@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 1 데이터 수집
+sports-industry-monitor — Phase 1 데이터 수집 (v2)
+v2: 기준 시점 저장 추가 — 분기 종료일(q_end/q_prev_end), 재고 기준일(inv_date/inv_prev_date)
 yfinance로 14종목의 3개년 재무(매출/GM/영업률/재고) + 주가(부지표) + 실적일 수집
 출력: docs/data.json
 §29-D: 조회 실패 항목은 null(대시보드에서 '미확인' 표기), 임의 수치 생성 금지
@@ -35,7 +36,6 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 
 
 def _row(df, names):
-    """재무제표 DataFrame에서 계정 행 탐색 (명칭 변형 대응)"""
     if df is None or getattr(df, "empty", True):
         return None
     for n in names:
@@ -47,7 +47,7 @@ def _row(df, names):
 def _num(v):
     try:
         f = float(v)
-        if f != f:  # NaN
+        if f != f:
             return None
         return f
     except Exception:
@@ -56,20 +56,23 @@ def _num(v):
 
 def fetch_one(ticker, name, group):
     d = {"ticker": ticker, "name": name, "group": group,
-         "currency": None, "fy": [], "latest_q_yoy": None,
+         "currency": None, "fy": [],
+         "latest_q_yoy": None, "q_end": None, "q_prev_end": None,
          "inventory": None, "inv_yoy": None, "inv_sales_pct": None,
+         "inv_date": None, "inv_prev_date": None,
          "price": None, "off_high_pct": None, "earn_date": None,
          "error": None}
     try:
         tk = yf.Ticker(ticker)
 
-        # ── 연간 손익 3개년 (+YoY 계산용 1년 추가) ──
+        # ── 연간 손익 3개년 ──
         inc = tk.income_stmt
         rev_r = _row(inc, ["Total Revenue", "Operating Revenue"])
         gp_r = _row(inc, ["Gross Profit"])
-        op_r = _row(inc, ["Operating Income", "Total Operating Income As Reported"])
+        op_r = _row(inc, ["Operating Income",
+                          "Total Operating Income As Reported"])
         if rev_r is not None:
-            cols = sorted(inc.columns)  # 과거→최신
+            cols = sorted(inc.columns)
             years = []
             for c in cols:
                 years.append({
@@ -83,9 +86,9 @@ def fetch_one(ticker, name, group):
                 y["rev_yoy"] = ((y["rev"] / prev - 1) * 100) if (y["rev"] and prev) else None
                 y["gm_pct"] = (y["gp"] / y["rev"] * 100) if (y["gp"] and y["rev"]) else None
                 y["op_pct"] = (y["op"] / y["rev"] * 100) if (y["op"] and y["rev"]) else None
-            d["fy"] = years[-3:]  # 최근 3개년
+            d["fy"] = years[-3:]
 
-        # ── 최근 분기 매출 YoY (5개 분기 필요) ──
+        # ── 최근 분기 매출 YoY (기준일 포함) ──
         qinc = tk.quarterly_income_stmt
         q_rev = _row(qinc, ["Total Revenue", "Operating Revenue"])
         if q_rev is not None:
@@ -93,10 +96,12 @@ def fetch_one(ticker, name, group):
             if len(qcols) >= 5:
                 cur = _num(q_rev.get(qcols[-1]))
                 prv = _num(q_rev.get(qcols[-5]))
+                d["q_end"] = str(qcols[-1])[:10]
+                d["q_prev_end"] = str(qcols[-5])[:10]
                 if cur and prv:
                     d["latest_q_yoy"] = (cur / prv - 1) * 100
 
-        # ── 재고 (연간 최신 vs 전년) ──
+        # ── 재고 (기준일 포함) ──
         bs = tk.balance_sheet
         inv_r = _row(bs, ["Inventory", "Inventories"])
         if inv_r is not None:
@@ -104,8 +109,10 @@ def fetch_one(ticker, name, group):
             if len(bcols) >= 1:
                 inv_now = _num(inv_r.get(bcols[-1]))
                 d["inventory"] = inv_now
+                d["inv_date"] = str(bcols[-1])[:10]
                 if len(bcols) >= 2:
                     inv_prev = _num(inv_r.get(bcols[-2]))
+                    d["inv_prev_date"] = str(bcols[-2])[:10]
                     if inv_now and inv_prev:
                         d["inv_yoy"] = (inv_now / inv_prev - 1) * 100
                 last_rev = d["fy"][-1]["rev"] if d["fy"] else None
@@ -144,7 +151,8 @@ def fetch_one(ticker, name, group):
 
 
 def main():
-    out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
+    out = {"generated_at":
+           datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
            "items": []}
     for ticker, (name, group) in WATCH.items():
         print(f"fetch {ticker} ({name}) ...")
