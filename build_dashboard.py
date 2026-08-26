@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v6: 서머리 기준 시점을 종목명 아래가 아닌 각 수치 셀 아래에 개별 표시
-    (FY매출YoY·GM → 결산월 / 분기YoY → 분기말 / 재고YoY → 재고 기준월)
-(v5의 라이트 모드+로고+공시 추출+DKS 부문 분리+상세 탭 기준 시점 포함)
+v7: 잘린 텍스트 터치/클릭 시 전체 표시(다시 터치하면 접힘), PC는 호버 툴팁 병행
+    — 지역/채널/매출 바 라벨, 서머리 종목명 등 말줄임 요소 전체 적용
+(v6의 셀 단위 기준 시점 표시 + 라이트 모드 + 로고 + 공시 추출 + DKS 부문 포함)
 docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
@@ -56,8 +56,11 @@ tr.subrow td:first-child{padding-left:26px}
 border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
 select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:12px}
 .bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:12px}
-.bar-row .lb{width:72px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bar-wrap{flex:1;background:var(--barbg);border-radius:4px;height:22px;position:relative}
+.bar-row .lb{width:72px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+flex-shrink:0;cursor:pointer}
+.bar-row .lb.open{width:auto;max-width:60%;white-space:normal;overflow:visible;text-overflow:clip;
+word-break:break-word;padding-right:6px}
+.bar-wrap{flex:1;background:var(--barbg);border-radius:4px;height:22px;position:relative;min-width:60px}
 .bar{height:100%;border-radius:4px;background:var(--accent);opacity:.85}
 .bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:11px;color:var(--tx)}
 .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
@@ -88,7 +91,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
   <div class="note">각 수치 아래 작은 글씨 = 그 수치의 기준 시점(결산월/분기말/재고 기준월). 모든 YoY는 해당 시점의 전년 동기 대비.<br>
-  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比: 부지표 · 종목명을 누르면 상세로 이동</div>
+  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比: 부지표 · 종목명을 누르면 상세로 이동 · 잘린 텍스트는 터치하면 전체 표시</div>
 </div>
 
 <div class="pane" id="p-det">
@@ -104,6 +107,14 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 <script>
 const DATA = __DATA__;
 const SEGS = __SEGS__;
+
+/* ── 잘린 텍스트 터치 시 전체 표시 토글 (이벤트 위임) ── */
+document.addEventListener('click', e=>{
+  const lb = e.target.closest('.bar-row .lb');
+  if(lb){ lb.classList.toggle('open'); }
+});
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
 /* ── 브랜드 로고 (공식 도메인 파비콘, 실패 시 로고만 제거) ── */
 const DOMAINS = {
@@ -141,7 +152,6 @@ const fmt=(v,d=1,sign=false)=>{
   const s=v.toFixed(d); const cls=v>=0?'pos':'neg';
   return sign?`<span class="${cls}">${v>=0?'+':''}${s}%</span>`:s;
 };
-/* 수치 + 아래 기준 시점 한 줄 */
 const cell=(valHtml,refDate)=>{
   const r=refDate?`<div class="ref">${refDate}</div>`:'';
   return valHtml+r;
@@ -215,7 +225,7 @@ function segBars(list, cur){
     const w=Math.max(r.revenue/mx*100,8);
     const share=total?(r.revenue/total*100).toFixed(0):null;
     const yoy=r.yoy_pct!=null?` ${r.yoy_pct>=0?'+':''}${r.yoy_pct.toFixed(1)}%`:'';
-    h+=`<div class="bar-row"><div class="lb">${r.name}</div>
+    h+=`<div class="bar-row"><div class="lb" title="${esc(r.name)}">${esc(r.name)}</div>
     <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
     <div class="bar-val">${segMoney(r.revenue,'')}${share?` · ${share}%`:''}${yoy}</div></div></div>`;
   });
@@ -230,7 +240,7 @@ function renderDetail(t){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
     x.fy.forEach(y=>{
       const w=y.rev?Math.max(y.rev/mx*100,8):0;
-      h+=`<div class="bar-row"><div class="lb">${ym(y.end)}결산</div>
+      h+=`<div class="bar-row"><div class="lb" title="${ym(y.end)}결산">${ym(y.end)}결산</div>
       <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
       <div class="bar-val">${money(y.rev,'')} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
     });
