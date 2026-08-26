@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>스포츠 산업 모니터</title>
+<style>
+:root{--bg:#0f1420;--card:#1a2233;--line:#2a3550;--tx:#e8ecf4;--sub:#8b96ad;
+--pos:#3ddc84;--neg:#ff6b6b;--accent:#4d9fff;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;padding-bottom:40px}
+header{padding:16px;border-bottom:1px solid var(--line)}
+header h1{font-size:17px}
+header .sub{color:var(--sub);font-size:11px;margin-top:4px}
+.tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.tab{flex:1;text-align:center;padding:12px 0;color:var(--sub);font-size:13px;cursor:pointer}
+.tab.on{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600}
+.pane{display:none;padding:12px}
+.pane.on{display:block}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:11px}
+th:first-child,td:first-child{text-align:left}
+td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
+tr.grp td{color:var(--sub);font-size:11px;padding:10px 4px 4px;border-bottom:none}
+.pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
+.nm{cursor:pointer;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+.card h3{font-size:13px;color:var(--sub);margin-bottom:10px;font-weight:500}
+select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:12px}
+.bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:12px}
+.bar-row .lb{width:52px;color:var(--sub)}
+.bar-wrap{flex:1;background:#0c101a;border-radius:4px;height:22px;position:relative}
+.bar{height:100%;border-radius:4px;background:var(--accent)}
+.bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:11px}
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kv .k{color:var(--sub)}
+.note{color:var(--sub);font-size:11px;margin-top:10px;line-height:1.6}
+.cal-item{display:flex;align-items:center;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:13px}
+.cal-item .dn{width:56px;font-weight:700}
+.cal-item .dt{margin-left:auto;color:var(--sub)}
+.hot{color:var(--neg)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏭 스포츠 산업 모니터</h1>
+  <div class="sub" id="gen"></div>
+</header>
+<div class="tabs">
+  <div class="tab on" data-p="sum">서머리</div>
+  <div class="tab" data-p="det">브랜드 상세</div>
+  <div class="tab" data-p="cal">캘린더</div>
+</div>
+
+<div class="pane on" id="p-sum">
+  <table id="sumTbl"></table>
+  <div class="note">FY매출YoY·GM: 최근 회계연도 / 분기YoY: 최근 분기 매출 / 재고YoY: 최근 연간 / 52주比: 부지표<br>
+  "―" = 미확인(소스 미제공, §29-D) · 종목명을 누르면 상세로 이동</div>
+</div>
+
+<div class="pane" id="p-det">
+  <select id="sel"></select>
+  <div id="detBody"></div>
+</div>
+
+<div class="pane" id="p-cal">
+  <div id="calBody"></div>
+  <div class="note">일정 미표시 종목은 소스 미제공(미확인). 🔴 = D-7 이내</div>
+</div>
+
+<script>
+const DATA = {"generated_at": "2026-08-26 14:38 KST", "items": [{"ticker": "NKE", "name": "나이키", "group": "브랜드", "currency": "USD", "fy": [{"end": "2024-05-31", "rev": 51362000000.0, "gp": 22887000000.0, "op": 6311000000.0, "rev_yoy": 0.28310912392370824, "gm_pct": 44.560180678322496, "op_pct": 12.287294108484872}, {"end": "2025-05-31", "rev": 46309000000.0, "gp": 19790000000.0, "op": 3702000000.0, "rev_yoy": -9.838012538452556, "gm_pct": 42.734673605562634, "op_pct": 7.994126411712626}, {"end": "2026-05-31", "rev": 46398000000.0, "gp": 19911000000.0, "op": 3797000000.0, "rev_yoy": 0.19218726381480256, "gm_pct": 42.913487650329756, "op_pct": 8.18354239406871}], "latest_q_yoy": -1.1264305668198582, "inventory": 7501000000.0, "inv_yoy": 0.16023501134998508, "inv_sales_pct": 16.166645114013537, "price": 39.47999954223633, "off_high_pct": -48.42546716574223, "earn_date": "2026-09-29", "error": null}, {"ticker": "ADS.DE", "name": "아디다스", "group": "브랜드", "currency": "EUR", "fy": [{"end": "2023-12-31", "rev": 21427000000.0, "gp": 10183000000.0, "op": 279000000.0, "rev_yoy": -4.815423570698774, "gm_pct": 47.52415177112989, "op_pct": 1.3020954870023802}, {"end": "2024-12-31", "rev": 23683000000.0, "gp": 12025000000.0, "op": 1291000000.0, "rev_yoy": 10.528772109954732, "gm_pct": 50.77481737955496, "op_pct": 5.451167504116877}, {"end": "2025-12-31", "rev": 24811000000.0, "gp": 12805000000.0, "op": 2061000000.0, "rev_yoy": 4.762910104294216, "gm_pct": 51.61017290717827, "op_pct": 8.306799403490388}], "latest_q_yoy": 13.289650537634401, "inventory": 5832000000.0, "inv_yoy": 16.897173782321097, "inv_sales_pct": 23.505703115553587, "price": 155.25, "off_high_pct": -18.848877483265436, "earn_date": "2026-10-29", "error": null}, {"ticker": "ONON", "name": "온홀딩", "group": "브랜드", "currency": "USD", "fy": [{"end": "2023-12-31", "rev": 1792100000.0, "gp": 1067200000.0, "op": 180200000.0, "rev_yoy": 46.64102773913754, "gm_pct": 59.55024831203616, "op_pct": 10.055242452988114}, {"end": "2024-12-31", "rev": 2318300000.0, "gp": 1405700000.0, "op": 211500000.0, "rev_yoy": 29.36220077004632, "gm_pct": 60.63494802225768, "op_pct": 9.123064314368287}, {"end": "2025-12-31", "rev": 3014000000.0, "gp": 1893600000.0, "op": 377000000.0, "rev_yoy": 30.009058361730578, "gm_pct": 62.826808228268085, "op_pct": 12.508294625082947}], "latest_q_yoy": 14.492155243600324, "inventory": 419800000.0, "inv_yoy": 0.14312977099235624, "inv_sales_pct": 13.928334439283343, "price": 28.829999923706055, "off_high_pct": -43.05747715683529, "earn_date": "2026-11-11", "error": null}, {"ticker": "DECK", "name": "데커스(HOKA)", "group": "브랜드", "currency": "USD", "fy": [{"end": "2024-03-31", "rev": 4287763000.0, "gp": 2385488000.0, "op": 927514000.0, "rev_yoy": 18.208572469885187, "gm_pct": 55.63479138189308, "op_pct": 21.631652682296107}, {"end": "2025-03-31", "rev": 4985612000.0, "gp": 2885663000.0, "op": 1179092000.0, "rev_yoy": 16.275363167227287, "gm_pct": 57.879814955516, "op_pct": 23.64989493767265}, {"end": "2026-03-31", "rev": 5472296000.0, "gp": 3157726000.0, "op": 1262903000.0, "rev_yoy": 9.761770470706498, "gm_pct": 57.70385958654284, "op_pct": 23.078119312259425}], "latest_q_yoy": 5.701486100081077, "inventory": 487018000.0, "inv_yoy": -1.6574250948051983, "inv_sales_pct": 8.899701331945495, "price": 88.73999786376953, "off_high_pct": -28.383507996856373, "earn_date": "2026-10-22", "error": null}, {"ticker": "AS", "name": "아머스포츠", "group": "브랜드", "currency": "USD", "fy": [{"end": "2023-12-31", "rev": 4400400000.0, "gp": 2308100000.0, "op": 303600000.0, "rev_yoy": 23.219086021505376, "gm_pct": 52.4520498136533, "op_pct": 6.899372784292337}, {"end": "2024-12-31", "rev": 5183300000.0, "gp": 2871800000.0, "op": 469900000.0, "rev_yoy": 17.79156440323606, "gm_pct": 55.40485790905407, "op_pct": 9.065653155325757}, {"end": "2025-12-31", "rev": 6566200000.0, "gp": 3784300000.0, "op": 714300000.0, "rev_yoy": 26.679914340285137, "gm_pct": 57.63302975846, "op_pct": 10.878438061588133}], "latest_q_yoy": 32.12224108658744, "inventory": 1622100000.0, "inv_yoy": 32.60034333360582, "inv_sales_pct": 24.703786055861837, "price": 31.59000015258789, "off_high_pct": -24.71401133972425, "earn_date": "2026-11-17", "error": null}, {"ticker": "LULU", "name": "룰루레몬", "group": "브랜드", "currency": "USD", "fy": [{"end": "2024-01-31", "rev": 9619278000.0, "gp": 5609405000.0, "op": 2207177000.0, "rev_yoy": 18.602510961691966, "gm_pct": 58.314199880697906, "op_pct": 22.945349952460052}, {"end": "2025-01-31", "rev": 10588126000.0, "gp": 6270811000.0, "op": 2505697000.0, "rev_yoy": 10.07194095024595, "gm_pct": 59.22493744407651, "op_pct": 23.665160388155563}, {"end": "2026-01-31", "rev": 11102600000.0, "gp": 6284132000.0, "op": 2210615000.0, "rev_yoy": 4.858971266492285, "gm_pct": 56.6005440167168, "op_pct": 19.910786662583536}], "latest_q_yoy": 4.258012536593192, "inventory": 1700753000.0, "inv_yoy": 17.93741128272268, "inv_sales_pct": 15.318510979410227, "price": 118.33000183105469, "off_high_pct": -45.187141395846965, "earn_date": "2026-09-03", "error": null}, {"ticker": "7936.T", "name": "아식스", "group": "브랜드", "currency": "JPY", "fy": [{"end": "2023-12-31", "rev": 570463000000.0, "gp": 296896000000.0, "op": 54216000000.0, "rev_yoy": 17.71808147321199, "gm_pct": 52.0447426038148, "op_pct": 9.50385914599194}, {"end": "2024-12-31", "rev": 678526000000.0, "gp": 378878000000.0, "op": 100112000000.0, "rev_yoy": 18.943033991687464, "gm_pct": 55.83839086490422, "op_pct": 14.754335132330965}, {"end": "2025-12-31", "rev": 810916000000.0, "gp": 460632000000.0, "op": 142520000000.0, "rev_yoy": 19.51141150081206, "gm_pct": 56.803910639326396, "op_pct": 17.575186579127802}], "latest_q_yoy": null, "inventory": 178967000000.0, "inv_yoy": 30.06700776185354, "inv_sales_pct": 22.069733486575675, "price": 4489.0, "off_high_pct": -14.99715962885817, "earn_date": "2026-11-13", "error": null}, {"ticker": "BIRK", "name": "버켄스탁", "group": "브랜드", "currency": "USD", "fy": [{"end": "2023-09-30", "rev": 1491911000.0, "gp": 925793000.0, "op": 296744000.0, "rev_yoy": 20.041147925747072, "gm_pct": 62.05417079168931, "op_pct": 19.890194522327402}, {"end": "2024-09-30", "rev": 1804690000.0, "gp": 1060677000.0, "op": 440849000.0, "rev_yoy": 20.964990538979865, "gm_pct": 58.773362738198806, "op_pct": 24.427962697194534}, {"end": "2025-09-30", "rev": 2097429000.0, "gp": 1239706000.0, "op": 551829000.0, "rev_yoy": 16.221013027168098, "gm_pct": 59.105981656590046, "op_pct": 26.309782118965646}], "latest_q_yoy": 7.6616231086657605, "inventory": 704417000.0, "inv_yoy": 12.741534585880121, "inv_sales_pct": 33.58478403798174, "price": 35.290000915527344, "off_high_pct": -32.71687244576202, "earn_date": null, "error": null}, {"ticker": "CROX", "name": "크록스", "group": "브랜드", "currency": "USD", "fy": [{"end": "2023-12-31", "rev": 3962347000.0, "gp": 2210010000.0, "op": 1046070000.0, "rev_yoy": 11.458895044564187, "gm_pct": 55.775276622668336, "op_pct": 26.4002622688018}, {"end": "2024-12-31", "rev": 4102108000.0, "gp": 2410258000.0, "op": 1045993000.0, "rev_yoy": 3.5272276759203525, "gm_pct": 58.756571011782235, "op_pct": 25.498914216788048}, {"end": "2025-12-31", "rev": 4040647000.0, "gp": 2357055000.0, "op": 887630000.0, "rev_yoy": -1.4982784461062493, "gm_pct": 58.33360350458726, "op_pct": 21.967521538011113}], "latest_q_yoy": 2.6183841102931815, "inventory": 368687000.0, "inv_yoy": 3.489925727149723, "inv_sales_pct": 9.124454573735346, "price": 122.88999938964844, "off_high_pct": -12.961259816786463, "earn_date": "2026-10-29", "error": null}, {"ticker": "VFC", "name": "VF Corp", "group": "브랜드", "currency": "USD", "fy": [{"end": "2024-03-31", "rev": 9915678000.0, "gp": 5112300000.0, "op": 363631000.0, "rev_yoy": -10.583848895143532, "gm_pct": 51.55774521923766, "op_pct": 3.667232840759855}, {"end": "2025-03-31", "rev": 9504691000.0, "gp": 5083865000.0, "op": 393015000.0, "rev_yoy": -4.1448199507890475, "gm_pct": 53.48795663109932, "op_pct": 4.13495820116614}, {"end": "2026-03-31", "rev": 9605207000.0, "gp": 5261715000.0, "op": 607285000.0, "rev_yoy": 1.0575409553030157, "gm_pct": 54.779818904475455, "op_pct": 6.32245614279838}], "latest_q_yoy": -5.184799388413253, "inventory": 1371274000.0, "inv_yoy": -15.718934865782641, "inv_sales_pct": 14.276360728092586, "price": 13.850000381469727, "off_high_pct": -35.38899684000517, "earn_date": "2026-10-26", "error": null}, {"ticker": "UAA", "name": "언더아머", "group": "브랜드", "currency": "USD", "fy": [{"end": "2024-03-31", "rev": 5701879000.0, "gp": 2630253000.0, "op": 229751000.0, "rev_yoy": -3.4097979643123666, "gm_pct": 46.12958289714671, "op_pct": 4.029391013032722}, {"end": "2025-03-31", "rev": 5164310000.0, "gp": 2474744000.0, "op": -127247000.0, "rev_yoy": -9.427927179794594, "gm_pct": 47.92012872968509, "op_pct": -2.4639690491082065}, {"end": "2026-03-31", "rev": 4966370000.0, "gp": 2258858000.0, "op": -35393000.0, "rev_yoy": -3.8328450460952235, "gm_pct": 45.483079190636225, "op_pct": -0.712653306137078}], "latest_q_yoy": -3.186845938691507, "inventory": 914751000.0, "inv_yoy": -3.286510557855693, "inv_sales_pct": 18.418905558788413, "price": 5.119999885559082, "off_high_pct": -37.100741159562475, "earn_date": "2026-11-05", "error": null}, {"ticker": "DKS", "name": "딕스+풋락커", "group": "유통", "currency": "USD", "fy": [{"end": "2024-01-31", "rev": 12984399000.0, "gp": 4533735000.0, "op": 1350205000.0, "rev_yoy": 4.982140486431419, "gm_pct": 34.91678744622681, "op_pct": 10.398671513406203}, {"end": "2025-01-31", "rev": 13442849000.0, "gp": 4825696000.0, "op": 1531424000.0, "rev_yoy": 3.5307756639333165, "gm_pct": 35.8978665906312, "op_pct": 11.39210891976842}, {"end": "2026-01-31", "rev": 17215120000.0, "gp": 5667262000.0, "op": 1329100000.0, "rev_yoy": 28.061544096790804, "gm_pct": 32.92025847046085, "op_pct": 7.720538689245268}], "latest_q_yoy": 62.678092920949126, "inventory": 4907823000.0, "inv_yoy": 46.50961392070643, "inv_sales_pct": 28.508793432749812, "price": 124.30999755859375, "off_high_pct": -48.02441840101389, "earn_date": null, "error": null}, {"ticker": "JD.L", "name": "JD스포츠", "group": "유통", "currency": "GBp", "fy": [{"end": "2024-01-31", "rev": 10542000000.0, "gp": 5048000000.0, "op": 972000000.0, "rev_yoy": 4.118518518518521, "gm_pct": 47.884651868715615, "op_pct": 9.220261809903244}, {"end": "2025-01-31", "rev": 11458000000.0, "gp": 5372000000.0, "op": 978000000.0, "rev_yoy": 8.689053310567264, "gm_pct": 46.88427299703264, "op_pct": 8.535521033339153}, {"end": "2026-01-31", "rev": 12662000000.0, "gp": 5951000000.0, "op": 966000000.0, "rev_yoy": 10.507942049223251, "gm_pct": 46.99889432948981, "op_pct": 7.629126520296952}], "latest_q_yoy": null, "inventory": 2017000000.0, "inv_yoy": -0.19792182088075316, "inv_sales_pct": 15.929552993208024, "price": 85.5, "off_high_pct": -18.209752335877695, "earn_date": "2026-09-22", "error": null}, {"ticker": "ASO", "name": "아카데미스포츠", "group": "유통", "currency": "USD", "fy": [{"end": "2024-01-31", "rev": 6159291000.0, "gp": 2110211000.0, "op": 677855000.0, "rev_yoy": -3.6869321116428266, "gm_pct": 34.26061538576437, "op_pct": 11.005406304069739}, {"end": "2025-01-31", "rev": 5933450000.0, "gp": 2011460000.0, "op": 538639000.0, "rev_yoy": -3.6666720244261874, "gm_pct": 33.900344656144405, "op_pct": 9.078006893122888}, {"end": "2026-01-31", "rev": 6053414000.0, "gp": 2105613000.0, "op": 512184000.0, "rev_yoy": 2.0218254135452307, "gm_pct": 34.7838921970313, "op_pct": 8.46107667507955}], "latest_q_yoy": 6.7036700214368805, "inventory": 1503756000.0, "inv_yoy": 14.892271018611902, "inv_sales_pct": 24.84145310398397, "price": 43.474998474121094, "off_high_pct": -28.5333826637152, "earn_date": "2026-09-08", "error": null}]};
+
+const fmt=(v,d=1,sign=false)=>{
+  if(v===null||v===undefined) return '<span class="na">―</span>';
+  const s=v.toFixed(d); const cls=v>=0?'pos':'neg';
+  return sign?`<span class="${cls}">${v>=0?'+':''}${s}%</span>`:s;
+};
+const money=(v,cur)=>{
+  if(v===null||v===undefined) return '―';
+  const m=v/1e6;
+  return m>=1000?(m/1000).toFixed(2)+'B '+(cur||''):m.toFixed(0)+'M '+(cur||'');
+};
+
+/* ── 서머리 ── */
+function buildSummary(){
+  let h=`<tr><th>종목</th><th>FY매출YoY</th><th>GM</th><th>분기YoY</th><th>재고YoY</th><th>52주比</th></tr>`;
+  ['브랜드','유통'].forEach(g=>{
+    h+=`<tr class="grp"><td colspan="6">━ ${g}</td></tr>`;
+    DATA.items.filter(x=>x.group===g).forEach(x=>{
+      const fy=x.fy.length?x.fy[x.fy.length-1]:{};
+      h+=`<tr><td class="nm" onclick="goDetail('${x.ticker}')">${x.name}</td>
+      <td>${fmt(fy.rev_yoy,1,true)}</td>
+      <td>${fy.gm_pct!=null?fy.gm_pct.toFixed(1)+'%':'<span class="na">―</span>'}</td>
+      <td>${fmt(x.latest_q_yoy,1,true)}</td>
+      <td>${fmt(x.inv_yoy,1,true)}</td>
+      <td>${fmt(x.off_high_pct,1,true)}</td></tr>`;
+    });
+  });
+  document.getElementById('sumTbl').innerHTML=h;
+}
+
+/* ── 상세 ── */
+function buildSelect(){
+  const s=document.getElementById('sel');
+  s.innerHTML=DATA.items.map(x=>`<option value="${x.ticker}">${x.name} (${x.ticker})</option>`).join('');
+  s.onchange=()=>renderDetail(s.value);
+  renderDetail(DATA.items[0].ticker);
+}
+function goDetail(t){
+  document.querySelector('.tab[data-p=det]').click();
+  document.getElementById('sel').value=t;
+  renderDetail(t);
+}
+function renderDetail(t){
+  const x=DATA.items.find(i=>i.ticker===t);
+  const cur=x.currency||'';
+  let h='';
+  /* 매출 3개년 */
+  h+=`<div class="card"><h3>📈 매출 3개년 (${cur})</h3>`;
+  if(x.fy.length){
+    const mx=Math.max(...x.fy.map(y=>y.rev||0));
+    x.fy.forEach(y=>{
+      const w=y.rev?Math.max(y.rev/mx*100,8):0;
+      h+=`<div class="bar-row"><div class="lb">FY${y.end.slice(2,4)}</div>
+      <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
+      <div class="bar-val">${money(y.rev,'')} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
+    });
+  } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
+  h+=`</div>`;
+  /* 수익성 */
+  h+=`<div class="card"><h3>💰 수익성 추이</h3><table><tr><th>FY</th><th>GM</th><th>영업이익률</th></tr>`;
+  x.fy.forEach(y=>{
+    h+=`<tr><td>FY${y.end.slice(2,4)}</td>
+    <td>${y.gm_pct!=null?y.gm_pct.toFixed(1)+'%':'―'}</td>
+    <td>${y.op_pct!=null?y.op_pct.toFixed(1)+'%':'―'}</td></tr>`;
+  });
+  h+=`</table></div>`;
+  /* 재고 */
+  h+=`<div class="card"><h3>📦 재고</h3>
+  <div class="kv"><span class="k">최근 재고자산</span><span>${money(x.inventory,cur)}</span></div>
+  <div class="kv"><span class="k">재고 YoY</span><span>${fmt(x.inv_yoy,1,true)}</span></div>
+  <div class="kv"><span class="k">재고/매출 비율</span><span>${x.inv_sales_pct!=null?x.inv_sales_pct.toFixed(1)+'%':'―'}</span></div></div>`;
+  /* Phase 2 예고 */
+  h+=`<div class="card"><h3>🌍 지역·채널 분해</h3>
+  <div class="na">미확인 — Phase 2(공시 추출)에서 지원 예정</div></div>`;
+  /* 주가 부지표 */
+  h+=`<div class="card"><h3>(부지표) 주가</h3>
+  <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+cur:'―'}</span></div>
+  <div class="kv"><span class="k">52주 고점比</span><span>${fmt(x.off_high_pct,1,true)}</span></div></div>`;
+  document.getElementById('detBody').innerHTML=h;
+}
+
+/* ── 캘린더 ── */
+function buildCal(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const rows=DATA.items.filter(x=>x.earn_date).map(x=>{
+    const d=new Date(x.earn_date+'T00:00:00');
+    return {n:x.name,d,dn:Math.round((d-today)/86400000)};
+  }).filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn-b.dn);
+  let h='';
+  rows.forEach(r=>{
+    h+=`<div class="cal-item"><div class="dn ${r.dn<=7?'hot':''}">${r.dn<=7?'🔴':'⚪'} D-${r.dn}</div>
+    <div>${r.n}</div><div class="dt">${(r.d.getMonth()+1)}/${r.d.getDate()}</div></div>`;
+  });
+  if(!rows.length) h='<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
+  document.getElementById('calBody').innerHTML=h;
+}
+
+/* ── 탭 ── */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById('p-'+t.dataset.p).classList.add('on');
+  };
+});
+
+document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance(공개 재무·주가)';
+buildSummary(); buildSelect(); buildCal();
+</script>
+</body>
+</html>
