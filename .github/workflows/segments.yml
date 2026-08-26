@@ -1,0 +1,32 @@
+name: extract-segments
+
+on:
+  schedule:
+    # 매주 월요일 05:00 KST = 일요일 20:00 UTC (매일 대시보드 빌드보다 먼저)
+    - cron: "0 20 * * 0"
+  workflow_dispatch:   # 수동 실행 버튼 (테스트용)
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Extract segments
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python extract_segments.py
+      - name: Commit segments
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/segments.json
+          git commit -m "update segments $(date -u +%F)" || echo "no changes"
+          git push
