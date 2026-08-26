@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-26 14:41 KST",
+ "generated_at": "2026-08-26 15:03 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -40,7 +40,7 @@
    "inv_yoy": 0.16023501134998508,
    "inv_sales_pct": 16.166645114013537,
    "price": 39.47999954223633,
-   "off_high_pct": -48.42546716574223,
+   "off_high_pct": -48.425462025500025,
    "earn_date": "2026-09-29",
    "error": null
   },
@@ -297,8 +297,8 @@
    "inventory": 178967000000.0,
    "inv_yoy": 30.06700776185354,
    "inv_sales_pct": 22.069733486575675,
-   "price": 4494.0,
-   "off_high_pct": -14.902480590797197,
+   "price": 4527.0,
+   "off_high_pct": -14.277598939594771,
    "earn_date": "2026-11-13",
    "error": null
   },
