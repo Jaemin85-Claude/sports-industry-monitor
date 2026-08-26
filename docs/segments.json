@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-26 16:50 KST",
+ "generated_at": "2026-08-26 17:29 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -14,15 +14,57 @@
    "extract": null
   },
   "NKE": {
-   "accession": "0000320187-26-000112",
-   "source": "8-K 2026-08-10 R1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000112/R1.htm",
+   "accession": "0000320187-26-000076",
+   "source": "8-K 2026-06-30 q4fy26exhibit991er.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000076/q4fy26exhibit991er.htm",
    "extract": {
-    "period": null,
-    "currency": null,
-    "regions": [],
-    "channels": [],
-    "notes": "실적 문서 아님"
+    "period": "Q4 FY26 ended 2026-05-31",
+    "currency": "USD",
+    "regions": [
+     {
+      "name": "North America",
+      "revenue": 4832,
+      "yoy_pct": 3
+     },
+     {
+      "name": "Europe, Middle East & Africa",
+      "revenue": 2975,
+      "yoy_pct": -1
+     },
+     {
+      "name": "Greater China",
+      "revenue": 1297,
+      "yoy_pct": -12
+     },
+     {
+      "name": "Asia Pacific & Latin America",
+      "revenue": 1596,
+      "yoy_pct": 1
+     },
+     {
+      "name": "Global Brand Divisions",
+      "revenue": 24,
+      "yoy_pct": 167
+     },
+     {
+      "name": "Converse",
+      "revenue": 244,
+      "yoy_pct": -32
+     }
+    ],
+    "channels": [
+     {
+      "name": "Wholesale",
+      "revenue": 6600,
+      "yoy_pct": 4
+     },
+     {
+      "name": "NIKE Direct",
+      "revenue": 4100,
+      "yoy_pct": -7
+     }
+    ],
+    "notes": "채널 매출액은 문서에서 정확한 수치 없이 반올림된 값으로 언급되었으며, North America EBIT에는 IEEPA 관세 환급 예상액 9억 6,500만 달러가 포함되어 있어 비교 가능성에 주의가 필요합니다."
    },
    "error": null
   },
@@ -147,15 +189,46 @@
    "error": null
   },
   "LULU": {
-   "accession": "0001397187-26-000120",
-   "source": "8-K 2026-08-13 R1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000120/R1.htm",
+   "accession": "0001397187-26-000077",
+   "source": "8-K 2026-06-04 lulu-20260503xex991.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000077/lulu-20260503xex991.htm",
    "extract": {
-    "period": null,
-    "currency": null,
-    "regions": [],
+    "period": "Q1 FY26 ended 2026-05-03",
+    "currency": "USD",
+    "regions": [
+     {
+      "name": "United States",
+      "revenue": null,
+      "yoy_pct": -4.0
+     },
+     {
+      "name": "Canada",
+      "revenue": null,
+      "yoy_pct": -3.0
+     },
+     {
+      "name": "Americas",
+      "revenue": null,
+      "yoy_pct": -3.0
+     },
+     {
+      "name": "China Mainland",
+      "revenue": null,
+      "yoy_pct": 30.0
+     },
+     {
+      "name": "Rest of World",
+      "revenue": null,
+      "yoy_pct": 13.0
+     },
+     {
+      "name": "International",
+      "revenue": null,
+      "yoy_pct": 22.0
+     }
+    ],
     "channels": [],
-    "notes": "실적 문서 아님"
+    "notes": "지역별 매출액(절대값)은 명시되지 않아 null 처리되었으며, 전년 대비 성장률만 공시됨."
    },
    "error": null
   },
@@ -233,15 +306,32 @@
    "error": null
   },
   "VFC": {
-   "accession": "0001193125-26-326327",
-   "source": "8-K 2026-07-30 R1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/103379/000119312526326327/R1.htm",
+   "accession": "0000103379-26-000113",
+   "source": "8-K 2026-07-29 q12027earningspressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningspressrelease.htm",
    "extract": {
-    "period": null,
-    "currency": null,
-    "regions": [],
-    "channels": [],
-    "notes": "실적 문서 아님"
+    "period": "Q1 FY27 ended 2026-06-27",
+    "currency": "USD",
+    "regions": [
+     {
+      "name": "Americas",
+      "revenue": null,
+      "yoy_pct": null
+     }
+    ],
+    "channels": [
+     {
+      "name": "DTC",
+      "revenue": null,
+      "yoy_pct": 2.0
+     },
+     {
+      "name": "Wholesale",
+      "revenue": null,
+      "yoy_pct": null
+     }
+    ],
+    "notes": "지역별 및 채널별 구체적인 매출액은 명시되지 않았으며, 성장률 일부는 Dickies® 제외 기준 또는 불변환율(C$) 기준으로 제공되어 직접 비교에 주의가 필요합니다."
    },
    "error": null
   },
@@ -296,23 +386,39 @@
    "error": null
   },
   "DKS": {
-   "accession": "0001089063-26-000033",
-   "source": "8-K 2026-08-25 0001089063-26-000033-index-headers.html",
-   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000033/0001089063-26-000033-index-headers.html",
+   "accession": "0001089063-26-000021",
+   "source": "8-K 2026-05-27 dks-2026502xex991earningsr.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000021/dks-2026502xex991earningsr.htm",
    "extract": {
-    "period": null,
-    "currency": null,
+    "period": "Q1 FY2026 ended 2026-05-02",
+    "currency": "USD",
     "regions": [],
     "channels": [],
-    "sub_segments": [],
-    "notes": "문서에 실제 재무 데이터가 포함되지 않고 SEC 제출 색인 및 파일 목록만 포함되어 있어 수치 추출 불가능"
+    "sub_segments": [
+     {
+      "name": "DICK'S",
+      "revenue": 3377.44,
+      "yoy_pct": null,
+      "segment_profit": 360.975,
+      "inventory": 3700.0
+     },
+     {
+      "name": "Foot Locker",
+      "revenue": 1787.064,
+      "yoy_pct": null,
+      "segment_profit": 17.462,
+      "inventory": 1700.0,
+      "proforma_comp_pct": 0.6
+     }
+    ],
+    "notes": "Foot Locker 사업부는 2025년 9월 8일 인수로 전년 동기 매출 비교 불가하며, Foot Locker의 proforma 비교 매출은 인수가 해당 기간 초에 이루어졌다고 가정하여 산출됨."
    },
    "error": null
   },
   "ASO": {
    "accession": "0001817358-26-000105",
-   "source": "8-K 2026-06-09 0001817358-26-000105-index-headers.html",
-   "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/0001817358-26-000105-index-headers.html",
+   "source": "8-K 2026-06-09 exhibit991pressreleaseq120.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/exhibit991pressreleaseq120.htm",
    "extract": {
     "period": "Q1 FY26 ended 2026-05-02",
     "currency": "USD",
