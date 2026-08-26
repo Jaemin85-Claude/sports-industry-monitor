@@ -18,7 +18,7 @@ import time
 import datetime
 import requests
 
-CONTACT_EMAIL = "여기에이메일"   # SEC 접속 규정용 연락처 (실제 이메일로 교체)
+CONTACT_EMAIL = "nightsit7@gmail.com"   # SEC 접속 규정용 연락처 (실제 이메일로 교체)
 
 UA = {"User-Agent": f"sports-industry-monitor ({CONTACT_EMAIL})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
