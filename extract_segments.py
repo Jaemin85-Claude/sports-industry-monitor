@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 2: 공시 추출
-SEC EDGAR에서 최신 실적 공시(8-K/6-K 보도자료, 폴백: 10-Q/10-K/20-F)를 찾아
-Claude API로 지역별·채널별 매출과 DKS 부문(딕스/풋락커) 분리 수치를 추출
+sports-industry-monitor — Phase 2: 공시 추출 (v2)
+v2: 최신 공시 탐색 개선 — 후보 폭 확대(최근 8-K/6-K 15건), 파일명 키워드 확대
+    (ex99 외 press/earn/release/result), 건너뛴 사유 로그 출력
+SEC EDGAR에서 최신 실적 공시를 찾아 Claude API로 지역·채널·DKS 부문 수치 추출
 출력: docs/segments.json
 §29-D: 공시에 명시된 수치만 추출, 실패/미기재는 null → 대시보드 "미확인"
 이미 추출한 공시(accession 동일)는 재추출하지 않음 → API 비용 최소화
@@ -22,7 +23,6 @@ UA = {"User-Agent": f"sports-industry-monitor ({CONTACT_EMAIL})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
-# EDGAR 추출 대상 (미국 상장). 비대상은 NON_US에 사유 기재
 US_TICKERS = ["NKE", "ONON", "DECK", "AS", "LULU", "BIRK",
               "CROX", "VFC", "UAA", "DKS", "ASO"]
 NON_US = {"ADS.DE": "EDGAR 미대상(독일 상장)",
@@ -56,8 +56,8 @@ def strip_html(text):
 
 
 def find_latest_filing(cik):
-    """최신 실적 공시 문서 텍스트와 메타 반환.
-    우선순위: 8-K/6-K의 EX-99 보도자료 → 폴백: 10-Q/10-K/20-F 본문"""
+    """최신 실적 공시 문서 텍스트와 메타 반환 (v2).
+    EDGAR recent는 최신순이므로 첫 유효 후보가 곧 최신 공시."""
     sub = sec_get(f"https://data.sec.gov/submissions/CIK{cik:010d}.json")
     rec = sub["filings"]["recent"]
     forms = rec["form"]
@@ -65,13 +65,12 @@ def find_latest_filing(cik):
     dates = rec["filingDate"]
     docs = rec["primaryDocument"]
 
-    # 1) 최근 8-K/6-K 최대 8건에서 EX-99 탐색
-    tried = 0
+    checked = 0
     for i in range(len(forms)):
         if forms[i] not in ("8-K", "6-K"):
             continue
-        tried += 1
-        if tried > 8:
+        checked += 1
+        if checked > 15:
             break
         acc = accs[i]
         nod = acc.replace("-", "")
@@ -79,23 +78,29 @@ def find_latest_filing(cik):
             idx = sec_get(
                 f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/index.json")
             items = idx.get("directory", {}).get("item", [])
-            ex = [it for it in items
-                  if re.search(r"ex.*99", it["name"], re.I)
-                  and it["name"].lower().endswith((".htm", ".html"))]
-            if not ex:
+            htmls = [it for it in items
+                     if it["name"].lower().endswith((".htm", ".html"))
+                     and it["name"] != docs[i]]
+            prio = [it for it in htmls
+                    if re.search(r"ex.?99|press|earn|release|result",
+                                 it["name"], re.I)]
+            pool = prio if prio else htmls
+            if not pool:
+                print(f"  - {forms[i]} {dates[i]}: 첨부 htm 없음, 건너뜀")
                 continue
-            ex.sort(key=lambda it: int(it.get("size") or 0), reverse=True)
+            pool.sort(key=lambda it: int(it.get("size") or 0), reverse=True)
             url = (f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/"
-                   f"{ex[0]['name']}")
+                   f"{pool[0]['name']}")
             txt = strip_html(sec_get(url, is_json=False))
-            if len(txt) < 3000:   # 실적자료로 보기엔 너무 짧으면 다음 후보
+            if len(txt) < 3000:
+                print(f"  - {forms[i]} {dates[i]}: 본문 짧음({len(txt)}자), 건너뜀")
                 continue
             return {"accession": acc, "text": txt, "url": url,
-                    "source": f"{forms[i]} {dates[i]} {ex[0]['name']}"}
-        except Exception:
+                    "source": f"{forms[i]} {dates[i]} {pool[0]['name']}"}
+        except Exception as e:
+            print(f"  - {forms[i]} {dates[i]}: 오류로 건너뜀: {str(e)[:100]}")
             continue
 
-    # 2) 폴백: 최신 10-Q / 10-K / 20-F 본문
     for i in range(len(forms)):
         if forms[i] in ("10-Q", "10-K", "20-F"):
             acc = accs[i]
@@ -175,7 +180,6 @@ def main():
         print("[ERROR] ANTHROPIC_API_KEY 미설정")
         raise SystemExit(1)
 
-    # 기존 결과 로드 (accession 캐시)
     old = {"items": {}}
     if os.path.exists(SEG_PATH):
         try:
@@ -189,7 +193,6 @@ def main():
            datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
            "items": {}}
 
-    # 비미국 상장 — 사유 명시
     for t, reason in NON_US.items():
         out["items"][t] = {"error": reason, "extract": None}
 
@@ -204,6 +207,7 @@ def main():
                 entry["error"] = "CIK 미확인"
                 out["items"][t] = entry
                 continue
+            print(f"{t}: 공시 탐색 중 ...")
             filing = find_latest_filing(cik)
             if not filing:
                 entry["error"] = "실적 공시 미발견"
@@ -220,8 +224,7 @@ def main():
                 print(f"{t}: 동일 공시({filing['accession']}) → 캐시 사용")
             else:
                 print(f"{t}: 신규 공시 추출 중 ... ({filing['source']})")
-                entry["extract"] = claude_extract(
-                    t, t, filing["text"])
+                entry["extract"] = claude_extract(t, t, filing["text"])
         except Exception as e:
             entry["error"] = str(e)[:200]
             print(f"[WARN] {t}: {e}")
