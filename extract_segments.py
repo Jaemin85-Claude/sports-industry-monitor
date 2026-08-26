@@ -18,7 +18,7 @@ import time
 import datetime
 import requests
 
-CONTACT_EMAIL = "nightsit7@gmail.com"   # SEC 접속 규정용 연락처 (실제 이메일로 교체)
+CONTACT_EMAIL = "여기에이메일"   # SEC 접속 규정용 연락처 (실제 이메일로 교체)
 
 UA = {"User-Agent": f"sports-industry-monitor ({CONTACT_EMAIL})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -262,4 +262,10 @@ def main():
         out["items"][t] = entry
 
     os.makedirs("docs", exist_ok=True)
-    with open(SEG_PATH, "w", encoding="utf-8") as
+    with open(SEG_PATH, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+    print("saved", SEG_PATH)
+
+
+if __name__ == "__main__":
+    main()
