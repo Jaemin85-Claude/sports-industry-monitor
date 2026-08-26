@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-26 17:23 KST",
+ "generated_at": "2026-08-26 17:31 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -44,7 +44,7 @@
    "inv_date": "2026-05-31",
    "inv_prev_date": "2025-05-31",
    "price": 39.47999954223633,
-   "off_high_pct": -48.425462025500025,
+   "off_high_pct": -48.42547230598342,
    "earn_date": "2026-09-29",
    "error": null
   },
@@ -90,8 +90,8 @@
    "inv_sales_pct": 23.505703115553587,
    "inv_date": "2025-12-31",
    "inv_prev_date": "2024-12-31",
-   "price": 153.5,
-   "off_high_pct": -19.763624435950046,
+   "price": 153.39999389648438,
+   "off_high_pct": -19.815898880773354,
    "earn_date": "2026-10-29",
    "error": null
   },
@@ -607,8 +607,8 @@
    "inv_sales_pct": 15.929552993208024,
    "inv_date": "2026-01-31",
    "inv_prev_date": "2025-01-31",
-   "price": 85.76000213623047,
-   "off_high_pct": -17.96103141055031,
+   "price": 85.80000305175781,
+   "off_high_pct": -17.92276609139507,
    "earn_date": "2026-09-22",
    "error": null
   },
