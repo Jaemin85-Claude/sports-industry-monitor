@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v4.1: 로고 대체 배지의 따옴표 충돌 버그 수정(이름 앞 찌꺼기 문자 제거)
-라이트 모드(기본)+다크 전환 + 브랜드 로고 + [공시 추출] 지역·채널 분해
-+ 서머리에 DKS 부문(딕스/풋락커) 분리 행
+v5: 지표 기준 시점 표시 — 서머리 종목명 아래 (FY결산·분기말·재고기준월),
+    수익성 표에 결산월, 재고 카드에 기준일/전년비교일 명시
+(v4.1의 라이트 모드+로고+공시 추출+DKS 부문 분리 포함)
 docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
@@ -46,6 +46,7 @@ tr.subrow td{font-size:11px;color:var(--sub)}
 tr.subrow td:first-child{padding-left:26px}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
 .nm{cursor:pointer;font-weight:600;white-space:nowrap}
+.ref{font-size:9px;color:var(--sub);font-weight:400;margin-top:2px;white-space:nowrap}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
@@ -86,8 +87,8 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
-  <div class="note">FY매출YoY·GM: 최근 회계연도 / 분기YoY: 최근 분기 매출 / 재고YoY: 최근 연간 / 52주比: 부지표<br>
-  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 종목명을 누르면 상세로 이동</div>
+  <div class="note">종목명 아래 작은 글씨가 각 지표의 기준 시점입니다 — FY: 최근 결산월(FY매출YoY·GM 기준) / Q: 최근 분기말(분기YoY 기준) / 재고: 재고 기준월. 모든 YoY는 해당 시점의 전년 동기 대비.<br>
+  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比: 부지표 · 종목명을 누르면 상세로 이동</div>
 </div>
 
 <div class="pane" id="p-det">
@@ -149,6 +150,7 @@ const segMoney=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   return v>=1000?(v/1000).toFixed(2)+'B '+(cur||''):v.toFixed(0)+'M '+(cur||'');
 };
+const ym=d=>d?("'"+d.slice(2,4)+"."+d.slice(5,7)):null;   // '2026-05-31' → '26.05
 function segOf(t){
   const e=(SEGS.items||{})[t];
   return (e&&e.extract)?e:null;
@@ -161,7 +163,12 @@ function buildSummary(){
     h+=`<tr class="grp"><td colspan="6">━ ${g}</td></tr>`;
     DATA.items.filter(x=>x.group===g).forEach(x=>{
       const fy=x.fy.length?x.fy[x.fy.length-1]:{};
-      h+=`<tr><td class="nm" onclick="goDetail('${x.ticker}')">${logoImg(x.ticker,false)}${x.name}</td>
+      const refs=[];
+      if(fy.end) refs.push('FY '+ym(fy.end));
+      if(x.q_end) refs.push('Q '+ym(x.q_end));
+      if(x.inv_date) refs.push('재고 '+ym(x.inv_date));
+      const refLine=refs.length?`<div class="ref">${refs.join(' · ')}</div>`:'';
+      h+=`<tr><td class="nm" onclick="goDetail('${x.ticker}')">${logoImg(x.ticker,false)}${x.name}${refLine}</td>
       <td>${fmt(fy.rev_yoy,1,true)}</td>
       <td>${fy.gm_pct!=null?fy.gm_pct.toFixed(1)+'%':'<span class="na">―</span>'}</td>
       <td>${fmt(x.latest_q_yoy,1,true)}</td>
@@ -217,26 +224,27 @@ function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
   let h=`<div class="det-head">${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span></div>`;
-  h+=`<div class="card"><h3>📈 매출 3개년 (${cur})</h3>`;
+  h+=`<div class="card"><h3>📈 매출 3개년 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
     x.fy.forEach(y=>{
       const w=y.rev?Math.max(y.rev/mx*100,8):0;
-      h+=`<div class="bar-row"><div class="lb">FY${y.end.slice(2,4)}</div>
+      h+=`<div class="bar-row"><div class="lb">${ym(y.end)}결산</div>
       <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
       <div class="bar-val">${money(y.rev,'')} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
     });
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
   h+=`</div>`;
-  h+=`<div class="card"><h3>💰 수익성 추이</h3><table><tr><th>FY</th><th>GM</th><th>영업이익률</th></tr>`;
+  h+=`<div class="card"><h3>💰 수익성 추이</h3><table><tr><th>결산월</th><th>GM</th><th>영업이익률</th></tr>`;
   x.fy.forEach(y=>{
-    h+=`<tr><td>FY${y.end.slice(2,4)}</td>
+    h+=`<tr><td>${ym(y.end)}</td>
     <td>${y.gm_pct!=null?y.gm_pct.toFixed(1)+'%':'―'}</td>
     <td>${y.op_pct!=null?y.op_pct.toFixed(1)+'%':'―'}</td></tr>`;
   });
   h+=`</table></div>`;
   h+=`<div class="card"><h3>📦 재고</h3>
-  <div class="kv"><span class="k">최근 재고자산</span><span>${money(x.inventory,cur)}</span></div>
+  <div class="kv"><span class="k">기준 시점</span><span>${x.inv_date||'―'}${x.inv_prev_date?' (전년비교: '+x.inv_prev_date+')':''}</span></div>
+  <div class="kv"><span class="k">재고자산</span><span>${money(x.inventory,cur)}</span></div>
   <div class="kv"><span class="k">재고 YoY</span><span>${fmt(x.inv_yoy,1,true)}</span></div>
   <div class="kv"><span class="k">재고/매출 비율</span><span>${x.inv_sales_pct!=null?x.inv_sales_pct.toFixed(1)+'%':'―'}</span></div></div>`;
 
@@ -272,6 +280,7 @@ function renderDetail(t){
       <td>${segMoney(ss.inventory,'')}</td></tr>`;
     });
     h+=`</table>`;
+    if(s.extract.period) h+=`<div class="note">기준: ${s.extract.period}</div>`;
     const fl=s.extract.sub_segments.find(z=>z.name==='Foot Locker');
     if(fl&&fl.proforma_comp_pct!=null){
       h+=`<div class="note">풋락커 프로포마 기존점 매출: ${fl.proforma_comp_pct>=0?'+':''}${fl.proforma_comp_pct.toFixed(1)}%
@@ -335,7 +344,7 @@ def main():
             .replace("__SEGS__", json.dumps(segs, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("saved saved docs/index.html" if False else "saved docs/index.html")
+    print("saved docs/index.html")
 
 
 if __name__ == "__main__":
