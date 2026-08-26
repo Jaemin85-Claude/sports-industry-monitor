@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v3: 라이트 모드(기본) + 다크 전환 버튼 + 브랜드 로고(파비콘, 실패 시 이니셜 배지)
-docs/data.json → docs/index.html
+v4: 라이트 모드(기본)+다크 전환 + 브랜드 로고 + [공시 추출] 지역·채널 분해
+    + 서머리에 DKS 부문(딕스/풋락커) 분리 행
+docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
 import json
+import os
 
 TEMPLATE = r"""<!DOCTYPE html>
 <html lang="ko">
@@ -39,6 +41,8 @@ th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bott
 th:first-child,td:first-child{text-align:left}
 td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
 tr.grp td{color:var(--sub);font-size:11px;padding:10px 4px 4px;border-bottom:none}
+tr.subrow td{font-size:11px;color:var(--sub)}
+tr.subrow td:first-child{padding-left:26px}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
 .nm{cursor:pointer;font-weight:600;white-space:nowrap}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
@@ -48,9 +52,11 @@ background:var(--accent);color:#fff;font-size:10px;font-weight:700;text-align:ce
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
 .card h3{font-size:13px;color:var(--sub);margin-bottom:10px;font-weight:500}
 .det-head{font-size:16px;font-weight:700;margin-bottom:12px}
+.tag{display:inline-block;font-size:10px;color:var(--accent);border:1px solid var(--accent);
+border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
 select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:12px}
 .bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:12px}
-.bar-row .lb{width:52px;color:var(--sub)}
+.bar-row .lb{width:72px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar-wrap{flex:1;background:var(--barbg);border-radius:4px;height:22px;position:relative}
 .bar{height:100%;border-radius:4px;background:var(--accent);opacity:.85}
 .bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:11px;color:var(--tx)}
@@ -58,6 +64,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .kv:last-child{border-bottom:none}
 .kv .k{color:var(--sub)}
 .note{color:var(--sub);font-size:11px;margin-top:10px;line-height:1.6}
+.src{color:var(--sub);font-size:10px;margin-top:8px;word-break:break-all}
 .cal-item{display:flex;align-items:center;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:13px}
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
@@ -81,7 +88,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
   <div class="note">FY매출YoY·GM: 최근 회계연도 / 분기YoY: 최근 분기 매출 / 재고YoY: 최근 연간 / 52주比: 부지표<br>
-  "―" = 미확인(소스 미제공, §29-D) · 종목명을 누르면 상세로 이동</div>
+  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 종목명을 누르면 상세로 이동</div>
 </div>
 
 <div class="pane" id="p-det">
@@ -96,6 +103,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 
 <script>
 const DATA = __DATA__;
+const SEGS = __SEGS__;
 
 /* ── 브랜드 로고 (공식 도메인 파비콘) ── */
 const DOMAINS = {
@@ -141,6 +149,14 @@ const money=(v,cur)=>{
   const m=v/1e6;
   return m>=1000?(m/1000).toFixed(2)+'B '+(cur||''):m.toFixed(0)+'M '+(cur||'');
 };
+const segMoney=(v,cur)=>{      // 공시 추출값은 백만 단위
+  if(v===null||v===undefined) return '―';
+  return v>=1000?(v/1000).toFixed(2)+'B '+(cur||''):v.toFixed(0)+'M '+(cur||'');
+};
+function segOf(t){
+  const e=(SEGS.items||{})[t];
+  return (e&&e.extract)?e:null;
+}
 
 /* ── 서머리 ── */
 function buildSummary(){
@@ -155,6 +171,20 @@ function buildSummary(){
       <td>${fmt(x.latest_q_yoy,1,true)}</td>
       <td>${fmt(x.inv_yoy,1,true)}</td>
       <td>${fmt(x.off_high_pct,1,true)}</td></tr>`;
+      /* DKS 부문 분리 행 (공시 추출) */
+      if(x.ticker==='DKS'){
+        const s=segOf('DKS');
+        const subs=(s&&s.extract.sub_segments)?s.extract.sub_segments:[];
+        subs.forEach(ss=>{
+          const label=ss.name==="DICK'S"?'딕스(본체)':'풋락커(부문)';
+          const extra=(ss.proforma_comp_pct!=null)
+            ?` · 프로포마comp ${ss.proforma_comp_pct>=0?'+':''}${ss.proforma_comp_pct.toFixed(1)}%`:'';
+          h+=`<tr class="subrow"><td>└ ${label} <span class="tag">공시</span></td>
+          <td colspan="2">매출 ${segMoney(ss.revenue,'')} ${ss.yoy_pct!=null?('('+(ss.yoy_pct>=0?'+':'')+ss.yoy_pct.toFixed(1)+'%)'):''}</td>
+          <td colspan="2">재고 ${segMoney(ss.inventory,'')}</td>
+          <td>${extra||''}</td></tr>`;
+        });
+      }
     });
   });
   document.getElementById('sumTbl').innerHTML=h;
@@ -171,6 +201,22 @@ function goDetail(t){
   document.querySelector('.tab[data-p=det]').click();
   document.getElementById('sel').value=t;
   renderDetail(t);
+}
+function segBars(list, cur){
+  const items=list.filter(r=>r.revenue!=null);
+  if(!items.length) return null;
+  const total=items.reduce((a,b)=>a+b.revenue,0);
+  const mx=Math.max(...items.map(r=>r.revenue));
+  let h='';
+  items.forEach(r=>{
+    const w=Math.max(r.revenue/mx*100,8);
+    const share=total?(r.revenue/total*100).toFixed(0):null;
+    const yoy=r.yoy_pct!=null?` ${r.yoy_pct>=0?'+':''}${r.yoy_pct.toFixed(1)}%`:'';
+    h+=`<div class="bar-row"><div class="lb">${r.name}</div>
+    <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
+    <div class="bar-val">${segMoney(r.revenue,'')}${share?` · ${share}%`:''}${yoy}</div></div></div>`;
+  });
+  return h;
 }
 function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
@@ -198,8 +244,49 @@ function renderDetail(t){
   <div class="kv"><span class="k">최근 재고자산</span><span>${money(x.inventory,cur)}</span></div>
   <div class="kv"><span class="k">재고 YoY</span><span>${fmt(x.inv_yoy,1,true)}</span></div>
   <div class="kv"><span class="k">재고/매출 비율</span><span>${x.inv_sales_pct!=null?x.inv_sales_pct.toFixed(1)+'%':'―'}</span></div></div>`;
-  h+=`<div class="card"><h3>🌍 지역·채널 분해</h3>
-  <div class="na">미확인 — Phase 2(공시 추출)에서 지원 예정</div></div>`;
+
+  /* 지역·채널 분해 (공시 추출) */
+  const s=segOf(t);
+  const segEntry=(SEGS.items||{})[t];
+  h+=`<div class="card"><h3>🌍 지역 분해 <span class="tag">공시 추출</span></h3>`;
+  if(s&&s.extract.regions&&s.extract.regions.length){
+    const bars=segBars(s.extract.regions,cur);
+    h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
+    if(s.extract.period) h+=`<div class="note">기준: ${s.extract.period}${s.extract.notes?' · '+s.extract.notes:''}</div>`;
+    if(s.source) h+=`<div class="src">출처: ${s.source}</div>`;
+  } else {
+    h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 지역 분해 미기재)'}</div>`;
+  }
+  h+=`</div>`;
+  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) <span class="tag">공시 추출</span></h3>`;
+  if(s&&s.extract.channels&&s.extract.channels.length){
+    const bars=segBars(s.extract.channels,cur);
+    h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
+  } else {
+    h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 채널 분해 미기재)'}</div>`;
+  }
+  h+=`</div>`;
+
+  /* DKS 부문 카드 */
+  if(t==='DKS'&&s&&s.extract.sub_segments&&s.extract.sub_segments.length){
+    h+=`<div class="card"><h3>🏬 부문 분해: 딕스 / 풋락커 <span class="tag">공시 추출</span></h3>
+    <table><tr><th>부문</th><th>매출</th><th>YoY</th><th>부문이익</th><th>재고</th></tr>`;
+    s.extract.sub_segments.forEach(ss=>{
+      h+=`<tr><td>${ss.name==="DICK'S"?'딕스(본체)':'풋락커(부문)'}</td>
+      <td>${segMoney(ss.revenue,'')}</td>
+      <td>${fmt(ss.yoy_pct,1,true)}</td>
+      <td>${segMoney(ss.segment_profit,'')}</td>
+      <td>${segMoney(ss.inventory,'')}</td></tr>`;
+    });
+    h+=`</table>`;
+    const fl=s.extract.sub_segments.find(z=>z.name==='Foot Locker');
+    if(fl&&fl.proforma_comp_pct!=null){
+      h+=`<div class="note">풋락커 프로포마 기존점 매출: ${fl.proforma_comp_pct>=0?'+':''}${fl.proforma_comp_pct.toFixed(1)}%
+      · 풋락커는 FY26 4분기까지 공식 comp 집계 미포함(프로포마 기준)</div>`;
+    }
+    h+=`</div>`;
+  }
+
   h+=`<div class="card"><h3>(부지표) 주가</h3>
   <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+cur:'―'}</span></div>
   <div class="kv"><span class="k">52주 고점比</span><span>${fmt(x.off_high_pct,1,true)}</span></div></div>`;
@@ -232,7 +319,7 @@ document.querySelectorAll('.tab').forEach(t=>{
   };
 });
 
-document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance(공개 재무·주가)';
+document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance + SEC 공시(추출)';
 buildSummary(); buildSelect(); buildCal();
 </script>
 </body>
@@ -243,7 +330,16 @@ buildSummary(); buildSelect(); buildCal();
 def main():
     with open("docs/data.json", encoding="utf-8") as f:
         data = json.load(f)
-    html = TEMPLATE.replace("__DATA__", json.dumps(data, ensure_ascii=False))
+    segs = {"items": {}}
+    if os.path.exists("docs/segments.json"):
+        try:
+            with open("docs/segments.json", encoding="utf-8") as f:
+                segs = json.load(f)
+        except Exception:
+            pass
+    html = (TEMPLATE
+            .replace("__DATA__", json.dumps(data, ensure_ascii=False))
+            .replace("__SEGS__", json.dumps(segs, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
