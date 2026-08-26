@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 2: 공시 추출 (v3)
-v3: 실적 문서 내용 검증 추가 — 최신 공시가 실적자료가 아니면(경영 공시 등)
-    건너뛰고 다음 공시를 탐색. v2의 "아무 첨부나 허용" 폴백이 만든
-    나이키 회귀(비실적 8-K를 잡아 미확인 처리) 수정.
-SEC EDGAR에서 최신 '실적' 공시를 찾아 Claude API로 지역·채널·DKS 부문 추출
-출력: docs/segments.json
-§29-D: 공시에 명시된 수치만 추출, 실패/미기재는 null → 대시보드 "미확인"
-이미 추출한 공시(accession 동일)는 재추출하지 않음 → API 비용 최소화
+sports-industry-monitor — Phase 2: 공시 추출 (v4)
+v4: 첨부 목록 폴백 추가 — index.json이 첨부를 온전히 반환하지 않는 공시(예: DKS
+    8/25 2분기)에서 디렉터리 HTML 목록으로 파일명을 직접 추출. index/R숫자 파일
+    제외, 후보 검사 3개로 확대.
+(v3의 실적 문서 내용 검증 포함)
+출력: docs/segments.json — §29-D: 명시 수치만 추출, 미기재는 null
+동일 공시(accession)는 재추출하지 않음(캐시)
 """
 
 import os
@@ -18,9 +17,10 @@ import time
 import datetime
 import requests
 
-CONTACT_EMAIL = "nightsit7@gmail.com"   # SEC 접속 규정용 연락처 (실제 이메일로 교체)
+CONTACT_EMAIL = "nightsit7@gmail.com"   # 반드시 영문 이메일로 교체
 
-UA = {"User-Agent": f"sports-industry-monitor ({CONTACT_EMAIL})"}
+_safe_email = CONTACT_EMAIL.encode("ascii", "ignore").decode() or "contact@example.com"
+UA = {"User-Agent": f"sports-industry-monitor ({_safe_email})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
@@ -34,7 +34,7 @@ SEG_PATH = "docs/segments.json"
 
 
 def sec_get(url, is_json=True):
-    time.sleep(0.4)  # SEC 요청 간격 준수
+    time.sleep(0.4)
     r = requests.get(url, headers=UA, timeout=60)
     r.raise_for_status()
     return r.json() if is_json else r.text
@@ -57,8 +57,7 @@ def strip_html(text):
 
 
 def looks_like_earnings(txt):
-    """실적자료 내용 검증: 매출 키워드 + 기간 키워드 + 재무표 흔적이
-    본문에 실제로 있어야 통과 (§29-D: 문서 선택 오류 방어)"""
+    """실적자료 내용 검증 (§29-D: 문서 선택 오류 방어)"""
     t = txt.lower()
     has_rev = re.search(r"net (sales|revenue)|total revenue|revenues", t)
     has_period = re.search(
@@ -70,10 +69,42 @@ def looks_like_earnings(txt):
     return bool(has_rev and has_period and has_fin)
 
 
+def _bad_name(n):
+    """index 파일·XBRL 렌더 파일(R1.htm 등) 제외"""
+    ln = n.lower()
+    return ("index" in ln) or re.fullmatch(r"r\d+\.html?", ln)
+
+
+def list_filing_docs(cik, nod, primary):
+    """공시 첨부 htm 목록 반환 [(이름, 크기)].
+    1차: index.json / 2차 폴백: 디렉터리 HTML 목록에서 파일명 직접 추출"""
+    names = []
+    try:
+        idx = sec_get(
+            f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/index.json")
+        for it in idx.get("directory", {}).get("item", []):
+            n = it["name"]
+            if (n.lower().endswith((".htm", ".html"))
+                    and n != primary and not _bad_name(n)):
+                names.append((n, int(it.get("size") or 0)))
+    except Exception:
+        pass
+    try:
+        listing = sec_get(
+            f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/",
+            is_json=False)
+        for n in re.findall(r'href="[^"]*?([\w.-]+\.html?)"', listing, re.I):
+            if (n != primary and not _bad_name(n)
+                    and all(n != x for x, _ in names)):
+                names.append((n, 0))
+    except Exception:
+        pass
+    return names
+
+
 def find_latest_filing(cik):
-    """최신 '실적' 공시 문서 텍스트와 메타 반환 (v3).
-    최근 8-K/6-K 15건을 최신순으로 훑으며, 첨부 본문이
-    실적자료 내용 검증(looks_like_earnings)을 통과하는 첫 공시를 채택."""
+    """최신 '실적' 공시 문서 반환 (v4).
+    최근 8-K/6-K 15건 최신순 탐색, 첨부 후보 3개까지 내용 검증."""
     sub = sec_get(f"https://data.sec.gov/submissions/CIK{cik:010d}.json")
     rec = sub["filings"]["recent"]
     forms = rec["form"]
@@ -91,36 +122,30 @@ def find_latest_filing(cik):
         acc = accs[i]
         nod = acc.replace("-", "")
         try:
-            idx = sec_get(
-                f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/index.json")
-            items = idx.get("directory", {}).get("item", [])
-            htmls = [it for it in items
-                     if it["name"].lower().endswith((".htm", ".html"))
-                     and it["name"] != docs[i]]
-            prio = [it for it in htmls
-                    if re.search(r"ex.?99|press|earn|release|result",
-                                 it["name"], re.I)]
-            pool = prio if prio else htmls
-            if not pool:
+            names = list_filing_docs(cik, nod, docs[i])
+            if not names:
                 print(f"  - {forms[i]} {dates[i]}: 첨부 htm 없음, 건너뜀")
                 continue
-            pool.sort(key=lambda it: int(it.get("size") or 0), reverse=True)
-            # 후보 공시 내 첨부 최대 2개까지 내용 검증
+            prio = [nm for nm in names
+                    if re.search(r"ex.?99|press|earn|release|result",
+                                 nm[0], re.I)]
+            pool = prio if prio else names
+            pool.sort(key=lambda nm: nm[1], reverse=True)
             found = None
-            for cand in pool[:2]:
+            for nm, _sz in pool[:3]:
                 url = (f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/"
-                       f"{cand['name']}")
+                       f"{nm}")
                 txt = strip_html(sec_get(url, is_json=False))
                 if len(txt) < 3000:
-                    print(f"  - {forms[i]} {dates[i]} {cand['name']}: "
+                    print(f"  - {forms[i]} {dates[i]} {nm}: "
                           f"본문 짧음({len(txt)}자)")
                     continue
                 if not looks_like_earnings(txt):
-                    print(f"  - {forms[i]} {dates[i]} {cand['name']}: "
+                    print(f"  - {forms[i]} {dates[i]} {nm}: "
                           f"실적자료 아님(내용 검증 불통과), 건너뜀")
                     continue
                 found = {"accession": acc, "text": txt, "url": url,
-                         "source": f"{forms[i]} {dates[i]} {cand['name']}"}
+                         "source": f"{forms[i]} {dates[i]} {nm}"}
                 break
             if found:
                 return found
@@ -128,7 +153,6 @@ def find_latest_filing(cik):
             print(f"  - {forms[i]} {dates[i]}: 오류로 건너뜀: {str(e)[:100]}")
             continue
 
-    # 폴백: 최신 10-Q / 10-K / 20-F 본문
     for i in range(len(forms)):
         if forms[i] in ("10-Q", "10-K", "20-F"):
             acc = accs[i]
@@ -142,7 +166,6 @@ def find_latest_filing(cik):
 
 
 def cap_text(txt):
-    """길면 앞 30k + 뒤 130k (부문 주석은 보통 후반부)"""
     if len(txt) <= 160000:
         return txt
     return txt[:30000] + "\n...(중략)...\n" + txt[-130000:]
