@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v5: 지표 기준 시점 표시 — 서머리 종목명 아래 (FY결산·분기말·재고기준월),
-    수익성 표에 결산월, 재고 카드에 기준일/전년비교일 명시
-(v4.1의 라이트 모드+로고+공시 추출+DKS 부문 분리 포함)
+v6: 서머리 기준 시점을 종목명 아래가 아닌 각 수치 셀 아래에 개별 표시
+    (FY매출YoY·GM → 결산월 / 분기YoY → 분기말 / 재고YoY → 재고 기준월)
+(v5의 라이트 모드+로고+공시 추출+DKS 부문 분리+상세 탭 기준 시점 포함)
 docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
@@ -40,13 +40,13 @@ border-radius:10px;padding:8px 12px;font-size:15px;cursor:pointer}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:11px}
 th:first-child,td:first-child{text-align:left}
-td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
+td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
 tr.grp td{color:var(--sub);font-size:11px;padding:10px 4px 4px;border-bottom:none}
 tr.subrow td{font-size:11px;color:var(--sub)}
 tr.subrow td:first-child{padding-left:26px}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
 .nm{cursor:pointer;font-weight:600;white-space:nowrap}
-.ref{font-size:9px;color:var(--sub);font-weight:400;margin-top:2px;white-space:nowrap}
+.ref{font-size:9px;color:var(--sub);font-weight:400;margin-top:2px}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
@@ -87,7 +87,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
-  <div class="note">종목명 아래 작은 글씨가 각 지표의 기준 시점입니다 — FY: 최근 결산월(FY매출YoY·GM 기준) / Q: 최근 분기말(분기YoY 기준) / 재고: 재고 기준월. 모든 YoY는 해당 시점의 전년 동기 대비.<br>
+  <div class="note">각 수치 아래 작은 글씨 = 그 수치의 기준 시점(결산월/분기말/재고 기준월). 모든 YoY는 해당 시점의 전년 동기 대비.<br>
   "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比: 부지표 · 종목명을 누르면 상세로 이동</div>
 </div>
 
@@ -141,6 +141,11 @@ const fmt=(v,d=1,sign=false)=>{
   const s=v.toFixed(d); const cls=v>=0?'pos':'neg';
   return sign?`<span class="${cls}">${v>=0?'+':''}${s}%</span>`:s;
 };
+/* 수치 + 아래 기준 시점 한 줄 */
+const cell=(valHtml,refDate)=>{
+  const r=refDate?`<div class="ref">${refDate}</div>`:'';
+  return valHtml+r;
+};
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   const m=v/1e6;
@@ -150,7 +155,7 @@ const segMoney=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   return v>=1000?(v/1000).toFixed(2)+'B '+(cur||''):v.toFixed(0)+'M '+(cur||'');
 };
-const ym=d=>d?("'"+d.slice(2,4)+"."+d.slice(5,7)):null;   // '2026-05-31' → '26.05
+const ym=d=>d?("'"+d.slice(2,4)+"."+d.slice(5,7)):null;
 function segOf(t){
   const e=(SEGS.items||{})[t];
   return (e&&e.extract)?e:null;
@@ -163,16 +168,12 @@ function buildSummary(){
     h+=`<tr class="grp"><td colspan="6">━ ${g}</td></tr>`;
     DATA.items.filter(x=>x.group===g).forEach(x=>{
       const fy=x.fy.length?x.fy[x.fy.length-1]:{};
-      const refs=[];
-      if(fy.end) refs.push('FY '+ym(fy.end));
-      if(x.q_end) refs.push('Q '+ym(x.q_end));
-      if(x.inv_date) refs.push('재고 '+ym(x.inv_date));
-      const refLine=refs.length?`<div class="ref">${refs.join(' · ')}</div>`:'';
-      h+=`<tr><td class="nm" onclick="goDetail('${x.ticker}')">${logoImg(x.ticker,false)}${x.name}${refLine}</td>
-      <td>${fmt(fy.rev_yoy,1,true)}</td>
-      <td>${fy.gm_pct!=null?fy.gm_pct.toFixed(1)+'%':'<span class="na">―</span>'}</td>
-      <td>${fmt(x.latest_q_yoy,1,true)}</td>
-      <td>${fmt(x.inv_yoy,1,true)}</td>
+      const fyRef=ym(fy.end), qRef=ym(x.q_end), invRef=ym(x.inv_date);
+      h+=`<tr><td class="nm" onclick="goDetail('${x.ticker}')">${logoImg(x.ticker,false)}${x.name}</td>
+      <td>${cell(fmt(fy.rev_yoy,1,true), fy.rev_yoy!=null?fyRef:null)}</td>
+      <td>${cell(fy.gm_pct!=null?fy.gm_pct.toFixed(1)+'%':'<span class="na">―</span>', fy.gm_pct!=null?fyRef:null)}</td>
+      <td>${cell(fmt(x.latest_q_yoy,1,true), x.latest_q_yoy!=null?qRef:null)}</td>
+      <td>${cell(fmt(x.inv_yoy,1,true), x.inv_yoy!=null?invRef:null)}</td>
       <td>${fmt(x.off_high_pct,1,true)}</td></tr>`;
       if(x.ticker==='DKS'){
         const s=segOf('DKS');
