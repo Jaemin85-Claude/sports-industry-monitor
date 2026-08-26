@@ -1,0 +1,37 @@
+name: update-dashboard
+
+on:
+  schedule:
+    # 매주 월요일 07:30 KST = 일요일 22:30 UTC
+    - cron: "30 22 * * 0"
+  workflow_dispatch:   # 수동 실행 버튼 (테스트용)
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Fetch data
+        run: python fetch_data.py
+      - name: Build dashboard
+        run: python build_dashboard.py
+      - name: Commit dashboard
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/
+          git commit -m "update dashboard $(date -u +%F)" || echo "no changes"
+          git push
+      - name: Send telegram signal
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+        run: python notify.py
