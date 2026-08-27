@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 2: 공시 추출 (v5)
-v5: 전년 동기 수치(prev_revenue) 추출 추가 — 공시 비교표에 명시된 경우만,
-    미기재는 null(대시보드에서 YoY 역산 + [역산] 표기). schema_v=2로 캐시 전량
-    갱신(1회). v4의 첨부 목록 폴백(index.json 미비 공시 대응) 포함.
+sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v5.1: 신규 종목 반영 — 울버린(WWW)·컬럼비아(COLM) 추출 대상 추가,
+      미즈노·요넥스·골드윈(일본)·안타·리닝(홍콩)·푸마(독일)는 EDGAR 미대상 표기
+v5: 전년 동기 수치(prev_revenue) 추출 — 공시 비교표에 명시된 경우만, 미기재는
+    null(대시보드에서 YoY 역산 + [역산] 표기). schema_v=2로 캐시 자동 갱신.
+v4: 첨부 목록 폴백(index.json 미비 공시 대응) / v3: 실적 문서 내용 검증
 출력: docs/segments.json — §29-D: 명시 수치만 추출, 미기재는 null
 동일 공시(accession)+동일 스키마는 재추출하지 않음(캐시)
 """
@@ -16,7 +18,7 @@ import time
 import datetime
 import requests
 
-CONTACT_EMAIL = "nightsit7@gmail.com"   # 반드시 영문 이메일로 교체
+CONTACT_EMAIL = "여기에이메일"   # 반드시 영문 이메일로 교체
 
 _safe_email = CONTACT_EMAIL.encode("ascii", "ignore").decode() or "contact@example.com"
 UA = {"User-Agent": f"sports-industry-monitor ({_safe_email})"}
@@ -25,9 +27,16 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 SCHEMA_V = 2   # 추출 스키마 버전 (필드 변경 시 +1 → 캐시 자동 무효화)
 
 US_TICKERS = ["NKE", "ONON", "DECK", "AS", "LULU", "BIRK",
-              "CROX", "VFC", "UAA", "DKS", "ASO"]
+              "CROX", "VFC", "UAA", "WWW", "COLM",
+              "DKS", "ASO"]
 NON_US = {"ADS.DE": "EDGAR 미대상(독일 상장)",
+          "PUM.DE": "EDGAR 미대상(독일 상장)",
           "7936.T": "EDGAR 미대상(일본 상장)",
+          "8022.T": "EDGAR 미대상(일본 상장)",
+          "7906.T": "EDGAR 미대상(일본 상장)",
+          "8111.T": "EDGAR 미대상(일본 상장)",
+          "2020.HK": "EDGAR 미대상(홍콩 상장)",
+          "2331.HK": "EDGAR 미대상(홍콩 상장)",
           "JD.L": "EDGAR 미대상(영국 상장)"}
 
 SEG_PATH = "docs/segments.json"
