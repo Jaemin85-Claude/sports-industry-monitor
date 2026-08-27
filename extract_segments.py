@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 2: 공시 추출 (v4)
-v4: 첨부 목록 폴백 추가 — index.json이 첨부를 온전히 반환하지 않는 공시(예: DKS
-    8/25 2분기)에서 디렉터리 HTML 목록으로 파일명을 직접 추출. index/R숫자 파일
-    제외, 후보 검사 3개로 확대.
-(v3의 실적 문서 내용 검증 포함)
+sports-industry-monitor — Phase 2: 공시 추출 (v5)
+v5: 전년 동기 수치(prev_revenue) 추출 추가 — 공시 비교표에 명시된 경우만,
+    미기재는 null(대시보드에서 YoY 역산 + [역산] 표기). schema_v=2로 캐시 전량
+    갱신(1회). v4의 첨부 목록 폴백(index.json 미비 공시 대응) 포함.
 출력: docs/segments.json — §29-D: 명시 수치만 추출, 미기재는 null
-동일 공시(accession)는 재추출하지 않음(캐시)
+동일 공시(accession)+동일 스키마는 재추출하지 않음(캐시)
 """
 
 import os
@@ -23,6 +22,7 @@ _safe_email = CONTACT_EMAIL.encode("ascii", "ignore").decode() or "contact@examp
 UA = {"User-Agent": f"sports-industry-monitor ({_safe_email})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
+SCHEMA_V = 2   # 추출 스키마 버전 (필드 변경 시 +1 → 캐시 자동 무효화)
 
 US_TICKERS = ["NKE", "ONON", "DECK", "AS", "LULU", "BIRK",
               "CROX", "VFC", "UAA", "DKS", "ASO"]
@@ -76,8 +76,8 @@ def _bad_name(n):
 
 
 def list_filing_docs(cik, nod, primary):
-    """공시 첨부 htm 목록 반환 [(이름, 크기)].
-    1차: index.json / 2차 폴백: 디렉터리 HTML 목록에서 파일명 직접 추출"""
+    """공시 첨부 htm 목록 [(이름, 크기)].
+    1차: index.json / 2차 폴백: 디렉터리 HTML에서 파일명 직접 추출"""
     names = []
     try:
         idx = sec_get(
@@ -103,8 +103,7 @@ def list_filing_docs(cik, nod, primary):
 
 
 def find_latest_filing(cik):
-    """최신 '실적' 공시 문서 반환 (v4).
-    최근 8-K/6-K 15건 최신순 탐색, 첨부 후보 3개까지 내용 검증."""
+    """최신 '실적' 공시 반환. 최근 8-K/6-K 15건 최신순, 첨부 3개까지 내용 검증."""
     sub = sec_get(f"https://data.sec.gov/submissions/CIK{cik:010d}.json")
     rec = sub["filings"]["recent"]
     forms = rec["form"]
@@ -176,11 +175,12 @@ def claude_extract(ticker, name, doc_text):
     if ticker == "DKS":
         dks_extra = """
   "sub_segments": [
-    {"name": "DICK'S", "revenue": number|null, "yoy_pct": number|null,
-     "segment_profit": number|null, "inventory": number|null},
-    {"name": "Foot Locker", "revenue": number|null, "yoy_pct": number|null,
-     "segment_profit": number|null, "inventory": number|null,
-     "proforma_comp_pct": number|null}
+    {"name": "DICK'S", "revenue": number|null, "prev_revenue": number|null,
+     "yoy_pct": number|null, "segment_profit": number|null,
+     "inventory": number|null},
+    {"name": "Foot Locker", "revenue": number|null, "prev_revenue": number|null,
+     "yoy_pct": number|null, "segment_profit": number|null,
+     "inventory": number|null, "proforma_comp_pct": number|null}
   ],"""
     prompt = f"""You are a financial data extractor. The following is text from the latest
 SEC earnings-related filing of {name} ({ticker}).
@@ -189,23 +189,28 @@ Extract ONLY figures that are EXPLICITLY stated in the document. Never compute,
 estimate, or infer missing values — use null instead. Revenue figures in
 MILLIONS of the reporting currency. yoy_pct = year-over-year growth in percent
 for the most recent quarter (or fiscal year if only annual data is present).
+prev_revenue = the PRIOR-YEAR comparative figure for the same period, ONLY if
+it is explicitly stated in a comparative table or the text; otherwise null.
 
 Respond with ONLY a JSON object, no markdown fences, no commentary:
 {{
   "period": "string describing the reported period, e.g. 'Q1 FY26 ended 2026-08-31'",
+  "prev_period": "string describing the prior-year comparative period, or null",
   "currency": "USD/CHF/etc or null",
   "regions": [
     {{"name": "North America|EMEA|Greater China|Asia Pacific|etc",
-      "revenue": number|null, "yoy_pct": number|null}}
+      "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null}}
   ],
   "channels": [
-    {{"name": "DTC|Wholesale|etc", "revenue": number|null, "yoy_pct": number|null}}
+    {{"name": "DTC|Wholesale|etc",
+      "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null}}
   ],{dks_extra}
   "notes": "one short sentence in Korean about data caveats, or null"
 }}
 If the document contains no regional breakdown, use an empty list for regions.
 Same for channels. If the document is not an earnings report at all, return
-{{"period": null, "currency": null, "regions": [], "channels": [], "notes": "실적 문서 아님"}}
+{{"period": null, "prev_period": null, "currency": null, "regions": [],
+"channels": [], "notes": "실적 문서 아님"}}
 
 DOCUMENT:
 {cap_text(doc_text)}"""
@@ -216,14 +221,16 @@ DOCUMENT:
                  "anthropic-version": "2023-06-01",
                  "content-type": "application/json"},
         json={"model": "claude-sonnet-4-6",
-              "max_tokens": 2000,
+              "max_tokens": 2500,
               "messages": [{"role": "user", "content": prompt}]},
         timeout=180)
     r.raise_for_status()
     parts = r.json().get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
-    return json.loads(text)
+    obj = json.loads(text)
+    obj["schema_v"] = SCHEMA_V
+    return obj
 
 
 def main():
@@ -269,12 +276,12 @@ def main():
             entry["url"] = filing["url"]
 
             prev = old_items.get(t) or {}
+            px = prev.get("extract") or {}
             if (prev.get("accession") == filing["accession"]
-                    and prev.get("extract")
-                    and (prev["extract"].get("regions")
-                         or prev["extract"].get("channels")
-                         or prev["extract"].get("sub_segments"))):
-                entry["extract"] = prev["extract"]
+                    and px.get("schema_v") == SCHEMA_V
+                    and (px.get("regions") or px.get("channels")
+                         or px.get("sub_segments"))):
+                entry["extract"] = px
                 print(f"{t}: 동일 공시({filing['accession']}) → 캐시 사용")
             else:
                 print(f"{t}: 신규 공시 추출 중 ... ({filing['source']})")
