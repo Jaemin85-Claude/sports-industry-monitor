@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-26 17:39 KST",
+ "generated_at": "2026-08-27 10:01 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -17,422 +17,78 @@
    "accession": "0000320187-26-000076",
    "source": "8-K 2026-06-30 q4fy26exhibit991er.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000076/q4fy26exhibit991er.htm",
-   "extract": {
-    "period": "Q4 FY26 ended 2026-05-31",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "North America",
-      "revenue": 4832,
-      "yoy_pct": 3
-     },
-     {
-      "name": "Europe, Middle East & Africa",
-      "revenue": 2975,
-      "yoy_pct": -1
-     },
-     {
-      "name": "Greater China",
-      "revenue": 1297,
-      "yoy_pct": -12
-     },
-     {
-      "name": "Asia Pacific & Latin America",
-      "revenue": 1596,
-      "yoy_pct": 1
-     },
-     {
-      "name": "Global Brand Divisions",
-      "revenue": 24,
-      "yoy_pct": 167
-     },
-     {
-      "name": "Converse",
-      "revenue": 244,
-      "yoy_pct": -32
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 6600,
-      "yoy_pct": 4
-     },
-     {
-      "name": "NIKE Direct",
-      "revenue": 4100,
-      "yoy_pct": -7
-     }
-    ],
-    "notes": "채널 매출액은 문서에서 정확한 수치 없이 반올림된 값으로 언급되었으며, North America EBIT에는 IEEPA 관세 환급 예상액 9억 6,500만 달러가 포함되어 있어 비교 가능성에 주의가 필요합니다."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "ONON": {
    "accession": "0001858985-26-000018",
    "source": "6-K 2026-08-11 a26q2-ex993xpressrelease.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000018/a26q2-ex993xpressrelease.htm",
-   "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "currency": "CHF",
-    "regions": [
-     {
-      "name": "Americas",
-      "revenue": 451.6,
-      "yoy_pct": 4.5
-     },
-     {
-      "name": "EMEA",
-      "revenue": 228.2,
-      "yoy_pct": 15.4
-     },
-     {
-      "name": "Asia-Pacific",
-      "revenue": 170.5,
-      "yoy_pct": 43.1
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 461.9,
-      "yoy_pct": 4.8
-     },
-     {
-      "name": "DTC",
-      "revenue": 388.4,
-      "yoy_pct": 26.0
-     }
-    ],
-    "notes": "수치는 CHF 기준이며, 불변환율 기준 성장률은 보고된 성장률과 상이하고, 지역 분류는 거래 상대방 소재지 기준임."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "DECK": {
    "accession": "0000910521-26-000015",
    "source": "8-K 2026-07-23 deckex991pressrelease-6302.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/910521/000091052126000015/deckex991pressrelease-6302.htm",
-   "extract": {
-    "period": "Q1 FY2027 ended 2026-06-30",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "Domestic",
-      "revenue": 517.4,
-      "yoy_pct": 3.2
-     },
-     {
-      "name": "International",
-      "revenue": 502.1,
-      "yoy_pct": 8.4
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 666.7,
-      "yoy_pct": 2.2
-     },
-     {
-      "name": "DTC",
-      "revenue": 352.8,
-      "yoy_pct": 13.0
-     }
-    ],
-    "notes": "지역별 세부 분류(북미, EMEA 등)는 제공되지 않으며, Domestic/International 수준의 지리적 구분만 명시되어 있음."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "AS": {
    "accession": "0001988894-26-000085",
    "source": "6-K 2026-08-18 as-2026q2xexx991.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1988894/000198889426000085/as-2026q2xexx991.htm",
-   "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "Greater China",
-      "revenue": 556.0,
-      "yoy_pct": 35.5
-     },
-     {
-      "name": "Americas",
-      "revenue": 496.7,
-      "yoy_pct": 25.6
-     },
-     {
-      "name": "EMEA",
-      "revenue": 332.3,
-      "yoy_pct": 20.3
-     },
-     {
-      "name": "Asia Pacific",
-      "revenue": 247.6,
-      "yoy_pct": 60.3
-     }
-    ],
-    "channels": [
-     {
-      "name": "DTC",
-      "revenue": 896.8,
-      "yoy_pct": 39.9
-     },
-     {
-      "name": "Wholesale",
-      "revenue": 735.8,
-      "yoy_pct": 23.6
-     }
-    ],
-    "notes": "지역별 및 채널별 수치는 2026년 6월 30일 종료된 3개월(Q2) 기준이며, 반기(6개월) 수치도 문서에 명시되어 있음."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "LULU": {
    "accession": "0001397187-26-000077",
    "source": "8-K 2026-06-04 lulu-20260503xex991.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1397187/000139718726000077/lulu-20260503xex991.htm",
-   "extract": {
-    "period": "Q1 FY26 ended 2026-05-03",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "United States",
-      "revenue": null,
-      "yoy_pct": -4.0
-     },
-     {
-      "name": "Canada",
-      "revenue": null,
-      "yoy_pct": -3.0
-     },
-     {
-      "name": "Americas",
-      "revenue": null,
-      "yoy_pct": -3.0
-     },
-     {
-      "name": "China Mainland",
-      "revenue": null,
-      "yoy_pct": 30.0
-     },
-     {
-      "name": "Rest of World",
-      "revenue": null,
-      "yoy_pct": 13.0
-     },
-     {
-      "name": "International",
-      "revenue": null,
-      "yoy_pct": 22.0
-     }
-    ],
-    "channels": [],
-    "notes": "지역별 매출액(절대값)은 명시되지 않아 null 처리되었으며, 전년 대비 성장률만 공시됨."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "BIRK": {
    "accession": "0001193125-26-354080",
    "source": "6-K 2026-08-17 birk-ex1_1.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1977102/000119312526354080/birk-ex1_1.htm",
-   "extract": {
-    "period": null,
-    "currency": null,
-    "regions": [],
-    "channels": [],
-    "notes": "이 문서는 실적 보고서가 아닌 주식 인수 계약서(Underwriting Agreement)임"
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "CROX": {
    "accession": "0001334036-26-000050",
    "source": "8-K 2026-07-30 croxq22026-pressrelease.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1334036/000133403626000050/croxq22026-pressrelease.htm",
-   "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "Crocs Brand North America",
-      "revenue": 458.733,
-      "yoy_pct": 0.4
-     },
-     {
-      "name": "Crocs Brand International",
-      "revenue": 541.704,
-      "yoy_pct": 7.8
-     },
-     {
-      "name": "HEYDUDE Brand (majority North America)",
-      "revenue": 179.031,
-      "yoy_pct": -5.7
-     }
-    ],
-    "channels": [
-     {
-      "name": "DTC - Crocs Brand",
-      "revenue": 558.938,
-      "yoy_pct": 12.9
-     },
-     {
-      "name": "Wholesale - Crocs Brand",
-      "revenue": 441.499,
-      "yoy_pct": -5.0
-     },
-     {
-      "name": "DTC - HEYDUDE Brand",
-      "revenue": 96.467,
-      "yoy_pct": 7.2
-     },
-     {
-      "name": "Wholesale - HEYDUDE Brand",
-      "revenue": 82.564,
-      "yoy_pct": -17.2
-     },
-     {
-      "name": "DTC - Total",
-      "revenue": null,
-      "yoy_pct": 12.0
-     },
-     {
-      "name": "Wholesale - Total",
-      "revenue": null,
-      "yoy_pct": -7.2
-     }
-    ],
-    "notes": "지역별 매출은 Crocs 브랜드와 HEYDUDE 브랜드로 구분되어 있으며, HEYDUDE 브랜드의 별도 국제 지역 세부 데이터는 공시되지 않음."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "VFC": {
    "accession": "0000103379-26-000113",
-   "source": "8-K 2026-07-29 q12027earningspressrelease.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningspressrelease.htm",
-   "extract": {
-    "period": "Q1 FY27 ended 2026-06-27",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "Americas",
-      "revenue": null,
-      "yoy_pct": null
-     }
-    ],
-    "channels": [
-     {
-      "name": "DTC",
-      "revenue": null,
-      "yoy_pct": 2.0
-     },
-     {
-      "name": "Wholesale",
-      "revenue": null,
-      "yoy_pct": null
-     }
-    ],
-    "notes": "지역별 및 채널별 구체적인 매출액은 명시되지 않았으며, 성장률 일부는 Dickies® 제외 기준 또는 불변환율(C$) 기준으로 제공되어 직접 비교에 주의가 필요합니다."
-   },
-   "error": null
+   "source": "8-K 2026-07-29 q12027earningsexhibit991.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningsexhibit991.htm",
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "UAA": {
    "accession": "0001336917-26-000108",
    "source": "8-K 2026-08-07 exhibit991-fiscal2027q1.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000108/exhibit991-fiscal2027q1.htm",
-   "extract": {
-    "period": "Q1 FY2027 ended 2026-06-30",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "North America",
-      "revenue": 609.777,
-      "yoy_pct": -9.0
-     },
-     {
-      "name": "EMEA",
-      "revenue": 278.68,
-      "yoy_pct": 12.1
-     },
-     {
-      "name": "Asia-Pacific",
-      "revenue": 152.586,
-      "yoy_pct": -6.6
-     },
-     {
-      "name": "Latin America",
-      "revenue": 58.754,
-      "yoy_pct": 7.7
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 638.468,
-      "yoy_pct": -1.6
-     },
-     {
-      "name": "DTC",
-      "revenue": 436.523,
-      "yoy_pct": -5.8
-     },
-     {
-      "name": "License",
-      "revenue": 24.806,
-      "yoy_pct": 1.8
-     }
-    ],
-    "notes": "Corporate Other(환헤지 손익 포함)는 세그먼트 및 채널 합계에서 제외되었으며, 전체 순매출 합계는 $1,097.927M임."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "DKS": {
    "accession": "0001089063-26-000021",
    "source": "8-K 2026-05-27 dks-2026502xex991earningsr.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000021/dks-2026502xex991earningsr.htm",
-   "extract": {
-    "period": "Q1 FY2026 ended 2026-05-02",
-    "currency": "USD",
-    "regions": [],
-    "channels": [],
-    "sub_segments": [
-     {
-      "name": "DICK'S",
-      "revenue": 3377.44,
-      "yoy_pct": null,
-      "segment_profit": 360.975,
-      "inventory": 3700.0
-     },
-     {
-      "name": "Foot Locker",
-      "revenue": 1787.064,
-      "yoy_pct": null,
-      "segment_profit": 17.462,
-      "inventory": 1700.0,
-      "proforma_comp_pct": 0.6
-     }
-    ],
-    "notes": "Foot Locker 사업부는 2025년 9월 8일 인수로 전년 동기 매출 비교 불가하며, Foot Locker의 proforma 비교 매출은 인수가 해당 기간 초에 이루어졌다고 가정하여 산출됨."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "ASO": {
    "accession": "0001817358-26-000105",
    "source": "8-K 2026-06-09 exhibit991pressreleaseq120.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/exhibit991pressreleaseq120.htm",
-   "extract": {
-    "period": "Q1 FY26 ended 2026-05-02",
-    "currency": "USD",
-    "regions": [],
-    "channels": [
-     {
-      "name": "eCommerce",
-      "revenue": null,
-      "yoy_pct": 17.4
-     }
-    ],
-    "notes": "지역별 매출 세분화 데이터는 제공되지 않았으며, 이커머스 매출 금액은 명시되지 않고 성장률만 공개됨."
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   }
  }
 }
