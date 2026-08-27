@@ -1,12 +1,36 @@
 {
- "generated_at": "2026-08-27 10:01 KST",
+ "generated_at": "2026-08-27 10:12 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
    "extract": null
   },
+  "PUM.DE": {
+   "error": "EDGAR 미대상(독일 상장)",
+   "extract": null
+  },
   "7936.T": {
    "error": "EDGAR 미대상(일본 상장)",
+   "extract": null
+  },
+  "8022.T": {
+   "error": "EDGAR 미대상(일본 상장)",
+   "extract": null
+  },
+  "7906.T": {
+   "error": "EDGAR 미대상(일본 상장)",
+   "extract": null
+  },
+  "8111.T": {
+   "error": "EDGAR 미대상(일본 상장)",
+   "extract": null
+  },
+  "2020.HK": {
+   "error": "EDGAR 미대상(홍콩 상장)",
+   "extract": null
+  },
+  "2331.HK": {
+   "error": "EDGAR 미대상(홍콩 상장)",
    "extract": null
   },
   "JD.L": {
@@ -64,8 +88,8 @@
   },
   "VFC": {
    "accession": "0000103379-26-000113",
-   "source": "8-K 2026-07-29 q12027earningsexhibit991.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningsexhibit991.htm",
+   "source": "8-K 2026-07-29 q12027earningspressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningspressrelease.htm",
    "extract": null,
    "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
@@ -73,6 +97,20 @@
    "accession": "0001336917-26-000108",
    "source": "8-K 2026-08-07 exhibit991-fiscal2027q1.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000108/exhibit991-fiscal2027q1.htm",
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
+  },
+  "WWW": {
+   "accession": "0001628280-26-056455",
+   "source": "8-K 2026-08-13 earningsrelease2026-q2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/110471/000162828026056455/earningsrelease2026-q2.htm",
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
+  },
+  "COLM": {
+   "accession": "0001050797-26-000129",
+   "source": "8-K 2026-07-30 colmfy26q2exhibit991.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1050797/000105079726000129/colmfy26q2exhibit991.htm",
    "extract": null,
    "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
