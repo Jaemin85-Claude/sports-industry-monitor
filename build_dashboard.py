@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v8: 서머리 한 줄 셀(FY매출/YoY 컬럼 분리, 52주比 제거→상세로, 행 클릭 시
-    기준 시점·통화 표시) + 지역/채널 당기vs전년 페어 바(비중 변화 병기,
-    전년 미기재 시 YoY 역산 + [역산] 태그, §29-D 구분)
+v9: 브랜드 로고 앞 국기(브랜드 본사 국가) 표시 + 신규 8종목 로고 도메인 추가
+v8: 서머리 한 줄 셀(FY매출/YoY 분리, 52주比→상세, 행 클릭 시 기준 시점·통화)
+    + 지역/채널 당기vs전년 페어 바(비중 변화 병기, 전년 미기재 시 [역산])
 docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
@@ -53,6 +53,7 @@ tr.refrow td{font-size:10px;color:var(--sub);padding:2px 4px 8px;text-align:left
 .pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
 .nm{font-weight:600;white-space:nowrap}
 .rev-main{font-weight:600}
+.flag{font-size:13px;margin-right:3px}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
@@ -69,7 +70,6 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .bar-wrap{flex:1;background:var(--barbg);border-radius:4px;height:22px;position:relative;min-width:60px}
 .bar{height:100%;border-radius:4px;background:var(--accent);opacity:.85}
 .bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:11px;color:var(--tx)}
-/* 페어 바 */
 .pair{margin-bottom:14px}
 .pair .pname{font-size:12px;font-weight:600;margin-bottom:4px;cursor:pointer;
 white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -109,7 +109,7 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
   <div class="note">행을 누르면 기준 시점(결산월·분기말·재고 기준월·통화)이 펼쳐지고, 종목명 옆 ▸ 아이콘을 누르면 상세로 이동합니다.<br>
-  "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比는 브랜드 상세에서 확인(부지표)</div>
+  국기 = 브랜드 본사 국가 · "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比는 브랜드 상세에서 확인(부지표)</div>
 </div>
 
 <div class="pane" id="p-det">
@@ -126,13 +126,29 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 const DATA = __DATA__;
 const SEGS = __SEGS__;
 
+/* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
   "NKE":"nike.com", "ADS.DE":"adidas.com", "ONON":"on.com",
   "DECK":"hoka.com", "AS":"amersports.com", "LULU":"lululemon.com",
   "7936.T":"asics.com", "BIRK":"birkenstock.com", "CROX":"crocs.com",
   "VFC":"vfc.com", "UAA":"underarmour.com",
+  "8022.T":"mizuno.com", "7906.T":"yonex.com", "8111.T":"goldwin.co.jp",
+  "2020.HK":"anta.com", "2331.HK":"lining.com", "PUM.DE":"puma.com",
+  "WWW":"wolverineworldwide.com", "COLM":"columbia.com",
   "DKS":"dickssportinggoods.com", "JD.L":"jdplc.com", "ASO":"academy.com"
 };
+/* ── 브랜드 본사 국가 국기 ── */
+const FLAGS = {
+  "NKE":"🇺🇸", "ADS.DE":"🇩🇪", "ONON":"🇨🇭", "DECK":"🇺🇸", "AS":"🇫🇮",
+  "LULU":"🇨🇦", "7936.T":"🇯🇵", "BIRK":"🇩🇪", "CROX":"🇺🇸", "VFC":"🇺🇸",
+  "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
+  "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
+  "COLM":"🇺🇸", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸"
+};
+function flagOf(t){
+  const f = FLAGS[t];
+  return f ? `<span class="flag">${f}</span>` : "";
+}
 function logoImg(t, large){
   const d = DOMAINS[t];
   if(!d) return "";
@@ -141,6 +157,7 @@ function logoImg(t, large){
     src="https://www.google.com/s2/favicons?domain=${d}&sz=64">`;
 }
 
+/* ── 테마 ── */
 const btn=document.getElementById('themeBtn');
 function applyTheme(t){
   if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️';}
@@ -182,7 +199,7 @@ function segOf(t){
   return (e&&e.extract)?e:null;
 }
 
-/* ── 서머리 (v8: 한 줄 셀, 행 클릭 시 기준 시점) ── */
+/* ── 서머리 ── */
 function buildSummary(){
   let h=`<tr><th>종목</th><th>FY매출</th><th>YoY</th><th>GM</th><th>분기YoY</th><th>재고YoY</th></tr>`;
   ['브랜드','유통'].forEach(g=>{
@@ -194,7 +211,7 @@ function buildSummary(){
       if(x.q_end) refs.push("분기 "+ym(x.q_end));
       if(x.inv_date) refs.push("재고 "+ym(x.inv_date));
       if(x.currency) refs.push(x.currency);
-      h+=`<tr class="mrow"><td class="nm">${logoImg(x.ticker,false)}${x.name}
+      h+=`<tr class="mrow"><td class="nm">${flagOf(x.ticker)}${logoImg(x.ticker,false)}${x.name}
       <span class="na" style="cursor:pointer" onclick="event.stopPropagation();goDetail('${x.ticker}')">▸</span></td>
       <td class="rev-main">${moneyShort(fy.rev)}</td>
       <td>${fmt(fy.rev_yoy,1,true)}</td>
@@ -222,7 +239,7 @@ function buildSummary(){
 /* ── 상세 ── */
 function buildSelect(){
   const s=document.getElementById('sel');
-  s.innerHTML=DATA.items.map(x=>`<option value="${x.ticker}">${x.name} (${x.ticker})</option>`).join('');
+  s.innerHTML=DATA.items.map(x=>`<option value="${x.ticker}">${(FLAGS[x.ticker]||'')} ${x.name} (${x.ticker})</option>`).join('');
   s.onchange=()=>renderDetail(s.value);
   renderDetail(DATA.items[0].ticker);
 }
@@ -271,7 +288,7 @@ function pairBars(list, curLabel, prevLabel){
 function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
-  let h=`<div class="det-head">${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span></div>`;
+  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span></div>`;
   h+=`<div class="card"><h3>📈 매출 3개년 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
@@ -298,10 +315,9 @@ function renderDetail(t){
 
   const s=segOf(t);
   const segEntry=(SEGS.items||{})[t];
-  const curL="당기", prevL="전년";
   h+=`<div class="card"><h3>🌍 지역 분해 — 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
-    const bars=pairBars(s.extract.regions,curL,prevL);
+    const bars=pairBars(s.extract.regions,"당기","전년");
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
     let noteTxt="기준: "+(s.extract.period||"―");
     if(s.extract.prev_period) noteTxt+=" · 전년: "+s.extract.prev_period;
@@ -314,7 +330,7 @@ function renderDetail(t){
   h+=`</div>`;
   h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
   if(s&&s.extract.channels&&s.extract.channels.length){
-    const bars=pairBars(s.extract.channels,curL,prevL);
+    const bars=pairBars(s.extract.channels,"당기","전년");
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
   } else {
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 채널 분해 미기재)'}</div>`;
@@ -354,4 +370,61 @@ function buildCal(){
   const rows=DATA.items.filter(x=>x.earn_date).map(x=>{
     const d=new Date(x.earn_date+'T00:00:00');
     return {t:x.ticker,n:x.name,d,dn:Math.round((d-today)/86400000)};
-  }).filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn
+  }).filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn-b.dn);
+  let h='';
+  rows.forEach(r=>{
+    h+=`<div class="cal-item"><div class="dn ${r.dn<=7?'hot':''}">${r.dn<=7?'🔴':'⚪'} D-${r.dn}</div>
+    <div>${flagOf(r.t)}${logoImg(r.t,false)}${r.n}</div><div class="dt">${(r.d.getMonth()+1)}/${r.d.getDate()}</div></div>`;
+  });
+  if(!rows.length) h='<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
+  document.getElementById('calBody').innerHTML=h;
+}
+
+/* ── 탭 / 토글 ── */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById('p-'+t.dataset.p).classList.add('on');
+  };
+});
+document.addEventListener('click',e=>{
+  const p=e.target.closest('.pname')||e.target.closest('.bar-row .lb');
+  if(p){ p.classList.toggle('open'); return; }
+  const r=e.target.closest('tr.mrow');
+  if(r){
+    r.classList.toggle('open');
+    const nx=r.nextElementSibling;
+    if(nx&&nx.classList.contains('refrow')) nx.classList.toggle('open');
+  }
+});
+
+document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance + SEC 공시(추출)';
+buildSummary(); buildSelect(); buildCal();
+</script>
+</body>
+</html>
+"""
+
+
+def main():
+    with open("docs/data.json", encoding="utf-8") as f:
+        data = json.load(f)
+    segs = {"items": {}}
+    if os.path.exists("docs/segments.json"):
+        try:
+            with open("docs/segments.json", encoding="utf-8") as f:
+                segs = json.load(f)
+        except Exception:
+            pass
+    html = (TEMPLATE
+            .replace("__DATA__", json.dumps(data, ensure_ascii=False))
+            .replace("__SEGS__", json.dumps(segs, ensure_ascii=False)))
+    with open("docs/index.html", "w", encoding="utf-8") as f:
+        f.write(html)
+    print("saved docs/index.html")
+
+
+if __name__ == "__main__":
+    main()
