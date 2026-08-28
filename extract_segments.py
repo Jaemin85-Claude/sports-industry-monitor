@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v8: 실적자료 판별 강화 — EX-10(계약서) 계열 파일명 배제, 계약서 문구 감지 시
+      제외, 실적 보도자료 고유 표현 요구(UAA가 계약 공시를 실적으로 오탐한 문제).
+      대용량 문서 3MB 상한으로 지연 방지.
 v7: 첨부 목록 3중 소스 — index.json → 공시 인덱스 페이지(-index.htm, /ix?doc= 접두어
       해제) → 디렉터리 목록(상대경로 href 지원). 최근 공시에서 index.json이 실제
       첨부를 반환하지 않는 문제(DKS·UAA·LULU·CROX·VFC) 해결.
@@ -48,11 +51,24 @@ NON_US = {"ADS.DE": "EDGAR 미대상(독일 상장)",
 SEG_PATH = "docs/segments.json"
 
 
+MAX_DOC_BYTES = 3_000_000   # 대용량 문서 상한 (지연 방지)
+
+
 def sec_get(url, is_json=True):
     time.sleep(0.4)
-    r = requests.get(url, headers=UA, timeout=60)
+    if is_json:
+        r = requests.get(url, headers=UA, timeout=60)
+        r.raise_for_status()
+        return r.json()
+    r = requests.get(url, headers=UA, timeout=90, stream=True)
     r.raise_for_status()
-    return r.json() if is_json else r.text
+    buf = b""
+    for chunk in r.iter_content(65536):
+        buf += chunk
+        if len(buf) >= MAX_DOC_BYTES:
+            break
+    r.close()
+    return buf.decode(r.encoding or "utf-8", errors="ignore")
 
 
 def load_cik_map():
@@ -71,8 +87,14 @@ def strip_html(text):
     return re.sub(r"[ \t\xa0]+", " ", text)
 
 
+CONTRACT_TEXT_PAT = re.compile(
+    r"witnesseth|hereinafter|the parties hereto|hereby amended|"
+    r"in witness whereof|shall mean|governing law|counterparts", re.I)
+
+
 def looks_like_earnings(txt):
-    """실적자료 내용 검증 (§29-D: 문서 선택 오류 방어)"""
+    """실적자료 내용 검증 (§29-D: 문서 선택 오류 방어).
+    v8: 계약서 문구가 다수면 배제, 실적 보도자료 고유 표현을 요구."""
     t = txt.lower()
     has_rev = re.search(r"net (sales|revenue)|total revenue|revenues", t)
     has_period = re.search(
@@ -81,13 +103,41 @@ def looks_like_earnings(txt):
     has_fin = re.search(
         r"gross (profit|margin)|operating income|income statement|"
         r"balance sheet|earnings per share|diluted", t)
-    return bool(has_rev and has_period and has_fin)
+    if not (has_rev and has_period and has_fin):
+        return False
+    # 계약서/약정서 신호가 2종 이상이면 실적자료 아님
+    if len(set(m.group(0).lower()
+               for m in CONTRACT_TEXT_PAT.finditer(t))) >= 2:
+        return False
+    # 실적 보도자료 고유 표현 요구
+    reports = re.search(
+        r"reports? (first|second|third|fourth|full|fiscal)|"
+        r"announces? (its )?(first|second|third|fourth|full|fiscal|financial)|"
+        r"results for the|financial results|compared to the prior year|"
+        r"increased \d|decreased \d|versus the prior|year-over-year", t)
+    return bool(reports)
+
+
+# 실적 첨부로 보이는 이름(우선 허용 — 계약서 패턴보다 우선)
+EARNINGS_NAME_PAT = re.compile(r"ex.?99|press|earn|release|result|mda", re.I)
+# 계약서·부속서류로 보이는 이름
+CONTRACT_NAME_PAT = re.compile(
+    r"ex-?10|agreement|amend|indenture|guarant|pledge|"
+    r"\blease|employ|severance|incentive|equityplan|bylaw|charter|"
+    r"consent|opinion|certif|merger|purchaseagr", re.I)
 
 
 def _bad_name(n):
-    """index 파일·XBRL 렌더 파일(R1.htm 등) 제외"""
+    """index 파일·XBRL 렌더 파일·계약서(EX-10) 계열 제외.
+    단, 실적 첨부로 보이는 이름은 계약서 패턴보다 우선 허용."""
     ln = n.lower()
-    return ("index" in ln) or re.fullmatch(r"r\d+\.html?", ln)
+    if ("index" in ln) or re.fullmatch(r"r\d+\.html?", ln):
+        return True
+    if EARNINGS_NAME_PAT.search(ln):
+        return False
+    if CONTRACT_NAME_PAT.search(ln):
+        return True
+    return False
 
 
 def _href_to_name(href, base):
