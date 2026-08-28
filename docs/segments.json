@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-28 15:15 KST",
+ "generated_at": "2026-08-28 15:24 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -389,8 +389,8 @@
   },
   "VFC": {
    "accession": "0000103379-26-000113",
-   "source": "8-K 2026-07-29 q12027earningsexhibit991.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningsexhibit991.htm",
+   "source": "8-K 2026-07-29 q12027earningspressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningspressrelease.htm",
    "extract": {
     "period": "Q1 FY27 ended 2026-06-27",
     "prev_period": "Q1 FY26 ended 2025-06-28",
@@ -640,16 +640,16 @@
    "error": null
   },
   "ASO": {
-   "accession": "0001817358-26-000026",
-   "source": "8-K 2026-03-17 exhibit991pressreleaseye25.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000026/exhibit991pressreleaseye25.htm",
+   "accession": "0001817358-26-000105",
+   "source": "8-K 2026-06-09 exhibit991pressreleaseq120.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/exhibit991pressreleaseq120.htm",
    "extract": {
-    "period": "Q4 FY2025 and Full Year FY2025 ended January 31, 2026",
-    "prev_period": "Q4 FY2024 and Full Year FY2024 ended February 1, 2025",
+    "period": "Q1 FY2026 ended May 2, 2026",
+    "prev_period": "Q1 FY2025 ended May 3, 2025",
     "currency": "USD",
     "regions": [],
     "channels": [],
-    "notes": "지역별 및 채널별 매출 세분화 데이터는 문서에 명시되어 있지 않으며, 분기 및 연간 총 순매출만 제공됨.",
+    "notes": "지역별 및 채널별 매출 세분화 데이터가 문서에 명시되어 있지 않으며, 전체 순매출만 공시됨.",
     "schema_v": 2
    },
    "error": null
