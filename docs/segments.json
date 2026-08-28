@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-28 15:29 KST",
+ "generated_at": "2026-08-28 15:36 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -323,90 +323,66 @@
    "error": null
   },
   "CROX": {
-   "accession": "0001334036-26-000029",
-   "source": "8-K 2026-04-30 croxq12026-pressrelease.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1334036/000133403626000029/croxq12026-pressrelease.htm",
+   "accession": "0001334036-26-000050",
+   "source": "8-K 2026-07-30 croxq22026-pressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1334036/000133403626000050/croxq22026-pressrelease.htm",
    "extract": {
-    "period": "Q1 FY26 ended 2026-03-31",
-    "prev_period": "Q1 FY25 ended 2025-03-31",
+    "period": "Q2 FY26 ended 2026-06-30",
+    "prev_period": "Q2 FY25 ended 2025-06-30",
     "currency": "USD",
     "regions": [
      {
       "name": "Crocs Brand - North America",
-      "revenue": 345.926,
-      "prev_revenue": 368.517,
-      "yoy_pct": -6.1
+      "revenue": 458.733,
+      "prev_revenue": 457.13,
+      "yoy_pct": 0.4
      },
      {
       "name": "Crocs Brand - International",
-      "revenue": 421.49,
-      "prev_revenue": 393.091,
-      "yoy_pct": 7.2
+      "revenue": 541.704,
+      "prev_revenue": 502.46,
+      "yoy_pct": 7.8
      }
     ],
     "channels": [
      {
-      "name": "DTC",
-      "revenue": 392.233,
-      "prev_revenue": 349.836,
-      "yoy_pct": 12.1
-     },
-     {
-      "name": "Wholesale",
-      "revenue": 529.224,
-      "prev_revenue": 587.497,
-      "yoy_pct": -9.9
-     },
-     {
-      "name": "Crocs Brand - Wholesale",
-      "revenue": 445.822,
-      "prev_revenue": 476.804,
-      "yoy_pct": -6.5
-     },
-     {
       "name": "Crocs Brand - DTC",
-      "revenue": 321.594,
-      "prev_revenue": 284.804,
+      "revenue": 558.938,
+      "prev_revenue": 494.911,
       "yoy_pct": 12.9
      },
      {
-      "name": "HEYDUDE Brand - Wholesale",
-      "revenue": 83.402,
-      "prev_revenue": 110.693,
-      "yoy_pct": -24.7
+      "name": "Crocs Brand - Wholesale",
+      "revenue": 441.499,
+      "prev_revenue": 464.679,
+      "yoy_pct": -5.0
      },
      {
       "name": "HEYDUDE Brand - DTC",
-      "revenue": 70.639,
-      "prev_revenue": 65.032,
-      "yoy_pct": 8.6
+      "revenue": 96.467,
+      "prev_revenue": 90.023,
+      "yoy_pct": 7.2
      },
      {
-      "name": "Crocs Brand - North America Wholesale",
-      "revenue": 138.397,
-      "prev_revenue": 170.682,
-      "yoy_pct": -18.9
+      "name": "HEYDUDE Brand - Wholesale",
+      "revenue": 82.564,
+      "prev_revenue": 99.76,
+      "yoy_pct": -17.2
      },
      {
-      "name": "Crocs Brand - North America DTC",
-      "revenue": 207.529,
-      "prev_revenue": 197.835,
-      "yoy_pct": 4.9
+      "name": "Total DTC",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": 12.0
      },
      {
-      "name": "Crocs Brand - International Wholesale",
-      "revenue": 307.425,
-      "prev_revenue": 306.122,
-      "yoy_pct": 0.4
-     },
-     {
-      "name": "Crocs Brand - International DTC",
-      "revenue": 114.065,
-      "prev_revenue": 86.969,
-      "yoy_pct": 31.2
+      "name": "Total Wholesale",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": -7.2
      }
     ],
-    "notes": "HEYDUDE 브랜드 매출의 대부분은 북미에서 발생하며, 지역별 세부 분류는 Crocs 브랜드에 대해서만 명시적으로 제공됨.",
+    "notes": "지역 세분화는 Crocs 브랜드에만 명시적으로 제공되며, HEYDUDE 브랜드 매출의 대부분은 북미에서 발생하나 별도 지역별 수치는 공개되지 않았습니다.",
     "schema_v": 2
    },
    "error": null
@@ -471,60 +447,16 @@
    "error": null
   },
   "UAA": {
-   "accession": "0001336917-26-000108",
-   "source": "8-K 2026-08-07 exhibit991-fiscal2027q1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000108/exhibit991-fiscal2027q1.htm",
+   "accession": "0001336917-26-000119",
+   "source": "8-K 2026-08-27 ex101fifthamendedandrestat.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000119/ex101fifthamendedandrestat.htm",
    "extract": {
-    "period": "Q1 FY2027 ended 2026-06-30",
-    "prev_period": "Q1 FY2026 ended 2025-06-30",
-    "currency": "USD",
-    "regions": [
-     {
-      "name": "North America",
-      "revenue": 609.777,
-      "prev_revenue": 670.319,
-      "yoy_pct": -9.0
-     },
-     {
-      "name": "EMEA",
-      "revenue": 278.68,
-      "prev_revenue": 248.607,
-      "yoy_pct": 12.1
-     },
-     {
-      "name": "Asia-Pacific",
-      "revenue": 152.586,
-      "prev_revenue": 163.386,
-      "yoy_pct": -6.6
-     },
-     {
-      "name": "Latin America",
-      "revenue": 58.754,
-      "prev_revenue": 54.575,
-      "yoy_pct": 7.7
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 638.468,
-      "prev_revenue": 649.05,
-      "yoy_pct": -1.6
-     },
-     {
-      "name": "DTC",
-      "revenue": 436.523,
-      "prev_revenue": 463.475,
-      "yoy_pct": -5.8
-     },
-     {
-      "name": "License",
-      "revenue": 24.806,
-      "prev_revenue": 24.362,
-      "yoy_pct": 1.8
-     }
-    ],
-    "notes": "Corporate Other(환헤지 손익)는 세그먼트 및 채널 합계에서 제외되며, 총 매출에는 포함되어 전체 합산 시 차이가 발생할 수 있음.",
+    "period": null,
+    "prev_period": null,
+    "currency": null,
+    "regions": [],
+    "channels": [],
+    "notes": "실적 문서 아님",
     "schema_v": 2
    },
    "error": null
@@ -630,35 +562,35 @@
    "error": null
   },
   "DKS": {
-   "accession": "0001089063-26-000021",
-   "source": "8-K 2026-05-27 dks-2026502xex991earningsr.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000021/dks-2026502xex991earningsr.htm",
+   "accession": "0001089063-26-000033",
+   "source": "8-K 2026-08-25 dks-2026801xex991earningsr.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000033/dks-2026801xex991earningsr.htm",
    "extract": {
-    "period": "Q1 FY2026 ended 2026-05-02 (13 weeks)",
-    "prev_period": "Q1 FY2025 ended 2025-05-03 (13 weeks)",
+    "period": "Q2 FY2026 (13 weeks ended August 1, 2026)",
+    "prev_period": "Q2 FY2025 (13 weeks ended August 2, 2025)",
     "currency": "USD",
     "regions": [],
     "channels": [],
     "sub_segments": [
      {
       "name": "DICK'S",
-      "revenue": 3377.44,
-      "prev_revenue": 3174.677,
-      "yoy_pct": 6.0,
-      "segment_profit": 360.975,
-      "inventory": 3700.0
+      "revenue": 3849.887,
+      "prev_revenue": 3646.616,
+      "yoy_pct": null,
+      "segment_profit": 485.204,
+      "inventory": 3600.0
      },
      {
       "name": "Foot Locker",
-      "revenue": 1787.064,
+      "revenue": 1736.928,
       "prev_revenue": null,
       "yoy_pct": null,
-      "segment_profit": 17.462,
-      "inventory": 1700.0,
-      "proforma_comp_pct": 0.6
+      "segment_profit": -31.876,
+      "inventory": 2000.0,
+      "proforma_comp_pct": -3.6
      }
     ],
-    "notes": "Foot Locker 사업부는 2025년 9월 8일 인수되어 전년도 비교 매출 수치가 없으며, Foot Locker의 동일매장 성장률은 프로포마(소급 적용) 기준으로 산출됨.",
+    "notes": "Foot Locker는 2025년 9월 8일 인수되어 전년도 비교 실적이 없으며, Foot Locker의 비교 가능 매출은 프로포마 기준으로 산출됨.",
     "schema_v": 2
    },
    "error": null
@@ -668,12 +600,12 @@
    "source": "8-K 2026-06-09 exhibit991pressreleaseq120.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/exhibit991pressreleaseq120.htm",
    "extract": {
-    "period": "Q1 FY2026 ended 2026-05-02",
-    "prev_period": "Q1 FY2025 ended 2025-05-03",
+    "period": "Q1 FY2026 ended May 2, 2026",
+    "prev_period": "Q1 FY2025 ended May 3, 2025",
     "currency": "USD",
     "regions": [],
     "channels": [],
-    "notes": "지역별 및 채널별 매출 세부 내역이 문서에 명시되어 있지 않아 해당 항목은 비어 있음.",
+    "notes": "지역별 및 채널별 매출 세분화 데이터가 문서에 명시되어 있지 않음.",
     "schema_v": 2
    },
    "error": null
