@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v7: 첨부 목록 3중 소스 — index.json → 공시 인덱스 페이지(-index.htm, /ix?doc= 접두어
+      해제) → 디렉터리 목록(상대경로 href 지원). 최근 공시에서 index.json이 실제
+      첨부를 반환하지 않는 문제(DKS·UAA·LULU·CROX·VFC) 해결.
 v6: 후보 단위 오류 격리 — 첨부 1개가 404여도 공시 전체를 버리지 않고 다음 첨부로
       진행(DKS 8/25 2분기·ASO 최신 공시 누락 원인). 폴백 앵커를 해당 공시 폴더
       경로로 한정, 본문 길이 하한 1500자로 완화, 오류 로그 전체 URL 표시.
@@ -87,34 +90,69 @@ def _bad_name(n):
     return ("index" in ln) or re.fullmatch(r"r\d+\.html?", ln)
 
 
+def _href_to_name(href, base):
+    """href에서 파일명 추출. /ix?doc=/Archives/... 형태와 상대경로 모두 지원.
+    해당 공시 폴더의 파일이 아니면 None."""
+    h = href.strip()
+    m = re.search(r"doc=(/Archives/[^&\"']+)", h, re.I)   # iXBRL 뷰어 링크 해제
+    if m:
+        h = m.group(1)
+    if "/" not in h:                                      # 상대경로(파일명만)
+        name = h
+    else:
+        if base.lower() not in h.lower():
+            return None                                   # 다른 폴더/페이지 링크
+        name = h.rstrip("/").split("/")[-1]
+    name = name.split("?")[0].split("#")[0]
+    if not name.lower().endswith((".htm", ".html")):
+        return None
+    return name
+
+
 def list_filing_docs(cik, nod, primary):
-    """공시 첨부 htm 목록 [(이름, 크기)].
-    1차: index.json / 2차 폴백: 디렉터리 HTML에서 파일명 직접 추출"""
+    """공시 첨부 htm 목록 [(이름, 크기)] — 3중 소스로 수집.
+    1) index.json  2) 공시 인덱스 페이지(-index.htm)  3) 디렉터리 목록"""
+    base = f"/Archives/edgar/data/{cik}/{nod}/"
     names = []
+
+    def _add(n, size=0):
+        if (n and n != primary and not _bad_name(n)
+                and all(n != x for x, _ in names)):
+            names.append((n, size))
+
+    # 1) index.json
     try:
-        idx = sec_get(
-            f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/index.json")
+        idx = sec_get(f"https://www.sec.gov{base}index.json")
         for it in idx.get("directory", {}).get("item", []):
             n = it["name"]
-            if (n.lower().endswith((".htm", ".html"))
-                    and n != primary and not _bad_name(n)):
-                names.append((n, int(it.get("size") or 0)))
-    except Exception:
-        pass
-    try:
-        base = f"/Archives/edgar/data/{cik}/{nod}/"
-        listing = sec_get(
-            f"https://www.sec.gov{base}", is_json=False)
-        for href in re.findall(r'href="([^"]+)"', listing, re.I):
-            if base.lower() not in href.lower():
-                continue          # 다른 폴더/페이지 링크 제외 (404 원인)
-            n = href.rstrip("/").split("/")[-1]
-            if (n.lower().endswith((".htm", ".html"))
-                    and n != primary and not _bad_name(n)
-                    and all(n != x for x, _ in names)):
-                names.append((n, 0))
+            if n.lower().endswith((".htm", ".html")):
+                _add(n, int(it.get("size") or 0))
     except Exception as e:
-        print(f"  [폴백 목록 실패] {str(e)[:200]}")
+        print(f"  [index.json 실패] {str(e)[:120]}")
+
+    # 2) 공시 인덱스 페이지 (문서 표에 실제 첨부 링크가 있음)
+    if not names:
+        acc_dash = f"{nod[:10]}-{nod[10:12]}-{nod[12:]}"
+        for idx_url in (f"https://www.sec.gov{base}{acc_dash}-index.htm",
+                        f"https://www.sec.gov{base}{acc_dash}-index.html"):
+            try:
+                page = sec_get(idx_url, is_json=False)
+            except Exception:
+                continue
+            for href in re.findall(r'href=[\"\']([^\"\']+)[\"\']', page, re.I):
+                _add(_href_to_name(href, base))
+            if names:
+                break
+
+    # 3) 디렉터리 목록
+    if not names:
+        try:
+            listing = sec_get(f"https://www.sec.gov{base}", is_json=False)
+            for href in re.findall(r'href=[\"\']([^\"\']+)[\"\']', listing, re.I):
+                _add(_href_to_name(href, base))
+        except Exception as e:
+            print(f"  [디렉터리 목록 실패] {str(e)[:120]}")
+
     return names
 
 
@@ -141,6 +179,8 @@ def find_latest_filing(cik):
             if not names:
                 print(f"  - {forms[i]} {dates[i]}: 첨부 htm 없음, 건너뜀")
                 continue
+            print(f"  · {forms[i]} {dates[i]} 첨부 후보 {len(names)}건: "
+                  f"{', '.join(n for n, _ in names[:4])}")
             prio = [nm for nm in names
                     if re.search(r"ex.?99|press|earn|release|result",
                                  nm[0], re.I)]
