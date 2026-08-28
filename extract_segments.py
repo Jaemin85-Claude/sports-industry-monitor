@@ -21,7 +21,7 @@ import time
 import datetime
 import requests
 
-CONTACT_EMAIL = "여기에이메일"   # 반드시 영문 이메일로 교체
+CONTACT_EMAIL = "nightsit7@gmail.com"   # 반드시 영문 이메일로 교체
 
 _safe_email = CONTACT_EMAIL.encode("ascii", "ignore").decode() or "contact@example.com"
 UA = {"User-Agent": f"sports-industry-monitor ({_safe_email})"}
