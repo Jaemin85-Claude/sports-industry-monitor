@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-08-28 15:36 KST",
+ "generated_at": "2026-08-28 15:43 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -308,16 +308,48 @@
    "error": null
   },
   "BIRK": {
-   "accession": "0001193125-26-354080",
-   "source": "6-K 2026-08-17 birk-ex1_1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1977102/000119312526354080/birk-ex1_1.htm",
+   "accession": "0001193125-26-347762",
+   "source": "6-K 2026-08-13 birk-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1977102/000119312526347762/birk-ex99_1.htm",
    "extract": {
-    "period": null,
-    "prev_period": null,
-    "currency": null,
-    "regions": [],
-    "channels": [],
-    "notes": "실적 문서 아님",
+    "period": "Q3 FY26 ended 2026-06-30",
+    "prev_period": "Q3 FY25 ended 2025-06-30",
+    "currency": "EUR",
+    "regions": [
+     {
+      "name": "Americas",
+      "revenue": 347.434,
+      "prev_revenue": 312.266,
+      "yoy_pct": 11
+     },
+     {
+      "name": "EMEA",
+      "revenue": 297.217,
+      "prev_revenue": 258.603,
+      "yoy_pct": 15
+     },
+     {
+      "name": "APAC",
+      "revenue": 74.745,
+      "prev_revenue": 63.178,
+      "yoy_pct": 18
+     }
+    ],
+    "channels": [
+     {
+      "name": "B2B",
+      "revenue": 441.689,
+      "prev_revenue": 390.156,
+      "yoy_pct": 13
+     },
+     {
+      "name": "DTC",
+      "revenue": 277.707,
+      "prev_revenue": 243.891,
+      "yoy_pct": 14
+     }
+    ],
+    "notes": "수익 수치는 천 유로 단위로 보고되었으며, 여기서는 백만 유로로 변환하였고, Corporate/Other 항목은 지역 및 채널 분류에서 제외되었습니다.",
     "schema_v": 2
    },
    "error": null
@@ -447,16 +479,72 @@
    "error": null
   },
   "UAA": {
-   "accession": "0001336917-26-000119",
-   "source": "8-K 2026-08-27 ex101fifthamendedandrestat.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000119/ex101fifthamendedandrestat.htm",
+   "accession": "0001336917-26-000108",
+   "source": "8-K 2026-08-07 exhibit991-fiscal2027q1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1336917/000133691726000108/exhibit991-fiscal2027q1.htm",
    "extract": {
-    "period": null,
-    "prev_period": null,
-    "currency": null,
-    "regions": [],
-    "channels": [],
-    "notes": "실적 문서 아님",
+    "period": "Q1 FY2027 ended 2026-06-30",
+    "prev_period": "Q1 FY2026 ended 2025-06-30",
+    "currency": "USD",
+    "regions": [
+     {
+      "name": "North America",
+      "revenue": 609.777,
+      "prev_revenue": 670.319,
+      "yoy_pct": -9.0
+     },
+     {
+      "name": "EMEA",
+      "revenue": 278.68,
+      "prev_revenue": 248.607,
+      "yoy_pct": 12.1
+     },
+     {
+      "name": "Asia-Pacific",
+      "revenue": 152.586,
+      "prev_revenue": 163.386,
+      "yoy_pct": -6.6
+     },
+     {
+      "name": "Latin America",
+      "revenue": 58.754,
+      "prev_revenue": 54.575,
+      "yoy_pct": 7.7
+     },
+     {
+      "name": "Corporate Other",
+      "revenue": -1.87,
+      "prev_revenue": -2.819,
+      "yoy_pct": null
+     }
+    ],
+    "channels": [
+     {
+      "name": "Wholesale",
+      "revenue": 638.468,
+      "prev_revenue": 649.05,
+      "yoy_pct": -1.6
+     },
+     {
+      "name": "DTC",
+      "revenue": 436.523,
+      "prev_revenue": 463.475,
+      "yoy_pct": -5.8
+     },
+     {
+      "name": "License",
+      "revenue": 24.806,
+      "prev_revenue": 24.362,
+      "yoy_pct": 1.8
+     },
+     {
+      "name": "Corporate Other",
+      "revenue": -1.87,
+      "prev_revenue": -2.819,
+      "yoy_pct": null
+     }
+    ],
+    "notes": "Corporate Other는 외환 헤지 손익을 포함하며 전년 대비 변화율(NM)은 의미 있는 지표로 간주되지 않아 제공되지 않음.",
     "schema_v": 2
    },
    "error": null
@@ -600,12 +688,12 @@
    "source": "8-K 2026-06-09 exhibit991pressreleaseq120.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000105/exhibit991pressreleaseq120.htm",
    "extract": {
-    "period": "Q1 FY2026 ended May 2, 2026",
-    "prev_period": "Q1 FY2025 ended May 3, 2025",
+    "period": "Q1 FY26 ended 2026-05-02",
+    "prev_period": "Q1 FY25 ended 2025-05-03",
     "currency": "USD",
     "regions": [],
     "channels": [],
-    "notes": "지역별 및 채널별 매출 세분화 데이터가 문서에 명시되어 있지 않음.",
+    "notes": "지역별 또는 채널별 매출 세분화 데이터가 문서에 명시되어 있지 않으며, 전체 순매출만 공시됨.",
     "schema_v": 2
    },
    "error": null
