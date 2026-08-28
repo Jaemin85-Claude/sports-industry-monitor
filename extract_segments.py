@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v6: 후보 단위 오류 격리 — 첨부 1개가 404여도 공시 전체를 버리지 않고 다음 첨부로
+      진행(DKS 8/25 2분기·ASO 최신 공시 누락 원인). 폴백 앵커를 해당 공시 폴더
+      경로로 한정, 본문 길이 하한 1500자로 완화, 오류 로그 전체 URL 표시.
 v5.1: 신규 종목 반영 — 울버린(WWW)·컬럼비아(COLM) 추출 대상 추가,
       미즈노·요넥스·골드윈(일본)·안타·리닝(홍콩)·푸마(독일)는 EDGAR 미대상 표기
 v5: 전년 동기 수치(prev_revenue) 추출 — 공시 비교표에 명시된 경우만, 미기재는
@@ -99,15 +102,19 @@ def list_filing_docs(cik, nod, primary):
     except Exception:
         pass
     try:
+        base = f"/Archives/edgar/data/{cik}/{nod}/"
         listing = sec_get(
-            f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/",
-            is_json=False)
-        for n in re.findall(r'href="[^"]*?([\w.-]+\.html?)"', listing, re.I):
-            if (n != primary and not _bad_name(n)
+            f"https://www.sec.gov{base}", is_json=False)
+        for href in re.findall(r'href="([^"]+)"', listing, re.I):
+            if base.lower() not in href.lower():
+                continue          # 다른 폴더/페이지 링크 제외 (404 원인)
+            n = href.rstrip("/").split("/")[-1]
+            if (n.lower().endswith((".htm", ".html"))
+                    and n != primary and not _bad_name(n)
                     and all(n != x for x, _ in names)):
                 names.append((n, 0))
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"  [폴백 목록 실패] {str(e)[:200]}")
     return names
 
 
@@ -140,11 +147,17 @@ def find_latest_filing(cik):
             pool = prio if prio else names
             pool.sort(key=lambda nm: nm[1], reverse=True)
             found = None
-            for nm, _sz in pool[:3]:
+            for nm, _sz in pool[:4]:
                 url = (f"https://www.sec.gov/Archives/edgar/data/{cik}/{nod}/"
                        f"{nm}")
-                txt = strip_html(sec_get(url, is_json=False))
-                if len(txt) < 3000:
+                try:
+                    txt = strip_html(sec_get(url, is_json=False))
+                except Exception as e:
+                    # 후보 1개 실패가 공시 전체를 버리지 않도록 격리
+                    print(f"  - {forms[i]} {dates[i]} {nm}: "
+                          f"내려받기 실패({str(e)[:160]}), 다음 첨부로")
+                    continue
+                if len(txt) < 1500:
                     print(f"  - {forms[i]} {dates[i]} {nm}: "
                           f"본문 짧음({len(txt)}자)")
                     continue
@@ -158,7 +171,8 @@ def find_latest_filing(cik):
             if found:
                 return found
         except Exception as e:
-            print(f"  - {forms[i]} {dates[i]}: 오류로 건너뜀: {str(e)[:100]}")
+            print(f"  - {forms[i]} {dates[i]}: 공시 목록 오류로 건너뜀: "
+                  f"{str(e)[:200]}")
             continue
 
     for i in range(len(forms)):
