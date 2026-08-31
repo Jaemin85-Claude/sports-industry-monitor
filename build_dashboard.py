@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v11: 뉴스 탭 — 브랜드(스포츠·아웃도어/패션/명품/유통·그외)·산업(스포츠/패션·명품/유통)
+     필터 칩, 오늘 신규 NEW 배지, 날짜별 그룹, 14일 롤링(news.json v2)
 v9: 브랜드 로고 앞 국기(브랜드 본사 국가) 표시 + 신규 8종목 로고 도메인 추가
 v8: 서머리 한 줄 셀(FY매출/YoY 분리, 52주比→상세, 행 클릭 시 기준 시점·통화)
     + 지역/채널 당기vs전년 페어 바(비중 변화 병기, 전년 미기재 시 [역산])
@@ -90,6 +92,18 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:12px;padding:6px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--sub);cursor:pointer;white-space:nowrap}
+.chip.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+.chip.sep{border:none;background:transparent;color:var(--sub);padding:6px 2px;cursor:default}
+.newbadge{display:inline-block;font-size:9px;font-weight:700;color:#fff;background:var(--neg);border-radius:5px;padding:1px 5px;margin-right:5px;vertical-align:1px}
+.ndate{font-size:11px;color:var(--sub);margin:14px 0 6px;font-weight:600}
+.nitem{padding:10px 0;border-bottom:1px solid var(--line)}
+.nitem:last-child{border-bottom:none}
+.nitem .nsum{font-size:13px;line-height:1.5}
+.nitem .nsum a{color:var(--tx);text-decoration:none}
+.nitem .nmeta{font-size:10px;color:var(--sub);margin-top:3px}
+.ntag{display:inline-block;font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 5px;margin-right:5px}
 </style>
 </head>
 <body>
@@ -104,6 +118,7 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="tab on" data-p="sum">서머리</div>
   <div class="tab" data-p="det">브랜드 상세</div>
   <div class="tab" data-p="cal">캘린더</div>
+  <div class="tab" data-p="news">뉴스</div>
 </div>
 
 <div class="pane on" id="p-sum">
@@ -122,9 +137,17 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="note">일정 미표시 종목은 소스 미제공(미확인). 🔴 = D-7 이내</div>
 </div>
 
+<div class="pane" id="p-news">
+  <div class="chips" id="newsChips"></div>
+  <div id="newsBody"></div>
+  <div class="note">매일 06:30 수집 · 최근 14일 보관 · <span class="newbadge">NEW</span>=오늘 신규 · ★=중요도<br>
+  실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
+</div>
+
 <script>
 const DATA = __DATA__;
 const SEGS = __SEGS__;
+const NEWS = __NEWS__;
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -380,6 +403,62 @@ function buildCal(){
   document.getElementById('calBody').innerHTML=h;
 }
 
+/* ── 뉴스 (v11: 그룹 필터 + NEW 배지 + 날짜별) ── */
+const NEWS_FILTERS = [
+  {id:"all",   label:"전체"},
+  {id:"sep1",  label:"브랜드 ▸", sep:true},
+  {id:"b:sports",  label:"스포츠·아웃도어"},
+  {id:"b:fashion", label:"패션"},
+  {id:"b:luxury",  label:"명품"},
+  {id:"b:retail",  label:"유통·그외"},
+  {id:"sep2",  label:"산업 ▸", sep:true},
+  {id:"i:sports",  label:"스포츠 트렌드"},
+  {id:"i:fashion", label:"패션·명품 시장"},
+  {id:"i:retail",  label:"멀티브랜드 유통"},
+];
+let newsFilter="all";
+function newsMatch(it){
+  if(newsFilter==="all") return true;
+  const [scope,grp]=newsFilter.split(":");
+  if(scope==="b") return it.scope==="brand" && it.group===grp;
+  if(scope==="i") return it.scope==="industry" && it.key===grp;
+  return true;
+}
+function buildNewsChips(){
+  const el=document.getElementById('newsChips');
+  el.innerHTML=NEWS_FILTERS.map(f=>f.sep
+    ? `<span class="chip sep">${f.label}</span>`
+    : `<span class="chip ${newsFilter===f.id?'on':''}" data-f="${f.id}">${f.label}</span>`).join('');
+  el.querySelectorAll('.chip[data-f]').forEach(c=>{
+    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); };
+  });
+}
+function buildNews(){
+  const el=document.getElementById('newsBody');
+  if(!NEWS||!NEWS.items){
+    el.innerHTML='<div class="na">뉴스 데이터 없음 — 뉴스 워크플로우(update-news) 첫 실행 전이거나 수집 실패(미확인)</div>';
+    return;
+  }
+  const today=NEWS.today||'';
+  const items=NEWS.items.filter(newsMatch);
+  if(!items.length){ el.innerHTML='<div class="na">해당 구분의 최근 14일 뉴스 없음</div>'; return; }
+  let h=`<div class="note" style="margin:0 0 6px">수집: ${NEWS.generated_at||'―'} · ${items.length}건</div>`;
+  let curDate=null;
+  items.forEach(it=>{
+    if(it.first_seen!==curDate){
+      curDate=it.first_seen;
+      h+=`<div class="ndate">${curDate}${curDate===today?' · 오늘':''}</div>`;
+    }
+    const stars='★'.repeat(Math.max(1,Math.min(3,it.importance||1)));
+    const tag=it.scope==="brand"?it.label:(it.label||it.key);
+    h+=`<div class="nitem">
+      <div class="nsum">${it.first_seen===today?'<span class="newbadge">NEW</span>':''}<span class="pos">${stars}</span> <a href="${it.link}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
+      <div class="nmeta"><span class="ntag">${esc(tag)}</span>${esc(it.source||'')}${it.pubDate?' · '+esc(String(it.pubDate).slice(0,16)):''}</div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
 /* ── 탭 / 토글 ── */
 document.querySelectorAll('.tab').forEach(t=>{
   t.onclick=()=>{
@@ -401,7 +480,7 @@ document.addEventListener('click',e=>{
 });
 
 document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance + SEC 공시(추출)';
-buildSummary(); buildSelect(); buildCal();
+buildSummary(); buildSelect(); buildCal(); buildNewsChips(); buildNews();
 </script>
 </body>
 </html>
@@ -418,9 +497,17 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    news = None
+    if os.path.exists("docs/news.json"):
+        try:
+            with open("docs/news.json", encoding="utf-8") as f:
+                news = json.load(f)
+        except Exception:
+            pass
     html = (TEMPLATE
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
-            .replace("__SEGS__", json.dumps(segs, ensure_ascii=False)))
+            .replace("__SEGS__", json.dumps(segs, ensure_ascii=False))
+            .replace("__NEWS__", json.dumps(news, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
