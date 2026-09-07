@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 5 사전 검증: KOSIS 프로브 (1회용)
-목적: 통계표 ID를 추측으로 코드에 박지 않고, 실제 API 응답으로
-      ① 키워드 검색 결과(orgId/tblId/표명) ② 후보 표의 최근 데이터 구조를
-      로그로 확인한 뒤 본 코드를 확정한다. (§검증 우선 원칙)
-실행: GitHub Actions 수동 1회 → 로그 전체를 Claude에게 전달
+sports-industry-monitor — Phase 5 사전 검증: KOSIS 프로브 2차
+1차에서 확보한 실제 표 ID의 ① 분류 축(objL1/objL2…) 구성과 항목 코드를
+메타 API로 확인하고, ② 그 코드로 실제 데이터 조회를 시도한다.
+여기서 나온 코드로 본 코드(kosis_fetch.py)를 확정한다. (§검증 우선)
+실행: GitHub Actions 수동 1회 → 로그를 Claude에게 전달
 """
 
 import os
@@ -12,108 +12,94 @@ import json
 import requests
 
 API_KEY = os.environ.get("KOSIS_API_KEY", "")
-UA = {"User-Agent": "sports-industry-monitor kosis probe"}
+UA = {"User-Agent": "sports-industry-monitor kosis probe2"}
 
-SEARCH_KEYWORDS = ["소매판매액지수", "온라인쇼핑 상품군", "소비자물가지수 지출목적"]
-
-# 후보 표 (프로브가 실제 응답으로 검증 — 확정 아님)
-CANDIDATES = [
-    ("101", "DT_1KE10071", "소매판매액지수(상품군별) 후보1"),
-    ("101", "DT_1K31013",  "소매판매액지수 후보2"),
-    ("101", "DT_1KE10051", "온라인쇼핑 상품군별 거래액 후보1"),
-    ("101", "DT_1KE10081", "온라인쇼핑 후보2"),
-    ("101", "DT_1J20112",  "소비자물가지수(지출목적별) 후보1"),
-    ("101", "DT_1J20003",  "소비자물가지수 후보2"),
+# 1차 검색으로 확인된 실제 표
+TABLES = [
+    ("101", "DT_1K41012", "재별 및 상품군별 소매판매액지수"),
+    ("101", "DT_1K41013", "소매업태별 판매액지수"),
+    ("101", "DT_1KE1007", "온라인쇼핑몰 판매매체별/상품군별 거래액"),
+    ("101", "DT_1J22001", "지출목적별 소비자물가지수"),
 ]
 
-
-def show(title, obj, limit=2500):
-    txt = json.dumps(obj, ensure_ascii=False)[:limit] if not isinstance(obj, str) else obj[:limit]
-    print(f"\n===== {title} =====\n{txt}\n")
+META = "https://kosis.kr/openapi/statisticsData.do"
+DATA = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
 
 
-def probe_search():
-    """통합검색 API — 엔드포인트 변형 2종 시도"""
-    for kw in SEARCH_KEYWORDS:
-        ok = False
-        for url in (
-            "https://kosis.kr/openapi/statisticsSearch.do",
-            "https://kosis.kr/openapi/statisticsList.do",
-        ):
-            try:
-                r = requests.get(url, params={
-                    "method": "getList", "apiKey": API_KEY,
-                    "searchNm": kw, "format": "json", "jsonVD": "Y",
-                    "startCount": 1, "resultCount": 8,
-                }, headers=UA, timeout=30)
-                body = r.text.strip()
-                if r.status_code == 200 and body and body != "[]":
-                    try:
-                        data = r.json()
-                    except Exception:
-                        show(f"검색[{kw}] {url} → JSON 아님", body, 800)
-                        continue
-                    # 표 목록이면 orgId/tblId/표명만 추려서 출력
-                    rows = data if isinstance(data, list) else [data]
-                    slim = []
-                    for row in rows[:8]:
-                        if isinstance(row, dict):
-                            slim.append({k: row.get(k) for k in
-                                         ("ORG_ID", "TBL_ID", "TBL_NM",
-                                          "STAT_NM", "VW_NM", "err", "errMsg")
-                                         if k in row})
-                    show(f"검색[{kw}] {url}", slim)
-                    ok = True
-                    break
-                else:
-                    show(f"검색[{kw}] {url} → status {r.status_code}", body, 500)
-            except Exception as e:
-                print(f"검색[{kw}] {url} 실패: {str(e)[:150]}")
-        if not ok:
-            print(f"[참고] '{kw}' 검색은 두 엔드포인트 모두 유효 응답 없음")
+def show(title, obj, limit=3000):
+    txt = obj if isinstance(obj, str) else json.dumps(obj, ensure_ascii=False)
+    print(f"\n===== {title} =====\n{txt[:limit]}\n")
 
 
-def probe_data():
-    """후보 표의 최근 월 데이터 구조 확인 (항목/분류 코드가 로그에 찍힘)"""
-    url = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
-    for org, tbl, label in CANDIDATES:
+def meta(org, tbl, label, meta_type, keep):
+    """메타 조회: ITM(항목) / OBJ(분류) 목록"""
+    try:
+        r = requests.get(META, params={
+            "method": "getMeta", "apiKey": API_KEY, "type": meta_type,
+            "orgId": org, "tblId": tbl, "format": "json", "jsonVD": "Y",
+        }, headers=UA, timeout=30)
         try:
-            r = requests.get(url, params={
-                "method": "getList", "apiKey": API_KEY,
-                "orgId": org, "tblId": tbl,
-                "itmId": "ALL", "objL1": "ALL",
-                "prdSe": "M", "newEstPrdCnt": "2",
-                "format": "json", "jsonVD": "Y",
-            }, headers=UA, timeout=40)
-            body = r.text.strip()
+            data = r.json()
+        except Exception:
+            show(f"[{label}] {tbl} META({meta_type}) JSON 아님", r.text, 600)
+            return
+        rows = data if isinstance(data, list) else [data]
+        slim = []
+        for row in rows[:40]:
+            if isinstance(row, dict):
+                slim.append({k: row.get(k) for k in keep if k in row})
+        show(f"[{label}] {tbl} META({meta_type}) — {len(rows)}행 중 40행", slim)
+    except Exception as e:
+        print(f"[{label}] {tbl} META({meta_type}) 실패: {str(e)[:150]}")
+
+
+def try_data(org, tbl, label, obj_levels):
+    """objL 조합을 바꿔가며 최근 2개월 데이터 조회 시도"""
+    params = {
+        "method": "getList", "apiKey": API_KEY,
+        "orgId": org, "tblId": tbl, "itmId": "ALL",
+        "prdSe": "M", "newEstPrdCnt": "2",
+        "format": "json", "jsonVD": "Y",
+    }
+    for lv in obj_levels:
+        p = dict(params)
+        for i in range(1, lv + 1):
+            p[f"objL{i}"] = "ALL"
+        try:
+            r = requests.get(DATA, params=p, headers=UA, timeout=40)
             try:
                 data = r.json()
             except Exception:
-                show(f"[{label}] {org}/{tbl} → JSON 아님(status {r.status_code})", body, 600)
+                show(f"[{label}] {tbl} objL1~{lv} → JSON 아님", r.text, 500)
                 continue
             if isinstance(data, dict) and ("err" in data or "errMsg" in data):
-                show(f"[{label}] {org}/{tbl} → 오류", data, 400)
+                show(f"[{label}] {tbl} objL1~{lv} → 오류", data, 300)
                 continue
             rows = data if isinstance(data, list) else [data]
             slim = []
-            for row in rows[:12]:
+            for row in rows[:15]:
                 if isinstance(row, dict):
                     slim.append({k: row.get(k) for k in
-                                 ("TBL_NM", "PRD_DE", "ITM_NM", "C1_NM",
-                                  "C2_NM", "UNIT_NM", "DT") if k in row})
-            show(f"[{label}] {org}/{tbl} — 표본 {len(rows)}행 중 12행", slim, 3500)
+                                 ("PRD_DE", "ITM_NM", "C1_NM", "C2_NM",
+                                  "C3_NM", "UNIT_NM", "DT") if k in row})
+            show(f"[{label}] {tbl} objL1~{lv} ✅ 성공 — 총 {len(rows)}행 중 15행",
+                 slim, 4000)
+            return
         except Exception as e:
-            print(f"[{label}] {org}/{tbl} 실패: {str(e)[:150]}")
+            print(f"[{label}] {tbl} objL1~{lv} 실패: {str(e)[:150]}")
 
 
 def main():
     if not API_KEY:
-        print("[ERROR] KOSIS_API_KEY 미설정 — GitHub Secret 등록 필요")
+        print("[ERROR] KOSIS_API_KEY 미설정")
         raise SystemExit(1)
-    print("KOSIS 프로브 시작 — 아래 로그 전체를 복사해 Claude에게 전달해주세요")
-    probe_search()
-    probe_data()
-    print("\nKOSIS 프로브 완료")
+    print("KOSIS 프로브 2차 — 로그를 Claude에게 전달해주세요")
+    for org, tbl, label in TABLES:
+        meta(org, tbl, label, "ITM", ("ITM_ID", "ITM_NM", "UNIT_NM"))
+        meta(org, tbl, label, "OBJ",
+             ("OBJ_ID", "OBJ_NM", "OBJ_ID_SUB", "C1", "C1_NM", "ITM_NM"))
+        try_data(org, tbl, label, [1, 2, 3])
+    print("\nKOSIS 프로브 2차 완료")
 
 
 if __name__ == "__main__":
