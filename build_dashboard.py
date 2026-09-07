@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v14: 국내 탭 금액 단위 환산 수정(백만원 → 억/조), 최신 월 라벨 강조
 v13: 국내 수요 탭 추가 — KOSIS 월별 지표(소매판매·업태·온라인 거래액·CPI)
      스파크라인 + 최근값·YoY, 지표 클릭 시 최근 13개월 표
 v12: 기간 라벨 명시(연간/최근 분기) + 지역 분해가 Total 단독인 경우
@@ -523,7 +524,9 @@ function buildKR(){
       const v=s.values[last], y=s.yoy?s.yoy[last]:null;
       const vals=prds.slice(-25).map(p=>s.values[p]);
       const isIdx=/지수|100/.test(s.unit||'');
-      const disp=isIdx?v.toFixed(1):(v>=1000000?(v/1000000).toFixed(2)+'조':(v/10000).toFixed(0)+'억');
+      // 금액 단위: 원자료가 백만원 → 1,000,000백만원 = 1조 / 100백만원 = 1억
+      const disp=isIdx?v.toFixed(1)
+        :(v>=1000000?(v/1000000).toFixed(2)+'조원':(v/100).toLocaleString(undefined,{maximumFractionDigits:0})+'억원');
       h+=`<div class="krcard" data-k="${k}">
         <div class="krhead"><span class="krname">${esc(s.label)}</span>
           <span class="krval">${disp}
@@ -534,7 +537,10 @@ function buildKR(){
         <div class="krtbl" id="krt-${k}"><table><tr><th>월</th><th>값</th><th>YoY</th></tr>
         ${prds.slice(-13).reverse().map(p=>{
           const yy=s.yoy?s.yoy[p]:null;
-          return `<tr><td>${fmtPrd(p)}</td><td>${isIdx?s.values[p].toFixed(1):s.values[p].toLocaleString()}</td>
+          const pv=s.values[p];
+          const pdisp=isIdx?pv.toFixed(1)
+            :(pv>=1000000?(pv/1000000).toFixed(2)+'조원':(pv/100).toLocaleString(undefined,{maximumFractionDigits:0})+'억원');
+          return `<tr><td>${fmtPrd(p)}</td><td>${pdisp}</td>
           <td>${yy==null?'<span class="na">―</span>':`<span class="${yy>=0?'pos':'neg'}">${yy>=0?'+':''}${yy.toFixed(1)}%</span>`}</td></tr>`;
         }).join('')}</table></div>
       </div>`;
