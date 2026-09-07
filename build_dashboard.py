@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v12: 기간 라벨 명시(연간/최근 분기) + 지역 분해가 Total 단독인 경우
+     '지역별 매출액 미공시' 안내로 표시(룰루레몬 케이스 혼동 방지)
 v11: 뉴스 탭 — 브랜드(스포츠·아웃도어/패션/명품/유통·그외)·산업(스포츠/패션·명품/유통)
      필터 칩, 오늘 신규 NEW 배지, 날짜별 그룹, 14일 롤링(news.json v2)
 v9: 브랜드 로고 앞 국기(브랜드 본사 국가) 표시 + 신규 8종목 로고 도메인 추가
@@ -123,7 +125,7 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 <div class="pane on" id="p-sum">
   <table id="sumTbl"></table>
-  <div class="note">행을 누르면 기준 시점(결산월·분기말·재고 기준월·통화)이 펼쳐지고, 종목명 옆 ▸ 아이콘을 누르면 상세로 이동합니다.<br>
+  <div class="note">FY매출·YoY·GM은 연간, 분기YoY는 최근 분기 기준입니다. 행을 누르면 기준 시점(결산월·분기말·재고 기준월·통화)이 펼쳐지고, 종목명 옆 ▸ 아이콘을 누르면 상세로 이동합니다.<br>
   국기 = 브랜드 본사 국가 · "―" = 미확인(소스 미제공, §29-D) · [공시] = 공시 추출값 · 52주比는 브랜드 상세에서 확인(부지표)</div>
 </div>
 
@@ -312,7 +314,7 @@ function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
   let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span></div>`;
-  h+=`<div class="card"><h3>📈 매출 3개년 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
+  h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
     x.fy.forEach(y=>{
@@ -323,7 +325,7 @@ function renderDetail(t){
     });
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
   h+=`</div>`;
-  h+=`<div class="card"><h3>💰 수익성 추이</h3><table><tr><th>결산월</th><th>GM</th><th>영업이익률</th></tr>`;
+  h+=`<div class="card"><h3>💰 수익성 추이 — 연간</h3><table><tr><th>결산월</th><th>GM</th><th>영업이익률</th></tr>`;
   x.fy.forEach(y=>{
     h+=`<tr><td>${ym(y.end)}</td>
     <td>${y.gm_pct!=null?y.gm_pct.toFixed(1)+'%':'―'}</td>
@@ -338,9 +340,19 @@ function renderDetail(t){
 
   const s=segOf(t);
   const segEntry=(SEGS.items||{})[t];
-  h+=`<div class="card"><h3>🌍 지역 분해 — 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
+  h+=`<div class="card"><h3>🌍 지역 분해 — 최근 분기, 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
-    const bars=pairBars(s.extract.regions,"당기","전년");
+    const regsAll=s.extract.regions.filter(r=>r.revenue!=null);
+    const totalOnly=regsAll.length>0&&regsAll.every(r=>/total|전체|합계|consolidated/i.test(r.name||""));
+    let bars;
+    if(totalOnly){
+      const tt=regsAll[0];
+      const yoy=tt.yoy_pct!=null?` <span class="${tt.yoy_pct>=0?'pos':'neg'}">${tt.yoy_pct>=0?'+':''}${tt.yoy_pct.toFixed(1)}%</span>`:'';
+      bars=`<div class="na">지역별 매출액 미공시 — 이 회사는 지역 분해 금액을 공시하지 않습니다(성장률만 공시하는 경우 하단 주석 참조)</div>
+      <div class="kv"><span class="k">분기 총매출</span><span>${segMoney(tt.revenue)}${yoy}</span></div>`;
+    } else {
+      bars=pairBars(s.extract.regions,"당기","전년");
+    }
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
     let noteTxt="기준: "+(s.extract.period||"―");
     if(s.extract.prev_period) noteTxt+=" · 전년: "+s.extract.prev_period;
@@ -351,7 +363,7 @@ function renderDetail(t){
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 지역 분해 미기재)'}</div>`;
   }
   h+=`</div>`;
-  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
+  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 최근 분기 <span class="tag">공시 추출</span></h3>`;
   if(s&&s.extract.channels&&s.extract.channels.length){
     const bars=pairBars(s.extract.channels,"당기","전년");
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
