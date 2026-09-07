@@ -4,8 +4,10 @@ sports-industry-monitor — Phase 5: KOSIS 국내 수요 지표 (v1)
 프로브로 검증된 통계표만 사용 (§검증 우선):
   DT_1K41012 재별·상품군별 소매판매액지수  → 의복(G21), 신발·가방(G22), 총지수(G0)
   DT_1K41013 소매업태별 판매액지수        → 의복·신발·가방 소매점, 인터넷쇼핑, 백화점
-  DT_1KE1007 온라인쇼핑 상품군별 거래액   → 의복/신발/가방/패션잡화/스포츠레저 (objL1+2)
+  DT_1KE10071 온라인쇼핑 판매매체별/상품군별 거래액 → 의복/신발/가방/패션잡화/스포츠레저
   DT_1J22001 지출목적별 소비자물가지수     → 의류·신발 (C2 이름 필터, 코드 추측 없음)
+v3: 온라인쇼핑 표를 현행 DT_1KE10071로 교체(구표 DT_1KE1007은 2017년 종료),
+    분류 이름 후보 복수 지정(축 순서·표기 차이 대응), 미발견 시 후보 목록 진단 출력
 v2: 2단계 조회 — ① 1개월 표본으로 분류 코드(C1/C2) 발견 → ② 해당 코드만 지정해
     25개월 조회. CPI(22,064행)처럼 큰 표에서 전체를 받아 필터링하다 지연되던 문제 해결.
     출력 즉시 flush(진행 상황 확인), 타임아웃·재시도 추가.
@@ -31,35 +33,32 @@ OUT_PATH = "docs/kosis.json"
 # ── 수집 정의 ──────────────────────────────────────
 # key: [표ID, objL레벨, 항목ID(itmId), 분류 매칭(C1/C2 이름 포함어), 표시명, 단위설명]
 SERIES = [
-    # 1) 상품군별 소매판매액지수 — 항목=경상지수(T1), 분류 C1=상품군
-    ("retail_apparel",  "DT_1K41012", 1, "T1", {"c1": "의류"},
-     "소매판매 의류", "지수(2020=100)"),
-    ("retail_shoesbag", "DT_1K41012", 1, "T1", {"c1": "신발"},
+    # (key, 표ID, objL레벨, itmId, needles, 표시명, 단위설명)
+    #   needles: 각 원소는 "대체 표기" 튜플 — 모든 원소가 분류명(C1/C2) 어딘가에
+    #   매칭되어야 채택 (축 순서·표기 차이에 무관, §29-D 코드 추측 없음)
+    ("retail_apparel",  "DT_1K41012", 1, "T1", [("의복", "의류")],
+     "소매판매 의복", "지수(2020=100)"),
+    ("retail_shoesbag", "DT_1K41012", 1, "T1", [("신발",)],
      "소매판매 신발·가방", "지수(2020=100)"),
-    ("retail_total",    "DT_1K41012", 1, "T1", {"c1": "총지수"},
+    ("retail_total",    "DT_1K41012", 1, "T1", [("총지수",)],
      "소매판매 총지수", "지수(2020=100)"),
-    # 2) 업태별 판매액지수 — 항목=경상지수(T1), 분류 C1=업태
-    ("store_fashion",   "DT_1K41013", 1, "T1", {"c1": "의복"},
+    ("store_fashion",   "DT_1K41013", 1, "T1", [("의복",)],
      "의복·신발·가방 소매점", "지수(2020=100)"),
-    ("store_internet",  "DT_1K41013", 1, "T1", {"c1": "인터넷쇼핑"},
+    ("store_internet",  "DT_1K41013", 1, "T1", [("인터넷",)],
      "인터넷쇼핑 업태", "지수(2020=100)"),
-    ("store_dept",      "DT_1K41013", 1, "T1", {"c1": "백화점"},
+    ("store_dept",      "DT_1K41013", 1, "T1", [("백화점",)],
      "백화점 업태", "지수(2020=100)"),
-    # 3) 온라인쇼핑 거래액 — 항목=거래액(T20), C1=상품군, C2=판매매체(합계)
-    ("online_apparel",  "DT_1KE1007", 2, "T20", {"c1": "의복", "c2": "합계"},
+    ("online_apparel",  "DT_1KE10071", 2, "T20", [("의복", "의류"), ("합계",)],
      "온라인 의복 거래액", "백만원"),
-    ("online_shoes",    "DT_1KE1007", 2, "T20", {"c1": "신발", "c2": "합계"},
+    ("online_shoes",    "DT_1KE10071", 2, "T20", [("신발",), ("합계",)],
      "온라인 신발 거래액", "백만원"),
-    ("online_bag",      "DT_1KE1007", 2, "T20", {"c1": "가방", "c2": "합계"},
+    ("online_bag",      "DT_1KE10071", 2, "T20", [("가방",), ("합계",)],
      "온라인 가방 거래액", "백만원"),
-    ("online_fashionacc", "DT_1KE1007", 2, "T20",
-     {"c1": "패션용품", "c2": "합계"},
-     "온라인 패션용품·악세서리", "백만원"),
-    ("online_sports",   "DT_1KE1007", 2, "T20",
-     {"c1": "스포츠", "c2": "합계"},
+    ("online_fashionacc", "DT_1KE10071", 2, "T20",
+     [("패션용품",), ("합계",)], "온라인 패션용품·악세서리", "백만원"),
+    ("online_sports",   "DT_1KE10071", 2, "T20", [("스포츠",), ("합계",)],
      "온라인 스포츠·레저용품", "백만원"),
-    # 4) CPI — 항목=소비자물가지수(T), C1=지역(전국), C2=지출목적
-    ("cpi_apparel",     "DT_1J22001", 2, "T", {"c1": "전국", "c2": "의류"},
+    ("cpi_apparel",     "DT_1J22001", 2, "T", [("전국",), ("의류",)],
      "소비자물가 의류·신발", "지수(2020=100)"),
 ]
 
@@ -178,16 +177,27 @@ def main():
             # 이름 매칭으로 코드 확정 (§29-D: 코드 추측 없음)
             hit = None
             for c1, c1nm, c2, c2nm in disc_cache[dk]:
-                ok = True
-                if "c1" in match and norm(match["c1"]) not in norm(c1nm):
-                    ok = False
-                if ok and "c2" in match and norm(match["c2"]) not in norm(c2nm):
-                    ok = False
+                names = [n for n in (c1nm, c2nm) if n]
+                used, ok = set(), True
+                for alts in match:
+                    found = None
+                    for i, nm in enumerate(names):
+                        if i in used:
+                            continue
+                        if any(norm(a) in norm(nm) for a in alts):
+                            found = i
+                            break
+                    if found is None:
+                        ok = False
+                        break
+                    used.add(found)
                 if ok:
                     hit = (c1, c1nm, c2, c2nm)
                     break
             if not hit:
-                log(f"  [WARN] 분류 미발견 → 수록 안 함")
+                pool = sorted({f"{a}|{b}" for _, a, _, b in disc_cache[dk]})
+                log(f"  [WARN] 분류 미발견 → 수록 안 함. 후보(최대 25): "
+                    f"{', '.join(pool[:25])}")
                 continue
             c1, c1nm, c2, c2nm = hit
             codes = {"objL1": c1 or "ALL"}
