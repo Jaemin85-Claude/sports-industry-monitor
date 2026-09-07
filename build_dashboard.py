@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v13: 국내 수요 탭 추가 — KOSIS 월별 지표(소매판매·업태·온라인 거래액·CPI)
+     스파크라인 + 최근값·YoY, 지표 클릭 시 최근 13개월 표
 v12: 기간 라벨 명시(연간/최근 분기) + 지역 분해가 Total 단독인 경우
      '지역별 매출액 미공시' 안내로 표시(룰루레몬 케이스 혼동 방지)
 v11: 뉴스 탭 — 브랜드(스포츠·아웃도어/패션/명품/유통·그외)·산업(스포츠/패션·명품/유통)
@@ -105,6 +107,14 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nitem .nsum{font-size:13px;line-height:1.5}
 .nitem .nsum a{color:var(--tx);text-decoration:none}
 .nitem .nmeta{font-size:10px;color:var(--sub);margin-top:3px}
+.krcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.krhead{display:flex;align-items:baseline;gap:8px}
+.krname{font-size:13px;font-weight:600}
+.krval{margin-left:auto;font-size:15px;font-weight:700}
+.kryoy{font-size:12px;font-weight:600}
+.krmeta{font-size:10px;color:var(--sub);margin-top:2px}
+.krtbl{display:none;margin-top:10px}
+.krtbl.open{display:block}
 .ntag{display:inline-block;font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 5px;margin-right:5px}
 </style>
 </head>
@@ -121,6 +131,7 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   <div class="tab" data-p="det">브랜드 상세</div>
   <div class="tab" data-p="cal">캘린더</div>
   <div class="tab" data-p="news">뉴스</div>
+  <div class="tab" data-p="kr">국내</div>
 </div>
 
 <div class="pane on" id="p-sum">
@@ -146,10 +157,17 @@ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
 </div>
 
+<div class="pane" id="p-kr">
+  <div id="krBody"></div>
+  <div class="note">출처: KOSIS(통계청) — 서비스업동향조사·온라인쇼핑동향조사·소비자물가조사 · 월 1회 갱신<br>
+  지수는 2020=100 기준 · YoY는 전년 동월 대비 · 지표를 누르면 최근 13개월 수치 표</div>
+</div>
+
 <script>
 const DATA = __DATA__;
 const SEGS = __SEGS__;
 const NEWS = __NEWS__;
+const KR = __KR__;
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -442,7 +460,7 @@ function buildNewsChips(){
     ? `<span class="chip sep">${f.label}</span>`
     : `<span class="chip ${newsFilter===f.id?'on':''}" data-f="${f.id}">${f.label}</span>`).join('');
   el.querySelectorAll('.chip[data-f]').forEach(c=>{
-    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); };
+    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); buildKR(); };
   });
 }
 function buildNews(){
@@ -469,6 +487,63 @@ function buildNews(){
     </div>`;
   });
   el.innerHTML=h;
+}
+
+/* ── 국내 수요 (KOSIS) ── */
+function spark(vals,w,h){
+  if(!vals||vals.length<2) return '';
+  const mn=Math.min(...vals), mx=Math.max(...vals), rg=(mx-mn)||1;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-(v-mn)/rg*h).toFixed(1)}`).join(' ');
+  const up=vals[vals.length-1]>=vals[0];
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;margin-top:6px">
+    <polyline points="${pts}" fill="none" stroke="${up?'var(--pos)':'var(--neg)'}" stroke-width="1.6"/></svg>`;
+}
+function fmtPrd(p){ return p.slice(0,4)+'.'+p.slice(4,6); }
+function buildKR(){
+  const el=document.getElementById('krBody');
+  if(!KR||!KR.series||!Object.keys(KR.series).length){
+    el.innerHTML='<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
+    return;
+  }
+  let h=`<div class="note" style="margin:0 0 8px">갱신: ${KR.generated_at||'―'}</div>`;
+  const groups=[
+    ["🛍️ 소매판매액지수",["retail_apparel","retail_shoesbag","retail_total"]],
+    ["🏬 업태별 판매액지수",["store_fashion","store_internet","store_dept"]],
+    ["💻 온라인쇼핑 거래액",["online_apparel","online_shoes","online_bag","online_fashionacc","online_sports"]],
+    ["🏷️ 소비자물가",["cpi_apparel"]],
+  ];
+  groups.forEach(([title,keys])=>{
+    const avail=keys.filter(k=>KR.series[k]);
+    if(!avail.length) return;
+    h+=`<div class="ndate">${title}</div>`;
+    avail.forEach(k=>{
+      const s=KR.series[k];
+      const prds=Object.keys(s.values).sort();
+      const last=prds[prds.length-1];
+      const v=s.values[last], y=s.yoy?s.yoy[last]:null;
+      const vals=prds.slice(-25).map(p=>s.values[p]);
+      const isIdx=/지수|100/.test(s.unit||'');
+      const disp=isIdx?v.toFixed(1):(v>=1000000?(v/1000000).toFixed(2)+'조':(v/10000).toFixed(0)+'억');
+      h+=`<div class="krcard" data-k="${k}">
+        <div class="krhead"><span class="krname">${esc(s.label)}</span>
+          <span class="krval">${disp}
+            <span class="kryoy ${y==null?'na':(y>=0?'pos':'neg')}">${y==null?'―':(y>=0?'+':'')+y.toFixed(1)+'%'}</span>
+          </span></div>
+        <div class="krmeta">${fmtPrd(last)} 기준 · ${esc(s.unit||'')} · ${s.table}</div>
+        ${spark(vals,260,34)}
+        <div class="krtbl" id="krt-${k}"><table><tr><th>월</th><th>값</th><th>YoY</th></tr>
+        ${prds.slice(-13).reverse().map(p=>{
+          const yy=s.yoy?s.yoy[p]:null;
+          return `<tr><td>${fmtPrd(p)}</td><td>${isIdx?s.values[p].toFixed(1):s.values[p].toLocaleString()}</td>
+          <td>${yy==null?'<span class="na">―</span>':`<span class="${yy>=0?'pos':'neg'}">${yy>=0?'+':''}${yy.toFixed(1)}%</span>`}</td></tr>`;
+        }).join('')}</table></div>
+      </div>`;
+    });
+  });
+  el.innerHTML=h;
+  el.querySelectorAll('.krcard').forEach(c=>{
+    c.onclick=()=>document.getElementById('krt-'+c.dataset.k).classList.toggle('open');
+  });
 }
 
 /* ── 탭 / 토글 ── */
@@ -509,6 +584,13 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    kr = None
+    if os.path.exists("docs/kosis.json"):
+        try:
+            with open("docs/kosis.json", encoding="utf-8") as f:
+                kr = json.load(f)
+        except Exception:
+            pass
     news = None
     if os.path.exists("docs/news.json"):
         try:
@@ -519,7 +601,8 @@ def main():
     html = (TEMPLATE
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SEGS__", json.dumps(segs, ensure_ascii=False))
-            .replace("__NEWS__", json.dumps(news, ensure_ascii=False)))
+            .replace("__NEWS__", json.dumps(news, ensure_ascii=False))
+            .replace("__KR__", json.dumps(kr, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
