@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v14: 국내 탭 금액 단위 환산 수정(백만원 → 억/조), 최신 월 라벨 강조
+v15: buildKR() 초기 호출 누락 수정 — 국내 탭이 비어 보이던 원인(호출문이 뉴스 칩
+     클릭 핸들러에 잘못 삽입되어 있었음)
+v14: 국내 탭 금액 단위 환산 수정(백만원 → 억/조)
 v13: 국내 수요 탭 추가 — KOSIS 월별 지표(소매판매·업태·온라인 거래액·CPI)
      스파크라인 + 최근값·YoY, 지표 클릭 시 최근 13개월 표
 v12: 기간 라벨 명시(연간/최근 분기) + 지역 분해가 Total 단독인 경우
@@ -461,7 +463,7 @@ function buildNewsChips(){
     ? `<span class="chip sep">${f.label}</span>`
     : `<span class="chip ${newsFilter===f.id?'on':''}" data-f="${f.id}">${f.label}</span>`).join('');
   el.querySelectorAll('.chip[data-f]').forEach(c=>{
-    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); buildKR(); };
+    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); };
   });
 }
 function buildNews(){
@@ -573,7 +575,7 @@ document.addEventListener('click',e=>{
 });
 
 document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · 데이터: Yahoo Finance + SEC 공시(추출)';
-buildSummary(); buildSelect(); buildCal(); buildNewsChips(); buildNews();
+buildSummary(); buildSelect(); buildCal(); buildNewsChips(); buildNews(); buildKR();
 </script>
 </body>
 </html>
