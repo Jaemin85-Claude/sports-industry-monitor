@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-14 07:02 KST",
+ "generated_at": "2026-09-21 07:07 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -694,12 +694,12 @@
    "source": "8-K 2026-09-09 exhibit991pressreleaseq220.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000146/exhibit991pressreleaseq220.htm",
    "extract": {
-    "period": "Q2 FY2026 (Thirteen Weeks Ended August 1, 2026)",
-    "prev_period": "Q2 FY2025 (Thirteen Weeks Ended August 2, 2025)",
+    "period": "Q2 FY26 ended 2026-08-01 (Thirteen Weeks Ended August 1, 2026)",
+    "prev_period": "Q2 FY25 ended 2025-08-02 (Thirteen Weeks Ended August 2, 2025)",
     "currency": "USD",
     "regions": [],
     "channels": [],
-    "notes": "이 문서에는 지역별 또는 채널별 매출 세부 내역이 명시되어 있지 않으며, 전체 순매출 및 비교 수치만 제공됩니다.",
+    "notes": "지역별 및 채널별 매출 세부 내역은 문서에 명시되어 있지 않으며, 전체 순매출만 공시됨.",
     "schema_v": 2
    },
    "error": null
