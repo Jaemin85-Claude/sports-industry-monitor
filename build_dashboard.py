@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v17: 국내 상장 20개사 편입 — 6그룹(글로벌 브랜드/글로벌 유통/국내 브랜드/국내 패션대기업/
+     국내 OEM/국내 유통) 헤더로 구분, 원화 억원·조원 표기, 상세 드롭다운 그룹 분리,
+     상세 헤더에 그룹 태그·종목 주석, 한국 상장은 '공시 추출 미대상' 표기
 v16: 브랜드 상세에 '지표 추이' 카드 — docs/history.json(일별 스냅샷 누적) 기반
      재고YoY·GM·분기YoY·매출YoY 스파크라인, 3점 미만이면 '축적 중' 안내
 v15: buildKR() 초기 호출 누락 수정 — 국내 탭이 비어 보이던 원인(호출문이 뉴스 칩
@@ -53,7 +56,9 @@ table{width:100%;border-collapse:collapse;font-size:12px}
 th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:11px}
 th:first-child,td:first-child{text-align:left}
 td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
-tr.grp td{color:var(--sub);font-size:11px;padding:10px 4px 4px;border-bottom:none}
+tr.grp td{color:var(--sub);font-size:11px;padding:14px 4px 4px;border-bottom:1px solid var(--line)}
+tr.grp td b{color:var(--tx);font-size:12px}
+tr.grp-kr td{background:var(--barbg);border-radius:6px}
 tr.subrow td{font-size:11px;color:var(--sub)}
 tr.subrow td:first-child{padding-left:26px}
 tr.mrow{cursor:pointer}
@@ -184,7 +189,15 @@ const DOMAINS = {
   "8022.T":"mizuno.com", "7906.T":"yonex.com", "8111.T":"goldwin.co.jp",
   "2020.HK":"anta.com", "2331.HK":"lining.com", "PUM.DE":"puma.com",
   "WWW":"wolverineworldwide.com", "COLM":"columbia.com",
-  "DKS":"dickssportinggoods.com", "JD.L":"jdplc.com", "ASO":"academy.com"
+  "DKS":"dickssportinggoods.com", "JD.L":"jdplc.com", "ASO":"academy.com",
+  "081660.KS":"fila.co.kr", "383220.KS":"fnf.co.kr", "298540.KQ":"thenatureholdings.com",
+  "120110.KS":"kolonindustries.com", "337930.KQ":"xexymix.com", "000680.KS":"lsnetworks.co.kr",
+  "036620.KQ":"gamsung.co.kr", "278470.KS":"apr-in.com",
+  "031430.KS":"sikorea.co.kr", "020000.KS":"handsome.co.kr", "093050.KS":"lfcorp.com",
+  "028260.KS":"samsungcnt.com", "005390.KS":"shinsung.co.kr",
+  "111770.KS":"youngone.co.kr", "241590.KS":"hsenterprise.co.kr", "105630.KS":"hansae.com",
+  "009970.KS":"youngonecorporation.com",
+  "023530.KS":"lotteshopping.com", "004170.KS":"shinsegae.com", "069960.KS":"ehyundai.com"
 };
 /* ── 브랜드 본사 국가 국기 ── */
 const FLAGS = {
@@ -194,8 +207,13 @@ const FLAGS = {
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
   "COLM":"🇺🇸", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸"
 };
+const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
+  : ["글로벌 브랜드","글로벌 유통","국내 브랜드","국내 패션대기업","국내 OEM","국내 유통"];
+const GROUP_ICON = {"글로벌 브랜드":"🌍","글로벌 유통":"🌍","국내 브랜드":"🇰🇷","국내 패션대기업":"🇰🇷","국내 OEM":"🇰🇷","국내 유통":"🇰🇷"};
+const GROUP_NOTE = {"국내 OEM":"브랜드 오더의 선행지표","삼성물산(패션부문)":""};
+const isKR = t => /\.K[SQ]$/.test(t);
 function flagOf(t){
-  const f = FLAGS[t];
+  const f = FLAGS[t] || (isKR(t) ? "🇰🇷" : null);
   return f ? `<span class="flag">${f}</span>` : "";
 }
 function logoImg(t, large){
@@ -230,11 +248,17 @@ const fmt=(v,d=1,sign=false)=>{
 };
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
+  if(cur==='KRW'){
+    return v>=1e12?(v/1e12).toFixed(2)+'조원':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억원';
+  }
   const m=v/1e6;
   return m>=1000?(m/1000).toFixed(2)+'B '+(cur||''):m.toFixed(0)+'M '+(cur||'');
 };
-const moneyShort=v=>{
+const moneyShort=(v,cur)=>{
   if(v===null||v===undefined) return '―';
+  if(cur==='KRW'){
+    return v>=1e12?(v/1e12).toFixed(2)+'조':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억';
+  }
   const m=v/1e6;
   return m>=1000?(m/1000).toFixed(1)+'B':m.toFixed(0)+'M';
 };
@@ -251,9 +275,12 @@ function segOf(t){
 /* ── 서머리 ── */
 function buildSummary(){
   let h=`<tr><th>종목</th><th>FY매출</th><th>YoY</th><th>GM</th><th>분기YoY</th><th>재고YoY</th></tr>`;
-  ['브랜드','유통'].forEach(g=>{
-    h+=`<tr class="grp"><td colspan="6">━ ${g}</td></tr>`;
-    DATA.items.filter(x=>x.group===g).forEach(x=>{
+  GROUPS.forEach(g=>{
+    const rows=DATA.items.filter(x=>x.group===g);
+    if(!rows.length) return;
+    const gn=GROUP_NOTE[g]?` <span class="na">· ${GROUP_NOTE[g]}</span>`:'';
+    h+=`<tr class="grp ${isKR(rows[0].ticker)?'grp-kr':''}"><td colspan="6">${GROUP_ICON[g]||'━'} <b>${g}</b>${gn} <span class="na">(${rows.length})</span></td></tr>`;
+    rows.forEach(x=>{
       const fy=x.fy.length?x.fy[x.fy.length-1]:{};
       const refs=[];
       if(fy.end) refs.push("FY "+ym(fy.end));
@@ -262,7 +289,7 @@ function buildSummary(){
       if(x.currency) refs.push(x.currency);
       h+=`<tr class="mrow"><td class="nm">${flagOf(x.ticker)}${logoImg(x.ticker,false)}${x.name}
       <span class="na" style="cursor:pointer" onclick="event.stopPropagation();goDetail('${x.ticker}')">▸</span></td>
-      <td class="rev-main">${moneyShort(fy.rev)}</td>
+      <td class="rev-main">${moneyShort(fy.rev,x.currency)}</td>
       <td>${fmt(fy.rev_yoy,1,true)}</td>
       <td>${fy.gm_pct!=null?fy.gm_pct.toFixed(1)+'%':'<span class="na">―</span>'}</td>
       <td>${fmt(x.latest_q_yoy,1,true)}</td>
@@ -288,7 +315,11 @@ function buildSummary(){
 /* ── 상세 ── */
 function buildSelect(){
   const s=document.getElementById('sel');
-  s.innerHTML=DATA.items.map(x=>`<option value="${x.ticker}">${(FLAGS[x.ticker]||'')} ${x.name} (${x.ticker})</option>`).join('');
+  s.innerHTML=GROUPS.map(g=>{
+    const rows=DATA.items.filter(x=>x.group===g);
+    if(!rows.length) return '';
+    return `<optgroup label="${GROUP_ICON[g]||''} ${g}">`+rows.map(x=>`<option value="${x.ticker}">${(FLAGS[x.ticker]||(isKR(x.ticker)?'🇰🇷':''))} ${x.name} (${x.ticker})</option>`).join('')+`</optgroup>`;
+  }).join('');
   s.onchange=()=>renderDetail(s.value);
   renderDetail(DATA.items[0].ticker);
 }
@@ -337,7 +368,8 @@ function pairBars(list, curLabel, prevLabel){
 function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
-  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span></div>`;
+  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
+  if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
@@ -345,7 +377,7 @@ function renderDetail(t){
       const w=y.rev?Math.max(y.rev/mx*100,8):0;
       h+=`<div class="bar-row"><div class="lb" title="${ym(y.end)}결산">${ym(y.end)}결산</div>
       <div class="bar-wrap"><div class="bar" style="width:${w}%"></div>
-      <div class="bar-val">${money(y.rev,'')} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
+      <div class="bar-val">${moneyShort(y.rev,cur)} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
     });
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
   h+=`</div>`;
@@ -386,7 +418,8 @@ function renderDetail(t){
   h+=`</div>`;
 
   const s=segOf(t);
-  const segEntry=(SEGS.items||{})[t];
+  let segEntry=(SEGS.items||{})[t];
+  if(!segEntry && isKR(t)) segEntry={error:"공시 추출 미대상 — 한국 상장(DART), 향후 확장"};
   h+=`<div class="card"><h3>🌍 지역 분해 — 최근 분기, 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
     const regsAll=s.extract.regions.filter(r=>r.revenue!=null);
