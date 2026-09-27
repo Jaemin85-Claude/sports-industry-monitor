@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-27 22:00 KST",
+ "generated_at": "2026-09-27 22:08 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -765,7 +765,7 @@
    "inv_date": "2025-12-31",
    "inv_prev_date": "2024-12-31",
    "price": 12.239999771118164,
-   "off_high_pct": -44.264181777724275,
+   "off_high_pct": -44.26417693692056,
    "earn_date": null,
    "error": null
   },
@@ -861,7 +861,7 @@
    "inv_date": "2025-12-31",
    "inv_prev_date": "2024-12-31",
    "price": 19.06999969482422,
-   "off_high_pct": -30.12085850199534,
+   "off_high_pct": -30.12086338598221,
    "earn_date": "2026-11-12",
    "error": null
   },
@@ -1005,7 +1005,7 @@
    "inv_date": "2026-01-31",
    "inv_prev_date": "2025-01-31",
    "price": 77.5,
-   "off_high_pct": -25.862641006204925,
+   "off_high_pct": -25.862646417018375,
    "earn_date": null,
    "error": null
   },
@@ -1053,7 +1053,7 @@
    "inv_date": "2026-01-31",
    "inv_prev_date": "2025-01-31",
    "price": 49.13999938964844,
-   "off_high_pct": -18.97999657347198,
+   "off_high_pct": -18.9800016692373,
    "earn_date": "2026-12-08",
    "error": null
   },
@@ -1631,26 +1631,6 @@
    "price": 367000.0,
    "off_high_pct": -31.401869158878505,
    "earn_date": "2026-10-27",
-   "error": null
-  },
-  {
-   "ticker": "005390.KS",
-   "name": "신성통상(탑텐)",
-   "group": "국내 패션대기업",
-   "note": "SPA 탑텐 + OEM",
-   "currency": null,
-   "fy": [],
-   "latest_q_yoy": null,
-   "q_end": null,
-   "q_prev_end": null,
-   "inventory": null,
-   "inv_yoy": null,
-   "inv_sales_pct": null,
-   "inv_date": null,
-   "inv_prev_date": null,
-   "price": null,
-   "off_high_pct": null,
-   "earn_date": null,
    "error": null
   },
   {
