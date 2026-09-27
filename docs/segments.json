@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-21 07:07 KST",
+ "generated_at": "2026-09-28 07:45 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -115,51 +115,11 @@
    "error": null
   },
   "ONON": {
-   "accession": "0001858985-26-000018",
-   "source": "6-K 2026-08-11 a26q2-ex993xpressrelease.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000018/a26q2-ex993xpressrelease.htm",
-   "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "prev_period": "Q2 FY25 ended 2025-06-30",
-    "currency": "CHF",
-    "regions": [
-     {
-      "name": "Americas",
-      "revenue": 451.6,
-      "prev_revenue": 432.3,
-      "yoy_pct": 4.5
-     },
-     {
-      "name": "EMEA",
-      "revenue": 228.2,
-      "prev_revenue": 197.8,
-      "yoy_pct": 15.4
-     },
-     {
-      "name": "Asia-Pacific",
-      "revenue": 170.5,
-      "prev_revenue": 119.2,
-      "yoy_pct": 43.1
-     }
-    ],
-    "channels": [
-     {
-      "name": "Wholesale",
-      "revenue": 461.9,
-      "prev_revenue": 441.0,
-      "yoy_pct": 4.8
-     },
-     {
-      "name": "DTC",
-      "revenue": 388.4,
-      "prev_revenue": 308.3,
-      "yoy_pct": 26.0
-     }
-    ],
-    "notes": "모든 수치는 CHF 기준이며, 불변환율 기준 성장률은 보고된 성장률과 다를 수 있음.",
-    "schema_v": 2
-   },
-   "error": null
+   "accession": "0001858985-26-000021",
+   "source": "6-K 2026-09-22 exhibit991oninvestorday202.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000021/exhibit991oninvestorday202.htm",
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "DECK": {
    "accession": "0000910521-26-000015",
@@ -656,53 +616,18 @@
    "error": null
   },
   "DKS": {
-   "accession": "0001089063-26-000033",
-   "source": "8-K 2026-08-25 dks-2026801xex991earningsr.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000033/dks-2026801xex991earningsr.htm",
-   "extract": {
-    "period": "Q2 FY2026 (13 weeks ended August 1, 2026)",
-    "prev_period": "Q2 FY2025 (13 weeks ended August 2, 2025)",
-    "currency": "USD",
-    "regions": [],
-    "channels": [],
-    "sub_segments": [
-     {
-      "name": "DICK'S",
-      "revenue": 3849.887,
-      "prev_revenue": 3646.616,
-      "yoy_pct": null,
-      "segment_profit": 485.204,
-      "inventory": 3600.0
-     },
-     {
-      "name": "Foot Locker",
-      "revenue": 1736.928,
-      "prev_revenue": null,
-      "yoy_pct": null,
-      "segment_profit": -31.876,
-      "inventory": 2000.0,
-      "proforma_comp_pct": -3.6
-     }
-    ],
-    "notes": "Foot Locker는 2025년 9월 8일 인수되어 전년도 비교 실적이 없으며, Foot Locker의 비교 가능 매출은 프로포마 기준으로 산출됨.",
-    "schema_v": 2
-   },
-   "error": null
+   "accession": "0001140361-26-037192",
+   "source": "8-K 2026-09-21 ef20082169_ex99-1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000114036126037192/ef20082169_ex99-1.htm",
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   },
   "ASO": {
    "accession": "0001817358-26-000146",
    "source": "8-K 2026-09-09 exhibit991pressreleaseq220.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000146/exhibit991pressreleaseq220.htm",
-   "extract": {
-    "period": "Q2 FY26 ended 2026-08-01 (Thirteen Weeks Ended August 1, 2026)",
-    "prev_period": "Q2 FY25 ended 2025-08-02 (Thirteen Weeks Ended August 2, 2025)",
-    "currency": "USD",
-    "regions": [],
-    "channels": [],
-    "notes": "지역별 및 채널별 매출 세부 내역은 문서에 명시되어 있지 않으며, 전체 순매출만 공시됨.",
-    "schema_v": 2
-   },
-   "error": null
+   "extract": null,
+   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
   }
  }
 }
