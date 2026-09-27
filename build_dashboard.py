@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v16: 브랜드 상세에 '지표 추이' 카드 — docs/history.json(일별 스냅샷 누적) 기반
+     재고YoY·GM·분기YoY·매출YoY 스파크라인, 3점 미만이면 '축적 중' 안내
 v15: buildKR() 초기 호출 누락 수정 — 국내 탭이 비어 보이던 원인(호출문이 뉴스 칩
      클릭 핸들러에 잘못 삽입되어 있었음)
 v14: 국내 탭 금액 단위 환산 수정(백만원 → 억/조)
@@ -171,6 +173,7 @@ const DATA = __DATA__;
 const SEGS = __SEGS__;
 const NEWS = __NEWS__;
 const KR = __KR__;
+const HIST = __HIST__;
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -358,6 +361,29 @@ function renderDetail(t){
   <div class="kv"><span class="k">재고자산</span><span>${money(x.inventory,cur)}</span></div>
   <div class="kv"><span class="k">재고 YoY</span><span>${fmt(x.inv_yoy,1,true)}</span></div>
   <div class="kv"><span class="k">재고/매출 비율</span><span>${x.inv_sales_pct!=null?x.inv_sales_pct.toFixed(1)+'%':'―'}</span></div></div>`;
+
+  /* 지표 추이 (히스토리 축적) */
+  h+=`<div class="card"><h3>📉 지표 추이 <span class="tag2">축적 데이터</span></h3>`;
+  const hs=(HIST&&HIST.tickers&&HIST.tickers[t])?HIST.tickers[t]:[];
+  if(hs.length<3){
+    h+=`<div class="na">축적 중 — 현재 ${hs.length}점 (변화가 있을 때와 주 1회 기록되며, 3점 이상부터 추이를 그립니다)</div>`;
+  } else {
+    const metrics=[["inv_yoy","재고 YoY","%"],["gm_pct","GM","%"],["latest_q_yoy","분기 매출 YoY","%"],["rev_yoy","FY 매출 YoY","%"]];
+    metrics.forEach(([k,label,unit])=>{
+      const pts=hs.filter(p=>p[k]!=null);
+      if(pts.length<2) return;
+      const vals=pts.map(p=>p[k]);
+      const first=pts[0], last=pts[pts.length-1];
+      const delta=last[k]-first[k];
+      h+=`<div class="krhead" style="margin-top:8px"><span class="krname" style="font-weight:500">${label}</span>
+        <span class="krval" style="font-size:13px">${last[k].toFixed(1)}${unit}
+        <span class="kryoy ${delta>=0?'pos':'neg'}">${delta>=0?'▲':'▼'}${Math.abs(delta).toFixed(1)}p</span></span></div>
+        <div class="krmeta">${first.date} → ${last.date} · ${pts.length}점</div>
+        ${spark(vals,260,26)}`;
+    });
+    h+=`<div class="note">첫 기록 대비 변화(▲▼ p) · 값은 야후 파이낸스 스냅샷 그대로(§29-D)</div>`;
+  }
+  h+=`</div>`;
 
   const s=segOf(t);
   const segEntry=(SEGS.items||{})[t];
@@ -592,6 +618,13 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    hist = None
+    if os.path.exists("docs/history.json"):
+        try:
+            with open("docs/history.json", encoding="utf-8") as f:
+                hist = json.load(f)
+        except Exception:
+            pass
     kr = None
     if os.path.exists("docs/kosis.json"):
         try:
@@ -610,7 +643,8 @@ def main():
             .replace("__DATA__", json.dumps(data, ensure_ascii=False))
             .replace("__SEGS__", json.dumps(segs, ensure_ascii=False))
             .replace("__NEWS__", json.dumps(news, ensure_ascii=False))
-            .replace("__KR__", json.dumps(kr, ensure_ascii=False)))
+            .replace("__KR__", json.dumps(kr, ensure_ascii=False))
+            .replace("__HIST__", json.dumps(hist, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
