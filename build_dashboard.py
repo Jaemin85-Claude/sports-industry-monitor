@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v18: 타이포 스케일 통일 — 6단계 변수(--fs-2xs 10 / xs 11 / sm 12 / base 13 / lg 15 / xl 17px)로
+     모든 요소 크기 일괄 정리, 인라인 font-size 제거
 v17: 국내 상장 20개사 편입 — 6그룹(글로벌 브랜드/글로벌 유통/국내 브랜드/국내 패션대기업/
      국내 OEM/국내 유통) 헤더로 구분, 원화 억원·조원 표기, 상세 드롭다운 그룹 분리,
      상세 헤더에 그룹 태그·종목 주석, 한국 상장은 '공시 추출 미대상' 표기
@@ -35,97 +37,114 @@ TEMPLATE = r"""<!DOCTYPE html>
   --bg:#f4f6fa;--card:#ffffff;--line:#dde3ee;--tx:#1c2433;
   --sub:#5f6b80;--pos:#0e9f4f;--neg:#d92d2d;--accent:#2563eb;
   --accent-prev:#a8bdd6;--barbg:#e8edf5;
+  /* 타이포 스케일 (v18) — 이 6개만 사용 */
+  --fs-2xs:10px;   /* 태그·배지·셀 아래 기준시점 */
+  --fs-xs:11px;    /* 메타·안내문·출처 */
+  --fs-sm:12px;    /* 표·바·칩·헤더 보조 */
+  --fs-base:13px;  /* 본문·카드 내용·뉴스 */
+  --fs-lg:15px;    /* 핵심 수치·셀렉트 */
+  --fs-xl:17px;    /* 제목·상세 헤더 */
 }
 [data-theme="dark"]{
   --bg:#0f1420;--card:#1a2233;--line:#2a3550;--tx:#e8ecf4;--sub:#8b96ad;
   --pos:#3ddc84;--neg:#ff6b6b;--accent:#4d9fff;--accent-prev:#3a4a68;--barbg:#0c101a;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;padding-bottom:40px}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;padding-bottom:40px}
 header{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start}
-header h1{font-size:17px}
-header .sub{color:var(--sub);font-size:11px;margin-top:4px}
+header h1{font-size:var(--fs-xl);font-weight:700}
+header .sub{color:var(--sub);font-size:var(--fs-xs);margin-top:4px}
 #themeBtn{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--tx);
-border-radius:10px;padding:8px 12px;font-size:15px;cursor:pointer}
+border-radius:10px;padding:8px 12px;font-size:var(--fs-lg);cursor:pointer}
 .tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-.tab{flex:1;text-align:center;padding:12px 0;color:var(--sub);font-size:13px;cursor:pointer}
+.tab{flex:1;text-align:center;padding:12px 0;color:var(--sub);font-size:var(--fs-base);cursor:pointer}
 .tab.on{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600}
 .pane{display:none;padding:12px}
 .pane.on{display:block}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:11px}
+/* 표 */
+table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
+th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
 th:first-child,td:first-child{text-align:left}
 td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
-tr.grp td{color:var(--sub);font-size:11px;padding:14px 4px 4px;border-bottom:1px solid var(--line)}
-tr.grp td b{color:var(--tx);font-size:12px}
+tr.grp td{color:var(--sub);font-size:var(--fs-sm);padding:14px 4px 4px;border-bottom:1px solid var(--line)}
+tr.grp td b{color:var(--tx);font-size:var(--fs-sm)}
 tr.grp-kr td{background:var(--barbg);border-radius:6px}
-tr.subrow td{font-size:11px;color:var(--sub)}
+tr.subrow td{font-size:var(--fs-xs);color:var(--sub)}
 tr.subrow td:first-child{padding-left:26px}
 tr.mrow{cursor:pointer}
 tr.mrow.open td{border-bottom:none}
 tr.refrow{display:none}
 tr.refrow.open{display:table-row}
-tr.refrow td{font-size:10px;color:var(--sub);padding:2px 4px 8px;text-align:left;border-bottom:1px solid var(--line)}
+tr.refrow td{font-size:var(--fs-2xs);color:var(--sub);padding:2px 4px 8px;text-align:left;border-bottom:1px solid var(--line)}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.na{color:var(--sub)}
 .nm{font-weight:600;white-space:nowrap}
 .rev-main{font-weight:600}
-.flag{font-size:13px;margin-right:3px}
+.ref{font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin-top:2px}
+.flag{font-size:var(--fs-base);margin-right:3px}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
+/* 카드 */
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
-.card h3{font-size:13px;color:var(--sub);margin-bottom:10px;font-weight:500}
-.det-head{font-size:16px;font-weight:700;margin-bottom:12px}
-.tag{display:inline-block;font-size:10px;color:var(--accent);border:1px solid var(--accent);
-border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
-.tag2{display:inline-block;font-size:9px;color:var(--sub);border:1px solid var(--sub);
-border-radius:6px;padding:0 5px;margin-left:4px}
-select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:12px}
-.bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:12px}
+.card h3{font-size:var(--fs-base);color:var(--sub);margin-bottom:10px;font-weight:500}
+.det-head{font-size:var(--fs-xl);font-weight:700;margin-bottom:12px}
+.det-head .tk{font-size:var(--fs-sm);color:var(--sub);font-weight:400}
+.tag{display:inline-block;font-size:var(--fs-2xs);color:var(--accent);border:1px solid var(--accent);
+border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px;font-weight:400}
+.tag2{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);border:1px solid var(--sub);
+border-radius:6px;padding:0 5px;margin-left:4px;font-weight:400}
+select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:10px;font-size:var(--fs-lg);margin-bottom:12px}
+/* 바 */
+.bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:var(--fs-sm)}
 .bar-row .lb{width:72px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;cursor:pointer}
 .bar-row .lb.open{width:auto;max-width:60%;white-space:normal;overflow:visible;word-break:break-word;padding-right:6px}
 .bar-wrap{flex:1;background:var(--barbg);border-radius:4px;height:22px;position:relative;min-width:60px}
 .bar{height:100%;border-radius:4px;background:var(--accent);opacity:.85}
-.bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:11px;color:var(--tx)}
+.bar-val{position:absolute;right:6px;top:0;line-height:22px;font-size:var(--fs-xs);color:var(--tx)}
 .pair{margin-bottom:14px}
-.pair .pname{font-size:12px;font-weight:600;margin-bottom:4px;cursor:pointer;
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pair .pname{font-size:var(--fs-sm);font-weight:600;margin-bottom:4px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pair .pname.open{white-space:normal;overflow:visible}
-.prow{display:flex;align-items:center;margin-bottom:3px;font-size:11px}
-.prow .yr{width:38px;color:var(--sub);font-size:10px;flex-shrink:0}
+.prow{display:flex;align-items:center;margin-bottom:3px;font-size:var(--fs-xs)}
+.prow .yr{width:38px;color:var(--sub);font-size:var(--fs-2xs);flex-shrink:0}
 .prow .pw{flex:1;background:var(--barbg);border-radius:4px;height:18px;position:relative;min-width:50px}
 .prow .pb{height:100%;border-radius:4px}
 .pb.now{background:var(--accent);opacity:.9}
 .pb.prev{background:var(--accent-prev)}
-.prow .pv{position:absolute;right:6px;top:0;line-height:18px;font-size:10px;color:var(--tx);white-space:nowrap}
-.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.prow .pv{position:absolute;right:6px;top:0;line-height:18px;font-size:var(--fs-2xs);color:var(--tx);white-space:nowrap}
+/* 키-값 */
+.kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-base)}
 .kv:last-child{border-bottom:none}
 .kv .k{color:var(--sub)}
-.note{color:var(--sub);font-size:11px;margin-top:10px;line-height:1.6}
-.src{color:var(--sub);font-size:10px;margin-top:8px;word-break:break-all}
-.cal-item{display:flex;align-items:center;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:13px}
+.note{color:var(--sub);font-size:var(--fs-xs);margin-top:10px;line-height:1.6}
+.src{color:var(--sub);font-size:var(--fs-2xs);margin-top:8px;word-break:break-all}
+/* 캘린더 */
+.cal-item{display:flex;align-items:center;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;font-size:var(--fs-base)}
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+/* 뉴스 */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.chip{font-size:12px;padding:6px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--sub);cursor:pointer;white-space:nowrap}
+.chip{font-size:var(--fs-sm);padding:6px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--sub);cursor:pointer;white-space:nowrap}
 .chip.on{color:#fff;background:var(--accent);border-color:var(--accent)}
 .chip.sep{border:none;background:transparent;color:var(--sub);padding:6px 2px;cursor:default}
-.newbadge{display:inline-block;font-size:9px;font-weight:700;color:#fff;background:var(--neg);border-radius:5px;padding:1px 5px;margin-right:5px;vertical-align:1px}
-.ndate{font-size:11px;color:var(--sub);margin:14px 0 6px;font-weight:600}
+.newbadge{display:inline-block;font-size:var(--fs-2xs);font-weight:700;color:#fff;background:var(--neg);border-radius:5px;padding:1px 5px;margin-right:5px;vertical-align:1px}
+.ndate{font-size:var(--fs-sm);color:var(--sub);margin:14px 0 6px;font-weight:600}
 .nitem{padding:10px 0;border-bottom:1px solid var(--line)}
 .nitem:last-child{border-bottom:none}
-.nitem .nsum{font-size:13px;line-height:1.5}
+.nitem .nsum{font-size:var(--fs-base);line-height:1.5}
 .nitem .nsum a{color:var(--tx);text-decoration:none}
-.nitem .nmeta{font-size:10px;color:var(--sub);margin-top:3px}
+.nitem .nmeta{font-size:var(--fs-xs);color:var(--sub);margin-top:3px}
+.ntag{display:inline-block;font-size:var(--fs-2xs);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 5px;margin-right:5px}
+/* 국내(KOSIS)·추이 카드 */
 .krcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
 .krhead{display:flex;align-items:baseline;gap:8px}
-.krname{font-size:13px;font-weight:600}
-.krval{margin-left:auto;font-size:15px;font-weight:700}
-.kryoy{font-size:12px;font-weight:600}
-.krmeta{font-size:10px;color:var(--sub);margin-top:2px}
+.krname{font-size:var(--fs-base);font-weight:600}
+.krval{margin-left:auto;font-size:var(--fs-lg);font-weight:700}
+.kryoy{font-size:var(--fs-sm);font-weight:600}
+.krmeta{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
 .krtbl{display:none;margin-top:10px}
 .krtbl.open{display:block}
-.ntag{display:inline-block;font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 5px;margin-right:5px}
+.trend .krname{font-weight:500}
+.trend .krval{font-size:var(--fs-base)}
 </style>
 </head>
 <body>
@@ -368,7 +387,7 @@ function pairBars(list, curLabel, prevLabel){
 function renderDetail(t){
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
-  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="na" style="font-size:12px">${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
+  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="tk">${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
@@ -407,8 +426,8 @@ function renderDetail(t){
       const vals=pts.map(p=>p[k]);
       const first=pts[0], last=pts[pts.length-1];
       const delta=last[k]-first[k];
-      h+=`<div class="krhead" style="margin-top:8px"><span class="krname" style="font-weight:500">${label}</span>
-        <span class="krval" style="font-size:13px">${last[k].toFixed(1)}${unit}
+      h+=`<div class="krhead trend" style="margin-top:8px"><span class="krname">${label}</span>
+        <span class="krval">${last[k].toFixed(1)}${unit}
         <span class="kryoy ${delta>=0?'pos':'neg'}">${delta>=0?'▲':'▼'}${Math.abs(delta).toFixed(1)}p</span></span></div>
         <div class="krmeta">${first.date} → ${last.date} · ${pts.length}점</div>
         ${spark(vals,260,26)}`;
