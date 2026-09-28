@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6 사전 검증: DART 프로브 (1회용)
+sports-industry-monitor — Phase 6 사전 검증: DART 프로브 2차
+2차 수정: ① 이름 정규화 버그 수정(글자 단위 삭제 → '주식회사/유한회사/(주)/(유)' 단어 단위)
+② 후보 정렬: 정확일치 > 접두일치 > 포함, 동률이면 수정일 최신 ③ 1차에서 확인된 코드는 직접 지정
+④ 공시 유형 필터 제거(전체) 후 보고서명으로 감사보고서/사업보고서 선별 ⑤ 상위 3후보 모두 검사
+⑥ 원본파일 표본: 푸마코리아·데상트코리아(1차 확인 법인)
 ① corpCode.xml에서 13개 법인명 매칭 후보 출력 (동명·유사명 확인)
 ② 후보 법인의 최근 공시(외부감사관련 F 유형) 목록 — 최신 감사보고서 접수번호 확인
 ③ 구조화 재무 API(fnlttSinglAcnt) 가능 여부 — 외감 법인은 013 예상
@@ -22,21 +26,22 @@ UA = {"User-Agent": "sports-industry-monitor dart probe"}
 
 # 법인명 검색어 (id: [표시명, 검색어 후보])
 TARGETS = {
-    "nike_kr":     ["나이키코리아", ["나이키"]],
-    "adidas_kr":   ["아디다스코리아", ["아디다스"]],
-    "asics_kr":    ["아식스코리아", ["아식스"]],
-    "puma_kr":     ["푸마코리아", ["푸마"]],
-    "descente_kr": ["데상트코리아", ["데상트"]],
-    "nb_eland":    ["이랜드월드", ["이랜드월드"]],
-    "abcmart_kr":  ["에이비씨마트코리아", ["에이비씨마트", "ABC마트", "에이비씨"]],
-    "shoemarker":  ["슈마커", ["슈마커"]],
-    "musinsa":     ["무신사", ["무신사"]],
-    "k2_kr":       ["K2코리아", ["케이투코리아", "K2코리아", "케이투"]],
-    "blackyak":    ["비와이엔블랙야크", ["블랙야크"]],
-    "nepa":        ["네파", ["네파"]],
-    "shinsung":    ["신성통상", ["신성통상"]],
+    # id: [표시명, 검색어 후보, 직접 지정 corp_code 목록(1차에서 확인, 우선 검사)]
+    "nike_kr":     ["나이키코리아", ["나이키코리아", "나이키"], ["01503133", "00125257"]],
+    "adidas_kr":   ["아디다스코리아", ["아디다스코리아", "아디다스"], ["00148133"]],
+    "asics_kr":    ["아식스코리아", ["아식스코리아", "아식스"], []],
+    "puma_kr":     ["푸마코리아", ["푸마코리아"], ["01471250"]],
+    "descente_kr": ["데상트코리아", ["데상트코리아"], ["00411154"]],
+    "nb_eland":    ["이랜드월드", ["이랜드월드"], ["00207108", "00179407"]],
+    "abcmart_kr":  ["에이비씨마트코리아", ["에이비씨마트코리아", "에이비씨마트", "ABC마트"], []],
+    "shoemarker":  ["슈마커", ["슈마커코리아", "슈마커"], ["00396402"]],
+    "musinsa":     ["무신사", ["무신사"], ["01137727"]],
+    "k2_kr":       ["K2코리아", ["케이투코리아", "K2코리아"], ["01312832"]],
+    "blackyak":    ["비와이엔블랙야크", ["비와이엔블랙야크", "블랙야크"], ["00520850", "01718407"]],
+    "nepa":        ["네파", ["네파"], ["00932930"]],
+    "shinsung":    ["신성통상", ["신성통상"], ["00136341"]],
 }
-SAMPLE_DOC_IDS = ["nike_kr", "abcmart_kr"]   # ④ 원본파일 표본
+SAMPLE_DOC_IDS = ["puma_kr", "descente_kr"]   # ④ 원본파일 표본 (1차 확인 법인)본
 
 
 def log(msg):
@@ -73,18 +78,32 @@ def load_corp_codes():
 
 
 def norm(s):
-    return re.sub(r"[\s()（）주식회사유한회사㈜]", "", s or "")
+    s = s or ""
+    s = re.sub(r"주식회사|유한회사|유한책임회사|\(주\)|\(유\)|㈜|\s+|[()（）]", "", s)
+    return s
 
 
-def find_candidates(rows, keywords, limit=8):
+def find_candidates(rows, keywords, limit=10):
+    """정확일치(0) > 접두일치(1) > 포함(2), 동률이면 수정일 최신순"""
     out = []
     for code, name, stock, mod in rows:
         n = norm(name)
-        if any(norm(k) in n for k in keywords):
-            out.append((code, name, stock, mod))
-    # 짧은 이름(정확 매칭에 가까운) 우선
-    out.sort(key=lambda r: (len(r[1]), r[1]))
-    return out[:limit]
+        best = None
+        for k in keywords:
+            nk = norm(k)
+            if n == nk:
+                rank = 0
+            elif n.startswith(nk):
+                rank = 1
+            elif nk in n:
+                rank = 2
+            else:
+                continue
+            best = rank if best is None else min(best, rank)
+        if best is not None:
+            out.append((best, code, name, stock, mod))
+    out.sort(key=lambda r: (r[0], -int(r[4] or 0), r[2]))
+    return [(c, n, s, m) for _, c, n, s, m in out[:limit]]
 
 
 def list_filings(corp_code, years_back=3):
@@ -92,14 +111,16 @@ def list_filings(corp_code, years_back=3):
     import datetime
     bgn = (datetime.date.today().replace(year=datetime.date.today().year - years_back)).strftime("%Y%m%d")
     data = get(f"{BASE}/list.json", {
-        "corp_code": corp_code, "bgn_de": bgn, "pblntf_ty": "F",
-        "page_count": 20, "sort": "date", "sort_mth": "desc",
+        "corp_code": corp_code, "bgn_de": bgn,
+        "page_count": 100, "sort": "date", "sort_mth": "desc",
     })
     if data.get("status") != "000":
         return None, f"{data.get('status')} {data.get('message')}"
+    allitems = data.get("list", [])
     items = [(it.get("rcept_no"), it.get("rcept_dt"), it.get("report_nm"),
-              it.get("flr_nm")) for it in data.get("list", [])]
-    return items, None
+              it.get("flr_nm")) for it in allitems
+             if re.search(r"감사보고서|사업보고서", it.get("report_nm") or "")]
+    return items, f"전체 {len(allitems)}건 중 감사/사업보고서 {len(items)}건"
 
 
 def try_structured(corp_code, year):
@@ -151,26 +172,33 @@ def main():
         raise SystemExit(1)
 
     picked = {}
-    for tid, (label, kws) in TARGETS.items():
+    for tid, (label, kws, known) in TARGETS.items():
         log(f"===== [{tid}] {label} — 검색어 {kws} =====")
         cands = find_candidates(rows, kws)
-        if not cands:
-            log("  후보 없음")
-            continue
-        for code, name, stock, mod in cands:
-            log(f"  · {name}  corp_code={code}  stock={stock or '-'}  수정일={mod}")
-        picked[tid] = cands[0]
-        code = cands[0][0]
-        items, err = list_filings(code)
-        if err:
-            log(f"  공시목록 오류: {err}")
-        elif not items:
-            log("  최근 3년 외부감사관련 공시 없음")
+        name_of = {c: n for c, n, _, _ in rows}
+        # 검사 대상: 직접 지정 코드 → 검색 상위 3 (중복 제거)
+        check = []
+        for c in known + [c for c, _, _, _ in cands[:3]]:
+            if c not in check:
+                check.append(c)
+        if cands:
+            log("  검색 후보(최대 10): " + " | ".join(
+                f"{n}[{c}{'·상장' + s if s else ''}·{m[:4]}]" for c, n, s, m in cands))
         else:
-            log(f"  최근 외부감사 공시 {len(items)}건(최신순, 최대 6):")
-            for rn, dt, nm, flr in items[:6]:
-                log(f"    - {dt} {nm} rcept_no={rn} ({flr})")
-        log(f"  구조화 API(2025): {try_structured(code, 2025)}")
+            log("  검색 후보 없음")
+        for code in check[:4]:
+            nm = name_of.get(code, "?")
+            items, info = list_filings(code)
+            if items is None:
+                log(f"  ▸ {nm} [{code}] 공시목록: {info}")
+                continue
+            log(f"  ▸ {nm} [{code}] {info}")
+            for rn, dt, rnm, flr in items[:6]:
+                log(f"      - {dt} {rnm} rcept_no={rn} ({flr})")
+            if items and tid not in picked:
+                picked[tid] = (code, nm)
+        st = try_structured(check[0], 2025) if check else "후보 없음"
+        log(f"  구조화 API(2025, {check[0] if check else '-'}): {st}")
         log("")
 
     log("===== ④ 원본파일 파싱 표본 =====")
@@ -179,10 +207,11 @@ def main():
             continue
         code, name = picked[tid][0], picked[tid][1]
         items, err = list_filings(code)
-        if err or not items:
+        if not items:
             log(f"[{name}] 표본 건너뜀 ({err or '공시 없음'})")
             continue
-        audit = [it for it in items if "감사보고서" in (it[2] or "")]
+        # 별도 감사보고서 우선(연결 제외)
+        audit = [it for it in items if "감사보고서" in (it[2] or "") and "연결" not in (it[2] or "")]
         target = audit[0] if audit else items[0]
         log(f"[{name}] {target[1]} {target[2]} rcept_no={target[0]}")
         try:
