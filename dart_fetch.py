@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v1)
+sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v1.1)
+v1.1: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X), 오류 응답 본문 로그
 프로브(2026-09-28)로 확정한 corp_code·경로만 사용 (§검증 우선):
   - route "api": 사업보고서 제출 법인 → 단일회사 주요계정 API(fnlttSinglAcnt)
   - route "doc": 감사보고서만 내는 외감 법인 → 공시서류 원본파일(document.xml) → Claude 추출
@@ -46,6 +47,25 @@ ENTITIES = [
     ("shinsung",    "신성통상(탑텐)",      "국내 브랜드(비상장)",    None,     "00136341", "api",  6,  "2025년 자진 상장폐지 — 6월 결산, 사업보고서는 계속 제출"),
 ]
 
+
+
+# ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) ──
+def anthropic_post(payload, timeout=180):
+    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
+    그 외 오류는 응답 본문을 포함해 예외로 올려 호출부가 처리."""
+    resp = requests.post(
+        "https://api.anthropic.com/v1/messages",
+        headers={"x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01",
+                 "content-type": "application/json"},
+        json=payload, timeout=timeout)
+    if resp.status_code in (401, 403) or (resp.status_code == 400 and "credit" in resp.text.lower()):
+        print(f"[FATAL] Anthropic API {resp.status_code}: {resp.text[:300]}", flush=True)
+        print("[FATAL] 키 만료/무효 또는 크레딧 소진 — console.anthropic.com 확인 후 "
+              "GitHub Secret ANTHROPIC_API_KEY 갱신", flush=True)
+        raise SystemExit(2)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
+    return resp.json()
 
 def log(msg):
     print(msg, flush=True)
@@ -173,15 +193,9 @@ Respond with ONLY a JSON object, no markdown fences:
 
 DOCUMENT:
 {text}"""
-    r = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={"x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01",
-                 "content-type": "application/json"},
-        json={"model": "claude-sonnet-4-6", "max_tokens": 800,
-              "messages": [{"role": "user", "content": prompt}]},
-        timeout=180)
-    r.raise_for_status()
-    parts = r.json().get("content", [])
+    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 800,
+              "messages": [{"role": "user", "content": prompt}]}, timeout=180)
+    parts = data.get("content", [])
     txt = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     txt = re.sub(r"```json|```", "", txt).strip()
     return json.loads(txt)
