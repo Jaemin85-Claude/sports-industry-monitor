@@ -1,0 +1,317 @@
+{
+ "updated_at": "2026-09-28",
+ "cadence": "월 1회 자동 체크 — 새 감사보고서/사업보고서만 추출 (DART OpenAPI)",
+ "source_note": "DART: 사업보고서 제출 법인은 구조화 API(별도 우선), 외감 법인은 감사보고서 원본을 Claude로 추출. 단위: 원. null = 미확인(§29-D)",
+ "entities": [
+  {
+   "id": "nike_kr",
+   "name": "나이키코리아",
+   "type": "글로벌 브랜드 국내법인",
+   "link": "NKE",
+   "corp_code": "01503133",
+   "route": "doc",
+   "fy_end_month": 5,
+   "note": "유한회사 — 5월 결산",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "adidas_kr",
+   "name": "아디다스코리아",
+   "type": "글로벌 브랜드 국내법인",
+   "link": "ADS.DE",
+   "corp_code": "00148133",
+   "route": "none",
+   "fy_end_month": 12,
+   "note": "DART 공시 미발견(2026-09 조사) — 재조사 예정",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "asics_kr",
+   "name": "아식스코리아",
+   "type": "글로벌 브랜드 국내법인",
+   "link": "7936.T",
+   "corp_code": "00664385",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "12월 결산",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "puma_kr",
+   "name": "푸마코리아",
+   "type": "글로벌 브랜드 국내법인",
+   "link": "PUM.DE",
+   "corp_code": "01471250",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "유한회사 — K-IFRS",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "descente_kr",
+   "name": "데상트코리아",
+   "type": "글로벌 브랜드 국내법인",
+   "link": null,
+   "corp_code": "00411154",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "일본 본사 상장폐지(2025.1) — 국내 법인은 DART로 추적",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "nb_eland",
+   "name": "뉴발란스(이랜드월드)",
+   "type": "글로벌 브랜드 국내법인",
+   "link": null,
+   "corp_code": "00207108",
+   "route": "api",
+   "fy_end_month": 12,
+   "note": "라이선스 — 이랜드월드 법인 전체 수치(뉴발란스 부문 분리 불가)",
+   "years": [
+    {
+     "fy": "FY23",
+     "end": "2023-12-31",
+     "rev": 1549774000000,
+     "op": 195131000000,
+     "ni": 155307000000,
+     "source": "사업보고서 2023 (별도) rcept=20240401004498"
+    },
+    {
+     "fy": "FY24",
+     "end": "2024-12-31",
+     "rev": 1683943000000,
+     "op": 173704000000,
+     "ni": 20899000000,
+     "source": "사업보고서 2024 (별도) rcept=20250331004217"
+    },
+    {
+     "fy": "FY25",
+     "end": "2025-12-31",
+     "rev": 1823205000000,
+     "op": 224302000000,
+     "ni": -73201000000,
+     "source": "사업보고서 2025 (별도) rcept=20260331004473"
+    }
+   ]
+  },
+  {
+   "id": "abcmart_kr",
+   "name": "에이비씨마트코리아",
+   "type": "국내 유통(비상장)",
+   "link": null,
+   "corp_code": "00496340",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "일본 ABC-Mart 자회사, 신발 멀티숍 1위",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "shoemarker",
+   "name": "슈마커코리아",
+   "type": "국내 유통(비상장)",
+   "link": null,
+   "corp_code": "00396402",
+   "route": "none",
+   "fy_end_month": 12,
+   "note": "DART 공시 미발견(2026-09 조사) — 외감 기준 미달 가능성",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "musinsa",
+   "name": "무신사",
+   "type": "국내 유통(비상장)",
+   "link": null,
+   "corp_code": "01137727",
+   "route": "api",
+   "fy_end_month": 12,
+   "note": "온라인 패션 플랫폼 — 2024년부터 사업보고서 제출, 거래액≠매출",
+   "years": [
+    {
+     "fy": "FY24",
+     "end": "2024-12-31",
+     "rev": 1100509264046,
+     "op": 112386710315,
+     "ni": -26248755188,
+     "source": "사업보고서 2024 (별도) rcept=20250331002442"
+    },
+    {
+     "fy": "FY25",
+     "end": "2025-12-31",
+     "rev": 1352929940950,
+     "op": 145812429110,
+     "ni": -10571158636,
+     "source": "사업보고서 2025 (별도) rcept=20260331003116"
+    }
+   ]
+  },
+  {
+   "id": "k2_kr",
+   "name": "K2코리아",
+   "type": "국내 브랜드(비상장)",
+   "link": null,
+   "corp_code": "00407063",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "K2·아이더·다이나핏",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "blackyak",
+   "name": "비와이엔블랙야크",
+   "type": "국내 브랜드(비상장)",
+   "link": null,
+   "corp_code": "00520850",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "블랙야크·나우 (별도 상장사 블랙야크아이앤씨 478560 존재)",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "nepa",
+   "name": "네파",
+   "type": "국내 브랜드(비상장)",
+   "link": null,
+   "corp_code": "00932930",
+   "route": "doc",
+   "fy_end_month": 12,
+   "note": "아웃도어",
+   "years": [
+    {
+     "fy": null,
+     "end": null,
+     "rev": null,
+     "op": null,
+     "ni": null,
+     "source": null
+    }
+   ]
+  },
+  {
+   "id": "shinsung",
+   "name": "신성통상(탑텐)",
+   "type": "국내 브랜드(비상장)",
+   "link": null,
+   "corp_code": "00136341",
+   "route": "api",
+   "fy_end_month": 6,
+   "note": "2025년 자진 상장폐지 — 6월 결산, 사업보고서는 계속 제출",
+   "years": [
+    {
+     "fy": "FY23",
+     "end": "2023-06-30",
+     "rev": 1538380830085,
+     "op": 152640965998,
+     "ni": 81110547507,
+     "source": "사업보고서 2023 (별도) rcept=20230919000320"
+    },
+    {
+     "fy": "FY24",
+     "end": "2024-06-30",
+     "rev": 1507198580735,
+     "op": 132478930453,
+     "ni": 77989706809,
+     "source": "사업보고서 2024 (별도) rcept=20240919000331"
+    },
+    {
+     "fy": "FY25",
+     "end": "2025-06-30",
+     "rev": 1476463055117,
+     "op": 100848448397,
+     "ni": 62036523766,
+     "source": "사업보고서 2025 (별도) rcept=20250918000334"
+    }
+   ]
+  }
+ ],
+ "_cache": {
+  "nike_kr": {},
+  "asics_kr": {},
+  "puma_kr": {},
+  "descente_kr": {},
+  "abcmart_kr": {},
+  "k2_kr": {},
+  "blackyak": {},
+  "nepa": {}
+ }
+}
