@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v21.1: 종합 KPI 칩 동작 — 성장 1위→해당 기업 상세, 재고 경고→재고 경고 카드로 스크롤·강조
 v21: A안 레이아웃 — 종합(신호 KPI 4·올해vs작년 꺾은선·성장 상하위·재고 경고·실적 일정) /
      기업(검색·그룹 칩·압축 표·행 펼침·전체 상세) / 캘린더(2개월 달력 + 90일 목록) /
      영문 약어 우리말화(매출총이익률·전년 대비) · CI 블루 적용
@@ -128,6 +129,7 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+.card.flash{outline:2px solid var(--accent);transition:outline .3s}
 /* A안 — 종합 */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer}
@@ -383,12 +385,12 @@ function buildHome(){
     if(y3.every(v=>v!=null)) krTrend = (y3[0]>y3[1]&&y3[1]>y3[2])?'3개월 둔화':(y3[0]<y3[1]&&y3[1]<y3[2])?'3개월 가속':''; }
 
   const kp=[
-    up[0]?{l:'성장 1위',v:fmt(up[0].g,1,true),s:`${up[0].name} ${up[0].basis}`,go:'co'}:{l:'성장 1위',v:'―',s:'',go:'co'},
-    {l:'재고 경고',v:`<span class="${warn.length?'neg':''}">${warn.length}곳</span>`,s:'재고↑ 매출↓',go:'home'},
-    ev[0]?{l:'실적 발표',v:`D-${ev[0].dn}`,s:`${ev[0].name} ${ev[0].d.getMonth()+1}/${ev[0].d.getDate()}`,go:'cal'}:{l:'실적 발표',v:'―',s:'90일 내 없음',go:'cal'},
-    kr?{l:'국내 의류 소매',v:fmt(krYoy,1,true),s:`${fmtPrd(krLast)} · ${krTrend||'전년 동월 대비'}`,go:'kr'}:{l:'국내 의류 소매',v:'―',s:'미수집',go:'kr'},
+    up[0]?{l:'성장 1위',v:fmt(up[0].g,1,true),s:`${up[0].name} ${up[0].basis}`,act:`goDetail('${up[0].key}')`}:{l:'성장 1위',v:'―',s:'',act:"sw('co')"},
+    {l:'재고 경고',v:`<span class="${warn.length?'neg':''}">${warn.length}곳</span>`,s:'재고↑ 매출↓ · 누르면 목록',act:"focusCard('warnCard')"},
+    ev[0]?{l:'실적 발표',v:`D-${ev[0].dn}`,s:`${ev[0].name} ${ev[0].d.getMonth()+1}/${ev[0].d.getDate()}`,act:"sw('cal')"}:{l:'실적 발표',v:'―',s:'90일 내 없음',act:"sw('cal')"},
+    kr?{l:'국내 의류 소매',v:fmt(krYoy,1,true),s:`${fmtPrd(krLast)} · ${krTrend||'전년 동월 대비'}`,act:"sw('kr')"}:{l:'국내 의류 소매',v:'―',s:'미수집',act:"sw('kr')"},
   ];
-  document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi" onclick="sw('${k.go}')"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${esc(k.s)}</div></div>`).join('');
+  document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi" onclick="${k.act}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${esc(k.s)}</div></div>`).join('');
 
   let h='';
   // 올해 vs 작년 꺾은선 (국내 의류 소매판매지수)
@@ -411,7 +413,7 @@ function buildHome(){
   const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.flag}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
   h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
-  h+=`<div class="card"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳</h3>${warn.slice(0,5).map(r=>rk(r,`<span>재고 <b class="neg">${fmt(r.inv_yoy,1,true)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}</span>`)).join('')||'<div class="na">해당 없음</div>'}</div>`;
+  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${warn.slice(0,8).map(r=>rk(r,`<span>재고 <b class="neg">${fmt(r.inv_yoy,1,true)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}</span>`)).join('')||'<div class="na">해당 없음</div>'}</div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
   document.getElementById('homeBody').innerHTML=h;
 }
@@ -795,6 +797,12 @@ function buildKR(){
 }
 
 /* ── 탭 / 토글 ── */
+function focusCard(id){
+  sw('home');
+  const el=document.getElementById(id); if(!el) return;
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+  el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1600);
+}
 function sw(p){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
