@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.1)
+sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.2)
+v2.2: 전체재무제표 결산일을 법인별 결산월로 산정(신성통상 6월 → 06-30), 종목별 재무제표 기준 예외
+      (LS네트웍스 별도 — 2024년 LS증권 연결 편입으로 연결 수치가 브랜드와 무관)
 v2.1: 캐시 판정 강화 — 빈 캐시·재고 항목 없는 캐시는 재추출
 v2: ① 국내 상장 20개사 — 종목코드→법인코드 매칭 후 연결 전체재무제표 API(fnlttSinglAcntAll)로
        매출·매출원가·영업이익·순이익·재고자산 3개년 → docs/kr_listed_fin.json
@@ -149,7 +151,17 @@ def _pick(rows, ids, names, sj_pref):
     return cand[0]
 
 
-def fetch_full_statements(corp_code, fs_div, years_try):
+# 종목별 재무제표 기준 예외 (기본 연결 CFS)
+FS_OVERRIDE = {"000680.KS": "OFS"}   # LS네트웍스: LS증권 연결 편입 → 별도로 브랜드 사업 추적
+LISTED_FY_MONTH = {}                  # 12월 결산 외 종목이 생기면 {"티커": 월} 추가
+
+
+def _end_date(y, m):
+    import calendar
+    return f"{y}-{m:02d}-{calendar.monthrange(y, m)[1]:02d}"
+
+
+def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12):
     """전체재무제표(사업보고서) 1건으로 당기·전기·전전기 3개년 확보.
     반환 ({end: {rev, cogs, op, ni, inv}}, source) — 값 없는 항목은 None"""
     for y in years_try:
@@ -174,9 +186,9 @@ def fetch_full_statements(corp_code, fs_div, years_try):
                     yy, mm, dd = m[-1]
                     return f"{yy}-{mm}-{dd}"
             return None
-        periods = [("thstrm_amount", end_of("thstrm_dt") or f"{y}-12-31"),
-                   ("frmtrm_amount", end_of("frmtrm_dt") or f"{y-1}-12-31"),
-                   ("bfefrmtrm_amount", end_of("bfefrmtrm_dt") or f"{y-2}-12-31")]
+        periods = [("thstrm_amount", end_of("thstrm_dt") or _end_date(y, fy_month)),
+                   ("frmtrm_amount", end_of("frmtrm_dt") or _end_date(y - 1, fy_month)),
+                   ("bfefrmtrm_amount", end_of("bfefrmtrm_dt") or _end_date(y - 2, fy_month))]
         for amt_key, end in periods:
             rec = {}
             for k, (ids, names) in ACC_FULL.items():
@@ -362,7 +374,7 @@ def main():
         log(f"[{eid}] {name} ({route}) corp={code}")
         recs = {}
         if route == "api":
-            recs, src_txt = fetch_full_statements(code, "OFS", years)
+            recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m)
             for r in recs.values():
                 r["source"] = src_txt
         elif route == "doc":
@@ -413,10 +425,13 @@ def main():
             continue
         code, cname = hit
         log(f"[{tk}] {cname} corp={code}")
-        recs, src_txt = fetch_full_statements(code, "CFS", years)
-        if not recs:
+        fs = FS_OVERRIDE.get(tk, "CFS"); fym = LISTED_FY_MONTH.get(tk, 12)
+        if fs != "CFS":
+            log(f"    기준 예외: {'별도' if fs == 'OFS' else fs}")
+        recs, src_txt = fetch_full_statements(code, fs, years, fym)
+        if not recs and fs == "CFS":
             log("    연결 없음 → 별도 시도")
-            recs, src_txt = fetch_full_statements(code, "OFS", years)
+            recs, src_txt = fetch_full_statements(code, "OFS", years, fym)
         ys = []
         for end in sorted(recs):
             r = recs[end]
