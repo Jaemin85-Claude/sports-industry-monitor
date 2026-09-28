@@ -31,4 +31,5 @@ jobs:
           git config user.email "actions@github.com"
           git add docs/kr_domestic.json docs/kr_listed_fin.json
           git commit -m "update dart domestic $(date -u +%F)" || echo "no changes"
+          git pull --rebase origin main
           git push
