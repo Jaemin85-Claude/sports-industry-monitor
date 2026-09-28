@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v1.1)
+sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2)
+v2: ① 국내 상장 20개사 — 종목코드→법인코드 매칭 후 연결 전체재무제표 API(fnlttSinglAcntAll)로
+       매출·매출원가·영업이익·순이익·재고자산 3개년 → docs/kr_listed_fin.json
+    ② 국내 법인 — 구조화 API 경로도 전체재무제표(별도)로 전환(재고 포함), 원본 추출에 재고자산 추가
+       (SCHEMA_V=2로 캐시 갱신)
 v1.1: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X), 오류 응답 본문 로그
 프로브(2026-09-28)로 확정한 corp_code·경로만 사용 (§검증 우선):
   - route "api": 사업보고서 제출 법인 → 단일회사 주요계정 API(fnlttSinglAcnt)
@@ -28,6 +32,23 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 OUT_PATH = "docs/kr_domestic.json"
 YEARS_BACK = 3
 MAX_DOC_CHARS = 70000
+SCHEMA_V = 2
+LISTED_PATH = "docs/kr_listed_fin.json"
+
+# ── 국내 상장 20개사 (야후 티커 → 종목코드 앞 6자리로 법인코드 매칭) ──
+KR_LISTED = ["081660.KS", "383220.KS", "298540.KQ", "120110.KS", "337930.KQ",
+             "000680.KS", "036620.KQ", "278470.KS", "031430.KS", "020000.KS",
+             "093050.KS", "028260.KS", "111770.KS", "241590.KS", "105630.KS",
+             "009970.KS", "023530.KS", "004170.KS", "069960.KS"]
+
+# 전체재무제표 계정 매칭 (account_id 우선, 이름 보조)
+ACC_FULL = {
+    "rev":  (["ifrs-full_Revenue", "ifrs_Revenue"], ["매출액", "수익(매출액)", "영업수익", "매출"]),
+    "cogs": (["ifrs-full_CostOfSales", "ifrs_CostOfSales"], ["매출원가"]),
+    "op":   (["dart_OperatingIncomeLoss"], ["영업이익", "영업이익(손실)", "영업손익"]),
+    "ni":   (["ifrs-full_ProfitLoss", "ifrs_ProfitLoss"], ["당기순이익", "당기순이익(손실)", "당기순손익"]),
+    "inv":  (["ifrs-full_Inventories", "ifrs_Inventories"], ["재고자산"]),
+}
 
 # ── 법인 정의 (프로브 확정) ─────────────────────────────
 # id, 표시명, 유형, 연결 글로벌 티커, corp_code, 경로, 결산월, 주석
@@ -82,8 +103,8 @@ def to_int(s):
     if s in (None, "", "-"):
         return None
     try:
-        return int(str(s).replace(",", "").replace(" ", ""))
-    except ValueError:
+        return int(round(float(str(s).replace(",", "").replace(" ", ""))))
+    except (ValueError, OverflowError):
         return None
 
 
@@ -93,6 +114,82 @@ ACCOUNT_MAP = {
     "op":  ["영업이익", "영업이익(손실)", "영업손익"],
     "ni":  ["당기순이익", "당기순이익(손실)", "당기순손익", "당기순손실"],
 }
+
+
+def load_corp_map_by_stock():
+    """corpCode.xml(zip) → {종목코드: (corp_code, corp_name)}"""
+    import zipfile, io
+    import xml.etree.ElementTree as ET
+    raw = dart(f"{BASE}/corpCode.xml", {}, as_bytes=True, timeout=180)
+    z = zipfile.ZipFile(io.BytesIO(raw))
+    name = [n for n in z.namelist() if n.lower().endswith(".xml")][0]
+    root = ET.fromstring(z.read(name))
+    m = {}
+    for el in root.iter("list"):
+        sc = (el.findtext("stock_code") or "").strip()
+        if sc:
+            m[sc] = ((el.findtext("corp_code") or "").strip(), (el.findtext("corp_name") or "").strip())
+    return m
+
+
+def _pick(rows, ids, names, sj_pref):
+    """전체재무제표 행에서 계정 1개 선택: account_id 일치 > 이름 정확 > 이름 포함. sj_div 우선순위 적용."""
+    def order(r):
+        sj = r.get("sj_div") or ""
+        return sj_pref.index(sj) if sj in sj_pref else 99
+    cand = [r for r in rows if (r.get("account_id") or "") in ids]
+    if not cand:
+        cand = [r for r in rows if (r.get("account_nm") or "").replace(" ", "") in [n.replace(" ", "") for n in names]]
+    if not cand:
+        cand = [r for r in rows if any(n.replace(" ", "") in (r.get("account_nm") or "").replace(" ", "") for n in names)]
+    if not cand:
+        return None
+    cand.sort(key=order)
+    return cand[0]
+
+
+def fetch_full_statements(corp_code, fs_div, years_try):
+    """전체재무제표(사업보고서) 1건으로 당기·전기·전전기 3개년 확보.
+    반환 ({end: {rev, cogs, op, ni, inv}}, source) — 값 없는 항목은 None"""
+    for y in years_try:
+        try:
+            data = dart(f"{BASE}/fnlttSinglAcntAll.json", {
+                "corp_code": corp_code, "bsns_year": str(y),
+                "reprt_code": "11011", "fs_div": fs_div})
+        except Exception as e:
+            log(f"    {y} {fs_div}: API 오류 {str(e)[:80]}")
+            continue
+        if data.get("status") != "000":
+            log(f"    {y} {fs_div}: {data.get('status')} {data.get('message')}")
+            continue
+        rows = data.get("list", [])
+        out = {}
+        # 기간 라벨 → 결산일 추출 (thstrm_dt 예: '2025.12.31 현재' / '2025.01.01 ~ 2025.12.31')
+        def end_of(key):
+            for r in rows:
+                dt = r.get(key) or ""
+                m = re.findall(r"(\d{4})\.(\d{2})\.(\d{2})", dt)
+                if m:
+                    yy, mm, dd = m[-1]
+                    return f"{yy}-{mm}-{dd}"
+            return None
+        periods = [("thstrm_amount", end_of("thstrm_dt") or f"{y}-12-31"),
+                   ("frmtrm_amount", end_of("frmtrm_dt") or f"{y-1}-12-31"),
+                   ("bfefrmtrm_amount", end_of("bfefrmtrm_dt") or f"{y-2}-12-31")]
+        for amt_key, end in periods:
+            rec = {}
+            for k, (ids, names) in ACC_FULL.items():
+                sj_pref = ["BS"] if k == "inv" else ["IS", "CIS"]
+                r = _pick(rows, ids, names, sj_pref)
+                rec[k] = to_int(r.get(amt_key)) if r else None
+            if rec.get("rev") is not None:
+                out[end] = rec
+        if out:
+            src_txt = f"사업보고서 {y} ({'연결' if fs_div == 'CFS' else '별도'}) rcept={rows[0].get('rcept_no')}"
+            for end, rec in sorted(out.items()):
+                log(f"    {end}: 매출 {rec['rev']:,} / 원가 {rec['cogs']} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
+            return out, src_txt
+    return {}, None
 
 
 def fetch_api_years(corp_code, fy_end_month, years):
@@ -180,6 +277,8 @@ CURRENT period (당기) and the PRIOR period (전기):
 - 매출액 (or 수익(매출액), 영업수익) — total revenue
 - 영업이익 (영업이익(손실)) — operating income; losses as negative
 - 당기순이익 (당기순이익(손실)) — net income; losses as negative
+Also from the statement of financial position (재무상태표): 재고자산 (inventories) at
+each period end.
 
 Amounts must be in KRW units of 원 (convert if the statement says 단위: 천원 or 백만원).
 Use ONLY figures explicitly stated. If a figure is not stated, use null.
@@ -187,8 +286,8 @@ Use ONLY figures explicitly stated. If a figure is not stated, use null.
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "unit_note": "단위 표기 그대로, 예: 단위: 원",
-  "current": {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null}},
-  "prior":   {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null}}
+  "current": {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null, "inv": number|null}},
+  "prior":   {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null, "inv": number|null}}
 }}
 
 DOCUMENT:
@@ -207,7 +306,7 @@ def fetch_doc_years(name, corp_code, cached):
     log(f"    감사보고서(별도) {len(reports)}건")
     out, new_cache = {}, {}
     for rcept, dt, nm in reports[:2]:   # 최신 2건 = 당기·전기 × 2 → 3개년 확보
-        if rcept in cached:
+        if rcept in cached and all(v.get("schema_v") == SCHEMA_V for v in cached[rcept].values()):
             log(f"    {dt} {nm}: 캐시 사용")
             for end, rec in cached[rcept].items():
                 out.setdefault(end, rec)
@@ -225,12 +324,13 @@ def fetch_doc_years(name, corp_code, cached):
             p = ex.get(which) or {}
             if p.get("end") and p.get("rev") is not None:
                 recs[p["end"]] = {"rev": to_int(p.get("rev")), "op": to_int(p.get("op")),
-                                  "ni": to_int(p.get("ni")),
+                                  "ni": to_int(p.get("ni")), "inv": to_int(p.get("inv")),
+                                  "schema_v": SCHEMA_V,
                                   "source": f"{nm} {dt} rcept={rcept} ({which}) · {ex.get('unit_note', '')}",
                                   "rcept_no": rcept}
         for end, rec in recs.items():
             out.setdefault(end, rec)
-            log(f"      {end}: 매출 {rec['rev']:,} / 영업이익 {rec['op']} / 순이익 {rec['ni']}")
+            log(f"      {end}: 매출 {rec['rev']:,} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
         new_cache[rcept] = recs
         time.sleep(1)
     return out, new_cache
@@ -260,7 +360,9 @@ def main():
         log(f"[{eid}] {name} ({route}) corp={code}")
         recs = {}
         if route == "api":
-            recs = fetch_api_years(code, fy_m, years)
+            recs, src_txt = fetch_full_statements(code, "OFS", years)
+            for r in recs.values():
+                r["source"] = src_txt
         elif route == "doc":
             if not ANTHROPIC_KEY:
                 log("    [WARN] ANTHROPIC_API_KEY 미설정 → 추출 생략")
@@ -275,9 +377,10 @@ def main():
             r = recs[end]
             years_out.append({"fy": f"FY{end[2:4]}", "end": end,
                               "rev": r.get("rev"), "op": r.get("op"), "ni": r.get("ni"),
+                              "inv": r.get("inv"), "cogs": r.get("cogs"),
                               "source": r.get("source")})
         if not years_out:
-            years_out = [{"fy": None, "end": None, "rev": None, "op": None, "ni": None, "source": None}]
+            years_out = [{"fy": None, "end": None, "rev": None, "op": None, "ni": None, "inv": None, "source": None}]
         result["entities"].append({
             "id": eid, "name": name, "type": etype, "link": link,
             "corp_code": code, "route": route, "fy_end_month": fy_m, "note": note,
@@ -290,6 +393,38 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=1)
     n = sum(1 for e in result["entities"] if e["years"] and e["years"][0].get("rev") is not None)
     log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인")
+
+    # ── 국내 상장 20개사: 연결 전체재무제표 3개년 ──
+    log("\n[상장] 법인코드 매칭(종목코드) ...")
+    try:
+        cmap = load_corp_map_by_stock()
+    except Exception as e:
+        log(f"[WARN] corpCode 로드 실패: {str(e)[:120]} — 상장사 처리 생략")
+        return
+    listed = {"updated_at": today.isoformat(), "basis": "DART 연결 전체재무제표(사업보고서)", "items": {}}
+    for tk in KR_LISTED:
+        sc = tk.split(".")[0]
+        hit = cmap.get(sc)
+        if not hit:
+            log(f"[{tk}] 법인코드 미발견")
+            listed["items"][tk] = {"error": "법인코드 미발견"}
+            continue
+        code, cname = hit
+        log(f"[{tk}] {cname} corp={code}")
+        recs, src_txt = fetch_full_statements(code, "CFS", years)
+        if not recs:
+            log("    연결 없음 → 별도 시도")
+            recs, src_txt = fetch_full_statements(code, "OFS", years)
+        ys = []
+        for end in sorted(recs):
+            r = recs[end]
+            ys.append({"end": end, "rev": r.get("rev"), "cogs": r.get("cogs"), "op": r.get("op"),
+                       "ni": r.get("ni"), "inv": r.get("inv")})
+        listed["items"][tk] = {"corp_code": code, "corp_name": cname, "source": src_txt, "years": ys[-3:]}
+    with open(LISTED_PATH, "w", encoding="utf-8") as f:
+        json.dump(listed, f, ensure_ascii=False, indent=1)
+    ok = sum(1 for v in listed["items"].values() if v.get("years"))
+    log(f"saved {LISTED_PATH} — 상장 {ok}/{len(KR_LISTED)}개사 3개년 확보")
 
 
 if __name__ == "__main__":
