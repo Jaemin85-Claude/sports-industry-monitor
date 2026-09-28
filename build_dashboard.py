@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v22.3: 기업 표 줄꺾임 수정 — 헤더·수치 줄바꿈 금지, 기업명은 말줄임, 라벨 축약(총이익률)
+v22.2: 로고 표기 통일 — 종합·기업 표·캘린더·상세 모두 브랜드명 앞에 로고(실패 시 이니셜 배지),
+       국기는 상세 헤더에만 보조 표기. 국내 법인 13개 로고 도메인 추가
+v22.1: 가로 넘침 수정 — KPI 격자 minmax(0,1fr)·min-width:0·줄바꿈 허용, 내용 영역 overflow-x 차단,
+       모바일 KPI 수치 크기 축소. 성장 순위에서 ±100% 초과(기저·인수 효과)는 제외하고 각주 표기
 v22: 상단 탭 → 하단 탭바(앱 형태). 100dvh 세로 배치(헤더 고정·내용 스크롤·탭바 하단 밀착,
      iOS 홈화면 안전영역 반영), 아이콘+라벨 5탭
 v21.1: 종합 KPI 칩 동작 — 성장 1위→해당 기업 상세, 재고 경고→재고 경고 카드로 스크롤·강조
@@ -63,7 +68,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;overflow:hidden}
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
-.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 header{flex:none;padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;background:var(--card)}
 header h1{font-size:var(--fs-xl);font-weight:700}
 header .sub{color:var(--sub);font-size:var(--fs-xs);margin-top:4px}
@@ -98,6 +103,10 @@ tr.refrow td{font-size:var(--fs-2xs);color:var(--sub);padding:2px 4px 8px;text-a
 .ref{font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin-top:2px}
 .flag{font-size:var(--fs-base);margin-right:3px}
 .logo{width:18px;height:18px;border-radius:4px;vertical-align:-4px;margin-right:6px;background:#fff;border:1px solid var(--line);object-fit:contain}
+.lg{display:inline-flex;align-items:center;vertical-align:middle;margin-right:6px}
+.lg .logo,.lg .logo-lg{margin-right:0;vertical-align:baseline}
+.lgfb{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;background:var(--accent);color:#fff;font-size:var(--fs-2xs);font-weight:700;font-style:normal}
+.lgfb-lg{width:28px;height:28px;border-radius:6px;font-size:var(--fs-base)}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
 /* 카드 */
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
@@ -139,20 +148,28 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .hot{color:var(--neg)}
 .card.flash{outline:2px solid var(--accent);transition:outline .3s}
 /* A안 — 종합 */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer}
-.kpi .l{font-size:var(--fs-xs);color:var(--sub)}
-.kpi .v{font-size:var(--fs-xl);font-weight:700;margin:2px 0;white-space:nowrap}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;min-width:0;overflow:hidden}
+.kpi .l{font-size:var(--fs-xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .v{font-size:var(--fs-lg);font-weight:700;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .s{font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hgrid{display:grid;grid-template-columns:1fr;gap:10px}
-@media(min-width:760px){.hgrid{grid-template-columns:1fr 1fr}.span2{grid-column:1/3}}
+@media(min-width:480px){.kpi .v{font-size:var(--fs-xl)}}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.hgrid>.card{min-width:0}
+@media(min-width:760px){.hgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.span2{grid-column:1/3}}
 .card h3 .go{margin-left:auto;color:var(--accent);font-size:var(--fs-sm);cursor:pointer;font-weight:500}
-.rk{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-base);cursor:pointer}
+.rk{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-base);cursor:pointer;min-width:0}
+.rk>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk>span:last-child,.rk>b{flex:none;white-space:nowrap}
 .rk:last-child{border-bottom:none}
 .rk .g{font-size:var(--fs-2xs);color:var(--sub);margin-left:4px}
 /* A안 — 기업 */
 .search{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:var(--fs-base);margin-bottom:8px;background:var(--card);color:var(--tx)}
-tr.co{cursor:pointer}tr.co td:first-child{font-weight:600;white-space:nowrap}
+#coTbl th{white-space:nowrap;font-size:var(--fs-2xs);padding:7px 3px}
+#coTbl td{white-space:nowrap;padding:9px 3px}
+tr.co{cursor:pointer}tr.co td:first-child{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+tr.co td:first-child .lg{vertical-align:-4px}
+@media(max-width:400px){tr.co td:first-child{max-width:132px}}
 tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:var(--fs-sm)}
 .mini b{font-weight:600}
@@ -278,7 +295,11 @@ const DOMAINS = {
   "028260.KS":"samsungcnt.com", "005390.KS":"shinsung.co.kr",
   "111770.KS":"youngone.co.kr", "241590.KS":"hsenterprise.co.kr", "105630.KS":"hansae.com",
   "009970.KS":"youngonecorporation.com",
-  "023530.KS":"lotteshopping.com", "004170.KS":"shinsegae.com", "069960.KS":"ehyundai.com"
+  "023530.KS":"lotteshopping.com", "004170.KS":"shinsegae.com", "069960.KS":"ehyundai.com",
+  "krd:nike_kr":"nike.com", "krd:adidas_kr":"adidas.co.kr", "krd:asics_kr":"asics.com", "krd:puma_kr":"puma.com",
+  "krd:descente_kr":"descentekorea.co.kr", "krd:nb_eland":"newbalance.co.kr", "krd:abcmart_kr":"abcmart.co.kr",
+  "krd:shoemarker":"shoemarker.co.kr", "krd:musinsa":"musinsa.com", "krd:k2_kr":"k2group.co.kr",
+  "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com"
 };
 /* ── 브랜드 본사 국가 국기 ── */
 const FLAGS = {
@@ -297,12 +318,14 @@ function flagOf(t){
   const f = FLAGS[t] || (isKR(t) ? "🇰🇷" : null);
   return f ? `<span class="flag">${f}</span>` : "";
 }
-function logoImg(t, large){
+function logoImg(t, large, name){
   const d = DOMAINS[t];
-  if(!d) return "";
   const cls = large ? "logo-lg" : "logo";
-  return `<img class="${cls}" loading="lazy" alt="" onerror="this.remove()"
-    src="https://www.google.com/s2/favicons?domain=${d}&sz=64">`;
+  const init = String(name||t).replace(/[^가-힣A-Za-z0-9]/g,'').slice(0,1) || '·';
+  const fb = `<i class="lgfb ${large?'lgfb-lg':''}" style="display:none">${init}</i>`;
+  if(!d) return `<span class="lg">${fb.replace('display:none','')}</span>`;
+  return `<span class="lg"><img class="${cls}" loading="lazy" alt="" onerror="this.style.display='none';this.nextSibling.style.display='inline-flex'"
+    src="https://www.google.com/s2/favicons?domain=${d}&sz=64">${fb}</span>`;
 }
 
 /* ── 테마 ── */
@@ -358,7 +381,7 @@ function rows_all(){
   const out=[];
   DATA.items.forEach(x=>{
     const fy=x.fy.length?x.fy[x.fy.length-1]:{};
-    out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), listed:true,
+    out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), logo:logoImg(x.ticker,false,x.name), listed:true,
       rev:fy.rev, cur:x.currency, rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy,
       inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
   });
@@ -366,7 +389,7 @@ function rows_all(){
     const ys=(e.years||[]).filter(y=>y.rev!=null); const last=ys[ys.length-1], prev=ys[ys.length-2];
     const yoy=(last&&prev&&prev.rev)?(last.rev/prev.rev-1)*100:null;
     const opm=(last&&last.op!=null&&last.rev)?last.op/last.rev*100:null;
-    out.push({key:'krd:'+e.id, name:e.name, group:'국내 법인', flag:'🇰🇷', listed:false,
+    out.push({key:'krd:'+e.id, name:e.name, group:'국내 법인', flag:'🇰🇷', logo:logoImg('krd:'+e.id,false,e.name), listed:false,
       rev:last?last.rev:null, cur:'KRW', rev_yoy:yoy, gm:null, opm, q_yoy:null, inv_yoy:null, earn:null,
       note:e.note, route:e.route, fy_end:last?last.end:null});
   });
@@ -379,7 +402,10 @@ function buildHome(){
   const rows=rows_all();
   const today=new Date(); today.setHours(0,0,0,0);
   // 성장(최근 분기 매출 전년 대비; 국내 법인은 연간)
-  const growth=rows.map(r=>({...r, g:(r.q_yoy!=null?r.q_yoy:r.rev_yoy), basis:(r.q_yoy!=null?'분기':'연간')})).filter(r=>r.g!=null);
+  const growthAll=rows.map(r=>({...r, g:(r.q_yoy!=null?r.q_yoy:r.rev_yoy), basis:(r.q_yoy!=null?'분기':'연간')})).filter(r=>r.g!=null);
+  // ±100% 초과는 기저·인수 효과 가능성이 커서 순위에서 제외(각주로 표기, §29-D: 값은 기업 탭에 그대로)
+  const outlier=growthAll.filter(r=>Math.abs(r.g)>100);
+  const growth=growthAll.filter(r=>Math.abs(r.g)<=100);
   const up=[...growth].sort((a,b)=>b.g-a.g).slice(0,4);
   const dn=[...growth].sort((a,b)=>a.g-b.g).slice(0,4);
   // 재고 경고: 재고 증가율이 매출 증가율보다 10p 이상 높고 재고 +10% 이상
@@ -421,8 +447,8 @@ function buildHome(){
     </svg>
     <div class="note">${fmtPrd(krLast)} ${kr.values[krLast].toFixed(1)} (작년 ${(kr.values[yPrev+krLast.slice(4,6)]??'―')}, ${fmt(krYoy,1,true)})${krTrend?' · '+krTrend:''}</div></div>`;
   }
-  const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.flag}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
-  h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
+  const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.logo}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
+  h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${outlier.length?`<div class="note">순위 제외(±100% 초과, 기저·인수 효과 가능): ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}</div>`:''}</div>`;
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
   h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${warn.slice(0,8).map(r=>rk(r,`<span>재고 <b class="neg">${fmt(r.inv_yoy,1,true)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}</span>`)).join('')||'<div class="na">해당 없음</div>'}</div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
@@ -439,10 +465,10 @@ function buildCoChips(){
 }
 function buildCo(){
   const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter)&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
-  let h=`<tr><th>기업</th><th>연매출</th><th>전년 대비</th><th>매출총이익률</th><th>재고 증감</th></tr>`;
+  let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
-    const gmCell=r.listed?(r.gm!=null?r.gm.toFixed(1)+'%':'<span class="na">―</span>'):(r.opm!=null?r.opm.toFixed(1)+'%<div class="ref">영업률</div>':'<span class="na">―</span>');
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.flag}${esc(r.name)}</td><td>${moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
+    const gmCell=r.listed?(r.gm!=null?r.gm.toFixed(1)+'%':'<span class="na">―</span>'):(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -456,7 +482,7 @@ function buildCo(){
       const evd=r.earn?Math.round((new Date(r.earn+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000):null;
       mini=`<div class="mini"><div>최근 분기 매출 ${fmt(r.q_yoy,1,true)} <span class="na">${x.q_end?ym(x.q_end):''}</span></div><div>영업이익률 <b>${fy.op_pct!=null?fy.op_pct.toFixed(1)+'%':'―'}</b></div>
       <div>지역: ${esc(top)}</div><div>채널: ${esc(chs)}</div>
-      <div>🇰🇷 ${kd?esc(kd.name)+' ':''}${kd?`<b>${kdTxt}</b>`:'<span class="na">국내 법인 미연결</span>'}</div><div>실적 발표 ${evd!=null&&evd>=0?`<b>D-${evd}</b>`:'<span class="na">―</span>'}</div></div>`;
+      <div>${kd?logoImg('krd:'+kd.id,false,kd.name)+esc(kd.name)+' ':'🇰🇷 '}${kd?`<b>${kdTxt}</b>`:'<span class="na">국내 법인 미연결</span>'}</div><div>실적 발표 ${evd!=null&&evd>=0?`<b>D-${evd}</b>`:'<span class="na">―</span>'}</div></div>`;
     } else {
       mini=`<div class="mini"><div>구분: ${esc(r.route==='none'?'DART 공시 미발견':'DART 감사보고서(연간)')}</div><div>기준: ${r.fy_end?ym(r.fy_end)+' 결산':'―'}</div>${r.note?`<div style="grid-column:1/3" class="na">${esc(r.note)}</div>`:''}</div>`;
     }
@@ -539,11 +565,11 @@ function krdCard(e, linked){
 function renderKrdDetail(id){
   const e=((KRD&&KRD.entities)||[]).find(z=>z.id===id);
   if(!e){ document.getElementById('detBody').innerHTML='<div class="na">미확인</div>'; return; }
-  let h=`<div class="det-head">🇰🇷 ${esc(e.name)} <span class="tag">${esc(e.type)}</span></div>`;
+  let h=`<div class="det-head">${logoImg('krd:'+e.id,true,e.name)}${esc(e.name)} <span class="tk">🇰🇷</span> <span class="tag">${esc(e.type)}</span></div>`;
   h+=krdCard(e,false);
   if(e.link){
     const g=DATA.items.find(i=>i.ticker===e.link);
-    if(g) h+=`<div class="note">글로벌 본사: <a href="#" onclick="goDetail('${e.link}');return false;" style="color:var(--accent)">${flagOf(e.link)}${esc(g.name)} ▸</a></div>`;
+    if(g) h+=`<div class="note">글로벌 본사: <a href="#" onclick="goDetail('${e.link}');return false;" style="color:var(--accent)">${logoImg(e.link,false,g.name)}${esc(g.name)} ▸</a></div>`;
   }
   document.getElementById('detBody').innerHTML=h;
 }
@@ -551,7 +577,7 @@ function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
-  let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="tk">${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
+  let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
@@ -680,13 +706,13 @@ function buildCal(){
     for(let d=1;d<=days;d++){
       const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const list=byDay[key]||[]; const isT=key===today.toISOString().slice(0,10);
-      cells+=`<div class="cd ${list.length?'has':''} ${isT?'today':''} ${calSel===key?'sel':''}" ${list.length?`data-day="${key}"`:''}><div class="dn">${d}</div>${list.slice(0,2).map(r=>`<div class="ev">${r.flag}${esc(r.name)}</div>`).join('')}${list.length>2?`<div class="ev na">+${list.length-2}</div>`:''}</div>`;
+      cells+=`<div class="cd ${list.length?'has':''} ${isT?'today':''} ${calSel===key?'sel':''}" ${list.length?`data-day="${key}"`:''}><div class="dn">${d}</div>${list.slice(0,2).map(r=>`<div class="ev">${esc(r.name)}</div>`).join('')}${list.length>2?`<div class="ev na">+${list.length-2}</div>`:''}</div>`;
     }
-    h+=`<div class="cal"><h3>${y}년 ${m+1}월</h3><div class="cgrid">${cells}</div>${calSel&&calSel.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)?`<div class="calday">${calSel.slice(5).replace('-','/')} · ${(byDay[calSel]||[]).map(r=>r.flag+esc(r.name)).join(', ')}</div>`:''}</div>`;
+    h+=`<div class="cal"><h3>${y}년 ${m+1}월</h3><div class="cgrid">${cells}</div>${calSel&&calSel.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)?`<div class="calday">${calSel.slice(5).replace('-','/')} · ${(byDay[calSel]||[]).map(r=>r.logo+esc(r.name)).join(', ')}</div>`:''}</div>`;
   });
   document.getElementById('calGrid').innerHTML=h;
   document.querySelectorAll('.cd[data-day]').forEach(c=>c.onclick=()=>{calSel=(calSel===c.dataset.day)?null:c.dataset.day;buildCal();});
-  document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<div class="cl"><span>${r.dn<=7?'🔴':'⚪'} ${r.flag}${esc(r.name)}</span><span>${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></div>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
+  document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<div class="cl"><span>${r.dn<=7?'🔴':'⚪'} ${r.logo}${esc(r.name)}</span><span>${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></div>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
 }
 
 /* ── 뉴스 (v11: 그룹 필터 + NEW 배지 + 날짜별) ── */
