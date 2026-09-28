@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v20: 국내 법인 카드 문구를 DART 자동 수집(dart_fetch.py) 기준으로 갱신, 공시 미발견 법인 사유 표기
+v19: Phase 6 국내 법인(비상장, DART 반자동) — docs/kr_domestic.json 표시.
+     서머리 '국내 법인(비상장)' 그룹, 글로벌 브랜드 상세에 '국내 법인 실적' 카드 연결,
+     비상장 법인 자체 상세(드롭다운 그룹), 수치 미입력은 '미확인'
 v18: 타이포 스케일 통일 — 6단계 변수(--fs-2xs 10 / xs 11 / sm 12 / base 13 / lg 15 / xl 17px)로
      모든 요소 크기 일괄 정리, 인라인 font-size 제거
 v17: 국내 상장 20개사 편입 — 6그룹(글로벌 브랜드/글로벌 유통/국내 브랜드/국내 패션대기업/
@@ -198,6 +202,7 @@ const SEGS = __SEGS__;
 const NEWS = __NEWS__;
 const KR = __KR__;
 const HIST = __HIST__;
+const KRD = __KRD__;   // 국내 법인(비상장) — 연 1회 수동 갱신
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -328,6 +333,26 @@ function buildSummary(){
       }
     });
   });
+  /* 국내 법인(비상장) — 연 1회 DART 수동 갱신 */
+  const ents=(KRD&&KRD.entities)?KRD.entities:[];
+  if(ents.length){
+    h+=`<tr class="grp grp-kr"><td colspan="6">🇰🇷 <b>국내 법인 (비상장·DART)</b> <span class="na">· DART 자동 수집 (${ents.length})</span></td></tr>`;
+    ents.forEach(e=>{
+      const ys=(e.years||[]).filter(y=>y.rev!=null);
+      const last=ys.length?ys[ys.length-1]:null;
+      const prev=ys.length>1?ys[ys.length-2]:null;
+      const yoy=(last&&prev&&prev.rev)?(last.rev/prev.rev-1)*100:null;
+      const opm=(last&&last.op!=null&&last.rev)?last.op/last.rev*100:null;
+      h+=`<tr class="mrow"><td class="nm">🇰🇷 ${esc(e.name)}
+        <span class="na" style="cursor:pointer" onclick="event.stopPropagation();goDetail('krd:${e.id}')">▸</span></td>
+      <td class="rev-main">${last?moneyShort(last.rev,'KRW'):'<span class="na">―</span>'}</td>
+      <td>${fmt(yoy,1,true)}</td>
+      <td>${opm!=null?opm.toFixed(1)+'%<div class="ref">영업률</div>':'<span class="na">―</span>'}</td>
+      <td><span class="na">―</span></td>
+      <td><span class="na">―</span></td></tr>`;
+      h+=`<tr class="refrow"><td colspan="6">기준: ${last?('FY '+ym(last.end)):(e.route==='none'?'DART 공시 미발견':'수집 대기')} · KRW · DART(연간·별도) · ${esc(e.type)}${e.note?' · '+esc(e.note):''}</td></tr>`;
+    });
+  }
   document.getElementById('sumTbl').innerHTML=h;
 }
 
@@ -339,6 +364,10 @@ function buildSelect(){
     if(!rows.length) return '';
     return `<optgroup label="${GROUP_ICON[g]||''} ${g}">`+rows.map(x=>`<option value="${x.ticker}">${(FLAGS[x.ticker]||(isKR(x.ticker)?'🇰🇷':''))} ${x.name} (${x.ticker})</option>`).join('')+`</optgroup>`;
   }).join('');
+  const ents=(KRD&&KRD.entities)?KRD.entities:[];
+  if(ents.length){
+    s.innerHTML+=`<optgroup label="🇰🇷 국내 법인 (비상장·DART)">`+ents.map(e=>`<option value="krd:${e.id}">🇰🇷 ${e.name}</option>`).join('')+`</optgroup>`;
+  }
   s.onchange=()=>renderDetail(s.value);
   renderDetail(DATA.items[0].ticker);
 }
@@ -384,7 +413,46 @@ function pairBars(list, curLabel, prevLabel){
   return h;
 }
 
+function krdCard(e, linked){
+  const title=linked?`🇰🇷 국내 법인 실적 — ${esc(e.name)}`:`🇰🇷 법인 실적`;
+  let h=`<div class="card"><h3>${title} <span class="tag">DART 감사보고서</span></h3>`;
+  if(e.note) h+=`<div class="note" style="margin:0 0 8px">ℹ️ ${esc(e.note)}</div>`;
+  const ys=e.years||[];
+  const filled=ys.filter(y=>y.rev!=null);
+  if(!filled.length){
+    const why=(e.route==='none')?'DART 공시 미발견':'DART 수집 대기';
+    h+=`<div class="na">미확인 — ${why}${KRD.updated_at?' · 마지막 체크 '+KRD.updated_at:''}</div></div>`;
+    return h;
+  }
+  h+=`<table><tr><th>결산</th><th>매출</th><th>YoY</th><th>영업이익</th><th>영업률</th><th>순이익</th></tr>`;
+  ys.forEach((y,i)=>{
+    const p=i>0?ys[i-1]:null;
+    const yoy=(y.rev!=null&&p&&p.rev)?(y.rev/p.rev-1)*100:null;
+    const opm=(y.op!=null&&y.rev)?y.op/y.rev*100:null;
+    h+=`<tr><td>${y.fy} <span class="na">${ym(y.end)}</span></td>
+      <td>${y.rev!=null?moneyShort(y.rev,'KRW'):'―'}</td><td>${fmt(yoy,1,true)}</td>
+      <td>${y.op!=null?moneyShort(y.op,'KRW'):'―'}</td><td>${opm!=null?opm.toFixed(1)+'%':'―'}</td>
+      <td>${y.ni!=null?moneyShort(y.ni,'KRW'):'―'}</td></tr>`;
+  });
+  h+=`</table>`;
+  const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
+  if(srcs.length) h+=`<div class="src">출처: ${esc(srcs.join(' · '))}</div>`;
+  h+=`<div class="note">별도(개별) 재무제표 · 원화 · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
+  return h;
+}
+function renderKrdDetail(id){
+  const e=((KRD&&KRD.entities)||[]).find(z=>z.id===id);
+  if(!e){ document.getElementById('detBody').innerHTML='<div class="na">미확인</div>'; return; }
+  let h=`<div class="det-head">🇰🇷 ${esc(e.name)} <span class="tag">${esc(e.type)}</span></div>`;
+  h+=krdCard(e,false);
+  if(e.link){
+    const g=DATA.items.find(i=>i.ticker===e.link);
+    if(g) h+=`<div class="note">글로벌 본사: <a href="#" onclick="goDetail('${e.link}');return false;" style="color:var(--accent)">${flagOf(e.link)}${esc(g.name)} ▸</a></div>`;
+  }
+  document.getElementById('detBody').innerHTML=h;
+}
 function renderDetail(t){
+  if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=x.currency||'';
   let h=`<div class="det-head">${flagOf(x.ticker)}${logoImg(x.ticker,true)}${x.name} <span class="tk">${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
@@ -412,6 +480,9 @@ function renderDetail(t){
   <div class="kv"><span class="k">재고자산</span><span>${money(x.inventory,cur)}</span></div>
   <div class="kv"><span class="k">재고 YoY</span><span>${fmt(x.inv_yoy,1,true)}</span></div>
   <div class="kv"><span class="k">재고/매출 비율</span><span>${x.inv_sales_pct!=null?x.inv_sales_pct.toFixed(1)+'%':'―'}</span></div></div>`;
+
+  /* 연결된 국내 법인 (Phase 6) */
+  ((KRD&&KRD.entities)||[]).filter(e=>e.link===t).forEach(e=>{ h+=krdCard(e,true); });
 
   /* 지표 추이 (히스토리 축적) */
   h+=`<div class="card"><h3>📉 지표 추이 <span class="tag2">축적 데이터</span></h3>`;
@@ -670,6 +741,13 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    krd = None
+    if os.path.exists("docs/kr_domestic.json"):
+        try:
+            with open("docs/kr_domestic.json", encoding="utf-8") as f:
+                krd = json.load(f)
+        except Exception:
+            pass
     hist = None
     if os.path.exists("docs/history.json"):
         try:
@@ -696,7 +774,8 @@ def main():
             .replace("__SEGS__", json.dumps(segs, ensure_ascii=False))
             .replace("__NEWS__", json.dumps(news, ensure_ascii=False))
             .replace("__KR__", json.dumps(kr, ensure_ascii=False))
-            .replace("__HIST__", json.dumps(hist, ensure_ascii=False)))
+            .replace("__HIST__", json.dumps(hist, ensure_ascii=False))
+            .replace("__KRD__", json.dumps(krd, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
