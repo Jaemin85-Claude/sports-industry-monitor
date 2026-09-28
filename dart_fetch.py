@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2)
+sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.1)
+v2.1: 캐시 판정 강화 — 빈 캐시·재고 항목 없는 캐시는 재추출
 v2: ① 국내 상장 20개사 — 종목코드→법인코드 매칭 후 연결 전체재무제표 API(fnlttSinglAcntAll)로
        매출·매출원가·영업이익·순이익·재고자산 3개년 → docs/kr_listed_fin.json
     ② 국내 법인 — 구조화 API 경로도 전체재무제표(별도)로 전환(재고 포함), 원본 추출에 재고자산 추가
@@ -306,7 +307,8 @@ def fetch_doc_years(name, corp_code, cached):
     log(f"    감사보고서(별도) {len(reports)}건")
     out, new_cache = {}, {}
     for rcept, dt, nm in reports[:2]:   # 최신 2건 = 당기·전기 × 2 → 3개년 확보
-        if rcept in cached and all(v.get("schema_v") == SCHEMA_V for v in cached[rcept].values()):
+        if (rcept in cached and cached[rcept]
+                and all(v.get("schema_v") == SCHEMA_V and "inv" in v for v in cached[rcept].values())):
             log(f"    {dt} {nm}: 캐시 사용")
             for end, rec in cached[rcept].items():
                 out.setdefault(end, rec)
