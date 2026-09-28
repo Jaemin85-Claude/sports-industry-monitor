@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v23.1: 상세 표 줄바꿈 금지(법인 실적 7열·수익성·국내 13개월 표) — 셀 nowrap, 결산 열 'FY25' 한 줄,
+       표가 카드보다 넓으면 표만 가로 스크롤(화면 전체는 고정)
 v23: 국내 상장 19개사 재무를 DART 연결 재무제표(docs/kr_listed_fin.json)로 교체(빌드 시 병합 —
      3개년 매출·매출총이익률·영업률·재고·재고 증감), 야후는 주가·분기YoY·실적일만. 국내 법인 카드에
      재고·재고 증감 열 추가, 종합 재고 경고에 국내 법인 포함. 상세에 '재무: DART 연결' 출처 표기
@@ -149,6 +151,12 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+/* 표 줄바꿈 금지 — 표가 넓으면 표만 가로 스크롤 */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
+table.nowrap th,table.nowrap td{white-space:nowrap;padding-left:3px;padding-right:3px}
+table.nowrap th{font-size:var(--fs-2xs)}
+#detBody .card table th,#detBody .card table td{white-space:nowrap}
+#krBody .krtbl table th,#krBody .krtbl table td{white-space:nowrap}
 .card.flash{outline:2px solid var(--accent);transition:outline .3s}
 /* A안 — 종합 */
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}
@@ -551,22 +559,23 @@ function krdCard(e, linked){
     h+=`<div class="na">미확인 — ${why}${KRD.updated_at?' · 마지막 체크 '+KRD.updated_at:''}</div></div>`;
     return h;
   }
-  h+=`<table><tr><th>결산</th><th>매출</th><th>전년 대비</th><th>영업률</th><th>순이익</th><th>재고</th><th>재고 증감</th></tr>`;
+  const fym=ys.length&&ys[ys.length-1].end?(+ys[ys.length-1].end.slice(5,7))+'월 결산':'';
+  h+=`<div class="tblwrap"><table class="nowrap"><tr><th>결산</th><th>매출</th><th>전년 대비</th><th>영업률</th><th>순이익</th><th>재고</th><th>재고 증감</th></tr>`;
   ys.forEach((y,i)=>{
     const p=i>0?ys[i-1]:null;
     const yoy=(y.rev!=null&&p&&p.rev)?(y.rev/p.rev-1)*100:null;
     const opm=(y.op!=null&&y.rev)?y.op/y.rev*100:null;
     const iy=(y.inv&&p&&p.inv)?(y.inv/p.inv-1)*100:null;
-    h+=`<tr><td>${y.fy} <span class="na">${ym(y.end)}</span></td>
+    h+=`<tr><td title="${ym(y.end)||''}">${y.fy}</td>
       <td>${y.rev!=null?moneyShort(y.rev,'KRW'):'―'}</td><td>${fmt(yoy,1,true)}</td>
       <td>${opm!=null?opm.toFixed(1)+'%':'―'}</td>
       <td>${y.ni!=null?moneyShort(y.ni,'KRW'):'―'}</td>
       <td>${y.inv!=null?moneyShort(y.inv,'KRW'):'―'}</td><td>${fmt(iy,1,true)}</td></tr>`;
   });
-  h+=`</table>`;
+  h+=`</table></div>`;
   const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
   if(srcs.length) h+=`<div class="src">출처: ${esc(srcs.join(' · '))}</div>`;
-  h+=`<div class="note">별도(개별) 재무제표 · 원화 · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
+  h+=`<div class="note">${fym?fym+' · ':''}별도(개별) 재무제표 · 원화 · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
   return h;
 }
 function renderKrdDetail(id){
