@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v22: 상단 탭 → 하단 탭바(앱 형태). 100dvh 세로 배치(헤더 고정·내용 스크롤·탭바 하단 밀착,
+     iOS 홈화면 안전영역 반영), 아이콘+라벨 5탭
 v21.1: 종합 KPI 칩 동작 — 성장 1위→해당 기업 상세, 재고 경고→재고 경고 카드로 스크롤·강조
 v21: A안 레이아웃 — 종합(신호 KPI 4·올해vs작년 꺾은선·성장 상하위·재고 경고·실적 일정) /
      기업(검색·그룹 칩·압축 표·행 펼침·전체 상세) / 캘린더(2개월 달력 + 90일 목록) /
@@ -38,7 +40,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>스포츠 산업 모니터</title>
 <style>
 :root{
@@ -58,15 +60,21 @@ TEMPLATE = r"""<!DOCTYPE html>
   --pos:#3ddc84;--neg:#ff6b6b;--accent:#4d9fff;--accent-prev:#3a4a68;--barbg:#0c101a;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;padding-bottom:40px}
-header{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+header{flex:none;padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;background:var(--card)}
 header h1{font-size:var(--fs-xl);font-weight:700}
 header .sub{color:var(--sub);font-size:var(--fs-xs);margin-top:4px}
 #themeBtn{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--tx);
 border-radius:10px;padding:8px 12px;font-size:var(--fs-lg);cursor:pointer}
-.tabs{display:flex;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-.tab{flex:1;text-align:center;padding:12px 0;color:var(--sub);font-size:var(--fs-base);cursor:pointer}
-.tab.on{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600}
+.tabs{display:flex;flex:none;border-top:1px solid var(--line);background:var(--card);
+padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{flex:1;text-align:center;padding:7px 0 6px;color:var(--sub);font-size:var(--fs-2xs);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
+.tab .ic{font-size:19px;line-height:1}
+.tab.on{color:var(--accent);font-weight:600}
+@media(min-width:760px){.tabs{justify-content:center}.tab{flex:0 0 120px}}
 .pane{display:none;padding:12px}
 .pane.on{display:block}
 /* 표 */
@@ -190,6 +198,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 </style>
 </head>
 <body>
+<div class="app">
 <header>
   <div>
     <h1>🏭 스포츠 산업 모니터</h1>
@@ -197,14 +206,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   </div>
   <button id="themeBtn" title="테마 전환">🌙</button>
 </header>
-<div class="tabs">
-  <div class="tab on" data-p="home">종합</div>
-  <div class="tab" data-p="co">기업</div>
-  <div class="tab" data-p="cal">캘린더</div>
-  <div class="tab" data-p="news">뉴스</div>
-  <div class="tab" data-p="kr">국내</div>
-</div>
-
+<main class="content" id="content">
 <div class="pane on" id="p-home">
   <div class="kpis" id="kpis"></div>
   <div class="hgrid" id="homeBody"></div>
@@ -242,6 +244,15 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   지수는 2020=100 기준 · YoY는 전년 동월 대비 · 지표를 누르면 최근 13개월 수치 표</div>
 </div>
 
+</main>
+<nav class="tabs">
+  <div class="tab on" data-p="home"><span class="ic">🏠</span>종합</div>
+  <div class="tab" data-p="co"><span class="ic">🏢</span>기업</div>
+  <div class="tab" data-p="cal"><span class="ic">📅</span>캘린더</div>
+  <div class="tab" data-p="news"><span class="ic">📰</span>뉴스</div>
+  <div class="tab" data-p="kr"><span class="ic">🇰🇷</span>국내</div>
+</nav>
+</div>
 <script>
 const DATA = __DATA__;
 const SEGS = __SEGS__;
@@ -461,7 +472,7 @@ function goDetail(t){
   document.getElementById('coList').style.display='none';
   document.getElementById('coDetail').style.display='';
   renderDetail(t);
-  window.scrollTo(0,0);
+  document.getElementById('content').scrollTo(0,0);
 }
 function pairBars(list, curLabel, prevLabel){
   const items=list.filter(r=>r.revenue!=null);
@@ -807,6 +818,7 @@ function sw(p){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
   if(p!=='co') showCoList();
+  document.getElementById('content').scrollTo(0,0);
 }
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ sw(t.dataset.p); showCoList(); }; });
 document.getElementById('coBack').onclick=showCoList;
