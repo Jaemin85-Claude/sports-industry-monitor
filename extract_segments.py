@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v9: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X)
 v8: 실적자료 판별 강화 — EX-10(계약서) 계열 파일명 배제, 계약서 문구 감지 시
       제외, 실적 보도자료 고유 표현 요구(UAA가 계약 공시를 실적으로 오탐한 문제).
       대용량 문서 3MB 상한으로 지연 방지.
@@ -53,6 +54,25 @@ SEG_PATH = "docs/segments.json"
 
 MAX_DOC_BYTES = 3_000_000   # 대용량 문서 상한 (지연 방지)
 
+
+
+# ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) ──
+def anthropic_post(payload, timeout=180):
+    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
+    그 외 오류는 응답 본문을 포함해 예외로 올려 호출부가 처리."""
+    resp = requests.post(
+        "https://api.anthropic.com/v1/messages",
+        headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01",
+                 "content-type": "application/json"},
+        json=payload, timeout=timeout)
+    if resp.status_code in (401, 403) or (resp.status_code == 400 and "credit" in resp.text.lower()):
+        print(f"[FATAL] Anthropic API {resp.status_code}: {resp.text[:300]}", flush=True)
+        print("[FATAL] 키 만료/무효 또는 크레딧 소진 — console.anthropic.com 확인 후 "
+              "GitHub Secret ANTHROPIC_API_KEY 갱신", flush=True)
+        raise SystemExit(2)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
+    return resp.json()
 
 def sec_get(url, is_json=True):
     time.sleep(0.4)
@@ -328,17 +348,10 @@ Same for channels. If the document is not an earnings report at all, return
 DOCUMENT:
 {cap_text(doc_text)}"""
 
-    r = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={"x-api-key": API_KEY,
-                 "anthropic-version": "2023-06-01",
-                 "content-type": "application/json"},
-        json={"model": "claude-sonnet-4-6",
+    data = anthropic_post({"model": "claude-sonnet-4-6",
               "max_tokens": 2500,
-              "messages": [{"role": "user", "content": prompt}]},
-        timeout=180)
-    r.raise_for_status()
-    parts = r.json().get("content", [])
+              "messages": [{"role": "user", "content": prompt}]}, timeout=180)
+    parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
     obj = json.loads(text)
