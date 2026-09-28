@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v23: 국내 상장 19개사 재무를 DART 연결 재무제표(docs/kr_listed_fin.json)로 교체(빌드 시 병합 —
+     3개년 매출·매출총이익률·영업률·재고·재고 증감), 야후는 주가·분기YoY·실적일만. 국내 법인 카드에
+     재고·재고 증감 열 추가, 종합 재고 경고에 국내 법인 포함. 상세에 '재무: DART 연결' 출처 표기
 v22.3: 기업 표 줄꺾임 수정 — 헤더·수치 줄바꿈 금지, 기업명은 말줄임, 라벨 축약(총이익률)
 v22.2: 로고 표기 통일 — 종합·기업 표·캘린더·상세 모두 브랜드명 앞에 로고(실패 시 이니셜 배지),
        국기는 상세 헤더에만 보조 표기. 국내 법인 13개 로고 도메인 추가
@@ -389,8 +392,10 @@ function rows_all(){
     const ys=(e.years||[]).filter(y=>y.rev!=null); const last=ys[ys.length-1], prev=ys[ys.length-2];
     const yoy=(last&&prev&&prev.rev)?(last.rev/prev.rev-1)*100:null;
     const opm=(last&&last.op!=null&&last.rev)?last.op/last.rev*100:null;
+    const gmk=(last&&last.cogs!=null&&last.rev)?(last.rev-last.cogs)/last.rev*100:null;
+    const invy=(last&&prev&&last.inv&&prev.inv)?(last.inv/prev.inv-1)*100:null;
     out.push({key:'krd:'+e.id, name:e.name, group:'국내 법인', flag:'🇰🇷', logo:logoImg('krd:'+e.id,false,e.name), listed:false,
-      rev:last?last.rev:null, cur:'KRW', rev_yoy:yoy, gm:null, opm, q_yoy:null, inv_yoy:null, earn:null,
+      rev:last?last.rev:null, cur:'KRW', rev_yoy:yoy, gm:gmk, opm, q_yoy:null, inv_yoy:invy, earn:null,
       note:e.note, route:e.route, fy_end:last?last.end:null});
   });
   return out;
@@ -467,7 +472,7 @@ function buildCo(){
   const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter)&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
-    const gmCell=r.listed?(r.gm!=null?r.gm.toFixed(1)+'%':'<span class="na">―</span>'):(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
+    const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
     h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
     let mini='';
     if(r.listed){
@@ -546,15 +551,17 @@ function krdCard(e, linked){
     h+=`<div class="na">미확인 — ${why}${KRD.updated_at?' · 마지막 체크 '+KRD.updated_at:''}</div></div>`;
     return h;
   }
-  h+=`<table><tr><th>결산</th><th>매출</th><th>YoY</th><th>영업이익</th><th>영업률</th><th>순이익</th></tr>`;
+  h+=`<table><tr><th>결산</th><th>매출</th><th>전년 대비</th><th>영업률</th><th>순이익</th><th>재고</th><th>재고 증감</th></tr>`;
   ys.forEach((y,i)=>{
     const p=i>0?ys[i-1]:null;
     const yoy=(y.rev!=null&&p&&p.rev)?(y.rev/p.rev-1)*100:null;
     const opm=(y.op!=null&&y.rev)?y.op/y.rev*100:null;
+    const iy=(y.inv&&p&&p.inv)?(y.inv/p.inv-1)*100:null;
     h+=`<tr><td>${y.fy} <span class="na">${ym(y.end)}</span></td>
       <td>${y.rev!=null?moneyShort(y.rev,'KRW'):'―'}</td><td>${fmt(yoy,1,true)}</td>
-      <td>${y.op!=null?moneyShort(y.op,'KRW'):'―'}</td><td>${opm!=null?opm.toFixed(1)+'%':'―'}</td>
-      <td>${y.ni!=null?moneyShort(y.ni,'KRW'):'―'}</td></tr>`;
+      <td>${opm!=null?opm.toFixed(1)+'%':'―'}</td>
+      <td>${y.ni!=null?moneyShort(y.ni,'KRW'):'―'}</td>
+      <td>${y.inv!=null?moneyShort(y.inv,'KRW'):'―'}</td><td>${fmt(iy,1,true)}</td></tr>`;
   });
   h+=`</table>`;
   const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
@@ -579,6 +586,7 @@ function renderDetail(t){
   const cur=x.currency||'';
   let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
+  if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · 주가·분기 매출 전년 대비·실적일: Yahoo</div>`;
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
@@ -868,9 +876,51 @@ buildHome(); buildCoChips(); buildCo(); buildCal(); buildNewsChips(); buildNews(
 """
 
 
+def merge_kr_listed(data):
+    """국내 상장사 재무를 DART 연결 재무제표로 교체 (야후는 주가·분기YoY·실적일 유지)"""
+    if not os.path.exists("docs/kr_listed_fin.json"):
+        return 0
+    try:
+        with open("docs/kr_listed_fin.json", encoding="utf-8") as f:
+            krf = json.load(f)
+    except Exception:
+        return 0
+    n = 0
+    for item in data.get("items", []):
+        e = (krf.get("items") or {}).get(item.get("ticker"))
+        if not e or not e.get("years"):
+            continue
+        ys = e["years"]
+        fy = []
+        for i, y in enumerate(ys):
+            rev, cogs, op = y.get("rev"), y.get("cogs"), y.get("op")
+            prev = ys[i - 1].get("rev") if i > 0 else None
+            fy.append({
+                "end": y.get("end"), "rev": rev,
+                "gp": (rev - cogs) if (rev is not None and cogs is not None) else None,
+                "op": op,
+                "rev_yoy": ((rev / prev - 1) * 100) if (rev and prev) else None,
+                "gm_pct": ((rev - cogs) / rev * 100) if (rev and cogs is not None) else None,
+                "op_pct": (op / rev * 100) if (rev and op is not None) else None,
+            })
+        item["fy"] = fy[-3:]
+        last, prev = ys[-1], (ys[-2] if len(ys) > 1 else None)
+        item["inventory"] = last.get("inv")
+        item["inv_date"] = last.get("end")
+        item["inv_prev_date"] = prev.get("end") if prev else None
+        item["inv_yoy"] = ((last["inv"] / prev["inv"] - 1) * 100) if (prev and last.get("inv") and prev.get("inv")) else None
+        item["inv_sales_pct"] = (last["inv"] / last["rev"] * 100) if (last.get("inv") and last.get("rev")) else None
+        item["currency"] = "KRW"
+        item["fin_source"] = "DART 연결 재무제표 · " + (e.get("source") or "")
+        n += 1
+    return n
+
+
 def main():
     with open("docs/data.json", encoding="utf-8") as f:
         data = json.load(f)
+    merged = merge_kr_listed(data)
+    print(f"국내 상장사 DART 재무 병합: {merged}개")
     segs = {"items": {}}
     if os.path.exists("docs/segments.json"):
         try:
