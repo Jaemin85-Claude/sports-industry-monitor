@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.2: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X) — 조용한 무선별 방지
 v2.1: 브랜드 그룹(스포츠·아웃도어/패션/명품/유통·그외) 태그 → 대시보드 필터
 v2: 범위 확장 — 감시 브랜드 31개사 + 명품 12개 + 산업 카테고리 3종.
     매일 수집, 14일 롤링 보관, 신규 헤드라인만 Claude 선별(비용·일관성),
@@ -109,6 +110,25 @@ KEEP_DAYS = 14
 NEWS_PATH = "docs/news.json"
 
 
+
+# ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) ──
+def anthropic_post(payload, timeout=180):
+    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
+    그 외 오류는 응답 본문을 포함해 예외로 올려 호출부가 처리."""
+    resp = requests.post(
+        "https://api.anthropic.com/v1/messages",
+        headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01",
+                 "content-type": "application/json"},
+        json=payload, timeout=timeout)
+    if resp.status_code in (401, 403) or (resp.status_code == 400 and "credit" in resp.text.lower()):
+        print(f"[FATAL] Anthropic API {resp.status_code}: {resp.text[:300]}", flush=True)
+        print("[FATAL] 키 만료/무효 또는 크레딧 소진 — console.anthropic.com 확인 후 "
+              "GitHub Secret ANTHROPIC_API_KEY 갱신", flush=True)
+        raise SystemExit(2)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
+    return resp.json()
+
 def fetch_rss(query, days=3):
     """Google News RSS: 최근 N일 헤드라인 (한국어 우선, 영문 포함)"""
     q = urllib.parse.quote(f"{query} when:{days}d")
@@ -192,17 +212,10 @@ Omit ids that should not be selected. If nothing qualifies, return {{}}.
 
 HEADLINES:
 {corpus}"""
-    r = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={"x-api-key": API_KEY,
-                 "anthropic-version": "2023-06-01",
-                 "content-type": "application/json"},
-        json={"model": "claude-sonnet-4-6",
+    data = anthropic_post({"model": "claude-sonnet-4-6",
               "max_tokens": 6000,
-              "messages": [{"role": "user", "content": prompt}]},
-        timeout=240)
-    r.raise_for_status()
-    parts = r.json().get("content", [])
+              "messages": [{"role": "user", "content": prompt}]}, timeout=240)
+    parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
     return json.loads(text)
