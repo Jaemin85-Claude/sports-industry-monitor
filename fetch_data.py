@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.2: 블랙야크아이앤씨(478560) 추가 — 시장(코스피/코스닥) 미확인이라 .KS 실패 시 .KQ 자동 재시도
+     (한국 종목 공통), 실제 조회된 티커를 기록
 v4.1: 신성통상(005390) 제외 — 2025년 자진 상장폐지 확인, Phase 6 비상장 DART 대상으로 이동
 v4: 국내 상장 20개사 추가(총 42종목→41), 그룹 6개로 세분(글로벌 브랜드/글로벌 유통/
     국내 브랜드/국내 패션대기업/국내 OEM/국내 유통), 종목별 주석(note) 필드
@@ -54,6 +56,7 @@ WATCH = {
     "000680.KS": ["LS네트웍스(프로스펙스)", "국내 브랜드", "토종 스포츠 브랜드, 유통·기타 사업 혼재"],
     "036620.KQ": ["감성코퍼레이션", "국내 브랜드", "스노우피크 어패럴 라이선스"],
     "278470.KS": ["에이피알(널디)", "국내 브랜드", "뷰티 디바이스 비중이 큼 — 널디는 일부"],
+    "478560.KS": ["블랙야크아이앤씨", "국내 브랜드", "블랙야크 관련 상장사(2026 신규 확인) — 사업 범위 확인 필요, 비와이엔블랙야크(비상장)와 별개 법인"],
     # ── 국내 패션대기업 ──
     "031430.KS": ["신세계인터내셔날", "국내 패션대기업", "수입 브랜드·자체 브랜드·코스메틱"],
     "020000.KS": ["한섬", "국내 패션대기업", "타임·마인·시스템 등 자체 브랜드"],
@@ -198,7 +201,17 @@ def main():
         name, group = spec[0], spec[1]
         note = spec[2] if len(spec) > 2 else None
         print(f"fetch {ticker} ({name}) ...", flush=True)
-        out["items"].append(fetch_one(ticker, name, group, note))
+        item = fetch_one(ticker, name, group, note)
+        # 한국 종목: 시장 접미사가 틀리면 데이터가 비므로 반대 접미사로 1회 재시도
+        if (item.get("error") or not item.get("fy")) and ticker[-3:] in (".KS", ".KQ"):
+            alt = ticker[:-3] + (".KQ" if ticker.endswith(".KS") else ".KS")
+            print(f"  → {ticker} 비어 있음, {alt} 재시도", flush=True)
+            item2 = fetch_one(alt, name, group, note)
+            if item2.get("fy") or item2.get("price") is not None:
+                item2["ticker"] = ticker          # 대시보드 키는 원래 티커 유지
+                item2["yf_ticker"] = alt
+                item = item2
+        out["items"].append(item)
     out["group_order"] = GROUP_ORDER
     os.makedirs("docs", exist_ok=True)
     with open("docs/data.json", "w", encoding="utf-8") as f:
