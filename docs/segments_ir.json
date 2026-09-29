@@ -1,0 +1,141 @@
+{
+ "generated_at": "2026-09-29 12:18 KST",
+ "items": {
+  "ADS.DE": {
+   "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
+   "source": "IR Fact Sheet (PDF)",
+   "url": "https://res.cloudinary.com/confirmed-web/image/upload/v1785388904/adidas-group/investors/financial-publications/2026/Q2/EN/Fact_Sheet_EN_q2_2026_twpk2u.pdf",
+   "error": null,
+   "extract": {
+    "schema_v": 2,
+    "period": "Q2 2026",
+    "prev_period": "Q2 2025",
+    "currency": "EUR",
+    "unit": "millions",
+    "regions": [
+     {
+      "name": "Europe",
+      "revenue": 2108.0,
+      "prev_revenue": 1997.0,
+      "yoy_pct": 5.558337506259381
+     },
+     {
+      "name": "North America",
+      "revenue": 1522.0,
+      "prev_revenue": 1339.0,
+      "yoy_pct": 13.666915608663178
+     },
+     {
+      "name": "Greater China",
+      "revenue": 953.0,
+      "prev_revenue": 798.0,
+      "yoy_pct": 19.423558897243097
+     },
+     {
+      "name": "Emerging Markets",
+      "revenue": 848.0,
+      "prev_revenue": 762.0,
+      "yoy_pct": 11.286089238845154
+     },
+     {
+      "name": "Latin America",
+      "revenue": 907.0,
+      "prev_revenue": 673.0,
+      "yoy_pct": 34.76968796433879
+     },
+     {
+      "name": "Japan/South Korea",
+      "revenue": 376.0,
+      "prev_revenue": 355.0,
+      "yoy_pct": 5.915492957746471
+     }
+    ],
+    "channels": [
+     {
+      "name": "Wholesale",
+      "revenue": 3825.0,
+      "prev_revenue": 3604.0,
+      "yoy_pct": 6.132075471698117
+     },
+     {
+      "name": "Direct-to-Consumer (DTC)",
+      "revenue": 2909.0,
+      "prev_revenue": 2338.0,
+      "yoy_pct": 24.422583404619335
+     }
+    ],
+    "sub_segments": [],
+    "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance"
+   },
+   "fetched_at": "2026-09-29"
+  },
+  "PUM.DE": {
+   "accession": "31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
+   "source": "IR 보도자료 (HTML)",
+   "url": "https://about.puma.com/en/newsroom/corporate-news/2026/31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
+   "error": null,
+   "extract": {
+    "schema_v": 2,
+    "period": "Q2 2026",
+    "prev_period": "Q2 2025",
+    "currency": "EUR",
+    "unit": "millions",
+    "regions": [
+     {
+      "name": "EMEA",
+      "revenue": 674.1,
+      "prev_revenue": 771.7,
+      "yoy_pct": -12.9
+     },
+     {
+      "name": "Americas",
+      "revenue": 600.4,
+      "prev_revenue": 709.0,
+      "yoy_pct": -15.4
+     },
+     {
+      "name": "Asia/Pacific",
+      "revenue": 416.0,
+      "prev_revenue": 390.5,
+      "yoy_pct": 8.6
+     },
+     {
+      "name": "North America",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": -16.7
+     },
+     {
+      "name": "Latin America",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": -13.8
+     },
+     {
+      "name": "Greater China",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": 0.9
+     }
+    ],
+    "channels": [
+     {
+      "name": "Wholesale",
+      "revenue": 1094.8,
+      "prev_revenue": null,
+      "yoy_pct": -14.0
+     },
+     {
+      "name": "Direct-to-Consumer",
+      "revenue": 595.8,
+      "prev_revenue": null,
+      "yoy_pct": 0.4
+     }
+    ],
+    "sub_segments": [],
+    "notes": "Growth percentages are currency-adjusted (ca); prior-year Q2 2025 channel € amounts not explicitly stated for the quarter in the release."
+   },
+   "fetched_at": "2026-09-29"
+  }
+ }
+}
