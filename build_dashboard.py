@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v25: Phase 7-A — docs/segments_ir.json(아디다스 Fact Sheet·푸마 보도자료) 병합.
+     IR 출처는 태그 'IR 추출'로 구분, 기업 펼침의 지역·채널 요약에도 반영
 v24: ① 재고일수(재고÷매출원가×365) — 기업 펼침·상세 재고 카드·종합 재고 경고에 표시
      ② 글로벌 본사 vs 국내 법인 대비 카드(매출 성장·영업이익률·재고 증감·재고일수) — 양쪽 상세에
      ③ 상세 하단 '최근 뉴스' 3건(뉴스 탭 브랜드 키 연결)
@@ -287,6 +289,8 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 <script>
 const DATA = __DATA__;
 const SEGS = __SEGS__;
+const SEGS_IR = __SEGS_IR__;
+if(SEGS_IR&&SEGS_IR.items){ SEGS.items=SEGS.items||{}; Object.entries(SEGS_IR.items).forEach(([k,v])=>{ if(v&&v.extract) SEGS.items[k]=v; }); }
 const NEWS = __NEWS__;
 const KR = __KR__;
 const HIST = __HIST__;
@@ -699,7 +703,8 @@ function renderDetail(t){
   const s=segOf(t);
   let segEntry=(SEGS.items||{})[t];
   if(!segEntry && isKR(t)) segEntry={error:"공시 추출 미대상 — 한국 상장(DART), 향후 확장"};
-  h+=`<div class="card"><h3>🌍 지역 분해 — 최근 분기, 당기 vs 전년 <span class="tag">공시 추출</span></h3>`;
+  const segTag=(segEntry&&/^IR/.test(segEntry.source||''))?'IR 추출':'공시 추출';
+  h+=`<div class="card"><h3>🌍 지역 분해 — 최근 분기, 당기 vs 전년 <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
     const regsAll=s.extract.regions.filter(r=>r.revenue!=null);
     const totalOnly=regsAll.length>0&&regsAll.every(r=>/total|전체|합계|consolidated/i.test(r.name||""));
@@ -722,7 +727,7 @@ function renderDetail(t){
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 지역 분해 미기재)'}</div>`;
   }
   h+=`</div>`;
-  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 최근 분기 <span class="tag">공시 추출</span></h3>`;
+  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 최근 분기 <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.channels&&s.extract.channels.length){
     const bars=pairBars(s.extract.channels,"당기","전년");
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
@@ -988,6 +993,13 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    segs_ir = None
+    if os.path.exists("docs/segments_ir.json"):
+        try:
+            with open("docs/segments_ir.json", encoding="utf-8") as f:
+                segs_ir = json.load(f)
+        except Exception:
+            pass
     krd = None
     if os.path.exists("docs/kr_domestic.json"):
         try:
@@ -1022,7 +1034,8 @@ def main():
             .replace("__NEWS__", json.dumps(news, ensure_ascii=False))
             .replace("__KR__", json.dumps(kr, ensure_ascii=False))
             .replace("__HIST__", json.dumps(hist, ensure_ascii=False))
-            .replace("__KRD__", json.dumps(krd, ensure_ascii=False)))
+            .replace("__KRD__", json.dumps(krd, ensure_ascii=False))
+            .replace("__SEGS_IR__", json.dumps(segs_ir, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
