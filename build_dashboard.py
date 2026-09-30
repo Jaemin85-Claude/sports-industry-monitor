@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v25.2: 지역·채널 카드 제목을 공시 기간 성격에 맞게(분기 / 누적) 표기 — 아식스 결산단신(누적) 대응
 v25.1: 기업 펼침 행 가로 넘침 수정 — 펼침 셀은 줄바꿈 허용(nowrap 예외), 모바일은 1열 목록,
        지역 요약에서 합계(Total) 항목 제외
 v25: Phase 7-A — docs/segments_ir.json(아디다스 Fact Sheet·푸마 보도자료) 병합.
@@ -709,7 +710,8 @@ function renderDetail(t){
   let segEntry=(SEGS.items||{})[t];
   if(!segEntry && isKR(t)) segEntry={error:"공시 추출 미대상 — 한국 상장(DART), 향후 확장"};
   const segTag=(segEntry&&/^IR/.test(segEntry.source||''))?'IR 추출':'공시 추출';
-  h+=`<div class="card"><h3>🌍 지역 분해 — 최근 분기, 당기 vs 전년 <span class="tag">${segTag}</span></h3>`;
+  const segPer=(s&&s.extract&&/누적|^FY|^\d+M /.test(s.extract.period||''))?'최근 공시 기간(누적)':'최근 분기';
+  h+=`<div class="card"><h3>🌍 지역 분해 — ${segPer}, 당기 vs 전년 <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
     const regsAll=s.extract.regions.filter(r=>r.revenue!=null);
     const totalOnly=regsAll.length>0&&regsAll.every(r=>/total|전체|합계|consolidated/i.test(r.name||""));
@@ -732,7 +734,7 @@ function renderDetail(t){
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 지역 분해 미기재)'}</div>`;
   }
   h+=`</div>`;
-  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — 최근 분기 <span class="tag">${segTag}</span></h3>`;
+  h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — ${segPer} <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.channels&&s.extract.channels.length){
     const bars=pairBars(s.extract.channels,"당기","전년");
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
