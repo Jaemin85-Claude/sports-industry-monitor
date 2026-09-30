@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-29 12:18 KST",
+ "generated_at": "2026-09-30 16:37 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -136,6 +136,67 @@
     "notes": "Growth percentages are currency-adjusted (ca); prior-year Q2 2025 channel € amounts not explicitly stated for the quarter in the release."
    },
    "fetched_at": "2026-09-29"
+  },
+  "7936.T": {
+   "accession": "Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the",
+   "source": "IR 결산단신 (PDF)",
+   "url": "https://assets.asics.com/system/libraries/4215/Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the%20Six%20Months%20Ended%20June%2030,%202026%20%28Japan%20GAAP%29.pdf",
+   "error": null,
+   "extract": {
+    "schema_v": 2,
+    "period": "6M 2026 (1~6월 누적)",
+    "prev_period": "6M 2025",
+    "currency": "JPY",
+    "unit": "millions",
+    "regions": [
+     {
+      "name": "Japan",
+      "revenue": 90310,
+      "prev_revenue": 75730,
+      "yoy_pct": 19.252607949293534
+     },
+     {
+      "name": "North America",
+      "revenue": 94696,
+      "prev_revenue": 73914,
+      "yoy_pct": 28.1
+     },
+     {
+      "name": "Europe",
+      "revenue": 166600,
+      "prev_revenue": 113769,
+      "yoy_pct": 46.4
+     },
+     {
+      "name": "Greater China",
+      "revenue": 81043,
+      "prev_revenue": 61966,
+      "yoy_pct": 30.7
+     },
+     {
+      "name": "Oceania",
+      "revenue": 28964,
+      "prev_revenue": 21447,
+      "yoy_pct": 35.0
+     },
+     {
+      "name": "Southeast and South Asia",
+      "revenue": 31492,
+      "prev_revenue": 23514,
+      "yoy_pct": 33.9
+     },
+     {
+      "name": "Others (South America, Korea, etc.)",
+      "revenue": 32269,
+      "prev_revenue": 24698,
+      "yoy_pct": 30.7
+     }
+    ],
+    "channels": [],
+    "sub_segments": [],
+    "notes": "Figures are sales to external customers only (excluding intersegment sales), sourced from the detailed segment information table in the Notes to Consolidated Financial Statements. Unit shown in the source document is millions of yen. For Japan: 6M 2026 sales to customers = ¥90,310M (intersegment ¥15,784M; total ¥106,094M); 6M 2025 sales to customers = ¥75,730M (intersegment ¥23,532M; total ¥99,263M). For Greater China: 6M 2026 sales to customers = ¥81,043M (intersegment ¥5M; total ¥81,048M); 6M 2025 sales to customers = ¥61,966M (intersegment ¥65M; total ¥62,032M). For Others: 6M 2026 sales to customers = ¥32,269M (intersegment ¥1M; total ¥32,271M); 6M 2025 sales to customers = ¥24,698M (intersegment ¥0M; total ¥24,698M). YoY% for Japan not explicitly stated in segment table header but is 6.9% per narrative; set to null as it refers to total sales not external-only. YoY% figures shown are from the summary segment table which references total net sales (same as external for non-Japan segments). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
+   },
+   "fetched_at": "2026-09-30"
   }
  }
 }
