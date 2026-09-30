@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v25.1: 기업 펼침 행 가로 넘침 수정 — 펼침 셀은 줄바꿈 허용(nowrap 예외), 모바일은 1열 목록,
+       지역 요약에서 합계(Total) 항목 제외
 v25: Phase 7-A — docs/segments_ir.json(아디다스 Fact Sheet·푸마 보도자료) 병합.
      IR 출처는 태그 'IR 추출'로 구분, 기업 펼침의 지역·채널 요약에도 반영
 v24: ① 재고일수(재고÷매출원가×365) — 기업 펼침·상세 재고 카드·종합 재고 경고에 표시
@@ -183,6 +185,9 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .search{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:var(--fs-base);margin-bottom:8px;background:var(--card);color:var(--tx)}
 #coTbl th{white-space:nowrap;font-size:var(--fs-2xs);padding:7px 3px}
 #coTbl td{white-space:nowrap;padding:9px 3px}
+#coTbl tr.cx td{white-space:normal;overflow-wrap:anywhere;max-width:0}
+.mini div{white-space:normal;overflow-wrap:anywhere}
+@media(max-width:480px){#coTbl .mini{grid-template-columns:1fr}}
 tr.co{cursor:pointer}tr.co td:first-child{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 tr.co td:first-child .lg{vertical-align:-4px}
 @media(max-width:400px){tr.co td:first-child{max-width:132px}}
@@ -518,7 +523,7 @@ function buildCo(){
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
-      const reg=(s&&s.extract.regions||[]).filter(z=>z.revenue!=null); const tot=reg.reduce((a,b)=>a+b.revenue,0);
+      const reg=(s&&s.extract.regions||[]).filter(z=>z.revenue!=null&&!/total|전체|합계|consolidated/i.test(z.name||'')); const tot=reg.reduce((a,b)=>a+b.revenue,0);
       const top=reg.length?reg.slice().sort((a,b)=>b.revenue-a.revenue).slice(0,2).map(z=>`${z.name} ${tot?(z.revenue/tot*100).toFixed(0):'―'}%`).join(' · '):'―';
       const ch=(s&&s.extract.channels||[]).filter(z=>z.revenue!=null); const ctot=ch.reduce((a,b)=>a+b.revenue,0);
       const chs=ch.length?ch.map(z=>`${z.name} ${ctot?(z.revenue/ctot*100).toFixed(0):'―'}%`).join(' · '):'―';
