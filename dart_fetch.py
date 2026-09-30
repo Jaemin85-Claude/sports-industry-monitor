@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.3)
+sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v2.4: 원본 추출에 매출원가 추가(SCHEMA_V=3 → 8개 법인 1회 재추출) → 재고일수 계산 가능.
+      블랙야크아이앤씨(478560) 상장 목록 편입
 v2.3: 재조사(2026-09-29) 반영 — 아디다스코리아는 2017년 유한책임회사 전환으로 외감 공시 의무 없음
       (마지막 감사보고서 2016), 슈마커코리아(00396402)는 시흥 화학업체(동명)로 확인되어 코드 제거
 v2.2: 전체재무제표 결산일을 법인별 결산월로 산정(신성통상 6월 → 06-30), 종목별 재무제표 기준 예외
@@ -37,14 +39,14 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 OUT_PATH = "docs/kr_domestic.json"
 YEARS_BACK = 3
 MAX_DOC_CHARS = 70000
-SCHEMA_V = 2
+SCHEMA_V = 3
 LISTED_PATH = "docs/kr_listed_fin.json"
 
 # ── 국내 상장 20개사 (야후 티커 → 종목코드 앞 6자리로 법인코드 매칭) ──
 KR_LISTED = ["081660.KS", "383220.KS", "298540.KQ", "120110.KS", "337930.KQ",
              "000680.KS", "036620.KQ", "278470.KS", "031430.KS", "020000.KS",
              "093050.KS", "028260.KS", "111770.KS", "241590.KS", "105630.KS",
-             "009970.KS", "023530.KS", "004170.KS", "069960.KS"]
+             "009970.KS", "023530.KS", "004170.KS", "069960.KS", "478560.KS"]
 
 # 전체재무제표 계정 매칭 (account_id 우선, 이름 보조)
 ACC_FULL = {
@@ -292,6 +294,8 @@ CURRENT period (당기) and the PRIOR period (전기):
 - 매출액 (or 수익(매출액), 영업수익) — total revenue
 - 영업이익 (영업이익(손실)) — operating income; losses as negative
 - 당기순이익 (당기순이익(손실)) — net income; losses as negative
+- 매출원가 (cost of sales) — from the income statement; null if the statement shows only
+  gross profit without a cost line
 Also from the statement of financial position (재무상태표): 재고자산 (inventories) at
 each period end.
 
@@ -301,8 +305,8 @@ Use ONLY figures explicitly stated. If a figure is not stated, use null.
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "unit_note": "단위 표기 그대로, 예: 단위: 원",
-  "current": {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null, "inv": number|null}},
-  "prior":   {{"end": "YYYY-MM-DD", "rev": number|null, "op": number|null, "ni": number|null, "inv": number|null}}
+  "current": {{"end": "YYYY-MM-DD", "rev": number|null, "cogs": number|null, "op": number|null, "ni": number|null, "inv": number|null}},
+  "prior":   {{"end": "YYYY-MM-DD", "rev": number|null, "cogs": number|null, "op": number|null, "ni": number|null, "inv": number|null}}
 }}
 
 DOCUMENT:
@@ -322,7 +326,7 @@ def fetch_doc_years(name, corp_code, cached):
     out, new_cache = {}, {}
     for rcept, dt, nm in reports[:2]:   # 최신 2건 = 당기·전기 × 2 → 3개년 확보
         if (rcept in cached and cached[rcept]
-                and all(v.get("schema_v") == SCHEMA_V and "inv" in v for v in cached[rcept].values())):
+                and all(v.get("schema_v") == SCHEMA_V and "inv" in v and "cogs" in v for v in cached[rcept].values())):
             log(f"    {dt} {nm}: 캐시 사용")
             for end, rec in cached[rcept].items():
                 out.setdefault(end, rec)
@@ -341,12 +345,13 @@ def fetch_doc_years(name, corp_code, cached):
             if p.get("end") and p.get("rev") is not None:
                 recs[p["end"]] = {"rev": to_int(p.get("rev")), "op": to_int(p.get("op")),
                                   "ni": to_int(p.get("ni")), "inv": to_int(p.get("inv")),
+                                  "cogs": to_int(p.get("cogs")),
                                   "schema_v": SCHEMA_V,
                                   "source": f"{nm} {dt} rcept={rcept} ({which}) · {ex.get('unit_note', '')}",
                                   "rcept_no": rcept}
         for end, rec in recs.items():
             out.setdefault(end, rec)
-            log(f"      {end}: 매출 {rec['rev']:,} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
+            log(f"      {end}: 매출 {rec['rev']:,} / 원가 {rec.get('cogs')} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
         new_cache[rcept] = recs
         time.sleep(1)
     return out, new_cache
