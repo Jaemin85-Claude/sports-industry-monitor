@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-sports-industry-monitor — Phase 7-A: 유럽 브랜드 IR 지역·채널 분해 (v1)
+sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.1)
+v1.1: 아식스(7936.T) 추가 — 재무자료 페이지의 최신 결산단신 영문판(Consolidated Financial
+      Statements … Japan GAAP) 세그먼트 표를 Claude 추출. 일본 결산단신은 누적 기준(Q2=1~6월)이라
+      기간을 '6M 2026 (누적)'으로 표기. 한국은 별도 세그먼트가 아니라 'Others(South America, Korea)'에 포함
 EDGAR 미대상인 아디다스(ADS.DE)·푸마(PUM.DE)의 지역·채널 매출을 IR 자료에서 추출한다.
   - 아디다스: 재무자료 페이지의 최신 Fact Sheet PDF → "Financial Highlights by Segment"·
     "Channels at a Glance" 표를 정규식으로 파싱 (Claude 불필요, 프로브 2026-09-29로 형식 확인)
@@ -27,6 +30,9 @@ UA = {"User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKi
 
 ADI_FIN = "https://www.adidas-group.com/en/investors/financial-reports"
 PUMA_NEWS = "https://about.puma.com/en/investor-relations/financial-news"
+ASICS_DATA = "https://corp.asics.com/en/investor_relations/library/financial_data"
+ASICS_REGIONS = ["Japan", "North America", "Europe", "Greater China", "Oceania",
+                 "Southeast and South Asia", "Others (South America, Korea, etc.)"]
 
 ADI_REGIONS = ["Europe", "North America", "Greater China", "Emerging Markets",
                "Latin America", "Japan/South Korea"]
@@ -256,6 +262,118 @@ def run_puma(cached):
             "fetched_at": datetime.datetime.now(KST).strftime("%Y-%m-%d")}
 
 
+# ══════════════════════════ 아식스 ══════════════════════════
+def asics_latest_statements():
+    """재무자료 페이지에서 최신 결산단신 영문판(Japan GAAP) 선택 → (url, period, prev_period)"""
+    html = fetch(ASICS_DATA)
+    best, best_key, best_lbl = None, (0, 0), None
+    for m in re.finditer(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', html, re.S):
+        u, title = m.group(1), re.sub(r"<[^>]+>|\s+", " ", m.group(2)).strip()
+        if u.startswith("//"):
+            u = "https:" + u
+        if not u.lower().endswith(".pdf") or "assets.asics.com" not in u:
+            continue
+        name = u.rsplit("/", 1)[-1]
+        text = (title + " " + name).replace("%20", " ")
+        if not re.search(r"Consolidated Financial Statements|Summary of Consolidated Financial Statements", text, re.I):
+            continue
+        y = re.search(r"(20\d\d)", text)
+        if not y:
+            continue
+        year = int(y.group(1))
+        if re.search(r"First Quarter|Three Months", text, re.I):
+            q, lbl = 1, ("3M", "1~3월 누적")
+        elif re.search(r"Second Quarter|Six Months", text, re.I):
+            q, lbl = 2, ("6M", "1~6월 누적")
+        elif re.search(r"Third Quarter|Nine Months", text, re.I):
+            q, lbl = 3, ("9M", "1~9월 누적")
+        elif re.search(r"Fiscal Year", text, re.I):
+            q, lbl = 4, ("FY", "연간")
+        else:
+            continue
+        key = (year, q)
+        if key > best_key:
+            best, best_key, best_lbl = u, key, lbl
+    if not best:
+        return None, None, None
+    year, q = best_key
+    period = f"{best_lbl[0]} {year} ({best_lbl[1]})"
+    prev = f"{best_lbl[0]} {year - 1}"
+    return best, period, prev
+
+
+def asics_segment_text(pages):
+    """세그먼트 표 부근만 잘라 Claude에 전달 (전체 결산단신은 길어서)"""
+    full = re.sub(r"\s+", " ", " ".join(pages))
+    idxs = [m.start() for m in re.finditer(r"[Ss]egment", full)]
+    if not idxs:
+        return full[:40000]
+    windows, last_end = [], -1
+    for i in idxs:
+        s, e = max(0, i - 1500), min(len(full), i + 6000)
+        if s < last_end:
+            continue
+        windows.append(full[s:e]); last_end = e
+    return " … ".join(windows)[:60000]
+
+
+def claude_extract_asics(text, period, prev_period):
+    prompt = f"""You are extracting segment figures from an ASICS Corporation consolidated financial
+statements summary (Japan GAAP, English). Target period: {period} — a CUMULATIVE year-to-date
+period; the prior-year comparison is the same cumulative period {prev_period}.
+
+From the reportable segment information table, extract "Net sales" (sales to external customers
+if both are shown) for each segment: Japan, North America, Europe, Greater China, Oceania,
+Southeast and South Asia, and Others. Give the current period amount ("revenue") and the same
+period prior year ("prev_revenue") in millions of yen (convert if the table is in thousands or
+billions). Use ONLY figures explicitly stated. If the table shows only the current period, set
+prev_revenue to null. Do not include inter-segment eliminations or the consolidated total.
+
+Respond with ONLY JSON, no markdown fences:
+{{
+  "schema_v": 2, "period": "{period}", "prev_period": "{prev_period}", "currency": "JPY", "unit": "millions",
+  "regions": [{{"name": "Japan", "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null}}],
+  "channels": [], "sub_segments": [],
+  "notes": "state whether figures are external sales or total incl. inter-segment, and the unit shown"
+}}
+
+DOCUMENT EXCERPTS:
+{text}"""
+    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1200,
+                           "messages": [{"role": "user", "content": prompt}]})
+    txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
+    ex = json.loads(re.sub(r"```json|```", "", txt).strip())
+    for r in ex.get("regions", []):
+        if r.get("yoy_pct") is None and r.get("revenue") and r.get("prev_revenue"):
+            r["yoy_pct"] = (r["revenue"] / r["prev_revenue"] - 1) * 100
+        if re.match(r"other", (r.get("name") or ""), re.I):
+            r["name"] = "Others (South America, Korea, etc.)"
+    return ex
+
+
+def run_asics(cached):
+    url, period, prev = asics_latest_statements()
+    if not url:
+        log("[7936.T] 결산단신 링크 미발견"); return None
+    log(f"[7936.T] 최신 결산단신 {period}: {url}")
+    if cached and cached.get("url") == url and cached.get("extract"):
+        log("  캐시 사용"); return cached
+    if not ANTHROPIC_KEY:
+        log("  [WARN] ANTHROPIC_API_KEY 미설정 → 추출 생략"); return cached
+    from pypdf import PdfReader
+    raw = fetch(url, as_bytes=True, timeout=120)
+    pages = [(p.extract_text() or "") for p in PdfReader(io.BytesIO(raw)).pages]
+    ex = claude_extract_asics(asics_segment_text(pages), period, prev)
+    ex.setdefault("schema_v", 2); ex.setdefault("channels", []); ex.setdefault("sub_segments", [])
+    ex["notes"] = (ex.get("notes") or "") + " · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
+    for r in ex.get("regions", []):
+        log(f"  {r.get('name')}: {r.get('revenue')} / 전년 {r.get('prev_revenue')} ({r.get('yoy_pct') and round(r['yoy_pct'],1)}%)")
+    ok = any(r.get("revenue") is not None for r in ex.get("regions", []))
+    return {"accession": url.rsplit("/", 1)[-1][:80], "source": "IR 결산단신 (PDF)", "url": url,
+            "error": None if ok else "세그먼트 표 미추출", "extract": ex if ok else None,
+            "fetched_at": datetime.datetime.now(KST).strftime("%Y-%m-%d")}
+
+
 def main():
     old = {}
     if os.path.exists(OUT_PATH):
@@ -265,7 +383,7 @@ def main():
         except Exception:
             pass
     items = dict(old.get("items", {}))
-    for tk, fn in (("ADS.DE", run_adidas), ("PUM.DE", run_puma)):
+    for tk, fn in (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics)):
         try:
             res = fn(items.get(tk))
             if res:
@@ -280,7 +398,7 @@ def main():
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    log(f"saved {OUT_PATH} — {sum(1 for v in items.values() if v.get('extract'))}/2 추출")
+    log(f"saved {OUT_PATH} — {sum(1 for v in items.values() if v.get('extract'))}/3 추출")
 
 
 if __name__ == "__main__":
