@@ -20,9 +20,14 @@
 | `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 06:00 |
 | `dart.yml` | update-dart | dart_fetch.py | `docs/kr_domestic.json`, `docs/kr_listed_fin.json` | 매월 15일 07:00 |
 | `kosis.yml` | update-kosis | kosis_fetch.py | `docs/kosis.json` | 매월 5일 06:00 |
+| `check.yml` | check-files | (워크플로우에 내장된 검사) | — | PR·main 코드 푸시 때 |
 
 - 데이터 워크플로우가 `docs/*.json`을 만들고, **update-dashboard가 마지막에 화면을 다시 만든다.**
 - 워크플로우들이 main에 직접 커밋하므로, 작업 시작 전에 항상 최신 main에서 작업 브랜치를 만든다.
+- 자동 실행 시각은 예약 시각이다. GitHub 대기열 때문에 실제 시작은 1.5~3.5시간 늦을 수 있다
+  (2026-09 실측: update-news 07:56~10:04, update-dashboard 09:06~11:09 시작).
+- check-files는 이 문서의 **운영 구조표와 파일 식별표를 검사 기준으로 읽는다.** 새 파일·워크플로우는
+  표에 먼저 등록해야 검사를 통과한다.
 
 ## 파일 식별표 (반영·수정 전 반드시 확인)
 
@@ -59,7 +64,8 @@
 4. 커밋 메시지
    - 직접 수정: `수정: fetch_data v4.4 — 한 줄 요약`
    - 첨부 반영: 버전 줄을 모아 `반영: build_dashboard v29 · fetch_data v4.3 · news_monitor v2.3`
-5. 작업 브랜치에 푸시 → main으로 PR 생성 → 바뀐 내용과 검증 결과를 보고하고 병합 승인을 기다린다.
+5. 작업 브랜치에 푸시 → main으로 PR 생성 → PR의 check-files 통과 확인 →
+   바뀐 내용과 검증 결과를 보고하고 병합 승인을 기다린다. check-files가 실패하면 고친 뒤 다시 보고.
 6. 승인되면 병합하고 워크플로우를 실행한다. 지시가 있으면 그대로, 없으면 바뀐 파일 기준:
    - news_monitor → `news.yml` · extract_segments → `segments.yml` · ir_fetch → `ir.yml`
    - dart_fetch → `dart.yml` · kosis_fetch → `kosis.yml`
@@ -86,5 +92,7 @@
 
 - 대시보드: https://jaemin85-claude.github.io/sports-industry-monitor/
 - 수집이 멈추면 대시보드 종합 탭 맨 아래 "수집 상태"에 지연으로 표시된다.
+- 매일 12:23(KST) Claude 일일 점검 루틴이 최근 실행 결과·데이터 갱신을 확인하고, 이상이 있으면 대표에게 알린다.
+- 저장소가 공개(public)다. 매출 등 내부 사업 수치는 커밋하지 않는다.
 - 반영 직후 화면이 그대로면 GitHub Pages 반영(1~2분)과 브라우저 캐시 때문이다.
 - 이 환경에는 `gh` 로그인이 없다. PR·병합·워크플로우 실행·로그 조회는 GitHub 연결 도구로 한다.

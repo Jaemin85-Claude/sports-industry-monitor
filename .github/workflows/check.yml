@@ -1,0 +1,116 @@
+name: check-files
+
+# 코드·워크플로우가 바뀔 때 CLAUDE.md의 표(운영 구조·파일 식별표)를 기준으로 검사한다.
+#  ① 파이썬 3번째 줄 식별 문구 ② 문법 ③ 워크플로우 이름·실행 대상 파일 ④ docs/*.json 파싱
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - "*.py"
+      - "CLAUDE.md"
+      - ".github/workflows/*.yml"
+      - "docs/worldmap.json"
+  workflow_dispatch:   # 수동 실행 버튼
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check files against CLAUDE.md
+        run: |
+          python - <<'PY'
+          import glob, json, os, re, sys
+
+          errs = []
+          md = open("CLAUDE.md", encoding="utf-8").read()
+
+          def section(title):
+              m = re.search(r"^## " + re.escape(title) + r"[^\n]*\n(.*?)(?=^## |\Z)", md, re.M | re.S)
+              return m.group(1) if m else ""
+
+          def rows(text):
+              for line in text.splitlines():
+                  if line.startswith("|") and not re.match(r"^\|\s*-", line):
+                      yield [c.strip() for c in line.strip().strip("|").split("|")]
+
+          # ① 파일 식별표: 파일명 → 3번째 줄 문구
+          ident = {}
+          for c in rows(section("파일 식별표")):
+              m = re.search(r"`([^`]+)`", c[1]) if len(c) > 1 else None
+              if c[0].endswith(".py") and m:
+                  ident[c[0]] = m.group(1)
+          if len(ident) < 8:
+              errs.append(f"CLAUDE.md 파일 식별표에서 파이썬 파일을 {len(ident)}개만 읽음 — 표 형식 확인")
+
+          for f, phrase in ident.items():
+              if not os.path.exists(f):
+                  errs.append(f"{f}: 식별표에 있으나 파일 없음")
+                  continue
+              lines = open(f, encoding="utf-8").read().splitlines()
+              l3 = lines[2] if len(lines) > 2 else ""
+              if phrase not in l3:
+                  errs.append(f"{f}: 3번째 줄에 '{phrase}' 없음 — 실제: {l3.strip()[:80]}")
+
+          pys = sorted(glob.glob("*.py"))
+          for f in pys:
+              if f not in ident:
+                  errs.append(f"{f}: 식별표에 없는 파일 — CLAUDE.md 파일 식별표에 등록 필요")
+              try:
+                  compile(open(f, encoding="utf-8").read(), f, "exec")
+              except SyntaxError as e:
+                  errs.append(f"{f}: 문법 오류 {e.lineno}번째 줄 — {e.msg}")
+
+          # ② 운영 구조표: 워크플로우 파일 → name
+          wf = {}
+          for c in rows(section("운영 구조")):
+              m = re.fullmatch(r"`([^`]+\.yml)`", c[0])
+              if m and len(c) > 1:
+                  wf[m.group(1)] = c[1]
+          if len(wf) < 6:
+              errs.append(f"CLAUDE.md 운영 구조표에서 워크플로우를 {len(wf)}개만 읽음 — 표 형식 확인")
+
+          ymls = sorted(glob.glob(".github/workflows/*.yml"))
+          for path in ymls:
+              f = os.path.basename(path)
+              txt = open(path, encoding="utf-8").read()
+              m = re.search(r"^name:\s*(.+?)\s*$", txt, re.M)
+              name = m.group(1).strip("\"'") if m else None
+              if f not in wf:
+                  errs.append(f"{f}: 운영 구조표에 없는 워크플로우 — CLAUDE.md 등록 또는 파일 삭제")
+              elif name != wf[f]:
+                  errs.append(f"{f}: 첫 name '{name}' ≠ 운영 구조표 '{wf[f]}'")
+              for s in re.findall(r"python3?\s+([\w./-]+\.py)", txt):
+                  if not os.path.exists(s):
+                      errs.append(f"{f}: 실행 대상 {s} 없음")
+          for f in wf:
+              if not os.path.exists(f".github/workflows/{f}"):
+                  errs.append(f"{f}: 운영 구조표에 있으나 파일 없음")
+
+          # ③ docs/*.json 파싱 (+ worldmap 최상위 키)
+          jsons = sorted(glob.glob("docs/*.json"))
+          for path in jsons:
+              try:
+                  d = json.load(open(path, encoding="utf-8"))
+              except Exception as e:
+                  errs.append(f"{path}: JSON 파싱 실패 — {str(e)[:120]}")
+                  continue
+              if path.endswith("worldmap.json") and not all(k in d for k in ("viewBox", "europe")):
+                  errs.append(f"{path}: 최상위 키 viewBox·europe 없음")
+
+          if errs:
+              for e in errs:
+                  print(f"::error::{e}")
+              print(f"검사 실패 {len(errs)}건")
+              sys.exit(1)
+          print(f"검사 통과: 파이썬 {len(pys)}개 · 워크플로우 {len(ymls)}개 · JSON {len(jsons)}개")
+          PY
