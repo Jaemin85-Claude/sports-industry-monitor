@@ -14,7 +14,7 @@
 
 | 워크플로우 파일 | 이름 | 실행하는 코드 | 만드는 파일 | 자동 실행(KST) |
 |---|---|---|---|---|
-| `update.yml` | update-dashboard | fetch_data.py → history_append.py → build_dashboard.py | `docs/` (data·history·index.html) | 매일 07:30 |
+| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·history·index.html) | 매일 07:30 |
 | `news.yml` | update-news | news_monitor.py | `docs/news.json` | 매일 06:30 |
 | `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 05:00 |
 | `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 06:00 |
@@ -43,6 +43,7 @@
 | kosis_fetch.py | `Phase 5: KOSIS` | 최상위 |
 | history_append.py | `히스토리 축적` | 최상위 |
 | ir_fetch.py | `Phase 7` | 최상위 |
+| naver_trend.py | `Phase 8: 네이버 데이터랩` | 최상위 |
 | worldmap.json | JSON 최상위 키에 `viewBox`, `europe` | `docs/` |
 | *.yml | 첫 `name:` 줄 = 위 운영 구조표의 이름 | `.github/workflows/` |
 
@@ -83,7 +84,8 @@
 
 ## 하지 말 것
 
-- API 키 등 비밀값을 출력하거나 커밋하지 않는다(키는 GitHub Secrets에만 있음).
+- API 키 등 비밀값을 출력하거나 커밋하지 않는다(키는 GitHub Secrets에만 있음:
+  ANTHROPIC_API_KEY, DART_API_KEY, KOSIS_API_KEY, 네이버 NCP_APIGW_API_KEY_ID·NCP_APIGW_API_KEY).
 - `docs/`의 데이터 파일(`*.json`, `index.html`)을 손으로 고치지 않는다. 워크플로우가 만든다. 예외: worldmap.json처럼 대표가 준 고정 파일.
 - 강제 푸시(`--force`) 금지. main에 직접 푸시하지 않는다(항상 PR → 승인 → 병합).
 - 워크플로우를 동시에 여러 개 돌리지 않는다(같은 파일을 커밋하다 충돌남).

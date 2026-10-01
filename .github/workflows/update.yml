@@ -21,6 +21,12 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Fetch data
         run: python fetch_data.py
+      - name: Naver search trend
+        continue-on-error: true   # 네이버 수집이 실패해도 대시보드 갱신은 계속
+        env:
+          NCP_APIGW_API_KEY_ID: ${{ secrets.NCP_APIGW_API_KEY_ID }}
+          NCP_APIGW_API_KEY: ${{ secrets.NCP_APIGW_API_KEY }}
+        run: python naver_trend.py
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
