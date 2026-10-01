@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v26.1: '환율 제외'를 막대 아래 별도 줄로 이동(막대 위 겹침 해소), 막대 위 수치에 옅은 바탕
+v26: 지역·채널 카드에 '환율 제외' 성장률 병기(IR 자료의 현지 통화 기준), 금액 없이 증감률만 공시된
+     지역(푸마 북미·라틴·중화권 등)을 카드 하단에 별도 표기
 v25.2: 지역·채널 카드 제목을 공시 기간 성격에 맞게(분기 / 누적) 표기 — 아식스 결산단신(누적) 대응
 v25.1: 기업 펼침 행 가로 넘침 수정 — 펼침 셀은 줄바꿈 허용(nowrap 예외), 모바일은 1열 목록,
        지역 요약에서 합계(Total) 항목 제외
@@ -159,6 +162,8 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+.prow .pv{background:color-mix(in srgb,var(--card) 82%,transparent);border-radius:4px;padding:0 4px;right:3px}
+.cnline{font-size:var(--fs-xs);color:var(--sub);margin:2px 0 0 38px}
 /* 표 줄바꿈 금지 — 표가 넓으면 표만 가로 스크롤 */
 .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -4px}
 table.nowrap th,table.nowrap td{white-space:nowrap;padding-left:3px;padding-right:3px}
@@ -561,7 +566,7 @@ function pairBars(list, curLabel, prevLabel){
     if(prev==null && r.yoy_pct!=null && r.yoy_pct>-100){
       prev=r.revenue/(1+r.yoy_pct/100); derived=true;
     }
-    return {name:r.name, cur:r.revenue, prev, derived, yoy:r.yoy_pct};
+    return {name:r.name, cur:r.revenue, prev, derived, yoy:r.yoy_pct, cn:r.cn_yoy_pct};
   });
   const totalCur=rows.reduce((a,b)=>a+b.cur,0);
   const totalPrev=rows.reduce((a,b)=>a+(b.prev||0),0);
@@ -583,6 +588,7 @@ function pairBars(list, curLabel, prevLabel){
       <div class="pw"><div class="pb prev" style="width:${wP}%"></div>
       <div class="pv">${segMoney(r.prev)}</div></div></div>`;
     }
+    if(r.cn!=null) h+=`<div class="cnline">환율 제외 <span class="${r.cn>=0?'pos':'neg'}">${r.cn>=0?'+':''}${r.cn.toFixed(1)}%</span>${r.yoy!=null?` <span class="na">(보고 통화 ${r.yoy>=0?'+':''}${r.yoy.toFixed(1)}%)</span>`:''}</div>`;
     h+=`</div>`;
   });
   return h;
@@ -725,10 +731,15 @@ function renderDetail(t){
       bars=pairBars(s.extract.regions,"당기","전년");
     }
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
+    const pctOnly=s.extract.regions.filter(r=>r.revenue==null&&(r.yoy_pct!=null||r.cn_yoy_pct!=null)&&!/total|전체|합계|consolidated/i.test(r.name||''));
+    if(pctOnly.length) h+=`<div class="note">금액 없이 증감률만 공시: ${pctOnly.map(r=>{
+      const v=r.cn_yoy_pct!=null?r.cn_yoy_pct:r.yoy_pct, lab=r.cn_yoy_pct!=null?'환율 제외 ':'';
+      return `${esc(r.name)} <span class="${v>=0?'pos':'neg'}">${lab}${v>=0?'+':''}${v.toFixed(1)}%</span>`;}).join(' · ')}</div>`;
     let noteTxt="기준: "+(s.extract.period||"―");
     if(s.extract.prev_period) noteTxt+=" · 전년: "+s.extract.prev_period;
     if(s.extract.notes) noteTxt+=" · "+s.extract.notes;
-    h+=`<div class="note">${noteTxt}<br>진한 바=당기 / 연한 바=전년 · [역산]=공시에 전년 수치 미기재로 YoY에서 계산(§29-D 구분)</div>`;
+    const anyCn=[...(s.extract.regions||[]),...(s.extract.channels||[])].some(r=>r.cn_yoy_pct!=null);
+    h+=`<div class="note">${noteTxt}<br>진한 바=당기 / 연한 바=전년 · [역산]=공시에 전년 수치 미기재로 YoY에서 계산(§29-D 구분)${anyCn?'<br>환율 제외 = 현지 통화 기준 증감(회사 공시값) — 보고 통화 증감과 차이가 크면 환율 영향이 큰 것':''}</div>`;
     if(s.source) h+=`<div class="src">출처: ${s.source}</div>`;
   } else {
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 지역 분해 미기재)'}</div>`;
