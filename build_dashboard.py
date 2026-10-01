@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v29.3: 소싱 지도 지역 판정에 현지 유통 재고(재고 과잉형)·환율 반영 — 점수제(브랜드 최대 2 + 유통 ±1 + 환율 ±1,
+       3점 이상 높음), 지역 패널에 점수 내역 표시. 중동 현지 유통사에 세노미 리테일(4240.SR) 연결
 v29.2: 영국 상장사(JD·프레이저스·닥터마틴) 재무 통화 표기 GBp(펜스)→GBP(파운드) 수정 — 주가는 펜스 그대로
 v29.1: 닥터마틴(DOCS.L) 로고·국기·뉴스 연결, 뉴발란스(이랜드월드) 국내 법인 상세에 뉴발란스 뉴스 연결
 v29: 소싱 지도 2단계 (뉴스 3건 표시는 같은 기사 다른 출처 중복 제거 — 기업 상세 최근 뉴스 카드 포함)
@@ -408,7 +410,7 @@ const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
-  "FRAS.L":"frasers.group", "ZAL.DE":"zalando.com", "SBFG3.SA":"gruposbf.com.br",
+  "FRAS.L":"frasers.group", "ZAL.DE":"zalando.com", "SBFG3.SA":"gruposbf.com.br", "4240.SR":"cenomiretail.com",
   "NKE":"nike.com", "ADS.DE":"adidas.com", "ONON":"on.com",
   "DECK":"hoka.com", "AS":"amersports.com", "LULU":"lululemon.com",
   "7936.T":"asics.com", "BIRK":"birkenstock.com", "CROX":"crocs.com",
@@ -437,14 +439,14 @@ const FLAGS = {
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
   "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
-  "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷"
+  "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷", "4240.SR":"🇸🇦"
 };
 const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
   : ["글로벌 브랜드","글로벌 유통","국내 브랜드","국내 패션대기업","국내 OEM","국내 유통"];
 const GROUP_ICON = {"글로벌 브랜드":"🌍","글로벌 유통":"🌍","국내 브랜드":"🇰🇷","국내 패션대기업":"🇰🇷","국내 OEM":"🇰🇷","국내 유통":"🇰🇷"};
 const GROUP_NOTE = {"국내 OEM":"브랜드 오더의 선행지표","삼성물산(패션부문)":""};
 const isKR = t => /\.K[SQ]$/.test(t);
-const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
+const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","4240.SR":"cenomi","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
   "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","DKS":"dks","JD.L":"jd","ASO":"academy",
   "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente",
@@ -571,7 +573,32 @@ function srcRanked(k){
   return srcModel().filter(b=>b.cells[k]).map(b=>({b, c:b.cells[k], lvl:b.cells[k][SRC_PRESET]}))
     .sort((x,y)=>(y.lvl-x.lvl)||(Math.abs(y.c.g)-Math.abs(x.c.g)));
 }
-function srcSumm(k){ const hi=srcRanked(k).filter(o=>o.lvl===2); return {hi, level:hi.length>=2?2:(hi.length===1?1:0)}; }
+/* 지역 판정(v29.3) = 기회 높은 브랜드 수(최대 2점) + 현지 유통 재고(재고 과잉형만 ±1) + 환율(±1)
+   → 3점 이상 높음 · 1~2점 보통 · 0점 이하 낮음 */
+function srcRetailSig(k){
+  const rs=(SRC_RETAIL[k]||[]).map(t=>{ const x=DATA.items.find(i=>i.ticker===t); if(!x) return null;
+    const fy=x.fy&&x.fy.length?x.fy[x.fy.length-1]:null;
+    return (x.inv_yoy==null||!fy||fy.rev_yoy==null)?null:{name:x.name, d:x.inv_yoy-fy.rev_yoy}; }).filter(Boolean);
+  if(!rs.length) return {pt:0, txt:'현지 유통사 자료 없음'};
+  const heavy=rs.filter(r=>r.d>=5);
+  if(heavy.length) return {pt:1, txt:'현지 유통 재고 무거움 '+heavy.map(r=>r.name).join('·')};
+  if(rs.every(r=>r.d<=-5)) return {pt:-1, txt:'현지 유통 재고 가벼움'};
+  return {pt:0, txt:'현지 유통 재고 보통'};
+}
+function srcFxSig(k){
+  const fx=(SRC_FXMAP[k]||[]).map(c=>(DATA.fx||{})[c]).filter(f=>f&&f.chg_pct!=null);
+  if(!fx.length) return {pt:0, txt:'환율 자료 없음'};
+  const avg=fx.reduce((a,f)=>a+f.chg_pct,0)/fx.length, lst=fx.map(f=>`${f.name} ${pp(f.chg_pct)}`).join('·');
+  if(avg<=-2) return {pt:1, txt:`${lst} — 매입 부담 줄어듦`};
+  if(avg>=2) return {pt:-1, txt:`${lst} — 매입 부담 커짐`};
+  return {pt:0, txt:`${lst} — 환율 비슷`};
+}
+function srcSumm(k){
+  const hi=srcRanked(k).filter(o=>o.lvl===2), br=Math.min(hi.length,2);
+  const rt=SRC_PRESET==='A'?srcRetailSig(k):null, fx=srcFxSig(k);
+  const score=br+(rt?rt.pt:0)+fx.pt;
+  return {hi, score, level:score>=3?2:(score>=1?1:0), parts:[{pt:br, txt:`기회 높은 브랜드 ${hi.length}곳`}, ...(rt?[rt]:[]), fx]};
+}
 function srcBadge(t,name,ring,large){
   const d=DOMAINS[t]; const init=d?d.replace(/^www\./,'').slice(0,2).toUpperCase():String(name||t).replace(/[^가-힣A-Za-z0-9]/g,'').slice(0,1);
   const fb=`<i style="${d?'display:none':''}">${init}</i>`;
@@ -603,8 +630,8 @@ function sourcingCard(){
       <span class="bs">${top.map(o=>srcBadge(o.b.t,o.b.name,SRC_LV[o.lvl].ring)).join('')}${list.length>3?`<span class="src-more">+${list.length-3}</span>`:''}</span>
       <span class="src-pill">${SRC_NAMES[k]} · ${lv.txt}${k==='middleeast'?'(추정)':''}</span></button>`;
   });
-  const desc=SRC_PRESET==='A'?'재고가 매출보다 빨리 늘었고 그 지역 판매가 약하면 처분 물량이 나온다고 봅니다.'
-                             :'지역 성장이 빠르거나 재고가 많이 늘면 유통 물량 자체가 커진다고 봅니다.';
+  const desc=SRC_PRESET==='A'?'재고가 매출보다 빨리 늘었고 그 지역 판매가 약하면 처분 물량이 나온다고 봅니다. 현지 유통 재고와 환율도 함께 반영합니다.'
+                             :'지역 성장이 빠르거나 재고가 많이 늘면 유통 물량 자체가 커진다고 봅니다. 환율도 함께 반영합니다.';
   return `<div class="card span2" id="srcCard"><h3>🌍 소싱 기회 지도 — 유럽 · 중동 · 남미 <span class="tag2">공시 기반</span></h3>
   <div class="src-wrap">
     <div class="src-seg"><div class="seg2">
@@ -621,7 +648,7 @@ function sourcingCard(){
   </div></div>`;
 }
 function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
-const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE'],middleeast:[],samerica:['SBFG3.SA']};
+const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE'],middleeast:['4240.SR'],samerica:['SBFG3.SA']};
 const SRC_FXMAP={europe:['EUR','GBP'],middleeast:['USD'],samerica:['BRL']};
 const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
 function srcRetailHtml(k){
@@ -672,6 +699,7 @@ function openSheet(kind){
     const sm=srcSumm(kind), lv=SRC_LV[sm.level];
     title=`${SRC_NAMES[kind]} 브랜드`; chip=`<span class="lvchip" style="background:${lv.bg};color:${lv.fg}">기회 ${lv.txt}</span>`;
     if(kind==='middleeast') body+=`<div class="sh-warn">중동은 대부분 브랜드가 유럽·중동·아프리카 또는 신흥시장으로 묶어 공시합니다. 그 합산값을 빌려 쓴 추정치입니다.</div>`;
+    body+=`<div class="note" style="margin:2px 0 8px"><b>판정 ${lv.txt} (${sm.score}점)</b> — ${sm.parts.map(p=>`${esc(p.txt)} ${p.pt>0?'+':''}${p.pt}`).join(' · ')}</div>`;
     srcRanked(kind).forEach(o=>{ const l=SRC_LV[o.lvl], c=o.c;
       const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}`;
       const t3=(SRC_PRESET==='A'?'근거: '+c.why:'기준: '+o.b.period)+(c.proxy&&c.proxy.indexOf('차용')>=0?' · 추정(유럽·중동·아프리카 값 차용)':(c.proxy&&kind!=='europe'?' · '+c.proxy:''));
@@ -698,7 +726,8 @@ function openSheet(kind){
     body=`<div class="sh-mt"><b>재고 과잉형 (보완안)</b><p>브랜드 재고 증가율이 매출 증가율보다 5%p 이상 높고(재고 압력), 그 지역이 역성장하거나 +10% 미만이면서 브랜드의 지역 중 하위권이면 높음. 둘 중 하나만 맞으면 보통.</p>
       <b>시장 확대형 (원안)</b><p>지역 성장률 +15% 이상 또는 브랜드 재고 증가 +15% 이상이면 높음, +5% 이상이면 보통.</p>
       <b>지도 배지</b><p>지역마다 기회 수준이 높은 순으로 최대 3개 브랜드를 표시하고 나머지는 +숫자로 묶습니다. 테두리 색이 기회 수준이며, 브랜드를 누르면 기업 상세로 이동합니다.</p>
-      <b>현지 유통사·환율·뉴스</b><p>지역 패널 아래쪽에 참고 정보로 붙입니다. 유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값이 1년 전보다 2% 이상 오르면 매입 부담이 커진 것으로 봅니다. 아직 기회 수준 계산에는 넣지 않았습니다.</p>
+      <b>지역 판정 (지도 색·지역 칩)</b><p>점수 = 기회 높은 브랜드 수(최대 2점) + 현지 유통 재고(재고 과잉형만: "무거움"인 유통사가 하나라도 있으면 +1, 모두 "가벼움"이면 −1) + 환율(현지 통화 원화 값이 1년 전보다 평균 2% 이상 내리면 매입 부담이 줄어 +1, 2% 이상 오르면 −1). 3점 이상 높음, 1~2점 보통, 0점 이하 낮음. 지역 패널 맨 위에 점수 내역을 표시합니다.</p>
+      <b>현지 유통사·환율·뉴스</b><p>유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값 1년 변동입니다(중동은 달러 고정 통화라 달러로 대신). 뉴스는 참고 정보로만 붙입니다.</p>
       <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 쓰고 상장 유통사도 없어 뉴스로 보완합니다.</p></div>`;
   } else return;
   sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="closeSheet()"></button>
