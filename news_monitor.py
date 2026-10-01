@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.3: 소싱 지도 지역 패널용 현지 유통 뉴스 — 프레이저스·잘란도·그루포 SBF, 중동(랜드마크·세노미·
+     중동 유통 일반), 남미 유통 일반 검색어 추가
 v2.2: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X) — 조용한 무선별 방지
 v2.1: 브랜드 그룹(스포츠·아웃도어/패션/명품/유통·그외) 태그 → 대시보드 필터
 v2: 범위 확장 — 감시 브랜드 31개사 + 명품 12개 + 산업 카테고리 3종.
@@ -77,6 +79,14 @@ BRANDS = {
     "gmg":        ["GMG(Sun&Sand)", "retail", '"GMG" Dubai OR "Sun and Sand Sports"'],
     "apparelgrp": ["Apparel Group", "retail", '"Apparel Group" UAE'],
     "alshaya":    ["Alshaya", "retail", '"Alshaya" retail'],
+    # ── 소싱 지도 지역 패널용 현지 유통 (v2.3) ──
+    "frasers":    ["프레이저스(스포츠다이렉트)", "retail", '"Frasers Group" OR "Sports Direct"'],
+    "zalando":    ["잘란도", "retail", '"Zalando"'],
+    "sbf":        ["그루포 SBF(센타우로)", "retail", '"Grupo SBF" OR Centauro OR Fisia'],
+    "landmark":   ["Landmark Group", "retail", '"Landmark Group" Dubai retail'],
+    "cenomi":     ["Cenomi Retail", "retail", '"Cenomi Retail" OR "Alhokair"'],
+    "me_retail":  ["중동 유통", "retail", '"Middle East" sportswear retail OR "GCC" fashion retail OR "Saudi" sports retail'],
+    "sa_retail":  ["남미 유통", "retail", '"Latin America" sportswear retail OR "Brazil" sneaker market'],
 }
 GROUP_LABEL = {"sports": "스포츠·아웃도어", "fashion": "패션", "luxury": "명품",
                "retail": "유통·그외"}
