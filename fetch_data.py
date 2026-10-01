@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.4: 환율 — 원화 직접 쌍 이력이 1년이 안 돼 1년 전 값이 비면(브라질 헤알) 달러 경유로 대체
 v4.3: 소싱 지도 2단계 — 현지 유통사 3곳 추가(프레이저스·잘란도·그루포 SBF, 글로벌 유통)와
      환율 수집(유로·파운드·달러·브라질 헤알 대비 원화, 최근값과 1년 전 값) → data.json 'fx'
 v4.2: 블랙야크아이앤씨(478560) 추가 — 시장(코스피/코스닥) 미확인이라 .KS 실패 시 .KQ 자동 재시도
@@ -212,34 +213,56 @@ def _fx_series(tk):
     return h["Close"].dropna() if h is not None and not h.empty else None
 
 
+def _cross_series(code, usd):
+    """달러 경유: 현지통화→달러 × 달러→원화"""
+    cross = _fx_series(f"{code}USD=X")
+    if usd is None or cross is None:
+        return None
+    return (cross * usd.reindex(cross.index, method="ffill")).dropna()
+
+
+def _year_ago(s):
+    """365일 이전 가장 가까운 날 종가 (이력이 1년이 안 되면 None)"""
+    prev = s[s.index <= s.index[-1] - datetime.timedelta(days=365)]
+    return float(prev.iloc[-1]) if len(prev) else None
+
+
 def fetch_fx():
     """환율: 최근 종가와 1년 전(365일 이전 가장 가까운 날) 종가, 변동률.
-    원화 직접 쌍이 비면 달러 경유(현지통화→달러 × 달러→원화)로 계산"""
+    원화 직접 쌍이 비거나 이력이 1년이 안 되면 달러 경유(현지통화→달러 × 달러→원화)로 계산"""
     out = {}
     usd = None
     for code, (name, tk) in FX.items():
         try:
             s = _fx_series(tk)
             via = None
-            if (s is None or s.empty) and code != "USD":
-                if usd is None:
-                    usd = _fx_series("USDKRW=X")
-                cross = _fx_series(f"{code}USD=X")
-                if usd is not None and cross is not None:
-                    s = (cross * usd.reindex(cross.index, method="ffill")).dropna()
-                    via = "달러 경유"
+            has_s = s is not None and not s.empty
+            if code != "USD" and (not has_s or _year_ago(s) is None):
+                if has_s:
+                    print(f"  환율 {code}: 원화 직접 쌍 이력 {s.index[0]:%Y-%m-%d}부터 {len(s)}일 "
+                          f"— 1년 전 값 없음, 달러 경유 시도")
+                try:
+                    if usd is None:
+                        usd = _fx_series("USDKRW=X")
+                    c = _cross_series(code, usd)
+                except Exception as e:      # 경유 실패해도 직접 쌍(현재값)은 유지
+                    c = None
+                    print(f"  환율 {code} 달러 경유 실패: {str(e)[:100]}")
+                # 직접 쌍이 있으면 달러 경유가 1년 전 값까지 있을 때만 대체
+                if c is not None and not c.empty and (not has_s or _year_ago(c) is not None):
+                    s, via = c, "달러 경유"
             if s is None or s.empty:
                 print(f"  환율 {code} 없음")
                 continue
             last_dt = s.index[-1]
             last = float(s.iloc[-1])
-            prev = s[s.index <= last_dt - datetime.timedelta(days=365)]
-            yago = float(prev.iloc[-1]) if len(prev) else None
+            yago = _year_ago(s)
             out[code] = {"name": name, "rate": round(last, 4),
                          "yago": round(yago, 4) if yago else None,
                          "chg_pct": round((last / yago - 1) * 100, 2) if yago else None,
                          "asof": last_dt.strftime("%Y-%m-%d"), "via": via}
-            print(f"  환율 {code}: {last:,.2f}원 (1년 전 대비 {out[code]['chg_pct']}%)")
+            print(f"  환율 {code}: {last:,.2f}원 (1년 전 대비 {out[code]['chg_pct']}%)"
+                  f"{' · ' + via if via else ''}")
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
     return out
