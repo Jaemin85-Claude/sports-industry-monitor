@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.4: 브랜드 21개 추가 — 뉴발란스·우포스·킨·CEP·노르다(스포츠), 드래곤디퓨전·메종키츠네·가니·헌터·
+     닥터마틴·핏플랍·락포트·피레넥스·클락스·파라부트·와일드동키·휴먼메이드·에코·단톤·샤카웨어(패션),
+     비비안웨스트우드(명품). 호카 검색어에 어그(UGG, 같은 데커스) 포함
 v2.3: 소싱 지도 지역 패널용 현지 유통 뉴스 — 프레이저스·잘란도·그루포 SBF, 중동(랜드마크·세노미·
      중동 유통 일반), 남미 유통 일반 검색어 추가
 v2.2: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨간 X) — 조용한 무선별 방지
@@ -36,7 +39,7 @@ BRANDS = {
     "nike":       ["나이키", "sports", '"Nike" OR 나이키 브랜드'],
     "adidas":     ["아디다스", "sports", '"adidas" OR 아디다스'],
     "on":         ["온홀딩", "sports", '"On Running" OR "On Holding" OR 온러닝'],
-    "hoka":       ["호카(데커스)", "sports", '"HOKA" OR "Deckers" OR 호카'],
+    "hoka":       ["호카·어그(데커스)", "sports", '"HOKA" OR "Deckers" OR 호카 OR "UGG" OR 어그부츠'],
     "amer":       ["아머스포츠", "sports", '"Amer Sports" OR "Arc\'teryx" OR "Salomon" OR 아크테릭스 OR 살로몬'],
     "lululemon":  ["룰루레몬", "sports", '"lululemon" OR 룰루레몬'],
     "asics":      ["아식스", "sports", '"ASICS" OR 아식스'],
@@ -54,9 +57,29 @@ BRANDS = {
     "brooks":     ["브룩스", "sports", '"Brooks Running" OR 브룩스러닝'],
     "descente":   ["데상트", "sports", '"Descente" OR 데상트'],
     "skechers":   ["스케쳐스", "sports", '"Skechers" OR 스케쳐스'],
+    "newbalance": ["뉴발란스", "sports", '"New Balance" OR 뉴발란스'],
+    "oofos":      ["우포스", "sports", '"OOFOS" OR 우포스'],
+    "keen":       ["킨(KEEN)", "sports", '"KEEN Footwear" OR "KEEN shoes" OR 킨샌들'],
+    "cep":        ["CEP", "sports", '"CEP compression" OR "CEP Sportswear"'],
+    "norda":      ["노르다", "sports", '"norda" running OR 노르다'],
     # ── 패션·라이프스타일 (fashion) ──
     "birkenstock":["버켄스탁", "fashion", '"Birkenstock" OR 버켄스탁'],
     "crocs":      ["크록스", "fashion", '"Crocs" OR 크록스'],
+    "dragondiffusion": ["드래곤디퓨전", "fashion", '"Dragon Diffusion" OR 드래곤디퓨전'],
+    "kitsune":    ["메종키츠네", "fashion", '"Maison Kitsune" OR "Maison Kitsuné" OR 메종키츠네'],
+    "ganni":      ["가니", "fashion", '"Ganni"'],
+    "hunter":     ["헌터", "fashion", '"Hunter Boots" OR 헌터부츠'],
+    "drmartens":  ["닥터마틴", "fashion", '"Dr. Martens" OR "Dr Martens" OR 닥터마틴'],
+    "fitflop":    ["핏플랍", "fashion", '"FitFlop" OR 핏플랍'],
+    "rockport":   ["락포트", "fashion", '"Rockport shoes" OR "Rockport Group" OR 락포트'],
+    "pyrenex":    ["피레넥스", "fashion", '"Pyrenex" OR 피레넥스'],
+    "clarks":     ["클락스", "fashion", '"Clarks shoes" OR "Clarks Originals" OR 클락스'],
+    "paraboot":   ["파라부트", "fashion", '"Paraboot" OR 파라부트'],
+    "wilddonkey": ["와일드동키", "fashion", '"Wild Donkey" OR 와일드동키'],
+    "humanmade":  ["휴먼메이드", "fashion", '"Human Made" OR 휴먼메이드'],
+    "ecco":       ["에코(ECCO)", "fashion", '"ECCO" 신발 OR "ECCO shoes" OR 에코슈즈'],
+    "danton":     ["단톤", "fashion", '"Danton" OR 단톤'],
+    "shakawear":  ["샤카웨어", "fashion", '"Shaka Wear" OR 샤카웨어'],
     # ── 명품 (luxury) ──
     "moncler":    ["몽클레르", "luxury", '"Moncler" OR 몽클레르'],
     "burberry":   ["버버리", "luxury", '"Burberry" OR 버버리'],
@@ -70,6 +93,7 @@ BRANDS = {
     "goldengoose":["골든구스", "luxury", '"Golden Goose" OR 골든구스'],
     "stoneisland":["스톤아일랜드", "luxury", '"Stone Island" OR 스톤아일랜드'],
     "margiela":   ["메종마르지엘라", "luxury", '"Maison Margiela" OR 마르지엘라'],
+    "viviennewestwood": ["비비안웨스트우드", "luxury", '"Vivienne Westwood" OR 비비안웨스트우드'],
     # ── 유통·그외 (retail) ──
     "dks":        ["딕스+풋락커", "retail", '"Dick\'s Sporting Goods" OR "Foot Locker" OR 풋락커'],
     "jd":         ["JD스포츠", "retail", '"JD Sports" OR JD스포츠'],

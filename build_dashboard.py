@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v29.1: 닥터마틴(DOCS.L) 로고·국기·뉴스 연결, 뉴발란스(이랜드월드) 국내 법인 상세에 뉴발란스 뉴스 연결
 v29: 소싱 지도 2단계 (뉴스 3건 표시는 같은 기사 다른 출처 중복 제거 — 기업 상세 최근 뉴스 카드 포함)
 v29.0: 소싱 지도 2단계 — 지역 패널에 ① 현지 유통사 재고(유럽 JD·프레이저스·잘란도, 남미 그루포 SBF)
      ② 환율(현지 통화→원화 1년 변동, 매입 부담 판정) ③ 현지 유통 뉴스(최근 14일 선별 3건). 기회 수준 계산에는 아직 미반영
@@ -413,7 +414,7 @@ const DOMAINS = {
   "VFC":"vfc.com", "UAA":"underarmour.com",
   "8022.T":"mizuno.com", "7906.T":"yonex.com", "8111.T":"goldwin.co.jp",
   "2020.HK":"anta.com", "2331.HK":"lining.com", "PUM.DE":"puma.com",
-  "WWW":"wolverineworldwide.com", "COLM":"columbia.com",
+  "WWW":"wolverineworldwide.com", "COLM":"columbia.com", "DOCS.L":"drmartens.com",
   "DKS":"dickssportinggoods.com", "JD.L":"jdplc.com", "ASO":"academy.com",
   "081660.KS":"fila.co.kr", "383220.KS":"fnf.co.kr", "298540.KQ":"thenatureholdings.com",
   "120110.KS":"kolonindustries.com", "337930.KQ":"xexymix.com", "000680.KS":"lsnetworks.co.kr",
@@ -434,7 +435,7 @@ const FLAGS = {
   "LULU":"🇨🇦", "7936.T":"🇯🇵", "BIRK":"🇩🇪", "CROX":"🇺🇸", "VFC":"🇺🇸",
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
-  "COLM":"🇺🇸", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
+  "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
   "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷"
 };
 const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
@@ -444,8 +445,9 @@ const GROUP_NOTE = {"국내 OEM":"브랜드 오더의 선행지표","삼성물�
 const isKR = t => /\.K[SQ]$/.test(t);
 const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
-  "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DKS":"dks","JD.L":"jd","ASO":"academy",
-  "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente"};
+  "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","DKS":"dks","JD.L":"jd","ASO":"academy",
+  "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente",
+  "krd:nb_eland":"newbalance"};
 /* 재고일수 = 재고 ÷ 매출원가 × 365 (연간 원가 기준, 재고는 최근 잔액) */
 function dioOf(inv, rev, gp, cogs){
   const c = (cogs!=null) ? cogs : ((rev!=null && gp!=null) ? rev-gp : null);
