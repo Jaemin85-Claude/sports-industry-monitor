@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v28.1: 지도의 지역 도형(유럽·중동·남미)도 누르면 패널 열림, PC는 마우스 올리면 강조
+v28: 🌍 소싱 기회 지도 — 종합에 지도 카드(새 탭 없이), 지역 위 브랜드 로고 배지 → 하단 패널(브랜드 목록·근거),
+     가정 2종(재고 과잉형=보완안 / 시장 확대형=원안) 전환, 브랜드×지역 표·계산 방식은 패널.
+     종합의 '한국이 속한 지역 성장' 카드는 지도 표의 '한국 수요' 열로 통합(중복 제거·길이 유지).
+     지도 경계: docs/worldmap.json (world-atlas 110m 단순화)
 v27: ① 🇰🇷 한국 시장 신호 — 브랜드 상세 첫 카드(국내 법인 DART · 본사 공시의 한국이 속한 지역 · 국내 소매 KOSIS),
        종합에 '한국이 속한 지역 성장' 카드(본사 공시 기준, 환율 제외 우선)
      ② 수집 상태 — 소스별 마지막 갱신·주기·지연 판정(열람 시점 기준), 지연 시 종합 상단 경고 띠
@@ -174,13 +179,74 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .ksig .kb .d{min-width:0;overflow-wrap:anywhere}
 .ksig .kb .v{flex:none;white-space:nowrap;font-weight:600}
 .ksig .ks{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
-.krow.more{display:none}
-.card.open .krow.more{display:flex}
-.morebtn{color:var(--accent);font-size:var(--fs-sm);cursor:pointer;margin-top:6px}
 .warnbar{background:color-mix(in srgb,var(--neg) 10%,var(--card));border:1px solid var(--neg);border-radius:10px;padding:8px 12px;font-size:var(--fs-sm);margin-bottom:10px;cursor:pointer}
 #statusTbl td,#statusTbl th{white-space:nowrap;padding:7px 4px}
 #statusTbl td:first-child{white-space:normal}
 .st-ok{color:var(--pos);font-weight:600}.st-late{color:var(--neg);font-weight:600}
+/* v28 소싱 기회 지도 */
+.src-wrap{display:grid;gap:10px;grid-template-columns:minmax(0,1fr);grid-template-areas:"seg" "map" "regs" "btns"}
+.src-seg{grid-area:seg}.src-mapbox{grid-area:map}.src-regs{grid-area:regs}.src-btns{grid-area:btns}
+.seg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.seg2 button{min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:var(--fs-sm);font-weight:600;cursor:pointer;font-family:inherit}
+.seg2 button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.src-desc{font-size:var(--fs-xs);color:var(--sub);margin-top:6px;line-height:1.5}
+.src-map{position:relative}
+.src-svg{width:100%;height:auto;display:block;border-radius:10px}
+.mp-sea{fill:#f2f5fa}.mp-other{fill:#dde2ea;stroke:var(--card);stroke-width:.25}
+.mp-reg{stroke:var(--card);stroke-width:.25}
+.mp-click{cursor:pointer;transition:opacity .12s}.mp-click:hover{opacity:.78}
+.mp-flow{fill:none;stroke:#E8590C;stroke-width:.7;stroke-dasharray:2 1.4}
+.mp-kr{fill:#E8590C;stroke:#E8590C;stroke-width:.8}
+.mp-lbl{font-size:6.5px;font-weight:700;fill:#8A3B0A;stroke:var(--card);stroke-width:1.6;paint-order:stroke}
+[data-theme="dark"] .mp-sea{fill:#121a2a}[data-theme="dark"] .mp-other{fill:#2b3650}[data-theme="dark"] .mp-lbl{fill:#ffb27a}
+.src-cl{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:0;padding:4px;min-width:44px;min-height:44px;cursor:pointer;font-family:inherit}
+.src-cl .bs{display:flex;align-items:center}
+.src-bd{width:26px;height:26px;border-radius:13px;background:#fff;border:2px solid;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;box-sizing:border-box;flex:none}
+.src-bd+.src-bd{margin-left:-7px}
+.src-bd img{width:16px;height:16px;object-fit:contain}
+.src-bd i{font-style:normal;font-size:var(--fs-2xs);font-weight:800;color:#1c2433}
+.src-bd.lg{width:34px;height:34px;border-radius:17px}.src-bd.lg img{width:20px;height:20px}
+@media(max-width:480px){.src-cl .src-bd{width:22px;height:22px;border-radius:11px}.src-cl .src-bd img{width:14px;height:14px}.src-cl .src-bd+.src-bd{margin-left:-6px}.src-cl .src-more{min-width:20px;height:20px}.src-cl .src-pill{font-size:var(--fs-2xs)}}
+.src-more{margin-left:-6px;min-width:24px;height:24px;padding:0 5px;border-radius:12px;background:#1c2433;color:#fff;font-size:var(--fs-2xs);font-weight:700;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box}
+.src-pill{font-size:var(--fs-xs);font-weight:700;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--tx);white-space:nowrap}
+.src-legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--fs-xs);color:var(--sub);margin-top:6px}
+.src-legend span{display:inline-flex;align-items:center;gap:4px}
+.src-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;box-sizing:border-box}
+.src-regs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.src-regs button{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:inherit}
+.src-regs b{font-size:var(--fs-base)}
+.src-regs .rl{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.src-regs .tops{display:none;font-size:var(--fs-xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.lvchip{font-size:var(--fs-xs);font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.src-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.src-btns button{min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--accent);font-size:var(--fs-sm);font-weight:600;cursor:pointer;font-family:inherit}
+/* PC: 지도 왼쪽 · 오른쪽 열이 지도 높이를 채움(빈 공간 없음) — 기본 규칙 뒤에 둬야 적용됨 */
+@media(min-width:760px){.src-wrap{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);grid-template-rows:auto 1fr auto;grid-template-areas:"map seg" "map regs" "map btns";align-items:stretch}
+  .src-regs{grid-template-columns:minmax(0,1fr);grid-auto-rows:1fr}
+  .src-regs button{flex-direction:row;justify-content:space-between;padding:0 14px}
+  .src-regs .rl{align-items:flex-start}.src-regs .tops{display:block}}
+/* 하단 패널 */
+.sheet{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;display:none}
+.sheet.on{display:block}
+.sh-bd{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;background:rgba(10,14,22,.45);border:0;cursor:pointer}
+.sh-pn{position:absolute;left:0;right:0;bottom:0;max-width:760px;margin:0 auto;max-height:80vh;overflow-y:auto;background:var(--card);border-radius:16px 16px 0 0;padding:8px 14px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box}
+.sh-grip{width:36px;height:4px;border-radius:2px;background:var(--line);margin:2px auto 8px}
+.sh-hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sh-tt{display:flex;align-items:center;gap:8px;font-size:var(--fs-lg);font-weight:700;min-width:0}
+.sh-x{width:44px;height:44px;border:0;background:transparent;color:var(--sub);font-size:var(--fs-xl);cursor:pointer}
+.sh-warn{font-size:var(--fs-sm);line-height:1.5;background:#fff4ec;color:#7a3208;border-radius:8px;padding:8px 10px;margin:4px 0}
+.sh-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.sh-row .bx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sh-row .t1{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:600}
+.sh-row .t2{font-size:var(--fs-base);color:var(--tx)}
+.sh-row .t3{font-size:var(--fs-xs);color:var(--sub)}
+.sh-kv{padding-top:10px;font-size:var(--fs-base)}.sh-kv .k{font-size:var(--fs-xs);color:var(--sub)}
+#srcTbl{table-layout:fixed}
+#srcTbl th:first-child,#srcTbl td:first-child{width:30%;text-align:left}
+#srcTbl th,#srcTbl td{text-align:center;padding:6px 3px}
+#srcTbl td .cv{border-radius:8px;padding:4px 2px;font-weight:700;font-size:var(--fs-sm);line-height:1.25;box-sizing:border-box}
+#srcTbl td .cv small{display:block;font-size:var(--fs-2xs);font-weight:500}
+.sh-mt p{font-size:var(--fs-base);line-height:1.55;margin:2px 0 10px}.sh-mt b{font-size:var(--fs-base)}
 .prow .pv{background:color-mix(in srgb,var(--card) 82%,transparent);border-radius:4px;padding:0 4px;right:3px}
 .cnline{font-size:var(--fs-xs);color:var(--sub);margin:2px 0 0 38px}
 /* 표 줄바꿈 금지 — 표가 넓으면 표만 가로 스크롤 */
@@ -316,6 +382,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   <div class="tab" data-p="news"><span class="ic">📰</span>뉴스</div>
   <div class="tab" data-p="kr"><span class="ic">🇰🇷</span>국내</div>
 </nav>
+<div class="sheet" id="sheet"></div>
 </div>
 <script>
 const DATA = __DATA__;
@@ -326,7 +393,8 @@ const NEWS = __NEWS__;
 const KR = __KR__;
 const HIST = __HIST__;
 const KRD = __KRD__;
-const STATUS = __STATUS__;   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
+const STATUS = __STATUS__;
+const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -438,22 +506,159 @@ function koreaCard(x){
   h+=`<div class="note">본사 지역 수치는 한국 단독이 아니라 한국이 속한 지역 합계 · 환율 제외 = 현지 통화 기준(회사 공시값) · 국내 법인은 연간(별도 재무제표)</div></div>`;
   return h;
 }
-function koreaHomeCard(){
-  const list=DATA.items.filter(x=>x.group==='글로벌 브랜드').map(x=>({x, rg:koreaRegion(x.ticker)}))
-    .filter(o=>o.rg&&(o.rg.cn!=null||o.rg.yoy!=null))
-    .map(o=>({...o, v:o.rg.cn!=null?o.rg.cn:o.rg.yoy, basis:o.rg.cn!=null?'환율 제외':'보고 통화'}))
-    .sort((a,b)=>b.v-a.v);
-  if(!list.length) return '';
-  const CAP=8;
-  let h=`<div class="card" id="koreaHome"><h3>🇰🇷 한국이 속한 지역 성장 · 본사 공시 기준</h3>`;
-  list.forEach((o,i)=>{
-    h+=`<div class="rk krow${i>=CAP?' more':''}" onclick="goDetail('${o.x.ticker}')"><span>${logoImg(o.x.ticker,false,o.x.name)}${esc(o.x.name)}<span class="g">${esc(o.rg.name)}</span></span>
-      <span>${fmt(o.v,1,true)} <span class="na" style="font-size:var(--fs-2xs)">${o.basis}</span></span></div>`;
+/* ── 🌍 소싱 기회 지도 (v28) ── */
+/* 브랜드별로 유럽·중동·남미에 대응하는 공시 지역(정규식, 표기)
+   중동은 대부분 EMEA 합산값을 빌려 씀(차용) — 화면에 추정으로 표시 */
+const SRC_CFG={
+  'ADS.DE':{europe:[/^europe$/i,null],middleeast:[/emerging markets/i,'신흥시장 합산'],samerica:[/^latin america$/i,null]},
+  'PUM.DE':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null]},
+  '7936.T':{europe:[/^europe$/i,null],middleeast:null,samerica:[/^others/i,'남미+한국 합산']},
+  'NKE':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america/i,'아시아+남미 합산']},
+  'AS':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
+  'BIRK':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
+  'COLM':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america and asia/i,'남미+아시아 합산']},
+  'UAA':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null]},
+  'VFC':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
+};
+const SRC_KEYS=['europe','middleeast','samerica'];
+const SRC_NAMES={europe:'유럽',middleeast:'중동',samerica:'남미'};
+const SRC_LV={2:{bg:'#0043FF',fg:'#FFFFFF',txt:'높음',ring:'#0043FF',map:'#0043FF'},
+              1:{bg:'#9DB4FF',fg:'#0B1A4A',txt:'보통',ring:'#7F9BFF',map:'#9DB4FF'},
+              0:{bg:'#E6EBF7',fg:'#3A4560',txt:'낮음',ring:'#B9C4DE',map:'#CBD6F5'}};
+const SRC_RNAME=[[/^europe$/i,'유럽'],[/^emea$|europe, middle east/i,'유럽·중동·아프리카'],[/emerging markets/i,'신흥시장'],
+  [/asia pacific & latin america/i,'아시아·남미'],[/latin america and asia/i,'남미·아시아'],[/latin america/i,'중남미'],[/^others/i,'남미·한국 등']];
+const srcRegName=n=>{ for(const [re,k] of SRC_RNAME) if(re.test(n||'')) return k; return n; };
+const pp=v=>(v>0?'+':'')+v.toFixed(1)+'%';
+let SRC_PRESET='A', SRC_SHEET=null, SRC_CACHE=null;
+function srcModel(){
+  if(SRC_CACHE) return SRC_CACHE;
+  const g=r=>r.cn_yoy_pct!=null?r.cn_yoy_pct:r.yoy_pct;
+  const out=[];
+  Object.entries(SRC_CFG).forEach(([t,cfg])=>{
+    const x=DATA.items.find(i=>i.ticker===t); const s=(SEGS.items||{})[t]; const ex=s&&s.extract;
+    if(!x||!ex||!ex.regions||x.inv_yoy==null) return;
+    const fy=x.fy.length?x.fy[x.fy.length-1]:{}; if(fy.rev_yoy==null) return;
+    const regs=ex.regions.filter(r=>g(r)!=null&&!/total|합계|corporate|global brand|converse/i.test(r.name||''));
+    if(!regs.length) return;
+    const vs=regs.map(g).sort((a,b)=>a-b), n=vs.length, med=n%2?vs[(n-1)/2]:(vs[n/2-1]+vs[n/2])/2;
+    const P=x.inv_yoy-fy.rev_yoy, cells={};
+    SRC_KEYS.forEach(k=>{
+      const spec=cfg[k]; const r=spec?regs.find(z=>spec[0].test(z.name||'')):null;
+      if(!r){ cells[k]=null; return; }
+      const v=g(r), excess=P>=5, weak=v<0||(v<10&&v<med);
+      const why=[]; if(excess) why.push(`재고 압력 ${P>0?'+':''}${P.toFixed(1)}%p`); if(weak) why.push(v<0?'지역 역성장':'지역 성장 둔화');
+      cells[k]={g:v, basis:r.cn_yoy_pct!=null?'환율 제외':'보고 통화', rname:srcRegName(r.name), proxy:spec[1],
+        A:(excess&&weak)?2:((excess||weak)?1:0), B:(v>=15||x.inv_yoy>=15)?2:((v>=5||x.inv_yoy>=5)?1:0), why:why.join(' · ')||'해당 없음'};
+    });
+    out.push({t, name:x.name, inv:x.inv_yoy, rev:fy.rev_yoy, period:(ex.period||'').split(' ended')[0], cells, kr:koreaRegion(t)});
   });
-  if(list.length>CAP) h+=`<div class="morebtn" onclick="this.parentElement.classList.toggle('open');this.textContent=this.parentElement.classList.contains('open')?'접기':'전체 ${list.length}개 보기'">전체 ${list.length}개 보기</div>`;
-  h+=`<div class="note">지역 합계(한국 단독 아님) · 회사별 최신 공시 기간 · 환율 제외 값이 있으면 우선</div></div>`;
-  return h;
+  return (SRC_CACHE=out);
 }
+function srcRanked(k){
+  return srcModel().filter(b=>b.cells[k]).map(b=>({b, c:b.cells[k], lvl:b.cells[k][SRC_PRESET]}))
+    .sort((x,y)=>(y.lvl-x.lvl)||(Math.abs(y.c.g)-Math.abs(x.c.g)));
+}
+function srcSumm(k){ const hi=srcRanked(k).filter(o=>o.lvl===2); return {hi, level:hi.length>=2?2:(hi.length===1?1:0)}; }
+function srcBadge(t,name,ring,large){
+  const d=DOMAINS[t]; const init=d?d.replace(/^www\./,'').slice(0,2).toUpperCase():String(name||t).replace(/[^가-힣A-Za-z0-9]/g,'').slice(0,1);
+  const fb=`<i style="${d?'display:none':''}">${init}</i>`;
+  return `<span class="src-bd${large?' lg':''}" style="border-color:${ring}">${d?`<img loading="lazy" alt="" src="https://www.google.com/s2/favicons?domain=${d}&sz=64" onerror="this.style.display='none';this.nextSibling.style.display='inline'">`:''}${fb}</span>`;
+}
+function srcMapSvg(){
+  const W=WMAP; if(!W) return '<div class="na">지도 데이터 없음 — docs/worldmap.json 확인</div>';
+  const vb=W.viewBox.split(' ').map(Number), K=W.korea_pt;
+  const fill=k=>SRC_LV[srcSumm(k).level].map;
+  return `<svg class="src-svg" viewBox="${W.viewBox}" role="img" aria-label="유럽·중동·남미 소싱 기회 지도">
+    <defs><pattern id="srcHatch" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="#ffffff" stroke-width="0.9"/></pattern></defs>
+    <rect class="mp-sea" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}"/>
+    <path class="mp-other" d="${W.other}"/>
+    ${SRC_KEYS.map(k=>`<path class="mp-reg mp-click" fill="${fill(k)}" d="${W[k]}" onclick="openSheet('${k}')"><title>${SRC_NAMES[k]} — 눌러서 브랜드 목록</title></path>`).join('')}
+    <path fill="url(#srcHatch)" d="${W.middleeast}" pointer-events="none"/>
+    <path class="mp-kr" d="${W.korea}"/>
+    ${W.flows.map(f=>`<path class="mp-flow" d="${f}"/>`).join('')}
+    <circle cx="${K[0]}" cy="${K[1]}" r="2.2" fill="#E8590C" stroke="#ffffff" stroke-width="0.6"/>
+    <text class="mp-lbl" x="${(K[0]+3).toFixed(1)}" y="${(K[1]-3).toFixed(1)}">한국</text>
+  </svg>`;
+}
+function sourcingCard(){
+  if(!srcModel().length) return '';
+  const W=WMAP;
+  let cl='';
+  if(W) SRC_KEYS.forEach(k=>{
+    const list=srcRanked(k), top=list.slice(0,3), lv=SRC_LV[srcSumm(k).level];
+    cl+=`<button type="button" class="src-cl" style="left:${W.anchors[k][0]};top:${W.anchors[k][1]}" onclick="openSheet('${k}')" aria-label="${SRC_NAMES[k]} 브랜드 목록 열기">
+      <span class="bs">${top.map(o=>srcBadge(o.b.t,o.b.name,SRC_LV[o.lvl].ring)).join('')}${list.length>3?`<span class="src-more">+${list.length-3}</span>`:''}</span>
+      <span class="src-pill">${SRC_NAMES[k]} · ${lv.txt}${k==='middleeast'?'(추정)':''}</span></button>`;
+  });
+  const desc=SRC_PRESET==='A'?'재고가 매출보다 빨리 늘었고 그 지역 판매가 약하면 처분 물량이 나온다고 봅니다.'
+                             :'지역 성장이 빠르거나 재고가 많이 늘면 유통 물량 자체가 커진다고 봅니다.';
+  return `<div class="card span2" id="srcCard"><h3>🌍 소싱 기회 지도 — 유럽 · 중동 · 남미 <span class="tag2">공시 기반</span></h3>
+  <div class="src-wrap">
+    <div class="src-seg"><div class="seg2">
+      <button type="button" class="${SRC_PRESET==='A'?'on':''}" onclick="setSrcPreset('A')">재고 과잉형</button>
+      <button type="button" class="${SRC_PRESET==='B'?'on':''}" onclick="setSrcPreset('B')">시장 확대형</button></div>
+      <div class="src-desc">${desc}</div></div>
+    <div class="src-mapbox"><div class="src-map">${srcMapSvg()}${cl}</div>
+      <div class="src-legend"><span><i style="background:#0043FF"></i>높음</span><span><i style="background:#9DB4FF"></i>보통</span><span><i style="background:#CBD6F5"></i>낮음</span>
+      <span><i style="background:#9DB4FF;border:1px dashed #3A4560"></i>빗금 = 추정</span><span><i style="background:#E8590C;border-radius:6px"></i>판매처</span></div></div>
+    <div class="src-regs">${SRC_KEYS.map(k=>{const sm=srcSumm(k), lv=SRC_LV[sm.level];
+      const tops=(sm.hi.length?sm.hi:srcRanked(k)).slice(0,3).map(o=>o.b.name).join(' · ');
+      return `<button type="button" onclick="openSheet('${k}')"><span class="rl"><b>${SRC_NAMES[k]}</b><span class="tops">${sm.hi.length?'기회 높음: ':'상위: '}${esc(tops)}</span></span><span class="lvchip" style="background:${lv.bg};color:${lv.fg}">${lv.txt} ${sm.hi.length}개</span></button>`;}).join('')}</div>
+    <div class="src-btns"><button type="button" onclick="openSheet('matrix')">브랜드 × 지역 전체 표</button><button type="button" onclick="openSheet('method')">가정과 계산 방식</button></div>
+  </div></div>`;
+}
+function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
+function srcRetail(k){
+  if(k==='europe'){
+    const j=DATA.items.find(i=>i.ticker==='JD.L'); const fy=j&&j.fy.length?j.fy[j.fy.length-1]:null;
+    if(j&&fy&&j.inv_yoy!=null&&fy.rev_yoy!=null){ const d=j.inv_yoy-fy.rev_yoy;
+      return `JD스포츠(영국) 재고 ${pp(j.inv_yoy)} · 매출 ${pp(fy.rev_yoy)} → 유럽 유통 재고 ${d<=-5?'가벼움':(d>=5?'무거움':'보통')}`; }
+    return '―';
+  }
+  return k==='middleeast'?'상장 유통사 없음 — 현지 대형 유통은 비상장(뉴스로 보완)':'상장 유통사 미편입 — 다음 단계 후보: 그루포 SBF(브라질)';
+}
+function openSheet(kind){
+  SRC_SHEET=kind; const sh=document.getElementById('sheet');
+  let title='', chip='', body='';
+  if(SRC_NAMES[kind]){
+    const sm=srcSumm(kind), lv=SRC_LV[sm.level];
+    title=`${SRC_NAMES[kind]} 브랜드`; chip=`<span class="lvchip" style="background:${lv.bg};color:${lv.fg}">기회 ${lv.txt}</span>`;
+    if(kind==='middleeast') body+=`<div class="sh-warn">중동은 대부분 브랜드가 유럽·중동·아프리카 또는 신흥시장으로 묶어 공시합니다. 그 합산값을 빌려 쓴 추정치입니다.</div>`;
+    srcRanked(kind).forEach(o=>{ const l=SRC_LV[o.lvl], c=o.c;
+      const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}`;
+      const t3=(SRC_PRESET==='A'?'근거: '+c.why:'기준: '+o.b.period)+(c.proxy&&c.proxy.indexOf('차용')>=0?' · 추정(유럽·중동·아프리카 값 차용)':(c.proxy&&kind!=='europe'?' · '+c.proxy:''));
+      body+=`<div class="sh-row" onclick="closeSheet();goDetail('${o.b.t}')">${srcBadge(o.b.t,o.b.name,l.ring,true)}
+        <div class="bx"><div class="t1"><span>${esc(o.b.name)}</span><span class="lvchip" style="background:${l.bg};color:${l.fg}">${l.txt}</span></div>
+        <div class="t2">${esc(t2)}</div><div class="t3">${esc(t3)}</div></div></div>`; });
+    body+=`<div class="sh-kv"><div class="k">현지 유통 재고</div>${esc(srcRetail(kind))}</div>`;
+  } else if(kind==='matrix'){
+    title='브랜드 × 지역';
+    body=`<div class="note" style="margin:2px 0 6px">칸 = 지역 성장률(환율 제외 우선) · 색 = 선택한 가정의 기회 수준 · 한국 수요 = 한국이 속한 지역 성장률</div>
+    <table id="srcTbl"><tr><th>브랜드</th><th>유럽</th><th>중동</th><th>남미</th><th>한국 수요</th></tr>`;
+    srcModel().forEach(b=>{
+      body+=`<tr><td>${logoImg(b.t,false,b.name)}${esc(b.name)}<div class="ref">${esc(b.period)}</div></td>`;
+      SRC_KEYS.forEach(k=>{ const c=b.cells[k];
+        if(!c){ body+=`<td><div class="cv" style="background:var(--barbg);color:var(--sub)">―<small>자료 없음</small></div></td>`; return; }
+        const l=SRC_LV[c[SRC_PRESET]], bor=c.proxy&&c.proxy.indexOf('차용')>=0;
+        body+=`<td><div class="cv" style="background:${l.bg};color:${l.fg};${bor?'border:1px dashed #3A4560':''}">${pp(c.g)}<small>${bor?'추정':l.txt}</small></div></td>`; });
+      const kr=b.kr, kv=kr?(kr.cn!=null?kr.cn:kr.yoy):null;
+      body+=`<td>${kv!=null?fmt(kv,1,true):'―'}<div class="ref">${kr?(kr.cn!=null?'환율 제외':'보고 통화'):''}</div></td></tr>`;
+    });
+    body+=`</table>`;
+  } else if(kind==='method'){
+    title='가정과 계산 방식';
+    body=`<div class="sh-mt"><b>재고 과잉형 (보완안)</b><p>브랜드 재고 증가율이 매출 증가율보다 5%p 이상 높고(재고 압력), 그 지역이 역성장하거나 +10% 미만이면서 브랜드의 지역 중 하위권이면 높음. 둘 중 하나만 맞으면 보통.</p>
+      <b>시장 확대형 (원안)</b><p>지역 성장률 +15% 이상 또는 브랜드 재고 증가 +15% 이상이면 높음, +5% 이상이면 보통.</p>
+      <b>지도 배지</b><p>지역마다 기회 수준이 높은 순으로 최대 3개 브랜드를 표시하고 나머지는 +숫자로 묶습니다. 테두리 색이 기회 수준이며, 브랜드를 누르면 기업 상세로 이동합니다.</p>
+      <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 씁니다. 환율·현지 유통사 재고는 다음 단계에서 붙입니다.</p></div>`;
+  } else return;
+  sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="closeSheet()"></button>
+    <div class="sh-pn" role="dialog" aria-modal="true" aria-label="${title}"><div class="sh-grip"></div>
+    <div class="sh-hd"><div class="sh-tt">${title} ${chip}</div><button type="button" class="sh-x" aria-label="닫기" onclick="closeSheet()">✕</button></div>${body}</div>`;
+  sh.classList.add('on');
+}
+function closeSheet(){ SRC_SHEET=null; const sh=document.getElementById('sheet'); sh.classList.remove('on'); sh.innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&SRC_SHEET) closeSheet(); });
 
 /* ── 수집 상태 (v27) — 열람 시점 기준으로 지연 판정 ── */
 function statusRows(){
@@ -632,7 +837,7 @@ function buildHome(){
     </svg>
     <div class="note">${fmtPrd(krLast)} ${kr.values[krLast].toFixed(1)} (작년 ${(kr.values[yPrev+krLast.slice(4,6)]??'―')}, ${fmt(krYoy,1,true)})${krTrend?' · '+krTrend:''}</div></div>`;
   }
-  h+=koreaHomeCard();
+  h+=sourcingCard();
   const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.logo}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
   h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${outlier.length?`<div class="note">순위 제외(±100% 초과, 기저·인수 효과 가능): ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}</div>`:''}</div>`;
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
@@ -1064,6 +1269,7 @@ function focusCard(id){
   el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1600);
 }
 function sw(p){
+  if(SRC_SHEET) closeSheet();
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
   if(p!=='co') showCoList();
@@ -1181,6 +1387,13 @@ def main():
                 segs = json.load(f)
         except Exception:
             pass
+    wmap = None
+    if os.path.exists("docs/worldmap.json"):
+        try:
+            with open("docs/worldmap.json", encoding="utf-8") as f:
+                wmap = json.load(f)
+        except Exception:
+            pass
     segs_ir = None
     if os.path.exists("docs/segments_ir.json"):
         try:
@@ -1224,7 +1437,8 @@ def main():
             .replace("__HIST__", json.dumps(hist, ensure_ascii=False))
             .replace("__KRD__", json.dumps(krd, ensure_ascii=False))
             .replace("__SEGS_IR__", json.dumps(segs_ir, ensure_ascii=False))
-            .replace("__STATUS__", json.dumps(collect_status(), ensure_ascii=False)))
+            .replace("__STATUS__", json.dumps(collect_status(), ensure_ascii=False))
+            .replace("__WMAP__", json.dumps(wmap, ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
