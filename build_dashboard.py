@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v29: 소싱 지도 2단계 (뉴스 3건 표시는 같은 기사 다른 출처 중복 제거 — 기업 상세 최근 뉴스 카드 포함)
+v29.0: 소싱 지도 2단계 — 지역 패널에 ① 현지 유통사 재고(유럽 JD·프레이저스·잘란도, 남미 그루포 SBF)
+     ② 환율(현지 통화→원화 1년 변동, 매입 부담 판정) ③ 현지 유통 뉴스(최근 14일 선별 3건). 기회 수준 계산에는 아직 미반영
 v28.1: 지도의 지역 도형(유럽·중동·남미)도 누르면 패널 열림, PC는 마우스 올리면 강조
 v28: 🌍 소싱 기회 지도 — 종합에 지도 카드(새 탭 없이), 지역 위 브랜드 로고 배지 → 하단 패널(브랜드 목록·근거),
      가정 2종(재고 과잉형=보완안 / 시장 확대형=원안) 전환, 브랜드×지역 표·계산 방식은 패널.
@@ -240,7 +243,12 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .sh-row .t1{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:var(--fs-base);font-weight:600}
 .sh-row .t2{font-size:var(--fs-base);color:var(--tx)}
 .sh-row .t3{font-size:var(--fs-xs);color:var(--sub)}
-.sh-kv{padding-top:10px;font-size:var(--fs-base)}.sh-kv .k{font-size:var(--fs-xs);color:var(--sub)}
+.sh-sub{font-size:var(--fs-sm);font-weight:700;color:var(--tx);margin:14px 0 2px;display:flex;flex-wrap:wrap;gap:2px 6px;align-items:baseline}
+.sh-sub span{font-size:var(--fs-xs);font-weight:400;color:var(--sub)}
+.sh-empty{font-size:var(--fs-sm);color:var(--sub);padding:8px 0;border-bottom:1px solid var(--line)}
+.sh-fx{padding:9px 0;border-bottom:1px solid var(--line)}
+.sh-fx .t1{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:var(--fs-base)}
+.sh-fx .t3{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
 #srcTbl{table-layout:fixed}
 #srcTbl th:first-child,#srcTbl td:first-child{width:30%;text-align:left}
 #srcTbl th,#srcTbl td{text-align:center;padding:6px 3px}
@@ -398,6 +406,7 @@ const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
+  "FRAS.L":"frasers.group", "ZAL.DE":"zalando.com", "SBFG3.SA":"gruposbf.com.br",
   "NKE":"nike.com", "ADS.DE":"adidas.com", "ONON":"on.com",
   "DECK":"hoka.com", "AS":"amersports.com", "LULU":"lululemon.com",
   "7936.T":"asics.com", "BIRK":"birkenstock.com", "CROX":"crocs.com",
@@ -425,14 +434,15 @@ const FLAGS = {
   "LULU":"🇨🇦", "7936.T":"🇯🇵", "BIRK":"🇩🇪", "CROX":"🇺🇸", "VFC":"🇺🇸",
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
-  "COLM":"🇺🇸", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸"
+  "COLM":"🇺🇸", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
+  "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷"
 };
 const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
   : ["글로벌 브랜드","글로벌 유통","국내 브랜드","국내 패션대기업","국내 OEM","국내 유통"];
 const GROUP_ICON = {"글로벌 브랜드":"🌍","글로벌 유통":"🌍","국내 브랜드":"🇰🇷","국내 패션대기업":"🇰🇷","국내 OEM":"🇰🇷","국내 유통":"🇰🇷"};
 const GROUP_NOTE = {"국내 OEM":"브랜드 오더의 선행지표","삼성물산(패션부문)":""};
 const isKR = t => /\.K[SQ]$/.test(t);
-const NEWS_KEY = {"NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
+const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
   "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DKS":"dks","JD.L":"jd","ASO":"academy",
   "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente"};
@@ -608,14 +618,49 @@ function sourcingCard(){
   </div></div>`;
 }
 function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
-function srcRetail(k){
-  if(k==='europe'){
-    const j=DATA.items.find(i=>i.ticker==='JD.L'); const fy=j&&j.fy.length?j.fy[j.fy.length-1]:null;
-    if(j&&fy&&j.inv_yoy!=null&&fy.rev_yoy!=null){ const d=j.inv_yoy-fy.rev_yoy;
-      return `JD스포츠(영국) 재고 ${pp(j.inv_yoy)} · 매출 ${pp(fy.rev_yoy)} → 유럽 유통 재고 ${d<=-5?'가벼움':(d>=5?'무거움':'보통')}`; }
-    return '―';
-  }
-  return k==='middleeast'?'상장 유통사 없음 — 현지 대형 유통은 비상장(뉴스로 보완)':'상장 유통사 미편입 — 다음 단계 후보: 그루포 SBF(브라질)';
+const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE'],middleeast:[],samerica:['SBFG3.SA']};
+const SRC_FXMAP={europe:['EUR','GBP'],middleeast:['USD'],samerica:['BRL']};
+const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
+function srcRetailHtml(k){
+  let h=`<div class="sh-sub">현지 유통사 재고 <span>재고가 매출보다 빨리 늘수록 처분 물량 가능성</span></div>`;
+  const tks=SRC_RETAIL[k]||[];
+  if(!tks.length) return h+`<div class="sh-empty">상장 유통사 없음 — 알샤야·어패럴그룹·GMG 등 대형 유통은 비상장(아래 뉴스로 보완)</div>`;
+  let any=false;
+  tks.forEach(t=>{
+    const x=DATA.items.find(i=>i.ticker===t); if(!x) return;
+    const fy=x.fy&&x.fy.length?x.fy[x.fy.length-1]:null;
+    const inv=x.inv_yoy, rev=fy?fy.rev_yoy:null; any=true;
+    let chip='<span class="lvchip" style="background:var(--barbg);color:var(--sub)">미확인</span>', t3='재고 또는 매출 미공시';
+    if(inv!=null&&rev!=null){ const d=inv-rev, lv=d>=5?2:(d<=-5?0:1), L=SRC_LV[lv];
+      chip=`<span class="lvchip" style="background:${L.bg};color:${L.fg}">재고 ${lv===2?'무거움':(lv===0?'가벼움':'보통')}</span>`;
+      t3=`재고 압력 ${d>0?'+':''}${d.toFixed(1)}%p · ${fy.end?('결산 '+ym(fy.end)):''}`; }
+    h+=`<div class="sh-row" onclick="closeSheet();goDetail('${t}')">${srcBadge(t,x.name,'#C9D0DD',true)}
+      <div class="bx"><div class="t1"><span>${esc(x.name)} ${flagOf(t)||''}</span>${chip}</div>
+      <div class="t2">재고 ${inv!=null?pp(inv):'―'} · 매출 ${rev!=null?pp(rev):'―'}</div><div class="t3">${esc(t3)}</div></div></div>`;
+  });
+  return any?h:h+`<div class="sh-empty">유통사 자료 수집 전 — 다음 갱신 후 표시</div>`;
+}
+function srcFxHtml(k){
+  let h=`<div class="sh-sub">환율 <span>현지 통화 1단위의 원화 값 · 1년 전 대비</span></div>`;
+  const FXD=DATA.fx||{}; const codes=(SRC_FXMAP[k]||[]).filter(c=>FXD[c]);
+  if(!codes.length) return h+`<div class="sh-empty">환율 수집 전 — 다음 갱신 후 표시</div>`;
+  codes.forEach(c=>{ const f=FXD[c], ch=f.chg_pct;
+    const rate=f.rate>=100?Math.round(f.rate).toLocaleString('ko-KR'):f.rate.toFixed(1);
+    const verdict=ch==null?'':(ch>=2?'<span class="neg">매입 부담 커짐</span>':(ch<=-2?'<span class="pos">매입 부담 줄어듦</span>':'<span class="na">비슷</span>'));
+    h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c}</span></span><b>${rate}원</b></div>
+      <div class="t3">${ch!=null?`1년 전보다 ${ch>0?'+':''}${ch.toFixed(1)}% · `:''}${verdict}${c==='USD'&&k==='middleeast'?' · 디르함·리얄은 달러에 고정':''}${f.via?' · '+esc(f.via):''} · ${esc(f.asof||'')} 기준</div></div>`; });
+  return h;
+}
+function srcNewsHtml(k){
+  let h=`<div class="sh-sub">현지 유통 뉴스 <span>최근 14일 선별</span></div>`;
+  const keys=SRC_NEWSKEYS[k]||[];
+  const list=((NEWS&&NEWS.items)||[]).filter(it=>it.scope==='brand'&&keys.indexOf(it.key)>=0)
+    .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0));
+  const list3=newsDedupe(list,3);
+  if(!list3.length) return h+`<div class="sh-empty">최근 14일 선별된 뉴스 없음</div>`;
+  list3.forEach(it=>{ h+=`<div class="nitem"><div class="nsum"><a href="${it.link}" target="_blank" rel="noopener">${'★'.repeat(it.importance||1)} ${esc(it.summary||it.title)}</a></div>
+    <div class="nmeta">${esc(it.label||'')} · ${esc(it.source||'')} · ${esc((it.first_seen||'').slice(5).replace('-','/'))}</div></div>`; });
+  return h;
 }
 function openSheet(kind){
   SRC_SHEET=kind; const sh=document.getElementById('sheet');
@@ -630,7 +675,7 @@ function openSheet(kind){
       body+=`<div class="sh-row" onclick="closeSheet();goDetail('${o.b.t}')">${srcBadge(o.b.t,o.b.name,l.ring,true)}
         <div class="bx"><div class="t1"><span>${esc(o.b.name)}</span><span class="lvchip" style="background:${l.bg};color:${l.fg}">${l.txt}</span></div>
         <div class="t2">${esc(t2)}</div><div class="t3">${esc(t3)}</div></div></div>`; });
-    body+=`<div class="sh-kv"><div class="k">현지 유통 재고</div>${esc(srcRetail(kind))}</div>`;
+    body+=srcRetailHtml(kind)+srcFxHtml(kind)+srcNewsHtml(kind);
   } else if(kind==='matrix'){
     title='브랜드 × 지역';
     body=`<div class="note" style="margin:2px 0 6px">칸 = 지역 성장률(환율 제외 우선) · 색 = 선택한 가정의 기회 수준 · 한국 수요 = 한국이 속한 지역 성장률</div>
@@ -650,7 +695,8 @@ function openSheet(kind){
     body=`<div class="sh-mt"><b>재고 과잉형 (보완안)</b><p>브랜드 재고 증가율이 매출 증가율보다 5%p 이상 높고(재고 압력), 그 지역이 역성장하거나 +10% 미만이면서 브랜드의 지역 중 하위권이면 높음. 둘 중 하나만 맞으면 보통.</p>
       <b>시장 확대형 (원안)</b><p>지역 성장률 +15% 이상 또는 브랜드 재고 증가 +15% 이상이면 높음, +5% 이상이면 보통.</p>
       <b>지도 배지</b><p>지역마다 기회 수준이 높은 순으로 최대 3개 브랜드를 표시하고 나머지는 +숫자로 묶습니다. 테두리 색이 기회 수준이며, 브랜드를 누르면 기업 상세로 이동합니다.</p>
-      <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 씁니다. 환율·현지 유통사 재고는 다음 단계에서 붙입니다.</p></div>`;
+      <b>현지 유통사·환율·뉴스</b><p>지역 패널 아래쪽에 참고 정보로 붙입니다. 유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값이 1년 전보다 2% 이상 오르면 매입 부담이 커진 것으로 봅니다. 아직 기회 수준 계산에는 넣지 않았습니다.</p>
+      <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 쓰고 상장 유통사도 없어 뉴스로 보완합니다.</p></div>`;
   } else return;
   sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="closeSheet()"></button>
     <div class="sh-pn" role="dialog" aria-modal="true" aria-label="${title}"><div class="sh-grip"></div>
@@ -686,10 +732,20 @@ function statusWarn(){
     `<div class="warnbar" onclick="focusCard('statusCard')">⚠️ 수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</div>`:'';
 }
 
+/* 같은 기사가 출처만 달리 여러 번 잡히면 하나만 (요약 앞부분 비교) */
+function newsDedupe(list, n){
+  const seen=new Set(), out=[];
+  for(const it of list){
+    const k=(it.summary||it.title||'').replace(/[\s.,·'"“”‘’!?()\[\]~-]/g,'').slice(0,18);
+    if(seen.has(k)) continue; seen.add(k); out.push(it);
+    if(out.length>=n) break;
+  }
+  return out;
+}
 function newsFor(key, n=3){
   const k = NEWS_KEY[key]; if(!k || !NEWS || !NEWS.items) return [];
-  return NEWS.items.filter(it=>it.scope==='brand' && it.key===k)
-    .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'') || (b.importance||0)-(a.importance||0)).slice(0,n);
+  return newsDedupe(NEWS.items.filter(it=>it.scope==='brand' && it.key===k)
+    .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'') || (b.importance||0)-(a.importance||0)), n);
 }
 function newsCard(key){
   const list=newsFor(key);
