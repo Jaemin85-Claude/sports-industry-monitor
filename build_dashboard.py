@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v27: ① 🇰🇷 한국 시장 신호 — 브랜드 상세 첫 카드(국내 법인 DART · 본사 공시의 한국이 속한 지역 · 국내 소매 KOSIS),
+       종합에 '한국이 속한 지역 성장' 카드(본사 공시 기준, 환율 제외 우선)
+     ② 수집 상태 — 소스별 마지막 갱신·주기·지연 판정(열람 시점 기준), 지연 시 종합 상단 경고 띠
 v26.1: '환율 제외'를 막대 아래 별도 줄로 이동(막대 위 겹침 해소), 막대 위 수치에 옅은 바탕
 v26: 지역·채널 카드에 '환율 제외' 성장률 병기(IR 자료의 현지 통화 기준), 금액 없이 증감률만 공시된
      지역(푸마 북미·라틴·중화권 등)을 카드 하단에 별도 표기
@@ -55,6 +58,7 @@ docs/data.json + docs/segments.json(있으면) → docs/index.html
 """
 
 import json
+import re
 import os
 
 TEMPLATE = r"""<!DOCTYPE html>
@@ -162,6 +166,21 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .cal-item .dn{width:56px;font-weight:700}
 .cal-item .dt{margin-left:auto;color:var(--sub)}
 .hot{color:var(--neg)}
+/* v27 한국 시장 신호 · 수집 상태 */
+.ksig{padding:8px 0;border-bottom:1px solid var(--line)}
+.ksig:last-of-type{border-bottom:none}
+.ksig .kh{display:flex;justify-content:space-between;align-items:center;font-size:var(--fs-xs);color:var(--sub)}
+.ksig .kb{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:3px;font-size:var(--fs-base)}
+.ksig .kb .d{min-width:0;overflow-wrap:anywhere}
+.ksig .kb .v{flex:none;white-space:nowrap;font-weight:600}
+.ksig .ks{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
+.krow.more{display:none}
+.card.open .krow.more{display:flex}
+.morebtn{color:var(--accent);font-size:var(--fs-sm);cursor:pointer;margin-top:6px}
+.warnbar{background:color-mix(in srgb,var(--neg) 10%,var(--card));border:1px solid var(--neg);border-radius:10px;padding:8px 12px;font-size:var(--fs-sm);margin-bottom:10px;cursor:pointer}
+#statusTbl td,#statusTbl th{white-space:nowrap;padding:7px 4px}
+#statusTbl td:first-child{white-space:normal}
+.st-ok{color:var(--pos);font-weight:600}.st-late{color:var(--neg);font-weight:600}
 .prow .pv{background:color-mix(in srgb,var(--card) 82%,transparent);border-radius:4px;padding:0 4px;right:3px}
 .cnline{font-size:var(--fs-xs);color:var(--sub);margin:2px 0 0 38px}
 /* 표 줄바꿈 금지 — 표가 넓으면 표만 가로 스크롤 */
@@ -252,6 +271,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 </header>
 <main class="content" id="content">
 <div class="pane on" id="p-home">
+  <div id="statusWarn"></div>
   <div class="kpis" id="kpis"></div>
   <div class="hgrid" id="homeBody"></div>
 </div>
@@ -305,7 +325,8 @@ if(SEGS_IR&&SEGS_IR.items){ SEGS.items=SEGS.items||{}; Object.entries(SEGS_IR.it
 const NEWS = __NEWS__;
 const KR = __KR__;
 const HIST = __HIST__;
-const KRD = __KRD__;   // 국내 법인(비상장) — 연 1회 수동 갱신
+const KRD = __KRD__;
+const STATUS = __STATUS__;   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
 
 /* ── 브랜드 로고 도메인 ── */
 const DOMAINS = {
@@ -353,6 +374,113 @@ function dioOf(inv, rev, gp, cogs){
   if(inv==null || !c || c<=0) return null;
   return inv / c * 365;
 }
+/* ── 🇰🇷 한국 시장 신호 (v27) ── */
+/* 한국이 속한 지역 찾기: 지역명에 Korea 명시 > 나이키 APLA > 아시아태평양 > Rest of World > International */
+const KOREA_PAT=[[/korea/i,true],[/asia pacific & latin america|\bapla\b/i,false],
+  [/asia[\s\/-]*pacific|\bapac\b|\bapma\b/i,false],[/rest of world/i,false],[/international/i,false]];
+function koreaRegion(t){
+  const s=(SEGS.items||{})[t]; const ex=s&&s.extract;
+  if(!ex||!ex.regions) return null;
+  const regs=ex.regions.filter(r=>(r.revenue!=null||r.yoy_pct!=null||r.cn_yoy_pct!=null)&&!/total|합계|전체/i.test(r.name||''));
+  for(const [re,explicit] of KOREA_PAT){
+    const r=regs.find(z=>re.test(z.name||''));
+    if(r) return {name:r.name, yoy:r.yoy_pct, cn:r.cn_yoy_pct, period:ex.period||'', explicit, src:/^IR/.test(s.source||'')?'IR':'SEC'};
+  }
+  return null;
+}
+function ksigRow(label, tag, desc, val, sub){
+  return `<div class="ksig"><div class="kh"><span>${label}</span>${tag?`<span class="tag2">${tag}</span>`:''}</div>
+    <div class="kb"><span class="d">${desc}</span>${val?`<span class="v">${val}</span>`:''}</div>${sub?`<div class="ks">${sub}</div>`:''}</div>`;
+}
+function koreaMarketLine(){
+  if(!KR||!KR.series) return null;
+  const pick=[['retail_apparel','의복 소매'],['retail_shoesbag','신발·가방 소매'],['online_sports','온라인 스포츠·레저']];
+  let last=null; const parts=[];
+  pick.forEach(([k,lab])=>{
+    const s=KR.series[k]; if(!s||!s.values) return;
+    const ps=Object.keys(s.values).sort(); const p=ps[ps.length-1]; last=last&&last>p?last:p;
+    const y=s.yoy?s.yoy[p]:null; parts.push(`${lab} ${fmt(y,1,true)}`);
+  });
+  return parts.length?{txt:parts.join(' · '), prd:last}:null;
+}
+function koreaCard(x){
+  const t=x.ticker;
+  let h=`<div class="card"><h3>🇰🇷 한국 시장 신호</h3>`;
+  // ① 국내 법인 (DART)
+  const kd=((KRD&&KRD.entities)||[]).find(e=>e.link===t);
+  if(kd){
+    const ys=(kd.years||[]).filter(y=>y.rev!=null), l=ys[ys.length-1], p=ys[ys.length-2];
+    if(l){
+      const yoy=(p&&p.rev)?(l.rev/p.rev-1)*100:null, iy=(p&&l.inv&&p.inv)?(l.inv/p.inv-1)*100:null;
+      const dio=dioOf(l.inv,l.rev,null,l.cogs);
+      h+=ksigRow('국내 법인','DART',`${logoImg('krd:'+kd.id,false,kd.name)}${esc(kd.name)}`,
+        `매출 ${fmt(yoy,1,true)} · 재고 ${fmt(iy,1,true)}`,
+        `${dio!=null?`재고일수 ${Math.round(dio)}일 · `:''}FY ${ym(l.end)} 결산 · 원화`);
+    } else {
+      h+=ksigRow('국내 법인','DART',`${esc(kd.name)}`,'<span class="na">공시 없음</span>',esc((kd.note||'').split(' — ')[0]));
+    }
+  } else {
+    h+=ksigRow('국내 법인','',`<span class="na">추적 중인 국내 법인 없음</span>`,'');
+  }
+  // ② 본사 공시의 한국이 속한 지역
+  const rg=koreaRegion(t);
+  if(rg){
+    const val=rg.cn!=null?`<span class="na" style="font-weight:400">환율 제외</span> ${fmt(rg.cn,1,true)}`:`${fmt(rg.yoy,1,true)}`;
+    const sub=[rg.cn!=null&&rg.yoy!=null?`보고 통화 ${fmt(rg.yoy,1,true)}`:(rg.cn==null?'보고 통화 기준':''),
+               rg.explicit?'한국 명시':'한국이 속한 지역', esc(rg.period)].filter(Boolean).join(' · ');
+    h+=ksigRow('본사 지역',rg.src,esc(rg.name),val,sub);
+  } else {
+    h+=ksigRow('본사 지역','',`<span class="na">지역 분해 미공시 또는 미추출</span>`,'');
+  }
+  // ③ 국내 시장 (KOSIS)
+  const km=koreaMarketLine();
+  if(km) h+=ksigRow(`국내 시장 <span class="na">· ${fmtPrd(km.prd)} 전년 동월 대비</span>`,'KOSIS',km.txt,'');
+  h+=`<div class="note">본사 지역 수치는 한국 단독이 아니라 한국이 속한 지역 합계 · 환율 제외 = 현지 통화 기준(회사 공시값) · 국내 법인은 연간(별도 재무제표)</div></div>`;
+  return h;
+}
+function koreaHomeCard(){
+  const list=DATA.items.filter(x=>x.group==='글로벌 브랜드').map(x=>({x, rg:koreaRegion(x.ticker)}))
+    .filter(o=>o.rg&&(o.rg.cn!=null||o.rg.yoy!=null))
+    .map(o=>({...o, v:o.rg.cn!=null?o.rg.cn:o.rg.yoy, basis:o.rg.cn!=null?'환율 제외':'보고 통화'}))
+    .sort((a,b)=>b.v-a.v);
+  if(!list.length) return '';
+  const CAP=8;
+  let h=`<div class="card" id="koreaHome"><h3>🇰🇷 한국이 속한 지역 성장 · 본사 공시 기준</h3>`;
+  list.forEach((o,i)=>{
+    h+=`<div class="rk krow${i>=CAP?' more':''}" onclick="goDetail('${o.x.ticker}')"><span>${logoImg(o.x.ticker,false,o.x.name)}${esc(o.x.name)}<span class="g">${esc(o.rg.name)}</span></span>
+      <span>${fmt(o.v,1,true)} <span class="na" style="font-size:var(--fs-2xs)">${o.basis}</span></span></div>`;
+  });
+  if(list.length>CAP) h+=`<div class="morebtn" onclick="this.parentElement.classList.toggle('open');this.textContent=this.parentElement.classList.contains('open')?'접기':'전체 ${list.length}개 보기'">전체 ${list.length}개 보기</div>`;
+  h+=`<div class="note">지역 합계(한국 단독 아님) · 회사별 최신 공시 기간 · 환율 제외 값이 있으면 우선</div></div>`;
+  return h;
+}
+
+/* ── 수집 상태 (v27) — 열람 시점 기준으로 지연 판정 ── */
+function statusRows(){
+  const now=Date.now();
+  return ((STATUS&&STATUS.sources)||[]).map(s=>{
+    const age=s.ts?(now-new Date(s.ts).getTime())/86400000:null;
+    return {...s, age, late:(age==null||age>s.limit)};
+  });
+}
+function statusCard(){
+  const rows=statusRows();
+  let h=`<div class="card span2" id="statusCard"><h3>⚙️ 수집 상태</h3><table id="statusTbl"><tr><th>자료</th><th>마지막 갱신</th><th>주기</th><th>상태</th></tr>`;
+  rows.forEach(r=>{
+    const when=r.ts?(r.ts.slice(5,7)+'/'+r.ts.slice(8,10)+(r.date_only?'':' '+r.ts.slice(11,16))):'―';   // 기록된 한국 시각 그대로
+    const ageTxt=r.age==null?'':(r.age<1?'오늘':`${Math.floor(r.age)}일 전`);
+    h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}</td></tr>`;
+  });
+  h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인</div></div>`;
+  return h;
+}
+function statusWarn(){
+  const late=statusRows().filter(r=>r.late);
+  document.getElementById('statusWarn').innerHTML=late.length?
+    `<div class="warnbar" onclick="focusCard('statusCard')">⚠️ 수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</div>`:'';
+}
+
 function newsFor(key, n=3){
   const k = NEWS_KEY[key]; if(!k || !NEWS || !NEWS.items) return [];
   return NEWS.items.filter(it=>it.scope==='brand' && it.key===k)
@@ -504,12 +632,15 @@ function buildHome(){
     </svg>
     <div class="note">${fmtPrd(krLast)} ${kr.values[krLast].toFixed(1)} (작년 ${(kr.values[yPrev+krLast.slice(4,6)]??'―')}, ${fmt(krYoy,1,true)})${krTrend?' · '+krTrend:''}</div></div>`;
   }
+  h+=koreaHomeCard();
   const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.logo}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
   h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${outlier.length?`<div class="note">순위 제외(±100% 초과, 기저·인수 효과 가능): ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}</div>`:''}</div>`;
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
   h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${warn.slice(0,8).map(r=>rk(r,`<span>재고 <b class="neg">${fmt(r.inv_yoy,1,true)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · <span class="na">${Math.round(r.dio)}일</span>`:''}</span>`)).join('')||'<div class="na">해당 없음</div>'}</div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
+  h+=statusCard();
   document.getElementById('homeBody').innerHTML=h;
+  statusWarn();
 }
 
 /* ── 기업 (A안: 검색·칩·압축 표·행 펼침) ── */
@@ -661,6 +792,7 @@ function renderDetail(t){
   let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · 주가·분기 매출 전년 대비·실적일: Yahoo</div>`;
+  if(x.group==='글로벌 브랜드') h+=koreaCard(x);
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
     const mx=Math.max(...x.fy.map(y=>y.rev||0));
@@ -999,6 +1131,44 @@ def merge_kr_listed(data):
     return n
 
 
+# 수집 상태: (파일, 표시명, 워크플로우, 주기 표기, 지연 판정 일수)
+STATUS_SOURCES = [
+    ("data.json", "재무·주가", "update-dashboard", "매일 07:30", 2),
+    ("news.json", "뉴스", "update-news", "매일 06:30", 2),
+    ("segments.json", "미국 공시 지역·채널", "extract-segments", "매주 월", 9),
+    ("segments_ir.json", "유럽·일본 IR", "update-ir", "매주 일", 9),
+    ("kr_domestic.json", "국내 법인·상장 재무", "update-dart", "매월 15일", 40),
+    ("kosis.json", "국내 소매 지표", "update-kosis", "매월 5일", 40),
+]
+
+
+def _ts_iso(v):
+    """'2026-10-01 11:22 KST' / '2026-09-30' → ISO(+09:00), 실패 시 None"""
+    m = re.match(r"(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}):(\d{2}))?", str(v or ""))
+    if not m:
+        return None
+    return f"{m.group(1)}T{m.group(2) or '00'}:{m.group(3) or '00'}:00+09:00"
+
+
+def collect_status():
+    out = []
+    for fn, label, wf, cad, limit in STATUS_SOURCES:
+        ts, date_only = None, False
+        p = os.path.join("docs", fn)
+        if os.path.exists(p):
+            try:
+                with open(p, encoding="utf-8") as f:
+                    d = json.load(f)
+                raw = str(d.get("generated_at") or d.get("updated_at") or "")
+                ts = _ts_iso(raw)
+                date_only = not re.search(r"\d{2}:\d{2}", raw)
+            except Exception:
+                pass
+        out.append({"file": fn, "label": label, "wf": wf, "cadence": cad, "limit": limit,
+                    "ts": ts, "date_only": date_only})
+    return {"sources": out}
+
+
 def main():
     with open("docs/data.json", encoding="utf-8") as f:
         data = json.load(f)
@@ -1053,7 +1223,8 @@ def main():
             .replace("__KR__", json.dumps(kr, ensure_ascii=False))
             .replace("__HIST__", json.dumps(hist, ensure_ascii=False))
             .replace("__KRD__", json.dumps(krd, ensure_ascii=False))
-            .replace("__SEGS_IR__", json.dumps(segs_ir, ensure_ascii=False)))
+            .replace("__SEGS_IR__", json.dumps(segs_ir, ensure_ascii=False))
+            .replace("__STATUS__", json.dumps(collect_status(), ensure_ascii=False)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
