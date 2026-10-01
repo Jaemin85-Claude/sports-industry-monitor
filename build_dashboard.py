@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v30.1: 15곳 추가 연결 — 상장 10곳(휴먼메이드·비바굿즈(클락스)·불카브라스·ABC마트·탑스포츠·TJX·로스·벌링턴·
+       럭스익스피리언스·쿠팡) 로고·국기·뉴스, 국내 법인 5곳(크림·트렌비·발란·머스트잇·트렉시) 로고.
+       소싱 지도 현지 재고에 유럽 럭스익스피리언스·남미 불카브라스 추가. 재무 금액 통화는 재무제표 통화
+       (fin_currency) 우선 — 홍콩 상장 중국 기업은 위안(CNY), 마이테레사는 유로로 표시
 v30: 국내 탭 — ① 국내 수요 한눈에(판매 vs 검색): KOSIS 온라인 신발·의복 거래액과 네이버 브랜드 검색량 합계의
      전년 대비(%)를 한 축에 겹친 그래프(눌러서 월별 값, 범례로 선 켜고 끄기) ② 브랜드 검색 관심도(네이버):
      전년 대비순/규모순, 상위 10개·전체 보기, 1년 추이(전년 점선), 중앙값 대비 색. 브랜드 상세에 검색 관심도 카드,
@@ -449,6 +453,9 @@ const DOMAINS = {
   "8022.T":"mizuno.com", "7906.T":"yonex.com", "8111.T":"goldwin.co.jp",
   "2020.HK":"anta.com", "2331.HK":"lining.com", "PUM.DE":"puma.com",
   "WWW":"wolverineworldwide.com", "COLM":"columbia.com", "DOCS.L":"drmartens.com",
+  "456A.T":"humanmade.jp", "0933.HK":"clarks.com", "VULC3.SA":"vulcabras.com",
+  "LUXE":"mytheresa.com", "2670.T":"abc-mart.co.jp", "6110.HK":"topsports.com.cn",
+  "TJX":"tjx.com", "ROST":"rossstores.com", "BURL":"burlington.com", "CPNG":"coupang.com",
   "DKS":"dickssportinggoods.com", "JD.L":"jdplc.com", "ASO":"academy.com",
   "081660.KS":"fila.co.kr", "383220.KS":"fnf.co.kr", "298540.KQ":"thenatureholdings.com",
   "120110.KS":"kolonindustries.com", "337930.KQ":"xexymix.com", "000680.KS":"lsnetworks.co.kr",
@@ -461,7 +468,8 @@ const DOMAINS = {
   "krd:nike_kr":"nike.com", "krd:adidas_kr":"adidas.co.kr", "krd:asics_kr":"asics.com", "krd:puma_kr":"puma.com",
   "krd:descente_kr":"descentekorea.co.kr", "krd:nb_eland":"newbalance.co.kr", "krd:abcmart_kr":"abcmart.co.kr",
   "krd:shoemarker":"shoemarker.co.kr", "krd:musinsa":"musinsa.com", "krd:k2_kr":"k2group.co.kr",
-  "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com"
+  "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com",
+  "krd:kream":"kream.co.kr", "krd:trenbe":"trenbe.com", "krd:balaan":"balaan.co.kr", "krd:mustit":"mustit.co.kr"
 };
 /* ── 브랜드 본사 국가 국기 ── */
 const FLAGS = {
@@ -470,7 +478,9 @@ const FLAGS = {
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
   "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
-  "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷", "4240.SR":"🇸🇦"
+  "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷", "4240.SR":"🇸🇦",
+  "456A.T":"🇯🇵", "0933.HK":"🇭🇰", "VULC3.SA":"🇧🇷", "LUXE":"🇩🇪", "2670.T":"🇯🇵", "6110.HK":"🇨🇳",
+  "TJX":"🇺🇸", "ROST":"🇺🇸", "BURL":"🇺🇸", "CPNG":"🇰🇷"
 };
 const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
   : ["글로벌 브랜드","글로벌 유통","국내 브랜드","국내 패션대기업","국내 OEM","국내 유통"];
@@ -479,7 +489,7 @@ const GROUP_NOTE = {"국내 OEM":"브랜드 오더의 선행지표","삼성물�
 const isKR = t => /\.K[SQ]$/.test(t);
 const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","4240.SR":"cenomi","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
-  "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","DKS":"dks","JD.L":"jd","ASO":"academy",
+  "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","456A.T":"humanmade","0933.HK":"clarks","DKS":"dks","JD.L":"jd","ASO":"academy",
   "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente",
   "krd:nb_eland":"newbalance"};
 /* 재고일수 = 재고 ÷ 매출원가 × 365 (연간 원가 기준, 재고는 최근 잔액) */
@@ -679,11 +689,11 @@ function sourcingCard(){
   </div></div>`;
 }
 function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
-const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE'],middleeast:['4240.SR'],samerica:['SBFG3.SA']};
+const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE','LUXE'],middleeast:['4240.SR'],samerica:['SBFG3.SA','VULC3.SA']};
 const SRC_FXMAP={europe:['EUR','GBP'],middleeast:['USD'],samerica:['BRL']};
 const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
 function srcRetailHtml(k){
-  let h=`<div class="sh-sub">현지 유통사 재고 <span>재고가 매출보다 빨리 늘수록 처분 물량 가능성</span></div>`;
+  let h=`<div class="sh-sub">현지 유통·브랜드 재고 <span>재고가 매출보다 빨리 늘수록 처분 물량 가능성</span></div>`;
   const tks=SRC_RETAIL[k]||[];
   if(!tks.length) return h+`<div class="sh-empty">상장 유통사 없음 — 알샤야·어패럴그룹·GMG 등 대형 유통은 비상장(아래 뉴스로 보완)</div>`;
   let any=false;
@@ -858,6 +868,7 @@ const fmt=(v,d=1,sign=false)=>{
 };
 /* 재무제표 통화: 야후 currency는 주가 통화라 영국 상장사는 GBp(펜스) — 재무 수치는 GBP(파운드) */
 const finCur=c=>c==='GBp'?'GBP':(c||'');
+const finCurOf=x=>finCur(x.fin_currency||x.currency);   // 재무제표 통화 우선(v30.1)
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   if(cur==='KRW'){
@@ -890,7 +901,7 @@ function rows_all(){
   DATA.items.forEach(x=>{
     const fy=x.fy.length?x.fy[x.fy.length-1]:{};
     out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), logo:logoImg(x.ticker,false,x.name), listed:true,
-      rev:fy.rev, cur:finCur(x.currency), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
+      rev:fy.rev, cur:finCurOf(x), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
       inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
   });
   ((KRD&&KRD.entities)||[]).forEach(e=>{
@@ -1115,7 +1126,7 @@ function renderKrdDetail(id){
 function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
-  const cur=finCur(x.currency);
+  const cur=finCurOf(x);
   let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · 주가·분기 매출 전년 대비·실적일: Yahoo</div>`;

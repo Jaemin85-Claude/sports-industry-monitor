@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v2.5: 국내 법인 5곳 추가(감사보고서 경로, 2026-10-01 DART 공시 목록 확인) — 크림(KREAM)·트렌비·발란·머스트잇
+      (병행수입·리셀 플랫폼), 트렉시(자사, 대표 승인). 에이비씨마트코리아를 일본 본사 ABC마트(2670.T)에 연결.
+      원본 추출 보강 — 압축 파일 중 손익계산서가 있는 문서 우선 선택, 응답에 설명 문장이 섞여도 JSON만 파싱,
+      수치를 못 찾으면 진단 로그(문서 글자 수·핵심어 유무·응답 앞부분)
 v2.4: 원본 추출에 매출원가 추가(SCHEMA_V=3 → 8개 법인 1회 재추출) → 재고일수 계산 가능.
       블랙야크아이앤씨(478560) 상장 목록 편입
 v2.3: 재조사(2026-09-29) 반영 — 아디다스코리아는 2017년 유한책임회사 전환으로 외감 공시 의무 없음
@@ -66,13 +70,18 @@ ENTITIES = [
     ("puma_kr",     "푸마코리아",          "글로벌 브랜드 국내법인", "PUM.DE", "01471250", "doc",  12, "유한회사 — K-IFRS"),
     ("descente_kr", "데상트코리아",        "글로벌 브랜드 국내법인", None,     "00411154", "doc",  12, "일본 본사 상장폐지(2025.1) — 국내 법인은 DART로 추적"),
     ("nb_eland",    "뉴발란스(이랜드월드)", "글로벌 브랜드 국내법인", None,     "00207108", "api",  12, "라이선스 — 이랜드월드 법인 전체 수치(뉴발란스 부문 분리 불가)"),
-    ("abcmart_kr",  "에이비씨마트코리아",  "국내 유통(비상장)",      None,     "00496340", "doc",  12, "일본 ABC-Mart 자회사, 신발 멀티숍 1위"),
+    ("abcmart_kr",  "에이비씨마트코리아",  "국내 유통(비상장)",      "2670.T", "00496340", "doc",  12, "일본 ABC-Mart 자회사, 신발 멀티숍 1위"),
     ("shoemarker",  "슈마커",              "국내 유통(비상장)",      None,     None,       "none", 12, "DART 법인 목록에 운영 법인 없음(동명 '슈마커코리아'는 시흥 화학업체) — 외감 대상 아님 또는 타 법인명 운영, 확인 불가"),
     ("musinsa",     "무신사",              "국내 유통(비상장)",      None,     "01137727", "api",  12, "온라인 패션 플랫폼 — 2024년부터 사업보고서 제출, 거래액≠매출"),
     ("k2_kr",       "K2코리아",            "국내 브랜드(비상장)",    None,     "00407063", "doc",  12, "K2·아이더·다이나핏"),
     ("blackyak",    "비와이엔블랙야크",    "국내 브랜드(비상장)",    None,     "00520850", "doc",  12, "블랙야크·나우 (별도 상장사 블랙야크아이앤씨 478560 존재)"),
     ("nepa",        "네파",                "국내 브랜드(비상장)",    None,     "00932930", "doc",  12, "아웃도어"),
     ("shinsung",    "신성통상(탑텐)",      "국내 브랜드(비상장)",    None,     "00136341", "api",  6,  "2025년 자진 상장폐지 — 6월 결산, 사업보고서는 계속 제출"),
+    ("kream",       "크림(KREAM)",         "국내 유통(비상장)",      None,     "01529876", "doc",  12, "네이버 자회사 — 스니커즈·명품 리셀 플랫폼, 거래액≠매출"),
+    ("trenbe",      "트렌비",              "국내 유통(비상장)",      None,     "01537334", "doc",  12, "명품 병행수입 플랫폼 — 별도 감사보고서 기준"),
+    ("balaan",      "발란",                "국내 유통(비상장)",      None,     "01551565", "doc",  12, "명품 병행수입 플랫폼 — 2024·2025년 감사보고서 원문에 재무제표 수치가 없어 미확인(2026.10 확인, 새 공시 나오면 자동 재시도)"),
+    ("mustit",      "머스트잇",            "국내 유통(비상장)",      None,     "01557082", "doc",  12, "명품 병행수입 플랫폼 — 2025년 감사보고서 미공시(2026.10 확인)"),
+    ("trexi",       "트렉시(자사)",        "자사",                   None,     "01454031", "doc",  12, "자사 — 병행수입·브랜드 온라인 벤더, DART 공개 감사보고서(별도) 수치"),
 ]
 
 
@@ -266,23 +275,38 @@ def fetch_document_text(rcept_no):
     if raw[:2] != b"PK":
         raise RuntimeError("원본이 zip이 아님")
     z = zipfile.ZipFile(io.BytesIO(raw))
-    name = max(z.namelist(), key=lambda n: z.getinfo(n).file_size)
-    content = z.read(name)
-    txt = None
-    for enc in ("utf-8", "euc-kr", "cp949"):
-        try:
-            txt = content.decode(enc)
-            break
-        except Exception:
+    docs = []   # (손익계산서 포함 여부, 크기, 이름, 본문)
+    for name in z.namelist():
+        content = z.read(name)
+        txt = None
+        for enc in ("utf-8", "euc-kr", "cp949"):
+            try:
+                txt = content.decode(enc)
+                break
+            except Exception:
+                continue
+        if txt is None:
             continue
-    if txt is None:
+        plain = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", txt))
+        docs.append(("손익계산서" in plain, len(content), name, plain))
+    if not docs:
         raise RuntimeError("디코딩 실패")
-    plain = re.sub(r"<[^>]+>", " ", txt)
-    plain = re.sub(r"\s+", " ", plain)
+    # 손익계산서가 있는 문서 중 가장 큰 것(없으면 가장 큰 문서) — 첨부가 본문보다 큰 공시 대응
+    has_is, _, name, plain = max(docs, key=lambda d: (d[0], d[1]))
+    if len(docs) > 1 or not has_is:
+        log(f"      원본 파일 {len(docs)}개 중 {name} 선택 · 손익계산서 {'있음' if has_is else '없음'} · {len(plain):,}자")
     # 손익계산서 부근 우선 포함: 앞부분(회사명·기간) + 손익계산서 창
     idx = plain.find("손익계산서")
     if len(plain) > MAX_DOC_CHARS and idx > 20000:
         plain = plain[:15000] + " ...(중략)... " + plain[idx - 2000: idx - 2000 + (MAX_DOC_CHARS - 15000)]
+    elif len(plain) > MAX_DOC_CHARS:
+        # 첫 언급이 감사의견 문단이고 실제 표(금액이 붙은 손익계산서)가 상한 뒤에 있으면 표 부근으로 창 이동
+        tbl = next((m.start() for m in re.finditer("손익계산서", plain)
+                    if re.search(r"\d{1,3}(?:,\d{3}){2,}", plain[m.start(): m.start() + 1500])), -1)
+        if tbl > MAX_DOC_CHARS - 10000:
+            st = max(15000, tbl - 12000)   # 재무상태표(재고)도 포함되도록 앞쪽 여유
+            plain = plain[:15000] + " ...(중략)... " + plain[st: st + (MAX_DOC_CHARS - 15000)]
+            log(f"      손익계산서 표 위치 {tbl:,}자 → 창 이동")
     return plain[:MAX_DOC_CHARS]
 
 
@@ -316,7 +340,16 @@ DOCUMENT:
     parts = data.get("content", [])
     txt = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     txt = re.sub(r"```json|```", "", txt).strip()
-    return json.loads(txt)
+    try:
+        return json.loads(txt)
+    except ValueError:
+        m = re.search(r"\{.*\}", txt, re.S)   # 설명 문장이 섞인 응답 → JSON 부분만
+        if m:
+            try:
+                return json.loads(m.group(0))
+            except ValueError:
+                pass
+        raise RuntimeError("응답이 JSON 아님: " + re.sub(r"\s+", " ", txt)[:150])
 
 
 def fetch_doc_years(name, corp_code, cached):
@@ -349,6 +382,9 @@ def fetch_doc_years(name, corp_code, cached):
                                   "schema_v": SCHEMA_V,
                                   "source": f"{nm} {dt} rcept={rcept} ({which}) · {ex.get('unit_note', '')}",
                                   "rcept_no": rcept}
+        if not recs:
+            log(f"      수치 없음 — 문서 {len(text):,}자 · 손익계산서 {'있음' if '손익계산서' in text else '없음'}"
+                f" · 매출 {'있음' if '매출' in text else '없음'} · 응답 {json.dumps(ex, ensure_ascii=False)[:150]}")
         for end, rec in recs.items():
             out.setdefault(end, rec)
             log(f"      {end}: 매출 {rec['rev']:,} / 원가 {rec.get('cogs')} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
