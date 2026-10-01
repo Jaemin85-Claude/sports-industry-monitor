@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-30 16:37 KST",
+ "generated_at": "2026-10-01 11:13 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -17,37 +17,43 @@
       "name": "Europe",
       "revenue": 2108.0,
       "prev_revenue": 1997.0,
-      "yoy_pct": 5.558337506259381
+      "yoy_pct": 5.558337506259381,
+      "cn_yoy_pct": 6.0
      },
      {
       "name": "North America",
       "revenue": 1522.0,
       "prev_revenue": 1339.0,
-      "yoy_pct": 13.666915608663178
+      "yoy_pct": 13.666915608663178,
+      "cn_yoy_pct": 17.0
      },
      {
       "name": "Greater China",
       "revenue": 953.0,
       "prev_revenue": 798.0,
-      "yoy_pct": 19.423558897243097
+      "yoy_pct": 19.423558897243097,
+      "cn_yoy_pct": 15.0
      },
      {
       "name": "Emerging Markets",
       "revenue": 848.0,
       "prev_revenue": 762.0,
-      "yoy_pct": 11.286089238845154
+      "yoy_pct": 11.286089238845154,
+      "cn_yoy_pct": 12.0
      },
      {
       "name": "Latin America",
       "revenue": 907.0,
       "prev_revenue": 673.0,
-      "yoy_pct": 34.76968796433879
+      "yoy_pct": 34.76968796433879,
+      "cn_yoy_pct": 28.0
      },
      {
       "name": "Japan/South Korea",
       "revenue": 376.0,
       "prev_revenue": 355.0,
-      "yoy_pct": 5.915492957746471
+      "yoy_pct": 5.915492957746471,
+      "cn_yoy_pct": 18.0
      }
     ],
     "channels": [
@@ -55,19 +61,22 @@
       "name": "Wholesale",
       "revenue": 3825.0,
       "prev_revenue": 3604.0,
-      "yoy_pct": 6.132075471698117
+      "yoy_pct": 6.132075471698117,
+      "cn_yoy_pct": 6.0
      },
      {
       "name": "Direct-to-Consumer (DTC)",
       "revenue": 2909.0,
       "prev_revenue": 2338.0,
-      "yoy_pct": 24.422583404619335
+      "yoy_pct": 24.422583404619335,
+      "cn_yoy_pct": 25.0
      }
     ],
     "sub_segments": [],
     "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance"
    },
-   "fetched_at": "2026-09-29"
+   "fetched_at": "2026-10-01",
+   "ir_ver": 2
   },
   "PUM.DE": {
    "accession": "31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
@@ -85,37 +94,43 @@
       "name": "EMEA",
       "revenue": 674.1,
       "prev_revenue": 771.7,
-      "yoy_pct": -12.9
+      "yoy_pct": -12.647401840093298,
+      "cn_yoy_pct": -12.9
      },
      {
       "name": "Americas",
       "revenue": 600.4,
       "prev_revenue": 709.0,
-      "yoy_pct": -15.4
+      "yoy_pct": -15.317348377997186,
+      "cn_yoy_pct": -15.4
      },
      {
       "name": "Asia/Pacific",
       "revenue": 416.0,
       "prev_revenue": 390.5,
-      "yoy_pct": 8.6
+      "yoy_pct": 6.530089628681179,
+      "cn_yoy_pct": 8.6
      },
      {
       "name": "North America",
       "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": -16.7
+      "yoy_pct": null,
+      "cn_yoy_pct": -16.7
      },
      {
       "name": "Latin America",
       "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": -13.8
+      "yoy_pct": null,
+      "cn_yoy_pct": -13.8
      },
      {
       "name": "Greater China",
       "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": 0.9
+      "yoy_pct": null,
+      "cn_yoy_pct": 0.9
      }
     ],
     "channels": [
@@ -123,19 +138,22 @@
       "name": "Wholesale",
       "revenue": 1094.8,
       "prev_revenue": null,
-      "yoy_pct": -14.0
+      "yoy_pct": null,
+      "cn_yoy_pct": -14.0
      },
      {
       "name": "Direct-to-Consumer",
       "revenue": 595.8,
       "prev_revenue": null,
-      "yoy_pct": 0.4
+      "yoy_pct": null,
+      "cn_yoy_pct": 0.4
      }
     ],
     "sub_segments": [],
-    "notes": "Growth percentages are currency-adjusted (ca); prior-year Q2 2025 channel € amounts not explicitly stated for the quarter in the release."
+    "notes": "Primary growth rates stated on currency-adjusted (ca) basis; EMEA euro decline explicitly stated at -12.6%; total Q2 2026 sales €1,690.6M vs Q2 2025 €1,871.3M, down 9.7% reported and 9.4% ca; prior-year channel revenues not explicitly stated for Q2."
    },
-   "fetched_at": "2026-09-29"
+   "fetched_at": "2026-10-01",
+   "ir_ver": 2
   },
   "7936.T": {
    "accession": "Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the",
@@ -153,50 +171,58 @@
       "name": "Japan",
       "revenue": 90310,
       "prev_revenue": 75730,
-      "yoy_pct": 19.252607949293534
+      "yoy_pct": 19.252607949293534,
+      "cn_yoy_pct": null
      },
      {
       "name": "North America",
       "revenue": 94696,
       "prev_revenue": 73914,
-      "yoy_pct": 28.1
+      "yoy_pct": 28.1,
+      "cn_yoy_pct": 19.6
      },
      {
       "name": "Europe",
       "revenue": 166600,
       "prev_revenue": 113769,
-      "yoy_pct": 46.4
+      "yoy_pct": 46.4,
+      "cn_yoy_pct": 29.7
      },
      {
       "name": "Greater China",
       "revenue": 81043,
       "prev_revenue": 61966,
-      "yoy_pct": 30.7
+      "yoy_pct": 30.7,
+      "cn_yoy_pct": 17.6
      },
      {
       "name": "Oceania",
       "revenue": 28964,
       "prev_revenue": 21447,
-      "yoy_pct": 35.0
+      "yoy_pct": 35.0,
+      "cn_yoy_pct": 15.3
      },
      {
       "name": "Southeast and South Asia",
       "revenue": 31492,
       "prev_revenue": 23514,
-      "yoy_pct": 33.9
+      "yoy_pct": 33.9,
+      "cn_yoy_pct": 25.9
      },
      {
       "name": "Others (South America, Korea, etc.)",
       "revenue": 32269,
       "prev_revenue": 24698,
-      "yoy_pct": 30.7
+      "yoy_pct": 30.7,
+      "cn_yoy_pct": 17.5
      }
     ],
     "channels": [],
     "sub_segments": [],
-    "notes": "Figures are sales to external customers only (excluding intersegment sales), sourced from the detailed segment information table in the Notes to Consolidated Financial Statements. Unit shown in the source document is millions of yen. For Japan: 6M 2026 sales to customers = ¥90,310M (intersegment ¥15,784M; total ¥106,094M); 6M 2025 sales to customers = ¥75,730M (intersegment ¥23,532M; total ¥99,263M). For Greater China: 6M 2026 sales to customers = ¥81,043M (intersegment ¥5M; total ¥81,048M); 6M 2025 sales to customers = ¥61,966M (intersegment ¥65M; total ¥62,032M). For Others: 6M 2026 sales to customers = ¥32,269M (intersegment ¥1M; total ¥32,271M); 6M 2025 sales to customers = ¥24,698M (intersegment ¥0M; total ¥24,698M). YoY% for Japan not explicitly stated in segment table header but is 6.9% per narrative; set to null as it refers to total sales not external-only. YoY% figures shown are from the summary segment table which references total net sales (same as external for non-Japan segments). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
+    "notes": "Figures are 'Sales to customers' (external sales only), explicitly broken out from intersegment sales in the segment information tables. Unit as stated in the document: millions of yen. Japan 6M 2026 external sales = 90,310 (intersegment 15,784; total segment sales 106,094). Japan 6M 2025 external sales = 75,730 (intersegment 23,532; total segment sales 99,263). Greater China 6M 2026 external sales = 81,043 (intersegment 5; total 81,048). Greater China 6M 2025 external sales = 61,966 (intersegment 65; total 62,032). Others 6M 2026 external sales = 32,269 (intersegment 1; total 32,271). Others 6M 2025 external sales = 24,698 (intersegment 0; total 24,698). The yoy_pct figures shown in the document for segment net sales refer to total sales (including intersegment), not external-only; Japan yoy_pct is set to null as the document's stated 6.9% increase applies to total segment sales (106,094 vs 99,263), not to external-only sales. · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
    },
-   "fetched_at": "2026-09-30"
+   "fetched_at": "2026-10-01",
+   "ir_ver": 2
   }
  }
 }
