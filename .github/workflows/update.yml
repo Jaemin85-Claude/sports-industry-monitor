@@ -27,14 +27,6 @@ jobs:
           NCP_APIGW_API_KEY_ID: ${{ secrets.NCP_APIGW_API_KEY_ID }}
           NCP_APIGW_API_KEY: ${{ secrets.NCP_APIGW_API_KEY }}
         run: python naver_trend.py
-      - name: Push naver data to branch (TEMP — branch verification only, remove before merge)
-        if: github.ref_name != 'main'
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add docs/naver_trend.json
-          git commit -m "branch check: naver_trend.json $(date -u +%F)" || echo "no changes"
-          git push origin HEAD:${{ github.ref_name }}
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
