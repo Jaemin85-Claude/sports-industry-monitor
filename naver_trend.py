@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.2: 클락스→비바굿즈(0933.HK)·휴먼메이드→456A.T 기업 상세 연결(상장사 추가에 맞춤)
 v1.1: 월간 합계 추가(교차 그래프용) — 전체 검색어를 5묶음(각 20개 이하)으로 한 번에 요청해 같은 배율로 합산,
       월별 전년 대비 계산(최근 37개월). 검색어 보정: 브룩스(모델명 고스트·글리세린), 가니(가니 코펜하겐)
 v1: 핵심 브랜드 29개의 네이버 검색어 트렌드(주간, 최근 2년) — NAVER API HUB 검색어 트렌드 API.
@@ -49,11 +50,11 @@ BRANDS = [
     ("핏플랍", "fitflop", None, ["핏플랍", "fitflop"]),
     ("락포트", "rockport", None, ["락포트", "rockport"]),
     ("피레넥스", "pyrenex", None, ["피레넥스", "pyrenex"]),
-    ("클락스", "clarks", None, ["클락스", "clarks", "클락스 왈라비"]),
+    ("클락스", "clarks", "0933.HK", ["클락스", "clarks", "클락스 왈라비"]),
     ("브룩스", "brooks", None, ["브룩스 러닝화", "브룩스러닝", "brooks running", "브룩스 고스트", "브룩스 글리세린"]),
     ("파라부트", "paraboot", None, ["파라부트", "paraboot"]),
     ("와일드동키", "wilddonkey", None, ["와일드동키", "wild donkey"]),
-    ("휴먼메이드", "humanmade", None, ["휴먼메이드", "human made"]),
+    ("휴먼메이드", "humanmade", "456A.T", ["휴먼메이드", "human made"]),
     ("CEP", "cep", None, ["cep 컴프레션", "cep 양말", "cep 종아리"]),
     ("노르다", "norda", None, ["노르다", "norda", "노르다 001"]),
     ("비비안웨스트우드", "viviennewestwood", None, ["비비안웨스트우드", "비비안 웨스트우드", "vivienne westwood"]),

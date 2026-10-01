@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.7: 상장 10곳 추가 — 휴먼메이드(456A.T)·비바굿즈(클락스, 0933.HK)·불카브라스(VULC3.SA)
+     (글로벌 브랜드), ABC마트(2670.T)·탑스포츠(6110.HK)·TJX·로스·벌링턴·럭스익스피리언스(LUXE)
+     (글로벌 유통), 쿠팡(CPNG, 국내 유통). 재무 통화(fin_currency) 별도 기록 — 야후 currency는
+     주가 통화라 중국 기업(안타·리닝·탑스포츠 위안)·마이테레사(유로) 재무 단위가 틀리게 표시되던 문제
 v4.6: 세노미 리테일(4240.SR, 사우디 상장) 추가 — 소싱 지도 중동 현지 유통사.
      종목마다 수집 결과 한 줄 로그(연간·재고·주가 유무) — 빈 데이터 조기 발견용
 v4.5: 닥터마틴(DOCS.L, 런던 상장) 추가 — 글로벌 브랜드
@@ -50,6 +54,9 @@ WATCH = {
     "WWW":     ["울버린(새코니)", "글로벌 브랜드"],
     "COLM":    ["컬럼비아", "글로벌 브랜드"],
     "DOCS.L":  ["닥터마틴", "글로벌 브랜드", "영국 · 부츠·신발, 3월 결산"],
+    "456A.T":  ["휴먼메이드", "글로벌 브랜드", "일본 · 니고의 스트리트 브랜드, 2025.11 도쿄 그로스 상장"],
+    "0933.HK": ["비바굿즈(클락스)", "글로벌 브랜드", "홍콩 · 클락스 대주주(리닝 일가) — 보시니 등 포함 연결 수치"],
+    "VULC3.SA": ["불카브라스", "글로벌 브랜드", "브라질 · 올림피쿠스 + 언더아머·미즈노 브라질 라이선스"],
     # ── 글로벌 유통 ──
     "DKS":     ["딕스+풋락커", "글로벌 유통"],
     "JD.L":    ["JD스포츠", "글로벌 유통"],
@@ -58,6 +65,12 @@ WATCH = {
     "ZAL.DE":  ["잘란도", "글로벌 유통", "독일 · 유럽 최대 온라인 패션몰, 오프프라이스 '라운지' 운영"],
     "SBFG3.SA": ["그루포 SBF(센타우로)", "글로벌 유통", "브라질 · 센타우로 매장, 나이키 브라질 유통(피지아)"],
     "4240.SR": ["세노미 리테일", "글로벌 유통", "사우디 · 해외 패션 브랜드 프랜차이즈 매장 운영(구 알호카이르)"],
+    "LUXE":    ["럭스익스피리언스(마이테레사)", "글로벌 유통", "독일 · 마이테레사·네타포르테·육스 — 명품·디자이너 온라인, 6월 결산"],
+    "2670.T":  ["ABC마트", "글로벌 유통", "일본 · 신발 멀티숍, 에이비씨마트코리아 모회사, 2월 결산"],
+    "6110.HK": ["탑스포츠", "글로벌 유통", "중국 · 나이키·아디다스 매장 운영 1위, 나이키가 2027년부터 온라인 판매 종료 통보(2026.7), 2월 결산"],
+    "TJX":     ["TJX", "글로벌 유통", "미국 · TJ맥스·마셜스 — 오프프라이스(브랜드 재고 처분) 1위, 1월 결산"],
+    "ROST":    ["로스스토어", "글로벌 유통", "미국 · 오프프라이스 2위, 1월 결산"],
+    "BURL":    ["벌링턴", "글로벌 유통", "미국 · 오프프라이스 3위, 1월 결산"],
     # ── 국내 브랜드 ──
     "081660.KS": ["휠라홀딩스", "국내 브랜드", "휠라·케이스위스·아쿠쉬네트(타이틀리스트)"],
     "383220.KS": ["F&F", "국내 브랜드", "MLB·디스커버리·듀베티카, 중국 비중 큼"],
@@ -82,6 +95,7 @@ WATCH = {
     "023530.KS": ["롯데쇼핑", "국내 유통", "백화점·마트·이커머스 연결"],
     "004170.KS": ["신세계", "국내 유통", "백화점 중심"],
     "069960.KS": ["현대백화점", "국내 유통", "백화점·아울렛, 한섬 모회사"],
+    "CPNG":    ["쿠팡", "국내 유통", "미국 상장(달러 실적) · 국내 최대 온라인 판매 채널"],
 }
 GROUP_ORDER = ["글로벌 브랜드", "글로벌 유통", "국내 브랜드",
                "국내 패션대기업", "국내 OEM", "국내 유통"]
@@ -119,7 +133,7 @@ def _num(v):
 
 def fetch_one(ticker, name, group, note=None):
     d = {"ticker": ticker, "name": name, "group": group, "note": note,
-         "currency": None, "fy": [],
+         "currency": None, "fin_currency": None, "fy": [],
          "latest_q_yoy": None, "q_end": None, "q_prev_end": None,
          "inventory": None, "inv_yoy": None, "inv_sales_pct": None,
          "inv_date": None, "inv_prev_date": None,
@@ -191,6 +205,11 @@ def fetch_one(ticker, name, group, note=None):
             d["off_high_pct"] = (last / float(closes.max()) - 1) * 100
         try:
             d["currency"] = tk.fast_info.get("currency", None)
+        except Exception:
+            pass
+        # 재무제표 통화(주가 통화와 다를 수 있음: 홍콩 상장 중국 기업=CNY, LUXE=EUR)
+        try:
+            d["fin_currency"] = (tk.info or {}).get("financialCurrency")
         except Exception:
             pass
 
@@ -292,7 +311,8 @@ def main():
                 item2["yf_ticker"] = alt
                 item = item2
         print(f"  ↳ 연간 {len(item['fy'])}개 · 재고 {'O' if item.get('inventory') else '-'} · "
-              f"주가 {'O' if item.get('price') is not None else '-'}", flush=True)
+              f"주가 {'O' if item.get('price') is not None else '-'} · "
+              f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}", flush=True)
         out["items"].append(item)
     out["group_order"] = GROUP_ORDER
     print("fetch 환율 ...", flush=True)
