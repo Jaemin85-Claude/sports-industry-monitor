@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.3: 소싱 지도 2단계 — 현지 유통사 3곳 추가(프레이저스·잘란도·그루포 SBF, 글로벌 유통)와
+     환율 수집(유로·파운드·달러·브라질 헤알 대비 원화, 최근값과 1년 전 값) → data.json 'fx'
 v4.2: 블랙야크아이앤씨(478560) 추가 — 시장(코스피/코스닥) 미확인이라 .KS 실패 시 .KQ 자동 재시도
      (한국 종목 공통), 실제 조회된 티커를 기록
 v4.1: 신성통상(005390) 제외 — 2025년 자진 상장폐지 확인, Phase 6 비상장 DART 대상으로 이동
@@ -47,6 +49,9 @@ WATCH = {
     "DKS":     ["딕스+풋락커", "글로벌 유통"],
     "JD.L":    ["JD스포츠", "글로벌 유통"],
     "ASO":     ["아카데미스포츠", "글로벌 유통"],
+    "FRAS.L":  ["프레이저스(스포츠다이렉트)", "글로벌 유통", "영국 · 스포츠다이렉트 등 운영, 할인 판매 비중 큼"],
+    "ZAL.DE":  ["잘란도", "글로벌 유통", "독일 · 유럽 최대 온라인 패션몰, 오프프라이스 '라운지' 운영"],
+    "SBFG3.SA": ["그루포 SBF(센타우로)", "글로벌 유통", "브라질 · 센타우로 매장, 나이키 브라질 유통(피지아)"],
     # ── 국내 브랜드 ──
     "081660.KS": ["휠라홀딩스", "국내 브랜드", "휠라·케이스위스·아쿠쉬네트(타이틀리스트)"],
     "383220.KS": ["F&F", "국내 브랜드", "MLB·디스커버리·듀베티카, 중국 비중 큼"],
@@ -76,6 +81,15 @@ GROUP_ORDER = ["글로벌 브랜드", "글로벌 유통", "국내 브랜드",
                "국내 패션대기업", "국내 OEM", "국내 유통"]
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
+
+# 환율 (소싱 지도: 현지 통화 1단위 = 원화 몇 원) — 코드: [표시명, 야후 티커]
+#   중동(디르함·리얄)은 달러에 고정이라 달러로 대신함
+FX = {
+    "EUR": ["유로", "EURKRW=X"],
+    "GBP": ["파운드", "GBPKRW=X"],
+    "USD": ["달러", "USDKRW=X"],
+    "BRL": ["브라질 헤알", "BRLKRW=X"],
+}
 
 
 def _row(df, names):
@@ -193,6 +207,44 @@ def fetch_one(ticker, name, group, note=None):
     return d
 
 
+def _fx_series(tk):
+    h = yf.Ticker(tk).history(period="13mo", interval="1d")
+    return h["Close"].dropna() if h is not None and not h.empty else None
+
+
+def fetch_fx():
+    """환율: 최근 종가와 1년 전(365일 이전 가장 가까운 날) 종가, 변동률.
+    원화 직접 쌍이 비면 달러 경유(현지통화→달러 × 달러→원화)로 계산"""
+    out = {}
+    usd = None
+    for code, (name, tk) in FX.items():
+        try:
+            s = _fx_series(tk)
+            via = None
+            if (s is None or s.empty) and code != "USD":
+                if usd is None:
+                    usd = _fx_series("USDKRW=X")
+                cross = _fx_series(f"{code}USD=X")
+                if usd is not None and cross is not None:
+                    s = (cross * usd.reindex(cross.index, method="ffill")).dropna()
+                    via = "달러 경유"
+            if s is None or s.empty:
+                print(f"  환율 {code} 없음")
+                continue
+            last_dt = s.index[-1]
+            last = float(s.iloc[-1])
+            prev = s[s.index <= last_dt - datetime.timedelta(days=365)]
+            yago = float(prev.iloc[-1]) if len(prev) else None
+            out[code] = {"name": name, "rate": round(last, 4),
+                         "yago": round(yago, 4) if yago else None,
+                         "chg_pct": round((last / yago - 1) * 100, 2) if yago else None,
+                         "asof": last_dt.strftime("%Y-%m-%d"), "via": via}
+            print(f"  환율 {code}: {last:,.2f}원 (1년 전 대비 {out[code]['chg_pct']}%)")
+        except Exception as e:
+            print(f"  환율 {code} 실패: {str(e)[:100]}")
+    return out
+
+
 def main():
     out = {"generated_at":
            datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
@@ -213,6 +265,8 @@ def main():
                 item = item2
         out["items"].append(item)
     out["group_order"] = GROUP_ORDER
+    print("fetch 환율 ...", flush=True)
+    out["fx"] = fetch_fx()
     os.makedirs("docs", exist_ok=True)
     with open("docs/data.json", "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
