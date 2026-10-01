@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v29.2: 영국 상장사(JD·프레이저스·닥터마틴) 재무 통화 표기 GBp(펜스)→GBP(파운드) 수정 — 주가는 펜스 그대로
 v29.1: 닥터마틴(DOCS.L) 로고·국기·뉴스 연결, 뉴발란스(이랜드월드) 국내 법인 상세에 뉴발란스 뉴스 연결
 v29: 소싱 지도 2단계 (뉴스 3건 표시는 같은 기사 다른 출처 중복 제거 — 기업 상세 최근 뉴스 카드 포함)
 v29.0: 소싱 지도 2단계 — 지역 패널에 ① 현지 유통사 재고(유럽 JD·프레이저스·잘란도, 남미 그루포 SBF)
@@ -795,6 +796,8 @@ const fmt=(v,d=1,sign=false)=>{
   const s=v.toFixed(d); const cls=v>=0?'pos':'neg';
   return sign?`<span class="${cls}">${v>=0?'+':''}${s}%</span>`:s;
 };
+/* 재무제표 통화: 야후 currency는 주가 통화라 영국 상장사는 GBp(펜스) — 재무 수치는 GBP(파운드) */
+const finCur=c=>c==='GBp'?'GBP':(c||'');
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   if(cur==='KRW'){
@@ -827,7 +830,7 @@ function rows_all(){
   DATA.items.forEach(x=>{
     const fy=x.fy.length?x.fy[x.fy.length-1]:{};
     out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), logo:logoImg(x.ticker,false,x.name), listed:true,
-      rev:fy.rev, cur:x.currency, rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
+      rev:fy.rev, cur:finCur(x.currency), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
       inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
   });
   ((KRD&&KRD.entities)||[]).forEach(e=>{
@@ -1051,7 +1054,7 @@ function renderKrdDetail(id){
 function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
-  const cur=x.currency||'';
+  const cur=finCur(x.currency);
   let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · 주가·분기 매출 전년 대비·실적일: Yahoo</div>`;
@@ -1171,7 +1174,7 @@ function renderDetail(t){
   }
 
   h+=`<div class="card"><h3>(부지표) 주가</h3>
-  <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+cur:'―'}</span></div>
+  <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+(x.currency||''):'―'}</span></div>
   <div class="kv"><span class="k">52주 고점比</span><span>${fmt(x.off_high_pct,1,true)}</span></div></div>`;
   h+=newsCard(t);
   document.getElementById('detBody').innerHTML=h;
