@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v30: 국내 탭 — ① 국내 수요 한눈에(판매 vs 검색): KOSIS 온라인 신발·의복 거래액과 네이버 브랜드 검색량 합계의
+     전년 대비(%)를 한 축에 겹친 그래프(눌러서 월별 값, 범례로 선 켜고 끄기) ② 브랜드 검색 관심도(네이버):
+     전년 대비순/규모순, 상위 10개·전체 보기, 1년 추이(전년 점선), 중앙값 대비 색. 브랜드 상세에 검색 관심도 카드,
+     연결 없는 브랜드는 눌러서 그 브랜드 뉴스만 보기. 수집 상태에 네이버 검색 관심도 추가
 v29.3: 소싱 지도 지역 판정에 현지 유통 재고(재고 과잉형)·환율 반영 — 점수제(브랜드 최대 2 + 유통 ±1 + 환율 ±1,
        3점 이상 높음), 지역 패널에 점수 내역 표시. 중동 현지 유통사에 세노미 리테일(4240.SR) 연결
 v29.2: 영국 상장사(JD·프레이저스·닥터마틴) 재무 통화 표기 GBp(펜스)→GBP(파운드) 수정 — 주가는 펜스 그대로
@@ -336,6 +340,32 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .krtbl.open{display:block}
 .trend .krname{font-weight:500}
 .trend .krval{font-size:var(--fs-base)}
+/* v30 국내 수요 — 판매 vs 검색 교차 그래프 · 네이버 검색 관심도 */
+:root{--s-naver:#0043FF;--s-shoe:#D9480F;--s-apparel:#6E56CF;--up:#0043FF;--down:#D9480F;--on-sig:#ffffff}
+[data-theme="dark"]{--s-naver:#4d9fff;--s-shoe:#ff8a4c;--s-apparel:#a897ff;--up:#4d9fff;--down:#ff8a4c;--on-sig:#0f1420}
+.xc-legend{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.xc-leg{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:var(--fs-sm);background:var(--card);color:var(--tx);cursor:pointer;font-family:inherit;min-height:32px}
+.xc-leg i{width:14px;height:3px;border-radius:2px;display:inline-block}
+.xc-leg.off{opacity:.4}
+.xc-leg:focus-visible,.nv-row:focus-visible,.nv-more:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.xc-wrap{position:relative}
+.xc-svg{width:100%;height:auto;display:block;touch-action:pan-y}
+.xc-tip{position:absolute;top:2px;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:var(--fs-xs);line-height:1.55;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nv-sum{background:var(--barbg);border-radius:10px;padding:10px 12px;font-size:var(--fs-sm);line-height:1.6;margin-bottom:8px}
+.nv-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.nv-row.low{opacity:.55}
+.nv-nm{display:flex;align-items:center;gap:6px;min-width:0;font-weight:700;font-size:var(--fs-base)}
+.nv-nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nv-low{font-style:normal;font-size:var(--fs-2xs);color:var(--sub);border:1px solid var(--line);border-radius:6px;padding:0 5px;font-weight:500;flex:none}
+.nv-pill{justify-self:end;align-self:center;border-radius:999px;padding:1px 9px;font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.nv-pill.up{background:var(--up);color:var(--on-sig)}.nv-pill.down{background:var(--down);color:var(--on-sig)}.nv-pill.mid{background:var(--barbg);color:var(--tx)}
+.nv-bar{display:flex;align-items:center;gap:8px;min-width:0}
+.nv-bar .tr{flex:1;height:6px;background:var(--barbg);border-radius:3px;overflow:hidden}
+.nv-bar .tr i{display:block;height:100%;background:var(--sub);opacity:.55}
+.nv-bar b{font-size:var(--fs-sm);min-width:34px;text-align:right;font-variant-numeric:tabular-nums}
+.nv-sub{grid-column:1/-1;font-size:var(--fs-xs);color:var(--sub)}
+.nv-more{width:100%;margin-top:8px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--accent);font-weight:700;font-size:var(--fs-sm);cursor:pointer;font-family:inherit}
+.nv-det+.nv-det{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -403,6 +433,7 @@ const SEGS_IR = __SEGS_IR__;
 if(SEGS_IR&&SEGS_IR.items){ SEGS.items=SEGS.items||{}; Object.entries(SEGS_IR.items).forEach(([k,v])=>{ if(v&&v.extract) SEGS.items[k]=v; }); }
 const NEWS = __NEWS__;
 const KR = __KR__;
+const NAVER = __NAVER__;   // 네이버 데이터랩 검색 관심도(docs/naver_trend.json)
 const HIST = __HIST__;
 const KRD = __KRD__;
 const STATUS = __STATUS__;
@@ -1077,6 +1108,7 @@ function renderKrdDetail(id){
     const g=DATA.items.find(i=>i.ticker===e.link);
     if(g) h+=compareCard(g,e)+`<div class="note">글로벌 본사: <a href="#" onclick="goDetail('${e.link}');return false;" style="color:var(--accent)">${logoImg(e.link,false,g.name)}${esc(g.name)} ▸</a></div>`;
   }
+  h+=naverDetailCard('krd:'+e.id);
   h+=newsCard('krd:'+e.id);
   document.getElementById('detBody').innerHTML=h;
 }
@@ -1205,6 +1237,7 @@ function renderDetail(t){
   h+=`<div class="card"><h3>(부지표) 주가</h3>
   <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+(x.currency||''):'―'}</span></div>
   <div class="kv"><span class="k">52주 고점比</span><span>${fmt(x.off_high_pct,1,true)}</span></div></div>`;
+  h+=naverDetailCard(t);
   h+=newsCard(t);
   document.getElementById('detBody').innerHTML=h;
 }
@@ -1252,6 +1285,7 @@ function newsMatch(it){
   const [scope,grp]=newsFilter.split(":");
   if(scope==="b") return it.scope==="brand" && it.group===grp;
   if(scope==="i") return it.scope==="industry" && it.key===grp;
+  if(scope==="k") return it.scope==="brand" && it.key===grp;   // 검색 관심도 카드에서 브랜드 하나로 거른 경우
   return true;
 }
 function buildNewsChips(){
@@ -1271,8 +1305,13 @@ function buildNews(){
   }
   const today=NEWS.today||'';
   const items=NEWS.items.filter(newsMatch);
-  if(!items.length){ el.innerHTML='<div class="na">해당 구분의 최근 14일 뉴스 없음</div>'; return; }
-  let h=`<div class="note" style="margin:0 0 6px">수집: ${NEWS.generated_at||'―'} · ${items.length}건</div>`;
+  let kb='';
+  if(newsFilter.startsWith('k:')){
+    const k=newsFilter.slice(2), nm=(NEWS.items.find(i=>i.key===k)||{}).label||(nvBrands().find(b=>b.news===k)||{}).name||k;
+    kb=`<div class="nv-sum" style="display:flex;align-items:center;gap:8px">${esc(nm)} 뉴스만 보는 중<button type="button" class="chip" style="margin-left:auto" onclick="newsFilter='all';buildNewsChips();buildNews()">전체 보기</button></div>`;
+  }
+  if(!items.length){ el.innerHTML=kb+'<div class="na">해당 구분의 최근 14일 뉴스 없음</div>'; return; }
+  let h=kb+`<div class="note" style="margin:0 0 6px">수집: ${NEWS.generated_at||'―'} · ${items.length}건</div>`;
   let curDate=null;
   items.forEach(it=>{
     if(it.first_seen!==curDate){
@@ -1299,13 +1338,145 @@ function spark(vals,w,h){
     <polyline points="${pts}" fill="none" stroke="${up?'var(--pos)':'var(--neg)'}" stroke-width="1.6"/></svg>`;
 }
 function fmtPrd(p){ return p.slice(0,4)+'.'+p.slice(4,6); }
+/* ── v30 국내 수요: 판매 vs 검색 교차 그래프 · 네이버 검색 관심도 ── */
+let NV_SORT='yoy', NV_ALL=false, XC_OFF={};
+const NV_TOP=10;
+const nvBrands=()=>(NAVER&&NAVER.brands)||[];
+function nvMed(){
+  const ys=nvBrands().map(b=>b.yoy).filter(v=>v!=null).sort((a,b)=>a-b), n=ys.length;
+  return n?(n%2?ys[(n-1)/2]:(ys[n/2-1]+ys[n/2])/2):null;
+}
+const nvRel=(y,med)=>(y==null||med==null)?'mid':(y-med>=5?'up':(y-med<=-5?'down':'mid'));
+const nvWk=d=>d?(+d.slice(5,7))+'/'+(+d.slice(8,10)):'';
+const nvSc=v=>v==null?'―':(v>=10?v.toFixed(0):v.toFixed(1));
+/* 최근 52주(실선) vs 그 전 52주(점선), 같은 축 */
+function nvSpark(s,w,h,fluid){
+  if(!s||s.length<8) return '';
+  const n=Math.min(52,Math.floor(s.length/2)), cur=s.slice(-n), prev=s.slice(-2*n,-n), all=cur.concat(prev);
+  const mx=Math.max(...all), mn=Math.min(...all), rg=(mx-mn)||1;
+  const pt=a=>a.map((v,i)=>`${(i/(n-1)*w).toFixed(1)},${(h-2-(v-mn)/rg*(h-4)).toFixed(1)}`).join(' ');
+  const ns=fluid?' vector-effect="non-scaling-stroke"':'';
+  return `<svg ${fluid?`style="display:block;width:100%;height:${h}px" preserveAspectRatio="none"`:`width="${w}" height="${h}" style="display:block;overflow:visible"`} viewBox="0 0 ${w} ${h}" aria-hidden="true">
+    ${prev.length===n?`<polyline points="${pt(prev)}" fill="none" stroke="var(--sub)" stroke-width="1" stroke-dasharray="2 2" opacity=".7"${ns}/>`:''}
+    <polyline points="${pt(cur)}" fill="none" stroke="var(--accent)" stroke-width="1.6"${ns}/>
+    ${fluid?'':`<circle cx="${w}" cy="${(h-2-(cur[n-1]-mn)/rg*(h-4)).toFixed(1)}" r="2" fill="var(--accent)"/>`}</svg>`;
+}
+function nvRowHtml(b,med){
+  const go=b.link?`goDetail('${b.link}')`:`nvNews('${b.news}')`;
+  return `<div class="nv-row${b.low?' low':''}" role="button" tabindex="0" onclick="${go}" onkeydown="if(event.key==='Enter'){${go}}">
+    <div class="nv-nm"><span>${esc(b.name)}</span>${b.low?'<em class="nv-low">검색량 적음</em>':''}</div>
+    <span class="nv-pill ${nvRel(b.yoy,med)}">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span>
+    <div class="nv-bar"><span class="tr"><i style="width:${b.scale!=null?Math.max(2,Math.min(100,b.scale)):0}%"></i></span><b>${nvSc(b.scale)}</b></div>
+    <div style="justify-self:end">${nvSpark(b.s,84,24)}</div>
+    <div class="nv-sub">최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'} (계절 영향 포함)</div></div>`;
+}
+function naverCardHtml(){
+  const bs=nvBrands();
+  if(!bs.length) return `<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3><div class="na">네이버 검색 관심도 수집 전 — 다음 갱신 후 표시</div></div>`;
+  const med=nvMed(), key=b=>NV_SORT==='yoy'?(b.yoy??-1e9):(b.scale??-1);
+  const rows=[...bs].sort((a,b)=>key(b)-key(a)), shown=NV_ALL?rows:rows.slice(0,NV_TOP);
+  const ups=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='up').sort((a,b)=>b.yoy-a.yoy).slice(0,4);
+  const downs=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='down').sort((a,b)=>a.yoy-b.yoy).slice(0,3);
+  let h=`<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3>
+    <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드</div>
+    <div class="seg2" style="margin-bottom:10px"><button type="button" class="${NV_SORT==='yoy'?'on':''}" aria-pressed="${NV_SORT==='yoy'}" onclick="nvSort('yoy')">전년 대비순</button><button type="button" class="${NV_SORT==='size'?'on':''}" aria-pressed="${NV_SORT==='size'}" onclick="nvSort('size')">규모순</button></div>
+    <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b> — 대부분이 같이 움직이면 네이버 검색 전반의 변화라, 중앙값보다 나은지로 봅니다.${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
+  shown.forEach(b=>{ h+=nvRowHtml(b,med); });
+  if(rows.length>NV_TOP) h+=`<button type="button" class="nv-more" onclick="nvToggle()">${NV_ALL?`상위 ${NV_TOP}개만 보기 ▴`:`전체 ${rows.length}개 보기 ▾`}</button>`;
+  h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--up)"></i>중앙값보다 5%p 이상 좋음</span><span><i style="background:var(--down)"></i>5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span><span>그래프: 최근 1년 실선 · 그 전 1년 점선</span></div>
+    <div class="note" style="margin-top:6px">전년 대비 = 최근 4주 vs 1년 전 같은 4주(지수 비율 = 실제 검색 횟수 비율). 규모 1 미만은 검색량이 적어 흐리게 표시. 누르면 기업 상세 또는 그 브랜드 뉴스로 이동. 출처: ${esc(NAVER.source||'네이버 데이터랩')}</div></div>`;
+  return h;
+}
+function nvRefresh(){ const c=document.getElementById('nvCard'); if(c) c.outerHTML=naverCardHtml(); }
+function nvSort(s){ NV_SORT=s; nvRefresh(); }
+function nvToggle(){ NV_ALL=!NV_ALL; nvRefresh(); }
+function nvNews(k){ newsFilter='k:'+k; sw('news'); buildNewsChips(); buildNews(); }
+function naverDetailCard(t){
+  const bs=nvBrands().filter(b=>b.link===t); if(!bs.length) return '';
+  const med=nvMed();
+  let h=`<div class="card"><h3>🔎 네이버 검색 관심도 <span class="go" onclick="sw('kr')">국내 ▸</span></h3>`;
+  bs.forEach(b=>{
+    h+=`<div class="nv-det"><div class="krhead"><span class="krname">${esc(b.name)}</span><span class="nv-pill ${nvRel(b.yoy,med)}" style="margin-left:auto">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span></div>
+      <div class="krmeta">규모 ${nvSc(b.scale)} (나이키 최근 4주 = 100) · ${nvBrands().length}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
+      ${nvSpark(b.s,300,44,true)}</div>`;
+  });
+  return h+`<div class="note" style="margin-top:6px">주간 검색 지수 · 최근 1년 실선 · 그 전 1년 점선 · ${nvWk(NAVER.end)} 주까지${bs.some(b=>b.low)?' · 검색량이 적어 변동이 큼':''}</div></div>`;
+}
+/* 판매 vs 검색: 모두 전년 같은 달 대비(%) — 축 하나 */
+function crossData(){
+  const ser=[];
+  if(NAVER&&NAVER.monthly){ const mo=NAVER.monthly, m={}; mo.months.forEach((p,i)=>{ if(mo.yoy[i]!=null) m[p]=mo.yoy[i]; });
+    ser.push({id:'nv',label:'네이버 브랜드 검색량',col:'var(--s-naver)',m,bold:true}); }
+  [['online_shoes','온라인 신발 거래액','var(--s-shoe)'],['online_apparel','온라인 의복 거래액','var(--s-apparel)']].forEach(([k,label,col])=>{
+    const s=KR&&KR.series&&KR.series[k]; if(!s||!s.yoy) return; const m={};
+    Object.entries(s.yoy).forEach(([p,v])=>{ if(v!=null) m[p.slice(0,4)+'-'+p.slice(4,6)]=v; });
+    ser.push({id:k,label,col,m}); });
+  const months=[...new Set(ser.flatMap(s=>Object.keys(s.m)))].sort().slice(-24);
+  return {ser,months};
+}
+const XC={W:340,H:196,L:36,R:10,T:12,B:28};
+function crossChartHtml(){
+  const {ser,months}=crossData();
+  if(!ser.length||months.length<3) return '';
+  const {W,H,L,R,T,B}=XC, iw=W-L-R, ih=H-T-B, vis=ser.filter(s=>!XC_OFF[s.id]);
+  const vals=vis.flatMap(s=>months.map(m=>s.m[m]).filter(v=>v!=null));
+  let lo=Math.min(0,...vals), hi=Math.max(0,...vals);
+  const step=[5,10,20,25,50,100,200].find(s=>(hi-lo)/s<=6)||500;
+  lo=Math.floor(lo/step)*step; hi=Math.ceil(hi/step)*step; if(hi===lo) hi=lo+step;
+  const x=i=>L+(months.length>1?i/(months.length-1):.5)*iw, y=v=>T+(hi-v)/(hi-lo)*ih;
+  let g='';
+  for(let v=lo; v<=hi+1e-9; v+=step) g+=`<line x1="${L}" x2="${W-R}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="var(--line)" stroke-width="${v===0?1.4:.6}"/><text x="${L-5}" y="${(y(v)+3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--sub)">${v>0?'+':''}${v}%</text>`;
+  months.forEach((m,i)=>{ const last=months.length-1; if((i%3===0&&last-i>=2)||i===last) g+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="${i===months.length-1?'end':(i===0?'start':'middle')}" font-size="9" fill="var(--sub)">${m.slice(2,4)}.${m.slice(5,7)}</text>`; });
+  let ln='';
+  vis.forEach(s=>{
+    let d='', pen=false, li=-1;
+    months.forEach((m,i)=>{ const v=s.m[m]; if(v==null){ pen=false; return; } d+=(pen?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1); pen=true; li=i; });
+    ln+=`<path d="${d}" fill="none" stroke="${s.col}" stroke-width="${s.bold?2.6:1.7}" stroke-linejoin="round" stroke-linecap="round"/>`;
+    if(li>=0) ln+=`<circle cx="${x(li).toFixed(1)}" cy="${y(s.m[months[li]]).toFixed(1)}" r="3.2" fill="${s.col}"/>`;
+  });
+  const lastOf=s=>{ for(let i=months.length-1;i>=0;i--){ const v=s.m[months[i]]; if(v!=null) return {m:months[i],v}; } return null; };
+  const summ=ser.map(s=>{ const l=lastOf(s); return l?`${esc(s.label)} <b>${pp(l.v)}</b> <span class="na">(${+l.m.slice(5,7)}월)</span>`:''; }).filter(Boolean).join(' · ');
+  const legend=ser.map(s=>`<button type="button" class="xc-leg${XC_OFF[s.id]?' off':''}" aria-pressed="${!XC_OFF[s.id]}" onclick="xcToggle('${s.id}')"><i style="background:${s.col}"></i>${esc(s.label)}</button>`).join('');
+  return `<div class="card" id="xcCard"><h3>📈 국내 수요 한눈에 — 판매 vs 검색</h3>
+    <div class="note" style="margin:0 0 4px">모두 전년 같은 달 대비(%) · 같은 축 · 최근 ${months.length}개월 · 그래프를 누르면 그 달 값</div>
+    <div class="xc-legend">${legend}</div>
+    <div class="xc-wrap"><svg class="xc-svg" id="xcSvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="온라인 신발·의복 거래액과 네이버 브랜드 검색량의 전년 대비 증감">${g}${ln}<line id="xcGuide" x1="0" x2="0" y1="${T}" y2="${T+ih}" stroke="var(--sub)" stroke-width=".8" stroke-dasharray="3 3" visibility="hidden"/><rect id="xcHit" x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent"/></svg><div class="xc-tip" id="xcTip" hidden></div></div>
+    <div class="note" style="margin-top:6px;line-height:1.6">최근: ${summ}</div>
+    <div class="note" style="margin-top:4px">KOSIS 온라인쇼핑 거래액은 1~2개월 늦게 나오고 네이버는 지난달까지 나옵니다. 검색선이 판매선보다 먼저 움직이면 선행 신호로 볼 수 있습니다. 네이버 선은 아래 브랜드 검색어 전체의 검색량 합계라 큰 브랜드 비중이 크며, 시장 전체가 아닌 방향 참고용입니다.</div></div>`;
+}
+function xcToggle(id){
+  const {ser}=crossData();
+  if(!XC_OFF[id]&&ser.filter(s=>!XC_OFF[s.id]).length<=1) return;   // 마지막 한 선은 끄지 않음
+  XC_OFF[id]=!XC_OFF[id];
+  const c=document.getElementById('xcCard'); if(c){ c.outerHTML=crossChartHtml(); xcBind(); }
+}
+function xcBind(){
+  const svg=document.getElementById('xcSvg'); if(!svg) return;
+  const hit=document.getElementById('xcHit'), tip=document.getElementById('xcTip'), gd=document.getElementById('xcGuide');
+  const {ser,months}=crossData(), vis=ser.filter(s=>!XC_OFF[s.id]), {W,L,R}=XC, iw=W-L-R;
+  const show=cx=>{
+    const r=svg.getBoundingClientRect();
+    let i=Math.round(((cx-r.left)/r.width*W-L)/iw*(months.length-1)); i=Math.max(0,Math.min(months.length-1,i));
+    const xx=L+(months.length>1?i/(months.length-1):.5)*iw, m=months[i];
+    gd.setAttribute('x1',xx); gd.setAttribute('x2',xx); gd.setAttribute('visibility','visible');
+    tip.innerHTML=`<b>${m.slice(0,4)}년 ${+m.slice(5,7)}월</b><br>`+vis.map(s=>`<span style="color:${s.col}">●</span> ${esc(s.label)} ${s.m[m]!=null?`<b>${pp(s.m[m])}</b>`:'<span class="na">미발표</span>'}`).join('<br>');
+    tip.hidden=false;
+    const tw=tip.offsetWidth, px=xx/W*r.width;
+    tip.style.left=Math.max(0,Math.min(r.width-tw,px-tw/2))+'px';
+  };
+  hit.addEventListener('pointermove',e=>show(e.clientX));
+  hit.addEventListener('pointerdown',e=>show(e.clientX));
+  hit.addEventListener('pointerleave',e=>{ if(e.pointerType==='mouse'){ tip.hidden=true; gd.setAttribute('visibility','hidden'); } });
+}
 function buildKR(){
   const el=document.getElementById('krBody');
+  const top=crossChartHtml()+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
-    el.innerHTML='<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
+    el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
+    xcBind();
     return;
   }
-  let h=`<div class="note" style="margin:0 0 8px">갱신: ${KR.generated_at||'―'}</div>`;
+  let h=top+`<div class="ndate">🧾 KOSIS 국내 지표 (월간)</div><div class="note" style="margin:0 0 8px">갱신: ${KR.generated_at||'―'}</div>`;
   const groups=[
     ["🛍️ 소매판매액지수",["retail_apparel","retail_shoesbag","retail_total"]],
     ["🏬 업태별 판매액지수",["store_fashion","store_internet","store_dept"]],
@@ -1346,6 +1517,7 @@ function buildKR(){
     });
   });
   el.innerHTML=h;
+  xcBind();
   el.querySelectorAll('.krcard').forEach(c=>{
     c.onclick=()=>document.getElementById('krt-'+c.dataset.k).classList.toggle('open');
   });
@@ -1435,6 +1607,7 @@ STATUS_SOURCES = [
     ("segments_ir.json", "유럽·일본 IR", "update-ir", "매주 일", 9),
     ("kr_domestic.json", "국내 법인·상장 재무", "update-dart", "매월 15일", 40),
     ("kosis.json", "국내 소매 지표", "update-kosis", "매월 5일", 40),
+    ("naver_trend.json", "네이버 검색 관심도", "update-dashboard", "매일 07:30", 2),
 ]
 
 
@@ -1512,6 +1685,13 @@ def main():
                 kr = json.load(f)
         except Exception:
             pass
+    naver = None
+    if os.path.exists("docs/naver_trend.json"):
+        try:
+            with open("docs/naver_trend.json", encoding="utf-8") as f:
+                naver = json.load(f)
+        except Exception as e:
+            print(f"[WARN] naver_trend.json 읽기 실패: {str(e)[:100]}")
     news = None
     if os.path.exists("docs/news.json"):
         try:
@@ -1524,6 +1704,7 @@ def main():
             .replace("__SEGS__", json.dumps(segs, ensure_ascii=False))
             .replace("__NEWS__", json.dumps(news, ensure_ascii=False))
             .replace("__KR__", json.dumps(kr, ensure_ascii=False))
+            .replace("__NAVER__", json.dumps(naver, ensure_ascii=False))
             .replace("__HIST__", json.dumps(hist, ensure_ascii=False))
             .replace("__KRD__", json.dumps(krd, ensure_ascii=False))
             .replace("__SEGS_IR__", json.dumps(segs_ir, ensure_ascii=False))
