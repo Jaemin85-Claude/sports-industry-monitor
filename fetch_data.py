@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.9: 환율 1% 칸 알림 — 엔·유로·달러는 2년 일별 환율로 1년 이동평균 대비 %를 계산하고, 1% 단위 선
+     (−1%, −2% … / +1%, +2% …)을 새로 넘은 날을 알림으로 기록(최근 30영업일 안에 닿은 선은 제외).
+     data.json fx[통화]에 1년 일별 추이(hist)·1년 평균·다음 알림 가격·지난 1년 알림 목록,
+     최상위 fx_push에 오늘 새로 생긴 알림 문구(점검 세션이 휴대폰 알림으로 그대로 전달).
+     알림의 first_seen은 이전 data.json에서 이어받아 같은 알림이 두 번 나가지 않게 함
 v4.8: 환율에 엔(JPYKRW=X) 추가 — 소싱 지도 일본 지역. 값은 1엔당 원화(화면은 100엔 단위)
 v4.7: 상장 10곳 추가 — 휴먼메이드(456A.T)·비바굿즈(클락스, 0933.HK)·불카브라스(VULC3.SA)
      (글로벌 브랜드), ABC마트(2670.T)·탑스포츠(6110.HK)·TJX·로스·벌링턴·럭스익스피리언스(LUXE)
@@ -27,6 +32,7 @@ yfinance로 3개년 재무(매출/GM/영업률/재고) + 분기YoY + 주가(부�
 
 import os
 import json
+import math
 import datetime
 import yfinance as yf
 
@@ -112,6 +118,13 @@ FX = {
     "BRL": ["브라질 헤알", "BRLKRW=X"],
     "JPY": ["엔", "JPYKRW=X"],
 }
+# 1% 칸 알림 대상(v4.9) — 파운드·헤알은 값만 표시
+FX_ALERT = ["JPY", "EUR", "USD"]
+FX_ALERT_LABEL = {"JPY": "엔(100엔)", "EUR": "유로", "USD": "달러"}
+FX_LOOKBACK = 30      # 최근 30영업일 안에 이미 닿은 선은 다시 알리지 않음
+FX_MIN_POINTS = 200   # 1년 평균 계산에 필요한 최소 일수
+FX_HINT = {"dn": "▼ 매입 부담 줄어듦 — 결제 시점 앞당김·선매입 검토 참고",
+           "up": "▲ 매입 부담 커짐 — 선물환·결제 시점·수출 비중 검토 참고"}
 
 
 def _row(df, names):
@@ -235,7 +248,9 @@ def fetch_one(ticker, name, group, note=None):
 
 
 def _fx_series(tk):
-    h = yf.Ticker(tk).history(period="13mo", interval="1d")
+    # v4.9: 2년+α (1% 칸 알림의 1년 이동평균을 지난 1년 내내 계산하려면 2년 필요)
+    start = (datetime.date.today() - datetime.timedelta(days=800)).isoformat()
+    h = yf.Ticker(tk).history(start=start, interval="1d")
     return h["Close"].dropna() if h is not None and not h.empty else None
 
 
@@ -251,6 +266,95 @@ def _year_ago(s):
     """365일 이전 가장 가까운 날 종가 (이력이 1년이 안 되면 None)"""
     prev = s[s.index <= s.index[-1] - datetime.timedelta(days=365)]
     return float(prev.iloc[-1]) if len(prev) else None
+
+
+def _line_txt(line):
+    """1% 선 이름: 0 → '1년 평균', -4 → '−4% 선', 2 → '+2% 선'"""
+    if line == 0:
+        return "1년 평균"
+    return f"{'+' if line > 0 else '−'}{abs(line)}% 선"
+
+
+def fx_levels(s):
+    """1% 칸 알림(v4.9): 1년 이동평균 대비 %(dev)를 1% 선으로 나눠, 최근 30영업일 안에
+    닿지 않았던 선을 새로 넘은 날을 알림으로 기록. 반환: 표시·알림용 dict (자료 부족 시 None)"""
+    roll = s.rolling("365D").mean()
+    cnt = s.rolling("365D").count()
+    dev = (s / roll - 1) * 100
+    ok = cnt >= FX_MIN_POINTS
+    if not ok.iloc[-1]:
+        return None
+    dn_line = [math.ceil(v - 1e-9) for v in dev]    # 내려가며 넘은 가장 낮은 선
+    up_line = [math.floor(v + 1e-9) for v in dev]   # 올라가며 넘은 가장 높은 선
+    last_dt = s.index[-1]
+    win_start = last_dt - datetime.timedelta(days=365)
+    alerts = []
+    for i in range(FX_LOOKBACK, len(s)):
+        if s.index[i] <= win_start or not ok.iloc[i] or not ok.iloc[i - FX_LOOKBACK:i].all():
+            continue
+        if dn_line[i] < min(dn_line[i - FX_LOOKBACK:i]):
+            d, line = "dn", dn_line[i]
+        elif up_line[i] > max(up_line[i - FX_LOOKBACK:i]):
+            d, line = "up", up_line[i]
+        else:
+            continue
+        alerts.append({"date": s.index[i].strftime("%Y-%m-%d"), "dir": d, "line": line,
+                       "rate": round(float(s.iloc[i]), 4), "dev": round(float(dev.iloc[i]), 2)})
+    avg = float(roll.iloc[-1])
+    recent = dev.iloc[-FX_LOOKBACK:]
+    return {
+        "hist": [[t.strftime("%Y-%m-%d"), round(float(v), 4)] for t, v in s[s.index > win_start].items()],
+        "avg1y": round(avg, 4),
+        "dev_pct": round(float(dev.iloc[-1]), 2),
+        "next_dn": round(avg * (1 + (dn_line[-1] - 1) / 100), 4),
+        "next_up": round(avg * (1 + (up_line[-1] + 1) / 100), 4),
+        "seen30": [round(float(recent.min()), 2), round(float(recent.max()), 2)],
+        "alerts": alerts,
+    }
+
+
+def fx_rate_txt(code, rate):
+    return f"{rate * 100:,.0f}" if code == "JPY" else f"{rate:,.0f}"
+
+
+def mark_first_seen(fx, prev_fx, today):
+    """알림마다 처음 잡힌 날(KST) — 이전 data.json에서 이어받음. 첫 배포 때는 최근 4일 안 알림만 '오늘'"""
+    recent = (today - datetime.timedelta(days=4)).isoformat()
+    for code in FX_ALERT:
+        cur = fx.get(code) or {}
+        if not cur.get("alerts"):
+            continue
+        prev_list = (prev_fx.get(code) or {}).get("alerts")
+        prev = {(a["date"], a["dir"], a["line"]): a.get("first_seen") for a in (prev_list or [])}
+        for a in cur["alerts"]:
+            k = (a["date"], a["dir"], a["line"])
+            if prev.get(k):
+                a["first_seen"] = prev[k]
+            elif prev_list is not None or a["date"] >= recent:
+                a["first_seen"] = today.isoformat()
+            else:
+                a["first_seen"] = a["date"]
+
+
+def build_fx_push(fx, today):
+    """오늘 새로 잡힌 알림(first_seen=오늘, 시장 날짜 4일 이내) → 휴대폰 알림 문구. 없으면 None"""
+    t, recent = today.isoformat(), (today - datetime.timedelta(days=4)).isoformat()
+    items = []
+    for code in FX_ALERT:
+        for a in (fx.get(code) or {}).get("alerts") or []:
+            if a.get("first_seen") == t and a["date"] >= recent:
+                items.append({**a, "code": code})
+    if not items:
+        return None
+    lines = ["💱 매입 환율 알림"]
+    for a in items:
+        lines.append(f"{FX_ALERT_LABEL[a['code']]} {fx_rate_txt(a['code'], a['rate'])}원 — "
+                     f"1년 평균 대비 {_line_txt(a['line'])} {'아래로' if a['dir'] == 'dn' else '위로'} "
+                     f"({'+' if a['dev'] >= 0 else '−'}{abs(a['dev']):.1f}%)")
+    for d in ("dn", "up"):
+        if any(a["dir"] == d for a in items):
+            lines.append(FX_HINT[d])
+    return {"date": t, "items": items, "text": "\n".join(lines)}
 
 
 def fetch_fx():
@@ -289,6 +393,18 @@ def fetch_fx():
                          "asof": last_dt.strftime("%Y-%m-%d"), "via": via}
             print(f"  환율 {code}: {last:,.2f}원 (1년 전 대비 {out[code]['chg_pct']}%)"
                   f"{' · ' + via if via else ''}")
+            if code in FX_ALERT:
+                lv = fx_levels(s)
+                if lv is None:
+                    print(f"  환율 {code}: 1년 평균 계산 자료 부족 ({len(s)}일) — 1% 칸 알림 건너뜀")
+                else:
+                    out[code].update(lv)
+                    al = lv["alerts"]
+                    n_dn = sum(1 for a in al if a["dir"] == "dn")
+                    print(f"  환율 {code}: 1년 평균 {lv['avg1y']:,.4f} 대비 {lv['dev_pct']:+.1f}% · "
+                          f"지난 1년 알림 {len(al)}건(내림 {n_dn}·오름 {len(al) - n_dn})"
+                          + (f" · 최근 {al[-1]['date']} {_line_txt(al[-1]['line'])} "
+                             f"{'아래로' if al[-1]['dir'] == 'dn' else '위로'}" if al else ""))
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
     return out
@@ -319,6 +435,16 @@ def main():
     out["group_order"] = GROUP_ORDER
     print("fetch 환율 ...", flush=True)
     out["fx"] = fetch_fx()
+    prev_fx = {}
+    try:
+        with open("docs/data.json", encoding="utf-8") as f:
+            prev_fx = json.load(f).get("fx") or {}
+    except Exception:
+        pass
+    today = datetime.datetime.now(KST).date()
+    mark_first_seen(out["fx"], prev_fx, today)
+    out["fx_push"] = build_fx_push(out["fx"], today)
+    print(f"  환율 알림: 오늘 새 알림 {len(out['fx_push']['items']) if out['fx_push'] else 0}건", flush=True)
     os.makedirs("docs", exist_ok=True)
     with open("docs/data.json", "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
