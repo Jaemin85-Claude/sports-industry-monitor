@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 5: KOSIS 국내 수요 지표 (v4)
+v5: 해외직구(온라인쇼핑동향 해외직접구매액, 분기) 추가 — 표 ID를 추측하지 않고 ① 통계표 검색 API
+    ② 후보 표 1분기 표본 조회로 표 이름에 '직접구매'가 있는 표를 찾아 사용(찾은 과정 로그 출력).
+    나라(전체·미국·중국·일본·유럽)×상품군(전체·의류·패션·스포츠) 12분기 → kosis.json 'cross_border'
 프로브로 검증된 통계표만 사용 (§검증 우선):
   DT_1K41012 재별·상품군별 소매판매액지수  → 의복(G21), 신발·가방(G22), 총지수(G0)
   DT_1K41013 소매업태별 판매액지수        → 의복·신발·가방 소매점, 인터넷쇼핑, 백화점
@@ -31,6 +34,22 @@ MONTHS = 25          # 최근 25개월 (YoY 계산 위해 13개월 이상 필요
 TIMEOUT = 60
 RETRY = 2
 OUT_PATH = "docs/kosis.json"
+SEARCH_URL = "https://kosis.kr/openapi/statisticsSearch.do"
+
+# ── 해외직구(v5) ─────────────────────────────────────
+CB_KEYWORD = "해외직접구매"
+CB_CANDIDATES = ["DT_1KE10081", "DT_1KE10091", "DT_1KE10101", "DT_1KE10111",
+                 "DT_1KE10121", "DT_1KE10131", "DT_1KE10141"]
+CB_QUARTERS = 12
+# 이름 매칭: 'exact' = 공백 뺀 이름이 정확히 일치(합계류), 그 밖 = 포함
+CB_COUNTRIES = [("total", "전체", {"exact": ("계", "합계", "전체", "총계")}),
+                ("us", "미국", {"has": ("미국",)}),
+                ("cn", "중국", {"has": ("중국",)}),
+                ("jp", "일본", {"has": ("일본",)}),
+                ("eu", "유럽", {"has": ("유럽", "EU")})]
+CB_CATS = [("total", "전체", {"exact": ("계", "합계", "전체", "총계")}),
+           ("fashion", "의류·패션", {"has": ("의류", "패션")}),
+           ("sports", "스포츠·레저", {"has": ("스포츠",)})]
 
 # ── 수집 정의 ──────────────────────────────────────
 # key: [표ID, objL레벨, 항목ID(itmId), 분류 매칭(C1/C2 이름 포함어), 표시명, 단위설명]
@@ -69,12 +88,12 @@ def log(msg):
     print(msg, flush=True)
 
 
-def api(tbl, itm, obj_codes, months):
-    """obj_codes: {'objL1': 코드 또는 'ALL', ...}"""
+def api(tbl, itm, obj_codes, months, prd_se="M"):
+    """obj_codes: {'objL1': 코드 또는 'ALL', ...} · months = 최근 시점 수(분기면 분기 수)"""
     params = {
         "method": "getList", "apiKey": API_KEY,
         "orgId": "101", "tblId": tbl, "itmId": itm,
-        "prdSe": "M", "newEstPrdCnt": str(months),
+        "prdSe": prd_se, "newEstPrdCnt": str(months),
         "format": "json", "jsonVD": "Y",
     }
     params.update(obj_codes)
@@ -159,6 +178,159 @@ def yoy(ser):
     return out
 
 
+def _nm_ok(name, rule):
+    n = norm(name)
+    if "exact" in rule:
+        return n in {norm(a) for a in rule["exact"]}
+    return any(norm(a) in n for a in rule["has"])
+
+
+def cb_search():
+    """통계표 검색 API로 '해외직접구매' 표 ID 후보 (실패해도 빈 목록)"""
+    try:
+        r = requests.get(SEARCH_URL, params={
+            "method": "getList", "apiKey": API_KEY, "searchNm": CB_KEYWORD,
+            "orgId": "101", "format": "json", "jsonVD": "Y", "resultCount": "20"},
+            headers=UA, timeout=TIMEOUT)
+        data = r.json()
+        if isinstance(data, dict):
+            log(f"  검색 API 응답: {str(data)[:160]}")
+            return []
+        out = []
+        for row in data:
+            tid, tnm = row.get("TBL_ID"), row.get("TBL_NM")
+            log(f"  검색: {tid} | {tnm} | {row.get('ORG_ID')}")
+            if tid and "직접구매" in norm(tnm) and tid not in out:
+                out.append(tid)
+        return out
+    except Exception as e:
+        log(f"  검색 API 실패: {str(e)[:120]}")
+        return []
+
+
+def cb_probe(tbl):
+    """후보 표 1분기 표본 → (단계 수, 행) 또는 None. 분류 단계 수를 모르니 2→3→1 순서로 시도"""
+    for lv in (2, 3, 1):
+        codes = {"objL%d" % i: "ALL" for i in range(1, lv + 1)}
+        try:
+            rows = api(tbl, "ALL", codes, 1, prd_se="Q")
+        except Exception as e:
+            log(f"  {tbl} 단계 {lv}: {str(e)[:100]}")
+            continue
+        rows = [x for x in rows if isinstance(x, dict)]
+        if rows:
+            return lv, rows
+    return None
+
+
+def cb_axes(rows, lv):
+    """각 분류 축(C1~C3)의 이름 집합"""
+    return [sorted({r.get(f"C{i}_NM") for r in rows if r.get(f"C{i}_NM")}) for i in range(1, lv + 1)]
+
+
+def fetch_cross_border():
+    """해외직접구매액(분기) — 나라×상품군. 실패 시 None (§29-D: 값 없으면 수록 안 함)"""
+    log("[cross_border] 해외직구 표 찾기")
+    cands = cb_search() + [t for t in CB_CANDIDATES]
+    seen, found = set(), None
+    for tbl in cands:
+        if tbl in seen:
+            continue
+        seen.add(tbl)
+        pr = cb_probe(tbl)
+        if not pr:
+            continue
+        lv, rows = pr
+        tnm = rows[0].get("TBL_NM") or ""
+        log(f"  {tbl} 표본 {len(rows)}행 · 표 이름: {tnm} · 시점 {rows[0].get('PRD_DE')}")
+        if "직접구매" in norm(tnm):
+            found = (tbl, lv, rows, tnm)
+            break
+    if not found:
+        log("  [WARN] 해외직구 표 미발견 → 수록 안 함")
+        return None
+    tbl, lv, rows, tnm = found
+    items = sorted({(r.get("ITM_ID"), r.get("ITM_NM"), r.get("UNIT_NM")) for r in rows})
+    axes = cb_axes(rows, lv)
+    log(f"  항목: {items}")
+    for i, a in enumerate(axes, 1):
+        log(f"  분류 C{i} ({len(a)}): {', '.join(a[:40])}")
+    # 금액 항목: 이름에 '구매' 또는 단위 '백만원' — 구성비·증감률 제외
+    itm = None
+    for iid, inm, unit in items:
+        n = norm(inm)
+        if any(x in n for x in ("구성비", "증감", "비중", "률")):
+            continue
+        if "구매" in n or "백만원" in norm(unit) or len(items) == 1:
+            itm = (iid, inm, unit)
+            break
+    if not itm:
+        log("  [WARN] 금액 항목 미발견 → 수록 안 함")
+        return None
+    # 축 판정: 나라 축 = '미국'이 있는 축, 상품군 축 = '의류'/'패션'이 있는 축
+    ax_cty = next((i for i, a in enumerate(axes) if any("미국" in norm(x) for x in a)), None)
+    ax_cat = next((i for i, a in enumerate(axes) if i != ax_cty and
+                   any(("의류" in norm(x) or "패션" in norm(x)) for x in a)), None)
+    if ax_cty is None or ax_cat is None:
+        log(f"  [WARN] 나라·상품군 축 판정 실패(나라 {ax_cty}, 상품군 {ax_cat}) → 수록 안 함")
+        return None
+    others = [i for i in range(lv) if i not in (ax_cty, ax_cat)]
+    codes = {"objL%d" % i: "ALL" for i in range(1, lv + 1)}
+    data = api(tbl, itm[0], codes, CB_QUARTERS, prd_se="Q")
+    data = [r for r in data if isinstance(r, dict)]
+    log(f"  {CB_QUARTERS}분기 조회 {len(data)}행 · 항목 {itm[1]} ({itm[2]})")
+
+    def other_ok(r):
+        # 나머지 축(있다면): '구매'가 들어간 값만, 그런 값이 없으면 합계류만
+        for i in others:
+            nm = r.get(f"C{i + 1}_NM") or ""
+            vals = axes[i]
+            if any("구매" in norm(v) for v in vals):
+                if "구매" not in norm(nm):
+                    return False
+            elif not _nm_ok(nm, {"exact": ("계", "합계", "전체", "총계")}):
+                return False
+        return True
+
+    series, names = {}, {}
+    for ck, clab, crule in CB_COUNTRIES:
+        for gk, glab, grule in CB_CATS:
+            sel = [r for r in data if other_ok(r)
+                   and _nm_ok(r.get(f"C{ax_cty + 1}_NM"), crule)
+                   and _nm_ok(r.get(f"C{ax_cat + 1}_NM"), grule)]
+            # 같은 시점이 여럿이면(예: '의류'·'패션' 둘 다 매칭) 첫 분류명만 사용
+            if sel:
+                first = (sel[0].get(f"C{ax_cty + 1}_NM"), sel[0].get(f"C{ax_cat + 1}_NM"))
+                sel = [r for r in sel if (r.get(f"C{ax_cty + 1}_NM"), r.get(f"C{ax_cat + 1}_NM")) == first]
+                names[f"{ck}|{gk}"] = f"{first[0]} / {first[1]}"
+            ser, _ = to_series(sel)
+            if ser:
+                series[f"{ck}|{gk}"] = {"values": ser, "yoy": yoy_q(ser)}
+    if not series:
+        log("  [WARN] 해외직구 값 없음 → 수록 안 함")
+        return None
+    last = max(p for v in series.values() for p in v["values"])
+    for k, v in series.items():
+        y = v["yoy"].get(last)
+        log(f"  ✔ {k} ({names.get(k)}): {last} = {v['values'].get(last)}"
+            f"{'' if y is None else f' (전년 같은 분기 {y:+.1f}%)'}")
+    return {"table": tbl, "table_name": tnm, "item": itm[1], "unit": itm[2] or "백만원",
+            "last": last, "names": names,
+            "countries": {k: lab for k, lab, _ in CB_COUNTRIES},
+            "cats": {k: lab for k, lab, _ in CB_CATS}, "series": series}
+
+
+def yoy_q(ser):
+    """분기 전년 같은 분기 대비 % — PRD_DE '202602'·'20262' 모두 대응"""
+    out = {}
+    for prd, v in ser.items():
+        prev = f"{int(prd[:4]) - 1}{prd[4:]}"
+        pv = ser.get(prev)
+        if pv:
+            out[prd] = (v / pv - 1) * 100
+    return out
+
+
 def main():
     if not API_KEY:
         log("[ERROR] KOSIS_API_KEY 미설정")
@@ -223,10 +395,18 @@ def main():
         except Exception as e:
             log(f"  [WARN] {key} 실패: {str(e)[:160]}")
 
+    try:
+        cb = fetch_cross_border()
+        if cb:
+            out["cross_border"] = cb
+    except Exception as e:
+        log(f"  [WARN] 해외직구 실패: {str(e)[:160]}")
+
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    log(f"saved {OUT_PATH} ({len(out['series'])}개 시계열)")
+    log(f"saved {OUT_PATH} ({len(out['series'])}개 시계열"
+        f"{' · 해외직구 ' + str(len(out['cross_border']['series'])) + '개' if out.get('cross_border') else ''})")
 
 
 if __name__ == "__main__":
