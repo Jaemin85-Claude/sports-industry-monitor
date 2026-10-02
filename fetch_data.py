@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.8: 환율에 엔(JPYKRW=X) 추가 — 소싱 지도 일본 지역. 값은 1엔당 원화(화면은 100엔 단위)
 v4.7: 상장 10곳 추가 — 휴먼메이드(456A.T)·비바굿즈(클락스, 0933.HK)·불카브라스(VULC3.SA)
      (글로벌 브랜드), ABC마트(2670.T)·탑스포츠(6110.HK)·TJX·로스·벌링턴·럭스익스피리언스(LUXE)
      (글로벌 유통), 쿠팡(CPNG, 국내 유통). 재무 통화(fin_currency) 별도 기록 — 야후 currency는
@@ -109,6 +110,7 @@ FX = {
     "GBP": ["파운드", "GBPKRW=X"],
     "USD": ["달러", "USDKRW=X"],
     "BRL": ["브라질 헤알", "BRLKRW=X"],
+    "JPY": ["엔", "JPYKRW=X"],
 }
 
 

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v30.5: 소싱 지도에 북미·일본 추가(5개 지역) — 지도(worldmap v2: 기타에서 미국·캐나다·일본 분리, 서쪽 확장)·
+       브랜드 지역 대응(북미: 나이키·아디다스·아식스·언더아머 직접, 크록스·데커스 추가 / 일본: 아식스 직접·아디다스
+       일본+한국, 나머지 아시아·태평양 합산 → 추정 표시)·현지 유통 재고(북미 딕스·아카데미·TJX·로스·벌링턴, 일본 ABC마트)·
+       환율(북미 달러, 일본 엔 — 100엔 단위 표시)
 v30.4: 국내 탭에 "🏷️ 수입 브랜드 유통사 비교" 카드 — 트렉시 + DART 감사보고서 공시 유통사 8곳.
        ① 순위 요약(트렉시가 앞서는 지표를 먼저·강조) ② 재무 비교표(트렉시 맨 위 고정·지표별 순위 배지·비교군 중앙값 행)
        ③ 성장성 비교 막대(전년 대비 / 2년 연평균, 트렉시 강조색·나머지 회색·중앙값 점선, 누르면 값 표시).
@@ -591,23 +595,37 @@ function koreaCard(x){
 /* 브랜드별로 유럽·중동·남미에 대응하는 공시 지역(정규식, 표기)
    중동은 대부분 EMEA 합산값을 빌려 씀(차용) — 화면에 추정으로 표시 */
 const SRC_CFG={
-  'ADS.DE':{europe:[/^europe$/i,null],middleeast:[/emerging markets/i,'신흥시장 합산'],samerica:[/^latin america$/i,null]},
-  'PUM.DE':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null]},
-  '7936.T':{europe:[/^europe$/i,null],middleeast:null,samerica:[/^others/i,'남미+한국 합산']},
-  'NKE':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america/i,'아시아+남미 합산']},
-  'AS':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
-  'BIRK':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
-  'COLM':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america and asia/i,'남미+아시아 합산']},
-  'UAA':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null]},
-  'VFC':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null},
+  'ADS.DE':{europe:[/^europe$/i,null],middleeast:[/emerging markets/i,'신흥시장 합산'],samerica:[/^latin america$/i,null],
+            namerica:[/^north america$/i,null],japan:[/japan\/south korea/i,'일본+한국 합산']},
+  'PUM.DE':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null],
+            namerica:[/^north america$/i,null],japan:[/^asia\/pacific$/i,'아시아·태평양 합산']},
+  '7936.T':{europe:[/^europe$/i,null],middleeast:null,samerica:[/^others/i,'남미+한국 합산'],
+            namerica:[/^north america$/i,null],japan:[/^japan$/i,null]},
+  'NKE':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america/i,'아시아+남미 합산'],
+            namerica:[/^north america$/i,null],japan:[/asia pacific & latin america/i,'아시아·태평양+남미 합산']},
+  'AS':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null,
+            namerica:[/^americas$/i,'미주(남미 포함) 합산'],japan:[/^asia pacific$/i,'아시아·태평양 합산']},
+  'BIRK':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null,
+            namerica:[/^americas$/i,'미주(남미 포함) 합산'],japan:[/^apac$/i,'아시아·태평양 합산']},
+  'COLM':{europe:[/europe, middle east/i,'유럽·중동·아프리카 합산'],middleeast:[/europe, middle east/i,'유럽·중동·아프리카 값 차용'],samerica:[/latin america and asia/i,'남미+아시아 합산'],
+            namerica:[/^united states$/i,'미국만'],japan:[/latin america and asia/i,'남미+아시아 합산']},
+  'UAA':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:[/^latin america$/i,null],
+            namerica:[/^north america$/i,null],japan:[/^asia-pacific$/i,'아시아·태평양 합산']},
+  'VFC':{europe:[/^emea$/i,'유럽·중동·아프리카 합산'],middleeast:[/^emea$/i,'유럽·중동·아프리카 값 차용'],samerica:null,
+            namerica:[/^americas$/i,'미주(남미 포함) 합산'],japan:[/^apac$/i,'아시아·태평양 합산']},
+  'CROX':{europe:null,middleeast:null,samerica:null,namerica:[/north america/i,null],japan:null},
+  'DECK':{europe:null,middleeast:null,samerica:null,namerica:[/^domestic$/i,'미국 내수'],japan:null},
 };
-const SRC_KEYS=['europe','middleeast','samerica'];
-const SRC_NAMES={europe:'유럽',middleeast:'중동',samerica:'남미'};
+const SRC_KEYS=['europe','namerica','japan','middleeast','samerica'];
+const SRC_NAMES={europe:'유럽',namerica:'북미',japan:'일본',middleeast:'중동',samerica:'남미'};
+const SRC_EST={middleeast:1,japan:1};   // 합산값을 빌려 쓴 추정 지역(빗금·'추정' 표시)
 const SRC_LV={2:{bg:'#0043FF',fg:'#FFFFFF',txt:'높음',ring:'#0043FF',map:'#0043FF'},
               1:{bg:'#9DB4FF',fg:'#0B1A4A',txt:'보통',ring:'#7F9BFF',map:'#9DB4FF'},
               0:{bg:'#E6EBF7',fg:'#3A4560',txt:'낮음',ring:'#B9C4DE',map:'#CBD6F5'}};
 const SRC_RNAME=[[/^europe$/i,'유럽'],[/^emea$|europe, middle east/i,'유럽·중동·아프리카'],[/emerging markets/i,'신흥시장'],
-  [/asia pacific & latin america/i,'아시아·남미'],[/latin america and asia/i,'남미·아시아'],[/latin america/i,'중남미'],[/^others/i,'남미·한국 등']];
+  [/asia pacific & latin america/i,'아시아·남미'],[/latin america and asia/i,'남미·아시아'],[/latin america/i,'중남미'],[/^others/i,'남미·한국 등'],
+  [/japan\/south korea/i,'일본·한국'],[/^japan$/i,'일본'],[/north america/i,'북미'],[/^americas$/i,'미주'],[/^united states$/i,'미국'],
+  [/^domestic$/i,'미국 내수'],[/^asia[\s\/-]*pacific$|^apac$/i,'아시아·태평양']];
 const srcRegName=n=>{ for(const [re,k] of SRC_RNAME) if(re.test(n||'')) return k; return n; };
 const pp=v=>(v>0?'+':'')+v.toFixed(1)+'%';
 let SRC_PRESET='A', SRC_SHEET=null, SRC_CACHE=null;
@@ -674,12 +692,12 @@ function srcMapSvg(){
   const W=WMAP; if(!W) return '<div class="na">지도 데이터 없음 — docs/worldmap.json 확인</div>';
   const vb=W.viewBox.split(' ').map(Number), K=W.korea_pt;
   const fill=k=>SRC_LV[srcSumm(k).level].map;
-  return `<svg class="src-svg" viewBox="${W.viewBox}" role="img" aria-label="유럽·중동·남미 소싱 기회 지도">
+  return `<svg class="src-svg" viewBox="${W.viewBox}" role="img" aria-label="유럽·북미·일본·중동·남미 소싱 기회 지도">
     <defs><pattern id="srcHatch" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="2.6" stroke="#ffffff" stroke-width="0.9"/></pattern></defs>
     <rect class="mp-sea" x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}"/>
     <path class="mp-other" d="${W.other}"/>
     ${SRC_KEYS.map(k=>`<path class="mp-reg mp-click" fill="${fill(k)}" d="${W[k]}" onclick="openSheet('${k}')"><title>${SRC_NAMES[k]} — 눌러서 브랜드 목록</title></path>`).join('')}
-    <path fill="url(#srcHatch)" d="${W.middleeast}" pointer-events="none"/>
+    ${Object.keys(SRC_EST).filter(k=>W[k]).map(k=>`<path fill="url(#srcHatch)" d="${W[k]}" pointer-events="none"/>`).join('')}
     <path class="mp-kr" d="${W.korea}"/>
     ${W.flows.map(f=>`<path class="mp-flow" d="${f}"/>`).join('')}
     <circle cx="${K[0]}" cy="${K[1]}" r="2.2" fill="#E8590C" stroke="#ffffff" stroke-width="0.6"/>
@@ -694,11 +712,11 @@ function sourcingCard(){
     const list=srcRanked(k), top=list.slice(0,3), lv=SRC_LV[srcSumm(k).level];
     cl+=`<button type="button" class="src-cl" style="left:${W.anchors[k][0]};top:${W.anchors[k][1]}" onclick="openSheet('${k}')" aria-label="${SRC_NAMES[k]} 브랜드 목록 열기">
       <span class="bs">${top.map(o=>srcBadge(o.b.t,o.b.name,SRC_LV[o.lvl].ring)).join('')}${list.length>3?`<span class="src-more">+${list.length-3}</span>`:''}</span>
-      <span class="src-pill">${SRC_NAMES[k]} · ${lv.txt}${k==='middleeast'?'(추정)':''}</span></button>`;
+      <span class="src-pill">${SRC_NAMES[k]} · ${lv.txt}${SRC_EST[k]?'(추정)':''}</span></button>`;
   });
   const desc=SRC_PRESET==='A'?'재고가 매출보다 빨리 늘었고 그 지역 판매가 약하면 처분 물량이 나온다고 봅니다. 현지 유통 재고와 환율도 함께 반영합니다.'
                              :'지역 성장이 빠르거나 재고가 많이 늘면 유통 물량 자체가 커진다고 봅니다. 환율도 함께 반영합니다.';
-  return `<div class="card span2" id="srcCard"><h3>🌍 소싱 기회 지도 — 유럽 · 중동 · 남미 <span class="tag2">공시 기반</span></h3>
+  return `<div class="card span2" id="srcCard"><h3>🌍 소싱 기회 지도 — 유럽 · 북미 · 일본 · 중동 · 남미 <span class="tag2">공시 기반</span></h3>
   <div class="src-wrap">
     <div class="src-seg"><div class="seg2">
       <button type="button" class="${SRC_PRESET==='A'?'on':''}" onclick="setSrcPreset('A')">재고 과잉형</button>
@@ -714,9 +732,9 @@ function sourcingCard(){
   </div></div>`;
 }
 function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
-const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE','LUXE'],middleeast:['4240.SR'],samerica:['SBFG3.SA','VULC3.SA']};
-const SRC_FXMAP={europe:['EUR','GBP'],middleeast:['USD'],samerica:['BRL']};
-const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
+const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE','LUXE'],namerica:['DKS','ASO','TJX','ROST','BURL'],japan:['2670.T'],middleeast:['4240.SR'],samerica:['SBFG3.SA','VULC3.SA']};
+const SRC_FXMAP={europe:['EUR','GBP'],namerica:['USD'],japan:['JPY'],middleeast:['USD'],samerica:['BRL']};
+const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],namerica:['dks','academy'],japan:[],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
 function srcRetailHtml(k){
   let h=`<div class="sh-sub">현지 유통·브랜드 재고 <span>재고가 매출보다 빨리 늘수록 처분 물량 가능성</span></div>`;
   const tks=SRC_RETAIL[k]||[];
@@ -741,9 +759,9 @@ function srcFxHtml(k){
   const FXD=DATA.fx||{}; const codes=(SRC_FXMAP[k]||[]).filter(c=>FXD[c]);
   if(!codes.length) return h+`<div class="sh-empty">환율 수집 전 — 다음 갱신 후 표시</div>`;
   codes.forEach(c=>{ const f=FXD[c], ch=f.chg_pct;
-    const rate=f.rate>=100?Math.round(f.rate).toLocaleString('ko-KR'):f.rate.toFixed(1);
+    const rate=c==='JPY'?Math.round(f.rate*100).toLocaleString('ko-KR'):(f.rate>=100?Math.round(f.rate).toLocaleString('ko-KR'):f.rate.toFixed(1));
     const verdict=ch==null?'':(ch>=2?'<span class="neg">매입 부담 커짐</span>':(ch<=-2?'<span class="pos">매입 부담 줄어듦</span>':'<span class="na">비슷</span>'));
-    h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c}</span></span><b>${rate}원</b></div>
+    h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c==='JPY'?'100엔':c}</span></span><b>${rate}원</b></div>
       <div class="t3">${ch!=null?`1년 전보다 ${ch>0?'+':''}${ch.toFixed(1)}% · `:''}${verdict}${c==='USD'&&k==='middleeast'?' · 디르함·리얄은 달러에 고정':''}${f.via?' · '+esc(f.via):''} · ${esc(f.asof||'')} 기준</div></div>`; });
   return h;
 }
@@ -765,6 +783,7 @@ function openSheet(kind){
     const sm=srcSumm(kind), lv=SRC_LV[sm.level];
     title=`${SRC_NAMES[kind]} 브랜드`; chip=`<span class="lvchip" style="background:${lv.bg};color:${lv.fg}">기회 ${lv.txt}</span>`;
     if(kind==='middleeast') body+=`<div class="sh-warn">중동은 대부분 브랜드가 유럽·중동·아프리카 또는 신흥시장으로 묶어 공시합니다. 그 합산값을 빌려 쓴 추정치입니다.</div>`;
+    if(kind==='japan') body+=`<div class="sh-warn">일본을 따로 공시하는 곳은 아식스뿐이고, 아디다스는 일본+한국 합산입니다. 나머지는 아시아·태평양 합산값을 빌려 쓴 추정치입니다.</div>`;
     body+=`<div class="note" style="margin:2px 0 8px"><b>판정 ${lv.txt} (${sm.score}점)</b> — ${sm.parts.map(p=>`${esc(p.txt)} ${p.pt>0?'+':''}${p.pt}`).join(' · ')}</div>`;
     srcRanked(kind).forEach(o=>{ const l=SRC_LV[o.lvl], c=o.c;
       const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}`;
@@ -793,7 +812,7 @@ function openSheet(kind){
       <b>시장 확대형 (원안)</b><p>지역 성장률 +15% 이상 또는 브랜드 재고 증가 +15% 이상이면 높음, +5% 이상이면 보통.</p>
       <b>지도 배지</b><p>지역마다 기회 수준이 높은 순으로 최대 3개 브랜드를 표시하고 나머지는 +숫자로 묶습니다. 테두리 색이 기회 수준이며, 브랜드를 누르면 기업 상세로 이동합니다.</p>
       <b>지역 판정 (지도 색·지역 칩)</b><p>점수 = 기회 높은 브랜드 수(최대 2점) + 현지 유통 재고(재고 과잉형만: "무거움"인 유통사가 하나라도 있으면 +1, 모두 "가벼움"이면 −1) + 환율(현지 통화 원화 값이 1년 전보다 평균 2% 이상 내리면 매입 부담이 줄어 +1, 2% 이상 오르면 −1). 3점 이상 높음, 1~2점 보통, 0점 이하 낮음. 지역 패널 맨 위에 점수 내역을 표시합니다.</p>
-      <b>현지 유통사·환율·뉴스</b><p>유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값 1년 변동입니다(중동은 달러 고정 통화라 달러로 대신). 뉴스는 참고 정보로만 붙입니다.</p>
+      <b>현지 유통사·환율·뉴스</b><p>유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값 1년 변동입니다(북미는 달러, 일본은 엔(100엔 단위 표시), 중동은 달러 고정 통화라 달러로 대신). 뉴스는 참고 정보로만 붙입니다.</p>
       <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 쓰고 상장 유통사도 없어 뉴스로 보완합니다.</p></div>`;
   } else return;
   sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="closeSheet()"></button>
