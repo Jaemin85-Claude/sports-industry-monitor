@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v30.2: 국내 탭에 "🛒 국내 온라인 플랫폼" 카드 — 쿠팡·무신사·크림·트렌비·발란·머스트잇·트렉시(자사)를 한 표로
+       (매출 원화 기준 큰 순, 전년 대비·영업이익률·재고 증감, 누르면 상세). 국내 그룹의 외화 실적(쿠팡 달러)은
+       최근 환율로 원화 환산(≈)해 기업 목록·상세에 함께 표시 — 옆 기업의 조·억 단위와 맞춤
 v30.1: 15곳 추가 연결 — 상장 10곳(휴먼메이드·비바굿즈(클락스)·불카브라스·ABC마트·탑스포츠·TJX·로스·벌링턴·
        럭스익스피리언스·쿠팡) 로고·국기·뉴스, 국내 법인 5곳(크림·트렌비·발란·머스트잇·트렉시) 로고.
        소싱 지도 현지 재고에 유럽 럭스익스피리언스·남미 불카브라스 추가. 재무 금액 통화는 재무제표 통화
@@ -869,6 +872,14 @@ const fmt=(v,d=1,sign=false)=>{
 /* 재무제표 통화: 야후 currency는 주가 통화라 영국 상장사는 GBp(펜스) — 재무 수치는 GBP(파운드) */
 const finCur=c=>c==='GBp'?'GBP':(c||'');
 const finCurOf=x=>finCur(x.fin_currency||x.currency);   // 재무제표 통화 우선(v30.1)
+/* 외화 금액의 원화 근사(v30.2) — data.json fx의 최근 환율, 환율 없으면 null */
+const krwOf=(v,cur)=>{ if(v==null) return null; if(cur==='KRW') return v; const f=(DATA.fx||{})[cur]; return (f&&f.rate)?v*f.rate:null; };
+/* 국내 그룹의 외화 실적: "≈46.9조" + 작은 글씨로 원래 통화 */
+function revKrwCell(rev,cur){
+  const k=krwOf(rev,cur);
+  if(cur==='KRW'||k==null) return moneyShort(rev,cur);
+  return `≈${moneyShort(k,'KRW')}<span class="na" style="font-size:var(--fs-2xs);display:block">${moneyShort(rev,cur)} ${esc(cur)}</span>`;
+}
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   if(cur==='KRW'){
@@ -993,7 +1004,7 @@ function buildCo(){
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${String(r.group||'').startsWith('국내')?revKrwCell(r.rev,r.cur):moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -1141,6 +1152,10 @@ function renderDetail(t){
       <div class="bar-val">${moneyShort(y.rev,cur)} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
     });
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
+  if(String(x.group||'').startsWith('국내') && cur!=='KRW' && x.fy.length){
+    const ly=x.fy[x.fy.length-1], k=krwOf(ly.rev,cur), f=(DATA.fx||{})[cur];
+    if(k!=null) h+=`<div class="note" style="margin-top:6px">원화 환산 ≈ ${moneyShort(k,'KRW')}원 (${ym(ly.end)}결산 · 최근 환율 1 ${esc(cur)} = ${Math.round(f.rate).toLocaleString()}원 기준, 참고용)</div>`;
+  }
   h+=`</div>`;
   h+=`<div class="card"><h3>💰 수익성 추이 — 연간</h3><table><tr><th>결산월</th><th>매출총이익률</th><th>영업이익률</th></tr>`;
   x.fy.forEach(y=>{
@@ -1479,9 +1494,32 @@ function xcBind(){
   hit.addEventListener('pointerdown',e=>show(e.clientX));
   hit.addEventListener('pointerleave',e=>{ if(e.pointerType==='mouse'){ tip.hidden=true; gd.setAttribute('visibility','hidden'); } });
 }
+/* ── 🛒 국내 온라인 플랫폼 (v30.2) ── */
+const KR_PLATFORMS=['CPNG','krd:musinsa','krd:kream','krd:trenbe','krd:balaan','krd:mustit','krd:trexi'];
+function platformCardHtml(){
+  const all=rows_all();
+  const rows=KR_PLATFORMS.map(k=>all.find(r=>r.key===k)).filter(Boolean).map(r=>{
+    const fy=r.listed&&r.item.fy.length?r.item.fy[r.item.fy.length-1]:null;
+    return {...r, krw:krwOf(r.rev,r.cur), op:(r.opm!=null?r.opm:(fy?fy.op_pct:null)), end:(r.fy_end||(fy?fy.end:null))};
+  }).sort((a,b)=>(b.krw==null?-1:b.krw)-(a.krw==null?-1:a.krw));
+  if(!rows.length) return '';
+  let h=`<div class="card"><h3>🛒 국내 온라인 플랫폼 <span class="tag">연간</span></h3>
+    <div class="tblwrap"><table class="nowrap"><tr><th>기업</th><th>매출</th><th>전년 대비</th><th>영업이익률</th><th>재고 증감</th></tr>`;
+  rows.forEach(r=>{
+    const self=r.key==='krd:trexi';
+    h+=`<tr class="co" style="cursor:pointer${self?';background:var(--barbg)':''}" onclick="goDetail('${r.key}')">
+      <td>${r.logo}${self?'<b>'+esc(r.name)+'</b>':esc(r.name)}<span class="na" style="font-size:var(--fs-2xs);display:block">${r.end?ym(r.end)+' 결산':'미확인'}${r.listed?' · 상장':''}</span></td>
+      <td>${r.rev!=null?revKrwCell(r.rev,r.cur):'<span class="na">―</span>'}</td><td>${fmt(r.rev_yoy,1,true)}</td>
+      <td>${r.op!=null?fmt(r.op,1,true):'<span class="na">―</span>'}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
+  });
+  const usd=(DATA.fx||{}).USD;
+  h+=`</table></div><div class="note" style="margin-top:6px">매출 큰 순 · 쿠팡은 미국 상장 달러 실적을 최근 환율${usd&&usd.rate?'(1달러 = '+Math.round(usd.rate).toLocaleString()+'원)':''}로 환산한 근사치 ·
+    나머지는 DART 감사보고서(별도) 연간 · 플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세</div></div>`;
+  return h;
+}
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+naverCardHtml();
+  const top=crossChartHtml()+platformCardHtml()+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
