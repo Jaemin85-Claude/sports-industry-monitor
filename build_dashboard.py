@@ -1580,7 +1580,9 @@ function peerCardHtml(){
   const me=rows.find(r=>r.self), peers=rows.filter(r=>!r.self);
   const med={}, rk={};
   PEER_METRICS.forEach(([k,,hi])=>{ med[k]=pgMedian(peers.map(r=>r[k])); rk[k]=peerRank(rows,k,hi); });
-  const topHalf=(k,r)=>{const n=rk[k].n, x=rk[k].of(r); return x!=null&&n>1&&x<=Math.ceil(n/2);};
+  // 강조 기준: 비교군 중앙값(트렉시 제외)보다 나은 지표만 — 순위 중간을 '강점'으로 부풀리지 않음
+  const hiOf=Object.fromEntries(PEER_METRICS.map(([k,,hi])=>[k,hi]));
+  const topHalf=(k,r)=>r[k]!=null&&med[k]!=null&&(hiOf[k]?r[k]>med[k]:r[k]<med[k]);
   let h=`<div class="card" id="peerCard"><h3>🏷️ ${PEER_NAME} <span class="tag">연간 · 감사보고서</span></h3>`;
   if(me){
     const items=PEER_METRICS.map(([k,nm])=>({k,nm,x:rk[k].of(me),n:rk[k].n})).filter(i=>i.x!=null);
@@ -1619,7 +1621,7 @@ function peerCardHtml(){
     h+=`</div><div class="pg-tip" id="pgTip">막대를 누르면 매출 변화가 보입니다</div>`;
   } else h+=`<div class="na">비교할 수치 없음</div>`;
   h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--accent)"></i>트렉시</span><span><i style="background:var(--sub);opacity:.4"></i>비교 유통사</span><span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>비교군 중앙값(트렉시 제외)</span></div>
-    <div class="note" style="margin-top:6px">DART 감사보고서(별도) 연간 수치 그대로 · 순위는 수치가 있는 기업끼리 · 재고일수는 낮을수록 위 · 연평균은 3개년 자료가 있는 기업만 · 행을 누르면 기업 상세</div></div>`;
+    <div class="note" style="margin-top:6px">DART 감사보고서(별도) 연간 수치 그대로 · 파란 배지 = 비교군 중앙값보다 나은 지표 · 순위는 수치가 있는 기업끼리 · 재고일수는 낮을수록 위 · 연평균은 3개년 자료가 있는 기업만 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
 function peerGrowth(m){ PEER_GROWTH=m; const c=document.getElementById('peerCard'); if(c) c.outerHTML=peerCardHtml(); }
