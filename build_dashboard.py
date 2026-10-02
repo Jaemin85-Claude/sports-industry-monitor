@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v31: 하단 탭에 '더보기'(6번째) — 새 지표는 탭을 늘리지 않고 여기에 쌓음.
+     ① 💱 환율: 엔·유로·달러 1% 칸 알림(1년 평균 대비 %, 다음 내림·오름 알림 가격, 1% 칸 막대, 1년 추이와
+        알림 날짜 점, 최근 알림 목록) + 파운드·헤알은 값만 + 내릴 때·오를 때 참고 상자 (fetch_data v4.9)
+     ② 🌏 해외직구: 통계청 해외직접구매액(분기) 요약 3칸·나라별 막대(의류·패션/스포츠)·최근 8분기 (kosis v5)
+     ③ ⚙️ 수집 상태: 종합 탭 맨 아래에서 이동(지연 시 종합 상단 경고 띠는 유지 → 누르면 여기로)
+     소싱 지도 지역 패널(유럽·북미·일본)에 '한국 소비자 직구' 한 줄, 환율 줄에 1년 평균 대비 %
 v30.5: 소싱 지도에 북미·일본 추가(5개 지역) — 지도(worldmap v2: 기타에서 미국·캐나다·일본 분리, 서쪽 확장)·
        브랜드 지역 대응(북미: 나이키·아디다스·아식스·언더아머 직접, 크록스·데커스 추가 / 일본: 아식스 직접·아디다스
        일본+한국, 나머지 아시아·태평양 합산 → 추정 표시)·현지 유통 재고(북미 딕스·아카데미·TJX·로스·벌링턴, 일본 ABC마트)·
@@ -398,6 +404,71 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .nv-sub{grid-column:1/-1;font-size:var(--fs-xs);color:var(--sub)}
 .nv-more{width:100%;margin-top:8px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--accent);font-weight:700;font-size:var(--fs-sm);cursor:pointer;font-family:inherit}
 .nv-det+.nv-det{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+/* v31 더보기 — 메뉴 · 환율 · 해외직구 · 수집 상태 */
+.mhead{display:flex;align-items:center;gap:12px;margin:2px 0 10px}
+.mhead .mback{color:var(--accent);font-size:var(--fs-sm);cursor:pointer;white-space:nowrap;padding:6px 0}
+.mhead b{font-size:var(--fs-xl)}
+.mhead .ms{display:block;color:var(--sub);font-size:var(--fs-2xs);font-weight:400}
+.mmenu{padding:2px 12px}
+.mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.mi:last-child{border-bottom:none}
+.mi .mic{font-size:20px;text-align:center}
+.mi .mt{font-weight:700}
+.mi .md{font-size:var(--fs-xs);color:var(--sub)}
+.mi .mr{font-size:var(--fs-2xs);color:var(--sub);text-align:right;white-space:nowrap}
+.mi .mr b{display:block;font-size:var(--fs-xs);color:var(--tx)}
+.mbadge{display:inline-block;font-size:var(--fs-2xs);font-weight:700;border-radius:999px;padding:0 7px;line-height:1.7;color:#fff;background:var(--pos)}
+.mbadge.up,.mbadge.late{background:var(--neg)}
+.fxgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:10px}
+@media(min-width:760px){.fxgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.fxc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card);min-width:0}
+.fxc.dn{border-color:var(--pos)}.fxc.up{border-color:var(--neg)}
+.fxtop{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm)}
+.fpill{margin-left:auto;font-size:var(--fs-2xs);font-weight:700;border-radius:999px;padding:1px 8px;line-height:1.7;white-space:nowrap}
+.fpill.dn{background:var(--pos);color:#fff}.fpill.up{background:var(--neg);color:#fff}
+.fpill.wait{border:1px solid var(--line);color:var(--sub);font-weight:500}
+.fxv{font-size:var(--fs-lg);font-weight:700;margin-top:2px}
+.fxv small{font-size:var(--fs-xs);font-weight:400;color:var(--sub);margin-left:4px}
+.fxmeta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin-top:6px;font-size:var(--fs-sm)}
+.fxmeta span{display:block;color:var(--sub);font-size:var(--fs-2xs)}
+.fgauge{position:relative;height:30px;margin-top:8px}
+.fg-trk{position:absolute;left:0;right:0;top:9px;height:6px;background:var(--barbg);border-radius:3px}
+.fg-tk{position:absolute;top:7px;width:1px;height:10px;background:var(--line)}
+.fg-tk.z{background:var(--sub);top:4px;height:16px}
+.fg-seen{position:absolute;top:9px;height:6px;background:var(--accent);opacity:.3;border-radius:3px}
+.fg-me{position:absolute;top:4px;width:10px;height:16px;margin-left:-5px;border-radius:3px;background:var(--tx)}
+.fg-lb{position:absolute;top:19px;font-size:var(--fs-2xs);color:var(--sub);transform:translateX(-50%);white-space:nowrap}
+.fxsv{display:block;width:100%;height:52px;margin-top:6px}
+.fxcnt{font-size:var(--fs-2xs);color:var(--sub);margin-top:4px}
+.fleg{display:flex;gap:10px;flex-wrap:wrap;font-size:var(--fs-2xs);color:var(--sub);margin:0 0 10px}
+.fleg i{display:inline-block;width:14px;height:0;border-top:1.5px solid var(--sub);vertical-align:3px;margin-right:4px}
+.fleg i.avg{border-top-style:dashed}.fleg i.ldn{border-top-color:var(--pos)}.fleg i.lup{border-top-color:var(--neg)}
+.fleg i.dn,.fleg i.up{width:7px;height:7px;border:none;border-radius:50%;vertical-align:0}
+.fleg i.dn{background:var(--pos)}.fleg i.up{background:var(--neg)}
+.frec>div{display:grid;grid-template-columns:40px 10px minmax(0,1fr);gap:6px;align-items:baseline;font-size:var(--fs-sm);padding:6px 0;border-bottom:1px solid var(--line)}
+.frec>div:last-child{border-bottom:none}
+.frec .d{color:var(--sub);font-size:var(--fs-xs)}
+.frec i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.frec i.dn{background:var(--pos)}.frec i.up{background:var(--neg)}
+.fplain{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-sm);padding:7px 0;border-bottom:1px solid var(--line)}
+.fplain:last-child{border-bottom:none}
+.fuse{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fuse>div{border-radius:10px;padding:8px 10px;background:var(--barbg);min-width:0}
+.fuse b{display:block;font-size:var(--fs-sm);margin-bottom:2px}
+.fuse ul,.frules{margin:0;padding-left:16px;font-size:var(--fs-xs);display:flex;flex-direction:column;gap:2px}
+.kpis.cbk{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kpis.cbk .kpi{cursor:default}
+.cb-row{display:grid;grid-template-columns:62px minmax(0,1fr) 56px;gap:8px;align-items:center;font-size:var(--fs-sm);margin-bottom:8px}
+.cb-row .lb{color:var(--sub);white-space:nowrap}
+.cb-row .yy{text-align:right;font-size:var(--fs-xs);font-variant-numeric:tabular-nums}
+.bar.cb-src{background:var(--pos);opacity:.9}
+.cb-trend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:760px){.cb-trend{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cb-tr{border:1px solid var(--line);border-radius:10px;padding:6px 8px;min-width:0}
+.cb-tr .h{display:flex;justify-content:space-between;gap:4px;font-size:var(--fs-xs)}
+.cb-tr svg{display:block;width:100%;height:36px;margin-top:2px}
+.cb-tr .ax{display:flex;justify-content:space-between;font-size:var(--fs-2xs);color:var(--sub)}
+.cb-read{background:var(--barbg);border-radius:10px;padding:8px 10px;font-size:var(--fs-xs);margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -448,6 +519,10 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   지수는 2020=100 기준 · YoY는 전년 동월 대비 · 지표를 누르면 최근 13개월 수치 표</div>
 </div>
 
+<div class="pane" id="p-more">
+  <div id="moreBody"></div>
+</div>
+
 </main>
 <nav class="tabs">
   <div class="tab on" data-p="home"><span class="ic">🏠</span>종합</div>
@@ -455,6 +530,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   <div class="tab" data-p="cal"><span class="ic">📅</span>캘린더</div>
   <div class="tab" data-p="news"><span class="ic">📰</span>뉴스</div>
   <div class="tab" data-p="kr"><span class="ic">🇰🇷</span>국내</div>
+  <div class="tab" data-p="more"><span class="ic">☰</span>더보기</div>
 </nav>
 <div class="sheet" id="sheet"></div>
 </div>
@@ -762,8 +838,20 @@ function srcFxHtml(k){
     const rate=c==='JPY'?Math.round(f.rate*100).toLocaleString('ko-KR'):(f.rate>=100?Math.round(f.rate).toLocaleString('ko-KR'):f.rate.toFixed(1));
     const verdict=ch==null?'':(ch>=2?'<span class="neg">매입 부담 커짐</span>':(ch<=-2?'<span class="pos">매입 부담 줄어듦</span>':'<span class="na">비슷</span>'));
     h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c==='JPY'?'100엔':c}</span></span><b>${rate}원</b></div>
-      <div class="t3">${ch!=null?`1년 전보다 ${ch>0?'+':''}${ch.toFixed(1)}% · `:''}${verdict}${c==='USD'&&k==='middleeast'?' · 디르함·리얄은 달러에 고정':''}${f.via?' · '+esc(f.via):''} · ${esc(f.asof||'')} 기준</div></div>`; });
+      <div class="t3">${ch!=null?`1년 전보다 ${ch>0?'+':''}${ch.toFixed(1)}% · `:''}${f.dev_pct!=null?`1년 평균 대비 ${f.dev_pct>0?'+':''}${f.dev_pct.toFixed(1)}% · `:''}${verdict}${c==='USD'&&k==='middleeast'?' · 디르함·리얄은 달러에 고정':''}${f.via?' · '+esc(f.via):''} · ${esc(f.asof||'')} 기준</div></div>`; });
   return h;
+}
+const SRC_CBMAP={europe:'eu',namerica:'us',japan:'jp'};   // v31 지역 → 해외직구 나라
+function srcCbHtml(k){
+  const ck=SRC_CBMAP[k]; if(!ck) return '';
+  const CB=KR&&KR.cross_border;
+  let h=`<div class="sh-sub">한국 소비자 직구 <span>이 지역 → 한국 의류·패션 · 전년 같은 분기 대비</span></div>`;
+  if(!CB||!CB.series) return h+`<div class="sh-empty">해외직구 자료 수집 전 — 다음 갱신 후 표시</div>`;
+  const s=CB.series[ck+'|fashion'], v=s&&s.values?s.values[CB.last]:null, y=s&&s.yoy?s.yoy[CB.last]:null;
+  if(v==null) return h+`<div class="sh-empty">이 지역 자료 없음</div>`;
+  const nm=((CB.names||{})[ck+'|fashion']||'').split(' / ')[0]||SRC_NAMES[k];
+  return h+`<div class="sh-fx" style="cursor:pointer" onclick="closeSheet();goMore('cb')"><div class="t1"><span>${esc(nm)}</span><b>${cbMoney(v)}원</b></div>
+    <div class="t3">${y!=null?`${y>=0?'+':''}${y.toFixed(1)}% · `:''}${cbPrd(CB.last)} · 누르면 더보기 › 해외직구</div></div>`;
 }
 function srcNewsHtml(k){
   let h=`<div class="sh-sub">현지 유통 뉴스 <span>최근 14일 선별</span></div>`;
@@ -791,7 +879,7 @@ function openSheet(kind){
       body+=`<div class="sh-row" onclick="closeSheet();goDetail('${o.b.t}')">${srcBadge(o.b.t,o.b.name,l.ring,true)}
         <div class="bx"><div class="t1"><span>${esc(o.b.name)}</span><span class="lvchip" style="background:${l.bg};color:${l.fg}">${l.txt}</span></div>
         <div class="t2">${esc(t2)}</div><div class="t3">${esc(t3)}</div></div></div>`; });
-    body+=srcRetailHtml(kind)+srcFxHtml(kind)+srcNewsHtml(kind);
+    body+=srcRetailHtml(kind)+srcFxHtml(kind)+srcCbHtml(kind)+srcNewsHtml(kind);
   } else if(kind==='matrix'){
     title='브랜드 × 지역';
     body=`<div class="note" style="margin:2px 0 6px">칸 = 지역 성장률(환율 제외 우선) · 색 = 선택한 가정의 기회 수준 · 한국 수요 = 한국이 속한 지역 성장률</div>
@@ -833,7 +921,7 @@ function statusRows(){
 }
 function statusCard(){
   const rows=statusRows();
-  let h=`<div class="card span2" id="statusCard"><h3>⚙️ 수집 상태</h3><table id="statusTbl"><tr><th>자료</th><th>마지막 갱신</th><th>주기</th><th>상태</th></tr>`;
+  let h=`<div class="card" id="statusCard"><h3>⚙️ 자료별 마지막 갱신</h3><table id="statusTbl"><tr><th>자료</th><th>마지막 갱신</th><th>주기</th><th>상태</th></tr>`;
   rows.forEach(r=>{
     const when=r.ts?(r.ts.slice(5,7)+'/'+r.ts.slice(8,10)+(r.date_only?'':' '+r.ts.slice(11,16))):'―';   // 기록된 한국 시각 그대로
     const ageTxt=r.age==null?'':(r.age<1?'오늘':`${Math.floor(r.age)}일 전`);
@@ -846,7 +934,7 @@ function statusCard(){
 function statusWarn(){
   const late=statusRows().filter(r=>r.late);
   document.getElementById('statusWarn').innerHTML=late.length?
-    `<div class="warnbar" onclick="focusCard('statusCard')">⚠️ 수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</div>`:'';
+    `<div class="warnbar" onclick="goMore('status')">⚠️ 수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</div>`:'';
 }
 
 /* 같은 기사가 출처만 달리 여러 번 잡히면 하나만 (요약 앞부분 비교) */
@@ -1027,7 +1115,6 @@ function buildHome(){
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
   h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${warn.slice(0,8).map(r=>rk(r,`<span>재고 <b class="neg">${fmt(r.inv_yoy,1,true)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · <span class="na">${Math.round(r.dio)}일</span>`:''}</span>`)).join('')||'<div class="na">해당 없음</div>'}</div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
-  h+=statusCard();
   document.getElementById('homeBody').innerHTML=h;
   statusWarn();
 }
@@ -1703,6 +1790,158 @@ function buildKR(){
   });
 }
 
+/* ── 더보기 (v31): 메뉴 · 환율 · 해외직구 · 수집 상태 ── */
+let MORE_VIEW=null, CB_CAT='fashion';
+const FX_ALERT=['JPY','EUR','USD'];
+const FX_LBL={JPY:'🇯🇵 엔 (100엔)',EUR:'🇪🇺 유로',USD:'🇺🇸 달러',GBP:'🇬🇧 파운드',BRL:'🇧🇷 브라질 헤알'};
+const FX_SH={JPY:'엔',EUR:'유로',USD:'달러'};
+const fxMul=c=>c==='JPY'?100:1;
+const wonR=v=>Math.round(v).toLocaleString('ko-KR');
+const pctU=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1)+'%';
+const fxLine=l=>l===0?'1년 평균':`${l>0?'+':'−'}${Math.abs(l)}% 선`;
+const mdTxt=d=>d?`${+d.slice(5,7)}/${+d.slice(8,10)}`:'';
+function fxAlertsAll(){
+  const FXD=DATA.fx||{}, out=[];
+  FX_ALERT.forEach(c=>((FXD[c]||{}).alerts||[]).forEach(a=>out.push({...a,c})));
+  return out.sort((a,b)=>b.date.localeCompare(a.date));
+}
+const fxAlertTxt=a=>`${FX_SH[a.c]} ${wonR(a.rate*fxMul(a.c))}원 · ${fxLine(a.line)} ${a.dir==='dn'?'아래로':'위로'} (${pctU(a.dev)})`;
+function fxSpark(f,c){
+  const H=f.hist||[]; if(H.length<2) return '';
+  const W=300,Ht=52,P=4,m=fxMul(c), vs=H.map(x=>x[1]*m), avg=f.avg1y*m, dn=f.next_dn*m, up=f.next_up*m;
+  const all=[...vs,avg,dn,up], lo=Math.min(...all)*0.997, hi=Math.max(...all)*1.003;
+  const x=i=>P+(W-2*P)*i/(vs.length-1), y=v=>P+(Ht-2*P)*(1-(v-lo)/(hi-lo));
+  const d=vs.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const ln=(v,a)=>`<line x1="${P}" x2="${W-P}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" ${a} vector-effect="non-scaling-stroke"/>`;
+  const at={}; H.forEach((h,i)=>{at[h[0]]=i;});
+  const dots=(f.alerts||[]).filter(a=>at[a.date]!=null).map(a=>`<circle cx="${x(at[a.date]).toFixed(1)}" cy="${y(vs[at[a.date]]).toFixed(1)}" r="2.6" fill="${a.dir==='dn'?'var(--pos)':'var(--neg)'}"/>`).join('');
+  return `<svg class="fxsv" viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none" role="img" aria-label="${esc(FX_LBL[c]||c)} 1년 추이">
+    <path d="${d} L${x(vs.length-1).toFixed(1)} ${Ht-P} L${x(0)} ${Ht-P} Z" fill="var(--barbg)" stroke="none"/>
+    ${ln(avg,'stroke="var(--sub)" stroke-width="1" stroke-dasharray="4 3"')}${ln(dn,'stroke="var(--pos)" stroke-width="1.2"')}${ln(up,'stroke="var(--neg)" stroke-width="1.2"')}
+    <path d="${d}" fill="none" stroke="var(--sub)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>${dots}
+    <circle cx="${x(vs.length-1).toFixed(1)}" cy="${y(vs[vs.length-1]).toFixed(1)}" r="3.4" fill="var(--tx)"/></svg>`;
+}
+function fxGauge(f){
+  const devs=(f.hist||[]).map(h=>(h[1]/f.avg1y-1)*100); if(!devs.length) return '';
+  const lo=Math.min(-3,Math.floor(Math.min(...devs,f.dev_pct))-1), hi=Math.max(3,Math.ceil(Math.max(...devs,f.dev_pct))+1);
+  const p=v=>((v-lo)/(hi-lo)*100).toFixed(2)+'%', s=f.seen30||[f.dev_pct,f.dev_pct];
+  let h=`<div class="fg-trk"></div><div class="fg-seen" style="left:${p(s[0])};width:calc(${p(s[1])} - ${p(s[0])})"></div>`;
+  for(let k=lo;k<=hi;k++) h+=`<div class="fg-tk${k===0?' z':''}" style="left:${p(k)}"></div>`;
+  const labs=new Set([lo,0,hi]); [-10,-5,5,10].forEach(k=>{ if(k>lo+1&&k<hi-1) labs.add(k); });
+  labs.forEach(k=>{ h+=`<div class="fg-lb" style="left:${p(k)}">${k===0?'평균':(k>0?'+':'−')+Math.abs(k)+'%'}</div>`; });
+  return `<div class="fgauge" aria-label="1년 평균 대비 ${pctU(f.dev_pct)}">${h}<div class="fg-me" style="left:${p(f.dev_pct)}"></div></div>`;
+}
+function fxCard(c,f){
+  const m=fxMul(c);
+  if(f.avg1y==null) return `<div class="fxc"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b></div><div class="fxv num">${wonR(f.rate*m)}원</div><div class="note">1년 평균 계산 자료 부족 — 1% 칸 알림 없음</div></div>`;
+  const al=f.alerts||[], last=al[al.length-1], now=last&&last.date===f.asof?last:null, ndn=al.filter(a=>a.dir==='dn').length;
+  const pill=now?`<span class="fpill ${now.dir}">새 알림 · ${fxLine(now.line)} ${now.dir==='dn'?'아래로':'위로'}</span>`
+                :`<span class="fpill wait">다음 ↓${wonR(f.next_dn*m)} · ↑${wonR(f.next_up*m)}</span>`;
+  return `<div class="fxc ${now?now.dir:''}"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b>${pill}</div>
+    <div class="fxv num">${wonR(f.rate*m)}원${f.chg_pct!=null?`<small>1년 전 ${wonR(f.yago*m)}원 · <span class="${f.chg_pct<=0?'pos':'neg'}">${pctU(f.chg_pct)}</span></small>`:''}</div>
+    <div class="fxmeta"><div><span>1년 평균 대비</span><b class="num ${f.dev_pct<=0?'pos':'neg'}">${pctU(f.dev_pct)}</b></div>
+      <div><span>다음 내림 알림</span><b class="num pos">${wonR(f.next_dn*m)}원↓</b></div>
+      <div><span>다음 오름 알림</span><b class="num neg">${wonR(f.next_up*m)}원↑</b></div></div>
+    ${fxGauge(f)}${fxSpark(f,c)}
+    <div class="fxcnt">1년 평균 ${wonR(f.avg1y*m)}원 · 지난 1년 알림 ${al.length}번 (내림 ${ndn} · 오름 ${al.length-ndn}) · ${esc(f.asof||'')} 기준</div></div>`;
+}
+function moreHead(t,sub){ return `<div class="mhead"><span class="mback" onclick="moreOpen(null)">‹ 더보기</span><div><b>${t}</b><span class="ms">${sub}</span></div></div>`; }
+function moreFxHtml(){
+  const FXD=DATA.fx||{}, al=fxAlertsAll();
+  let h=moreHead('💱 환율','현지 통화 1단위의 원화 값 (엔은 100엔) · 갱신 '+esc(DATA.generated_at||''));
+  h+=`<div class="card"><h3>최근 알림 <span class="na" style="font-size:var(--fs-2xs)">1년 평균 대비 1% 선을 새로 넘은 날</span></h3>`
+    +(al.length?`<div class="frec">${al.slice(0,6).map(a=>`<div><span class="d">${mdTxt(a.date)}</span><i class="${a.dir}"></i><span>${esc(fxAlertTxt(a))}</span></div>`).join('')}</div>`:'<div class="na">지난 1년 알림 없음</div>')+`</div>`;
+  const cards=FX_ALERT.filter(c=>FXD[c]).map(c=>fxCard(c,FXD[c])).join('');
+  h+=cards?`<div class="fxgrid">${cards}</div>`:'<div class="card"><div class="na">환율 수집 전 — 다음 갱신 후 표시</div></div>';
+  h+=`<div class="fleg"><span><i></i>1년 추이</span><span><i class="avg"></i>1년 평균</span><span><i class="ldn"></i>다음 내림 선</span><span><i class="lup"></i>다음 오름 선</span><span><i class="dn"></i>내림 알림</span><span><i class="up"></i>오름 알림</span><span>칸 막대: 눈금 1% · 굵은 눈금 = 1년 평균 · 검은 표시 = 지금 · 파란 구간 = 최근 30일</span></div>`;
+  const rest=Object.keys(FXD).filter(c=>FX_ALERT.indexOf(c)<0);
+  if(rest.length) h+=`<div class="card"><h3>알림 없이 표시만</h3>${rest.map(c=>{ const f=FXD[c];
+    return `<div class="fplain"><span>${esc(FX_LBL[c]||f.name||c)}</span><span class="num">${wonR(f.rate*fxMul(c))}원${f.chg_pct!=null?` <span class="${f.chg_pct<=0?'pos':'neg'}">${pctU(f.chg_pct)}</span> <span class="na">1년 전 대비${f.via?' · '+esc(f.via):''}</span>`:''}</span></div>`; }).join('')}</div>`;
+  h+=`<div class="card"><h3>알림을 이렇게 참고</h3><div class="fuse">
+    <div><b class="pos">▼ 내릴 때</b><ul><li>외화 값이 싸짐 → 매입 부담 줄어듦</li><li>해외 매입 결제 시점 앞당김 검토</li><li>선매입·추가 발주 검토</li></ul></div>
+    <div><b class="neg">▲ 오를 때</b><ul><li>외화 값이 비싸짐 → 매입 부담 커짐</li><li>선물환으로 환율 미리 확정 검토</li><li>결제 시점 조정 · 수출 비중 확대 검토</li></ul></div></div>
+    <div class="note">판단 참고용 지표입니다. 실제 거래는 은행 고시 환율·수수료를 함께 확인하세요.</div></div>`;
+  h+=`<div class="card"><h3>알림 규칙</h3><ol class="frules">
+    <li>기준은 1년 평균(최근 365일 이동평균), 1% 단위 선(−1%, −2% … / +1%, +2% …).</li>
+    <li>새 선을 넘어 내려가거나 올라간 날 알림 1번 — 매일 12:23 일일 점검이 휴대폰으로 보냄.</li>
+    <li>최근 30영업일 안에 이미 닿은 선은 다시 알리지 않음(선 근처 반복 방지).</li>
+    <li>'다음 알림' 가격은 지금의 1년 평균 기준이라 평균이 움직이면 조금씩 바뀝니다.</li></ol></div>`;
+  return h;
+}
+/* 해외직구: KOSIS 백만원 단위 */
+const cbMoney=v=>v==null?'―':(v>=1000000?(v/1000000).toFixed(2)+'조':Math.round(v/100).toLocaleString('ko-KR')+'억');
+const cbPrd=p=>p?`${p.slice(0,4)}년 ${+p.slice(4)}분기`:'';
+const cbPrdS=p=>p?`${p.slice(2,4)}.${+p.slice(4)}Q`:'';
+const cbPrev=p=>`${+p.slice(0,4)-1}${p.slice(4)}`;
+const cbVal=(k,p)=>{ const s=((KR&&KR.cross_border&&KR.cross_border.series)||{})[k]; return s&&s.values?(s.values[p]??null):null; };
+const cbYoy=(c,pv)=>(c!=null&&pv)?(c/pv-1)*100:null;
+const CB_CTY=[['cn','🇨🇳 중국'],['us','🇺🇸 미국'],['eu','🇪🇺 유럽'],['jp','🇯🇵 일본']];
+function cbBarsHtml(){
+  const CB=KR.cross_border, L=CB.last, P=cbPrev(L), g=CB_CAT;
+  const rows=CB_CTY.map(([k,nm])=>({k,nm,v:cbVal(k+'|'+g,L),pv:cbVal(k+'|'+g,P)})).filter(r=>r.v!=null);
+  const tot=cbVal('total|'+g,L), totP=cbVal('total|'+g,P);
+  if(tot!=null&&rows.length){ const sm=rows.reduce((a,r)=>a+r.v,0), sp=rows.every(r=>r.pv!=null)?rows.reduce((a,r)=>a+r.pv,0):null;
+    if(tot-sm>0) rows.push({k:'etc',nm:'기타',v:tot-sm,pv:(totP!=null&&sp!=null&&totP-sp>0)?totP-sp:null}); }
+  rows.sort((a,b)=>(a.k==='etc')-(b.k==='etc')||b.v-a.v);
+  const catNm=((CB.names||{})['total|'+g]||'').split(' / ')[1]||(g==='fashion'?'의류·패션':'스포츠·레저');
+  let h=`<h3>나라별 · ${cbPrd(L)}</h3><div class="chips" style="margin-bottom:8px">${[['fashion','의류·패션'],['sports','스포츠·레저']].map(([k,l])=>`<span class="chip${CB_CAT===k?' on':''}" onclick="CB_CAT='${k}';document.getElementById('cbCard').innerHTML=cbBarsHtml()">${l}</span>`).join('')}</div>`;
+  if(!rows.length) return h+'<div class="na">자료 없음</div>';
+  const mx=Math.max(...rows.map(r=>r.v));
+  h+=rows.map(r=>{ const y=cbYoy(r.v,r.pv); return `<div class="cb-row"><span class="lb">${r.nm}</span><div class="bar-wrap"><div class="bar${r.k==='eu'||r.k==='jp'?' cb-src':''}" style="width:${(r.v/mx*100).toFixed(1)}%"></div><span class="bar-val num">${cbMoney(r.v)}</span></div><span class="yy">${y!=null?fmt(y,1,true):'<span class="na">―</span>'}</span></div>`; }).join('');
+  return h+`<div class="note">통계청 상품군 '${esc(catNm)}' · 합계 ${cbMoney(tot)}원 · 초록 막대 = 유럽·일본(병행수입 주요 소싱 지역) · 오른쪽 = 전년 같은 분기 대비</div>`;
+}
+function cbTrendHtml(){
+  const S=KR.cross_border.series, out=[];
+  [['us','🇺🇸 미국'],['cn','🇨🇳 중국'],['eu','🇪🇺 유럽'],['jp','🇯🇵 일본']].forEach(([k,nm])=>{
+    const s=S[k+'|fashion']; if(!s||!s.values) return;
+    const ps=Object.keys(s.values).sort().slice(-8); if(ps.length<2) return;
+    const v=ps.map(p=>s.values[p]), y=s.yoy?s.yoy[ps[ps.length-1]]:null;
+    const W=200,H=36,P=3,lo=Math.min(...v)*0.95,hi=Math.max(...v)*1.03, n=v.length-1;
+    const x=i=>P+(W-2*P)*i/n, yy=a=>P+(H-2*P)*(1-(a-lo)/(hi-lo));
+    const d=v.map((a,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+yy(a).toFixed(1)).join(' ');
+    out.push(`<div class="cb-tr"><div class="h"><b>${nm}</b><span class="num">${cbMoney(v[n])} ${y!=null?fmt(y,1,true):''}</span></div>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${nm} 최근 8분기"><path d="${d} L${x(n).toFixed(1)} ${H-P} L${x(0)} ${H-P} Z" fill="var(--barbg)" stroke="none"/>
+      <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.5" vector-effect="non-scaling-stroke"/><circle cx="${x(n).toFixed(1)}" cy="${yy(v[n]).toFixed(1)}" r="3" fill="var(--accent)"/></svg>
+      <div class="ax"><span>${cbPrdS(ps[0])}</span><span>${cbPrdS(ps[n])}</span></div></div>`);
+  });
+  return out.length?`<div class="card"><h3>최근 8분기 · 의류·패션 직구</h3><div class="cb-trend">${out.join('')}</div></div>`:'';
+}
+function moreCbHtml(){
+  const CB=KR&&KR.cross_border;
+  let h=moreHead('🌏 해외직구','통계청 온라인쇼핑동향 · 해외직접구매액 · 분기');
+  if(!CB||!CB.series) return h+'<div class="card"><div class="na">해외직구 자료 수집 전 — update-kosis 실행 후 표시</div></div>';
+  const L=CB.last, P=cbPrev(L);
+  const tt=cbVal('total|total',L), tf=cbVal('total|fashion',L);
+  const ej=['eu','jp'].map(k=>cbVal(k+'|fashion',L)), ejp=['eu','jp'].map(k=>cbVal(k+'|fashion',P));
+  const ejS=ej.every(v=>v!=null)?ej[0]+ej[1]:null, ejP=ejp.every(v=>v!=null)?ejp[0]+ejp[1]:null;
+  const kp=(l,v,y,sh)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${cbMoney(v)}</div><div class="s">${y!=null?fmt(y,1,true):'<span class="na">―</span>'}${sh?' · '+sh:''}</div></div>`;
+  h+=`<div class="note" style="margin:0 0 6px">${cbPrd(L)} · 전년 같은 분기 대비</div>`;
+  h+=`<div class="kpis cbk">${kp('직구 전체',tt,cbYoy(tt,cbVal('total|total',P)))}${kp('의류·패션',tf,cbYoy(tf,cbVal('total|fashion',P)),(tt&&tf!=null)?'전체의 '+Math.round(tf/tt*100)+'%':'')}${kp('유럽+일본 패션',ejS,cbYoy(ejS,ejP),(tf&&ejS!=null)?'패션의 '+Math.round(ejS/tf*100)+'%':'')}</div>`;
+  h+=`<div class="card" id="cbCard">${cbBarsHtml()}</div>`;
+  h+=cbTrendHtml();
+  h+=`<div class="cb-read"><b>읽는 법</b> — 유럽·일본 패션 직구가 늘면 그 브랜드의 국내 수요는 있다는 뜻이고, 정식 유통보다 싸게 사려는 고객이 직구로 빠진다는 신호이기도 합니다. 병행수입 가격이 직구 가격(관부가세·배송비 포함)보다 경쟁력이 있는지 점검할 때 씁니다.</div>`;
+  h+=`<div class="note">출처: KOSIS ${esc(CB.table||'')} ${esc(CB.table_name||'')} · 단위 ${esc(CB.unit||'')}(화면은 억·조원) · 분기가 끝나고 약 2달 뒤 발표 · 갱신 ${esc(KR.generated_at||'')}<br>유럽 = 유럽연합+영국+기타 유럽 합계(통계청 지역 분류)</div>`;
+  return h;
+}
+function moreMenuHtml(){
+  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late);
+  const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
+  return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
+    ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
+    ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
+    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
+  </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
+}
+function buildMore(){
+  const el=document.getElementById('moreBody'); if(!el) return;
+  el.innerHTML = MORE_VIEW==='fx'?moreFxHtml()
+    : MORE_VIEW==='cb'?moreCbHtml()
+    : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()
+    : moreMenuHtml();
+}
+function moreOpen(v){ MORE_VIEW=v; buildMore(); document.getElementById('content').scrollTo(0,0); }
+function goMore(v){ sw('more'); moreOpen(v); }
+
 /* ── 탭 / 토글 ── */
 function focusCard(id){
   sw('home');
@@ -1717,7 +1956,7 @@ function sw(p){
   if(p!=='co') showCoList();
   document.getElementById('content').scrollTo(0,0);
 }
-document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ sw(t.dataset.p); showCoList(); }; });
+document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ sw(t.dataset.p); showCoList(); if(t.dataset.p==='more') moreOpen(null); }; });
 document.getElementById('coBack').onclick=showCoList;
 document.getElementById('coSearch').addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();});
 document.addEventListener('click',e=>{
@@ -1732,7 +1971,7 @@ document.addEventListener('click',e=>{
 });
 
 document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · Yahoo·SEC·DART·KOSIS';
-buildHome(); buildCoChips(); buildCo(); buildCal(); buildNewsChips(); buildNews(); buildKR();
+buildHome(); buildCoChips(); buildCo(); buildCal(); buildNewsChips(); buildNews(); buildKR(); buildMore();
 </script>
 </body>
 </html>

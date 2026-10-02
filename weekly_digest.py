@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.1: 환율 줄에 '1년 평균 대비 %'(fetch_data v4.9) + 지난 7일 1% 칸 알림 목록
 v1: 월요일 아침 주간 요약 — docs/*.json(현재)과 history.json·git 이력(7일 전 main)을 비교해 한 주 변화를 정리.
     출력: 기본 = 메일 본문(텍스트), --short = 휴대폰 알림용 3줄. 저장소에 아무것도 쓰지 않음(읽기 전용).
     매주 월 07:47(KST) 점검 전용 세션의 루틴이 실행 → Claude 앱 알림 + 대표 본인 Gmail로 발송.
@@ -94,8 +95,24 @@ def fx_moves(data, old):
         rate = c["rate"] * unit
         p = prv.get(code)
         wk = (c["rate"] / p["rate"] - 1) * 100 if p and p.get("rate") else None
-        rows.append((code, c.get("name", code), rate, wk, c.get("chg_pct")))
+        rows.append((code, c.get("name", code), rate, wk, c.get("chg_pct"), c.get("dev_pct")))
     return rows
+
+
+FX_SH = {"JPY": "엔", "EUR": "유로", "USD": "달러"}
+
+
+def fx_alerts_week(data, start):
+    """지난 7일 1% 칸 알림 (fetch_data v4.9 fx[통화].alerts) — 날짜순"""
+    out = []
+    for code, c in ((data or {}).get("fx") or {}).items():
+        for a in c.get("alerts") or []:
+            if a.get("date", "") >= start.isoformat():
+                rate = a["rate"] * (100 if code == "JPY" else 1)
+                line = "1년 평균" if a["line"] == 0 else f"{'+' if a['line'] > 0 else '−'}{abs(a['line'])}% 선"
+                out.append((a["date"], f"{a['date'][5:].replace('-', '/')} {FX_SH.get(code, code)} {rate:,.0f}원 "
+                                       f"{line} {'아래로' if a['dir'] == 'dn' else '위로'}"))
+    return [t for _, t in sorted(out)]
 
 
 def new_results(data, old):
@@ -203,6 +220,7 @@ def build(today):
 
     moves, span = price_moves(data, hist, today)
     fx = fx_moves(data, fx_old)
+    fxa = fx_alerts_week(data, start)
     res = new_results(data, data_old)
     earn = upcoming_earnings(data, today)
     nws, n_imp = top_news(news, today)
@@ -243,11 +261,14 @@ def build(today):
     L.append("")
 
     L.append("■ 환율 (원화 기준)" + (f" — 주간 변화는 {fx_days}일 기준(수집 이력 부족)" if fx_days and fx_days < DAYS else ""))
-    for code, name, rate, wk, yr in fx:
+    for code, name, rate, wk, yr, dev in fx:
         unit = "100엔" if code == "JPY" else name
-        L.append(f"  {unit} {rate:,.1f}원 · 주간 {pct(wk)} · 1년 {pct(yr)}")
+        L.append(f"  {unit} {rate:,.1f}원 · 주간 {pct(wk)} · 1년 {pct(yr)}"
+                 + (f" · 1년 평균 대비 {pct(dev)}" if dev is not None else ""))
     if not fx:
         L.append("  자료 없음")
+    elif any(r[5] is not None for r in fx):
+        L.append("  1% 칸 알림(지난 7일): " + (" · ".join(fxa) if fxa else "없음"))
     L.append("")
 
     L.append("■ 새로 반영된 실적")
