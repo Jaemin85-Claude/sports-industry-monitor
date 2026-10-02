@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v30.3: 국내 온라인 플랫폼 카드 — 발란은 결산월 대신 상태(2026.2 회생 폐지 · 청산 절차) 표기
 v30.2: 국내 탭에 "🛒 국내 온라인 플랫폼" 카드 — 쿠팡·무신사·크림·트렌비·발란·머스트잇·트렉시(자사)를 한 표로
        (매출 원화 기준 큰 순, 전년 대비·영업이익률·재고 증감, 누르면 상세). 국내 그룹의 외화 실적(쿠팡 달러)은
        최근 환율로 원화 환산(≈)해 기업 목록·상세에 함께 표시 — 옆 기업의 조·억 단위와 맞춤
@@ -1496,6 +1497,7 @@ function xcBind(){
 }
 /* ── 🛒 국내 온라인 플랫폼 (v30.2) ── */
 const KR_PLATFORMS=['CPNG','krd:musinsa','krd:kream','krd:trenbe','krd:balaan','krd:mustit','krd:trexi'];
+const KR_PLATFORM_STATUS={'krd:balaan':'2026.2 회생 폐지 · 청산 절차'};   // 수치 없는 이유(대표 확인 2026.10)
 function platformCardHtml(){
   const all=rows_all();
   const rows=KR_PLATFORMS.map(k=>all.find(r=>r.key===k)).filter(Boolean).map(r=>{
@@ -1508,7 +1510,7 @@ function platformCardHtml(){
   rows.forEach(r=>{
     const self=r.key==='krd:trexi';
     h+=`<tr class="co" style="cursor:pointer${self?';background:var(--barbg)':''}" onclick="goDetail('${r.key}')">
-      <td>${r.logo}${self?'<b>'+esc(r.name)+'</b>':esc(r.name)}<span class="na" style="font-size:var(--fs-2xs);display:block">${r.end?ym(r.end)+' 결산':'미확인'}${r.listed?' · 상장':''}</span></td>
+      <td>${r.logo}${self?'<b>'+esc(r.name)+'</b>':esc(r.name)}<span class="na" style="font-size:var(--fs-2xs);display:block">${KR_PLATFORM_STATUS[r.key]?'<span class="neg">'+esc(KR_PLATFORM_STATUS[r.key])+'</span>':(r.end?ym(r.end)+' 결산':'미확인')}${r.listed?' · 상장':''}</span></td>
       <td>${r.rev!=null?revKrwCell(r.rev,r.cur):'<span class="na">―</span>'}</td><td>${fmt(r.rev_yoy,1,true)}</td>
       <td>${r.op!=null?fmt(r.op,1,true):'<span class="na">―</span>'}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
   });
