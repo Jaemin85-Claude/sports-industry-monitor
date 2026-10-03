@@ -5,7 +5,8 @@ v3.0: 수입 브랜드 유통사 비교군 9곳(FIN_IDS, 트렉시 포함)에 �
       현금·단기금융상품·매출채권·매입채무·차입금·리스부채·자산·부채·자본총계·영업활동현금흐름·CAPEX·감가상각비.
       손익 추출(캐시 SCHEMA_V=3)은 그대로 두고 별도 호출·별도 캐시(_cache_fin, FIN_V=1) — 다른 법인은 재추출 없음.
       검증: 자산총계 ≠ 부채+자본(1% 초과) 또는 재고가 손익 추출 값과 1% 넘게 다르면 그 해 chk 표시(화면 '확인 필요').
-      원본 창: 재무상태표~현금흐름표 표 부근(멀면 두 창)
+      원본 창: 재무상태표~현금흐름표 표 부근(멀면 두 창). 응답에 설명이 길게 붙어도 JSON을 찾도록 파싱 보강·출력 한도 2500
+      (브랜치 실행에서 한아아이앤티가 설명 뒤 JSON이 잘려 실패 → 보강)
 v2.9: 아이웨어 2곳 추가(2026-10-03 DART 감사보고서 확인, 대표 요청) — 케어링아이웨어코리아(케링 아이웨어 한국 법인:
       구찌·생로랑·보테가·까르띠에 등), 시원아이웨어(디올·펜디 등 명품 아이웨어 수입 유통). 둘 다 2025년 첫 감사보고서라 2개년
 v2.8: 국내 패션 브랜드 13곳 추가(2026-10-03 DART 공시 목록 확인, 대표 요청) — 상장 3곳은 사업보고서 경로
@@ -408,13 +409,16 @@ def ask_json(prompt, max_tokens):
     try:
         return json.loads(txt)
     except ValueError:
-        m = re.search(r"\{.*\}", txt, re.S)   # 설명 문장이 섞인 응답 → JSON 부분만
-        if m:
+        # 설명 문장이 섞인 응답 → 'current'가 든 JSON 객체를 앞에서부터 찾음(설명 속 중괄호는 건너뜀)
+        dec = json.JSONDecoder()
+        for m in re.finditer(r"\{", txt):
             try:
-                return json.loads(m.group(0))
+                obj, _ = dec.raw_decode(txt[m.start():])
             except ValueError:
-                pass
-        raise RuntimeError("응답이 JSON 아님: " + re.sub(r"\s+", " ", txt)[:150])
+                continue
+            if isinstance(obj, dict) and "current" in obj:
+                return obj
+        raise RuntimeError(f"응답이 JSON 아님(종료 사유 {data.get('stop_reason')}): " + re.sub(r"\s+", " ", txt)[:150])
 
 
 # ── 재무상태표·현금흐름표 추가 추출(v3.0, FIN_IDS만) ──────────
@@ -486,10 +490,11 @@ Respond with ONLY a JSON object, no markdown fences:
   "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "borrow": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}}
 }}
 (n = number or null)
+Start your response with {{ — no explanation before or after the JSON.
 
 DOCUMENT:
 {text}"""
-    return ask_json(prompt, 1000)
+    return ask_json(prompt, 2500)
 
 
 def fin_check(rec, pl):
