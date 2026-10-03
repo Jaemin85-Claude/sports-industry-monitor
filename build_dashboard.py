@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v31.1: 국내 탭 '👕 국내 패션 브랜드 비교' 카드(dart_fetch v2.8 13곳: 에이유브랜즈·피스피스스튜디오·에스제이그룹·마뗑킴·
+       레이어·하이라이트브랜즈·하고하우스·비케이브·파이브스페이스·코자·안다르·시선인터내셔널·로우클래식) — 수입 브랜드
+       유통사 비교 카드를 공통 비교 카드로 바꿔 함께 사용(자사 강조는 유통사 비교에만). 기업 탭 칩 '패션 브랜드 비교'.
+       네이버 검색 관심도에 '수입·해외 / 국내 패션' 전환(naver_trend v1.3 group) — 중앙값은 그룹 안에서만 계산.
+       '🕶️ 아이웨어 비교' 카드(국내 브랜드 젠틀몬스터·블루엘리펀트 vs 룩소티카코리아 vs 다비치안경체인) + 기업 탭 칩,
+       글로벌 아이웨어 에실로룩소티카(EL.PA)·사필로(SFL.MI) 표시 정보
 v31: 하단 탭에 '더보기'(6번째) — 새 지표는 탭을 늘리지 않고 여기에 쌓음.
      ① 💱 환율: 엔·유로·달러 1% 칸 알림(1년 평균 대비 %, 다음 내림·오름 알림 가격, 1% 칸 막대, 1년 추이와
         알림 날짜 점, 최근 알림 목록) + 파운드·헤알은 값만 + 내릴 때·오를 때 참고 상자 (fetch_data v4.9)
@@ -574,7 +580,9 @@ const DOMAINS = {
   "krd:shoemarker":"shoemarker.co.kr", "krd:musinsa":"musinsa.com", "krd:k2_kr":"k2group.co.kr",
   "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com",
   "krd:kream":"kream.co.kr", "krd:trenbe":"trenbe.com", "krd:balaan":"balaan.co.kr", "krd:mustit":"mustit.co.kr",
-  "krd:rexmond":"okmall.com", "krd:hana_int":"hahamall.net", "krd:bbluein":"bblue.co.kr"
+  "krd:rexmond":"okmall.com", "krd:hana_int":"hahamall.net", "krd:bbluein":"bblue.co.kr",
+  "EL.PA":"essilorluxottica.com", "SFL.MI":"safilogroup.com", "krd:iicombined":"gentlemonster.com", "krd:luxottica_kr":"luxottica.com",
+  "krd:fivespace":"adererror.com", "krd:andar":"andar.co.kr", "krd:matinkim":"matinkim.com", "krd:piecepeace":"mardimercredi.com"
 };
 /* ── 브랜드 본사 국가 국기 ── */
 const FLAGS = {
@@ -582,7 +590,7 @@ const FLAGS = {
   "LULU":"🇨🇦", "7936.T":"🇯🇵", "BIRK":"🇩🇪", "CROX":"🇺🇸", "VFC":"🇺🇸",
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
-  "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
+  "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "EL.PA":"🇫🇷", "SFL.MI":"🇮🇹", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
   "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷", "4240.SR":"🇸🇦",
   "456A.T":"🇯🇵", "0933.HK":"🇭🇰", "VULC3.SA":"🇧🇷", "LUXE":"🇩🇪", "2670.T":"🇯🇵", "6110.HK":"🇨🇳",
   "TJX":"🇺🇸", "ROST":"🇺🇸", "BURL":"🇺🇸", "CPNG":"🇰🇷"
@@ -1124,12 +1132,14 @@ let coFilter='전체', coQuery='';
 function buildCoChips(){
   const rows=rows_all();
   const chips=[['전체',rows.length],...CO_GROUPS.map(g=>[g,rows.filter(r=>r.group===g).length]).filter(x=>x[1]>0),
-    ['유통사 비교',rows.filter(r=>PEER_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
-  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='유통사 비교'?'🏷️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
+    ['유통사 비교',rows.filter(r=>PEER_KEYS.includes(r.key)).length],
+    ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length],
+    ['아이웨어 비교',rows.filter(r=>EY_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
+  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='유통사 비교'?'🏷️':g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
   document.querySelectorAll('#coChips .chip').forEach(c=>c.onclick=()=>{coFilter=c.dataset.g;buildCoChips();buildCo();});
 }
 function buildCo(){
-  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='유통사 비교'&&PEER_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
+  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='유통사 비교'&&PEER_KEYS.includes(r.key))||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
@@ -1462,7 +1472,7 @@ function buildNews(){
   const items=NEWS.items.filter(newsMatch);
   let kb='';
   if(newsFilter.startsWith('k:')){
-    const k=newsFilter.slice(2), nm=(NEWS.items.find(i=>i.key===k)||{}).label||(nvBrands().find(b=>b.news===k)||{}).name||k;
+    const k=newsFilter.slice(2), nm=(NEWS.items.find(i=>i.key===k)||{}).label||(nvAll().find(b=>b.news===k)||{}).name||k;
     kb=`<div class="nv-sum" style="display:flex;align-items:center;gap:8px">${esc(nm)} 뉴스만 보는 중<button type="button" class="chip" style="margin-left:auto" onclick="newsFilter='all';buildNewsChips();buildNews()">전체 보기</button></div>`;
   }
   if(!items.length){ el.innerHTML=kb+'<div class="na">해당 구분의 최근 14일 뉴스 없음</div>'; return; }
@@ -1494,11 +1504,13 @@ function spark(vals,w,h){
 }
 function fmtPrd(p){ return p.slice(0,4)+'.'+p.slice(4,6); }
 /* ── v30 국내 수요: 판매 vs 검색 교차 그래프 · 네이버 검색 관심도 ── */
-let NV_SORT='yoy', NV_ALL=false, XC_OFF={};
+let NV_SORT='yoy', NV_ALL=false, NV_GRP='global', XC_OFF={};
 const NV_TOP=10;
-const nvBrands=()=>(NAVER&&NAVER.brands)||[];
-function nvMed(){
-  const ys=nvBrands().map(b=>b.yoy).filter(v=>v!=null).sort((a,b)=>a-b), n=ys.length;
+const nvAll=()=>(NAVER&&NAVER.brands)||[];
+const nvGrpOf=b=>b.group||'global';                      // v31.1: 'global'(수입·해외) / 'kr'(국내 패션)
+const nvBrands=(g=NV_GRP)=>nvAll().filter(b=>nvGrpOf(b)===g);
+function nvMed(g=NV_GRP){
+  const ys=nvBrands(g).map(b=>b.yoy).filter(v=>v!=null).sort((a,b)=>a-b), n=ys.length;
   return n?(n%2?ys[(n-1)/2]:(ys[n/2-1]+ys[n/2])/2):null;
 }
 const nvRel=(y,med)=>(y==null||med==null)?'mid':(y-med>=5?'up':(y-med<=-5?'down':'mid'));
@@ -1533,7 +1545,8 @@ function naverCardHtml(){
   const ups=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='up').sort((a,b)=>b.yoy-a.yoy).slice(0,4);
   const downs=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='down').sort((a,b)=>a.yoy-b.yoy).slice(0,3);
   let h=`<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3>
-    <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드</div>
+    ${nvBrands('kr').length?`<div class="seg2" style="margin-bottom:8px"><button type="button" class="${NV_GRP==='global'?'on':''}" aria-pressed="${NV_GRP==='global'}" onclick="nvGrp('global')">수입·해외 브랜드 ${nvBrands('global').length}</button><button type="button" class="${NV_GRP==='kr'?'on':''}" aria-pressed="${NV_GRP==='kr'}" onclick="nvGrp('kr')">국내 패션 브랜드 ${nvBrands('kr').length}</button></div>`:''}
+    <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드${NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':''}</div>
     <div class="seg2" style="margin-bottom:10px"><button type="button" class="${NV_SORT==='yoy'?'on':''}" aria-pressed="${NV_SORT==='yoy'}" onclick="nvSort('yoy')">전년 대비순</button><button type="button" class="${NV_SORT==='size'?'on':''}" aria-pressed="${NV_SORT==='size'}" onclick="nvSort('size')">규모순</button></div>
     <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b> — 대부분이 같이 움직이면 네이버 검색 전반의 변화라, 중앙값보다 나은지로 봅니다.${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
   shown.forEach(b=>{ h+=nvRowHtml(b,med); });
@@ -1545,14 +1558,15 @@ function naverCardHtml(){
 function nvRefresh(){ const c=document.getElementById('nvCard'); if(c) c.outerHTML=naverCardHtml(); }
 function nvSort(s){ NV_SORT=s; nvRefresh(); }
 function nvToggle(){ NV_ALL=!NV_ALL; nvRefresh(); }
+function nvGrp(g){ NV_GRP=g; NV_ALL=false; nvRefresh(); }
 function nvNews(k){ newsFilter='k:'+k; sw('news'); buildNewsChips(); buildNews(); }
 function naverDetailCard(t){
-  const bs=nvBrands().filter(b=>b.link===t); if(!bs.length) return '';
-  const med=nvMed();
+  const bs=nvAll().filter(b=>b.link===t); if(!bs.length) return '';
   let h=`<div class="card"><h3>🔎 네이버 검색 관심도 <span class="go" onclick="sw('kr')">국내 ▸</span></h3>`;
   bs.forEach(b=>{
+    const med=nvMed(nvGrpOf(b)), grpN=nvBrands(nvGrpOf(b)).length;
     h+=`<div class="nv-det"><div class="krhead"><span class="krname">${esc(b.name)}</span><span class="nv-pill ${nvRel(b.yoy,med)}" style="margin-left:auto">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span></div>
-      <div class="krmeta">규모 ${nvSc(b.scale)} (나이키 최근 4주 = 100) · ${nvBrands().length}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
+      <div class="krmeta">규모 ${nvSc(b.scale)} (나이키 최근 4주 = 100) · ${nvGrpOf(b)==='kr'?'국내 패션 ':''}${grpN}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
       ${nvSpark(b.s,300,44,true)}</div>`;
   });
   return h+`<div class="note" style="margin-top:6px">주간 검색 지수 · 최근 1년 실선 · 그 전 1년 점선 · ${nvWk(NAVER.end)} 주까지${bs.some(b=>b.low)?' · 검색량이 적어 변동이 큼':''}</div></div>`;
@@ -1647,10 +1661,21 @@ function platformCardHtml(){
     나머지는 DART 감사보고서(별도) 연간 · 플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세</div></div>`;
   return h;
 }
-/* ── 🏷️ 수입 브랜드 유통사 비교 (v30.4) — 수치는 감사보고서 그대로, 트렉시는 위치·강조로만 앞세움 ── */
-const PEER_NAME='수입 브랜드 유통사 비교';
+/* ── 비교 카드 (v30.4 수입 브랜드 유통사 → v31.1 공통화) — 수치는 공시 그대로, 자사(트렉시)는 위치·강조로만 앞세움 ── */
 const PEER_SELF='krd:trexi';
 const PEER_KEYS=[PEER_SELF,'krd:daelim_corp','krd:rexmond','krd:bazig','krd:creed','krd:hana_int','krd:t1global','krd:bbluein','krd:starintl'];
+const FB_KEYS=['krd:aubrandz','krd:piecepeace','krd:sjgroup','krd:matinkim','krd:layer','krd:highlight','krd:hagohouse',
+  'krd:bcave','krd:fivespace','krd:koza','krd:andar','krd:sisun','krd:lowclassic'];
+const EY_KEYS=['krd:iicombined','krd:blueelephant','krd:luxottica_kr','krd:davich'];
+const CMP={
+  peer:{id:'peerCard',icon:'🏷️',name:'수입 브랜드 유통사 비교',keys:PEER_KEYS,self:PEER_SELF,selfName:'트렉시',tag:'연간 · 감사보고서',
+        who:'비교 유통사',src:'DART 감사보고서(별도) 연간 수치 그대로'},
+  fb:{id:'fbCard',icon:'👕',name:'국내 패션 브랜드 비교',keys:FB_KEYS,self:null,tag:'연간 · 사업·감사보고서',
+      who:'패션 브랜드사',src:'DART 별도 재무제표 연간 수치 그대로(상장 3곳 사업보고서 · 외감 10곳 감사보고서) · 하고하우스는 브랜드 육성·투자 회사'},
+  ey:{id:'eyCard',icon:'🕶️',name:'아이웨어 비교',keys:EY_KEYS,self:null,tag:'연간 · 감사보고서',
+      who:'아이웨어 기업',src:'DART 감사보고서(별도) 연간 수치 그대로 · 국내 브랜드(젠틀몬스터·블루엘리펀트) vs 글로벌 국내법인(룩소티카코리아 = 에실로룩소티카) vs 안경 체인(다비치) · 아이아이컴바인드는 탬버린즈·누데이크 포함'},
+};
+const CMP_GROWTH={peer:'yoy',fb:'yoy',ey:'yoy'};
 // [키, 이름, 높을수록 좋음, 표시]
 const PEER_METRICS=[
   ['rev','매출',true,v=>moneyShort(v,'KRW')],
@@ -1660,15 +1685,14 @@ const PEER_METRICS=[
   ['gm','매출총이익률',true,v=>v.toFixed(1)+'%'],
   ['dio','재고일수',false,v=>Math.round(v)+'일'],
 ];
-let PEER_GROWTH='yoy';
 const pgMedian=arr=>{const a=arr.filter(v=>v!=null).sort((x,y)=>x-y); if(!a.length) return null; const m=Math.floor(a.length/2); return a.length%2?a[m]:(a[m-1]+a[m])/2;};
-function peerData(){
+function cmpData(c){
   const ents=(KRD&&KRD.entities)||[];
-  return PEER_KEYS.map(k=>{
+  return c.keys.map(k=>{
     const e=ents.find(x=>'krd:'+x.id===k); if(!e) return null;
     const ys=(e.years||[]).filter(y=>y.rev!=null&&y.end).sort((a,b)=>a.end<b.end?-1:1);
     const l=ys[ys.length-1], p=ys[ys.length-2], f=ys[0], n=ys.length;
-    return {key:k, name:e.name, self:k===PEER_SELF, end:l?l.end:null, l, p, f,
+    return {key:k, name:e.name, self:k===c.self, end:l?l.end:null, l, p, f,
       rev:l?l.rev:null,
       yoy:(l&&p&&p.rev>0)?(l.rev/p.rev-1)*100:null,
       cagr:(n>=3&&f.rev>0&&l.rev>0)?(Math.pow(l.rev/f.rev,1/(n-1))-1)*100:null,
@@ -1681,19 +1705,21 @@ function peerRank(rows,k,hi){
   const v=rows.filter(r=>r[k]!=null).sort((a,b)=>hi?b[k]-a[k]:a[k]-b[k]);
   return {of:r=>{const i=v.indexOf(r); return i<0?null:i+1;}, n:v.length};
 }
-function peerCardHtml(){
-  const rows=peerData(); if(rows.length<2) return '';
-  const me=rows.find(r=>r.self), peers=rows.filter(r=>!r.self);
+function cmpCardHtml(cid){
+  const c=CMP[cid], rows=cmpData(c); if(rows.length<2) return '';
+  const me=c.self?rows.find(r=>r.self):null, peers=rows.filter(r=>!r.self);
   const med={}, rk={};
   PEER_METRICS.forEach(([k,,hi])=>{ med[k]=pgMedian(peers.map(r=>r[k])); rk[k]=peerRank(rows,k,hi); });
-  // 강조 기준: 비교군 중앙값(트렉시 제외)보다 나은 지표만 — 순위 중간을 '강점'으로 부풀리지 않음
+  // 강조 기준: 비교군 중앙값(자사 제외)보다 나은 지표만 — 순위 중간을 '강점'으로 부풀리지 않음
   const hiOf=Object.fromEntries(PEER_METRICS.map(([k,,hi])=>[k,hi]));
   const topHalf=(k,r)=>r[k]!=null&&med[k]!=null&&(hiOf[k]?r[k]>med[k]:r[k]<med[k]);
-  let h=`<div class="card" id="peerCard"><h3>🏷️ ${PEER_NAME} <span class="tag">연간 · 감사보고서</span></h3>`;
+  let h=`<div class="card" id="${c.id}"><h3>${c.icon} ${c.name} <span class="tag">${c.tag}</span></h3>`;
   if(me){
     const items=PEER_METRICS.map(([k,nm])=>({k,nm,x:rk[k].of(me),n:rk[k].n})).filter(i=>i.x!=null);
     const strong=items.filter(i=>topHalf(i.k,me)).sort((a,b)=>a.x-b.x), rest=items.filter(i=>!topHalf(i.k,me));
-    h+=`<div class="nv-sum"><b>트렉시</b> · ${rows.length}곳 비교<br>${strong.length?strong.map(i=>`<span class="pg-badge">${esc(i.nm)} ${i.x}위</span>`).join(''):''}${rest.length?`<span class="na" style="font-size:var(--fs-xs)"> ${rest.map(i=>`${esc(i.nm)} ${i.x}위`).join(' · ')}</span>`:''}</div>`;
+    h+=`<div class="nv-sum"><b>${esc(c.selfName)}</b> · ${rows.length}곳 비교<br>${strong.length?strong.map(i=>`<span class="pg-badge">${esc(i.nm)} ${i.x}위</span>`).join(''):''}${rest.length?`<span class="na" style="font-size:var(--fs-xs)"> ${rest.map(i=>`${esc(i.nm)} ${i.x}위`).join(' · ')}</span>`:''}</div>`;
+  } else {
+    h+=`<div class="note" style="margin:0 0 8px">${rows.length}곳 · 매출 큰 순 · 회색 줄 = 중앙값</div>`;
   }
   const order=[me,...peers.slice().sort((a,b)=>(b.rev??-1)-(a.rev??-1))].filter(Boolean);
   h+=`<div class="tblwrap"><table class="nowrap"><tr><th>기업</th>${PEER_METRICS.map(([,nm])=>`<th>${nm}</th>`).join('')}</tr>`;
@@ -1708,11 +1734,11 @@ function peerCardHtml(){
     });
     h+=`</tr>`;
   });
-  h+=`<tr><td class="na">비교군 중앙값<span class="pg-rk">트렉시 제외 ${peers.length}곳</span></td>${PEER_METRICS.map(([k,,,f])=>`<td class="na">${med[k]!=null?f(med[k]):'―'}</td>`).join('')}</tr></table></div>`;
+  h+=`<tr><td class="na">${me?'비교군 중앙값':'중앙값'}<span class="pg-rk">${me?esc(c.selfName)+' 제외 ':''}${peers.length}곳</span></td>${PEER_METRICS.map(([k,,,f])=>`<td class="na">${med[k]!=null?f(med[k]):'―'}</td>`).join('')}</tr></table></div>`;
   // 성장성 비교
-  const g=PEER_GROWTH;
+  const g=CMP_GROWTH[cid], tid=c.id+'Tip';
   h+=`<div class="ndate" style="margin-top:14px">📈 성장성 비교</div>
-    <div class="seg2" style="margin:6px 0 10px"><button type="button" class="${g==='yoy'?'on':''}" aria-pressed="${g==='yoy'}" onclick="peerGrowth('yoy')">전년 대비</button><button type="button" class="${g==='cagr'?'on':''}" aria-pressed="${g==='cagr'}" onclick="peerGrowth('cagr')">연평균(2년)</button></div>`;
+    <div class="seg2" style="margin:6px 0 10px"><button type="button" class="${g==='yoy'?'on':''}" aria-pressed="${g==='yoy'}" onclick="cmpGrowth('${cid}','yoy')">전년 대비</button><button type="button" class="${g==='cagr'?'on':''}" aria-pressed="${g==='cagr'}" onclick="cmpGrowth('${cid}','cagr')">연평균(2년)</button></div>`;
   const bars=rows.filter(r=>r[g]!=null).sort((a,b)=>b[g]-a[g]);
   if(bars.length){
     const mv=med[g], lo=Math.min(0,mv??0,...bars.map(r=>r[g])), hi=Math.max(0,mv??0,...bars.map(r=>r[g])), sp=(hi-lo)||1, X=t=>(t-lo)/sp*100;
@@ -1721,23 +1747,24 @@ function peerCardHtml(){
       const a=X(Math.min(0,r[g])), b=X(Math.max(0,r[g]));
       const from=g==='yoy'?r.p:r.f;
       const tip=`${r.name}: ${ym(from.end)} ${moneyShort(from.rev,'KRW')} → ${ym(r.l.end)} ${moneyShort(r.l.rev,'KRW')} (${g==='yoy'?'전년 대비':'연평균'} ${pp(r[g])})`;
-      h+=`<div class="pg-row${r.self?' me':''}" role="button" tabindex="0" title="${esc(tip)}" data-tip="${esc(tip)}" data-k="${r.key}" onmouseenter="peerTip(this)" onclick="peerTip(this)"><span class="pg-nm">${esc(r.name)}</span>
+      h+=`<div class="pg-row${r.self?' me':''}" role="button" tabindex="0" title="${esc(tip)}" data-tip="${esc(tip)}" data-k="${r.key}" onmouseenter="peerTip(this,'${tid}')" onclick="peerTip(this,'${tid}')"><span class="pg-nm">${esc(r.name)}</span>
         <span class="pg-tr"><i class="pg-zero" style="left:${X(0)}%"></i>${mv!=null?`<i class="pg-med" style="left:${X(mv)}%"></i>`:''}<i class="pg-bar${r[g]<0?' neg':''}" style="left:${a}%;width:${Math.max(b-a,0.8)}%"></i></span><b class="pg-v">${pp(r[g])}</b></div>`;
     });
-    h+=`</div><div class="pg-tip" id="pgTip">막대를 누르면 매출 변화가 보입니다</div>`;
+    h+=`</div><div class="pg-tip" id="${tid}">막대를 누르면 매출 변화가 보입니다</div>`;
   } else h+=`<div class="na">비교할 수치 없음</div>`;
-  h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--accent)"></i>트렉시</span><span><i style="background:var(--sub);opacity:.4"></i>비교 유통사</span><span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>비교군 중앙값(트렉시 제외)</span></div>
-    <div class="note" style="margin-top:6px">DART 감사보고서(별도) 연간 수치 그대로 · 파란 배지 = 비교군 중앙값보다 나은 지표 · 순위는 수치가 있는 기업끼리 · 재고일수는 낮을수록 위 · 연평균은 3개년 자료가 있는 기업만 · 행을 누르면 기업 상세</div></div>`;
+  h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span><span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>${me?`비교군 중앙값(${esc(c.selfName)} 제외)`:'중앙값'}</span></div>
+    <div class="note" style="margin-top:6px">${c.src}${me?' · 파란 배지 = 비교군 중앙값보다 나은 지표':''} · 순위는 수치가 있는 기업끼리 · 재고일수는 낮을수록 위 · 연평균은 3개년 자료가 있는 기업만 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
-function peerGrowth(m){ PEER_GROWTH=m; const c=document.getElementById('peerCard'); if(c) c.outerHTML=peerCardHtml(); }
-function peerTip(el){
-  const t=document.getElementById('pgTip'); if(!t) return;
+const peerCardHtml=()=>cmpCardHtml('peer');
+function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
+function peerTip(el,tid){
+  const t=document.getElementById(tid||'peerCardTip'); if(!t) return;
   t.innerHTML=`${esc(el.dataset.tip||'')} <span class="go" style="color:var(--accent);cursor:pointer" onclick="goDetail('${el.dataset.k}')">상세 ▸</span>`;
 }
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+platformCardHtml()+peerCardHtml()+naverCardHtml();
+  const top=crossChartHtml()+platformCardHtml()+peerCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
