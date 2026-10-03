@@ -692,7 +692,8 @@ def main():
     log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인")
     fy = [y for e in result["entities"] if e["id"] in FIN_IDS for y in e["years"] if y.get("fin")]
     log(f"  재무상태표·현금흐름: {sum(1 for e in result['entities'] if e['id'] in FIN_IDS and any(y.get('fin') for y in e['years']))}"
-        f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건")
+        f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건"
+        f" · 보고서 간 다름 {sum(1 for y in fy if y['fin'].get('bad'))}건")
 
     # ── 국내 상장 20개사: 연결 전체재무제표 3개년 ──
     log("\n[상장] 법인코드 매칭(종목코드) ...")
