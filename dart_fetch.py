@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.0: 수입 브랜드 유통사 비교군 9곳(FIN_IDS, 트렉시 포함)에 재무상태표·현금흐름표 추출 추가(대표 요청 2026-10-03) —
+      현금·단기금융상품·매출채권·매입채무·차입금·리스부채·자산·부채·자본총계·영업활동현금흐름·CAPEX·감가상각비.
+      손익 추출(캐시 SCHEMA_V=3)은 그대로 두고 별도 호출·별도 캐시(_cache_fin, FIN_V=1) — 다른 법인은 재추출 없음.
+      검증: 자산총계 ≠ 부채+자본(1% 초과) 또는 재고가 손익 추출 값과 1% 넘게 다르면 그 해 chk 표시(화면 '확인 필요').
+      원본 창: 재무상태표~현금흐름표 표 부근(멀면 두 창). 응답에 설명이 길게 붙어도 JSON을 찾도록 파싱 보강·출력 한도 2500
+      (브랜치 실행에서 한아아이앤티가 설명 뒤 JSON이 잘려 실패 → 보강)
 v2.9: 아이웨어 2곳 추가(2026-10-03 DART 감사보고서 확인, 대표 요청) — 케어링아이웨어코리아(케링 아이웨어 한국 법인:
       구찌·생로랑·보테가·까르띠에 등), 시원아이웨어(디올·펜디 등 명품 아이웨어 수입 유통). 둘 다 2025년 첫 감사보고서라 2개년
 v2.8: 국내 패션 브랜드 13곳 추가(2026-10-03 DART 공시 목록 확인, 대표 요청) — 상장 3곳은 사업보고서 경로
@@ -55,6 +61,10 @@ YEARS_BACK = 3
 MAX_DOC_CHARS = 70000
 SCHEMA_V = 3
 LISTED_PATH = "docs/kr_listed_fin.json"
+# 재무상태표·현금흐름표 추가 추출 대상(수입 브랜드 유통사 비교군) — 손익과 별도 캐시
+FIN_IDS = {"trexi", "daelim_corp", "rexmond", "bazig", "creed", "hana_int", "t1global", "bbluein", "starintl"}
+FIN_V = 1
+FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "borrow", "lease", "inv", "ocf", "capex", "da")
 
 # ── 국내 상장 20개사 (야후 티커 → 종목코드 앞 6자리로 법인코드 매칭) ──
 KR_LISTED = ["081660.KS", "383220.KS", "298540.KQ", "120110.KS", "337930.KQ",
@@ -310,7 +320,13 @@ def list_audit_reports(corp_code):
     return out
 
 
-def fetch_document_text(rcept_no):
+_PLAIN = {}   # 같은 실행에서 손익·재무상태표 추출이 같은 원본을 두 번 받지 않도록
+
+
+def fetch_document_plain(rcept_no):
+    """원본 zip → 손익계산서가 있는 문서(가장 큰 것)의 평문 전체"""
+    if rcept_no in _PLAIN:
+        return _PLAIN[rcept_no]
     raw = dart(f"{BASE}/document.xml", {"rcept_no": rcept_no}, as_bytes=True, timeout=120)
     if raw[:2] != b"PK":
         raise RuntimeError("원본이 zip이 아님")
@@ -335,6 +351,12 @@ def fetch_document_text(rcept_no):
     has_is, _, name, plain = max(docs, key=lambda d: (d[0], d[1]))
     if len(docs) > 1 or not has_is:
         log(f"      원본 파일 {len(docs)}개 중 {name} 선택 · 손익계산서 {'있음' if has_is else '없음'} · {len(plain):,}자")
+    _PLAIN[rcept_no] = plain
+    return plain
+
+
+def fetch_document_text(rcept_no):
+    plain = fetch_document_plain(rcept_no)
     # 손익계산서 부근 우선 포함: 앞부분(회사명·기간) + 손익계산서 창
     idx = plain.find("손익계산서")
     if len(plain) > MAX_DOC_CHARS and idx > 20000:
@@ -375,7 +397,11 @@ Respond with ONLY a JSON object, no markdown fences:
 
 DOCUMENT:
 {text}"""
-    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 800,
+    return ask_json(prompt, 800)
+
+
+def ask_json(prompt, max_tokens):
+    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": max_tokens,
               "messages": [{"role": "user", "content": prompt}]}, timeout=180)
     parts = data.get("content", [])
     txt = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
@@ -383,18 +409,151 @@ DOCUMENT:
     try:
         return json.loads(txt)
     except ValueError:
-        m = re.search(r"\{.*\}", txt, re.S)   # 설명 문장이 섞인 응답 → JSON 부분만
-        if m:
+        # 설명 문장이 섞인 응답 → 'current'가 든 JSON 객체를 앞에서부터 찾음(설명 속 중괄호는 건너뜀)
+        dec = json.JSONDecoder()
+        for m in re.finditer(r"\{", txt):
             try:
-                return json.loads(m.group(0))
+                obj, _ = dec.raw_decode(txt[m.start():])
             except ValueError:
-                pass
-        raise RuntimeError("응답이 JSON 아님: " + re.sub(r"\s+", " ", txt)[:150])
+                continue
+            if isinstance(obj, dict) and "current" in obj:
+                return obj
+        raise RuntimeError(f"응답이 JSON 아님(종료 사유 {data.get('stop_reason')}): " + re.sub(r"\s+", " ", txt)[:150])
 
 
-def fetch_doc_years(name, corp_code, cached):
+# ── 재무상태표·현금흐름표 추가 추출(v3.0, FIN_IDS만) ──────────
+def _sp(word):
+    """'재 무 상 태 표'처럼 글자 사이가 띄어진 제목도 찾도록"""
+    return r"\s*".join(map(re.escape, word))
+
+
+def _table_pos(plain, word, start=0, need=None):
+    """word 뒤 1500자 안에 큰 금액(1,234,567 꼴)이 있는 첫 위치 = 실제 표(목차·감사의견 문단 제외)"""
+    for m in re.finditer(_sp(word), plain[start:]):
+        p = start + m.start()
+        if (re.search(r"\d{1,3}(?:,\d{3}){2,}", plain[p: p + 1500])
+                and (need is None or re.search(_sp(need), plain[p: p + 4000]))):
+            return p
+    return -1
+
+
+def fin_window(plain):
+    """앞부분(회사명·단위) + 재무상태표~현금흐름표 표 부근. 둘이 멀면 두 창으로 나눔"""
+    if len(plain) <= MAX_DOC_CHARS:
+        return plain
+    head, room = 8000, MAX_DOC_CHARS - 8000
+    bs = _table_pos(plain, "재무상태표")
+    cf = _table_pos(plain, "현금흐름표", max(bs, 0), need="영업활동")
+    found = [p for p in (bs, cf) if p >= 0]
+    if not found:
+        log("      재무상태표·현금흐름표 표 위치 못 찾음 → 앞부분")
+        return plain[:MAX_DOC_CHARS]
+    if len(found) == 1 or (cf + 15000) - (bs - 1000) <= room:
+        a = max(head, found[0] - 1000)
+        return plain[:head] + " ...(중략)... " + plain[a: a + room]
+    log(f"      재무상태표 {bs:,}자 · 현금흐름표 {cf:,}자 → 두 창")
+    return " ...(중략)... ".join([plain[:head]] + [plain[max(head, p - 1000): max(head, p - 1000) + room // 2] for p in found])
+
+
+def claude_extract_fin(name, text):
+    prompt = f"""You are extracting figures from a Korean statutory audit report (감사보고서, separate
+financial statements) of {name}. For the CURRENT period (당기) and the PRIOR period (전기):
+
+From the statement of financial position (재무상태표), at each period end:
+- end: period end date (YYYY-MM-DD)
+- assets: 자산총계
+- liab: 부채총계
+- equity: 자본총계 (negative if 자본잠식)
+- cash: 현금및현금성자산
+- stfin: 단기금융상품 (short-term financial instruments / deposits); null if none shown
+- ar: 매출채권 (net of allowance). If only "매출채권및기타채권" is shown, use that line.
+- ap: 매입채무. If only "매입채무및기타채무" is shown, use that line.
+- borrow: interest-bearing borrowings = 단기차입금 + 유동성장기차입금(유동성장기부채) + 장기차입금
+  + 사채(유동성사채 포함). Exclude lease liabilities. 0 if the company shows none.
+- lease: 리스부채 (current + non-current); null if not shown
+- inv: 재고자산
+From the cash flow statement (현금흐름표), for each period:
+- ocf: 영업활동으로 인한 현금흐름 / 영업활동현금흐름 (net; outflow as negative)
+- capex: 유형자산의 취득 + 무형자산의 취득 (cash paid, as a positive number); 0 if none
+- da: 감가상각비 + 사용권자산상각비 + 무형자산상각비 (from cash flow adjustments or notes); null if not found
+For the PRIOR period also:
+- equity_begin: 자본총계 at the beginning of the prior period (전기초), from 자본변동표; null if not shown
+
+Amounts must be in KRW units of 원 (convert if the statement says 단위: 천원 or 백만원).
+Use ONLY figures explicitly stated; if a figure is not stated, use null. Do not compute anything
+except the sums described for borrow, capex and da.
+
+Respond with ONLY a JSON object, no markdown fences:
+{{
+  "unit_note": "단위 표기 그대로",
+  "current": {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "borrow": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n}},
+  "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "borrow": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}}
+}}
+(n = number or null)
+Start your response with {{ — no explanation before or after the JSON.
+
+DOCUMENT:
+{text}"""
+    return ask_json(prompt, 2500)
+
+
+def fin_check(rec, pl):
+    """검증: 자산 = 부채 + 자본(1% 이내), 재고가 손익 추출 값과 1% 이내. 어긋나면 사유 문자열"""
+    bad = []
+    a, l, e = rec.get("assets"), rec.get("liab"), rec.get("equity")
+    if None in (a, l, e):
+        bad.append("자산·부채·자본 일부 없음")
+    elif abs(a - (l + e)) > 0.01 * abs(a):
+        bad.append("자산≠부채+자본")
+    i1, i2 = rec.get("inv"), (pl or {}).get("inv")
+    if i1 is not None and i2 is not None and abs(i1 - i2) > 0.01 * max(abs(i2), 1):
+        bad.append("재고가 손익 추출 값과 다름")
+    return " · ".join(bad) or None
+
+
+def fetch_fin_years(name, reports, cached, pl_recs):
+    """reports: 감사보고서 목록(최신순). cached: {rcept_no: {end: rec}}. 반환 {end: rec}, 새 캐시"""
+    out, new_cache = {}, {}
+    for rcept, dt, nm in reports[:2]:
+        if rcept in cached and cached[rcept] and all(v.get("fin_v") == FIN_V for v in cached[rcept].values()):
+            log(f"    [재무상태표·현금흐름] {dt}: 캐시 사용")
+            recs = cached[rcept]
+        else:
+            try:
+                log(f"    [재무상태표·현금흐름] {dt} {nm} rcept={rcept}: 추출")
+                ex = claude_extract_fin(name, fin_window(fetch_document_plain(rcept)))
+            except Exception as e:
+                log(f"      실패: {str(e)[:120]}")
+                continue
+            recs = {}
+            for which in ("current", "prior"):
+                p = ex.get(which) or {}
+                if not p.get("end"):
+                    continue
+                rec = {k: to_int(p.get(k)) for k in FIN_KEYS}
+                if which == "prior":
+                    rec["equity_begin"] = to_int(p.get("equity_begin"))
+                if all(rec.get(k) is None for k in ("assets", "equity", "ocf")):
+                    continue
+                rec.update(fin_v=FIN_V, source=f"{nm} {dt} rcept={rcept} ({which}) · {ex.get('unit_note', '')}")
+                recs[p["end"]] = rec
+            if not recs:
+                log(f"      수치 없음 — 응답 {json.dumps(ex, ensure_ascii=False)[:150]}")
+            time.sleep(1)
+        for end, rec in recs.items():
+            rec["chk"] = fin_check(rec, pl_recs.get(end))
+            out.setdefault(end, rec)
+            log(f"      {end}: 자산 {rec.get('assets')} / 부채 {rec.get('liab')} / 자본 {rec.get('equity')} / 현금 {rec.get('cash')}"
+                f" / 차입금 {rec.get('borrow')} / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')}"
+                f" / 상각 {rec.get('da')}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}")
+        new_cache[rcept] = recs
+    return out, new_cache
+
+
+def fetch_doc_years(name, corp_code, cached, reports=None):
     """cached: {rcept_no: {end: rec}} 기존 추출. 반환 {end: rec}, 사용된 캐시 dict"""
-    reports = list_audit_reports(corp_code)
+    if reports is None:
+        reports = list_audit_reports(corp_code)
     log(f"    감사보고서(별도) {len(reports)}건")
     out, new_cache = {}, {}
     for rcept, dt, nm in reports[:2]:   # 최신 2건 = 당기·전기 × 2 → 3개년 확보
@@ -445,17 +604,18 @@ def main():
         except Exception:
             pass
     old_cache = old.get("_cache", {})
+    old_fin = old.get("_cache_fin", {})
     today = datetime.datetime.now(KST).date()
     years = [today.year - i for i in range(0, YEARS_BACK + 1)]
 
     result = {"updated_at": today.isoformat(),
               "cadence": "월 1회 자동 체크 — 새 감사보고서/사업보고서만 추출 (DART OpenAPI)",
               "source_note": "DART: 사업보고서 제출 법인은 구조화 API(별도 우선), 외감 법인은 감사보고서 원본을 Claude로 추출. 단위: 원. null = 미확인(§29-D)",
-              "entities": [], "_cache": {}}
+              "entities": [], "_cache": {}, "_cache_fin": {}}
 
     for eid, name, etype, link, code, route, fy_m, note in ENTITIES:
         log(f"[{eid}] {name} ({route}) corp={code or '-'}")
-        recs = {}
+        recs, fin_by_end = {}, {}
         if route == "api":
             recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m)
             for r in recs.values():
@@ -464,8 +624,13 @@ def main():
             if not ANTHROPIC_KEY:
                 log("    [WARN] ANTHROPIC_API_KEY 미설정 → 추출 생략")
             else:
-                recs, cache = fetch_doc_years(name, code, old_cache.get(eid, {}))
+                reports = list_audit_reports(code)
+                recs, cache = fetch_doc_years(name, code, old_cache.get(eid, {}), reports)
                 result["_cache"][eid] = cache
+                if eid in FIN_IDS:
+                    fins, fcache = fetch_fin_years(name, reports, old_fin.get(eid, {}), recs)
+                    result["_cache_fin"][eid] = fcache
+                    fin_by_end = {end: {k: v for k, v in f.items() if k != "fin_v"} for end, f in fins.items()}
         else:
             log("    공시 미발견 경로 — 수치 없음")
         ends = sorted(recs)[-3:]
@@ -476,6 +641,8 @@ def main():
                               "rev": r.get("rev"), "op": r.get("op"), "ni": r.get("ni"),
                               "inv": r.get("inv"), "cogs": r.get("cogs"),
                               "source": r.get("source")})
+            if end in fin_by_end:
+                years_out[-1]["fin"] = fin_by_end[end]
         if not years_out:
             years_out = [{"fy": None, "end": None, "rev": None, "op": None, "ni": None, "inv": None, "source": None}]
         result["entities"].append({
@@ -490,6 +657,9 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=1)
     n = sum(1 for e in result["entities"] if e["years"] and e["years"][0].get("rev") is not None)
     log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인")
+    fy = [y for e in result["entities"] if e["id"] in FIN_IDS for y in e["years"] if y.get("fin")]
+    log(f"  재무상태표·현금흐름: {sum(1 for e in result['entities'] if e['id'] in FIN_IDS and any(y.get('fin') for y in e['years']))}"
+        f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건")
 
     # ── 국내 상장 20개사: 연결 전체재무제표 3개년 ──
     log("\n[상장] 법인코드 매칭(종목코드) ...")

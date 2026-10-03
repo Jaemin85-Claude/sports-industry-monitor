@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32: 🏷️ 수입 브랜드 유통사 비교 카드를 재무 분석 지표 카드로 교체(2026-10-03 목업 승인) — 그룹 탭 5개(손익·성장/수익성/
+     운전자본/현금/안정성) + 지표 칩 17개(매출·성장률·매출총이익률·영업이익률·ROE·재고·매출채권·매입채무일수·현금전환주기·
+     OCF·FCF·이익의 현금화·순부채·순부채/EBITDA·부채비율·현금·순자산), 3개년 표(트렉시 맨 위·중앙값 행)·최근 연도 순위 막대·
+     식/좋은 방향 상자. OCF·FCF는 매출 대비, 순부채는 순자산 대비 비율로 순위. 현금·순자산은 순위 없는 참고 지표.
+     추출 검증 실패 연도는 '확인 필요'. 기업 상세에 재무 지표 3개년 표. 패션·아이웨어 카드는 기존 그대로(dart_fetch v3.0)
 v31.2: 아이웨어 비교에 케어링아이웨어코리아·시원아이웨어 추가(dart_fetch v2.9) — 6곳
 v31.1: 국내 탭 '👕 국내 패션 브랜드 비교' 카드(dart_fetch v2.8 13곳: 에이유브랜즈·피스피스스튜디오·에스제이그룹·마뗑킴·
        레이어·하이라이트브랜즈·하고하우스·비케이브·파이브스페이스·코자·안다르·시선인터내셔널·로우클래식) — 수입 브랜드
@@ -381,6 +386,43 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .xc-svg{width:100%;height:auto;display:block;touch-action:pan-y}
 .xc-tip{position:absolute;top:2px;pointer-events:none;background:var(--card);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:var(--fs-xs);line-height:1.55;white-space:nowrap;font-variant-numeric:tabular-nums}
 .nv-sum{background:var(--barbg);border-radius:10px;padding:10px 12px;font-size:var(--fs-sm);line-height:1.6;margin-bottom:8px}
+/* 유통사 재무 지표 (v32) */
+.fi-top{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.fi-big{font-size:var(--fs-lg)}
+.fi-gsum{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:8px}
+.fi-gsum button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 2px;cursor:pointer;color:var(--tx);min-width:0;font-family:inherit}
+.fi-gsum button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.fi-gsum .l{display:block;font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-gsum .v{display:block;font-size:var(--fs-sm);font-weight:700}
+.fi-dots{display:flex;justify-content:center;gap:2px;margin-top:2px}
+.fi-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.fi-dots i.b{background:var(--accent)}
+.fi-dots i.x{background:transparent;border:1px solid var(--line)}
+.fi-seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--barbg);border-radius:10px;padding:3px}
+.fi-seg button{min-height:36px;border:none;border-radius:8px;background:none;color:var(--sub);font-size:var(--fs-sm);font-weight:600;cursor:pointer;padding:0 2px;white-space:nowrap;font-family:inherit}
+.fi-seg button.on{background:var(--card);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.fi-chips{margin:8px 0 0}
+.fi-chips .chip{font-family:inherit}
+.fi-seg button:focus-visible,.fi-gsum button:focus-visible,.fi-chips .chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fi-mhead{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:10px 0 6px;font-size:var(--fs-xs)}
+.fi-mhead b{font-size:var(--fs-base)}
+.fi-mbox{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.fi-mbox div{background:var(--barbg);border-radius:8px;padding:6px 8px;min-width:0}
+.fi-mbox .l{display:block;font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-mbox .v{display:block;font-size:var(--fs-base);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fi-mbox .s{display:block;font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap}
+.fi-tbl td{vertical-align:top;font-variant-numeric:tabular-nums;padding:7px 3px}
+.fi-tbl td:first-child{max-width:124px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi-tbl tr.me td{background:var(--barbg)}
+.fi-tbl tr.me td:first-child{font-weight:700}
+.fi-tbl tr.fi-med td{color:var(--sub);border-bottom:none}
+.fi-tbl tr.fi-gh td{background:var(--barbg);font-size:var(--fs-xs);color:var(--sub);font-weight:700;padding:4px 6px}
+.fi-sub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400}
+.fi-b{display:block;margin-top:2px}
+.fi-def{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:12px;font-size:var(--fs-xs);line-height:1.6}
+.fi-def dl{display:grid;grid-template-columns:56px minmax(0,1fr);gap:2px 8px;margin:0}
+.fi-def dt{color:var(--sub)}
+.fi-def dd{margin:0}
 /* 수입 브랜드 유통사 비교 (v30.4) */
 .pg-badge{display:inline-block;padding:1px 6px;border-radius:999px;background:var(--accent);color:#fff;font-size:var(--fs-2xs);font-weight:700;line-height:1.5;margin:1px 2px 1px 0}
 .pg-rk{display:block;font-size:var(--fs-2xs);color:var(--sub)}
@@ -1266,6 +1308,7 @@ function renderKrdDetail(id){
   if(!e){ document.getElementById('detBody').innerHTML='<div class="na">미확인</div>'; return; }
   let h=`<div class="det-head">${logoImg('krd:'+e.id,true,e.name)}${esc(e.name)} <span class="tk">🇰🇷</span> <span class="tag">${esc(e.type)}</span></div>`;
   h+=krdCard(e,false);
+  h+=fiDetailCard(e);
   if(e.link){
     const g=DATA.items.find(i=>i.ticker===e.link);
     if(g) h+=compareCard(g,e)+`<div class="note">글로벌 본사: <a href="#" onclick="goDetail('${e.link}');return false;" style="color:var(--accent)">${logoImg(e.link,false,g.name)}${esc(g.name)} ▸</a></div>`;
@@ -1757,7 +1800,152 @@ function cmpCardHtml(cid){
     <div class="note" style="margin-top:6px">${c.src}${me?' · 파란 배지 = 비교군 중앙값보다 나은 지표':''} · 순위는 수치가 있는 기업끼리 · 재고일수는 낮을수록 위 · 연평균은 3개년 자료가 있는 기업만 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
-const peerCardHtml=()=>cmpCardHtml('peer');
+// ── 유통사 재무 지표(v32) — 그룹 탭 5개 · 지표 칩 · 3개년 표 · 최근 연도 순위 (dart_fetch v3.0 재무상태표·현금흐름표) ──
+const FI_G=[['pl','손익·성장'],['prof','수익성'],['wc','운전자본'],['cash','현금'],['stab','안정성']];
+const fiEok=v=>{const a=Math.abs(v); const t=a>=1e12?(a/1e12).toFixed(2)+'조':(a>=1e10?Math.round(a/1e8).toLocaleString():(a/1e8).toFixed(1))+'억'; return (v<0?'−':'')+t;};
+const fiPct=(v,d=1)=>(v<0?'−':'')+Math.abs(v).toFixed(d)+'%';
+const fiDay=v=>Math.round(v)+'일';
+// f(y): 재무상태표·현금흐름 — 없으면 null, 검증 실패면 '확인 필요'
+const fiF=y=>!y||!y.fin?null:(y.fin.chk?'확인 필요':y.fin);
+const fiNd=f=>f.borrow==null||f.cash==null?null:f.borrow+(f.lease||0)-f.cash-(f.stfin||0);
+const fiDa=(y,f)=>y.op==null||f.da==null?null:y.op+f.da;
+// 지표: v=값(문자열이면 표시만·순위 제외), c=순위·중앙값 비교값(없으면 v), s=보조줄, ref=참고(순위 없음), nr=마이너스가 좋음
+const FI_M={
+  rev:{g:'pl',nm:'매출',hi:1,fmt:fiEok,v:y=>y.rev,f:'매출액',dir:'클수록 규모 큼',why:'브랜드 본사 협상력·물류 단가를 좌우하는 기본 체급'},
+  yoy:{g:'pl',nm:'매출 성장률',hi:1,fmt:v=>pp(v),v:(y,p)=>p&&p.rev>0?(y.rev/p.rev-1)*100:null,f:'올해 매출 ÷ 전년 매출 − 1',dir:'높을수록 좋음',why:'브랜드 확보·채널 확장이 실제 매출로 이어지는지'},
+  gm:{g:'prof',nm:'매출총이익률',hi:1,fmt:v=>fiPct(v),v:y=>y.cogs!=null?(y.rev-y.cogs)/y.rev*100:null,f:'(매출 − 매출원가) ÷ 매출',dir:'높을수록 좋음',why:'매입가·환율·할인 판매의 결과. 병행·수입 유통의 가격 경쟁력'},
+  opm:{g:'prof',nm:'영업이익률',hi:1,fmt:v=>fiPct(v),v:y=>y.op!=null?y.op/y.rev*100:null,f:'영업이익 ÷ 매출',dir:'높을수록 좋음',why:'판관비(인건비·물류·수수료)까지 뺀 본업 수익력'},
+  roe:{g:'prof',nm:'ROE',hi:1,bs:1,fmt:v=>fiPct(v),v:(y,p)=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+        const pf=fiF(p), e0=pf&&typeof pf!=='string'&&pf.equity!=null?pf.equity:f.equity_begin;
+        if(f.equity==null||e0==null||y.ni==null) return null; const a=(f.equity+e0)/2; return a>0?y.ni/a*100:'자본잠식';},
+       f:'순이익 ÷ 평균 자기자본(기초·기말)',dir:'높을수록 좋음',why:'주주 돈(순자산)으로 얼마를 벌었나. 차입 효과까지 포함'},
+  dio:{g:'wc',nm:'재고일수',hi:0,fmt:fiDay,v:y=>y.inv!=null&&y.cogs?y.inv/y.cogs*365:null,f:'기말 재고 ÷ 매출원가 × 365',dir:'짧을수록 좋음',why:'재고가 현금으로 바뀌는 데 걸리는 날. 시즌 지난 재고 위험'},
+  dso:{g:'wc',nm:'매출채권일수',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ar!=null?f.ar/y.rev*365:null;},
+       f:'기말 매출채권 ÷ 매출 × 365',dir:'짧을수록 좋음',why:'오픈마켓·백화점 정산이 들어오는 데 걸리는 날'},
+  dpo:{g:'wc',nm:'매입채무일수',hi:1,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ap!=null&&y.cogs?f.ap/y.cogs*365:null;},
+       f:'기말 매입채무 ÷ 매출원가 × 365',dir:'길수록 현금에 유리',why:'공급처 결제를 미룰 수 있는 날. 선결제가 많은 수입 유통은 짧게 나옴'},
+  ccc:{g:'wc',nm:'현금전환주기',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+        return f.ar!=null&&f.ap!=null&&y.inv!=null&&y.cogs?y.inv/y.cogs*365+f.ar/y.rev*365-f.ap/y.cogs*365:null;},
+       f:'재고일수 + 매출채권일수 − 매입채무일수',dir:'짧을수록 좋음',why:'물건값을 낸 뒤 판매 대금이 들어올 때까지 묶이는 날. 운전자금 필요량'},
+  ocf:{g:'cash',nm:'영업현금흐름(OCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf;},
+       c:y=>y.fin.ocf/y.rev*100,cn:'매출 대비 %',f:'현금흐름표 \'영업활동으로 인한 현금흐름\'',dir:'플러스·클수록 좋음',why:'장부상 이익이 아니라 실제로 들어온 현금. 재고·채권이 늘면 이익이 나도 마이너스'},
+  fcf:{g:'cash',nm:'잉여현금흐름(FCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf!=null&&f.capex!=null?f.ocf-f.capex:null;},
+       c:y=>(y.fin.ocf-y.fin.capex)/y.rev*100,cn:'매출 대비 %',f:'OCF − 유형·무형자산 취득(CAPEX)',dir:'플러스·클수록 좋음',why:'설비·시스템 투자 후 남는 현금. 빚 상환·새 브랜드 선매입 여력'},
+  conv:{g:'cash',nm:'이익의 현금화',hi:1,bs:1,clip:300,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.ocf==null||y.op==null) return null; return y.op>0?f.ocf/y.op*100:'영업적자';},
+       f:'OCF ÷ 영업이익',dir:'100% 이상이 좋음',why:'영업이익이 현금으로 들어왔나. 계속 100% 아래면 재고·채권에 이익이 묶임. 재고가 크게 늘거나 준 해엔 수백 %로 흔들려 3년 흐름으로 봄'},
+  nd:{g:'stab',nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
+      c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금(단기·장기·사채) + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
+  ndx:{g:'stab',nm:'순부채/EBITDA',hi:0,nr:1,bs:1,fmt:v=>v<0?'순현금':v.toFixed(1)+'배',v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+        const n=fiNd(f), e=fiDa(y,f); if(n==null||e==null) return null; return e>0?n/e:'EBITDA 적자';},
+       f:'순부채 ÷ (영업이익 + 감가상각비)',dir:'낮을수록 좋음 · 3배 넘으면 주의',why:'번 돈으로 빚을 몇 년에 갚나. 은행 여신 심사에서 보는 기준'},
+  dr:{g:'stab',nm:'부채비율',hi:0,bs:1,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.liab==null||f.equity==null) return null; return f.equity>0?f.liab/f.equity*100:'자본잠식';},
+      f:'부채총계 ÷ 자본총계',dir:'낮을수록 좋음 · 200% 넘으면 주의',why:'매입채무까지 포함한 전체 빚 부담'},
+  cash:{g:'stab',nm:'현금',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.cash!=null?f.cash+(f.stfin||0):null;},
+        c:y=>(y.fin.cash+(y.fin.stfin||0))/y.rev*100,cn:'매출 대비 %',f:'현금및현금성자산 + 단기금융상품',dir:'참고',why:'당장 쓸 수 있는 돈. 회사 규모 차이가 커서 순위 없이 참고'},
+  eq:{g:'stab',nm:'순자산',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.equity;},
+      f:'자본총계(자산 − 부채)',dir:'참고',why:'쌓아 온 자기 돈. 회사 규모 차이가 커서 순위 없이 참고'},
+};
+const FI_K=Object.keys(FI_M);
+let FI_GRP='pl', FI_MET='rev';
+function fiRows(){
+  const c=CMP.peer, ents=(KRD&&KRD.entities)||[];
+  return c.keys.map(k=>{ const e=ents.find(x=>'krd:'+x.id===k); if(!e) return null;
+    const by={}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{by[+y.end.slice(0,4)]=y;});
+    return {key:k,name:e.name,self:k===c.self,by};
+  }).filter(Boolean);
+}
+function fiVal(r,k,fy){ // {v,c,s} 또는 {t:'사유'}
+  const y=r.by[fy]; if(!y) return {t:'―'};
+  const m=FI_M[k], v=m.v(y,r.by[fy-1]||null);
+  if(v==null||(typeof v==='number'&&!isFinite(v))) return {t:'―'};
+  if(typeof v==='string') return {t:v};
+  const c=m.c?m.c(y):v;
+  return {v,c:(c==null||!isFinite(c))?null:c};
+}
+const fiMed=a=>{a=a.filter(x=>x!=null).sort((x,y)=>x-y); if(!a.length) return null; const i=a.length>>1; return a.length%2?a[i]:(a[i-1]+a[i])/2;};
+function fiStat(rows,k,fy){ // 중앙값(자사 제외)·순위·중앙값보다 나은지
+  const m=FI_M[k], vs=rows.map(r=>({r,x:fiVal(r,k,fy)})).filter(o=>o.x.v!=null&&o.x.c!=null);
+  const pe=vs.filter(o=>!o.r.self), md=fiMed(pe.map(o=>o.x.c)), mdv=fiMed(rows.filter(r=>!r.self).map(r=>fiVal(r,k,fy).v));
+  const sorted=vs.slice().sort((a,b)=>m.hi?b.x.c-a.x.c:a.x.c-b.x.c);
+  const me=rows.find(r=>r.self), mx=me?fiVal(me,k,fy):{t:'―'}, i=sorted.findIndex(o=>o.r.self);
+  const better=!m.ref&&mx.v!=null&&mx.c!=null&&md!=null&&(m.hi?mx.c>md:mx.c<md);
+  return {md,mdv,rank:i>=0?i+1:null,n:sorted.length,np:pe.length,better,me:mx};
+}
+function fiPick(g,k){ FI_GRP=g; FI_MET=k||FI_K.find(x=>FI_M[x].g===g); const el=document.getElementById('peerCard'); if(el) el.outerHTML=finCardHtml(); }
+function finCardHtml(){
+  const c=CMP.peer, rows=fiRows(); if(rows.length<2) return '';
+  const fys=[...new Set(rows.flatMap(r=>Object.keys(r.by).map(Number)))].sort().slice(-3), L=fys[fys.length-1];
+  const me=rows.find(r=>r.self), m=FI_M[FI_MET], cls=v=>v<0?(m.nr?'pos':'neg'):'';
+  let h=`<div class="card" id="peerCard"><h3>${c.icon} ${c.name} <span class="tag">${c.tag}</span></h3>`;
+  // 자사 요약: 최근 연도 중앙값보다 나은 지표 수 · 그룹별
+  const cmpK=FI_K.filter(k=>!FI_M[k].ref), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
+  if(me){
+    const has=k=>st[k].me.v!=null&&st[k].md!=null;
+    h+=`<div class="nv-sum"><div class="fi-top"><b>${esc(c.selfName)}</b><span class="na">FY${String(L).slice(2)} · ${rows.length}곳 비교</span><span style="margin-left:auto">중앙값보다 나은 지표 <b class="fi-big">${cmpK.filter(k=>st[k].better).length}</b><span class="na">/${cmpK.filter(has).length}</span></span></div><div class="fi-gsum">`;
+    FI_G.forEach(([g,gn])=>{ const ks=cmpK.filter(k=>FI_M[k].g===g);
+      h+=`<button type="button" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}')"><span class="l">${gn}</span><span class="v">${ks.filter(k=>st[k].better).length}/${ks.filter(has).length}</span><span class="fi-dots">${ks.map(k=>`<i class="${!has(k)?'x':st[k].better?'b':''}" title="${esc(FI_M[k].nm)}"></i>`).join('')}</span></button>`; });
+    h+=`</div></div>`;
+  }
+  h+=`<div class="fi-seg" role="tablist">${FI_G.map(([g,gn])=>`<button type="button" role="tab" aria-selected="${g===FI_GRP}" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}')">${gn}</button>`).join('')}</div>`;
+  h+=`<div class="chips fi-chips">${FI_K.filter(k=>FI_M[k].g===FI_GRP).map(k=>`<button type="button" class="chip${k===FI_MET?' on':''}" aria-pressed="${k===FI_MET}" onclick="fiPick('${FI_GRP}','${k}')">${esc(FI_M[k].nm)}</button>`).join('')}</div>`;
+  // 선택 지표 요약 3칸
+  const s=st[FI_MET]||fiStat(rows,FI_MET,L), s0=fiStat(rows,FI_MET,L-1), mv=s.me, m0=me?fiVal(me,FI_MET,L-1):{t:'―'};
+  h+=`<div class="fi-mhead"><b>${esc(m.nm)}</b><span class="na">${esc(m.dir)}</span></div>`;
+  if(me){
+    const tr=(mv.c!=null&&m0.c!=null&&!m.ref)?(mv.c===m0.c?'변화 없음':((m.hi?mv.c>m0.c:mv.c<m0.c)?'<span class="pos">개선</span>':'<span class="neg">악화</span>')):'<span class="na">―</span>';
+    h+=`<div class="fi-mbox"><div><span class="l">${esc(c.selfName)} FY${String(L).slice(2)}</span><span class="v ${mv.v!=null?cls(mv.v):'na'}">${mv.v!=null?m.fmt(mv.v):esc(mv.t)}</span><span class="s">${m.ref?'참고 지표':s.rank?`${s.rank}위/${s.n}`:'순위 없음'}${s.better?' · <b style="color:var(--accent)">중앙값↑</b>':''}</span></div>
+      <div><span class="l">비교군 중앙값</span><span class="v">${s.mdv!=null?m.fmt(s.mdv):'―'}</span><span class="s">${esc(c.selfName)} 제외 ${s.np}곳</span></div>
+      <div><span class="l">전년 대비</span><span class="v">${tr}</span><span class="s">FY${String(L-1).slice(2)} ${m0.v!=null?m.fmt(m0.v):esc(m0.t)}</span></div></div>`;
+  }
+  // 3개년 표 — 자사 맨 위, 나머지 최근 매출 큰 순
+  const order=[me,...rows.filter(r=>!r.self).sort((a,b)=>((b.by[L]||{}).rev??-1)-((a.by[L]||{}).rev??-1))].filter(Boolean);
+  const cp=v=>fiPct(v,FI_MET==='nd'?0:1);
+  h+=`<div class="tblwrap"><table class="fi-tbl"><tr><th>기업</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
+  order.forEach(r=>{
+    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}</td>`;
+    fys.forEach(f=>{ const x=fiVal(r,FI_MET,f);
+      if(x.v==null){ h+=`<td class="na">${esc(x.t)}</td>`; return; }
+      let ex='';
+      if(r.self&&!m.ref){ const t=fiStat(rows,FI_MET,f); if(t.rank) ex=t.better?`<span class="fi-b"><span class="pg-badge">${t.rank}위</span></span>`:`<span class="pg-rk">${t.rank}위/${t.n}</span>`; }
+      h+=`<td><span class="${cls(x.v)}">${m.fmt(x.v)}</span>${m.c&&x.c!=null?`<span class="fi-sub">${cp(x.c)}</span>`:''}${ex}</td>`; });
+    h+=`</tr>`;
+  });
+  h+=`<tr class="fi-med"><td>중앙값<span class="pg-rk">${me?esc(c.selfName)+' 제외':''}</span></td>${fys.map(f=>{const t=fiStat(rows,FI_MET,f); return `<td>${t.mdv!=null?m.fmt(t.mdv):'―'}${m.c&&t.md!=null?`<span class="fi-sub">${cp(t.md)}</span>`:''}</td>`;}).join('')}</tr></table></div>`;
+  if(m.cn) h+=`<div class="note" style="margin-top:4px">작은 글씨 = ${esc(m.cn)}${m.ref?'':' · 순위·배지는 이 비율 기준(회사 규모 차이 보정)'}</div>`;
+  // 최근 연도 순위 막대
+  const bars=rows.map(r=>({r,x:fiVal(r,FI_MET,L)})).filter(o=>o.x.v!=null&&o.x.c!=null).sort((a,b)=>m.hi||m.ref?b.x.c-a.x.c:a.x.c-b.x.c);
+  const bf=m.c?cp:m.fmt, md=m.ref?null:s.md;
+  if(bars.length){
+    const CL=m.clip?(t=>Math.max(-m.clip,Math.min(m.clip,t))):(t=>t);
+    const all=bars.map(o=>CL(o.x.c)).concat(md!=null?[CL(md)]:[]), lo=Math.min(0,...all), hi=Math.max(0,...all), sp=(hi-lo)||1, X=t=>(CL(t)-lo)/sp*100;
+    h+=`<div class="ndate">FY${String(L).slice(2)} ${m.ref?'비교(참고)':'순위'}${m.cn?' · '+esc(m.cn):''}${m.hi||m.ref?'':' · 낮을수록 위'}</div><div class="pg-bars">`;
+    bars.forEach(o=>{ const v=o.x.c, a=X(Math.min(0,v)), b=X(Math.max(0,v));
+      h+=`<div class="pg-row${o.r.self?' me':''}" role="button" tabindex="0" onclick="goDetail('${o.r.key}')"><span class="pg-nm">${esc(o.r.name)}</span><span class="pg-tr"><i class="pg-zero" style="left:${X(0)}%"></i>${md!=null?`<i class="pg-med" style="left:${X(md)}%"></i>`:''}<i class="pg-bar${v<0?' neg':''}" style="left:${a}%;width:${Math.max(b-a,0.8)}%"></i></span><b class="pg-v">${bf(v)}</b></div>`; });
+    h+=`</div>`;
+    if(m.clip&&bars.some(o=>Math.abs(o.x.c)>m.clip)) h+=`<div class="note" style="margin-top:4px">막대는 ±${m.clip}%에서 자름(숫자는 실제 값)</div>`;
+    const no=rows.filter(r=>fiVal(r,FI_MET,L).v==null);
+    if(no.length) h+=`<div class="note" style="margin-top:4px">제외: ${no.map(r=>esc(r.name)+'('+esc(fiVal(r,FI_MET,L).t)+')').join(' · ')}</div>`;
+    h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값(${esc(c.selfName)} 제외)</span>`:''}</div>`;
+  } else h+=`<div class="na" style="margin-top:8px">비교할 수치 없음</div>`;
+  h+=`<div class="fi-def"><dl><dt>식</dt><dd>${esc(m.f)}</dd><dt>좋은 방향</dt><dd>${esc(m.dir)}</dd><dt>왜 보나</dt><dd>${esc(m.why)}</dd></dl></div>`;
+  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본 등 추출 검증 실패 · 행을 누르면 기업 상세</div></div>`;
+  return h;
+}
+// 기업 상세: 유통사 재무 지표 3개년(재무상태표·현금흐름이 있는 법인만)
+function fiDetailCard(e){
+  if(!(e.years||[]).some(y=>y.fin)) return '';
+  const r={key:'krd:'+e.id,name:e.name,by:{}}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{r.by[+y.end.slice(0,4)]=y;});
+  const fys=Object.keys(r.by).map(Number).sort().slice(-3);
+  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART 감사보고서(별도)</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
+  FI_G.forEach(([g,gn])=>{
+    h+=`<tr class="fi-gh"><td colspan="${fys.length+1}">${gn}</td></tr>`;
+    FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
+      h+=`<tr><td>${esc(m.nm)}</td>${fys.map(f=>{const x=fiVal(r,k,f); return x.v==null?`<td class="na">${esc(x.t)}</td>`:`<td class="${x.v<0?(m.nr?'pos':'neg'):''}">${m.fmt(x.v)}</td>`;}).join('')}</tr>`; });
+  });
+  const chk=(e.years||[]).filter(y=>y.fin&&y.fin.chk);
+  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc(y.fin.chk)}`).join(' · ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
+  return h;
+}
 function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
 function peerTip(el,tid){
   const t=document.getElementById(tid||'peerCardTip'); if(!t) return;
@@ -1765,7 +1953,7 @@ function peerTip(el,tid){
 }
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+platformCardHtml()+peerCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
+  const top=crossChartHtml()+platformCardHtml()+finCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
@@ -2115,7 +2303,7 @@ def main():
     if os.path.exists("docs/kr_domestic.json"):
         try:
             with open("docs/kr_domestic.json", encoding="utf-8") as f:
-                krd = json.load(f)
+                krd = {k: v for k, v in json.load(f).items() if not k.startswith("_")}   # 추출 캐시 제외
         except Exception:
             pass
     hist = None
