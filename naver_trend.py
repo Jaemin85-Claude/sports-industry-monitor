@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.3: 국내 패션 브랜드 11개 추가(KR_BRANDS, 대표 요청) — 같은 나이키 기준으로 주간 지수 수집, 결과에 group 표시.
+      월간 합계(판매 vs 검색 교차 그래프)는 기존 브랜드만 유지해 시계열 의미가 바뀌지 않게 함
 v1.2: 클락스→비바굿즈(0933.HK)·휴먼메이드→456A.T 기업 상세 연결(상장사 추가에 맞춤)
 v1.1: 월간 합계 추가(교차 그래프용) — 전체 검색어를 5묶음(각 20개 이하)으로 한 번에 요청해 같은 배율로 합산,
       월별 전년 대비 계산(최근 37개월). 검색어 보정: 브룩스(모델명 고스트·글리세린), 가니(가니 코펜하겐)
@@ -63,6 +65,21 @@ BRANDS = [
     ("어그", "hoka", "DECK", ["어그", "ugg", "어그부츠"]),
     ("샤카웨어", "shakawear", None, ["샤카웨어", "shaka wear"]),
 ]
+# 국내 패션 브랜드(v1.3) — 연결은 DART 국내 법인(krd:). 월간 합계에는 넣지 않음
+KR_BRANDS = [
+    ("락피쉬웨더웨어", None, "krd:aubrandz", ["락피쉬웨더웨어", "락피쉬", "rockfish weatherwear"]),
+    ("마르디 메크르디", None, "krd:piecepeace", ["마르디메크르디", "마르디 메크르디", "mardi mercredi"]),
+    ("마뗑킴", None, "krd:matinkim", ["마뗑킴", "마땡킴", "matin kim"]),
+    ("마리떼", None, "krd:layer", ["마리떼", "마리떼프랑소와저버", "마리떼 프랑소와 저버", "marithe"]),
+    ("코닥어패럴", None, "krd:highlight", ["코닥어패럴", "코닥 어패럴", "kodak apparel"]),
+    ("커버낫", None, "krd:bcave", ["커버낫", "covernat"]),
+    ("아더에러", None, "krd:fivespace", ["아더에러", "ader error", "adererror"]),
+    ("스탠드오일", None, "krd:koza", ["스탠드오일", "stand oil"]),
+    ("안다르", None, "krd:andar", ["안다르", "andar"]),
+    ("캉골", None, "krd:sjgroup", ["캉골", "kangol"]),
+    ("로우클래식", None, "krd:lowclassic", ["로우클래식", "low classic"]),
+]
+KR_NAMES = {b[0] for b in KR_BRANDS}
 
 
 class FatalAPI(Exception):
@@ -113,10 +130,10 @@ def metrics(vals):
 
 def collect():
     start, end = date_range()
-    names = [b[0] for b in BRANDS]
+    ALL = BRANDS + KR_BRANDS
     weeks, rows, anchor_row = None, {}, None
-    for i in range(0, len(BRANDS), PER_REQ):
-        batch = BRANDS[i:i + PER_REQ]
+    for i in range(0, len(ALL), PER_REQ):
+        batch = ALL[i:i + PER_REQ]
         groups = [(ANCHOR[0], ANCHOR[3])] + [(b[0], b[3]) for b in batch]
         try:
             res = call(start, end, groups)
@@ -143,15 +160,16 @@ def collect():
     if weeks is None:
         return None
     out_brands = []
-    for name, news, link, kw in [(ANCHOR[0], ANCHOR[1], ANCHOR[2], ANCHOR[3])] + BRANDS:
+    for name, news, link, kw in [(ANCHOR[0], ANCHOR[1], ANCHOR[2], ANCHOR[3])] + ALL:
         vals, scale = anchor_row if name == ANCHOR[0] else rows.get(name, (None, None))
+        grp = "kr" if name in KR_NAMES else "global"
         if vals is None:
-            out_brands.append({"name": name, "news": news, "link": link, "keywords": kw,
+            out_brands.append({"name": name, "news": news, "link": link, "keywords": kw, "group": grp,
                                "scale": None, "yoy": None, "trend": None, "s": None})
             continue
         recent, yoy, trend = metrics(vals)
         sc = round(recent * scale, 2) if (scale and recent is not None) else None
-        out_brands.append({"name": name, "news": news, "link": link, "keywords": kw,
+        out_brands.append({"name": name, "news": news, "link": link, "keywords": kw, "group": grp,
                            "scale": sc, "yoy": yoy, "trend": trend, "low": sc is not None and sc < 1,
                            "s": [round(v * scale, 2) if scale else round(v, 2) for v in vals]})
         print(f"  {name}: 규모 {sc if sc is not None else '―'} · 전년 대비 "
