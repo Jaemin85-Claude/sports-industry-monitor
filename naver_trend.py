@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
-v1.3: 국내 패션 브랜드 11개 추가(KR_BRANDS, 대표 요청) — 같은 나이키 기준으로 주간 지수 수집, 결과에 group 표시.
+v1.3: 국내 패션·아이웨어 브랜드 13개 추가(KR_BRANDS, 대표 요청) — 같은 나이키 기준으로 주간 지수 수집, 결과에 group 표시.
       월간 합계(판매 vs 검색 교차 그래프)는 기존 브랜드만 유지해 시계열 의미가 바뀌지 않게 함
 v1.2: 클락스→비바굿즈(0933.HK)·휴먼메이드→456A.T 기업 상세 연결(상장사 추가에 맞춤)
 v1.1: 월간 합계 추가(교차 그래프용) — 전체 검색어를 5묶음(각 20개 이하)으로 한 번에 요청해 같은 배율로 합산,
@@ -78,6 +78,8 @@ KR_BRANDS = [
     ("안다르", None, "krd:andar", ["안다르", "andar"]),
     ("캉골", None, "krd:sjgroup", ["캉골", "kangol"]),
     ("로우클래식", None, "krd:lowclassic", ["로우클래식", "low classic"]),
+    ("젠틀몬스터", None, "krd:iicombined", ["젠틀몬스터", "gentle monster"]),
+    ("블루엘리펀트", None, "krd:blueelephant", ["블루엘리펀트", "blue elephant"]),
 ]
 KR_NAMES = {b[0] for b in KR_BRANDS}
 

@@ -4,7 +4,9 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v31.1: 국내 탭 '👕 국내 패션 브랜드 비교' 카드(dart_fetch v2.8 13곳: 에이유브랜즈·피스피스스튜디오·에스제이그룹·마뗑킴·
        레이어·하이라이트브랜즈·하고하우스·비케이브·파이브스페이스·코자·안다르·시선인터내셔널·로우클래식) — 수입 브랜드
        유통사 비교 카드를 공통 비교 카드로 바꿔 함께 사용(자사 강조는 유통사 비교에만). 기업 탭 칩 '패션 브랜드 비교'.
-       네이버 검색 관심도에 '수입·해외 / 국내 패션' 전환(naver_trend v1.3 group) — 중앙값은 그룹 안에서만 계산
+       네이버 검색 관심도에 '수입·해외 / 국내 패션' 전환(naver_trend v1.3 group) — 중앙값은 그룹 안에서만 계산.
+       '🕶️ 아이웨어 비교' 카드(국내 브랜드 젠틀몬스터·블루엘리펀트 vs 룩소티카코리아 vs 다비치안경체인) + 기업 탭 칩,
+       글로벌 아이웨어 에실로룩소티카(EL.PA)·사필로(SFL.MI) 표시 정보
 v31: 하단 탭에 '더보기'(6번째) — 새 지표는 탭을 늘리지 않고 여기에 쌓음.
      ① 💱 환율: 엔·유로·달러 1% 칸 알림(1년 평균 대비 %, 다음 내림·오름 알림 가격, 1% 칸 막대, 1년 추이와
         알림 날짜 점, 최근 알림 목록) + 파운드·헤알은 값만 + 내릴 때·오를 때 참고 상자 (fetch_data v4.9)
@@ -579,6 +581,7 @@ const DOMAINS = {
   "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com",
   "krd:kream":"kream.co.kr", "krd:trenbe":"trenbe.com", "krd:balaan":"balaan.co.kr", "krd:mustit":"mustit.co.kr",
   "krd:rexmond":"okmall.com", "krd:hana_int":"hahamall.net", "krd:bbluein":"bblue.co.kr",
+  "EL.PA":"essilorluxottica.com", "SFL.MI":"safilogroup.com", "krd:iicombined":"gentlemonster.com", "krd:luxottica_kr":"luxottica.com",
   "krd:fivespace":"adererror.com", "krd:andar":"andar.co.kr", "krd:matinkim":"matinkim.com", "krd:piecepeace":"mardimercredi.com"
 };
 /* ── 브랜드 본사 국가 국기 ── */
@@ -587,7 +590,7 @@ const FLAGS = {
   "LULU":"🇨🇦", "7936.T":"🇯🇵", "BIRK":"🇩🇪", "CROX":"🇺🇸", "VFC":"🇺🇸",
   "UAA":"🇺🇸", "8022.T":"🇯🇵", "7906.T":"🇯🇵", "8111.T":"🇯🇵",
   "2020.HK":"🇨🇳", "2331.HK":"🇨🇳", "PUM.DE":"🇩🇪", "WWW":"🇺🇸",
-  "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
+  "COLM":"🇺🇸", "DOCS.L":"🇬🇧", "EL.PA":"🇫🇷", "SFL.MI":"🇮🇹", "DKS":"🇺🇸", "JD.L":"🇬🇧", "ASO":"🇺🇸",
   "FRAS.L":"🇬🇧", "ZAL.DE":"🇩🇪", "SBFG3.SA":"🇧🇷", "4240.SR":"🇸🇦",
   "456A.T":"🇯🇵", "0933.HK":"🇭🇰", "VULC3.SA":"🇧🇷", "LUXE":"🇩🇪", "2670.T":"🇯🇵", "6110.HK":"🇨🇳",
   "TJX":"🇺🇸", "ROST":"🇺🇸", "BURL":"🇺🇸", "CPNG":"🇰🇷"
@@ -1130,12 +1133,13 @@ function buildCoChips(){
   const rows=rows_all();
   const chips=[['전체',rows.length],...CO_GROUPS.map(g=>[g,rows.filter(r=>r.group===g).length]).filter(x=>x[1]>0),
     ['유통사 비교',rows.filter(r=>PEER_KEYS.includes(r.key)).length],
-    ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
-  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='유통사 비교'?'🏷️':g==='패션 브랜드 비교'?'👕':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
+    ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length],
+    ['아이웨어 비교',rows.filter(r=>EY_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
+  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='유통사 비교'?'🏷️':g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
   document.querySelectorAll('#coChips .chip').forEach(c=>c.onclick=()=>{coFilter=c.dataset.g;buildCoChips();buildCo();});
 }
 function buildCo(){
-  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='유통사 비교'&&PEER_KEYS.includes(r.key))||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
+  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='유통사 비교'&&PEER_KEYS.includes(r.key))||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
@@ -1662,13 +1666,16 @@ const PEER_SELF='krd:trexi';
 const PEER_KEYS=[PEER_SELF,'krd:daelim_corp','krd:rexmond','krd:bazig','krd:creed','krd:hana_int','krd:t1global','krd:bbluein','krd:starintl'];
 const FB_KEYS=['krd:aubrandz','krd:piecepeace','krd:sjgroup','krd:matinkim','krd:layer','krd:highlight','krd:hagohouse',
   'krd:bcave','krd:fivespace','krd:koza','krd:andar','krd:sisun','krd:lowclassic'];
+const EY_KEYS=['krd:iicombined','krd:blueelephant','krd:luxottica_kr','krd:davich'];
 const CMP={
   peer:{id:'peerCard',icon:'🏷️',name:'수입 브랜드 유통사 비교',keys:PEER_KEYS,self:PEER_SELF,selfName:'트렉시',tag:'연간 · 감사보고서',
         who:'비교 유통사',src:'DART 감사보고서(별도) 연간 수치 그대로'},
   fb:{id:'fbCard',icon:'👕',name:'국내 패션 브랜드 비교',keys:FB_KEYS,self:null,tag:'연간 · 사업·감사보고서',
       who:'패션 브랜드사',src:'DART 별도 재무제표 연간 수치 그대로(상장 3곳 사업보고서 · 외감 10곳 감사보고서) · 하고하우스는 브랜드 육성·투자 회사'},
+  ey:{id:'eyCard',icon:'🕶️',name:'아이웨어 비교',keys:EY_KEYS,self:null,tag:'연간 · 감사보고서',
+      who:'아이웨어 기업',src:'DART 감사보고서(별도) 연간 수치 그대로 · 국내 브랜드(젠틀몬스터·블루엘리펀트) vs 글로벌 국내법인(룩소티카코리아 = 에실로룩소티카) vs 안경 체인(다비치) · 아이아이컴바인드는 탬버린즈·누데이크 포함'},
 };
-const CMP_GROWTH={peer:'yoy',fb:'yoy'};
+const CMP_GROWTH={peer:'yoy',fb:'yoy',ey:'yoy'};
 // [키, 이름, 높을수록 좋음, 표시]
 const PEER_METRICS=[
   ['rev','매출',true,v=>moneyShort(v,'KRW')],
@@ -1757,7 +1764,7 @@ function peerTip(el,tid){
 }
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+platformCardHtml()+peerCardHtml()+cmpCardHtml('fb')+naverCardHtml();
+  const top=crossChartHtml()+platformCardHtml()+peerCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
