@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v31.2: 아이웨어 비교에 케어링아이웨어코리아·시원아이웨어 추가(dart_fetch v2.9) — 6곳
 v31.1: 국내 탭 '👕 국내 패션 브랜드 비교' 카드(dart_fetch v2.8 13곳: 에이유브랜즈·피스피스스튜디오·에스제이그룹·마뗑킴·
        레이어·하이라이트브랜즈·하고하우스·비케이브·파이브스페이스·코자·안다르·시선인터내셔널·로우클래식) — 수입 브랜드
        유통사 비교 카드를 공통 비교 카드로 바꿔 함께 사용(자사 강조는 유통사 비교에만). 기업 탭 칩 '패션 브랜드 비교'.
@@ -581,7 +582,7 @@ const DOMAINS = {
   "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com",
   "krd:kream":"kream.co.kr", "krd:trenbe":"trenbe.com", "krd:balaan":"balaan.co.kr", "krd:mustit":"mustit.co.kr",
   "krd:rexmond":"okmall.com", "krd:hana_int":"hahamall.net", "krd:bbluein":"bblue.co.kr",
-  "EL.PA":"essilorluxottica.com", "SFL.MI":"safilogroup.com", "krd:iicombined":"gentlemonster.com", "krd:luxottica_kr":"luxottica.com",
+  "EL.PA":"essilorluxottica.com", "SFL.MI":"safilogroup.com", "krd:iicombined":"gentlemonster.com", "krd:luxottica_kr":"luxottica.com", "krd:kering_ey_kr":"keringeyewear.com",
   "krd:fivespace":"adererror.com", "krd:andar":"andar.co.kr", "krd:matinkim":"matinkim.com", "krd:piecepeace":"mardimercredi.com"
 };
 /* ── 브랜드 본사 국가 국기 ── */
@@ -1666,14 +1667,14 @@ const PEER_SELF='krd:trexi';
 const PEER_KEYS=[PEER_SELF,'krd:daelim_corp','krd:rexmond','krd:bazig','krd:creed','krd:hana_int','krd:t1global','krd:bbluein','krd:starintl'];
 const FB_KEYS=['krd:aubrandz','krd:piecepeace','krd:sjgroup','krd:matinkim','krd:layer','krd:highlight','krd:hagohouse',
   'krd:bcave','krd:fivespace','krd:koza','krd:andar','krd:sisun','krd:lowclassic'];
-const EY_KEYS=['krd:iicombined','krd:blueelephant','krd:luxottica_kr','krd:davich'];
+const EY_KEYS=['krd:iicombined','krd:blueelephant','krd:luxottica_kr','krd:kering_ey_kr','krd:seeone','krd:davich'];
 const CMP={
   peer:{id:'peerCard',icon:'🏷️',name:'수입 브랜드 유통사 비교',keys:PEER_KEYS,self:PEER_SELF,selfName:'트렉시',tag:'연간 · 감사보고서',
         who:'비교 유통사',src:'DART 감사보고서(별도) 연간 수치 그대로'},
   fb:{id:'fbCard',icon:'👕',name:'국내 패션 브랜드 비교',keys:FB_KEYS,self:null,tag:'연간 · 사업·감사보고서',
       who:'패션 브랜드사',src:'DART 별도 재무제표 연간 수치 그대로(상장 3곳 사업보고서 · 외감 10곳 감사보고서) · 하고하우스는 브랜드 육성·투자 회사'},
   ey:{id:'eyCard',icon:'🕶️',name:'아이웨어 비교',keys:EY_KEYS,self:null,tag:'연간 · 감사보고서',
-      who:'아이웨어 기업',src:'DART 감사보고서(별도) 연간 수치 그대로 · 국내 브랜드(젠틀몬스터·블루엘리펀트) vs 글로벌 국내법인(룩소티카코리아 = 에실로룩소티카) vs 안경 체인(다비치) · 아이아이컴바인드는 탬버린즈·누데이크 포함'},
+      who:'아이웨어 기업',src:'DART 감사보고서(별도) 연간 수치 그대로 · 국내 브랜드(젠틀몬스터·블루엘리펀트) vs 글로벌 국내법인(룩소티카코리아 = 에실로룩소티카, 케어링아이웨어코리아 = 케링) vs 명품 아이웨어 수입 유통(시원아이웨어) vs 안경 체인(다비치) · 아이아이컴바인드는 탬버린즈·누데이크 포함'},
 };
 const CMP_GROWTH={peer:'yoy',fb:'yoy',ey:'yoy'};
 // [키, 이름, 높을수록 좋음, 표시]
