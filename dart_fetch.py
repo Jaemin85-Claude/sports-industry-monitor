@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.1: 차입금을 항목별(단기차입금·유동성장기부채·장기차입금·사채)로 받아 코드에서 합산(FIN_V=2 → 9곳 1회 재추출) —
+      v3.0에서 모델이 합계를 낼 때 항목을 넣었다 뺐다 해 트렉시 차입금이 실행마다 76억/99억으로 달랐음.
+      두 보고서가 같은 연도를 담으면(최신 보고서의 전기 = 직전 보고서의 당기) 항목별로 대조해, 매출의 0.1%와 값의 1%를
+      모두 넘게 다르면 그 항목을 bad로 표시(화면에서 그 항목을 쓰는 지표만 '확인 필요')
 v3.0: 수입 브랜드 유통사 비교군 9곳(FIN_IDS, 트렉시 포함)에 재무상태표·현금흐름표 추출 추가(대표 요청 2026-10-03) —
       현금·단기금융상품·매출채권·매입채무·차입금·리스부채·자산·부채·자본총계·영업활동현금흐름·CAPEX·감가상각비.
       손익 추출(캐시 SCHEMA_V=3)은 그대로 두고 별도 호출·별도 캐시(_cache_fin, FIN_V=1) — 다른 법인은 재추출 없음.
@@ -63,8 +67,11 @@ SCHEMA_V = 3
 LISTED_PATH = "docs/kr_listed_fin.json"
 # 재무상태표·현금흐름표 추가 추출 대상(수입 브랜드 유통사 비교군) — 손익과 별도 캐시
 FIN_IDS = {"trexi", "daelim_corp", "rexmond", "bazig", "creed", "hana_int", "t1global", "bbluein", "starintl"}
-FIN_V = 1
-FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "borrow", "lease", "inv", "ocf", "capex", "da")
+FIN_V = 2
+BORROW_PARTS = ("st_borrow", "cur_lt", "lt_borrow", "bonds")   # 합계(borrow)는 코드에서 계산
+FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap") + BORROW_PARTS + ("lease", "inv", "ocf", "capex", "da")
+# 보고서 간 대조 항목(같은 연도를 두 보고서에서 읽었을 때). 없음(null)과 0은 같게 봄
+CROSS_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "borrow", "lease", "inv", "ocf", "capex", "da")
 
 # ── 국내 상장 20개사 (야후 티커 → 종목코드 앞 6자리로 법인코드 매칭) ──
 KR_LISTED = ["081660.KS", "383220.KS", "298540.KQ", "120110.KS", "337930.KQ",
@@ -468,8 +475,12 @@ From the statement of financial position (재무상태표), at each period end:
 - stfin: 단기금융상품 (short-term financial instruments / deposits); null if none shown
 - ar: 매출채권 (net of allowance). If only "매출채권및기타채권" is shown, use that line.
 - ap: 매입채무. If only "매입채무및기타채무" is shown, use that line.
-- borrow: interest-bearing borrowings = 단기차입금 + 유동성장기차입금(유동성장기부채) + 장기차입금
-  + 사채(유동성사채 포함). Exclude lease liabilities. 0 if the company shows none.
+Borrowings — report each line exactly as shown on the face of 재무상태표 (do NOT add them up;
+null if the company has no such line; exclude lease liabilities):
+- st_borrow: 단기차입금 (include 외화단기차입금 if shown as a separate line)
+- cur_lt: 유동성장기차입금 / 유동성장기부채 / 유동성사채 (current portion of long-term debt and bonds)
+- lt_borrow: 장기차입금 (non-current)
+- bonds: 사채 (non-current, net of discount)
 - lease: 리스부채 (current + non-current); null if not shown
 - inv: 재고자산
 From the cash flow statement (현금흐름표), for each period:
@@ -481,13 +492,13 @@ For the PRIOR period also:
 
 Amounts must be in KRW units of 원 (convert if the statement says 단위: 천원 or 백만원).
 Use ONLY figures explicitly stated; if a figure is not stated, use null. Do not compute anything
-except the sums described for borrow, capex and da.
+except the sums described for capex and da.
 
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "unit_note": "단위 표기 그대로",
-  "current": {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "borrow": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n}},
-  "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "borrow": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}}
+  "current": {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "st_borrow": n, "cur_lt": n, "lt_borrow": n, "bonds": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n}},
+  "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "st_borrow": n, "cur_lt": n, "lt_borrow": n, "bonds": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}}
 }}
 (n = number or null)
 Start your response with {{ — no explanation before or after the JSON.
@@ -511,9 +522,19 @@ def fin_check(rec, pl):
     return " · ".join(bad) or None
 
 
+def fin_cross(a, b, rev):
+    """같은 연도를 두 보고서에서 읽은 값 대조 → 다른 항목 목록. 기준: 차이가 값의 1%와 매출의 0.1%를 모두 넘음"""
+    bad = []
+    for k in CROSS_KEYS:
+        x, y = a.get(k) or 0, b.get(k) or 0
+        if abs(x - y) > max(0.01 * max(abs(x), abs(y)), 0.001 * abs(rev or 0)):
+            bad.append(k)
+    return bad
+
+
 def fetch_fin_years(name, reports, cached, pl_recs):
     """reports: 감사보고서 목록(최신순). cached: {rcept_no: {end: rec}}. 반환 {end: rec}, 새 캐시"""
-    out, new_cache = {}, {}
+    out, new_cache, seen = {}, {}, {}
     for rcept, dt, nm in reports[:2]:
         if rcept in cached and cached[rcept] and all(v.get("fin_v") == FIN_V for v in cached[rcept].values()):
             log(f"    [재무상태표·현금흐름] {dt}: 캐시 사용")
@@ -531,6 +552,8 @@ def fetch_fin_years(name, reports, cached, pl_recs):
                 if not p.get("end"):
                     continue
                 rec = {k: to_int(p.get(k)) for k in FIN_KEYS}
+                parts = [rec[k] for k in BORROW_PARTS if rec.get(k) is not None]
+                rec["borrow"] = sum(parts) if parts or rec.get("assets") is not None else None
                 if which == "prior":
                     rec["equity_begin"] = to_int(p.get("equity_begin"))
                 if all(rec.get(k) is None for k in ("assets", "equity", "ocf")):
@@ -542,11 +565,21 @@ def fetch_fin_years(name, reports, cached, pl_recs):
             time.sleep(1)
         for end, rec in recs.items():
             rec["chk"] = fin_check(rec, pl_recs.get(end))
+            rec.pop("bad", None)
             out.setdefault(end, rec)
+            seen.setdefault(end, []).append(rec)
             log(f"      {end}: 자산 {rec.get('assets')} / 부채 {rec.get('liab')} / 자본 {rec.get('equity')} / 현금 {rec.get('cash')}"
-                f" / 차입금 {rec.get('borrow')} / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')}"
+                f" / 차입금 {rec.get('borrow')} (단기 {rec.get('st_borrow')} · 유동성 {rec.get('cur_lt')} · 장기 {rec.get('lt_borrow')}"
+                f" · 사채 {rec.get('bonds')}) / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')}"
                 f" / 상각 {rec.get('da')}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}")
         new_cache[rcept] = recs
+    # 보고서 간 대조: 최신 보고서의 전기 값(out에 쓰는 값)과 직전 보고서의 당기 값
+    for end, lst in seen.items():
+        if len(lst) > 1:
+            bad = fin_cross(lst[0], lst[1], (pl_recs.get(end) or {}).get("rev"))
+            if bad:
+                out[end] = dict(out[end], bad=bad)
+                log(f"      ⚠ {end} 보고서 간 다름: {', '.join(bad)}")
     return out, new_cache
 
 
