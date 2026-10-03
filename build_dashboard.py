@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.1: 유통사 재무 지표 — 보고서 간 값이 다른 항목(dart_fetch v3.1 fin.bad)을 쓰는 지표만 '확인 필요'로 표시
+       (예: 차입금이 다르면 순부채·순부채/EBITDA만), 기업 상세에 다른 항목 이름 표시
 v32: 🏷️ 수입 브랜드 유통사 비교 카드를 재무 분석 지표 카드로 교체(2026-10-03 목업 승인) — 그룹 탭 5개(손익·성장/수익성/
      운전자본/현금/안정성) + 지표 칩 17개(매출·성장률·매출총이익률·영업이익률·ROE·재고·매출채권·매입채무일수·현금전환주기·
      OCF·FCF·이익의 현금화·순부채·순부채/EBITDA·부채비율·현금·순자산), 3개년 표(트렉시 맨 위·중앙값 행)·최근 연도 순위 막대·
@@ -1815,34 +1817,34 @@ const FI_M={
   yoy:{g:'pl',nm:'매출 성장률',hi:1,fmt:v=>pp(v),v:(y,p)=>p&&p.rev>0?(y.rev/p.rev-1)*100:null,f:'올해 매출 ÷ 전년 매출 − 1',dir:'높을수록 좋음',why:'브랜드 확보·채널 확장이 실제 매출로 이어지는지'},
   gm:{g:'prof',nm:'매출총이익률',hi:1,fmt:v=>fiPct(v),v:y=>y.cogs!=null?(y.rev-y.cogs)/y.rev*100:null,f:'(매출 − 매출원가) ÷ 매출',dir:'높을수록 좋음',why:'매입가·환율·할인 판매의 결과. 병행·수입 유통의 가격 경쟁력'},
   opm:{g:'prof',nm:'영업이익률',hi:1,fmt:v=>fiPct(v),v:y=>y.op!=null?y.op/y.rev*100:null,f:'영업이익 ÷ 매출',dir:'높을수록 좋음',why:'판관비(인건비·물류·수수료)까지 뺀 본업 수익력'},
-  roe:{g:'prof',nm:'ROE',hi:1,bs:1,fmt:v=>fiPct(v),v:(y,p)=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
-        const pf=fiF(p), e0=pf&&typeof pf!=='string'&&pf.equity!=null?pf.equity:f.equity_begin;
+  roe:{g:'prof',u:['equity'],nm:'ROE',hi:1,bs:1,fmt:v=>fiPct(v),v:(y,p)=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+        const pf=fiF(p), e0=pf&&typeof pf!=='string'&&pf.equity!=null&&!(pf.bad||[]).includes('equity')?pf.equity:f.equity_begin;
         if(f.equity==null||e0==null||y.ni==null) return null; const a=(f.equity+e0)/2; return a>0?y.ni/a*100:'자본잠식';},
        f:'순이익 ÷ 평균 자기자본(기초·기말)',dir:'높을수록 좋음',why:'주주 돈(순자산)으로 얼마를 벌었나. 차입 효과까지 포함'},
   dio:{g:'wc',nm:'재고일수',hi:0,fmt:fiDay,v:y=>y.inv!=null&&y.cogs?y.inv/y.cogs*365:null,f:'기말 재고 ÷ 매출원가 × 365',dir:'짧을수록 좋음',why:'재고가 현금으로 바뀌는 데 걸리는 날. 시즌 지난 재고 위험'},
-  dso:{g:'wc',nm:'매출채권일수',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ar!=null?f.ar/y.rev*365:null;},
+  dso:{g:'wc',u:['ar'],nm:'매출채권일수',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ar!=null?f.ar/y.rev*365:null;},
        f:'기말 매출채권 ÷ 매출 × 365',dir:'짧을수록 좋음',why:'오픈마켓·백화점 정산이 들어오는 데 걸리는 날'},
-  dpo:{g:'wc',nm:'매입채무일수',hi:1,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ap!=null&&y.cogs?f.ap/y.cogs*365:null;},
+  dpo:{g:'wc',u:['ap'],nm:'매입채무일수',hi:1,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ap!=null&&y.cogs?f.ap/y.cogs*365:null;},
        f:'기말 매입채무 ÷ 매출원가 × 365',dir:'길수록 현금에 유리',why:'공급처 결제를 미룰 수 있는 날. 선결제가 많은 수입 유통은 짧게 나옴'},
-  ccc:{g:'wc',nm:'현금전환주기',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+  ccc:{g:'wc',u:['ar','ap'],nm:'현금전환주기',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
         return f.ar!=null&&f.ap!=null&&y.inv!=null&&y.cogs?y.inv/y.cogs*365+f.ar/y.rev*365-f.ap/y.cogs*365:null;},
        f:'재고일수 + 매출채권일수 − 매입채무일수',dir:'짧을수록 좋음',why:'물건값을 낸 뒤 판매 대금이 들어올 때까지 묶이는 날. 운전자금 필요량'},
-  ocf:{g:'cash',nm:'영업현금흐름(OCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf;},
+  ocf:{g:'cash',u:['ocf'],nm:'영업현금흐름(OCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf;},
        c:y=>y.fin.ocf/y.rev*100,cn:'매출 대비 %',f:'현금흐름표 \'영업활동으로 인한 현금흐름\'',dir:'플러스·클수록 좋음',why:'장부상 이익이 아니라 실제로 들어온 현금. 재고·채권이 늘면 이익이 나도 마이너스'},
-  fcf:{g:'cash',nm:'잉여현금흐름(FCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf!=null&&f.capex!=null?f.ocf-f.capex:null;},
+  fcf:{g:'cash',u:['ocf','capex'],nm:'잉여현금흐름(FCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf!=null&&f.capex!=null?f.ocf-f.capex:null;},
        c:y=>(y.fin.ocf-y.fin.capex)/y.rev*100,cn:'매출 대비 %',f:'OCF − 유형·무형자산 취득(CAPEX)',dir:'플러스·클수록 좋음',why:'설비·시스템 투자 후 남는 현금. 빚 상환·새 브랜드 선매입 여력'},
-  conv:{g:'cash',nm:'이익의 현금화',hi:1,bs:1,clip:300,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.ocf==null||y.op==null) return null; return y.op>0?f.ocf/y.op*100:'영업적자';},
+  conv:{g:'cash',u:['ocf'],nm:'이익의 현금화',hi:1,bs:1,clip:300,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.ocf==null||y.op==null) return null; return y.op>0?f.ocf/y.op*100:'영업적자';},
        f:'OCF ÷ 영업이익',dir:'100% 이상이 좋음',why:'영업이익이 현금으로 들어왔나. 계속 100% 아래면 재고·채권에 이익이 묶임. 재고가 크게 늘거나 준 해엔 수백 %로 흔들려 3년 흐름으로 봄'},
-  nd:{g:'stab',nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
+  nd:{g:'stab',u:['borrow','lease','cash','stfin','equity'],nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
       c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금(단기·장기·사채) + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
-  ndx:{g:'stab',nm:'순부채/EBITDA',hi:0,nr:1,bs:1,fmt:v=>v<0?'순현금':v.toFixed(1)+'배',v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+  ndx:{g:'stab',u:['borrow','lease','cash','stfin','da'],nm:'순부채/EBITDA',hi:0,nr:1,bs:1,fmt:v=>v<0?'순현금':v.toFixed(1)+'배',v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
         const n=fiNd(f), e=fiDa(y,f); if(n==null||e==null) return null; return e>0?n/e:'EBITDA 적자';},
        f:'순부채 ÷ (영업이익 + 감가상각비)',dir:'낮을수록 좋음 · 3배 넘으면 주의',why:'번 돈으로 빚을 몇 년에 갚나. 은행 여신 심사에서 보는 기준'},
-  dr:{g:'stab',nm:'부채비율',hi:0,bs:1,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.liab==null||f.equity==null) return null; return f.equity>0?f.liab/f.equity*100:'자본잠식';},
+  dr:{g:'stab',u:['liab','equity'],nm:'부채비율',hi:0,bs:1,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.liab==null||f.equity==null) return null; return f.equity>0?f.liab/f.equity*100:'자본잠식';},
       f:'부채총계 ÷ 자본총계',dir:'낮을수록 좋음 · 200% 넘으면 주의',why:'매입채무까지 포함한 전체 빚 부담'},
-  cash:{g:'stab',nm:'현금',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.cash!=null?f.cash+(f.stfin||0):null;},
+  cash:{g:'stab',u:['cash','stfin'],nm:'현금',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.cash!=null?f.cash+(f.stfin||0):null;},
         c:y=>(y.fin.cash+(y.fin.stfin||0))/y.rev*100,cn:'매출 대비 %',f:'현금및현금성자산 + 단기금융상품',dir:'참고',why:'당장 쓸 수 있는 돈. 회사 규모 차이가 커서 순위 없이 참고'},
-  eq:{g:'stab',nm:'순자산',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.equity;},
+  eq:{g:'stab',u:['equity'],nm:'순자산',ref:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.equity;},
       f:'자본총계(자산 − 부채)',dir:'참고',why:'쌓아 온 자기 돈. 회사 규모 차이가 커서 순위 없이 참고'},
 };
 const FI_K=Object.keys(FI_M);
@@ -1856,7 +1858,9 @@ function fiRows(){
 }
 function fiVal(r,k,fy){ // {v,c,s} 또는 {t:'사유'}
   const y=r.by[fy]; if(!y) return {t:'―'};
-  const m=FI_M[k], v=m.v(y,r.by[fy-1]||null);
+  const m=FI_M[k];
+  if(y.fin&&y.fin.bad&&m.u&&m.u.some(f=>y.fin.bad.includes(f))) return {t:'확인 필요'};   // 보고서 간 값이 다른 항목을 쓰는 지표
+  const v=m.v(y,r.by[fy-1]||null);
   if(v==null||(typeof v==='number'&&!isFinite(v))) return {t:'―'};
   if(typeof v==='string') return {t:v};
   const c=m.c?m.c(y):v;
@@ -1928,7 +1932,7 @@ function finCardHtml(){
     h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값(${esc(c.selfName)} 제외)</span>`:''}</div>`;
   } else h+=`<div class="na" style="margin-top:8px">비교할 수치 없음</div>`;
   h+=`<div class="fi-def"><dl><dt>식</dt><dd>${esc(m.f)}</dd><dt>좋은 방향</dt><dd>${esc(m.dir)}</dd><dt>왜 보나</dt><dd>${esc(m.why)}</dd></dl></div>`;
-  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본 등 추출 검증 실패 · 행을 누르면 기업 상세</div></div>`;
+  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본이거나 두 감사보고서의 같은 연도 값이 다름 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
 // 기업 상세: 유통사 재무 지표 3개년(재무상태표·현금흐름이 있는 법인만)
@@ -1942,8 +1946,9 @@ function fiDetailCard(e){
     FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
       h+=`<tr><td>${esc(m.nm)}</td>${fys.map(f=>{const x=fiVal(r,k,f); return x.v==null?`<td class="na">${esc(x.t)}</td>`:`<td class="${x.v<0?(m.nr?'pos':'neg'):''}">${m.fmt(x.v)}</td>`;}).join('')}</tr>`; });
   });
-  const chk=(e.years||[]).filter(y=>y.fin&&y.fin.chk);
-  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc(y.fin.chk)}`).join(' · ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
+  const FI_NM={assets:'자산',liab:'부채',equity:'자본',cash:'현금',stfin:'단기금융상품',ar:'매출채권',ap:'매입채무',borrow:'차입금',lease:'리스부채',inv:'재고',ocf:'OCF',capex:'CAPEX',da:'감가상각비'};
+  const chk=(e.years||[]).filter(y=>y.fin&&(y.fin.chk||(y.fin.bad||[]).length));
+  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'보고서 간 다름('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
   return h;
 }
 function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
