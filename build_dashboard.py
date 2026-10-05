@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.6: 더보기 '👕 패션 브랜드' 한 화면에 국내 패션 브랜드 비교 + 그 아래 아이웨어 비교(대표 요청 2026-10-05) — 아이웨어 메뉴 줄 삭제.
+       기업 탭 '패션 브랜드 비교'·'아이웨어 비교' 칩 삭제(중복). 더보기에서 연 상세에서 돌아오면 보던 위치로 스크롤
 v32.5: 국내 탭 정리(대표 요청 2026-10-05) — 🛒 국내 온라인 플랫폼 카드는 기업 탭 '🛒 온라인 플랫폼' 칩으로 이동(칩을 누르면
        표 대신 이 카드), 👕 국내 패션 브랜드 비교·🕶️ 아이웨어 비교는 더보기 별도 화면으로 이동. 국내 탭에서는 셋 다 삭제
 v32.4: 🏷️ 수입 브랜드 유통사 비교를 국내 탭에서 더보기 › 유통사 비교로 이동(대표 요청 2026-10-05) — 메뉴 줄에 트렉시
@@ -1187,10 +1189,8 @@ let coFilter='전체', coQuery='';
 function buildCoChips(){
   const rows=rows_all();
   const chips=[['전체',rows.length],...CO_GROUPS.map(g=>[g,rows.filter(r=>r.group===g).length]).filter(x=>x[1]>0),
-    ['온라인 플랫폼',rows.filter(r=>KR_PLATFORMS.includes(r.key)).length],
-    ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length],
-    ['아이웨어 비교',rows.filter(r=>EY_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
-  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='온라인 플랫폼'?'🛒':g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
+    ['온라인 플랫폼',rows.filter(r=>KR_PLATFORMS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
+  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='온라인 플랫폼'?'🛒':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
   document.querySelectorAll('#coChips .chip').forEach(c=>c.onclick=()=>{coFilter=c.dataset.g;buildCoChips();buildCo();});
 }
 function buildCo(){
@@ -1199,7 +1199,7 @@ function buildCo(){
   document.getElementById('coPlat').innerHTML=plat?platformCardHtml():'';
   document.getElementById('coTblCard').style.display=plat?'none':'';
   if(plat) return;
-  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
+  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter)&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
@@ -1230,11 +1230,13 @@ function buildCo(){
 }
 function showCoList(){ document.getElementById('coDetail').style.display='none'; document.getElementById('coList').style.display=''; }
 let DET_BACK=null;   // 더보기 화면에서 상세를 열었으면 그 화면 키(뒤로 가기 대상)
-const MORE_NAME={peer:'유통사 비교',fb:'패션 브랜드 비교',ey:'아이웨어 비교',fx:'환율',cb:'해외직구',status:'수집 상태'};
+const MORE_NAME={peer:'유통사 비교',fb:'패션 브랜드',ey:'패션 브랜드',fx:'환율',cb:'해외직구',status:'수집 상태'};
+let DET_SCROLL=0;   // 더보기에서 상세로 갈 때 스크롤 위치 — 돌아오면 복원
 function setCoBack(v){ DET_BACK=v||null; const b=document.getElementById('coBack'); if(b) b.textContent=DET_BACK?'◂ '+(MORE_NAME[DET_BACK]||'더보기'):'◂ 기업 목록'; }
 function goDetail(t){
   const pm=document.getElementById('p-more');
   setCoBack(pm&&pm.classList.contains('on')?MORE_VIEW:null);
+  DET_SCROLL=DET_BACK?document.getElementById('content').scrollTop:0;
   sw('co');
   document.getElementById('coList').style.display='none';
   document.getElementById('coDetail').style.display='';
@@ -2172,21 +2174,24 @@ function moreCbHtml(){
 }
 function moreMenuHtml(){
   const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore();
-  const cmpN=cid=>{const r=cmpData(CMP[cid]); const L=r.map(x=>x.end).filter(Boolean).sort().pop(); return r.length?`<b>${r.length}곳</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
+  const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`패션 <b>${a.length}</b> · 아이웨어 <b>${b.length}</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
     ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
-    ${row('fb','👕','패션 브랜드 비교','국내 패션 브랜드 매출·수익성·성장',cmpN('fb'))}
-    ${row('ey','🕶️','아이웨어 비교','국내 브랜드·글로벌 국내법인·안경 체인',cmpN('ey'))}
+    ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교',cmpN('fb'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
     ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
   </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
 }
+function moreFashionHtml(){   // 👕 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
+  const sec=cid=>{const c=CMP[cid], n=cmpData(c).length; return n?`<div class="ndate" style="margin-top:16px">${c.icon} ${esc(c.name)} <span class="na" style="font-weight:400">${n}곳 · ${esc(c.tag)}</span></div>`+cmpCardHtml(cid):'';};
+  return moreHead('👕 패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · DART 연간')+sec('fb')+sec('ey');
+}
 function buildMore(){
   const el=document.getElementById('moreBody'); if(!el) return;
   el.innerHTML = MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
-    : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreHead(CMP[MORE_VIEW].icon+' '+CMP[MORE_VIEW].name,CMP[MORE_VIEW].tag+' · '+cmpData(CMP[MORE_VIEW]).length+'곳')+cmpCardHtml(MORE_VIEW)
+    : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreFashionHtml()
     : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
     : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()
@@ -2210,7 +2215,7 @@ function sw(p){
   document.getElementById('content').scrollTo(0,0);
 }
 document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ setCoBack(null); sw(t.dataset.p); showCoList(); if(t.dataset.p==='more') moreOpen(null); }; });
-document.getElementById('coBack').onclick=()=>{ const v=DET_BACK; setCoBack(null); if(v) goMore(v); else showCoList(); };
+document.getElementById('coBack').onclick=()=>{ const v=DET_BACK; setCoBack(null); if(v){ goMore(v); document.getElementById('content').scrollTo(0,DET_SCROLL); } else showCoList(); };
 document.getElementById('coSearch').addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();});
 document.addEventListener('click',e=>{
   const p=e.target.closest('.pname')||e.target.closest('.bar-row .lb');
