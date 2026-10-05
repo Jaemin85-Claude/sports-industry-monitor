@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.5: 국내 탭 정리(대표 요청 2026-10-05) — 🛒 국내 온라인 플랫폼 카드는 기업 탭 '🛒 온라인 플랫폼' 칩으로 이동(칩을 누르면
+       표 대신 이 카드), 👕 국내 패션 브랜드 비교·🕶️ 아이웨어 비교는 더보기 별도 화면으로 이동. 국내 탭에서는 셋 다 삭제
 v32.4: 🏷️ 수입 브랜드 유통사 비교를 국내 탭에서 더보기 › 유통사 비교로 이동(대표 요청 2026-10-05) — 메뉴 줄에 트렉시
        '중앙값보다 나은 지표' 수 표시. 기업 탭 '유통사 비교' 칩 삭제(중복). 더보기에서 연 기업 상세의 '뒤로'는 그 더보기 화면으로
 v32.3: 트렉시(자사)는 '🏷️ 수입 브랜드 유통사 비교' 카드와 그 상세에만 표시(대표 요청 2026-10-05, 나중에 합침) —
@@ -547,7 +549,8 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   <div id="coList">
     <input class="search" id="coSearch" placeholder="기업명 검색 (예: 나이키, 아식스)">
     <div class="chips" id="coChips"></div>
-    <div class="card" style="padding:4px 8px"><table id="coTbl"></table></div>
+    <div id="coPlat"></div>
+    <div class="card" id="coTblCard" style="padding:4px 8px"><table id="coTbl"></table></div>
     <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
   </div>
   <div id="coDetail" style="display:none">
@@ -1184,12 +1187,18 @@ let coFilter='전체', coQuery='';
 function buildCoChips(){
   const rows=rows_all();
   const chips=[['전체',rows.length],...CO_GROUPS.map(g=>[g,rows.filter(r=>r.group===g).length]).filter(x=>x[1]>0),
+    ['온라인 플랫폼',rows.filter(r=>KR_PLATFORMS.includes(r.key)).length],
     ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length],
     ['아이웨어 비교',rows.filter(r=>EY_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
-  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
+  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='온라인 플랫폼'?'🛒':g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
   document.querySelectorAll('#coChips .chip').forEach(c=>c.onclick=()=>{coFilter=c.dataset.g;buildCoChips();buildCo();});
 }
 function buildCo(){
+  // 🛒 온라인 플랫폼 칩: 공통 표 대신 플랫폼 카드(원화 환산·상태 표기 포함, v32.5)
+  const plat=coFilter==='온라인 플랫폼';
+  document.getElementById('coPlat').innerHTML=plat?platformCardHtml():'';
+  document.getElementById('coTblCard').style.display=plat?'none':'';
+  if(plat) return;
   const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
@@ -1221,7 +1230,7 @@ function buildCo(){
 }
 function showCoList(){ document.getElementById('coDetail').style.display='none'; document.getElementById('coList').style.display=''; }
 let DET_BACK=null;   // 더보기 화면에서 상세를 열었으면 그 화면 키(뒤로 가기 대상)
-const MORE_NAME={peer:'유통사 비교',fx:'환율',cb:'해외직구',status:'수집 상태'};
+const MORE_NAME={peer:'유통사 비교',fb:'패션 브랜드 비교',ey:'아이웨어 비교',fx:'환율',cb:'해외직구',status:'수집 상태'};
 function setCoBack(v){ DET_BACK=v||null; const b=document.getElementById('coBack'); if(b) b.textContent=DET_BACK?'◂ '+(MORE_NAME[DET_BACK]||'더보기'):'◂ 기업 목록'; }
 function goDetail(t){
   const pm=document.getElementById('p-more');
@@ -1770,7 +1779,7 @@ function cmpCardHtml(cid){
   // 강조 기준: 비교군 중앙값(자사 제외)보다 나은 지표만 — 순위 중간을 '강점'으로 부풀리지 않음
   const hiOf=Object.fromEntries(PEER_METRICS.map(([k,,hi])=>[k,hi]));
   const topHalf=(k,r)=>r[k]!=null&&med[k]!=null&&(hiOf[k]?r[k]>med[k]:r[k]<med[k]);
-  let h=`<div class="card" id="${c.id}"><h3>${c.icon} ${c.name} <span class="tag">${c.tag}</span></h3>`;
+  let h=`<div class="card" id="${c.id}">`;   // 제목은 더보기 화면 머리글(v32.5)
   if(me){
     const items=PEER_METRICS.map(([k,nm])=>({k,nm,x:rk[k].of(me),n:rk[k].n})).filter(i=>i.x!=null);
     const strong=items.filter(i=>topHalf(i.k,me)).sort((a,b)=>a.x-b.x), rest=items.filter(i=>!topHalf(i.k,me));
@@ -1975,7 +1984,7 @@ function peerTip(el,tid){
 }
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+platformCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
+  const top=crossChartHtml()+naverCardHtml();   // 플랫폼은 기업 탭 칩, 패션·아이웨어 비교는 더보기(v32.5)
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
@@ -2163,9 +2172,12 @@ function moreCbHtml(){
 }
 function moreMenuHtml(){
   const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore();
+  const cmpN=cid=>{const r=cmpData(CMP[cid]); const L=r.map(x=>x.end).filter(Boolean).sort().pop(); return r.length?`<b>${r.length}곳</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
     ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
+    ${row('fb','👕','패션 브랜드 비교','국내 패션 브랜드 매출·수익성·성장',cmpN('fb'))}
+    ${row('ey','🕶️','아이웨어 비교','국내 브랜드·글로벌 국내법인·안경 체인',cmpN('ey'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
     ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
@@ -2174,6 +2186,7 @@ function moreMenuHtml(){
 function buildMore(){
   const el=document.getElementById('moreBody'); if(!el) return;
   el.innerHTML = MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
+    : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreHead(CMP[MORE_VIEW].icon+' '+CMP[MORE_VIEW].name,CMP[MORE_VIEW].tag+' · '+cmpData(CMP[MORE_VIEW]).length+'곳')+cmpCardHtml(MORE_VIEW)
     : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
     : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()
