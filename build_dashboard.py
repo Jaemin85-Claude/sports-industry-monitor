@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.3: 트렉시(자사)는 '🏷️ 수입 브랜드 유통사 비교' 카드와 그 상세에만 표시(대표 요청 2026-10-05, 나중에 합침) —
+       기업 탭 목록·종합 탭 신호·🛒 국내 온라인 플랫폼 카드에서 제외(PEER_ONLY 한 곳에서 관리)
+v32.2: 순부채 정의에 RCPS 부채 포함(대표 결정, dart_fetch v3.2) — 식 문구 수정, '확인 필요' 사유에 부채 항목 누락 추가
 v32.1: 유통사 재무 지표 — 보고서 간 값이 다른 항목(dart_fetch v3.1 fin.bad)을 쓰는 지표만 '확인 필요'로 표시
        (예: 차입금이 다르면 순부채·순부채/EBITDA만), 기업 상세에 다른 항목 이름 표시
 v32: 🏷️ 수입 브랜드 유통사 비교 카드를 재무 분석 지표 카드로 교체(2026-10-03 목업 승인) — 그룹 탭 5개(손익·성장/수익성/
@@ -1089,6 +1092,8 @@ function segOf(t){
 }
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
+// 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
+const PEER_ONLY=new Set(['krd:trexi']);
 function rows_all(){
   const out=[];
   DATA.items.forEach(x=>{
@@ -1097,7 +1102,7 @@ function rows_all(){
       rev:fy.rev, cur:finCurOf(x), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
       inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
   });
-  ((KRD&&KRD.entities)||[]).forEach(e=>{
+  ((KRD&&KRD.entities)||[]).filter(e=>!PEER_ONLY.has('krd:'+e.id)).forEach(e=>{
     const ys=(e.years||[]).filter(y=>y.rev!=null); const last=ys[ys.length-1], prev=ys[ys.length-2];
     const yoy=(last&&prev&&prev.rev)?(last.rev/prev.rev-1)*100:null;
     const opm=(last&&last.op!=null&&last.rev)?last.op/last.rev*100:null;
@@ -1836,7 +1841,7 @@ const FI_M={
   conv:{g:'cash',u:['ocf'],nm:'이익의 현금화',hi:1,bs:1,clip:300,fmt:v=>fiPct(v,0),v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; if(f.ocf==null||y.op==null) return null; return y.op>0?f.ocf/y.op*100:'영업적자';},
        f:'OCF ÷ 영업이익',dir:'100% 이상이 좋음',why:'영업이익이 현금으로 들어왔나. 계속 100% 아래면 재고·채권에 이익이 묶임. 재고가 크게 늘거나 준 해엔 수백 %로 흔들려 3년 흐름으로 봄'},
   nd:{g:'stab',u:['borrow','lease','cash','stfin','equity'],nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
-      c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금(단기·장기·사채) + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
+      c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금·사채 + RCPS 부채 + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
   ndx:{g:'stab',u:['borrow','lease','cash','stfin','da'],nm:'순부채/EBITDA',hi:0,nr:1,bs:1,fmt:v=>v<0?'순현금':v.toFixed(1)+'배',v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
         const n=fiNd(f), e=fiDa(y,f); if(n==null||e==null) return null; return e>0?n/e:'EBITDA 적자';},
        f:'순부채 ÷ (영업이익 + 감가상각비)',dir:'낮을수록 좋음 · 3배 넘으면 주의',why:'번 돈으로 빚을 몇 년에 갚나. 은행 여신 심사에서 보는 기준'},
@@ -1932,7 +1937,7 @@ function finCardHtml(){
     h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값(${esc(c.selfName)} 제외)</span>`:''}</div>`;
   } else h+=`<div class="na" style="margin-top:8px">비교할 수치 없음</div>`;
   h+=`<div class="fi-def"><dl><dt>식</dt><dd>${esc(m.f)}</dd><dt>좋은 방향</dt><dd>${esc(m.dir)}</dd><dt>왜 보나</dt><dd>${esc(m.why)}</dd></dl></div>`;
-  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본이거나 두 감사보고서의 같은 연도 값이 다름 · 행을 누르면 기업 상세</div></div>`;
+  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본, 두 감사보고서의 같은 연도 값이 다름, 또는 부채 항목 합이 부채총계와 다름 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
 // 기업 상세: 유통사 재무 지표 3개년(재무상태표·현금흐름이 있는 법인만)
@@ -1948,7 +1953,7 @@ function fiDetailCard(e){
   });
   const FI_NM={assets:'자산',liab:'부채',equity:'자본',cash:'현금',stfin:'단기금융상품',ar:'매출채권',ap:'매입채무',borrow:'차입금',lease:'리스부채',inv:'재고',ocf:'OCF',capex:'CAPEX',da:'감가상각비'};
   const chk=(e.years||[]).filter(y=>y.fin&&(y.fin.chk||(y.fin.bad||[]).length));
-  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'보고서 간 다름('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
+  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'검증 불일치('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
   return h;
 }
 function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
