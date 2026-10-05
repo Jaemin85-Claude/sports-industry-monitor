@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.2: 차입금을 코드가 분류 — 모델은 재무상태표 부채 항목을 줄 이름·금액 그대로 옮기고(liab_lines), 코드가 이름 규칙으로
+      차입금(차입금·사채·회사채·유동성장기부채)·RCPS 부채(상환우선주)·리스부채를 합산(FIN_V=3 → 9곳 1회 재추출).
+      v3.1은 '유동회사채'를 놓쳐 트렉시 FY25 차입금이 73.8억(실제 99.5억)으로 나옴 — 대표가 준 2026.04.03 감사보고서로 확인.
+      RCPS 부채는 순부채에 포함(대표 결정 2026-10-05: IFRS상 부채). 부채 항목 합이 부채총계와 1% 넘게 다르면
+      항목 누락으로 보고 borrow를 bad로 표시(그 해 순부채 지표만 '확인 필요')
 v3.1: 차입금을 항목별(단기차입금·유동성장기부채·장기차입금·사채)로 받아 코드에서 합산(FIN_V=2 → 9곳 1회 재추출) —
       v3.0에서 모델이 합계를 낼 때 항목을 넣었다 뺐다 해 트렉시 차입금이 실행마다 76억/99억으로 달랐음.
       두 보고서가 같은 연도를 담으면(최신 보고서의 전기 = 직전 보고서의 당기) 항목별로 대조해, 매출의 0.1%와 값의 1%를
@@ -67,9 +72,14 @@ SCHEMA_V = 3
 LISTED_PATH = "docs/kr_listed_fin.json"
 # 재무상태표·현금흐름표 추가 추출 대상(수입 브랜드 유통사 비교군) — 손익과 별도 캐시
 FIN_IDS = {"trexi", "daelim_corp", "rexmond", "bazig", "creed", "hana_int", "t1global", "bbluein", "starintl"}
-FIN_V = 2
-BORROW_PARTS = ("st_borrow", "cur_lt", "lt_borrow", "bonds")   # 합계(borrow)는 코드에서 계산
-FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap") + BORROW_PARTS + ("lease", "inv", "ocf", "capex", "da")
+FIN_V = 3
+FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "inv", "ocf", "capex", "da")
+# 부채 항목 이름 규칙(v3.2) — 차입금·RCPS·리스는 코드가 분류·합산
+DEBT_PAT = re.compile(r"차입금|사채|유동성장기부채")              # 단기·장기차입금, (유동)회사채, 전환사채, 유동성장기부채
+RCPS_PAT = re.compile(r"상환우선주|우선주부채")                   # 전환상환우선주부채 등(IFRS 금융부채)
+LEASE_PAT = re.compile(r"리스부채")
+SKIP_PAT = re.compile(r"리스|이자|보증금|충당|미지급|선수|파생|합계|총계|소계")
+SUBTOTAL_NAMES = {"유동부채", "비유동부채", "부채"}
 # 보고서 간 대조 항목(같은 연도를 두 보고서에서 읽었을 때). 없음(null)과 0은 같게 봄
 CROSS_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "borrow", "lease", "inv", "ocf", "capex", "da")
 
@@ -475,14 +485,12 @@ From the statement of financial position (재무상태표), at each period end:
 - stfin: 단기금융상품 (short-term financial instruments / deposits); null if none shown
 - ar: 매출채권 (net of allowance). If only "매출채권및기타채권" is shown, use that line.
 - ap: 매입채무. If only "매입채무및기타채무" is shown, use that line.
-Borrowings — report each line exactly as shown on the face of 재무상태표 (do NOT add them up;
-null if the company has no such line; exclude lease liabilities):
-- st_borrow: 단기차입금 (include 외화단기차입금 if shown as a separate line)
-- cur_lt: 유동성장기차입금 / 유동성장기부채 / 유동성사채 (current portion of long-term debt and bonds)
-- lt_borrow: 장기차입금 (non-current)
-- bonds: 사채 (non-current, net of discount)
-- lease: 리스부채 (current + non-current); null if not shown
 - inv: 재고자산
+Also transcribe EVERY individual line item of the liabilities section (부채) of 재무상태표 into
+"liab_lines": exact line name as printed (keep words like 유동/비유동/회사채/전환상환우선주부채), with the
+amount for the current and prior period end. Include lines whose amount is "-" as 0. Amounts shown in
+parentheses or as deductions (e.g. 사채할인발행차금) are negative. Do NOT include subtotal or total lines
+(I. 유동부채, II. 비유동부채, 부채총계).
 From the cash flow statement (현금흐름표), for each period:
 - ocf: 영업활동으로 인한 현금흐름 / 영업활동현금흐름 (net; outflow as negative)
 - capex: 유형자산의 취득 + 무형자산의 취득 (cash paid, as a positive number); 0 if none
@@ -492,20 +500,40 @@ For the PRIOR period also:
 
 Amounts must be in KRW units of 원 (convert if the statement says 단위: 천원 or 백만원).
 Use ONLY figures explicitly stated; if a figure is not stated, use null. Do not compute anything
-except the sums described for capex and da.
+except the sums described for capex and da. Do not add up liab_lines.
 
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "unit_note": "단위 표기 그대로",
-  "current": {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "st_borrow": n, "cur_lt": n, "lt_borrow": n, "bonds": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n}},
-  "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "st_borrow": n, "cur_lt": n, "lt_borrow": n, "bonds": n, "lease": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}}
+  "current": {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "inv": n, "ocf": n, "capex": n, "da": n}},
+  "prior":   {{"end": "YYYY-MM-DD", "assets": n, "liab": n, "equity": n, "cash": n, "stfin": n, "ar": n, "ap": n, "inv": n, "ocf": n, "capex": n, "da": n, "equity_begin": n}},
+  "liab_lines": [{{"name": "단기차입금", "current": n, "prior": n}}]
 }}
 (n = number or null)
 Start your response with {{ — no explanation before or after the JSON.
 
 DOCUMENT:
 {text}"""
-    return ask_json(prompt, 2500)
+    return ask_json(prompt, 3500)
+
+
+def classify_liab(lines, which):
+    """liab_lines → 차입금·RCPS·리스 합계와 항목, 부채 항목 합(부채총계 대조용). 이름 규칙은 코드가 고정"""
+    debt, rcps, lease, total, names = 0, 0, 0, 0, []
+    for ln in lines or []:
+        nm = re.sub(r"\s+", "", str(ln.get("name") or ""))
+        nm = re.sub(r"^[IVX]+\.|^\d+\.|^[\(（]?\d+[\)）]", "", nm)
+        v = to_int(ln.get(which))
+        if not nm or v is None or nm in SUBTOTAL_NAMES or re.search(r"합계|총계|소계", nm):
+            continue
+        total += v
+        if RCPS_PAT.search(nm):
+            rcps += v; names.append(nm)
+        elif LEASE_PAT.search(nm):
+            lease += v
+        elif DEBT_PAT.search(nm) and not SKIP_PAT.search(nm):
+            debt += v; names.append(nm)
+    return {"debt": debt, "rcps": rcps, "lease": lease, "line_sum": total, "debt_lines": names}
 
 
 def fin_check(rec, pl):
@@ -552,8 +580,14 @@ def fetch_fin_years(name, reports, cached, pl_recs):
                 if not p.get("end"):
                     continue
                 rec = {k: to_int(p.get(k)) for k in FIN_KEYS}
-                parts = [rec[k] for k in BORROW_PARTS if rec.get(k) is not None]
-                rec["borrow"] = sum(parts) if parts or rec.get("assets") is not None else None
+                lines = ex.get("liab_lines") or []
+                c = classify_liab(lines, which)
+                # 순부채용 차입금 = 차입금·사채 + RCPS 부채(대표 결정). 부채 항목을 못 읽었으면 null
+                rec.update(borrow=(c["debt"] + c["rcps"]) if lines else None, debt=c["debt"] if lines else None,
+                           rcps=c["rcps"] if lines else None, lease=c["lease"] if lines else None,
+                           debt_lines=c["debt_lines"],
+                           lines_ok=bool(lines) and rec.get("liab") is not None
+                           and abs(c["line_sum"] - rec["liab"]) <= 0.01 * max(abs(rec["liab"]), 1))
                 if which == "prior":
                     rec["equity_begin"] = to_int(p.get("equity_begin"))
                 if all(rec.get(k) is None for k in ("assets", "equity", "ocf")):
@@ -569,17 +603,19 @@ def fetch_fin_years(name, reports, cached, pl_recs):
             out.setdefault(end, rec)
             seen.setdefault(end, []).append(rec)
             log(f"      {end}: 자산 {rec.get('assets')} / 부채 {rec.get('liab')} / 자본 {rec.get('equity')} / 현금 {rec.get('cash')}"
-                f" / 차입금 {rec.get('borrow')} (단기 {rec.get('st_borrow')} · 유동성 {rec.get('cur_lt')} · 장기 {rec.get('lt_borrow')}"
-                f" · 사채 {rec.get('bonds')}) / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')}"
-                f" / 상각 {rec.get('da')}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}")
+                f" / 차입금 {rec.get('borrow')} (차입·사채 {rec.get('debt')} + RCPS {rec.get('rcps')}: {'·'.join(rec.get('debt_lines') or [])})"
+                f" / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')} / 상각 {rec.get('da')}"
+                f"{'' if rec.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}")
         new_cache[rcept] = recs
     # 보고서 간 대조: 최신 보고서의 전기 값(out에 쓰는 값)과 직전 보고서의 당기 값
     for end, lst in seen.items():
-        if len(lst) > 1:
-            bad = fin_cross(lst[0], lst[1], (pl_recs.get(end) or {}).get("rev"))
-            if bad:
-                out[end] = dict(out[end], bad=bad)
-                log(f"      ⚠ {end} 보고서 간 다름: {', '.join(bad)}")
+        bad = fin_cross(lst[0], lst[1], (pl_recs.get(end) or {}).get("rev")) if len(lst) > 1 else []
+        if bad:
+            log(f"      ⚠ {end} 보고서 간 다름: {', '.join(bad)}")
+        if not out[end].get("lines_ok") and "borrow" not in bad:
+            bad.append("borrow")   # 부채 항목 누락 가능 → 순부채 지표만 가림
+        if bad:
+            out[end] = dict(out[end], bad=bad)
     return out, new_cache
 
 
@@ -693,7 +729,7 @@ def main():
     fy = [y for e in result["entities"] if e["id"] in FIN_IDS for y in e["years"] if y.get("fin")]
     log(f"  재무상태표·현금흐름: {sum(1 for e in result['entities'] if e['id'] in FIN_IDS and any(y.get('fin') for y in e['years']))}"
         f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건"
-        f" · 보고서 간 다름 {sum(1 for y in fy if y['fin'].get('bad'))}건")
+        f" · 항목 확인 필요 {sum(1 for y in fy if y['fin'].get('bad'))}건(보고서 간 다름·부채 항목 누락)")
 
     # ── 국내 상장 20개사: 연결 전체재무제표 3개년 ──
     log("\n[상장] 법인코드 매칭(종목코드) ...")
