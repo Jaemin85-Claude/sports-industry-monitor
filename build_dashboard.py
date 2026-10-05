@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.3: 트렉시(자사)는 '🏷️ 수입 브랜드 유통사 비교' 카드와 그 상세에만 표시(대표 요청 2026-10-05, 나중에 합침) —
+       기업 탭 목록·종합 탭 신호·🛒 국내 온라인 플랫폼 카드에서 제외(PEER_ONLY 한 곳에서 관리)
 v32.2: 순부채 정의에 RCPS 부채 포함(대표 결정, dart_fetch v3.2) — 식 문구 수정, '확인 필요' 사유에 부채 항목 누락 추가
 v32.1: 유통사 재무 지표 — 보고서 간 값이 다른 항목(dart_fetch v3.1 fin.bad)을 쓰는 지표만 '확인 필요'로 표시
        (예: 차입금이 다르면 순부채·순부채/EBITDA만), 기업 상세에 다른 항목 이름 표시
@@ -1090,6 +1092,8 @@ function segOf(t){
 }
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
+// 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
+const PEER_ONLY=new Set(['krd:trexi']);
 function rows_all(){
   const out=[];
   DATA.items.forEach(x=>{
@@ -1098,7 +1102,7 @@ function rows_all(){
       rev:fy.rev, cur:finCurOf(x), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
       inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
   });
-  ((KRD&&KRD.entities)||[]).forEach(e=>{
+  ((KRD&&KRD.entities)||[]).filter(e=>!PEER_ONLY.has('krd:'+e.id)).forEach(e=>{
     const ys=(e.years||[]).filter(y=>y.rev!=null); const last=ys[ys.length-1], prev=ys[ys.length-2];
     const yoy=(last&&prev&&prev.rev)?(last.rev/prev.rev-1)*100:null;
     const opm=(last&&last.op!=null&&last.rev)?last.op/last.rev*100:null;
