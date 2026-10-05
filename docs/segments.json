@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-28 07:45 KST",
+ "generated_at": "2026-10-05 11:08 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -38,78 +38,84 @@
    "extract": null
   },
   "NKE": {
-   "accession": "0000320187-26-000076",
-   "source": "8-K 2026-06-30 q4fy26exhibit991er.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000076/q4fy26exhibit991er.htm",
+   "accession": "0000320187-26-000184",
+   "source": "8-K 2026-10-01 q1fy27exhibit991er.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000184/q1fy27exhibit991er.htm",
    "extract": {
-    "period": "Q4 FY26 ended 2026-05-31",
-    "prev_period": "Q4 FY25 ended 2025-05-31",
+    "period": "Q1 FY27 ended 2026-08-31",
+    "prev_period": "Q1 FY26 ended 2025-08-31",
     "currency": "USD",
     "regions": [
      {
       "name": "North America",
-      "revenue": 4832,
-      "prev_revenue": 4703,
-      "yoy_pct": 3
+      "revenue": 5127,
+      "prev_revenue": 5020,
+      "yoy_pct": 2
      },
      {
       "name": "Europe, Middle East & Africa",
-      "revenue": 2975,
-      "prev_revenue": 3000,
-      "yoy_pct": -1
+      "revenue": 3176,
+      "prev_revenue": 3331,
+      "yoy_pct": -5
      },
      {
       "name": "Greater China",
-      "revenue": 1297,
-      "prev_revenue": 1476,
-      "yoy_pct": -12
+      "revenue": 1180,
+      "prev_revenue": 1512,
+      "yoy_pct": -22
      },
      {
       "name": "Asia Pacific & Latin America",
-      "revenue": 1596,
-      "prev_revenue": 1575,
-      "yoy_pct": 1
-     },
-     {
-      "name": "Global Brand Divisions",
-      "revenue": 24,
-      "prev_revenue": 9,
-      "yoy_pct": 167
-     },
-     {
-      "name": "NIKE Brand Total",
-      "revenue": 10724,
-      "prev_revenue": 10763,
-      "yoy_pct": 0
+      "revenue": 1463,
+      "prev_revenue": 1490,
+      "yoy_pct": -2
      },
      {
       "name": "Converse",
-      "revenue": 244,
-      "prev_revenue": 357,
-      "yoy_pct": -32
+      "revenue": 263,
+      "prev_revenue": 366,
+      "yoy_pct": -28
+     },
+     {
+      "name": "Global Brand Divisions",
+      "revenue": 6,
+      "prev_revenue": 9,
+      "yoy_pct": null
      },
      {
       "name": "Corporate",
-      "revenue": 4,
-      "prev_revenue": -23,
+      "revenue": -2,
+      "prev_revenue": -8,
       "yoy_pct": null
      }
     ],
     "channels": [
      {
-      "name": "Wholesale",
-      "revenue": 6600,
-      "prev_revenue": null,
-      "yoy_pct": 4
+      "name": "Wholesale (NIKE Brand)",
+      "revenue": 6804,
+      "prev_revenue": 6839,
+      "yoy_pct": -1
      },
      {
-      "name": "NIKE Direct",
-      "revenue": 4100,
+      "name": "NIKE Direct (NIKE Brand)",
+      "revenue": 4142,
+      "prev_revenue": 4514,
+      "yoy_pct": -8
+     },
+     {
+      "name": "NIKE Brand Digital",
+      "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": -7
+      "yoy_pct": -13
+     },
+     {
+      "name": "NIKE-owned stores",
+      "revenue": null,
+      "prev_revenue": null,
+      "yoy_pct": -5
      }
     ],
-    "notes": "채널별 매출은 본문에 개략적 수치($6.6B, $4.1B)로만 언급되었으며 정확한 전년도 비교 수치는 명시되지 않았고, 북미 및 Converse EBIT에는 IEEPA 관세 환급 약 $986M 일회성 이익이 포함되어 있어 실적 비교 시 유의가 필요함.",
+    "notes": "지역별 및 채널별 수치는 NIKE 브랜드 기준이며, Converse와 Corporate 항목은 별도 분리되어 전체 합산 매출 $11,213M과 일치함.",
     "schema_v": 2
    },
    "error": null
@@ -118,8 +124,16 @@
    "accession": "0001858985-26-000021",
    "source": "6-K 2026-09-22 exhibit991oninvestorday202.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000021/exhibit991oninvestorday202.htm",
-   "extract": null,
-   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
+   "extract": {
+    "period": "FY2029 targets (Investor Day 2026, dated 2026-09-22)",
+    "prev_period": null,
+    "currency": "CHF",
+    "regions": [],
+    "channels": [],
+    "notes": "이 문서는 실적 보고서가 아닌 2026년 투자자 데이 자료로, 구체적인 지역별·채널별 매출 수치 없이 2029년 중기 재무 목표만 제시되어 있음.",
+    "schema_v": 2
+   },
+   "error": null
   },
   "DECK": {
    "accession": "0000910521-26-000015",
@@ -619,15 +633,50 @@
    "accession": "0001140361-26-037192",
    "source": "8-K 2026-09-21 ef20082169_ex99-1.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1089063/000114036126037192/ef20082169_ex99-1.htm",
-   "extract": null,
-   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
+   "extract": {
+    "period": "Pro Forma FY ended 2026-01-31",
+    "prev_period": null,
+    "currency": "USD",
+    "regions": [],
+    "channels": [],
+    "sub_segments": [
+     {
+      "name": "DICK'S",
+      "revenue": 17215.12,
+      "prev_revenue": null,
+      "yoy_pct": null,
+      "segment_profit": null,
+      "inventory": null
+     },
+     {
+      "name": "Foot Locker",
+      "revenue": 4566.0,
+      "prev_revenue": null,
+      "yoy_pct": null,
+      "segment_profit": null,
+      "inventory": null,
+      "proforma_comp_pct": null
+     }
+    ],
+    "notes": "이 문서는 2025년 9월 8일 Foot Locker 인수를 기준으로 작성된 미감사 프로포마 합산 재무제표이며, 실제 과거 비교 수치는 포함되어 있지 않습니다.",
+    "schema_v": 2
+   },
+   "error": null
   },
   "ASO": {
    "accession": "0001817358-26-000146",
    "source": "8-K 2026-09-09 exhibit991pressreleaseq220.htm",
    "url": "https://www.sec.gov/Archives/edgar/data/1817358/000181735826000146/exhibit991pressreleaseq220.htm",
-   "extract": null,
-   "error": "401 Client Error: Unauthorized for url: https://api.anthropic.com/v1/messages"
+   "extract": {
+    "period": "Q2 FY26 (Thirteen Weeks) ended 2026-08-01",
+    "prev_period": "Q2 FY25 (Thirteen Weeks) ended 2025-08-02",
+    "currency": "USD",
+    "regions": [],
+    "channels": [],
+    "notes": "지역별 및 채널별 매출 세부 내역은 문서에 명시되어 있지 않음.",
+    "schema_v": 2
+   },
+   "error": null
   }
  }
 }
