@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.4: 🏷️ 수입 브랜드 유통사 비교를 국내 탭에서 더보기 › 유통사 비교로 이동(대표 요청 2026-10-05) — 메뉴 줄에 트렉시
+       '중앙값보다 나은 지표' 수 표시. 기업 탭 '유통사 비교' 칩 삭제(중복). 더보기에서 연 기업 상세의 '뒤로'는 그 더보기 화면으로
 v32.3: 트렉시(자사)는 '🏷️ 수입 브랜드 유통사 비교' 카드와 그 상세에만 표시(대표 요청 2026-10-05, 나중에 합침) —
        기업 탭 목록·종합 탭 신호·🛒 국내 온라인 플랫폼 카드에서 제외(PEER_ONLY 한 곳에서 관리)
 v32.2: 순부채 정의에 RCPS 부채 포함(대표 결정, dart_fetch v3.2) — 식 문구 수정, '확인 필요' 사유에 부채 항목 누락 추가
@@ -1182,14 +1184,13 @@ let coFilter='전체', coQuery='';
 function buildCoChips(){
   const rows=rows_all();
   const chips=[['전체',rows.length],...CO_GROUPS.map(g=>[g,rows.filter(r=>r.group===g).length]).filter(x=>x[1]>0),
-    ['유통사 비교',rows.filter(r=>PEER_KEYS.includes(r.key)).length],
     ['패션 브랜드 비교',rows.filter(r=>FB_KEYS.includes(r.key)).length],
     ['아이웨어 비교',rows.filter(r=>EY_KEYS.includes(r.key)).length]].filter(x=>x[0]==='전체'||x[1]>0);
-  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='유통사 비교'?'🏷️':g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
+  document.getElementById('coChips').innerHTML=chips.map(([g,n])=>`<span class="chip ${coFilter===g?'on':''}" data-g="${g}">${g==='전체'?'전체':(g==='패션 브랜드 비교'?'👕':g==='아이웨어 비교'?'🕶️':(GROUP_ICON[g]||'🇰🇷'))+' '+g} ${n}</span>`).join('');
   document.querySelectorAll('#coChips .chip').forEach(c=>c.onclick=()=>{coFilter=c.dataset.g;buildCoChips();buildCo();});
 }
 function buildCo(){
-  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='유통사 비교'&&PEER_KEYS.includes(r.key))||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
+  const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter||(coFilter==='패션 브랜드 비교'&&FB_KEYS.includes(r.key))||(coFilter==='아이웨어 비교'&&EY_KEYS.includes(r.key)))&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
   let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
@@ -1219,7 +1220,12 @@ function buildCo(){
   document.querySelectorAll('#coTbl tr.co').forEach(tr=>tr.onclick=()=>{const x=tr.nextElementSibling; if(x&&x.classList.contains('cx')) x.style.display=x.style.display==='none'?'':'none';});
 }
 function showCoList(){ document.getElementById('coDetail').style.display='none'; document.getElementById('coList').style.display=''; }
+let DET_BACK=null;   // 더보기 화면에서 상세를 열었으면 그 화면 키(뒤로 가기 대상)
+const MORE_NAME={peer:'유통사 비교',fx:'환율',cb:'해외직구',status:'수집 상태'};
+function setCoBack(v){ DET_BACK=v||null; const b=document.getElementById('coBack'); if(b) b.textContent=DET_BACK?'◂ '+(MORE_NAME[DET_BACK]||'더보기'):'◂ 기업 목록'; }
 function goDetail(t){
+  const pm=document.getElementById('p-more');
+  setCoBack(pm&&pm.classList.contains('on')?MORE_VIEW:null);
   sw('co');
   document.getElementById('coList').style.display='none';
   document.getElementById('coDetail').style.display='';
@@ -1881,11 +1887,17 @@ function fiStat(rows,k,fy){ // 중앙값(자사 제외)·순위·중앙값보다
   return {md,mdv,rank:i>=0?i+1:null,n:sorted.length,np:pe.length,better,me:mx};
 }
 function fiPick(g,k){ FI_GRP=g; FI_MET=k||FI_K.find(x=>FI_M[x].g===g); const el=document.getElementById('peerCard'); if(el) el.outerHTML=finCardHtml(); }
+function fiScore(){   // 더보기 메뉴 줄: 자사가 최근 연도 비교군 중앙값보다 나은 지표 수
+  const rows=fiRows(), me=rows.find(r=>r.self); if(!me) return null;
+  const L=Math.max(...rows.flatMap(r=>Object.keys(r.by).map(Number)));
+  const st=FI_K.filter(k=>!FI_M[k].ref).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
+  return {L, nb:has.filter(t=>t.better).length, na:has.length, n:rows.length};
+}
 function finCardHtml(){
   const c=CMP.peer, rows=fiRows(); if(rows.length<2) return '';
   const fys=[...new Set(rows.flatMap(r=>Object.keys(r.by).map(Number)))].sort().slice(-3), L=fys[fys.length-1];
   const me=rows.find(r=>r.self), m=FI_M[FI_MET], cls=v=>v<0?(m.nr?'pos':'neg'):'';
-  let h=`<div class="card" id="peerCard"><h3>${c.icon} ${c.name} <span class="tag">${c.tag}</span></h3>`;
+  let h=`<div class="card" id="peerCard">`;   // 제목은 더보기 화면 머리글(v32.4)
   // 자사 요약: 최근 연도 중앙값보다 나은 지표 수 · 그룹별
   const cmpK=FI_K.filter(k=>!FI_M[k].ref), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
   if(me){
@@ -1953,7 +1965,7 @@ function fiDetailCard(e){
   });
   const FI_NM={assets:'자산',liab:'부채',equity:'자본',cash:'현금',stfin:'단기금융상품',ar:'매출채권',ap:'매입채무',borrow:'차입금',lease:'리스부채',inv:'재고',ocf:'OCF',capex:'CAPEX',da:'감가상각비'};
   const chk=(e.years||[]).filter(y=>y.fin&&(y.fin.chk||(y.fin.bad||[]).length));
-  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'검증 불일치('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 국내 탭 '${esc(CMP.peer.name)}' 카드에서 지표를 누르면 보입니다</div></div>`;
+  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'검증 불일치('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 더보기 › 유통사 비교에서 지표를 누르면 보입니다</div></div>`;
   return h;
 }
 function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
@@ -1963,7 +1975,7 @@ function peerTip(el,tid){
 }
 function buildKR(){
   const el=document.getElementById('krBody');
-  const top=crossChartHtml()+platformCardHtml()+finCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
+  const top=crossChartHtml()+platformCardHtml()+cmpCardHtml('fb')+cmpCardHtml('ey')+naverCardHtml();
   if(!KR||!KR.series||!Object.keys(KR.series).length){
     el.innerHTML=top+'<div class="na">국내 지표 없음 — 수집 워크플로우(update-kosis) 첫 실행 전이거나 조회 실패(미확인)</div>';
     xcBind();
@@ -2150,9 +2162,10 @@ function moreCbHtml(){
   return h;
 }
 function moreMenuHtml(){
-  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late);
+  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore();
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
+    ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
     ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
@@ -2160,7 +2173,8 @@ function moreMenuHtml(){
 }
 function buildMore(){
   const el=document.getElementById('moreBody'); if(!el) return;
-  el.innerHTML = MORE_VIEW==='fx'?moreFxHtml()
+  el.innerHTML = MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
+    : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
     : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()
     : moreMenuHtml();
@@ -2182,8 +2196,8 @@ function sw(p){
   if(p!=='co') showCoList();
   document.getElementById('content').scrollTo(0,0);
 }
-document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ sw(t.dataset.p); showCoList(); if(t.dataset.p==='more') moreOpen(null); }; });
-document.getElementById('coBack').onclick=showCoList;
+document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ setCoBack(null); sw(t.dataset.p); showCoList(); if(t.dataset.p==='more') moreOpen(null); }; });
+document.getElementById('coBack').onclick=()=>{ const v=DET_BACK; setCoBack(null); if(v) goMore(v); else showCoList(); };
 document.getElementById('coSearch').addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();});
 document.addEventListener('click',e=>{
   const p=e.target.closest('.pname')||e.target.closest('.bar-row .lb');
