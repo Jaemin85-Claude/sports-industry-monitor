@@ -2,7 +2,7 @@
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
 v2.5: ① 국내 비교 회사 21곳 추가 — 유통사 8곳(kr_peer, 트렉시 제외)·국내 패션 브랜드 13곳(kr_fb), 키 = DART 법인 id.
-     선별 기준에 국내 비교 회사용 안내(동명 회사 제외, 사업 소식은 포함) 추가.
+     선별 기준에 국내 비교 회사용 안내(동명 회사 제외, 사업 소식은 포함) 추가. 로그에 국내 비교 그룹별 신규→선별 건수
      ② Haiku 4.5 품질 비교(대표 요청, ~10/13) — 선별은 지금처럼 Sonnet, 같은 헤드라인을 Haiku로도 한 번 더 선별해
      건수·겹침·비용을 news.json model_compare에 남김(화면 반영 없음). 기간이 지나면 자동으로 멈춤
 v2.4: 브랜드 21개 추가 — 뉴발란스·우포스·킨·CEP·노르다(스포츠), 드래곤디퓨전·메종키츠네·가니·헌터·
@@ -397,6 +397,12 @@ def main():
             "source": src["source"], "pubDate": src["pubDate"],
             "first_seen": today.isoformat(),
         })
+
+    for g in ("kr_peer", "kr_fb"):
+        nn = [v for v in new_items.values() if v.get("group") == g]
+        pk = [k for k in picked if (new_items.get(k) or {}).get("group") == g]
+        print(f"  {GROUP_LABEL[g]}: 신규 {len(nn)}건({len({v['key'] for v in nn})}곳) → 선별 {len(pk)}건"
+              + (f" — {', '.join(sorted({new_items[k]['label'] for k in pk}))}" if pk else ""), flush=True)
 
     # 선별 실패 시에는 seen에 넣지 않아 다음 회차에 재판정
     seen_list = list(seen_ids | (set(new_items.keys()) if picked or not new_items else set()))[-5000:]
