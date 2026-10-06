@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.8: (대표 요청 2026-10-06) ① 더보기 › 패션 브랜드: 국내 패션 13곳·아이웨어 6곳도 유통사와 같은 재무 지표 카드(그룹·지표 선택은
+       카드마다 따로), 맨 아래 '📊 검색 관심도 vs 실적'(같은 해 네이버 검색 증감 vs 매출 증감 · 올해 1월~지난달 · 최근 4주).
+       ② 캘린더 탭: 해외 세일 시즌(블프·유럽 법정 세일·광군제·618·박싱데이 등) — 달력에 기간 표시 + '🛍️ 해외 세일 시즌' 카드.
+       ③ 뉴스 탭 '산업 ▸ 통관·상표권' 칩. ④ 네이버 카드: 검색량 적은 브랜드는 순위 맨 아래
 v32.7: 뉴스 탭에 '국내 비교 ▸ 유통사 · 패션 브랜드' 칩(news_monitor v2.5, 대표 요청 2026-10-06) — 국내 법인 상세의 최근 뉴스도
        DART 법인 id로 연결. 네이버 검색 관심도 카드에 '아이웨어' 버튼(naver_trend v1.4 글로벌 아이웨어 11개 + 젠틀몬스터·
        블루엘리펀트, 중앙값은 이 13개끼리). 연결 기업·뉴스가 없는 브랜드 줄은 누를 수 없게
@@ -353,14 +357,23 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 /* A안 — 캘린더 */
 .cal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
 .cal h3{font-size:var(--fs-base);color:var(--sub);font-weight:500;margin-bottom:6px}
-.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
 .cgrid .wd{font-size:var(--fs-2xs);color:var(--sub);text-align:center;padding:2px 0}
-.cd{min-height:46px;border-radius:6px;padding:3px 3px;font-size:var(--fs-2xs);border:1px solid transparent}
+.cd{min-height:46px;min-width:0;overflow:hidden;border-radius:6px;padding:3px 3px;font-size:var(--fs-2xs);border:1px solid transparent}
 .cd .dn{color:var(--sub);text-align:right}
 .cd.has{background:var(--barbg);cursor:pointer}
 .cd.today{border-color:var(--accent)}
 .cd .ev{font-size:var(--fs-2xs);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx)}
 .cd.sel{outline:2px solid var(--accent)}
+.cd.sale{background:color-mix(in srgb,var(--down) 12%,transparent);cursor:pointer}
+.cd .ev.sl{color:var(--down);font-weight:600}
+.sv-tbl td:first-child{white-space:normal;min-width:96px;max-width:132px}
+.sv-tbl td:first-child .pg-rk{display:block;margin-left:0}
+.sl-row{padding:8px 0;border-bottom:1px solid var(--line)}
+.sl-row:last-child{border-bottom:0}
+.sl-row .t1{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-base)}
+.sl-row .t2{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
+.sl-k{font-size:var(--fs-2xs);border:1px solid var(--line);border-radius:6px;padding:0 4px;margin-left:4px;color:var(--sub);font-weight:400}
 .calday{font-size:var(--fs-sm);margin-top:8px;color:var(--sub)}
 .cl{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-base)}
 .cl:last-child{border-bottom:none}
@@ -567,7 +580,8 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 <div class="pane" id="p-cal">
   <div class="hgrid" id="calGrid"></div>
   <div class="card" style="margin-top:10px"><h3>90일 이내 실적 발표</h3><div id="calList"></div></div>
-  <div class="note">달력의 날짜를 누르면 그 날 발표 기업이 표시됩니다 · 일정 미표시 종목은 소스 미제공(미확인)</div>
+  <div class="card" style="margin-top:10px"><h3>🛍️ 해외 세일 시즌 <span class="na" style="font-weight:400">150일 이내 · 매입 시점 참고</span></h3><div id="saleList"></div></div>
+  <div class="note">달력의 날짜를 누르면 그 날 발표 기업·진행 중인 세일이 표시됩니다 · 연한 주황 칸 = 해외 세일 기간, 🛍 = 시작일 · 일정 미표시 종목은 소스 미제공(미확인)</div>
 </div>
 
 <div class="pane" id="p-news">
@@ -1481,8 +1495,33 @@ function renderDetail(t){
 
 /* ── 캘린더 (A안: 2개월 달력 + 90일 목록) ── */
 let calSel=null;
+/* ── 해외 세일 시즌(v32.8) — 규칙으로 계산하는 날짜(확정)와 해마다 발표되는 행사(예상) ── */
+const nthDow=(y,m,dow,n)=>{const d=new Date(y,m,1); return new Date(y,m,1+(dow-d.getDay()+7)%7+7*(n-1));};   // m: 0=1월, dow: 0=일
+const lastDow=(y,m,dow)=>{const d=new Date(y,m+1,0); return new Date(y,m,d.getDate()-(d.getDay()-dow+7)%7);};
+const addD=(d,n)=>new Date(d.getFullYear(),d.getMonth(),d.getDate()+n);
+function saleEvents(y){
+  const bf=addD(nthDow(y,10,4,4),1);   // 블랙프라이데이 = 미국 추수감사절(11월 넷째 목요일) 다음 날
+  return [
+    {s:new Date(y,0,1),e:new Date(y,0,3),nm:'일본 신년 세일(하츠우리)',sh:'일본 신년',fl:'🇯🇵',k:'확정',note:'백화점·편집숍 신년 할인 — 겨울 재고 정리'},
+    {s:nthDow(y,0,3,2),e:addD(nthDow(y,0,3,2),27),nm:'프랑스 겨울 세일(솔드)',sh:'佛 겨울',fl:'🇫🇷',k:'확정',note:'법정 세일 4주(1월 둘째 수요일 시작) — 유럽 FW 재고 매입 시점'},
+    {s:nthDow(y,0,6,1),e:addD(nthDow(y,0,6,1),41),nm:'이탈리아 겨울 세일(살디)',sh:'伊 겨울',fl:'🇮🇹',k:'예상',note:'주(州)마다 시작일이 달라 보통 1월 첫 토요일 전후'},
+    {s:new Date(y,5,1),e:new Date(y,5,18),nm:'중국 618 쇼핑 축제',sh:'618',fl:'🇨🇳',k:'확정',note:'징둥·티몰 상반기 최대 할인(6/18 마감)'},
+    {s:lastDow(y,5,3),e:addD(lastDow(y,5,3),27),nm:'프랑스 여름 세일(솔드)',sh:'佛 여름',fl:'🇫🇷',k:'확정',note:'법정 세일 4주(6월 마지막 수요일 시작) — 유럽 SS 재고 매입 시점'},
+    {s:nthDow(y,6,6,1),e:addD(nthDow(y,6,6,1),41),nm:'이탈리아 여름 세일(살디)',sh:'伊 여름',fl:'🇮🇹',k:'예상',note:'7월 첫 토요일 전후 시작(주마다 다름)'},
+    {s:new Date(y,6,1),e:new Date(y,6,15),nm:'일본 여름 세일',sh:'일본 여름',fl:'🇯🇵',k:'예상',note:'백화점·쇼핑몰 7월 초 시작'},
+    {s:new Date(y,6,8),e:new Date(y,6,11),nm:'아마존 프라임데이',sh:'프라임데이',fl:'🇺🇸',k:'예상',note:'매년 7월 중순 — 정확한 날짜는 아마존 발표 후 확정'},
+    {s:new Date(y,10,1),e:new Date(y,10,11),nm:'중국 광군제(11.11)',sh:'광군제',fl:'🇨🇳',k:'확정',note:'알리·티몰 연중 최대 할인, 11/11 당일이 정점'},
+    {s:new Date(y,10,1),e:new Date(y,10,30),nm:'코리아세일페스타',sh:'코세페',fl:'🇰🇷',k:'예상',note:'국내 유통 할인 행사(11월, 날짜는 매년 발표) — 국내 판매가 경쟁이 세지는 시기'},
+    {s:bf,e:addD(bf,3),nm:'블랙프라이데이~사이버먼데이',sh:'블프',fl:'🇺🇸',k:'확정',note:'미국 온라인 리테일러 연중 최대 할인 — 해외 배송·통관 지연 감안'},
+    {s:new Date(y,11,26),e:new Date(y+1,0,5),nm:'영국 박싱데이 세일',sh:'박싱데이',fl:'🇬🇧',k:'확정',note:'12/26부터 연초까지 — 영국·유럽 리테일러 시즌 마감 할인'},
+  ];
+}
+const saleAll=today=>[-1,0,1].flatMap(k=>saleEvents(today.getFullYear()+k));
+const md2=d=>`${d.getMonth()+1}/${d.getDate()}`;
 function buildCal(){
   const today=new Date(); today.setHours(0,0,0,0);
+  const SALES=saleAll(today), dayKey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const saleOn=dt=>SALES.filter(e=>dt>=e.s&&dt<=e.e), saleStart=key=>SALES.filter(e=>dayKey(e.s)===key);
   const evs=rows_all().filter(r=>r.earn).map(r=>{const d=new Date(r.earn+'T00:00:00');return {...r,d,dn:Math.round((d-today)/86400000)};}).filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn-b.dn);
   const byDay={}; evs.forEach(r=>{(byDay[r.earn]=byDay[r.earn]||[]).push(r);});
   const months=[0,1].map(k=>new Date(today.getFullYear(),today.getMonth()+k,1));
@@ -1494,13 +1533,19 @@ function buildCal(){
     for(let d=1;d<=days;d++){
       const key=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const list=byDay[key]||[]; const isT=key===today.toISOString().slice(0,10);
-      cells+=`<div class="cd ${list.length?'has':''} ${isT?'today':''} ${calSel===key?'sel':''}" ${list.length?`data-day="${key}"`:''}><div class="dn">${d}</div>${list.slice(0,2).map(r=>`<div class="ev">${esc(r.name)}</div>`).join('')}${list.length>2?`<div class="ev na">+${list.length-2}</div>`:''}</div>`;
+      const on=saleOn(new Date(y,m,d)), st=saleStart(key), click=list.length||on.length;
+      cells+=`<div class="cd ${list.length?'has':''} ${on.length?'sale':''} ${isT?'today':''} ${calSel===key?'sel':''}" ${click?`data-day="${key}"`:''}><div class="dn">${d}</div>${st.slice(0,1).map(e=>`<div class="ev sl">🛍${esc(e.sh)}</div>`).join('')}${list.slice(0,st.length?1:2).map(r=>`<div class="ev">${esc(r.name)}</div>`).join('')}${list.length>(st.length?1:2)?`<div class="ev na">+${list.length-(st.length?1:2)}</div>`:''}</div>`;
     }
-    h+=`<div class="cal"><h3>${y}년 ${m+1}월</h3><div class="cgrid">${cells}</div>${calSel&&calSel.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)?`<div class="calday">${calSel.slice(5).replace('-','/')} · ${(byDay[calSel]||[]).map(r=>r.logo+esc(r.name)).join(', ')}</div>`:''}</div>`;
+    h+=`<div class="cal"><h3>${y}년 ${m+1}월</h3><div class="cgrid">${cells}</div>${calSel&&calSel.startsWith(`${y}-${String(m+1).padStart(2,'0')}`)?`<div class="calday">${calSel.slice(5).replace('-','/')} · ${[(byDay[calSel]||[]).map(r=>r.logo+esc(r.name)).join(', '),saleOn(new Date(+calSel.slice(0,4),+calSel.slice(5,7)-1,+calSel.slice(8,10))).map(e=>'🛍 '+e.fl+esc(e.nm)).join(', ')].filter(Boolean).join(' · ')}</div>`:''}</div>`;
   });
   document.getElementById('calGrid').innerHTML=h;
   document.querySelectorAll('.cd[data-day]').forEach(c=>c.onclick=()=>{calSel=(calSel===c.dataset.day)?null:c.dataset.day;buildCal();});
   document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<div class="cl"><span>${r.dn<=7?'🔴':'⚪'} ${r.logo}${esc(r.name)}</span><span>${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></div>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
+  const lim=addD(today,150), up=SALES.filter(e=>e.e>=today&&e.s<=lim).sort((a,b)=>a.s-b.s);
+  document.getElementById('saleList').innerHTML=up.length?up.map(e=>{const live=e.s<=today, dn=Math.round(((live?e.e:e.s)-today)/86400000);
+    return `<div class="sl-row"><div class="t1"><span>${e.fl} ${esc(e.nm)}<span class="sl-k">${e.k}</span></span><span>${md2(e.s)}${+e.e!==+e.s?'~'+md2(e.e):''} <span class="${live?'neg':'na'}">${live?'진행 중 · '+dn+'일 남음':'D-'+dn}</span></span></div><div class="t2">${esc(e.note)}</div></div>`;}).join('')
+    +'<div class="note" style="margin-top:6px">확정 = 법정·고정 규칙으로 계산한 날짜 · 예상 = 해마다 주최 측이 발표(지난해 패턴 기준) · 해외 직구 배송·통관 기간(보통 1~3주)을 감안해 미리 결제</div>'
+    :'<div class="na">150일 이내 세일 없음</div>';
 }
 
 /* ── 뉴스 (v11: 그룹 필터 + NEW 배지 + 날짜별) ── */
@@ -1515,6 +1560,7 @@ const NEWS_FILTERS = [
   {id:"i:sports",  label:"스포츠 트렌드"},
   {id:"i:fashion", label:"패션·명품 시장"},
   {id:"i:retail",  label:"멀티브랜드 유통"},
+  {id:"i:customs", label:"통관·상표권"},
   {id:"sep3",  label:"국내 비교 ▸", sep:true},
   {id:"b:kr_peer", label:"유통사"},
   {id:"b:kr_fb",   label:"패션 브랜드"},
@@ -1621,7 +1667,7 @@ function naverCardHtml(){
   const bs=nvBrands();
   if(!bs.length) return `<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3><div class="na">네이버 검색 관심도 수집 전 — 다음 갱신 후 표시</div></div>`;
   const med=nvMed(), key=b=>NV_SORT==='yoy'?(b.yoy??-1e9):(b.scale??-1);
-  const rows=[...bs].sort((a,b)=>key(b)-key(a)), shown=NV_ALL?rows:rows.slice(0,NV_TOP);
+  const rows=[...bs].sort((a,b)=>(a.low?1:0)-(b.low?1:0)||key(b)-key(a)), shown=NV_ALL?rows:rows.slice(0,NV_TOP);   // v32.8 검색량 적은 브랜드는 맨 아래
   const ups=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='up').sort((a,b)=>b.yoy-a.yoy).slice(0,4);
   const downs=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='down').sort((a,b)=>a.yoy-b.yoy).slice(0,3);
   let h=`<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3>
@@ -1882,9 +1928,9 @@ const FI_M={
       f:'자본총계(자산 − 부채)',dir:'참고',why:'쌓아 온 자기 돈. 회사 규모 차이가 커서 순위 없이 참고'},
 };
 const FI_K=Object.keys(FI_M);
-let FI_GRP='pl', FI_MET='rev';
-function fiRows(){
-  const c=CMP.peer, ents=(KRD&&KRD.entities)||[];
+const FI_ST={peer:{g:'pl',k:'rev'},fb:{g:'pl',k:'rev'},ey:{g:'pl',k:'rev'}};   // v32.8 비교 카드별 선택 그룹·지표
+function fiRows(cid='peer'){
+  const c=CMP[cid], ents=(KRD&&KRD.entities)||[];
   return c.keys.map(k=>{ const e=ents.find(x=>'krd:'+x.id===k); if(!e) return null;
     const by={}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{by[+y.end.slice(0,4)]=y;});
     return {key:k,name:e.name,self:k===c.self,by};
@@ -1909,29 +1955,31 @@ function fiStat(rows,k,fy){ // 중앙값(자사 제외)·순위·중앙값보다
   const better=!m.ref&&mx.v!=null&&mx.c!=null&&md!=null&&(m.hi?mx.c>md:mx.c<md);
   return {md,mdv,rank:i>=0?i+1:null,n:sorted.length,np:pe.length,better,me:mx};
 }
-function fiPick(g,k){ FI_GRP=g; FI_MET=k||FI_K.find(x=>FI_M[x].g===g); const el=document.getElementById('peerCard'); if(el) el.outerHTML=finCardHtml(); }
+function fiPick(g,k,cid='peer'){ FI_ST[cid]={g,k:k||FI_K.find(x=>FI_M[x].g===g)}; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=finCardHtml(cid); }
+const fiHas=cid=>fiRows(cid).some(r=>Object.values(r.by).some(y=>y.fin));   // 재무상태표·현금흐름이 한 곳이라도 있으면 재무 지표 카드
 function fiScore(){   // 더보기 메뉴 줄: 자사가 최근 연도 비교군 중앙값보다 나은 지표 수
   const rows=fiRows(), me=rows.find(r=>r.self); if(!me) return null;
   const L=Math.max(...rows.flatMap(r=>Object.keys(r.by).map(Number)));
   const st=FI_K.filter(k=>!FI_M[k].ref).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
   return {L, nb:has.filter(t=>t.better).length, na:has.length, n:rows.length};
 }
-function finCardHtml(){
-  const c=CMP.peer, rows=fiRows(); if(rows.length<2) return '';
+function finCardHtml(cid='peer'){
+  const c=CMP[cid], rows=fiRows(cid); if(rows.length<2) return '';
+  const FI_GRP=FI_ST[cid].g, FI_MET=FI_ST[cid].k;
   const fys=[...new Set(rows.flatMap(r=>Object.keys(r.by).map(Number)))].sort().slice(-3), L=fys[fys.length-1];
   const me=rows.find(r=>r.self), m=FI_M[FI_MET], cls=v=>v<0?(m.nr?'pos':'neg'):'';
-  let h=`<div class="card" id="peerCard">`;   // 제목은 더보기 화면 머리글(v32.4)
+  let h=`<div class="card" id="${c.id}">`;   // 제목은 더보기 화면 머리글(v32.4)
   // 자사 요약: 최근 연도 중앙값보다 나은 지표 수 · 그룹별
   const cmpK=FI_K.filter(k=>!FI_M[k].ref), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
   if(me){
     const has=k=>st[k].me.v!=null&&st[k].md!=null;
     h+=`<div class="nv-sum"><div class="fi-top"><b>${esc(c.selfName)}</b><span class="na">FY${String(L).slice(2)} · ${rows.length}곳 비교</span><span style="margin-left:auto">중앙값보다 나은 지표 <b class="fi-big">${cmpK.filter(k=>st[k].better).length}</b><span class="na">/${cmpK.filter(has).length}</span></span></div><div class="fi-gsum">`;
     FI_G.forEach(([g,gn])=>{ const ks=cmpK.filter(k=>FI_M[k].g===g);
-      h+=`<button type="button" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}')"><span class="l">${gn}</span><span class="v">${ks.filter(k=>st[k].better).length}/${ks.filter(has).length}</span><span class="fi-dots">${ks.map(k=>`<i class="${!has(k)?'x':st[k].better?'b':''}" title="${esc(FI_M[k].nm)}"></i>`).join('')}</span></button>`; });
+      h+=`<button type="button" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}','','${cid}')"><span class="l">${gn}</span><span class="v">${ks.filter(k=>st[k].better).length}/${ks.filter(has).length}</span><span class="fi-dots">${ks.map(k=>`<i class="${!has(k)?'x':st[k].better?'b':''}" title="${esc(FI_M[k].nm)}"></i>`).join('')}</span></button>`; });
     h+=`</div></div>`;
   }
-  h+=`<div class="fi-seg" role="tablist">${FI_G.map(([g,gn])=>`<button type="button" role="tab" aria-selected="${g===FI_GRP}" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}')">${gn}</button>`).join('')}</div>`;
-  h+=`<div class="chips fi-chips">${FI_K.filter(k=>FI_M[k].g===FI_GRP).map(k=>`<button type="button" class="chip${k===FI_MET?' on':''}" aria-pressed="${k===FI_MET}" onclick="fiPick('${FI_GRP}','${k}')">${esc(FI_M[k].nm)}</button>`).join('')}</div>`;
+  h+=`<div class="fi-seg" role="tablist">${FI_G.map(([g,gn])=>`<button type="button" role="tab" aria-selected="${g===FI_GRP}" class="${g===FI_GRP?'on':''}" onclick="fiPick('${g}','','${cid}')">${gn}</button>`).join('')}</div>`;
+  h+=`<div class="chips fi-chips">${FI_K.filter(k=>FI_M[k].g===FI_GRP).map(k=>`<button type="button" class="chip${k===FI_MET?' on':''}" aria-pressed="${k===FI_MET}" onclick="fiPick('${FI_GRP}','${k}','${cid}')">${esc(FI_M[k].nm)}</button>`).join('')}</div>`;
   // 선택 지표 요약 3칸
   const s=st[FI_MET]||fiStat(rows,FI_MET,L), s0=fiStat(rows,FI_MET,L-1), mv=s.me, m0=me?fiVal(me,FI_MET,L-1):{t:'―'};
   h+=`<div class="fi-mhead"><b>${esc(m.nm)}</b><span class="na">${esc(m.dir)}</span></div>`;
@@ -1969,10 +2017,10 @@ function finCardHtml(){
     if(m.clip&&bars.some(o=>Math.abs(o.x.c)>m.clip)) h+=`<div class="note" style="margin-top:4px">막대는 ±${m.clip}%에서 자름(숫자는 실제 값)</div>`;
     const no=rows.filter(r=>fiVal(r,FI_MET,L).v==null);
     if(no.length) h+=`<div class="note" style="margin-top:4px">제외: ${no.map(r=>esc(r.name)+'('+esc(fiVal(r,FI_MET,L).t)+')').join(' · ')}</div>`;
-    h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값(${esc(c.selfName)} 제외)</span>`:''}</div>`;
+    h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값${me?'('+esc(c.selfName)+' 제외)':''}</span>`:''}</div>`;
   } else h+=`<div class="na" style="margin-top:8px">비교할 수치 없음</div>`;
   h+=`<div class="fi-def"><dl><dt>식</dt><dd>${esc(m.f)}</dd><dt>좋은 방향</dt><dd>${esc(m.dir)}</dd><dt>왜 보나</dt><dd>${esc(m.why)}</dd></dl></div>`;
-  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''} · 파란 배지 = 비교군 중앙값보다 나음 · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본, 두 감사보고서의 같은 연도 값이 다름, 또는 부채 항목 합이 부채총계와 다름 · 행을 누르면 기업 상세</div></div>`;
+  h+=`<div class="note" style="margin-top:8px">${c.src}${m.bs?' · 재무상태표·현금흐름표':''}${me?' · 파란 배지 = 비교군 중앙값보다 나음':''}${cid==='fb'&&m.bs?' · 상장 3곳은 사업보고서 재무제표(감가상각비가 따로 없으면 EBITDA 지표 ―)':''} · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본, 두 감사보고서의 같은 연도 값이 다름, 또는 부채 항목 합이 부채총계와 다름 · 행을 누르면 기업 상세</div></div>`;
   return h;
 }
 // 기업 상세: 유통사 재무 지표 3개년(재무상태표·현금흐름이 있는 법인만)
@@ -1980,7 +2028,7 @@ function fiDetailCard(e){
   if(!(e.years||[]).some(y=>y.fin)) return '';
   const r={key:'krd:'+e.id,name:e.name,by:{}}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{r.by[+y.end.slice(0,4)]=y;});
   const fys=Object.keys(r.by).map(Number).sort().slice(-3);
-  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART 감사보고서(별도)</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
+  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART(별도)</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   FI_G.forEach(([g,gn])=>{
     h+=`<tr class="fi-gh"><td colspan="${fys.length+1}">${gn}</td></tr>`;
     FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
@@ -1988,7 +2036,7 @@ function fiDetailCard(e){
   });
   const FI_NM={assets:'자산',liab:'부채',equity:'자본',cash:'현금',stfin:'단기금융상품',ar:'매출채권',ap:'매입채무',borrow:'차입금',lease:'리스부채',inv:'재고',ocf:'OCF',capex:'CAPEX',da:'감가상각비'};
   const chk=(e.years||[]).filter(y=>y.fin&&(y.fin.chk||(y.fin.bad||[]).length));
-  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'검증 불일치('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 더보기 › 유통사 비교에서 지표를 누르면 보입니다</div></div>`;
+  h+=`</table></div>${chk.length?`<div class="note">확인 필요: ${chk.map(y=>`FY${y.end.slice(2,4)} ${esc([y.fin.chk,(y.fin.bad||[]).length?'검증 불일치('+y.fin.bad.map(k=>FI_NM[k]||k).join('·')+')':''].filter(Boolean).join(' · '))}`).join(' / ')}</div>`:''}<div class="note">식·좋은 방향은 더보기 › 유통사 비교·패션 브랜드에서 지표를 누르면 보입니다</div></div>`;
   return h;
 }
 function cmpGrowth(cid,m){ CMP_GROWTH[cid]=m; const el=document.getElementById(CMP[cid].id); if(el) el.outerHTML=cmpCardHtml(cid); }
@@ -2184,21 +2232,62 @@ function moreCbHtml(){
   h+=`<div class="note">출처: KOSIS ${esc(CB.table||'')} ${esc(CB.table_name||'')} · 단위 ${esc(CB.unit||'')}(화면은 억·조원) · 분기가 끝나고 약 2달 뒤 발표 · 갱신 ${esc(KR.generated_at||'')}<br>유럽 = 유럽연합+영국+기타 유럽 합계(통계청 지역 분류)</div>`;
   return h;
 }
+/* ── 검색 관심도 vs 실적(v32.8) — 국내 패션·아이웨어: 같은 해 네이버 검색 증감 vs 매출 증감, 올해 검색 추이 ── */
+const SV_LINK_EXTRA={'krd:luxottica_kr':'EL.PA'};   // 룩소티카코리아 = 에실로룩소티카 브랜드(레이밴·오클리·프라다) 합
+function svData(){
+  const BM=NAVER&&NAVER.brand_monthly; if(!BM||!BM.series||!BM.months||!BM.months.length) return null;
+  const ents=(KRD&&KRD.entities)||[], mo=BM.months, last=mo[mo.length-1], cy=+last.slice(0,4), cm=+last.slice(5,7);
+  const ysum=(v,y,upto=12)=>{let t=0,n=0; mo.forEach((p,i)=>{ if(+p.slice(0,4)===y&&+p.slice(5,7)<=upto){ t+=v[i]; n++; } }); return n===upto?t:null;};
+  const pct=(a,b)=>a!=null&&b?(a/b-1)*100:null;
+  const rows=[];
+  FB_KEYS.concat(EY_KEYS).forEach(k=>{
+    const e=ents.find(x=>'krd:'+x.id===k); if(!e) return;
+    const lk=SV_LINK_EXTRA[k]||k, bs=nvAll().filter(b=>b.link===lk&&BM.series[b.name]);
+    if(!bs.length) return;
+    const v=mo.map((_,i)=>bs.reduce((t,b)=>t+(BM.series[b.name][i]||0),0));
+    const ys=(e.years||[]).filter(y=>y.rev!=null&&y.end).sort((a,b)=>a.end<b.end?-1:1), l=ys[ys.length-1], p=ys[ys.length-2];
+    const fy=l?+l.end.slice(0,4):null;   // 국내 패션·아이웨어는 모두 12월 결산 → 결산 연도 = 검색 비교 연도
+    let w4=null; const ws=bs.map(b=>b.s).filter(Boolean);
+    if(ws.length&&ws[0].length>=56){ const n=ws[0].length, sw=i=>ws.reduce((t,s)=>t+(s[i]||0),0); let a=0,b=0; for(let i=n-4;i<n;i++){ a+=sw(i); b+=sw(i-52); } w4=pct(a,b); }
+    rows.push({key:k,name:e.name,brands:bs.map(b=>b.name),fy,
+      rev:l&&p&&p.rev>0?(l.rev/p.rev-1)*100:null, srch:fy?pct(ysum(v,fy),ysum(v,fy-1)):null,
+      ytd:pct(ysum(v,cy,cm),ysum(v,cy-1,cm)), w4});
+  });
+  return {rows,cy,cm};
+}
+function svCardHtml(){
+  const d=svData(); if(!d||!d.rows.length) return '';
+  const {rows,cy,cm}=d, both=rows.filter(r=>r.rev!=null&&r.srch!=null), same=both.filter(r=>(r.rev>=0)===(r.srch>=0));
+  const fys=[...new Set(both.map(r=>r.fy))].sort(), fyT=fys.length?fys.map(f=>'FY'+String(f).slice(2)).join('·'):'―';
+  const cell=(v,w)=>v==null?'<span class="na">―</span>':`<span class="${v>=0?'pos':'neg'}">${pp(v)}</span>${w&&v<=-15?'<br><span class="mbadge late" style="white-space:nowrap">관심 둔화</span>':w&&v>=15?'<br><span class="pg-badge" style="white-space:nowrap">관심 증가</span>':''}`;
+  const order=rows.slice().sort((a,b)=>(b.ytd??-1e9)-(a.ytd??-1e9));
+  const down=order.filter(r=>r.ytd!=null&&r.ytd<=-15).map(r=>r.name.replace(/\(.*\)/,'')), up=order.filter(r=>r.ytd!=null&&r.ytd>=15).map(r=>r.name.replace(/\(.*\)/,''));
+  let h=`<div class="ndate" style="margin-top:16px">📊 검색 관심도 vs 실적 <span class="na" style="font-weight:400">${rows.length}곳 · 네이버 월간 검색 · DART 연간 매출</span></div><div class="card" id="svCard">`;
+  h+=`<div class="nv-sum">${both.length?`<b>${fyT} 매출과 같은 해 검색이 같은 방향</b> ${same.length}/${both.length}곳 — 많을수록 검색 흐름이 그 회사 매출을 잘 따라간다는 뜻이라, 올해 검색 변화를 다음 실적의 미리보기로 쓸 수 있습니다.`:'매출·검색을 함께 비교할 수 있는 회사가 아직 없습니다.'}
+    ${down.length?`<br><b style="color:var(--down)">▼ 올해 검색 15% 넘게 감소</b> ${down.map(esc).join(' · ')}`:''}${up.length?`<br><b style="color:var(--up)">▲ 15% 넘게 증가</b> ${up.map(esc).join(' · ')}`:''}</div>`;
+  h+=`<div class="tblwrap"><table class="nowrap sv-tbl"><tr><th>기업</th><th>매출<br><span class="na">결산 연도</span></th><th>검색<br><span class="na">같은 해</span></th><th>검색<br><span class="na">${cy} 1~${cm}월</span></th><th>검색<br><span class="na">최근 4주</span></th></tr>`;
+  order.forEach(r=>{
+    const bn=r.brands.length>2?r.brands.slice(0,2).join('·')+` 외 ${r.brands.length-2}`:r.brands.join('·');
+    h+=`<tr style="cursor:pointer" onclick="goDetail('${r.key}')"><td>${esc(r.name.replace(/\(.*\)/,''))}<span class="pg-rk">${esc(bn)}${r.fy?' · FY'+String(r.fy).slice(2):''}</span></td><td>${cell(r.rev)}</td><td>${cell(r.srch)}</td><td>${cell(r.ytd,1)}</td><td>${cell(r.w4)}</td></tr>`;
+  });
+  h+=`</table></div><div class="note" style="margin-top:6px">검색 = 네이버 검색량(브랜드 검색어 합 · 수입 법인은 취급 브랜드 합: 룩소티카코리아 = 레이밴·오클리·프라다, 케어링아이웨어코리아 = 구찌·생로랑·까르띠에·린드버그, 시원아이웨어 = 디올). 매출 = DART 별도 재무제표 전년 대비. 같은 해 검색 = 결산 연도 1~12월 합 vs 전년. 올해 = 1월부터 지난달까지 vs 전년 같은 기간. 검색은 온라인 관심의 흐름일 뿐 매출과 1:1이 아니고, 아이아이컴바인드 매출에는 탬버린즈·누데이크가 들어 있습니다. 하고하우스·시선인터내셔널·다비치는 브랜드 검색어가 없어 제외. 행을 누르면 기업 상세</div></div>`;
+  return h;
+}
 function moreMenuHtml(){
   const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore();
   const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`패션 <b>${a.length}</b> · 아이웨어 <b>${b.length}</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
     ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
-    ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교',cmpN('fb'))}
+    ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',cmpN('fb'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
     ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
   </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
 }
 function moreFashionHtml(){   // 👕 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
-  const sec=cid=>{const c=CMP[cid], n=cmpData(c).length; return n?`<div class="ndate" style="margin-top:16px">${c.icon} ${esc(c.name)} <span class="na" style="font-weight:400">${n}곳 · ${esc(c.tag)}</span></div>`+cmpCardHtml(cid):'';};
-  return moreHead('👕 패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · DART 연간')+sec('fb')+sec('ey');
+  const sec=cid=>{const c=CMP[cid], n=cmpData(c).length; return n?`<div class="ndate" style="margin-top:16px">${c.icon} ${esc(c.name)} <span class="na" style="font-weight:400">${n}곳 · ${esc(c.tag)}</span></div>`+(fiHas(cid)?finCardHtml(cid):cmpCardHtml(cid)):'';};
+  return moreHead('👕 패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적 · DART 연간')+sec('fb')+sec('ey')+svCardHtml();
 }
 function buildMore(){
   const el=document.getElementById('moreBody'); if(!el) return;

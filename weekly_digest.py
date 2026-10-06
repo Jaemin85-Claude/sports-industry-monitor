@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.2: (대표 요청 2026-10-06) 국내 비교 회사 뉴스(유통사·패션 브랜드)·통관·상표권 뉴스를 따로 묶고 '중요 뉴스'에서는 중복 제외.
+      아이웨어 검색(네이버 주간·전년 대비), 국내 패션·아이웨어 올해 누적 검색 변화(naver_trend v1.5 brand_monthly) 추가
 v1.1: 환율 줄에 '1년 평균 대비 %'(fetch_data v4.9) + 지난 7일 1% 칸 알림 목록
 v1: 월요일 아침 주간 요약 — docs/*.json(현재)과 history.json·git 이력(7일 전 main)을 비교해 한 주 변화를 정리.
     출력: 기본 = 메일 본문(텍스트), --short = 휴대폰 알림용 3줄. 저장소에 아무것도 쓰지 않음(읽기 전용).
@@ -142,9 +144,13 @@ def upcoming_earnings(data, today):
     return sorted(out)
 
 
+SEP_GROUPS = ("kr_peer", "kr_fb", "customs")   # 따로 묶는 뉴스(v1.2) — '중요 뉴스'에서는 제외
+
+
 def top_news(news, today, n=6):
     cutoff = (today - datetime.timedelta(days=DAYS)).isoformat()
-    items = [i for i in (news or {}).get("items", []) if (i.get("first_seen") or "") >= cutoff and (i.get("importance") or 0) >= 2]
+    items = [i for i in (news or {}).get("items", []) if (i.get("first_seen") or "") >= cutoff and (i.get("importance") or 0) >= 2
+             and i.get("group") not in SEP_GROUPS]
     items.sort(key=lambda i: i.get("first_seen") or "", reverse=True)      # 최신 먼저
     items.sort(key=lambda i: -(i.get("importance") or 0))                # 중요도 높은 것 먼저(안정 정렬)
     seen, per, out = set(), {}, []
@@ -161,10 +167,59 @@ def top_news(news, today, n=6):
     return out, len([i for i in items if (i.get("importance") or 0) >= 3])
 
 
+def group_news(news, today, groups, n=6):
+    """지난 7일 특정 그룹 뉴스(중요도 무관) — 최신·중요도 순, 같은 요약 반복 제외"""
+    cutoff = (today - datetime.timedelta(days=DAYS)).isoformat()
+    items = [i for i in (news or {}).get("items", []) if (i.get("first_seen") or "") >= cutoff and i.get("group") in groups]
+    items.sort(key=lambda i: i.get("first_seen") or "", reverse=True)      # 최신 먼저
+    items.sort(key=lambda i: -(i.get("importance") or 0))                # 중요도 높은 것 먼저(안정 정렬)
+    seen, out = set(), []
+    for i in items:
+        s = (i.get("summary") or i.get("title") or "").strip()
+        if not s or s[:24] in seen:
+            continue
+        seen.add(s[:24])
+        out.append((i.get("importance") or 0, i.get("label") or "", s, i.get("first_seen") or ""))
+    return out[:n], len(out)
+
+
+EYE_KR = ("젠틀몬스터", "블루엘리펀트")
+
+
+def eye_moves(nv):
+    """아이웨어(글로벌 + 젠틀몬스터·블루엘리펀트): 전년 대비(최근 4주) 순, 규모 1 미만 제외"""
+    rows = [(b["name"], b.get("yoy")) for b in (nv or {}).get("brands", [])
+            if (b.get("group") == "eye" or b.get("name") in EYE_KR) and b.get("yoy") is not None and (b.get("scale") or 0) >= 1]
+    rows.sort(key=lambda r: r[1], reverse=True)
+    return rows
+
+
+def ytd_search(nv):
+    """국내 패션·아이웨어 브랜드 올해 누적 검색(1월~지난달) vs 전년 같은 기간 — brand_monthly"""
+    bm = (nv or {}).get("brand_monthly") or {}
+    mo, ser = bm.get("months") or [], bm.get("series") or {}
+    if not mo:
+        return [], None
+    cy, cm = int(mo[-1][:4]), int(mo[-1][5:7])
+    idx = lambda y: [i for i, p in enumerate(mo) if int(p[:4]) == y and int(p[5:7]) <= cm]
+    a, b = idx(cy), idx(cy - 1)
+    if len(a) != cm or len(b) != cm:
+        return [], None
+    rows = []
+    for name, v in ser.items():
+        x, y = sum(v[i] for i in a), sum(v[i] for i in b)
+        if y and x + y >= 2:      # 검색이 거의 없는 브랜드 제외
+            rows.append((name, (x / y - 1) * 100))
+    rows.sort(key=lambda r: r[1], reverse=True)
+    return rows, f"{cy}년 1~{cm}월"
+
+
 def naver_moves(nv):
-    """네이버 주간 검색 지수: 최근 주 vs 그 전 주(규모 1 미만 제외)"""
+    """네이버 주간 검색 지수: 최근 주 vs 그 전 주(규모 1 미만 제외) — 수입·해외 브랜드(global)만"""
     rows = []
     for b in (nv or {}).get("brands", []):
+        if b.get("group", "global") != "global":
+            continue
         s = [v for v in (b.get("s") or []) if v is not None]
         if len(s) < 2 or (b.get("scale") or 0) < 1 or not s[-2]:
             continue
@@ -225,6 +280,10 @@ def build(today):
     earn = upcoming_earnings(data, today)
     nws, n_imp = top_news(news, today)
     nvm = naver_moves(nv)
+    kn, kn_n = group_news(news, today, ("kr_peer", "kr_fb"))
+    cn, cn_n = group_news(news, today, ("customs",))
+    eye = eye_moves(nv)
+    ytd, ytd_p = ytd_search(nv)
     dch = dart_changes(kr, kr_old)
     inv = inventory_warnings(data, kr)
 
@@ -250,6 +309,13 @@ def build(today):
             L.append(f"  {'★' * imp} [{lab}] {s} ({d[5:].replace('-', '/')})")
     else:
         L.append("  해당 없음")
+    L.append("")
+
+    L.append(f"■ 국내 비교 회사 뉴스 (지난 7일, 유통사·패션 브랜드{f' · 총 {kn_n}건' if kn_n > len(kn) else ''})")
+    L += [f"  {'★' * imp} [{lab}] {s} ({d[5:].replace('-', '/')})" for imp, lab, s, d in kn] or ["  해당 없음"]
+    L.append("")
+    L.append(f"■ 통관·상표권 (지난 7일{f' · 총 {cn_n}건' if cn_n > len(cn) else ''})")
+    L += [f"  {'★' * imp} {s} ({d[5:].replace('-', '/')})" for imp, lab, s, d in cn] or ["  해당 없음"]
     L.append("")
 
     L.append(f"■ 주가 변화 (지난 {span or DAYS}일)" + (" — 기록이 7일이 안 되어 가능한 기간만" if span and span < DAYS else ""))
@@ -288,6 +354,12 @@ def build(today):
         L.append("  네이버 검색(주간, 최근 주 vs 전 주) 상승 " + " · ".join(f"{n} {pct(v)}" for n, v, _ in nvm[:3]))
         L.append("  네이버 검색(주간) 하락 " + " · ".join(f"{n} {pct(v)}" for n, v, _ in nvm[::-1][:3]))
     m = (nv or {}).get("monthly") or {}
+    if eye:
+        L.append("  아이웨어 검색 전년 대비(최근 4주) 상위 " + " · ".join(f"{n} {pct(v)}" for n, v in eye[:3])
+                 + " / 하위 " + " · ".join(f"{n} {pct(v)}" for n, v in eye[::-1][:3]))
+    if ytd:
+        L.append(f"  국내 패션·아이웨어 검색 {ytd_p} 전년 대비 증가 " + " · ".join(f"{n} {pct(v)}" for n, v in ytd[:3])
+                 + " / 감소 " + " · ".join(f"{n} {pct(v)}" for n, v in ytd[::-1][:3]))
     if m.get("months") and m.get("yoy"):
         last_m = m["months"][-1]
         yv = m["yoy"].get(last_m) if isinstance(m["yoy"], dict) else (m["yoy"][-1] if m["yoy"] else None)

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.3: 재무상태표·현금흐름 지표 대상을 국내 패션 브랜드 13곳 + 아이웨어 6곳으로 확대(대표 요청 2026-10-06, FIN_IDS 9 → 28곳).
+      외감 16곳은 기존 방식(감사보고서 원본 → Claude 추출, 1회 약 $3). 상장 3곳(에이유브랜즈·피스피스스튜디오·에스제이그룹)은
+      사업보고서 전체재무제표 API 행에서 바로 계산(Claude 비용 없음) — 부채 항목은 유동·비유동부채 아래 행을 같은 규칙으로 분류하고
+      부채총계와 대조. 감가상각비는 현금흐름표에 따로 나올 때만(없으면 null → EBITDA 지표 '―')
 v3.2: 차입금을 코드가 분류 — 모델은 재무상태표 부채 항목을 줄 이름·금액 그대로 옮기고(liab_lines), 코드가 이름 규칙으로
       차입금(차입금·사채·회사채·유동성장기부채)·RCPS 부채(상환우선주)·리스부채를 합산(FIN_V=3 → 9곳 1회 재추출).
       v3.1은 '유동회사채'를 놓쳐 트렉시 FY25 차입금이 73.8억(실제 99.5억)으로 나옴 — 대표가 준 2026.04.03 감사보고서로 확인.
@@ -71,7 +75,11 @@ MAX_DOC_CHARS = 70000
 SCHEMA_V = 3
 LISTED_PATH = "docs/kr_listed_fin.json"
 # 재무상태표·현금흐름표 추가 추출 대상(수입 브랜드 유통사 비교군) — 손익과 별도 캐시
-FIN_IDS = {"trexi", "daelim_corp", "rexmond", "bazig", "creed", "hana_int", "t1global", "bbluein", "starintl"}
+FIN_IDS = {"trexi", "daelim_corp", "rexmond", "bazig", "creed", "hana_int", "t1global", "bbluein", "starintl",
+           # v3.3 국내 패션 브랜드 13곳(상장 3곳은 API 행에서 계산) + 아이웨어 6곳
+           "aubrandz", "piecepeace", "sjgroup", "matinkim", "layer", "highlight", "hagohouse", "bcave", "fivespace",
+           "koza", "andar", "sisun", "lowclassic",
+           "iicombined", "blueelephant", "luxottica_kr", "kering_ey_kr", "seeone", "davich"}
 FIN_V = 3
 FIN_KEYS = ("assets", "liab", "equity", "cash", "stfin", "ar", "ap", "inv", "ocf", "capex", "da")
 # 부채 항목 이름 규칙(v3.2) — 차입금·RCPS·리스는 코드가 분류·합산
@@ -241,9 +249,83 @@ def _end_date(y, m):
     return f"{y}-{m:02d}-{calendar.monthrange(y, m)[1]:02d}"
 
 
-def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12):
+# v3.3 상장사 재무상태표·현금흐름(전체재무제표 API 행) — 정확히 일치하는 계정만 사용
+FIN_ACC_BS = {
+    "assets": (["ifrs-full_Assets"], ["자산총계"]),
+    "liab":   (["ifrs-full_Liabilities"], ["부채총계"]),
+    "equity": (["ifrs-full_Equity"], ["자본총계"]),
+    "cash":   (["ifrs-full_CashAndCashEquivalents"], ["현금및현금성자산"]),
+    "stfin":  (["ifrs-full_ShorttermDepositsNotClassifiedAsCashEquivalents"], ["단기금융상품", "단기금융자산"]),
+    "ar":     (["dart_ShortTermTradeReceivable", "ifrs-full_CurrentTradeReceivables"],
+               ["매출채권", "매출채권및기타채권", "매출채권및기타유동채권"]),
+    "ap":     (["dart_ShortTermTradePayables", "ifrs-full_TradeAndOtherCurrentPayables"],
+               ["매입채무", "매입채무및기타채무", "매입채무및기타유동채무"]),
+    "inv":    (["ifrs-full_Inventories"], ["재고자산"]),
+}
+FIN_OCF = (["ifrs-full_CashFlowsFromUsedInOperatingActivities"], ["영업활동현금흐름", "영업활동으로인한현금흐름"])
+CAPEX_PREFIX = ("ifrs-full_PurchaseOfPropertyPlantAndEquipment", "ifrs-full_PurchaseOfIntangibleAssets")
+CAPEX_NAMES = {"유형자산의취득", "무형자산의취득"}
+DA_IDS = {"ifrs-full_AdjustmentsForDepreciationExpense", "ifrs-full_AdjustmentsForAmortisationExpense",
+          "ifrs-full_AdjustmentsForDepreciationAndAmortisationExpense"}
+DA_NAMES = {"감가상각비", "사용권자산상각비", "사용권자산감가상각비", "무형자산상각비", "감가상각비및무형자산상각비"}
+LIAB_HEADERS = {"ifrs-full_CurrentLiabilities", "ifrs-full_NoncurrentLiabilities"}
+BS_TOTALS = {"ifrs-full_Assets", "ifrs-full_CurrentAssets", "ifrs-full_NoncurrentAssets", "ifrs-full_Liabilities",
+             "ifrs-full_Equity", "ifrs-full_EquityAndLiabilities", "ifrs-full_EquityAttributableToOwnersOfParent"}
+
+
+def _nm(r):
+    return re.sub(r"\s+", "", r.get("account_nm") or "")
+
+
+def _exact(rows, sj, ids, names):
+    for r in rows:
+        if r.get("sj_div") == sj and (r.get("account_id") or "") in ids:
+            return r
+    names = {n.replace(" ", "") for n in names}
+    for r in rows:
+        if r.get("sj_div") == sj and _nm(r) in names:
+            return r
+    return None
+
+
+def fin_from_rows(rows, amt_key):
+    """전체재무제표 API 행 → 감사보고서 추출과 같은 모양의 재무상태표·현금흐름 레코드(없는 값 None)"""
+    rec = {}
+    for k, (ids, names) in FIN_ACC_BS.items():
+        r = _exact(rows, "BS", ids, names)
+        rec[k] = to_int(r.get(amt_key)) if r else None
+    r = _exact(rows, "CF", *FIN_OCF)
+    rec["ocf"] = to_int(r.get(amt_key)) if r else None
+    cf = [r for r in rows if r.get("sj_div") == "CF"]
+    cap = [r for r in cf if (r.get("account_id") or "").startswith(CAPEX_PREFIX) or _nm(r) in CAPEX_NAMES]
+    rec["capex"] = sum(abs(to_int(r.get(amt_key)) or 0) for r in cap) if cf else None
+    da = [r for r in cf if (r.get("account_id") or "") in DA_IDS or _nm(r) in DA_NAMES]
+    rec["da"] = sum(abs(to_int(r.get(amt_key)) or 0) for r in da) if da else None
+    # 부채 항목: 유동부채·비유동부채 머리 행 바로 뒤(ord 순)부터 다음 합계·머리 행 전까지
+    bs = sorted([r for r in rows if r.get("sj_div") == "BS"], key=lambda r: int(r.get("ord") or 0))
+    lines, on = [], False
+    for r in bs:
+        aid = r.get("account_id") or ""
+        if aid in LIAB_HEADERS:
+            on = True
+            continue
+        if aid in BS_TOTALS or (aid.endswith("Liabilities") and aid.startswith("ifrs-full_") and _nm(r) in ("유동부채", "비유동부채")):
+            on = False
+            continue
+        if on:
+            lines.append({"name": r.get("account_nm"), "v": to_int(r.get(amt_key)) or 0})
+    c = classify_liab(lines, "v")
+    rec.update(borrow=(c["debt"] + c["rcps"]) if lines else None, debt=c["debt"] if lines else None,
+               rcps=c["rcps"] if lines else None, lease=c["lease"] if lines else None, debt_lines=c["debt_lines"],
+               lines_ok=bool(lines) and rec.get("liab") is not None
+               and abs(c["line_sum"] - rec["liab"]) <= 0.01 * max(abs(rec["liab"]), 1))
+    return rec
+
+
+def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12, fin=None):
     """전체재무제표(사업보고서) 1건으로 당기·전기·전전기 3개년 확보.
-    반환 ({end: {rev, cogs, op, ni, inv}}, source) — 값 없는 항목은 None"""
+    반환 ({end: {rev, cogs, op, ni, inv}}, source) — 값 없는 항목은 None.
+    fin(dict)을 주면 같은 행에서 재무상태표·현금흐름 레코드도 채움(v3.3)"""
     for y in years_try:
         try:
             data = dart(f"{BASE}/fnlttSinglAcntAll.json", {
@@ -277,6 +359,12 @@ def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12):
                 rec[k] = to_int(r.get(amt_key)) if r else None
             if rec.get("rev") is not None:
                 out[end] = rec
+                if fin is not None:
+                    f = fin_from_rows(rows, amt_key)
+                    if any(f.get(k) is not None for k in ("assets", "equity", "ocf")):
+                        f.update(fin_v=FIN_V, source=f"사업보고서 {y} ({'연결' if fs_div == 'CFS' else '별도'}) "
+                                                     f"rcept={rows[0].get('rcept_no')} ({amt_key[:-7]}) · API")
+                        fin[end] = f
         if out:
             src_txt = f"사업보고서 {y} ({'연결' if fs_div == 'CFS' else '별도'}) rcept={rows[0].get('rcept_no')}"
             for end, rec in sorted(out.items()):
@@ -686,9 +774,19 @@ def main():
         log(f"[{eid}] {name} ({route}) corp={code or '-'}")
         recs, fin_by_end = {}, {}
         if route == "api":
-            recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m)
+            fins = {} if eid in FIN_IDS else None
+            recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m, fin=fins)
             for r in recs.values():
                 r["source"] = src_txt
+            for end, f in (fins or {}).items():
+                f["chk"] = fin_check(f, recs.get(end))
+                if not f.get("lines_ok"):
+                    f["bad"] = ["borrow"]
+                log(f"    [재무상태표·현금흐름 API] {end}: 자산 {f.get('assets')} / 부채 {f.get('liab')} / 자본 {f.get('equity')}"
+                    f" / 현금 {f.get('cash')} / 차입금 {f.get('borrow')} ({'·'.join(f.get('debt_lines') or [])}) / 리스 {f.get('lease')}"
+                    f" / OCF {f.get('ocf')} / CAPEX {f.get('capex')} / 상각 {f.get('da')}"
+                    f"{'' if f.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + f['chk'] if f.get('chk') else ''}")
+                fin_by_end[end] = {k: v for k, v in f.items() if k != "fin_v"}
         elif route == "doc":
             if not ANTHROPIC_KEY:
                 log("    [WARN] ANTHROPIC_API_KEY 미설정 → 추출 생략")
