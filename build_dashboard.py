@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.7: 뉴스 탭에 '국내 비교 ▸ 유통사 · 패션 브랜드' 칩(news_monitor v2.5, 대표 요청 2026-10-06) — 국내 법인 상세의 최근 뉴스도
+       DART 법인 id로 연결. 네이버 검색 관심도 카드에 '아이웨어' 버튼(naver_trend v1.4 글로벌 아이웨어 11개 + 젠틀몬스터·
+       블루엘리펀트, 중앙값은 이 13개끼리). 연결 기업·뉴스가 없는 브랜드 줄은 누를 수 없게
 v32.6: 더보기 '👕 패션 브랜드' 한 화면에 국내 패션 브랜드 비교 + 그 아래 아이웨어 비교(대표 요청 2026-10-05) — 아이웨어 메뉴 줄 삭제.
        기업 탭 '패션 브랜드 비교'·'아이웨어 비교' 칩 삭제(중복). 더보기에서 연 상세에서 돌아오면 보던 위치로 스크롤
 v32.5: 국내 탭 정리(대표 요청 2026-10-05) — 🛒 국내 온라인 플랫폼 카드는 기업 탭 '🛒 온라인 플랫폼' 칩으로 이동(칩을 누르면
@@ -1011,7 +1014,8 @@ function newsDedupe(list, n){
   return out;
 }
 function newsFor(key, n=3){
-  const k = NEWS_KEY[key]; if(!k || !NEWS || !NEWS.items) return [];
+  const k = NEWS_KEY[key] || (String(key).startsWith('krd:') ? key.slice(4) : null);   // v32.7 국내 비교 회사 = DART 법인 id
+  if(!k || !NEWS || !NEWS.items) return [];
   return newsDedupe(NEWS.items.filter(it=>it.scope==='brand' && it.key===k)
     .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'') || (b.importance||0)-(a.importance||0)), n);
 }
@@ -1511,6 +1515,9 @@ const NEWS_FILTERS = [
   {id:"i:sports",  label:"스포츠 트렌드"},
   {id:"i:fashion", label:"패션·명품 시장"},
   {id:"i:retail",  label:"멀티브랜드 유통"},
+  {id:"sep3",  label:"국내 비교 ▸", sep:true},
+  {id:"b:kr_peer", label:"유통사"},
+  {id:"b:kr_fb",   label:"패션 브랜드"},
 ];
 let newsFilter="all";
 function newsMatch(it){
@@ -1575,8 +1582,11 @@ function fmtPrd(p){ return p.slice(0,4)+'.'+p.slice(4,6); }
 let NV_SORT='yoy', NV_ALL=false, NV_GRP='global', XC_OFF={};
 const NV_TOP=10;
 const nvAll=()=>(NAVER&&NAVER.brands)||[];
-const nvGrpOf=b=>b.group||'global';                      // v31.1: 'global'(수입·해외) / 'kr'(국내 패션)
-const nvBrands=(g=NV_GRP)=>nvAll().filter(b=>nvGrpOf(b)===g);
+const nvGrpOf=b=>b.group||'global';                      // v31.1: 'global'(수입·해외) / 'kr'(국내 패션) / v32.7 'eye'(글로벌 아이웨어)
+const NV_EYE_KR=new Set(['krd:iicombined','krd:blueelephant']);   // 아이웨어 화면에 함께 보이는 국내 아이웨어
+const NV_GRPS=[['global','수입·해외'],['kr','국내 패션'],['eye','아이웨어']];
+const nvIn=(b,g)=>nvGrpOf(b)===g||(g==='eye'&&NV_EYE_KR.has(b.link));
+const nvBrands=(g=NV_GRP)=>nvAll().filter(b=>nvIn(b,g));
 function nvMed(g=NV_GRP){
   const ys=nvBrands(g).map(b=>b.yoy).filter(v=>v!=null).sort((a,b)=>a-b), n=ys.length;
   return n?(n%2?ys[(n-1)/2]:(ys[n/2-1]+ys[n/2])/2):null;
@@ -1597,8 +1607,8 @@ function nvSpark(s,w,h,fluid){
     ${fluid?'':`<circle cx="${w}" cy="${(h-2-(cur[n-1]-mn)/rg*(h-4)).toFixed(1)}" r="2" fill="var(--accent)"/>`}</svg>`;
 }
 function nvRowHtml(b,med){
-  const go=b.link?`goDetail('${b.link}')`:`nvNews('${b.news}')`;
-  return `<div class="nv-row${b.low?' low':''}" role="button" tabindex="0" onclick="${go}" onkeydown="if(event.key==='Enter'){${go}}">
+  const go=b.link?`goDetail('${b.link}')`:(b.news?`nvNews('${b.news}')`:'');
+  return `<div class="nv-row${b.low?' low':''}"${go?` role="button" tabindex="0" onclick="${go}" onkeydown="if(event.key==='Enter'){${go}}"`:' style="cursor:default"'}>
     <div class="nv-nm"><span>${esc(b.name)}</span>${b.low?'<em class="nv-low">검색량 적음</em>':''}</div>
     <span class="nv-pill ${nvRel(b.yoy,med)}">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span>
     <div class="nv-bar"><span class="tr"><i style="width:${b.scale!=null?Math.max(2,Math.min(100,b.scale)):0}%"></i></span><b>${nvSc(b.scale)}</b></div>
@@ -1606,6 +1616,8 @@ function nvRowHtml(b,med){
     <div class="nv-sub">최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'} (계절 영향 포함)</div></div>`;
 }
 function naverCardHtml(){
+  const grps=NV_GRPS.filter(([g])=>g==='global'||nvBrands(g).length);
+  if(!grps.some(([g])=>g===NV_GRP)) NV_GRP='global';
   const bs=nvBrands();
   if(!bs.length) return `<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3><div class="na">네이버 검색 관심도 수집 전 — 다음 갱신 후 표시</div></div>`;
   const med=nvMed(), key=b=>NV_SORT==='yoy'?(b.yoy??-1e9):(b.scale??-1);
@@ -1613,8 +1625,8 @@ function naverCardHtml(){
   const ups=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='up').sort((a,b)=>b.yoy-a.yoy).slice(0,4);
   const downs=bs.filter(b=>!b.low&&nvRel(b.yoy,med)==='down').sort((a,b)=>a.yoy-b.yoy).slice(0,3);
   let h=`<div class="card" id="nvCard"><h3>🔎 브랜드 검색 관심도 — 네이버</h3>
-    ${nvBrands('kr').length?`<div class="seg2" style="margin-bottom:8px"><button type="button" class="${NV_GRP==='global'?'on':''}" aria-pressed="${NV_GRP==='global'}" onclick="nvGrp('global')">수입·해외 브랜드 ${nvBrands('global').length}</button><button type="button" class="${NV_GRP==='kr'?'on':''}" aria-pressed="${NV_GRP==='kr'}" onclick="nvGrp('kr')">국내 패션 브랜드 ${nvBrands('kr').length}</button></div>`:''}
-    <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드${NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':''}</div>
+    ${grps.length>1?`<div class="seg2" style="margin-bottom:8px;grid-template-columns:repeat(${grps.length},minmax(0,1fr))">${grps.map(([g,l])=>`<button type="button" class="${NV_GRP===g?'on':''}" aria-pressed="${NV_GRP===g}" onclick="nvGrp('${g}')">${l} ${nvBrands(g).length}</button>`).join('')}</div>`:''}
+    <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드${NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':NV_GRP==='eye'?' · 글로벌 아이웨어 + 국내 젠틀몬스터·블루엘리펀트, 중앙값은 이들끼리 · 명품은 선글라스·안경 검색어만':''}</div>
     <div class="seg2" style="margin-bottom:10px"><button type="button" class="${NV_SORT==='yoy'?'on':''}" aria-pressed="${NV_SORT==='yoy'}" onclick="nvSort('yoy')">전년 대비순</button><button type="button" class="${NV_SORT==='size'?'on':''}" aria-pressed="${NV_SORT==='size'}" onclick="nvSort('size')">규모순</button></div>
     <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b> — 대부분이 같이 움직이면 네이버 검색 전반의 변화라, 중앙값보다 나은지로 봅니다.${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
   shown.forEach(b=>{ h+=nvRowHtml(b,med); });
@@ -1630,11 +1642,11 @@ function nvGrp(g){ NV_GRP=g; NV_ALL=false; nvRefresh(); }
 function nvNews(k){ newsFilter='k:'+k; sw('news'); buildNewsChips(); buildNews(); }
 function naverDetailCard(t){
   const bs=nvAll().filter(b=>b.link===t); if(!bs.length) return '';
-  let h=`<div class="card"><h3>🔎 네이버 검색 관심도 <span class="go" onclick="sw('kr')">국내 ▸</span></h3>`;
+  let h=`<div class="card"><h3>🔎 네이버 검색 관심도 <span class="go" onclick="NV_GRP='${nvGrpOf(bs[0])}';NV_ALL=false;nvRefresh();sw('kr')">국내 ▸</span></h3>`;
   bs.forEach(b=>{
-    const med=nvMed(nvGrpOf(b)), grpN=nvBrands(nvGrpOf(b)).length;
+    const g=nvGrpOf(b), med=nvMed(g), grpN=nvBrands(g).length;
     h+=`<div class="nv-det"><div class="krhead"><span class="krname">${esc(b.name)}</span><span class="nv-pill ${nvRel(b.yoy,med)}" style="margin-left:auto">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span></div>
-      <div class="krmeta">규모 ${nvSc(b.scale)} (나이키 최근 4주 = 100) · ${nvGrpOf(b)==='kr'?'국내 패션 ':''}${grpN}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
+      <div class="krmeta">규모 ${nvSc(b.scale)} (나이키 최근 4주 = 100) · ${g==='kr'?'국내 패션 ':g==='eye'?'아이웨어 ':''}${grpN}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 최근 4주 vs 직전 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
       ${nvSpark(b.s,300,44,true)}</div>`;
   });
   return h+`<div class="note" style="margin-top:6px">주간 검색 지수 · 최근 1년 실선 · 그 전 1년 점선 · ${nvWk(NAVER.end)} 주까지${bs.some(b=>b.low)?' · 검색량이 적어 변동이 큼':''}</div></div>`;

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.4: 글로벌 아이웨어 브랜드 11개 추가(EYE_BRANDS, group 'eye', 대표 요청) — 레이밴·오클리·페르솔·프라다·구찌·생로랑·
+      까르띠에·디올·톰포드·린드버그·모스콧. 브랜드명만으로는 의류·가방 검색이 섞이는 명품은 '선글라스·안경' 검색어로 한정.
+      같은 나이키 기준 · 월간 합계에는 넣지 않음. 국내 브랜드 수집(KR_BRANDS)은 group 'kr' 그대로(뉴스 키 = DART 법인 id 연결)
 v1.3: 국내 패션·아이웨어 브랜드 13개 추가(KR_BRANDS, 대표 요청) — 같은 나이키 기준으로 주간 지수 수집, 결과에 group 표시.
       월간 합계(판매 vs 검색 교차 그래프)는 기존 브랜드만 유지해 시계열 의미가 바뀌지 않게 함
 v1.2: 클락스→비바굿즈(0933.HK)·휴먼메이드→456A.T 기업 상세 연결(상장사 추가에 맞춤)
@@ -67,21 +70,37 @@ BRANDS = [
 ]
 # 국내 패션 브랜드(v1.3) — 연결은 DART 국내 법인(krd:). 월간 합계에는 넣지 않음
 KR_BRANDS = [
-    ("락피쉬웨더웨어", None, "krd:aubrandz", ["락피쉬웨더웨어", "락피쉬", "rockfish weatherwear"]),
-    ("마르디 메크르디", None, "krd:piecepeace", ["마르디메크르디", "마르디 메크르디", "mardi mercredi"]),
-    ("마뗑킴", None, "krd:matinkim", ["마뗑킴", "마땡킴", "matin kim"]),
-    ("마리떼", None, "krd:layer", ["마리떼", "마리떼프랑소와저버", "마리떼 프랑소와 저버", "marithe"]),
-    ("코닥어패럴", None, "krd:highlight", ["코닥어패럴", "코닥 어패럴", "kodak apparel"]),
-    ("커버낫", None, "krd:bcave", ["커버낫", "covernat"]),
-    ("아더에러", None, "krd:fivespace", ["아더에러", "ader error", "adererror"]),
-    ("스탠드오일", None, "krd:koza", ["스탠드오일", "stand oil"]),
-    ("안다르", None, "krd:andar", ["안다르", "andar"]),
-    ("캉골", None, "krd:sjgroup", ["캉골", "kangol"]),
-    ("로우클래식", None, "krd:lowclassic", ["로우클래식", "low classic"]),
+    ("락피쉬웨더웨어", "aubrandz", "krd:aubrandz", ["락피쉬웨더웨어", "락피쉬", "rockfish weatherwear"]),
+    ("마르디 메크르디", "piecepeace", "krd:piecepeace", ["마르디메크르디", "마르디 메크르디", "mardi mercredi"]),
+    ("마뗑킴", "matinkim", "krd:matinkim", ["마뗑킴", "마땡킴", "matin kim"]),
+    ("마리떼", "layer", "krd:layer", ["마리떼", "마리떼프랑소와저버", "마리떼 프랑소와 저버", "marithe"]),
+    ("코닥어패럴", "highlight", "krd:highlight", ["코닥어패럴", "코닥 어패럴", "kodak apparel"]),
+    ("커버낫", "bcave", "krd:bcave", ["커버낫", "covernat"]),
+    ("아더에러", "fivespace", "krd:fivespace", ["아더에러", "ader error", "adererror"]),
+    ("스탠드오일", "koza", "krd:koza", ["스탠드오일", "stand oil"]),
+    ("안다르", "andar", "krd:andar", ["안다르", "andar"]),
+    ("캉골", "sjgroup", "krd:sjgroup", ["캉골", "kangol"]),
+    ("로우클래식", "lowclassic", "krd:lowclassic", ["로우클래식", "low classic"]),
     ("젠틀몬스터", None, "krd:iicombined", ["젠틀몬스터", "gentle monster"]),
     ("블루엘리펀트", None, "krd:blueelephant", ["블루엘리펀트", "blue elephant"]),
 ]
 KR_NAMES = {b[0] for b in KR_BRANDS}
+# 글로벌 아이웨어(v1.4) — 연결: 레이밴·오클리·페르솔·프라다 = 에실로룩소티카(라이선스 포함), 구찌·생로랑·까르띠에·
+# 린드버그 = 케어링아이웨어코리아, 디올 = 시원아이웨어(국내 수입 유통). 톰포드·모스콧은 연결 대상 없음. 월간 합계에는 넣지 않음
+EYE_BRANDS = [
+    ("레이밴", None, "EL.PA", ["레이밴", "레이벤", "rayban", "ray-ban", "ray ban"]),
+    ("오클리", None, "EL.PA", ["오클리", "oakley", "오클리 선글라스"]),
+    ("페르솔", None, "EL.PA", ["페르솔", "persol"]),
+    ("프라다 아이웨어", "prada", "EL.PA", ["프라다 선글라스", "프라다 안경", "프라다 안경테", "prada 선글라스"]),
+    ("구찌 아이웨어", "gucci", "krd:kering_ey_kr", ["구찌 선글라스", "구찌 안경", "구찌 안경테", "gucci 선글라스"]),
+    ("생로랑 아이웨어", "ysl", "krd:kering_ey_kr", ["생로랑 선글라스", "생로랑 안경", "생로랑 안경테", "saint laurent 선글라스"]),
+    ("까르띠에 아이웨어", None, "krd:kering_ey_kr", ["까르띠에 안경", "까르띠에 선글라스", "까르띠에 안경테", "cartier 안경"]),
+    ("린드버그", None, "krd:kering_ey_kr", ["린드버그 안경", "린드버그 안경테", "lindberg 안경", "린드버그"]),
+    ("디올 아이웨어", "dior", "krd:seeone", ["디올 선글라스", "디올 안경", "디올 안경테", "dior 선글라스"]),
+    ("톰포드 아이웨어", None, None, ["톰포드 선글라스", "톰포드 안경", "톰포드 안경테", "tom ford 안경"]),
+    ("모스콧", None, None, ["모스콧", "moscot", "모스콧 렘토쉬"]),
+]
+EYE_NAMES = {b[0] for b in EYE_BRANDS}
 
 
 class FatalAPI(Exception):
@@ -132,7 +151,7 @@ def metrics(vals):
 
 def collect():
     start, end = date_range()
-    ALL = BRANDS + KR_BRANDS
+    ALL = BRANDS + KR_BRANDS + EYE_BRANDS
     weeks, rows, anchor_row = None, {}, None
     for i in range(0, len(ALL), PER_REQ):
         batch = ALL[i:i + PER_REQ]
@@ -164,7 +183,7 @@ def collect():
     out_brands = []
     for name, news, link, kw in [(ANCHOR[0], ANCHOR[1], ANCHOR[2], ANCHOR[3])] + ALL:
         vals, scale = anchor_row if name == ANCHOR[0] else rows.get(name, (None, None))
-        grp = "kr" if name in KR_NAMES else "global"
+        grp = "kr" if name in KR_NAMES else ("eye" if name in EYE_NAMES else "global")
         if vals is None:
             out_brands.append({"name": name, "news": news, "link": link, "keywords": kw, "group": grp,
                                "scale": None, "yoy": None, "trend": None, "s": None})
