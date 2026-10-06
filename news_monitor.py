@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.5: ① 국내 비교 회사 21곳 추가 — 유통사 8곳(kr_peer, 트렉시 제외)·국내 패션 브랜드 13곳(kr_fb), 키 = DART 법인 id.
+     선별 기준에 국내 비교 회사용 안내(동명 회사 제외, 사업 소식은 포함) 추가.
+     ② Haiku 4.5 품질 비교(대표 요청, ~10/13) — 선별은 지금처럼 Sonnet, 같은 헤드라인을 Haiku로도 한 번 더 선별해
+     건수·겹침·비용을 news.json model_compare에 남김(화면 반영 없음). 기간이 지나면 자동으로 멈춤
 v2.4: 브랜드 21개 추가 — 뉴발란스·우포스·킨·CEP·노르다(스포츠), 드래곤디퓨전·메종키츠네·가니·헌터·
      닥터마틴·핏플랍·락포트·피레넥스·클락스·파라부트·와일드동키·휴먼메이드·에코·단톤·샤카웨어(패션),
      비비안웨스트우드(명품). 호카 검색어에 어그(UGG, 같은 데커스) 포함
@@ -111,9 +115,32 @@ BRANDS = {
     "cenomi":     ["Cenomi Retail", "retail", '"Cenomi Retail" OR "Alhokair"'],
     "me_retail":  ["중동 유통", "retail", '"Middle East" sportswear retail OR "GCC" fashion retail OR "Saudi" sports retail'],
     "sa_retail":  ["남미 유통", "retail", '"Latin America" sportswear retail OR "Brazil" sneaker market'],
+    # ── 국내 비교 유통사 (kr_peer, v2.5) — 키 = DART 법인 id, 트렉시(자사)는 제외 ──
+    "daelim_corp": ["대림코퍼레이션", "kr_peer", '"대림코퍼레이션"'],
+    "rexmond":    ["렉스몬드(오케이몰)", "kr_peer", '"오케이몰" OR 렉스몬드'],
+    "bazig":      ["베이지그", "kr_peer", '"베이지그"'],
+    "creed":      ["크리드네트웍스", "kr_peer", '"크리드네트웍스"'],
+    "hana_int":   ["한아아이앤티(하하몰)", "kr_peer", '"한아아이앤티" OR "하하몰"'],
+    "t1global":   ["티원글로벌", "kr_peer", '"티원글로벌"'],
+    "bbluein":    ["비블루아이앤", "kr_peer", '"비블루아이앤"'],
+    "starintl":   ["스타인터내셔널", "kr_peer", '"스타인터내셔널"'],
+    # ── 국내 패션 브랜드 (kr_fb, v2.5) — 더보기 › 패션 브랜드 비교 13곳 ──
+    "aubrandz":   ["에이유브랜즈(락피쉬)", "kr_fb", '"에이유브랜즈" OR 락피쉬웨더웨어'],
+    "piecepeace": ["피스피스스튜디오(마르디)", "kr_fb", '"피스피스스튜디오" OR 마르디메크르디 OR "마르디 메크르디"'],
+    "sjgroup":    ["에스제이그룹(캉골)", "kr_fb", '"에스제이그룹" OR 캉골코리아 OR 캉골'],
+    "matinkim":   ["마뗑킴", "kr_fb", '마뗑킴 OR "Matin Kim"'],
+    "layer":      ["레이어(마리떼)", "kr_fb", '마리떼프랑소와저버 OR "마리떼 프랑소와 저버"'],
+    "highlight":  ["하이라이트브랜즈(코닥)", "kr_fb", '"하이라이트브랜즈" OR 코닥어패럴'],
+    "hagohouse":  ["하고하우스", "kr_fb", '"하고하우스"'],
+    "bcave":      ["비케이브(커버낫)", "kr_fb", '비케이브 OR 커버낫 OR 와키윌리'],
+    "fivespace":  ["파이브스페이스(아더에러)", "kr_fb", '아더에러 OR "Ader Error"'],
+    "koza":       ["코자(스탠드오일)", "kr_fb", '스탠드오일 OR "Stand Oil"'],
+    "andar":      ["안다르", "kr_fb", '안다르 OR 에코마케팅'],
+    "sisun":      ["시선인터내셔널(미샤)", "kr_fb", '"시선인터내셔널" OR 잇미샤'],
+    "lowclassic": ["로우클래식", "kr_fb", '로우클래식 OR "Low Classic"'],
 }
 GROUP_LABEL = {"sports": "스포츠·아웃도어", "fashion": "패션", "luxury": "명품",
-               "retail": "유통·그외"}
+               "retail": "유통·그외", "kr_peer": "국내 유통사", "kr_fb": "국내 패션"}
 
 # ────────────────────────────────────────────────
 # ② 산업 뉴스 — 카테고리별 검색어
@@ -142,6 +169,12 @@ INDUSTRY = {
 MAX_PER_QUERY = 10
 KEEP_DAYS = 14
 NEWS_PATH = "docs/news.json"
+
+# 선별 모델. SHADOW_MODEL은 SHADOW_UNTIL(KST, 포함)까지 같은 헤드라인을 따로 선별해 비교 기록만 남김
+MODEL = "claude-sonnet-4-6"
+SHADOW_MODEL = "claude-haiku-4-5"
+SHADOW_UNTIL = "2026-10-13"
+PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰 (입력, 출력)
 
 
 
@@ -212,18 +245,18 @@ def collect():
     return raw
 
 
-def claude_curate(new_items):
-    """신규 헤드라인만 선별·요약. 반환 {id: {summary, importance, category}}"""
+def claude_curate(new_items, model=MODEL):
+    """신규 헤드라인만 선별·요약. 반환 ({id: {summary, importance, category}}, 사용량 {model, in, out, usd})"""
     lines = []
     for it in new_items.values():
-        lines.append(f"[{it['id']}] ({it['scope']}/{it['key']}) {it['title']} "
+        lines.append(f"[{it['id']}] ({it['scope']}/{it['key']}/{it.get('group', '')}) {it['title']} "
                      f"— {it['source']}, {it['pubDate'][:16]}")
     corpus = "\n".join(lines)
     prompt = f"""You curate daily news for a Korean company that does parallel import
 and multi-brand distribution of sports, outdoor, fashion and luxury brands.
 
-Below are headlines collected in the last few days, each tagged with a scope
-(brand/<slug> or industry/<category>).
+Below are headlines collected in the last few days, each tagged with
+(scope/key/group): scope is brand or industry.
 
 SELECT only items that matter for that business: brand distribution/licensing
 changes, market entry/exit (especially Korea/Asia), store expansion/closures,
@@ -232,6 +265,14 @@ pricing/discount pressure, inventory issues, notable collaborations or category
 strategy, retail channel shifts, consumer trend shifts.
 EXCLUDE: product reviews, promotions/sales ads, sports match results, celebrity
 outfit gossip, unrelated namesakes, tariff/FX/policy items (handled elsewhere).
+
+Korean peer companies (group kr_peer = small Korean parallel-import / online
+distributors competing directly with this company; group kr_fb = Korean fashion
+brand companies it benchmarks): include genuine business news about that exact
+company or its brands (earnings, funding/IPO, new brand deals, mall or store
+launches, overseas expansion, M&A, management changes, lawsuits, customs or
+trademark issues). Exclude other companies that merely share the name, and pure
+product promotions or celebrity items.
 
 For each selected item: one-sentence Korean summary faithful to the headline
 (never invent facts), importance 1-3 (3 = strategic/urgent), and a category
@@ -246,13 +287,54 @@ Omit ids that should not be selected. If nothing qualifies, return {{}}.
 
 HEADLINES:
 {corpus}"""
-    data = anthropic_post({"model": "claude-sonnet-4-6",
+    data = anthropic_post({"model": model,
               "max_tokens": 6000,
               "messages": [{"role": "user", "content": prompt}]}, timeout=240)
     parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
-    return json.loads(text)
+    try:
+        picked = json.loads(text)
+    except json.JSONDecodeError:
+        # 앞뒤에 설명 문장이 붙은 경우: 첫 '{'부터 JSON 객체 하나만 읽음
+        picked, _ = json.JSONDecoder().raw_decode(text[text.index("{"):])
+    if not isinstance(picked, dict):
+        raise ValueError("선별 응답이 JSON 객체가 아님")
+    u = data.get("usage") or {}
+    pin, pout = PRICE.get(model, (0.0, 0.0))
+    tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    usage = {"model": model, "in": tin, "out": tout,
+             "usd": round((tin * pin + tout * pout) / 1e6, 4),
+             "stop": data.get("stop_reason", "")}
+    if usage["stop"] == "max_tokens":
+        print(f"  [WARN] {model} 응답이 max_tokens에서 잘림 — 일부 선별 누락 가능", flush=True)
+    return picked, usage
+
+
+def compare_models(new_items, picked, usage, today):
+    """SHADOW_MODEL로 같은 헤드라인을 한 번 더 선별해 비교 기록(화면 반영 없음). 실패해도 본 선별에는 영향 없음"""
+    try:
+        shadow, su = claude_curate(new_items, SHADOW_MODEL)
+    except (Exception, SystemExit) as e:
+        print(f"  [WARN] 모델 비교({SHADOW_MODEL}) 실패 — 건너뜀: {str(e)[:150]}", flush=True)
+        return None
+    a = {k for k in picked if k in new_items}
+    b = {k for k in shadow if k in new_items}
+    imp = lambda sel, ids: [sum(1 for k in ids if int((sel.get(k) or {}).get("importance", 1) or 1) == n)
+                            for n in (1, 2, 3)]
+    row = lambda k, sel: {"id": k, "key": new_items[k]["key"], "title": new_items[k]["title"][:120],
+                          "summary": str((sel.get(k) or {}).get("summary", ""))[:120],
+                          "importance": int((sel.get(k) or {}).get("importance", 1) or 1)}
+    rec = {"date": today.isoformat(), "new": len(new_items), "both": len(a & b),
+           "primary": {**usage, "n": len(a), "imp": imp(picked, a)},
+           "shadow": {**su, "n": len(b), "imp": imp(shadow, b)},
+           "only_primary": [row(k, picked) for k in sorted(a - b)][:25],
+           "only_shadow": [row(k, shadow) for k in sorted(b - a)][:25],
+           "imp_diff": sum(1 for k in a & b if int(picked[k].get("importance", 1) or 1)
+                           != int(shadow[k].get("importance", 1) or 1))}
+    print(f"모델 비교: {MODEL} {len(a)}건(${usage['usd']}) · {SHADOW_MODEL} {len(b)}건(${su['usd']}) · "
+          f"겹침 {len(a & b)}건 · 중요도 다름 {rec['imp_diff']}건", flush=True)
+    return rec
 
 
 def main():
@@ -283,13 +365,21 @@ def main():
     new_items = {k: v for k, v in raw.items() if k not in seen_ids}
     print(f"신규 {len(new_items)}건 → Claude 선별")
 
-    picked = {}
+    picked, usage = {}, None
     if new_items:
         try:
-            picked = claude_curate(new_items)
+            picked, usage = claude_curate(new_items)
+            print(f"선별 {MODEL}: {len(picked)}건 · 입력 {usage['in']:,} · 출력 {usage['out']:,} 토큰 · ${usage['usd']}",
+                  flush=True)
         except Exception as e:
             print(f"[WARN] 선별 실패(이번 회차 신규 미반영): {str(e)[:150]}")
             picked = {}
+
+    compare = old.get("model_compare", [])[-19:]
+    if usage and SHADOW_MODEL and today.isoformat() <= SHADOW_UNTIL:
+        rec = compare_models(new_items, picked, usage, today)
+        if rec:
+            compare.append(rec)
 
     for iid, sel in picked.items():
         src = new_items.get(iid)
@@ -316,6 +406,8 @@ def main():
            datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
            "today": today.isoformat(),
            "items": kept, "seen_ids": seen_list}
+    if compare:
+        out["model_compare"] = compare
     os.makedirs("docs", exist_ok=True)
     with open(NEWS_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
