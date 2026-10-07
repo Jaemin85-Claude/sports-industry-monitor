@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.6: ① 국내 유통사 8곳은 네이버 뉴스 검색(NAVER API HUB, 검색어 트렌드와 같은 키)도 함께 수집 — 구글 뉴스에 작은 국내 회사 기사가
+     적어서(10/6 신규 2건). 권한·키 오류면 [WARN] 후 구글만 사용. ② 산업 '통관·상표권'(customs) 검색어 5개 + 선별 기준
+     (병행수입 판례·관세청 단속·상표권 분쟁·직구 통관 규정은 포함). ③ 같은 사건 중복 방지 — 최근 3일 선별 요약을 함께 보내
+     같은 사건은 다시 고르지 않게 하고, 제목이 같은 기사(출처만 다른 경우 포함)는 수집 단계에서 하나만 남김
 v2.5: ① 국내 비교 회사 21곳 추가 — 유통사 8곳(kr_peer, 트렉시 제외)·국내 패션 브랜드 13곳(kr_fb), 키 = DART 법인 id.
      선별 기준에 국내 비교 회사용 안내(동명 회사 제외, 사업 소식은 포함) 추가. 로그에 국내 비교 그룹별 신규→선별 건수
      ② Haiku 4.5 품질 비교(대표 요청, ~10/13) — 선별은 지금처럼 Sonnet, 같은 헤드라인을 Haiku로도 한 번 더 선별해
@@ -25,6 +29,8 @@ import re
 import json
 import time
 import hashlib
+import html
+import email.utils
 import datetime
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -140,7 +146,8 @@ BRANDS = {
     "lowclassic": ["로우클래식", "kr_fb", '로우클래식 OR "Low Classic"'],
 }
 GROUP_LABEL = {"sports": "스포츠·아웃도어", "fashion": "패션", "luxury": "명품",
-               "retail": "유통·그외", "kr_peer": "국내 유통사", "kr_fb": "국내 패션"}
+               "retail": "유통·그외", "kr_peer": "국내 유통사", "kr_fb": "국내 패션",
+               "customs": "통관·상표권"}
 
 # ────────────────────────────────────────────────
 # ② 산업 뉴스 — 카테고리별 검색어
@@ -164,6 +171,29 @@ INDUSTRY = {
         '"off-price" OR "TJX" OR 오프프라이스 의류',
         '백화점 스포츠 OR 패션 매출',
     ]],
+    # v2.6 병행수입 사업에 직접 걸리는 법·통관 소식
+    "customs": ["통관·상표권", [
+        '병행수입 판결 OR 병행수입 소송 OR 병행수입 상표권',
+        '관세청 위조상품 적발 OR 짝퉁 적발 OR 지식재산권 침해 단속',
+        '상표권 침해 소송 패션 OR 상표권 분쟁 브랜드',
+        '해외직구 통관 OR 목록통관 OR 특송 통관 OR 직구 면세한도',
+        '"parallel import" OR "grey market" trademark ruling',
+    ]],
+}
+
+# ③ 네이버 뉴스 검색(v2.6) — 구글 뉴스에 기사가 적은 국내 유통사만. slug: [검색어…]
+NAVER_URL = "https://naverapihub.apigw.ntruss.com/search/v1/news"
+NAVER_KEY_ID = os.environ.get("NCP_APIGW_API_KEY_ID", "")
+NAVER_KEY = os.environ.get("NCP_APIGW_API_KEY", "")
+NAVER_NEWS = {
+    "daelim_corp": ["대림코퍼레이션"],
+    "rexmond":     ["오케이몰", "렉스몬드"],
+    "bazig":       ["베이지그"],
+    "creed":       ["크리드네트웍스"],
+    "hana_int":    ["하하몰", "한아아이앤티"],
+    "t1global":    ["티원글로벌"],
+    "bbluein":     ["비블루아이앤"],
+    "starintl":    ["스타인터내셔널"],
 }
 
 MAX_PER_QUERY = 10
@@ -225,33 +255,94 @@ def item_id(title, link):
     return hashlib.md5((title.strip().lower() + "|" + link).encode()).hexdigest()[:12]
 
 
-def collect():
-    """수집 → {id: {…, scope, key}} (scope=brand/industry, key=slug/category)"""
-    raw = {}
+def title_key(title):
+    """같은 기사 판별용 제목 키 — 구글 뉴스의 ' - 매체명' 꼬리와 기호·공백을 뺀 앞 40자"""
+    t = re.sub(r"\s+-\s+[^-]{1,40}$", "", title or "")
+    return re.sub(r"[^0-9a-z가-힣]", "", t.lower())[:40]
+
+
+def fetch_naver_news(query, days=3):
+    """네이버 뉴스 검색(최신순 10건) → 최근 N일만. 권한·키 오류는 PermissionError로 올림"""
+    r = requests.get(NAVER_URL, params={"query": query, "display": 10, "sort": "date"},
+                     headers={"X-NCP-APIGW-API-KEY-ID": NAVER_KEY_ID, "X-NCP-APIGW-API-KEY": NAVER_KEY},
+                     timeout=20)
+    if r.status_code in (401, 403):
+        raise PermissionError(f"{r.status_code}: {r.text[:150]}")
+    r.raise_for_status()
+    cutoff = datetime.datetime.now(KST) - datetime.timedelta(days=days)
+    items = []
+    for it in r.json().get("items", []):
+        try:
+            pd = email.utils.parsedate_to_datetime(it.get("pubDate", ""))
+        except Exception:
+            pd = None
+        if pd is None or pd < cutoff:
+            continue
+        title = html.unescape(re.sub(r"<[^>]+>", "", it.get("title", ""))).strip()
+        link = it.get("originallink") or it.get("link") or ""
+        src = urllib.parse.urlparse(link).netloc.replace("www.", "")
+        if title and link:
+            items.append({"title": title, "link": link, "source": src,
+                          "pubDate": pd.astimezone(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")})
+    return items
+
+
+def collect(known_titles=frozenset()):
+    """수집 → {id: {…, scope, key}} (scope=brand/industry, key=slug/category).
+    known_titles: 보관 중인 기사 제목 키 — 같은 제목은 출처가 달라도 다시 넣지 않음"""
+    raw, titles = {}, set(known_titles)
+
+    def add(it, **meta):
+        tk = title_key(it["title"])
+        if tk and tk in titles:
+            return False
+        iid = item_id(it["title"], it["link"])
+        if iid in raw:
+            return False
+        titles.add(tk)
+        raw[iid] = {**it, "id": iid, **meta}
+        return True
+
     for slug, (name, grp, q) in BRANDS.items():
         for it in fetch_rss(q):
-            iid = item_id(it["title"], it["link"])
-            raw.setdefault(iid, {**it, "id": iid, "scope": "brand",
-                                 "key": slug, "label": name, "group": grp})
+            add(it, scope="brand", key=slug, label=name, group=grp)
         time.sleep(0.7)
     for cat, (label, queries) in INDUSTRY.items():
         for q in queries:
             for it in fetch_rss(q):
-                iid = item_id(it["title"], it["link"])
-                raw.setdefault(iid, {**it, "id": iid, "scope": "industry",
-                                     "key": cat, "label": label, "group": cat})
+                add(it, scope="industry", key=cat, label=label, group=cat)
             time.sleep(0.7)
+    if NAVER_KEY_ID and NAVER_KEY:
+        got = calls = 0
+        try:
+            for slug, kws in NAVER_NEWS.items():
+                name, grp, _ = BRANDS[slug]
+                for kw in kws:
+                    calls += 1
+                    for it in fetch_naver_news(kw):
+                        got += add(it, scope="brand", key=slug, label=name, group=grp)
+                    time.sleep(0.2)
+            print(f"네이버 뉴스(국내 유통사): 검색 {calls}회 · 추가 {got}건", flush=True)
+        except PermissionError as e:
+            print(f"[WARN] 네이버 뉴스 검색 권한 없음({e}) — NCP API HUB 앱에서 '검색' API 사용 설정 필요. 구글 뉴스만 사용",
+                  flush=True)
+        except Exception as e:
+            print(f"[WARN] 네이버 뉴스 검색 실패: {str(e)[:150]} — 구글 뉴스만 사용", flush=True)
+    else:
+        print("[WARN] 네이버 키 없음 — 국내 유통사 네이버 뉴스 검색 건너뜀", flush=True)
     print(f"수집 {len(raw)}건 (중복 제거 후)")
     return raw
 
 
-def claude_curate(new_items, model=MODEL):
-    """신규 헤드라인만 선별·요약. 반환 ({id: {summary, importance, category}}, 사용량 {model, in, out, usd})"""
+def claude_curate(new_items, model=MODEL, recent=()):
+    """신규 헤드라인만 선별·요약. recent: 최근 선별 요약(같은 사건 재선별 방지).
+    반환 ({id: {summary, importance, category}}, 사용량 {model, in, out, usd})"""
     lines = []
     for it in new_items.values():
         lines.append(f"[{it['id']}] ({it['scope']}/{it['key']}/{it.get('group', '')}) {it['title']} "
                      f"— {it['source']}, {it['pubDate'][:16]}")
     corpus = "\n".join(lines)
+    recent_txt = "\n".join(f"- {r}" for r in recent) or "(none)"
     prompt = f"""You curate daily news for a Korean company that does parallel import
 and multi-brand distribution of sports, outdoor, fashion and luxury brands.
 
@@ -264,7 +355,19 @@ ownership/management changes, restructuring, earnings or demand signals,
 pricing/discount pressure, inventory issues, notable collaborations or category
 strategy, retail channel shifts, consumer trend shifts.
 EXCLUDE: product reviews, promotions/sales ads, sports match results, celebrity
-outfit gossip, unrelated namesakes, tariff/FX/policy items (handled elsewhere).
+outfit gossip, unrelated namesakes, tariff/FX/policy items (handled elsewhere) —
+except items tagged industry/customs (below).
+
+Items tagged industry/customs matter directly to a parallel importer: include
+court rulings or disputes on parallel imports and trademarks (fashion, sports,
+luxury, eyewear brands), customs enforcement (counterfeit seizures, inspections
+of imported goods), and changes to import clearance or overseas direct-purchase
+rules (duty-free limits, list clearance). Exclude trademark cases in unrelated
+industries (food, pharma, IT) and general trade/tariff policy.
+
+DUPLICATES: when several headlines report the same event, select only the most
+informative one. Do not select an event that already appears in RECENTLY
+SELECTED below, unless the headline adds a material new development.
 
 Korean peer companies (group kr_peer = small Korean parallel-import / online
 distributors competing directly with this company; group kr_fb = Korean fashion
@@ -276,14 +379,17 @@ product promotions or celebrity items.
 
 For each selected item: one-sentence Korean summary faithful to the headline
 (never invent facts), importance 1-3 (3 = strategic/urgent), and a category
-from: brand, sports, fashion, retail.
+from: brand, sports, fashion, retail, customs.
 
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "<id>": {{"summary": "한국어 한 문장", "importance": 1|2|3,
-            "category": "brand|sports|fashion|retail"}}
+            "category": "brand|sports|fashion|retail|customs"}}
 }}
 Omit ids that should not be selected. If nothing qualifies, return {{}}.
+
+RECENTLY SELECTED (last 3 days, for duplicate checking only):
+{recent_txt}
 
 HEADLINES:
 {corpus}"""
@@ -311,10 +417,10 @@ HEADLINES:
     return picked, usage
 
 
-def compare_models(new_items, picked, usage, today):
+def compare_models(new_items, picked, usage, today, recent=()):
     """SHADOW_MODEL로 같은 헤드라인을 한 번 더 선별해 비교 기록(화면 반영 없음). 실패해도 본 선별에는 영향 없음"""
     try:
-        shadow, su = claude_curate(new_items, SHADOW_MODEL)
+        shadow, su = claude_curate(new_items, SHADOW_MODEL, recent)
     except (Exception, SystemExit) as e:
         print(f"  [WARN] 모델 비교({SHADOW_MODEL}) 실패 — 건너뜀: {str(e)[:150]}", flush=True)
         return None
@@ -361,14 +467,17 @@ def main():
     known = {it["id"] for it in kept}
     seen_ids = set(old.get("seen_ids", [])) | known
 
-    raw = collect()
+    recent_days = {(today - datetime.timedelta(days=d)).isoformat() for d in range(3)}
+    recent = [it.get("summary") or it.get("title", "") for it in kept
+              if it.get("first_seen") in recent_days][:120]
+    raw = collect({title_key(it.get("title", "")) for it in kept})
     new_items = {k: v for k, v in raw.items() if k not in seen_ids}
     print(f"신규 {len(new_items)}건 → Claude 선별")
 
     picked, usage = {}, None
     if new_items:
         try:
-            picked, usage = claude_curate(new_items)
+            picked, usage = claude_curate(new_items, MODEL, recent)
             print(f"선별 {MODEL}: {len(picked)}건 · 입력 {usage['in']:,} · 출력 {usage['out']:,} 토큰 · ${usage['usd']}",
                   flush=True)
         except Exception as e:
@@ -377,7 +486,7 @@ def main():
 
     compare = old.get("model_compare", [])[-19:]
     if usage and SHADOW_MODEL and today.isoformat() <= SHADOW_UNTIL:
-        rec = compare_models(new_items, picked, usage, today)
+        rec = compare_models(new_items, picked, usage, today, recent)
         if rec:
             compare.append(rec)
 

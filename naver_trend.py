@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.5: 국내 패션·아이웨어 브랜드별 월간 검색(brand_monthly, 3년 전 1월부터) — '검색 관심도 vs 실적'(연간 검색 증감 vs 매출 증감)용.
+      요청마다 나이키를 함께 넣어 '나이키 최근 12개월 월평균 = 100'으로 환산(유통사처럼 여러 브랜드를 더할 수 있게).
+      페르솔 제외(규모 0.02, 검색량이 거의 없어 순위만 흐림)
 v1.4: 글로벌 아이웨어 브랜드 11개 추가(EYE_BRANDS, group 'eye', 대표 요청) — 레이밴·오클리·페르솔·프라다·구찌·생로랑·
       까르띠에·디올·톰포드·린드버그·모스콧. 브랜드명만으로는 의류·가방 검색이 섞이는 명품은 '선글라스·안경' 검색어로 한정.
       같은 나이키 기준 · 월간 합계에는 넣지 않음. 국내 브랜드 수집(KR_BRANDS)은 group 'kr' 그대로(뉴스 키 = DART 법인 id 연결)
@@ -85,12 +88,11 @@ KR_BRANDS = [
     ("블루엘리펀트", None, "krd:blueelephant", ["블루엘리펀트", "blue elephant"]),
 ]
 KR_NAMES = {b[0] for b in KR_BRANDS}
-# 글로벌 아이웨어(v1.4) — 연결: 레이밴·오클리·페르솔·프라다 = 에실로룩소티카(라이선스 포함), 구찌·생로랑·까르띠에·
+# 글로벌 아이웨어(v1.4) — 연결: 레이밴·오클리·프라다 = 에실로룩소티카(라이선스 포함), 구찌·생로랑·까르띠에·
 # 린드버그 = 케어링아이웨어코리아, 디올 = 시원아이웨어(국내 수입 유통). 톰포드·모스콧은 연결 대상 없음. 월간 합계에는 넣지 않음
 EYE_BRANDS = [
     ("레이밴", None, "EL.PA", ["레이밴", "레이벤", "rayban", "ray-ban", "ray ban"]),
     ("오클리", None, "EL.PA", ["오클리", "oakley", "오클리 선글라스"]),
-    ("페르솔", None, "EL.PA", ["페르솔", "persol"]),
     ("프라다 아이웨어", "prada", "EL.PA", ["프라다 선글라스", "프라다 안경", "프라다 안경테", "prada 선글라스"]),
     ("구찌 아이웨어", "gucci", "krd:kering_ey_kr", ["구찌 선글라스", "구찌 안경", "구찌 안경테", "gucci 선글라스"]),
     ("생로랑 아이웨어", "ysl", "krd:kering_ey_kr", ["생로랑 선글라스", "생로랑 안경", "생로랑 안경테", "saint laurent 선글라스"]),
@@ -237,6 +239,51 @@ def collect_monthly():
             "keywords": len(kws)}
 
 
+def collect_brand_monthly():
+    """국내 패션·아이웨어 브랜드별 월간 검색(v1.5). 요청 = 나이키 + 브랜드 4개, 나이키 최근 12개월 월평균 = 100으로 환산"""
+    today = datetime.datetime.now(KST).date()
+    end = today.replace(day=1) - datetime.timedelta(days=1)
+    start = datetime.date(end.year - 3, 1, 1)
+    ALL = KR_BRANDS + EYE_BRANDS
+    months, series = None, {}
+    for i in range(0, len(ALL), PER_REQ):
+        batch = ALL[i:i + PER_REQ]
+        groups = [(ANCHOR[0], ANCHOR[3])] + [(b[0], b[3]) for b in batch]
+        try:
+            res = call(start, end, groups, unit="month")
+        except FatalAPI:
+            raise
+        except Exception as e:
+            print(f"  [WARN] 브랜드 월간 요청 실패({', '.join(b[0] for b in batch)}): {str(e)[:150]}", flush=True)
+            continue
+        anc = res.get(ANCHOR[0]) or {}
+        if months is None and anc:
+            months = sorted(anc)
+        if not anc or months is None:
+            continue
+        base = mean([anc.get(m, 0.0) for m in months][-12:])
+        if not base:
+            continue
+        for b in batch:
+            series[b[0]] = [round(res.get(b[0], {}).get(m, 0.0) * 100.0 / base, 3) for m in months]
+        time.sleep(0.5)
+    if not months or not series:
+        return None
+    ym = [m[:7] for m in months]
+    y1, y0 = str(end.year - 1), str(end.year - 2)
+    def ysum(v, y, upto=12):
+        xs = [x for p, x in zip(ym, v) if p[:4] == y and int(p[5:7]) <= upto]
+        return sum(xs) if len(xs) == min(12, upto) else None
+    def pct(a, b):
+        return round((a / b - 1) * 100, 1) if (a is not None and b) else None
+    for name, v in list(series.items())[:3]:
+        print(f"  월간 {name}: {y1}년 vs {y0}년 {pct(ysum(v, y1), ysum(v, y0))}% · "
+              f"{end.year}년 1~{end.month}월 vs 전년 같은 기간 {pct(ysum(v, str(end.year), end.month), ysum(v, y1, end.month))}%",
+              flush=True)
+    print(f"  브랜드 월간: {len(series)}/{len(ALL)}개 · {ym[0]} ~ {ym[-1]}", flush=True)
+    return {"months": ym, "basis": "월간 검색량 지수 · 나이키 최근 12개월 월평균 = 100", "series": series}
+
+
 def main():
     if not KEY_ID or not KEY:
         print("[WARN] 네이버 API 키 미설정 — 검색 관심도 수집 건너뜀(기존 파일 유지)")
@@ -260,6 +307,14 @@ def main():
     except Exception as e:
         print(f"  [WARN] 월간 합계 실패: {str(e)[:150]}", flush=True)
         out["monthly"] = None
+    try:
+        out["brand_monthly"] = collect_brand_monthly()
+    except FatalAPI as e:
+        print(f"[ERROR] 네이버 API {e} — 브랜드 월간 생략", flush=True)
+        out["brand_monthly"] = None
+    except Exception as e:
+        print(f"  [WARN] 브랜드 월간 실패: {str(e)[:150]}", flush=True)
+        out["brand_monthly"] = None
     os.makedirs("docs", exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
