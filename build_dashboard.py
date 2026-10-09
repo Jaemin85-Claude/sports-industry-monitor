@@ -5,7 +5,7 @@ v32.11: (대표 지시 2026-10-09) ① 종합 탭 맨 위 '오늘 볼 것' 4줄 
         2개(진행 중/D-day) · 오늘 ★3 뉴스 · 트렉시 유통사 비교 위치, 누르면 해당 화면. 이미 페이지에 있는 데이터만 씀.
         ② 뉴스 탭 기본 보기 = 오늘 전체 + 최근 7일 ★3(날짜마다 '★1~2 N건 더 보기', 8일 이전은 맨 아래 펼치기) — 칩으로
         거르면 지금처럼 전체. NEW 배지 제거(날짜 머리글에 '오늘'), 날짜 '10/7(수)', 칩 한 줄 가로 넘김, 뉴스는 탭을 처음 열 때 그림,
-        화면에 안 쓰는 news.json 항목(seen_ids·model_compare)은 페이지에서 뺌
+        화면에 안 쓰는 news.json 항목(seen_ids·seen_titles·model_compare)은 페이지에서 뺌. '오늘' 표기는 보는 사람의 한국 날짜 기준
 v32.10: (대표 지시 2026-10-09) ① 재고 증감은 늘면 빨강·줄면 초록(fmtInv) — 재고 경고 카드에서 늘어난 재고가 초록으로 덮이던 버그,
         기업 표·상세·비교 표의 재고 색 반대 문제. 재고 경고: 9곳 이상이면 전체 보기, 기준 문구, KPI 설명을
         '재고가 매출보다 빨리 느는 곳'으로. ② 재무 지표 '확인 필요' 각주를 '값 확인(…)'으로(dart_fetch v3.5 capex·lease 포함).
@@ -622,7 +622,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 <div class="pane" id="p-news">
   <div class="chips" id="newsChips"></div>
   <div id="newsBody"></div>
-  <div class="note">매일 06:30 수집 · 최근 14일 보관 · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
+  <div class="note">매일 06:30 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
   실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
 </div>
 
@@ -1071,7 +1071,7 @@ function newsFor(key, n=3){
 function newsCard(key){
   const list=newsFor(key);
   let h=`<div class="card"><h3>📰 최근 뉴스 <span class="go" onclick="sw('news')">뉴스 ▸</span></h3>`;
-  if(!list.length){ h+=`<div class="na">최근 14일 선별 뉴스 없음</div></div>`; return h; }
+  if(!list.length){ h+=`<div class="na">보관 기간 내 선별 뉴스 없음</div></div>`; return h; }
   list.forEach(it=>{
     h+=`<div class="nitem"><div class="nsum"><a href="${it.link}" target="_blank" rel="noopener">${'★'.repeat(it.importance||1)} ${esc(it.summary||it.title)}</a></div>
       <div class="nmeta">${esc(it.source||'')} · ${esc((it.first_seen||'').slice(5).replace('-','/'))}</div></div>`;
@@ -1199,16 +1199,19 @@ function todayCardHtml(today){
   const FXD=DATA.fx||{}, fx=FX_ALERT.map(c=>({c,f:FXD[c]})).filter(x=>x.f&&x.f.dev_pct!=null&&x.f.rate);
   if(fx.length){   // 감시 통화(엔·유로·달러) 중 1년 평균 대비 가장 싼 통화
     const b=fx.slice().sort((a,c)=>a.f.dev_pct-c.f.dev_pct)[0], nm=c=>c==='JPY'?'100엔':FX_SH[c];
-    const la=fxAlertsAll()[0], newA=la&&la.date===String(DATA.generated_at||'').slice(0,10);   // 오늘 새 1% 칸 알림
+    // '오늘'은 보는 사람의 한국 날짜로 판단 — 아침(대시보드 갱신 전)엔 어제 알림·뉴스를 날짜로 표시
+    const kst=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'}), la=fxAlertsAll()[0];
+    const newA=la&&(la.date===kst||la.date===String(DATA.generated_at||'').slice(0,10));
     rows.push({ic:'💱',t:`${nm(b.c)} ${wonR(b.f.rate*fxMul(b.c))}원 · 1년 평균보다 <b class="${b.f.dev_pct<=0?'pos':'neg'}">${Math.abs(b.f.dev_pct).toFixed(1)}% ${b.f.dev_pct<=0?'쌈':'비쌈'}</b>`,
-      s:(newA?`오늘 알림: ${fxAlertTxt(la)} · `:'')+fx.filter(x=>x!==b).map(x=>`${FX_SH[x.c]} ${pctU(x.f.dev_pct)}`).join(' · ')+' (1년 평균 대비)',act:"goMore('fx')"});
+      s:(newA?`${la.date===kst?'오늘':mdTxt(la.date)} 알림: ${fxAlertTxt(la)} · `:'')+fx.filter(x=>x!==b).map(x=>`${FX_SH[x.c]} ${pctU(x.f.dev_pct)}`).join(' · ')+' (1년 평균 대비)',act:"goMore('fx')"});
   }
   const sales=saleAll(today).filter(e=>e.e>=today).sort((a,c)=>a.s-c.s).slice(0,2);
   if(sales.length) rows.push({ic:'🛍️',t:sales.map(e=>`${e.fl} ${esc(e.sh)} ${e.s<=today?`<b>진행 중</b>(~${md2(e.e)})`:`<b>D-${Math.round((e.s-today)/86400000)}</b>`}`).join(' · '),
     s:sales.map(e=>e.nm+(e.k==='예상'?'(예상)':'')).join(' · '),act:"sw('cal')"});
   const NI=(NEWS&&NEWS.items)||[], td=NEWS&&NEWS.today, imp=NI.filter(i=>(i.importance||1)>=3);
   const todays=imp.filter(i=>i.first_seen===td), top=todays[0]||imp[0];
-  if(top) rows.push({ic:'📰',t:`${todays.length?`오늘 ★3 <b>${todays.length}건</b>`:'오늘 ★3 없음 · 최근'} — ${esc(top.summary||top.title)}`,
+  const dayW=td&&td===new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'})?'오늘':(td?newsDateLbl(td):'오늘');
+  if(top) rows.push({ic:'📰',t:`${todays.length?`${dayW} ★3 <b>${todays.length}건</b>`:`${dayW} ★3 없음 · 최근`} — ${esc(top.summary||top.title)}`,
     s:`${top.label||top.key||''} · ${top.source||''}${todays.length?'':' · '+top.first_seen}`,act:"newsFilter='all';buildNewsChips();sw('news');buildNews()"});
   const fs=(typeof fiScore==='function')?fiScore():null;
   if(fs) rows.push({ic:'🏷️',t:`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)} · 중앙값보다 나은 지표 <b>${fs.nb}/${fs.na}</b>`,
@@ -1712,7 +1715,7 @@ function buildNews(){
     const k=newsFilter.slice(2), nm=(NEWS.items.find(i=>i.key===k)||{}).label||(nvAll().find(b=>b.news===k)||{}).name||k;
     kb=`<div class="nv-sum" style="display:flex;align-items:center;gap:8px">${esc(nm)} 뉴스만 보는 중<button type="button" class="chip" style="margin-left:auto" onclick="newsFilter='all';buildNewsChips();buildNews()">전체 보기</button></div>`;
   }
-  if(!items.length){ el.innerHTML=kb+'<div class="na">해당 구분의 최근 14일 뉴스 없음</div>'; return; }
+  if(!items.length){ el.innerHTML=kb+'<div class="na">해당 구분의 보관 기간 내 뉴스 없음</div>'; return; }
   const compact=newsFilter==='all', t0=new Date((today||'')+'T00:00:00');
   const age=d=>{ const t=new Date(d+'T00:00:00'); return (isNaN(t)||isNaN(t0))?0:Math.round((t0-t)/86400000); };
   const groups=[]; items.forEach(it=>{ const g=groups[groups.length-1]; if(g&&g.d===it.first_seen) g.items.push(it); else groups.push({d:it.first_seen,items:[it]}); });
@@ -2622,7 +2625,7 @@ def main():
         try:
             with open("docs/news.json", encoding="utf-8") as f:
                 news = json.load(f)
-            for k in ("seen_ids", "model_compare"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로
+            for k in ("seen_ids", "seen_titles", "seen_since", "model_compare"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로
                 news.pop(k, None)
         except Exception:
             pass
