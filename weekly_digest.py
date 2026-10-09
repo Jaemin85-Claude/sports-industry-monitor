@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.3: 새 실적 줄 — 야후(연결) 연간 매출이 DART 값과 20% 넘게 다른 상장사(LS네트웍스: 지정 별도 vs 야후 LS증권 포함 연결)는
+      분기 매출 전년 대비를 빼고 '야후 연결 기준이라 제외'로 표시(build_dashboard v32.9와 같은 규칙)
 v1.2: (대표 요청 2026-10-06) 국내 비교 회사 뉴스(유통사·패션 브랜드)·통관·상표권 뉴스를 따로 묶고 '중요 뉴스'에서는 중복 제외.
       아이웨어 검색(네이버 주간·전년 대비), 국내 패션·아이웨어 올해 누적 검색 변화(naver_trend v1.5 brand_monthly) 추가
 v1.1: 환율 줄에 '1년 평균 대비 %'(fetch_data v4.9) + 지난 7일 1% 칸 알림 목록
@@ -117,7 +119,16 @@ def fx_alerts_week(data, start):
     return [t for _, t in sorted(out)]
 
 
-def new_results(data, old):
+def yahoo_cfs_diff(x, krf):
+    """야후 연간 매출(최근 공통 연도)이 DART 값과 20% 넘게 다르면 True — build_dashboard merge_kr_listed와 같은 규칙"""
+    e = ((krf or {}).get("items") or {}).get(x.get("ticker")) or {}
+    dmap = {(y.get("end") or "")[:4]: y.get("rev") for y in e.get("years") or []}
+    diff = [(y["end"], abs(y["rev"] / dmap[y["end"][:4]] - 1)) for y in (x.get("fy") or [])
+            if y.get("rev") and y.get("end") and dmap.get(y["end"][:4])]
+    return bool(diff) and max(diff)[1] > 0.2
+
+
+def new_results(data, old, krf=None):
     """한 주 사이 새 분기·연간 실적이 반영된 상장사"""
     if not old:
         return []
@@ -130,7 +141,8 @@ def new_results(data, old):
         fy_new = (x.get("fy") or [{}])[-1].get("end") != (p.get("fy") or [{}])[-1].get("end")
         q_new = x.get("q_end") and x.get("q_end") != p.get("q_end")
         if fy_new or q_new:
-            out.append((x["name"], x.get("q_end"), x.get("latest_q_yoy"), x.get("inv_yoy")))
+            qy = "야후 연결 기준이라 제외" if yahoo_cfs_diff(x, krf) else x.get("latest_q_yoy")
+            out.append((x["name"], x.get("q_end"), qy, x.get("inv_yoy")))
     return out
 
 
@@ -276,7 +288,7 @@ def build(today):
     moves, span = price_moves(data, hist, today)
     fx = fx_moves(data, fx_old)
     fxa = fx_alerts_week(data, start)
-    res = new_results(data, data_old)
+    res = new_results(data, data_old, load("kr_listed_fin.json"))
     earn = upcoming_earnings(data, today)
     nws, n_imp = top_news(news, today)
     nvm = naver_moves(nv)
@@ -340,7 +352,7 @@ def build(today):
     L.append("■ 새로 반영된 실적")
     if res:
         for n, q, qy, iv in res:
-            L.append(f"  {n}: {q or '―'} 분기 매출 전년 대비 {pct(qy)} · 재고 {pct(iv)}")
+            L.append(f"  {n}: {q or '―'} 분기 매출 전년 대비 {qy if isinstance(qy, str) else pct(qy)} · 재고 {pct(iv)}")
     else:
         L.append("  없음")
     L.append("")

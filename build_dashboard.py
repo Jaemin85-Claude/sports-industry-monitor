@@ -7,6 +7,8 @@ v32.9: 기준·통화 표기(대표 요청 2026-10-09, dart_fetch v3.4·fetch_da
        분기 매출 증감을 순위에서 빼고 상세에 '야후 연결' 표기. 플랫폼 카드 각주를 회사별 기준으로. ② 금액에 통화 항상 표기 — 원화 '조원/억원',
        외화 'B USD', 기업 목록 외화 매출은 ≈원화 환산 + 원래 통화, 지역·채널 금액에 공시 통화, 현재가 펜스·원·엔 표기, 재무·주가 통화가 다르면 안내.
        ③ 재무 지표 카드: 회사명 아래 회계기준 배지, 안정성에 '순차입금(리스·RCPS 제외)', 기준이 섞인 비교군에서 순부채·부채비율 등에 안내
+       리뷰 반영: 기업 목록 매출 단위 '원'은 머리글로(휴대폰 폭 v32.8과 같게, 넘치면 가로 스크롤), 엔화 환산은 100엔 기준, 배지·'회계기준
+       미확인'은 dart v3.4 수집 후에만, 순차입금(리스·RCPS 제외)은 순부채와 겹쳐 '중앙값보다 나은 지표' 점수에서 뺌
 v32.8: (대표 요청 2026-10-06) ① 더보기 › 패션 브랜드: 국내 패션 13곳·아이웨어 6곳도 유통사와 같은 재무 지표 카드(그룹·지표 선택은
        카드마다 따로), 맨 아래 '📊 검색 관심도 vs 실적'(같은 해 네이버 검색 증감 vs 매출 증감 · 올해 1월~지난달 · 최근 4주).
        ② 캘린더 탭: 해외 세일 시즌(블프·유럽 법정 세일·광군제·618·박싱데이 등) — 달력에 기간 표시 + '🛍️ 해외 세일 시즌' 카드.
@@ -579,7 +581,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
     <input class="search" id="coSearch" placeholder="기업명 검색 (예: 나이키, 아식스)">
     <div class="chips" id="coChips"></div>
     <div id="coPlat"></div>
-    <div class="card" id="coTblCard" style="padding:4px 8px"><table id="coTbl"></table></div>
+    <div class="card" id="coTblCard" style="padding:4px 8px"><div class="tblwrap"><table id="coTbl"></table></div><div class="note" style="margin:6px 4px 4px">외화 매출은 ≈원화 환산(최근 환율, 참고용) · 작은 글씨가 원래 통화</div></div>
     <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
   </div>
   <div id="coDetail" style="display:none">
@@ -1096,10 +1098,10 @@ const finCurOf=x=>finCur(x.fin_currency||x.currency);   // 재무제표 통화 �
 /* 외화 금액의 원화 근사(v30.2) — data.json fx의 최근 환율, 환율 없으면 null */
 const krwOf=(v,cur)=>{ if(v==null) return null; if(cur==='KRW') return v; const f=(DATA.fx||{})[cur]; return (f&&f.rate)?v*f.rate:null; };
 /* 국내 그룹의 외화 실적: "≈46.9조" + 작은 글씨로 원래 통화 */
-function revKrwCell(rev,cur){
-  const k=krwOf(rev,cur);
-  if(cur==='KRW'||k==null) return moneyShort(rev,cur);
-  return `≈${moneyShort(k,'KRW')}<span class="na" style="font-size:var(--fs-2xs);display:block">${moneyShort(rev,cur)}</span>`;
+function revKrwCell(rev,cur,short){   // short = 기업 목록(폭 좁음): 단위 '원'은 머리글로, ≈조 소수 1자리
+  const k=krwOf(rev,cur), w=x=>short?x.replace(/원$/,''):x;
+  if(cur==='KRW'||k==null) return w(moneyShort(rev,cur));
+  return `≈${w(short&&k>=1e12?(k/1e12).toFixed(1)+'조원':moneyShort(k,'KRW'))}<span class="na" style="font-size:var(--fs-2xs);display:block">${short&&rev>=1e11?Math.round(rev/1e9)+'B '+cur:moneyShort(rev,cur)}</span>`;
 }
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
@@ -1239,10 +1241,10 @@ function buildCo(){
   document.getElementById('coTblCard').style.display=plat?'none':'';
   if(plat) return;
   const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter)&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
-  let h=`<tr><th>기업</th><th>매출 <span class="na" style="font-weight:400">외화는 ≈원화</span></th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
+  let h=`<tr><th>기업</th><th>매출(원)</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${revKrwCell(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -1341,7 +1343,7 @@ const STD_SH={'K-IFRS':'K-IFRS','일반기업회계기준':'K-GAAP','중소기�
 const srcKind=e=>e.route==='api'?'사업보고서':(e.route==='doc'?'감사보고서':'공시 미발견');
 function stdTxt(e){   // 연도별 기준이 바뀌었으면 '일반기업회계기준 → FY24부터 K-IFRS'
   const ys=(e.years||[]).filter(y=>y.rev!=null&&y.std);
-  if(!ys.length) return '회계기준 미확인';
+  if(!ys.length) return (e.years||[]).some(y=>'std' in y)?'회계기준 미확인':'';   // 필드 자체가 없으면(dart v3.4 실행 전) 표시 안 함
   const a=ys[0].std, b=ys[ys.length-1].std;
   return a===b?b:`${a} → ${ys.find(y=>y.std===b).fy}부터 ${b}`;
 }
@@ -1355,7 +1357,7 @@ function cfsHtml(e){   // 별도 기준 화면 아래 연결 요약(사업보고
       h+=`<tr><td>FY${c.end.slice(2,4)}</td><td>${c.rev!=null?moneyShort(c.rev,'KRW'):'―'}</td><td>${c.op!=null?moneyShort(c.op,'KRW'):'―'}</td><td>${c.ni!=null?moneyShort(c.ni,'KRW'):'―'}</td><td>${r!=null?r.toFixed(2)+'배':'―'}</td></tr>`; });
     return h+`</table></div><div class="note">비교 화면(유통사·패션·아이웨어 비교, 기업 목록)은 다른 회사와 기준을 맞추려고 별도 수치를 씀 · 출처 ${esc(e.cfs.source||'')}</div>`;
   }
-  if(e.cfs_report) return `<div class="note" style="margin-top:8px">🔗 연결감사보고서도 공시됨(${esc(e.cfs_report.name||'')} · ${ymd(e.cfs_report.date)}) — 이 화면은 별도 기준, 연결 수치는 수집하지 않음 · <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${encodeURIComponent(e.cfs_report.rcept)}" target="_blank" rel="noopener" style="color:var(--accent)">DART 원문 ▸</a></div>`;
+  if(e.cfs_report) return `<div class="note" style="margin-top:8px">🔗 연결감사보고서도 공시됨(${esc(e.cfs_report.name||'')} · ${esc(ymd(e.cfs_report.date))}) — 이 화면은 별도 기준, 연결 수치는 수집하지 않음 · <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${encodeURIComponent(e.cfs_report.rcept)}" target="_blank" rel="noopener" style="color:var(--accent)">DART 원문 ▸</a></div>`;
   return '';
 }
 function krdCard(e, linked){
@@ -1386,7 +1388,7 @@ function krdCard(e, linked){
   const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
   if(srcs.length) h+=`<div class="src">출처: ${esc(srcs.join(' · '))}</div>`;
   h+=cfsHtml(e);
-  h+=`<div class="note">${fym?fym+' · ':''}별도 재무제표 · ${esc(stdTxt(e))} · 원화(KRW) · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
+  h+=`<div class="note">${fym?fym+' · ':''}별도 재무제표 · ${stdTxt(e)?esc(stdTxt(e))+' · ':''}원화(KRW) · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
   return h;
 }
 function renderKrdDetail(id){
@@ -1425,7 +1427,7 @@ function renderDetail(t){
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
   if(cur!=='KRW' && x.fy.length){   // v32.9 외화 실적은 모두 원화 환산 참고값
     const ly=x.fy[x.fy.length-1], k=krwOf(ly.rev,cur), f=(DATA.fx||{})[cur];
-    if(k!=null) h+=`<div class="note" style="margin-top:6px">원화 환산 ≈ ${moneyShort(k,'KRW')} (${ym(ly.end)}결산 · 최근 환율 1 ${esc(cur)} = ${Math.round(f.rate).toLocaleString()}원 기준, 참고용)</div>`;
+    if(k!=null) h+=`<div class="note" style="margin-top:6px">원화 환산 ≈ ${moneyShort(k,'KRW')} (${ym(ly.end)}결산 · 최근 환율 ${fxMul(cur)} ${esc(cur)} = ${wonR(f.rate*fxMul(cur))}원 기준, 참고용)</div>`;
   }
   h+=`</div>`;
   h+=`<div class="card"><h3>💰 수익성 추이 — 연간</h3><table><tr><th>결산월</th><th>매출총이익률</th><th>영업이익률</th></tr>`;
@@ -1968,8 +1970,8 @@ const FI_M={
        f:'OCF ÷ 영업이익',dir:'100% 이상이 좋음',why:'영업이익이 현금으로 들어왔나. 계속 100% 아래면 재고·채권에 이익이 묶임. 재고가 크게 늘거나 준 해엔 수백 %로 흔들려 3년 흐름으로 봄'},
   nd:{g:'stab',u:['borrow','lease','cash','stfin','equity'],nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
       c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금·사채 + RCPS 부채 + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
-  // v32.9 회계기준이 섞인 비교군용 — K-IFRS(리스부채·RCPS 부채)와 일반기업회계기준(운용리스 부채 없음·RCPS 대개 자본)을 같은 잣대로
-  nd2:{g:'stab',u:['borrow','cash','stfin','equity'],nm:'순차입금(리스·RCPS 제외)',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd2(f);},
+  // v32.9 회계기준이 섞인 비교군용 — K-IFRS(리스부채·RCPS 부채)와 일반기업회계기준(운용리스 부채 없음·RCPS 대개 자본)을 같은 잣대로. alt=순부채와 겹쳐 요약 점수(중앙값보다 나은 지표 수)에선 뺌
+  nd2:{g:'stab',u:['borrow','cash','stfin','equity'],nm:'순차입금(리스·RCPS 제외)',hi:0,nr:1,bs:1,alt:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd2(f);},
        c:y=>{const f=y.fin, eq=(f.equity||0)+(f.rcps||0), n=fiNd2(f); return n!=null&&eq>0?n/eq*100:null;},cn:'순자산(RCPS 포함) 대비 %',
        f:'차입금·사채 − 현금·단기금융상품 (리스부채·RCPS 부채 제외, RCPS는 자본으로 봄)',dir:'낮을수록 좋음 · 마이너스 = 순현금',
        why:'회계기준이 다른 회사를 같은 잣대로 비교 — K-IFRS는 리스부채·RCPS를 부채로 잡아 순부채가 커 보임'},
@@ -2016,7 +2018,7 @@ const fiHas=cid=>fiRows(cid).some(r=>Object.values(r.by).some(y=>y.fin));   // �
 function fiScore(){   // 더보기 메뉴 줄: 자사가 최근 연도 비교군 중앙값보다 나은 지표 수
   const rows=fiRows(), me=rows.find(r=>r.self); if(!me) return null;
   const L=Math.max(...rows.flatMap(r=>Object.keys(r.by).map(Number)));
-  const st=FI_K.filter(k=>!FI_M[k].ref).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
+  const st=FI_K.filter(k=>!FI_M[k].ref&&!FI_M[k].alt).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
   return {L, nb:has.filter(t=>t.better).length, na:has.length, n:rows.length};
 }
 function finCardHtml(cid='peer'){
@@ -2026,7 +2028,7 @@ function finCardHtml(cid='peer'){
   const me=rows.find(r=>r.self), m=FI_M[FI_MET], cls=v=>v<0?(m.nr?'pos':'neg'):'';
   let h=`<div class="card" id="${c.id}">`;   // 제목은 더보기 화면 머리글(v32.4)
   // 자사 요약: 최근 연도 중앙값보다 나은 지표 수 · 그룹별
-  const cmpK=FI_K.filter(k=>!FI_M[k].ref), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
+  const cmpK=FI_K.filter(k=>!FI_M[k].ref&&!FI_M[k].alt), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
   if(me){
     const has=k=>st[k].me.v!=null&&st[k].md!=null;
     h+=`<div class="nv-sum"><div class="fi-top"><b>${esc(c.selfName)}</b><span class="na">FY${String(L).slice(2)} · ${rows.length}곳 비교</span><span style="margin-left:auto">중앙값보다 나은 지표 <b class="fi-big">${cmpK.filter(k=>st[k].better).length}</b><span class="na">/${cmpK.filter(has).length}</span></span></div><div class="fi-gsum">`;
@@ -2040,9 +2042,9 @@ function finCardHtml(cid='peer'){
   const s=st[FI_MET]||fiStat(rows,FI_MET,L), s0=fiStat(rows,FI_MET,L-1), mv=s.me, m0=me?fiVal(me,FI_MET,L-1):{t:'―'};
   h+=`<div class="fi-mhead"><b>${esc(m.nm)}</b><span class="na">${esc(m.dir)}</span></div>`;
   // v32.9 회계기준이 섞인 비교군 — 리스·RCPS 처리 차이가 큰 지표에서 안내
-  const nI=rows.filter(r=>r.std==='K-IFRS').length, nG=rows.filter(r=>r.std&&r.std!=='K-IFRS').length, nU=rows.filter(r=>!r.std).length;
-  if(nI&&(nG||nU)&&['nd','ndx','dr','ocf','fcf','conv','roe'].includes(FI_MET))
-    h+=`<div class="fi-warn">⚠ 회계기준 혼재 — K-IFRS ${nI}곳 · K-GAAP ${nG}곳${nU?` · 미확인 ${nU}곳`:''}. K-IFRS는 리스부채·RCPS를 부채로 잡고 임차료가 감가상각비·이자로 나뉘어, 이 지표가 회사마다 다른 잣대로 계산됨<br><button type="button" class="chip" onclick="fiPick('stab','nd2','${cid}')">순차입금(리스·RCPS 제외)로 비교 ▸</button></div>`;
+  const nI=rows.filter(r=>r.std==='K-IFRS').length, nG=rows.filter(r=>r.std==='일반기업회계기준').length, nS=rows.filter(r=>r.std==='중소기업회계기준').length, nU=rows.filter(r=>!r.std).length;
+  if(nI&&(nG||nS||nU)&&['nd','ndx','dr','ocf','fcf','conv','roe'].includes(FI_MET))
+    h+=`<div class="fi-warn">⚠ 회계기준 혼재 — K-IFRS ${nI}곳 · K-GAAP ${nG}곳${nS?` · 중소기업회계기준 ${nS}곳`:''}${nU?` · 미확인 ${nU}곳`:''}. K-IFRS는 리스부채·RCPS를 부채로 잡고 임차료가 감가상각비·이자로 나뉘어, 이 지표가 회사마다 다른 잣대로 계산됨<br><button type="button" class="chip" onclick="fiPick('stab','nd2','${cid}')">순차입금(리스·RCPS 제외)로 비교 ▸</button></div>`;
   if(me){
     const tr=(mv.c!=null&&m0.c!=null&&!m.ref)?(mv.c===m0.c?'변화 없음':((m.hi?mv.c>m0.c:mv.c<m0.c)?'<span class="pos">개선</span>':'<span class="neg">악화</span>')):'<span class="na">―</span>';
     h+=`<div class="fi-mbox"><div><span class="l">${esc(c.selfName)} FY${String(L).slice(2)}</span><span class="v ${mv.v!=null?cls(mv.v):'na'}">${mv.v!=null?m.fmt(mv.v):esc(mv.t)}</span><span class="s">${m.ref?'참고 지표':s.rank?`${s.rank}위/${s.n}`:'순위 없음'}${s.better?' · <b style="color:var(--accent)">중앙값↑</b>':''}</span></div>
@@ -2054,7 +2056,7 @@ function finCardHtml(cid='peer'){
   const cp=v=>fiPct(v,FI_MET==='nd'?0:1);
   h+=`<div class="tblwrap"><table class="fi-tbl"><tr><th>기업</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   order.forEach(r=>{
-    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}<span class="std-b ${r.std==='K-IFRS'?'ifrs':(r.std?'gaap':'unk')}">${esc(STD_SH[r.std]||'기준?')}</span></td>`;
+    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}${r.std?`<span class="std-b ${r.std==='K-IFRS'?'ifrs':'gaap'}">${esc(STD_SH[r.std]||r.std)}</span>`:''}</td>`;
     fys.forEach(f=>{ const x=fiVal(r,FI_MET,f);
       if(x.v==null){ h+=`<td class="na">${esc(x.t)}</td>`; return; }
       let ex='';
@@ -2088,7 +2090,7 @@ function fiDetailCard(e){
   if(!(e.years||[]).some(y=>y.fin)) return '';
   const r={key:'krd:'+e.id,name:e.name,by:{}}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{r.by[+y.end.slice(0,4)]=y;});
   const fys=Object.keys(r.by).map(Number).sort().slice(-3);
-  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART 별도 · ${esc(STD_SH[e.acct_std]||'회계기준 미확인')}</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
+  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART 별도${e.acct_std?' · '+esc(STD_SH[e.acct_std]||e.acct_std):''}</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   FI_G.forEach(([g,gn])=>{
     h+=`<tr class="fi-gh"><td colspan="${fys.length+1}">${gn}</td></tr>`;
     FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
@@ -2445,8 +2447,7 @@ def merge_kr_listed(data):
         item["fin_fs"] = e.get("fs") or ("별도" if "(별도)" in (e.get("source") or "") else "연결")
         item["acct_std"] = e.get("std")
         # v32.9 '연결' 고정 문구 대신 실제 기준(source의 연결/별도) + 회계기준 + 예외 사유
-        item["fin_source"] = "DART " + (e.get("source") or "") + (f" · {e['std']}" if e.get("std") else "") \
-            + (f" · {e['fs_note']}" if e.get("fs_note") else "")
+        item["fin_source"] = " · ".join(x for x in ["DART " + (e.get("source") or "").strip(), e.get("std"), e.get("fs_note")] if x)
         n += 1
     return n
 
