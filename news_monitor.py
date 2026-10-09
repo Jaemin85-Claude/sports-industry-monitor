@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.9: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 구글 뉴스가 한 건도 안 들어오면(전체 RSS 실패) news.json을 덮지 않고
+     '실패 표시'(soft_fail.txt → 워크플로우 마지막 단계 빨간 X → 낮 점검 알림). 검색어 절반 넘게 실패해도 실패 표시(받은 기사는 반영).
+     Claude 선별이 일시 오류(429·5xx·연결·시간 초과)면 1분·3분 뒤 두 번 다시 시도, 그래도 실패하면 실패 표시(신규는 다음 회차 재판정).
+     news.json에 수집 결과 status(검색어 수·실패 수·헤드라인 수·선별 결과) 추가. 선별 지시문·검색어·★ 기준은 그대로
 v2.8: 국내 유통사 8곳 뉴스 보완(대표 지시 2026-10-09) — 검색어 정리(렉스몬드 새 상호·REXMONDE, 대표 이름, 동명 회사 거르기:
      대림코퍼레이션은 신발 관련어와 함께·DL그룹 제외, 티원글로벌은 병행수입·운동화 등과 함께, 스타인터내셔널은 르까프·스코노 등과 함께),
      국내 유통사만 검색 창 30일·보관 90일(SLOW_GROUPS), 로그에 회사별 검색 건수. '이미 본 기사' 목록을 오래된 것부터 지우게 수정.
@@ -201,29 +205,60 @@ MODEL = "claude-sonnet-4-6"
 SHADOW_MODEL = "claude-haiku-4-5"
 SHADOW_UNTIL = "2026-10-13"
 PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰 (입력, 출력)
+RETRY_WAITS = (60, 180)   # v2.9 Claude 일시 오류 재시도 간격(초) — 1분·3분 뒤 두 번
+SCRIPT = "news_monitor"
 
+
+def soft_fail(msg):
+    """심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    print(f"실패 표시: {msg}", flush=True)
+    with open("soft_fail.txt", "a", encoding="utf-8") as f:
+        f.write(f"{SCRIPT}: {msg}\n")
+
+
+class TransientAPI(RuntimeError):
+    """일시 오류(429·5xx·연결 끊김·시간 초과) — 잠시 뒤 다시 시도할 만한 것"""
 
 
 # ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) ──
-def anthropic_post(payload, timeout=180):
-    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
-    그 외 오류는 응답 본문을 포함해 예외로 올려 호출부가 처리."""
-    resp = requests.post(
-        "https://api.anthropic.com/v1/messages",
-        headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01",
-                 "content-type": "application/json"},
-        json=payload, timeout=timeout)
+def _anthropic_once(payload, timeout):
+    try:
+        resp = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": API_KEY, "anthropic-version": "2023-06-01",
+                     "content-type": "application/json"},
+            json=payload, timeout=timeout)
+    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout,
+            requests.exceptions.ChunkedEncodingError) as e:
+        raise TransientAPI(f"연결 오류·시간 초과: {type(e).__name__} {str(e)[:150]}") from e
     if resp.status_code in (401, 403) or (resp.status_code == 400 and "credit" in resp.text.lower()):
         print(f"[FATAL] Anthropic API {resp.status_code}: {resp.text[:300]}", flush=True)
         print("[FATAL] 키 만료/무효 또는 크레딧 소진 — console.anthropic.com 확인 후 "
               "GitHub Secret ANTHROPIC_API_KEY 갱신", flush=True)
         raise SystemExit(2)
+    if resp.status_code == 429 or resp.status_code >= 500:
+        raise TransientAPI(f"Anthropic {resp.status_code}: {resp.text[:200]}")
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
     return resp.json()
 
+
+def anthropic_post(payload, timeout=180, waits=RETRY_WAITS):
+    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
+    v2.9 일시 오류(429·5xx·연결·시간 초과)는 waits(초) 간격으로 다시 시도. 그 외 오류는 예외로 올려 호출부가 처리."""
+    for n in range(len(waits) + 1):
+        try:
+            return _anthropic_once(payload, timeout)
+        except TransientAPI as e:
+            if n >= len(waits):
+                raise
+            print(f"  [WARN] Claude 일시 오류 — {waits[n] // 60}분 뒤 재시도({n + 1}/{len(waits)}): {str(e)[:150]}",
+                  flush=True)
+            time.sleep(waits[n])
+
+
 def fetch_rss(query, days=3):
-    """Google News RSS: 최근 N일 헤드라인 (한국어 우선, 영문 포함)"""
+    """Google News RSS: 최근 N일 헤드라인 (한국어 우선, 영문 포함). v2.9 요청·형식 실패면 None(0건과 구분)"""
     q = urllib.parse.quote(f"{query} when:{days}d")
     url = f"https://news.google.com/rss/search?q={q}&hl=ko&gl=KR&ceid=KR:ko"
     items = []
@@ -244,6 +279,7 @@ def fetch_rss(query, days=3):
                 break
     except Exception as e:
         print(f"  [WARN] RSS 실패({query[:30]}): {str(e)[:100]}")
+        return None
     return items
 
 
@@ -260,8 +296,19 @@ def title_key(title):
 def collect(known_titles=frozenset(), slow_days=None):
     """수집 → {id: {…, scope, key}} (scope=brand/industry, key=slug/category).
     known_titles: 보관 중·최근 판정한 기사 제목 키 — 같은 제목은 출처가 달라도 다시 넣지 않음.
-    slow_days: 느린 그룹(국내 유통사) 검색 창 — 제목 기억이 덮는 기간을 넘지 않게 호출 쪽에서 줄임"""
+    slow_days: 느린 그룹(국내 유통사) 검색 창 — 제목 기억이 덮는 기간을 넘지 않게 호출 쪽에서 줄임.
+    v2.9 반환 (raw, st) — st = {queries: 검색어 수, failed: 실패한 검색어, headlines: 중복 제거 전 받은 헤드라인 수}"""
     raw, titles = {}, set(known_titles)
+    st = {"queries": 0, "failed": [], "headlines": 0}
+
+    def rss(q, days=3):
+        st["queries"] += 1
+        got = fetch_rss(q, days=days)
+        if got is None:
+            st["failed"].append(q)
+            return []
+        st["headlines"] += len(got)
+        return got
 
     def add(it, **meta):
         tk = title_key(it["title"])
@@ -276,7 +323,7 @@ def collect(known_titles=frozenset(), slow_days=None):
 
     slow = []
     for slug, (name, grp, q) in BRANDS.items():
-        got = fetch_rss(q, days=min(SLOW_GROUPS[grp][0], slow_days or SLOW_GROUPS[grp][0]) if grp in SLOW_GROUPS else 3)
+        got = rss(q, days=min(SLOW_GROUPS[grp][0], slow_days or SLOW_GROUPS[grp][0]) if grp in SLOW_GROUPS else 3)
         added = sum(add(it, scope="brand", key=slug, label=name, group=grp) for it in got)
         if grp in SLOW_GROUPS:
             slow.append(f"{name} {len(got)}건(새 제목 {added})")
@@ -285,15 +332,16 @@ def collect(known_titles=frozenset(), slow_days=None):
         print(f"국내 유통사 검색(최근 {min(SLOW_GROUPS['kr_peer'][0], slow_days or 99)}일): " + " · ".join(slow), flush=True)
     for cat, (label, queries) in INDUSTRY.items():
         for q in queries:
-            for it in fetch_rss(q):
+            for it in rss(q):
                 add(it, scope="industry", key=cat, label=label, group=cat)
             time.sleep(0.7)
-    print(f"수집 {len(raw)}건 (중복 제거 후)")
-    return raw
+    print(f"수집 {len(raw)}건 (중복 제거 후)"
+          + (f" · 검색어 {st['queries']}개 중 실패 {len(st['failed'])}개" if st["failed"] else ""), flush=True)
+    return raw, st
 
 
-def claude_curate(new_items, model=MODEL, recent=()):
-    """신규 헤드라인만 선별·요약. recent: 최근 선별 요약(같은 사건 재선별 방지).
+def claude_curate(new_items, model=MODEL, recent=(), waits=RETRY_WAITS):
+    """신규 헤드라인만 선별·요약. recent: 최근 선별 요약(같은 사건 재선별 방지). waits: 일시 오류 재시도 간격(초).
     반환 ({id: {summary, importance, category}}, 사용량 {model, in, out, usd})"""
     lines = []
     for it in new_items.values():
@@ -353,7 +401,7 @@ HEADLINES:
 {corpus}"""
     data = anthropic_post({"model": model,
               "max_tokens": 6000,
-              "messages": [{"role": "user", "content": prompt}]}, timeout=240)
+              "messages": [{"role": "user", "content": prompt}]}, timeout=240, waits=waits)
     parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
@@ -376,9 +424,10 @@ HEADLINES:
 
 
 def compare_models(new_items, picked, usage, today, recent=()):
-    """SHADOW_MODEL로 같은 헤드라인을 한 번 더 선별해 비교 기록(화면 반영 없음). 실패해도 본 선별에는 영향 없음"""
+    """SHADOW_MODEL로 같은 헤드라인을 한 번 더 선별해 비교 기록(화면 반영 없음). 실패해도 본 선별에는 영향 없음.
+    v2.9 비교용이라 재시도하지 않음(실행 시간 25분 한도 안에 본 선별 재시도 몫을 남김)"""
     try:
-        shadow, su = claude_curate(new_items, SHADOW_MODEL, recent)
+        shadow, su = claude_curate(new_items, SHADOW_MODEL, recent, waits=())
     except (Exception, SystemExit) as e:
         print(f"  [WARN] 모델 비교({SHADOW_MODEL}) 실패 — 건너뜀: {str(e)[:150]}", flush=True)
         return None
@@ -437,19 +486,29 @@ def main():
         seen_titles.setdefault(title_key(it.get("title", "")), it.get("first_seen") or today.isoformat())
     since = old.get("seen_since") or (today - datetime.timedelta(days=KEEP_DAYS)).isoformat()
     mem_days = (today - datetime.date.fromisoformat(since)).days
-    raw = collect(set(seen_titles) | {title_key(it.get("title", "")) for it in kept}, slow_days=max(3, mem_days))
+    raw, st = collect(set(seen_titles) | {title_key(it.get("title", "")) for it in kept}, slow_days=max(3, mem_days))
+    nfail = len(st["failed"])
+    # v2.9 구글 뉴스가 한 건도 안 들어오면(전체 RSS 실패·형식 변경) 저장하지 않음 — 갱신 시각을 옮기지 않아 이틀 넘으면 수집 상태 '지연'
+    if st["headlines"] == 0:
+        soft_fail(f"구글 뉴스 수집 0건(검색어 {st['queries']}개 중 실패 {nfail}개) — news.json 그대로 둠")
+        return
+    if nfail * 2 > st["queries"]:
+        soft_fail(f"구글 뉴스 검색어 {st['queries']}개 중 {nfail}개 실패 — 받은 기사만 반영")
     new_items = {k: v for k, v in raw.items() if k not in seen_ids}
     print(f"신규 {len(new_items)}건 → Claude 선별")
 
-    picked, usage = {}, None
+    picked, usage, curate = {}, None, "none"
     if new_items:
         try:
             picked, usage = claude_curate(new_items, MODEL, recent)
+            curate = "ok"
             print(f"선별 {MODEL}: {len(picked)}건 · 입력 {usage['in']:,} · 출력 {usage['out']:,} 토큰 · ${usage['usd']}",
                   flush=True)
         except Exception as e:
             print(f"[WARN] 선별 실패(이번 회차 신규 미반영): {str(e)[:150]}")
-            picked = {}
+            picked, curate = {}, "failed"
+            # 신규는 seen에 넣지 않아 다음 회차에 다시 판정(손실 없음) — 오늘 뉴스가 비므로 알림
+            soft_fail(f"Claude 선별 실패({str(e).split(':')[0][:40]}) — 신규 {len(new_items)}건은 다음 실행에서 다시 선별")
 
     compare = old.get("model_compare", [])[-19:]
     if usage and SHADOW_MODEL and today.isoformat() <= SHADOW_UNTIL:
@@ -493,7 +552,10 @@ def main():
     out = {"generated_at":
            datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
            "today": today.isoformat(),
-           "items": kept, "seen_ids": seen_list, "seen_titles": seen_titles, "seen_since": since}
+           "items": kept, "seen_ids": seen_list, "seen_titles": seen_titles, "seen_since": since,
+           # v2.9 이번 실행 수집 결과(수집 상태·점검용): 검색어 수·실패 수·받은 헤드라인·신규·선별 결과(ok/failed/none)
+           "status": {"queries": st["queries"], "failed_queries": nfail, "headlines": st["headlines"],
+                      "new": len(new_items), "curate": curate}}
     if compare:
         out["model_compare"] = compare
     os.makedirs("docs", exist_ok=True)

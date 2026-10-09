@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.7: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 요청 묶음이 실패해 빈 브랜드는 이전 naver_trend.json 값을 이어 쓰고
+      stale_since(마지막 정상 수집일) 표시. 월간 합계·브랜드 월간이 실패해도 이전 값 유지(달이 바뀌어 칸이 안 맞으면 묶음 전체를 이전 값으로).
+      최상위 status(이전 값 쓴 브랜드·월간·값 없는 브랜드 월간). 브랜드(주간·월간) 절반 넘게 못 받음·전체 실패·인증·한도 오류·
+      월간 합계 이틀 연속 실패면 '실패 표시'(soft_fail.txt → 워크플로우 마지막 단계 빨간 X → 낮 점검 알림)
 v1.6: 스케쳐스 추가(대표 지시 2026-10-09) — 공식 표기 '스케쳐스'와 흔한 표기 '스케처스'·skechers 합산, 연결은 국내 법인
       (krd:skechers_kr, 미국 본사 상장폐지). 월간 합계(판매 vs 검색)에도 포함(대표 선택) — 37개월을 매번 다시 받아 선이 끊기지 않음
 v1.5: 국내 패션·아이웨어 브랜드별 월간 검색(brand_monthly, 3년 전 1월부터) — '검색 관심도 vs 실적'(연간 검색 증감 vs 매출 증감)용.
@@ -34,6 +38,7 @@ KEY_ID = os.environ.get("NCP_APIGW_API_KEY_ID", "")
 KEY = os.environ.get("NCP_APIGW_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 OUT = "docs/naver_trend.json"
+SCRIPT = "naver_trend"
 WEEKS = 104          # 차트용 2년
 MONTHS = 37          # 월간 합계: 월별 전년 대비 25개월
 PER_REQ = 4          # 요청당 브랜드 4개 + 기준(나이키) = API 상한 5개
@@ -110,6 +115,13 @@ EYE_NAMES = {b[0] for b in EYE_BRANDS}
 
 class FatalAPI(Exception):
     """인증·한도 오류 — 나머지 요청도 실패하므로 전체 중단"""
+
+
+def soft_fail(msg):
+    """심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    print(f"실패 표시: {msg}", flush=True)
+    with open("soft_fail.txt", "a", encoding="utf-8") as f:
+        f.write(f"{SCRIPT}: {msg}\n")
 
 
 def date_range():
@@ -287,26 +299,88 @@ def collect_brand_monthly():
     return {"months": ym, "basis": "월간 검색량 지수 · 나이키 최근 12개월 월평균 = 100", "series": series}
 
 
+def load_prev():
+    """이전 naver_trend.json(없거나 깨졌거나 형식이 다르면 None)"""
+    try:
+        with open(OUT, encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else None
+    except Exception:
+        return None
+
+
+def keep_prev(out, prev):
+    """v1.7 이번에 못 받은 값은 이전 파일 값을 이어 씀. stale_since = 그 값을 마지막으로 정상 수집한 날짜
+    (이전 값에 이미 있으면 그대로). 반환 status {kept_brands, failed_brands, monthly_kept, brand_monthly_kept,
+    brand_monthly_failed(이전 값도 없어 브랜드 월간에서 빠진 브랜드)}"""
+    prev = prev or {}
+    pdate = str(prev.get("generated_at") or "")[:10] or None
+    # ① 주간 브랜드: 이름으로 찾아 값(규모·전년 대비·추세·주간 s)을 통째로 이어 씀. 연결·뉴스 키·그룹은 지금 정의대로.
+    #    s는 그때 받은 배열 그대로라 주가 바뀐 날엔 끝 주가 weeks보다 한 주 이를 수 있음(None을 끼우면 그래프가 0으로 꺾임)
+    old_b = {b.get("name"): b for b in prev.get("brands") or []}
+    kept, failed = [], []
+    for i, b in enumerate(out["brands"]):
+        if b.get("s") is not None:
+            continue
+        ob = old_b.get(b["name"])
+        if ob and ob.get("s") is not None:
+            out["brands"][i] = dict(ob, news=b["news"], link=b["link"], group=b["group"],
+                                    stale_since=ob.get("stale_since") or pdate)
+            kept.append(b["name"])
+        else:
+            failed.append(b["name"])
+    # ② 월간 합계: 실패(None)면 이전 묶음 그대로
+    monthly_kept = False
+    om = prev.get("monthly")
+    if out.get("monthly") is None and om:
+        out["monthly"] = dict(om, stale_since=om.get("stale_since") or pdate)
+        monthly_kept = True
+    # ③ 브랜드 월간: 빠진 브랜드만 이전 값으로. 달 목록이 바뀌었으면(매월 1일) 칸이 안 맞으므로 묶음 전체를 이전 값으로
+    #    (화면·주간 메일이 여러 브랜드를 같은 칸끼리 더함). stale_since = {브랜드: 날짜}
+    bm, obm = out.get("brand_monthly"), prev.get("brand_monthly")
+    bm_kept = []
+    names = [b[0] for b in KR_BRANDS + EYE_BRANDS]
+    if obm and obm.get("series"):
+        o_since = obm.get("stale_since") if isinstance(obm.get("stale_since"), dict) else {}
+        lost = [n for n in names if n in obm["series"] and n not in ((bm or {}).get("series") or {})]
+        if not bm or (lost and obm.get("months") != bm.get("months")):
+            bm_kept = list(obm["series"])
+            out["brand_monthly"] = dict(obm, stale_since={n: o_since.get(n) or pdate for n in bm_kept})
+        elif lost:
+            bm["series"].update({n: obm["series"][n] for n in lost})
+            bm["stale_since"] = {n: o_since.get(n) or pdate for n in lost}
+            bm_kept = lost
+    got = (out.get("brand_monthly") or {}).get("series") or {}
+    return {"kept_brands": kept, "failed_brands": failed, "monthly_kept": monthly_kept,
+            "brand_monthly_kept": bm_kept, "brand_monthly_failed": [n for n in names if n not in got]}
+
+
 def main():
+    prev = load_prev()
     if not KEY_ID or not KEY:
         print("[WARN] 네이버 API 키 미설정 — 검색 관심도 수집 건너뜀(기존 파일 유지)")
+        soft_fail("네이버 API 키 없음 — 검색 관심도 이전 값 유지")
         return
     try:
         out = collect()
     except FatalAPI as e:
         print(f"[ERROR] 네이버 API {e} — 기존 파일 유지", flush=True)
+        soft_fail("네이버 API 인증·한도 오류 — 검색 관심도 이전 값 유지")
         return
     except Exception as e:
         print(f"[ERROR] 네이버 검색 관심도 수집 실패: {str(e)[:200]} — 기존 파일 유지", flush=True)
+        soft_fail("네이버 검색 관심도 수집 실패 — 이전 값 유지")
         return
     if not out:
         print("[ERROR] 네이버 검색 관심도: 받은 데이터 없음 — 기존 파일 유지")
+        soft_fail("네이버 검색 관심도 받은 데이터 없음 — 이전 값 유지")
         return
+    m_fatal = False                              # v1.7 월간에서 인증·한도 오류
     try:
         out["monthly"] = collect_monthly()
     except FatalAPI as e:
         print(f"[ERROR] 네이버 API {e} — 월간 합계 생략", flush=True)
-        out["monthly"] = None
+        out["monthly"], m_fatal = None, True
     except Exception as e:
         print(f"  [WARN] 월간 합계 실패: {str(e)[:150]}", flush=True)
         out["monthly"] = None
@@ -314,10 +388,31 @@ def main():
         out["brand_monthly"] = collect_brand_monthly()
     except FatalAPI as e:
         print(f"[ERROR] 네이버 API {e} — 브랜드 월간 생략", flush=True)
-        out["brand_monthly"] = None
+        out["brand_monthly"], m_fatal = None, True
     except Exception as e:
         print(f"  [WARN] 브랜드 월간 실패: {str(e)[:150]}", flush=True)
         out["brand_monthly"] = None
+    bm_names = [b[0] for b in KR_BRANDS + EYE_BRANDS]
+    bm_got = (out["brand_monthly"] or {}).get("series") or {}
+    bm_bad = sum(1 for n in bm_names if n not in bm_got)   # 오늘 못 받은 브랜드 월간(이전 값으로 채우기 전)
+    m_twice = out["monthly"] is None and bool(((prev or {}).get("monthly") or {}).get("stale_since"))
+    st = out["status"] = keep_prev(out, prev)   # v1.7 못 받은 값은 이전 값으로
+    n_all = len(out["brands"]) - 1               # 기준(나이키) 제외
+    n_bad = len(st["kept_brands"]) + len(st["failed_brands"])
+    print(f"  수집 결과: 정상 {n_all - n_bad} · 이전 값 {len(st['kept_brands'])} · 값 없음 {len(st['failed_brands'])}"
+          + (" · 월간 합계 이전 값" if st["monthly_kept"] else "")
+          + (f" · 브랜드 월간 이전 값 {len(st['brand_monthly_kept'])}" if st["brand_monthly_kept"] else "")
+          + (f" · 브랜드 월간 값 없음 {len(st['brand_monthly_failed'])}" if st["brand_monthly_failed"] else ""), flush=True)
+    if st["kept_brands"]:
+        print(f"  이전 값 이어 씀: {', '.join(st['kept_brands'])}", flush=True)
+    if n_bad * 2 > n_all:
+        soft_fail(f"네이버 검색 관심도 브랜드 {n_all}개 중 {n_bad}개 못 받음(이전 값 {len(st['kept_brands'])}개)")
+    # 월간(판매 vs 검색·검색 vs 실적): 인증·한도 오류, 월간 합계 이틀 연속 실패(요청 1건이라 하루 일시 오류는 넘김),
+    # 브랜드 월간 절반 넘게 못 받음 → 실패 표시 한 줄
+    why = ((["인증·한도 오류"] if m_fatal else []) + (["합계 이틀 연속 실패"] if m_twice else [])
+           + ([f"브랜드별 {len(bm_names)}개 중 {bm_bad}개 못 받음"] if bm_bad * 2 > len(bm_names) else []))
+    if why:
+        soft_fail(f"네이버 월간 검색 {' · '.join(why)} — 이전 값 유지")
     os.makedirs("docs", exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)

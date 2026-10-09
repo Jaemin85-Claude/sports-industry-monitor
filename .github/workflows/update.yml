@@ -2,8 +2,9 @@ name: update-dashboard
 
 on:
   schedule:
-    # 매일 07:30 KST = 전일 22:30 UTC
-    - cron: "30 22 * * *"
+    # 2026-10 대표 승인: GitHub 대기열 지연(3~4시간)이 길어져 모든 예약을 약 3시간 앞당김(순서 유지, 정각·30분 피함)
+    # 매일 04:17 KST = 전일 19:17 UTC (뉴스 03:17 뒤)
+    - cron: "17 19 * * *"
   workflow_dispatch:   # 수동 실행 버튼 (테스트용)
 
 permissions:
@@ -22,11 +23,16 @@ jobs:
       - name: Fetch data
         run: python fetch_data.py
       - name: Naver search trend
+        id: naver
         continue-on-error: true   # 네이버 수집이 실패해도 대시보드 갱신은 계속
         env:
           NCP_APIGW_API_KEY_ID: ${{ secrets.NCP_APIGW_API_KEY_ID }}
           NCP_APIGW_API_KEY: ${{ secrets.NCP_APIGW_API_KEY }}
         run: python naver_trend.py
+      - name: Note Naver failure
+        if: steps.naver.outcome == 'failure'
+        run: |
+          echo "naver_trend: 네이버 검색 관심도 수집 실패(이전 값 유지)" >> soft_fail.txt
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
@@ -39,3 +45,12 @@ jobs:
           git commit -m "update dashboard $(date -u +%F)" || echo "no changes"
           git pull --rebase origin main
           git push
+      - name: Check partial failures
+        # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
+        # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi

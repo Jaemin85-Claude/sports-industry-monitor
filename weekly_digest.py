@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.4: (대표 지시 2026-10-09) 대시보드(build_dashboard v32.12)와 같은 순위 규칙 — 새 실적 줄에 기준(분기 '26.06, 분기 증감이 없으면 연간 FY25),
+      딕스는 인수 효과 기간(ACQ)엔 '인수 효과 포함'(분기 실적이면 본체 증가율)·재고 경고에서 뺌, 삼성물산(전사 수치)은 새 실적·재고 경고에서 뺌,
+      공시(SEC·IR) 분기가 야후보다 45일 넘게 새로우면 '새 실적 반영 대기' 줄, 재고 경고에 결산 연도(FY24 등) 표시
+      수집 실패로 이전 값을 쓴 종목·통화·네이버 브랜드(stale_since)는 이번 주 변화에서 빼고, 새 실적은 결산일이 더 늦어질 때만
 v1.3: 새 실적 줄 — 야후(연결) 연간 매출이 DART 값과 20% 넘게 다른 상장사(LS네트웍스: 지정 별도 vs 야후 LS증권 포함 연결)는
       분기 매출 전년 대비를 빼고 '야후 연결 기준이라 제외'로 표시(build_dashboard v32.9와 같은 규칙)
 v1.2: (대표 요청 2026-10-06) 국내 비교 회사 뉴스(유통사·패션 브랜드)·통관·상표권 뉴스를 따로 묶고 '중요 뉴스'에서는 중복 제외.
@@ -13,6 +17,7 @@ v1: 월요일 아침 주간 요약 — docs/*.json(현재)과 history.json·git 
 """
 
 import os
+import re
 import sys
 import json
 import datetime
@@ -68,7 +73,8 @@ def won(v):
 def price_moves(data, hist, today):
     """history.json 일별 주가로 7일 변화(7일 전 기록이 없으면 가장 오래된 기록부터)"""
     cutoff = (today - datetime.timedelta(days=DAYS)).isoformat()
-    names = {x["ticker"]: x["name"] for x in (data or {}).get("items", [])}
+    # 그날 수집에 실패해 이전 값을 이어 쓴 종목(stale_since)은 기록이 멈춰 있어 비교 기간만 짧게 만듦 → 제외
+    names = {x["ticker"]: x["name"] for x in (data or {}).get("items", []) if not x.get("stale_since")}
     out, span_min = [], None
     for t, series in ((hist or {}).get("tickers") or {}).items():
         pts = [p for p in series if p.get("price") is not None]
@@ -98,8 +104,9 @@ def fx_moves(data, old):
         unit = 100 if code == "JPY" else 1
         rate = c["rate"] * unit
         p = prv.get(code)
-        wk = (c["rate"] / p["rate"] - 1) * 100 if p and p.get("rate") else None
-        rows.append((code, c.get("name", code), rate, wk, c.get("chg_pct"), c.get("dev_pct")))
+        st = c.get("stale_since")     # 오늘 수집 실패 → 이전 값(주간 변화는 비움)
+        wk = (c["rate"] / p["rate"] - 1) * 100 if p and p.get("rate") and not st else None
+        rows.append((code, c.get("name", code), rate, wk, c.get("chg_pct"), c.get("dev_pct"), st))
     return rows
 
 
@@ -128,21 +135,121 @@ def yahoo_cfs_diff(x, krf):
     return bool(diff) and max(diff)[1] > 0.2
 
 
-def new_results(data, old, krf=None):
-    """한 주 사이 새 분기·연간 실적이 반영된 상장사"""
+# ── v1.4 순위 규칙 — build_dashboard.py v32.12의 ACQ·WHOLE_CO·PEND_DAYS와 같게 유지 ──
+ACQ = {"DKS": {"until": "2026-11-30", "why": "풋락커 인수(2025-09) 효과 포함", "core": "DICK'S"}}   # 인수 효과 기간
+WHOLE_CO = {"028260.KS": "삼성물산은 건설·상사 포함 전사 수치라 제외"}                         # 회사 전체 수치
+PEND_DAYS = 45                                                                              # 공시 분기가 이만큼 넘게 새로우면 반영 대기
+MON3 = {m: i + 1 for i, m in enumerate("jan feb mar apr may jun jul aug sep oct nov dec".split())}
+
+
+def acq_on(t, today):
+    a = ACQ.get(t)
+    return a if a and today.isoformat() <= a["until"] else None
+
+
+def ym(d):
+    """결산·분기 종료일 표기: 2026-06-30 → '26.06"""
+    return f"'{d[2:4]}.{d[5:7]}" if d else ""
+
+
+def fy_lbl(d):
+    return f"FY{d[2:4]}" if d else ""
+
+
+def period_end(p):
+    """공시 기간 문자열의 종료일('ended 2026-08-31' / 'ended August 1, 2026') — 없거나 실적 기간이 아니면 None"""
+    p = str(p or "")
+    if re.search(r"pro ?forma|target|investor", p, re.I):
+        return None
+    m = re.search(r"ended\s+(\d{4}-\d{2}-\d{2})", p, re.I)
+    if m:
+        return m.group(1)
+    m = re.search(r"ended\s+([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})", p, re.I)
+    mo = m and MON3.get(m.group(1).lower())
+    return f"{m.group(3)}-{mo:02d}-{int(m.group(2)):02d}" if mo else None
+
+
+def is_qtr_period(p):
+    p = str(p or "")
+    return bool(re.search(r"\bQ[1-4]\b|quarter|thirteen weeks|13 weeks|three months|분기", p, re.I)) and \
+        not re.search(r"pro ?forma|누적|six months|nine months|26 weeks|39 weeks|twenty-six|thirty-nine", p, re.I)
+
+
+def pend_of(x, segs, segs_ir):
+    """야후 분기(q_end)보다 공시(SEC·IR) 분기 종료일이 45일 넘게 새로우면 (종료일, 출처)"""
+    if not x.get("q_end"):
+        return None
+    best = None
+    for src, d in (("SEC", segs), ("IR", segs_ir)):
+        e = ((d or {}).get("items") or {}).get(x["ticker"]) or {}
+        end = period_end((e.get("extract") or {}).get("period"))
+        if end and (not best or end > best[0]):
+            best = (end, src)
+    if not best:
+        return None
+    try:    # 없는 날짜('February 30')·형식이 다른 q_end는 판단하지 않음 — 대시보드 pendOf처럼 넘어가고 메일 전체는 계속
+        gap = (datetime.date.fromisoformat(best[0]) - datetime.date.fromisoformat(str(x["q_end"])[:10])).days
+    except (ValueError, TypeError):
+        return None
+    return best if gap > PEND_DAYS else None
+
+
+def acq_core(t, segs, segs_ir):
+    """인수 회사 본체 매출 증가율 — 공시 추출이 분기 실적이고 본체 부문에 당기·전년 매출이 있을 때만(대시보드처럼 IR 우선)"""
+    a = ACQ.get(t) or {}
+    e = ((segs_ir or {}).get("items") or {}).get(t) or {}
+    if not e.get("extract"):
+        e = ((segs or {}).get("items") or {}).get(t) or {}
+    ex = e.get("extract") or {}
+    if not a or not is_qtr_period(ex.get("period")):
+        return None
+    c = next((z for z in ex.get("sub_segments") or [] if z.get("name") == a.get("core")), None)
+    return (c["revenue"] / c["prev_revenue"] - 1) * 100 if c and c.get("revenue") is not None and c.get("prev_revenue") else None
+
+
+def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
+    """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임)
+    v1.4 전사 수치(삼성물산)는 빼고 두 번째 값으로 돌려줌, 인수 효과 기간(딕스)은 '인수 효과 포함'"""
     if not old:
-        return []
+        return [], []
+    today = today or datetime.datetime.now(KST).date()
     prev = {x["ticker"]: x for x in old.get("items", [])}
-    out = []
+    out, skipped = [], []
     for x in (data or {}).get("items", []):
         p = prev.get(x["ticker"])
-        if not p:
+        if not p or x.get("stale_since"):      # 오늘 수집 실패(이전 값)는 새 실적이 아님
             continue
-        fy_new = (x.get("fy") or [{}])[-1].get("end") != (p.get("fy") or [{}])[-1].get("end")
-        q_new = x.get("q_end") and x.get("q_end") != p.get("q_end")
+        # 두 값이 모두 있고 새 값이 더 늦을 때만 새 실적(값이 비었다 생기거나 앞 분기로 흔들린 것은 제외)
+        xe, pe = (x.get("fy") or [{}])[-1].get("end"), (p.get("fy") or [{}])[-1].get("end")
+        fy_new = bool(xe and pe and xe > pe)
+        q_new = bool(x.get("q_end") and p.get("q_end") and x["q_end"] > p["q_end"])
         if fy_new or q_new:
+            if x["ticker"] in WHOLE_CO:
+                skipped.append(WHOLE_CO[x["ticker"]])
+                continue
+            fy = (x.get("fy") or [{}])[-1]
+            fy_end = fy.get("end")
             qy = "야후 연결 기준이라 제외" if yahoo_cfs_diff(x, krf) else x.get("latest_q_yoy")
-            out.append((x["name"], x.get("q_end"), qy, x.get("inv_yoy")))
+            if qy is None:      # 대시보드 basisOf와 같게: 분기 증감이 없으면 연간 매출 증감(분기 자료 없는 곳·전년 짝 없는 분기)
+                qy, basis = fy.get("rev_yoy"), f"연간 {fy_lbl(fy_end)}".strip()
+            else:
+                basis = f"분기 {ym(x.get('q_end'))}" if x.get("q_end") else "분기 ―"
+            extra = ""
+            a = acq_on(x["ticker"], today)
+            if a:
+                c = acq_core(x["ticker"], segs, segs_ir)
+                extra = f" (인수 효과 포함{f', 본체 {pct(c)}' if c is not None else ''})"
+            out.append((x["name"], basis, qy, x.get("inv_yoy"), f"연간 {fy_lbl(fy_end)}" if fy_end else "", extra))
+    return out, skipped
+
+
+def pending_results(data, segs, segs_ir):
+    """공시에는 새 분기 실적이 있는데 야후(분기 매출 증감)에 아직 안 들어온 상장사"""
+    out = []
+    for x in (data or {}).get("items", []):
+        pe = pend_of(x, segs, segs_ir)
+        if pe:
+            out.append((x["name"], pe[1], pe[0], x.get("q_end")))
     return out
 
 
@@ -230,7 +337,7 @@ def naver_moves(nv):
     """네이버 주간 검색 지수: 최근 주 vs 그 전 주(규모 1 미만 제외) — 수입·해외 브랜드(global)만"""
     rows = []
     for b in (nv or {}).get("brands", []):
-        if b.get("group", "global") != "global":
+        if b.get("group", "global") != "global" or b.get("stale_since"):   # 이전 값 브랜드는 지난 회차 변화라 제외
             continue
         s = [v for v in (b.get("s") or []) if v is not None]
         if len(s) < 2 or (b.get("scale") or 0) < 1 or not s[-2]:
@@ -257,13 +364,22 @@ def dart_changes(kr, old):
     return out
 
 
-def inventory_warnings(data, kr):
-    out = []
+def inventory_warnings(data, kr, today=None):
+    """재고 경고 — (이름, 재고 증감, 매출 증감, 결산 기준) 목록과 제외 사유 목록.
+    v1.4 대시보드와 같게 전사 수치(삼성물산)·인수 효과 기간(딕스)은 빼고 사유로 돌려줌"""
+    today = today or datetime.datetime.now(KST).date()
+    out, skipped = [], []
     for x in (data or {}).get("items", []):
         fy = (x.get("fy") or [{}])[-1]
         iv, rv = x.get("inv_yoy"), fy.get("rev_yoy")
         if iv is not None and rv is not None and iv >= 10 and iv - rv >= 10:
-            out.append((x["name"], iv, rv))
+            a = acq_on(x["ticker"], today)
+            if x["ticker"] in WHOLE_CO:
+                skipped.append(WHOLE_CO[x["ticker"]])
+            elif a:
+                skipped.append(f"{x['name']}는 인수 효과 기간(~{int(a['until'][5:7])}/{int(a['until'][8:10])})이라 제외")
+            else:
+                out.append((x["name"], iv, rv, fy_lbl(fy.get("end"))))
     for e in (kr or {}).get("entities", []):
         ys = [y for y in e.get("years", []) if y.get("rev") is not None]
         if len(ys) < 2:
@@ -272,15 +388,16 @@ def inventory_warnings(data, kr):
         if l.get("inv") and p.get("inv") and p.get("rev"):
             iv, rv = (l["inv"] / p["inv"] - 1) * 100, (l["rev"] / p["rev"] - 1) * 100
             if iv >= 10 and iv - rv >= 10:
-                out.append((e["name"], iv, rv))
+                out.append((e["name"], iv, rv, fy_lbl(l.get("end"))))
     out.sort(key=lambda r: r[1] - r[2], reverse=True)
-    return out
+    return out, skipped
 
 
 def build(today):
     data, hist, news = load("data.json"), load("history.json"), load("news.json")
     nv, kr, kosis = load("naver_trend.json"), load("kr_domestic.json"), load("kosis.json")
     data_old, kr_old = load_old("data.json"), load_old("kr_domestic.json")
+    segs, segs_ir = load("segments.json"), load("segments_ir.json")
     fx_old, fx_days = load_old_with("data.json", "fx")
     start = today - datetime.timedelta(days=DAYS)
     period = f"{start:%m/%d}~{today:%m/%d}"
@@ -288,7 +405,8 @@ def build(today):
     moves, span = price_moves(data, hist, today)
     fx = fx_moves(data, fx_old)
     fxa = fx_alerts_week(data, start)
-    res = new_results(data, data_old, load("kr_listed_fin.json"))
+    res, res_skip = new_results(data, data_old, load("kr_listed_fin.json"), today, segs, segs_ir)
+    pend = pending_results(data, segs, segs_ir)
     earn = upcoming_earnings(data, today)
     nws, n_imp = top_news(news, today)
     nvm = naver_moves(nv)
@@ -297,7 +415,7 @@ def build(today):
     eye = eye_moves(nv)
     ytd, ytd_p = ytd_search(nv)
     dch = dart_changes(kr, kr_old)
-    inv = inventory_warnings(data, kr)
+    inv, inv_skip = inventory_warnings(data, kr, today)
 
     # ── 휴대폰 알림 3줄 ──
     usd = next((r for r in fx if r[0] == "USD"), None)
@@ -339,10 +457,11 @@ def build(today):
     L.append("")
 
     L.append("■ 환율 (원화 기준)" + (f" — 주간 변화는 {fx_days}일 기준(수집 이력 부족)" if fx_days and fx_days < DAYS else ""))
-    for code, name, rate, wk, yr, dev in fx:
+    for code, name, rate, wk, yr, dev, st in fx:
         unit = "100엔" if code == "JPY" else name
         L.append(f"  {unit} {rate:,.1f}원 · 주간 {pct(wk)} · 1년 {pct(yr)}"
-                 + (f" · 1년 평균 대비 {pct(dev)}" if dev is not None else ""))
+                 + (f" · 1년 평균 대비 {pct(dev)}" if dev is not None else "")
+                 + (f" (이전 값 {st[5:].replace('-', '/')})" if st else ""))
     if not fx:
         L.append("  자료 없음")
     elif any(r[5] is not None for r in fx):
@@ -351,10 +470,15 @@ def build(today):
 
     L.append("■ 새로 반영된 실적")
     if res:
-        for n, q, qy, iv in res:
-            L.append(f"  {n}: {q or '―'} 분기 매출 전년 대비 {qy if isinstance(qy, str) else pct(qy)} · 재고 {pct(iv)}")
+        for n, basis, qy, iv, ib, extra in res:
+            L.append(f"  {n}: {basis} 매출 전년 대비 {qy if isinstance(qy, str) else pct(qy)}{extra}"
+                     f" · 재고 {pct(iv)}{f'({ib})' if ib else ''}")
     else:
         L.append("  없음")
+    if res_skip:
+        L.append("  ※ " + " · ".join(res_skip))
+    for n, src, end, q in pend:
+        L.append(f"  새 실적 반영 대기: {n} — {src} 공시 {ym(end)} 분기 발표됨, 야후는 {ym(q)} 분기까지")
     L.append("")
 
     L.append("■ 이번 주 실적 발표 예정")
@@ -388,10 +512,12 @@ def build(today):
             L.append(f"  공시 반영: {n} {end[:7] if end else ''} 매출 {won(rev)} ({pct(yoy)}){'' if existed else ' · 새로 추가'}")
     L.append("")
 
-    L.append("■ 재고 경고 (재고 증가율이 매출보다 10%p 이상 높음)")
-    L += [f"  {n}: 재고 {pct(i)} vs 매출 {pct(r)}" for n, i, r in inv[:6]] or ["  없음"]
+    L.append("■ 재고 경고 (재고 증가율이 매출보다 10%p 이상 높음 · 연간 결산 기준)")
+    L += [f"  {n}: 재고 {pct(i)} vs 매출 {pct(r)}{f' ({fy})' if fy else ''}" for n, i, r, fy in inv[:6]] or ["  없음"]
     if len(inv) > 6:
         L.append(f"  외 {len(inv) - 6}곳")
+    if inv_skip:
+        L.append("  ※ " + " · ".join(inv_skip))
     L += ["", f"대시보드: {DASH_URL}", "※ 공시·수집값 그대로 비교한 자동 요약입니다."]
     return short, "\n".join(L)
 
