@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.5: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄(build_dashboard v32.13과 같게) — 딕스 '인수 효과 포함, 본체 +5.6%'
 v1.4: (대표 지시 2026-10-09) 대시보드(build_dashboard v32.12)와 같은 순위 규칙 — 새 실적 줄에 기준(분기 '26.06, 분기 증감이 없으면 연간 FY25),
       딕스는 인수 효과 기간(ACQ)엔 '인수 효과 포함'(분기 실적이면 본체 증가율)·재고 경고에서 뺌, 삼성물산(전사 수치)은 새 실적·재고 경고에서 뺌,
       공시(SEC·IR) 분기가 야후보다 45일 넘게 새로우면 '새 실적 반영 대기' 줄, 재고 경고에 결산 연도(FY24 등) 표시
@@ -170,7 +171,7 @@ def period_end(p):
 
 
 def is_qtr_period(p):
-    p = str(p or "")
+    p = re.split(r";|\balso\b", str(p or ""), flags=re.I)[0]   # v1.5 첫 구절만(분기·누적을 함께 적은 추출)
     return bool(re.search(r"\bQ[1-4]\b|quarter|thirteen weeks|13 weeks|three months|분기", p, re.I)) and \
         not re.search(r"pro ?forma|누적|six months|nine months|26 weeks|39 weeks|twenty-six|thirty-nine", p, re.I)
 
