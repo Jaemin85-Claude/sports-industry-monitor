@@ -6,6 +6,7 @@ v3.4: 기준 정보 저장(대표 요청 2026-10-09) — ① 회계기준: 감�
       사업보고서 경로·상장사는 API 계정 ID(ifrs-full_)로 K-IFRS 판정. ② 연결/별도(fs)·통화(currency) 필드 저장 — 국내 법인은 별도,
       상장사는 실제로 쓴 기준(연결 우선, LS네트웍스 지정 별도, 연결 없으면 별도). ③ 사업보고서 경로 6곳은 연결 요약(cfs: 매출·영업이익·
       순이익 3개년)도 함께 받음, 감사보고서 경로는 연결감사보고서가 따로 있으면 접수번호만 기록(cfs_report). ④ DART 연결 실패 시 3회 재시도
+      (응답 끊김·점검 페이지 포함, 실행 전체 8회까지 — 30분 제한 보호). '미확인' 보고서는 판정 규칙 버전(STD_VER)이 같으면 다시 받지 않음
 v3.3: 재무상태표·현금흐름 지표 대상을 국내 패션 브랜드 13곳 + 아이웨어 6곳으로 확대(대표 요청 2026-10-06, FIN_IDS 9 → 28곳).
       외감 16곳은 기존 방식(감사보고서 원본 → Claude 추출, 1회 약 $3). 상장 3곳(에이유브랜즈·피스피스스튜디오·에스제이그룹)은
       사업보고서 전체재무제표 API 행에서 바로 계산(Claude 비용 없음) — 부채 항목은 유동·비유동부채 아래 행을 같은 규칙으로 분류하고
@@ -63,6 +64,7 @@ v1.1: Anthropic 401/403·크레딧 소진 시 즉시 실패(워크플로우 빨�
 import os
 import io
 import re
+import html
 import json
 import time
 import zipfile
@@ -188,8 +190,12 @@ def log(msg):
     print(msg, flush=True)
 
 
+_RETRY_LEFT = [8]   # v3.4 실행 전체 재시도 한도 — DART 부분 장애 때 재시도 대기가 쌓여 30분 제한에 걸리지 않게
+
+
 def dart(url, params, as_bytes=False, timeout=90):
-    """DART 호출 — 연결 실패·시간 초과·5xx는 3회까지 재시도(v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패)"""
+    """DART 호출 — 연결 실패·시간 초과·응답 끊김·5xx·JSON 아닌 응답(점검 페이지)은 3회까지 재시도
+    (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 전체 재시도는 8회까지."""
     params = dict(params, crtfc_key=DART_KEY)
     for attempt in range(3):
         try:
@@ -198,9 +204,11 @@ def dart(url, params, as_bytes=False, timeout=90):
                 raise requests.exceptions.ConnectionError(f"HTTP {r.status_code}")
             r.raise_for_status()
             return r.content if as_bytes else r.json()
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
-            if attempt == 2:
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout,
+                requests.exceptions.ChunkedEncodingError, requests.exceptions.JSONDecodeError) as e:
+            if attempt == 2 or _RETRY_LEFT[0] <= 0:
                 raise
+            _RETRY_LEFT[0] -= 1
             wait = 15 * (attempt + 1)
             log(f"    [WARN] DART 연결 실패({type(e).__name__}) — {wait}초 후 재시도 {attempt + 1}/2")
             time.sleep(wait)
@@ -457,15 +465,17 @@ STD_NAMES = (("K-IFRS", r"한국\s*채택\s*국제\s*회계\s*기준"), ("일반
 
 def detect_std(plain):
     """감사보고서 평문 → ('K-IFRS'|'일반기업회계기준'|'중소기업회계기준'|None, 근거)"""
+    plain = html.unescape(plain)
     alt = "|".join(f"({p})" for _, p in STD_NAMES)
-    m = re.search(rf"(?:{alt})\s*에\s*따라[\s,]*(?:중요성|공정하게)", plain)
+    # '한국채택국제회계기준'에 따라 · 일반기업회계기준(K-GAAP)에 따라 같은 따옴표·괄호 표기도 허용
+    m = re.search(rf"(?:{alt})\s*['\"‘’“”]?\s*(?:\([^)]{{0,30}}\))?\s*에\s*따라[\s,]*(?:중요성|공정하게)", plain)
     if m:
         return next(n for i, (n, _) in enumerate(STD_NAMES) if m.group(i + 1)), "감사의견"
     for mm in re.finditer(r"작\s*성\s*기\s*준", plain):
         seg = plain[mm.start(): mm.start() + 800]
-        for n, p in STD_NAMES:
-            if re.search(p, seg):
-                return n, "작성기준 주석"
+        hits = [(h.start(), n) for n, p in STD_NAMES for h in [re.search(p, seg)] if h]
+        if hits:
+            return min(hits)[1], "작성기준 주석"   # 주석 안에서 가장 먼저 나온 기준
     a = len(re.findall(r"기업회계기준서\s*제\s*1\d{3}\s*호", plain))
     b = len(re.findall(r"일반\s*기업\s*회계\s*기준\s*제\s*\d+\s*장", plain))
     if a >= 3 and a > 2 * b:
@@ -475,17 +485,21 @@ def detect_std(plain):
     return None, None
 
 
+STD_VER = 1   # 판정 규칙을 고치면 올림 → '미확인'으로 저장된 보고서만 다시 받아 판정
+
+
 def report_std(rcept, cached):
     """접수번호별 회계기준 — 캐시에 있으면 그대로, 없으면 원문(이번 실행에서 받았으면 재사용)에서 판정. Claude 호출 없음"""
-    if rcept in cached and cached[rcept].get("std"):
-        return cached[rcept]
+    c = cached.get(rcept) or {}
+    if c.get("std") or c.get("v") == STD_VER:   # 판정됨, 또는 같은 규칙으로 이미 보고 '미확인'(의견거절 등)
+        return c
     try:
         std, how = detect_std(fetch_document_plain(rcept))
-    except Exception as e:
+    except Exception as e:   # 다운로드 실패만 다음 실행에서 다시 시도
         log(f"      회계기준 판정 실패 rcept={rcept}: {str(e)[:100]}")
         return {"std": None, "how": None}
     log(f"      회계기준 rcept={rcept}: {std or '미확인'}{f' ({how})' if how else ''}")
-    return {"std": std, "how": how}
+    return {"std": std, "how": how, "v": STD_VER}
 
 
 _PLAIN = {}   # 같은 실행에서 손익·재무상태표 추출이 같은 원본을 두 번 받지 않도록
