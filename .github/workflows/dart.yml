@@ -5,6 +5,11 @@ on:
     # 매월 15일 07:00 KST = 14일 22:00 UTC (3~4월 감사보고서 시즌 이후 자동 반영)
     - cron: "0 22 14 * *"
   workflow_dispatch:   # 수동 실행 버튼
+    inputs:
+      only:
+        description: "검증용: 이 법인 id만(쉼표 구분, 예: trexi,skechers_kr) — 저장·커밋 안 함. 비우면 전체 실행"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -24,6 +29,7 @@ jobs:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PYTHONUNBUFFERED: "1"
+          DART_ONLY: ${{ inputs.only }}
         run: python dart_fetch.py
       - name: Commit domestic data
         run: |

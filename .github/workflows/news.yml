@@ -22,8 +22,6 @@ jobs:
       - name: Collect and curate news
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          NCP_APIGW_API_KEY_ID: ${{ secrets.NCP_APIGW_API_KEY_ID }}
-          NCP_APIGW_API_KEY: ${{ secrets.NCP_APIGW_API_KEY }}
         run: python news_monitor.py
       - name: Commit news
         run: |
