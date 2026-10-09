@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.4: 기준 정보 저장(대표 요청 2026-10-09) — ① 회계기준: 감사보고서 원문의 감사의견 문구('한국채택국제회계기준/일반기업회계기준에
+      따라 … 중요성의 관점에서')를 정규식으로 찾아 years[].std·acct_std에 저장(Claude 비용 없음, 접수번호별 _cache_std로 1회만 다운로드).
+      사업보고서 경로·상장사는 API 계정 ID(ifrs-full_)로 K-IFRS 판정. ② 연결/별도(fs)·통화(currency) 필드 저장 — 국내 법인은 별도,
+      상장사는 실제로 쓴 기준(연결 우선, LS네트웍스 지정 별도, 연결 없으면 별도). ③ 사업보고서 경로 6곳은 연결 요약(cfs: 매출·영업이익·
+      순이익 3개년)도 함께 받음, 감사보고서 경로는 연결감사보고서가 따로 있으면 접수번호만 기록(cfs_report). ④ DART 연결 실패 시 3회 재시도
 v3.3: 재무상태표·현금흐름 지표 대상을 국내 패션 브랜드 13곳 + 아이웨어 6곳으로 확대(대표 요청 2026-10-06, FIN_IDS 9 → 28곳).
       외감 16곳은 기존 방식(감사보고서 원본 → Claude 추출, 1회 약 $3). 상장 3곳(에이유브랜즈·피스피스스튜디오·에스제이그룹)은
       사업보고서 전체재무제표 API 행에서 바로 계산(Claude 비용 없음) — 부채 항목은 유동·비유동부채 아래 행을 같은 규칙으로 분류하고
@@ -184,10 +189,21 @@ def log(msg):
 
 
 def dart(url, params, as_bytes=False, timeout=90):
+    """DART 호출 — 연결 실패·시간 초과·5xx는 3회까지 재시도(v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패)"""
     params = dict(params, crtfc_key=DART_KEY)
-    r = requests.get(url, params=params, headers=UA, timeout=timeout)
-    r.raise_for_status()
-    return r.content if as_bytes else r.json()
+    for attempt in range(3):
+        try:
+            r = requests.get(url, params=params, headers=UA, timeout=timeout)
+            if r.status_code >= 500 and attempt < 2:
+                raise requests.exceptions.ConnectionError(f"HTTP {r.status_code}")
+            r.raise_for_status()
+            return r.content if as_bytes else r.json()
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            if attempt == 2:
+                raise
+            wait = 15 * (attempt + 1)
+            log(f"    [WARN] DART 연결 실패({type(e).__name__}) — {wait}초 후 재시도 {attempt + 1}/2")
+            time.sleep(wait)
 
 
 def to_int(s):
@@ -322,10 +338,11 @@ def fin_from_rows(rows, amt_key):
     return rec
 
 
-def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12, fin=None):
+def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12, fin=None, meta=None):
     """전체재무제표(사업보고서) 1건으로 당기·전기·전전기 3개년 확보.
     반환 ({end: {rev, cogs, op, ni, inv}}, source) — 값 없는 항목은 None.
-    fin(dict)을 주면 같은 행에서 재무상태표·현금흐름 레코드도 채움(v3.3)"""
+    fin(dict)을 주면 같은 행에서 재무상태표·현금흐름 레코드도 채움(v3.3).
+    meta(dict)를 주면 회계기준(std: 계정 ID가 ifrs-full_ → K-IFRS)·통화·기준(fs)을 채움(v3.4)"""
     for y in years_try:
         try:
             data = dart(f"{BASE}/fnlttSinglAcntAll.json", {
@@ -367,6 +384,10 @@ def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12, fin=None):
                         fin[end] = f
         if out:
             src_txt = f"사업보고서 {y} ({'연결' if fs_div == 'CFS' else '별도'}) rcept={rows[0].get('rcept_no')}"
+            if meta is not None:
+                meta.update(fs="연결" if fs_div == "CFS" else "별도",
+                            std="K-IFRS" if any((r.get("account_id") or "").startswith("ifrs") for r in rows) else None,
+                            currency=next((r.get("currency") for r in rows if r.get("currency")), None) or "KRW")
             for end, rec in sorted(out.items()):
                 log(f"    {end}: 매출 {rec['rev']:,} / 원가 {rec['cogs']} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
             return out, src_txt
@@ -422,7 +443,49 @@ def list_audit_reports(corp_code):
         nm = it.get("report_nm") or ""
         if "감사보고서" in nm and "연결" not in nm and "정정" not in nm:
             out.append((it.get("rcept_no"), it.get("rcept_dt"), nm))
+        elif "연결감사보고서" in nm and "정정" not in nm:
+            _CFS_RPT.setdefault(corp_code, (it.get("rcept_no"), it.get("rcept_dt"), nm))   # 최신순 → 첫 건 = 최신
     return out
+
+
+_CFS_RPT = {}   # v3.4 corp_code → 최신 연결감사보고서(rcept, 접수일, 이름) — 수치는 받지 않고 존재만 기록
+
+# v3.4 회계기준 판정: 감사의견 문구 → 재무제표 작성기준 주석 → 기준서 인용 횟수 순
+STD_NAMES = (("K-IFRS", r"한국\s*채택\s*국제\s*회계\s*기준"), ("일반기업회계기준", r"일반\s*기업\s*회계\s*기준"),
+             ("중소기업회계기준", r"중소\s*기업\s*회계\s*기준"))
+
+
+def detect_std(plain):
+    """감사보고서 평문 → ('K-IFRS'|'일반기업회계기준'|'중소기업회계기준'|None, 근거)"""
+    alt = "|".join(f"({p})" for _, p in STD_NAMES)
+    m = re.search(rf"(?:{alt})\s*에\s*따라[\s,]*(?:중요성|공정하게)", plain)
+    if m:
+        return next(n for i, (n, _) in enumerate(STD_NAMES) if m.group(i + 1)), "감사의견"
+    for mm in re.finditer(r"작\s*성\s*기\s*준", plain):
+        seg = plain[mm.start(): mm.start() + 800]
+        for n, p in STD_NAMES:
+            if re.search(p, seg):
+                return n, "작성기준 주석"
+    a = len(re.findall(r"기업회계기준서\s*제\s*1\d{3}\s*호", plain))
+    b = len(re.findall(r"일반\s*기업\s*회계\s*기준\s*제\s*\d+\s*장", plain))
+    if a >= 3 and a > 2 * b:
+        return "K-IFRS", f"기준서 인용 {a}회"
+    if b >= 3 and b > 2 * a:
+        return "일반기업회계기준", f"기준 인용 {b}회"
+    return None, None
+
+
+def report_std(rcept, cached):
+    """접수번호별 회계기준 — 캐시에 있으면 그대로, 없으면 원문(이번 실행에서 받았으면 재사용)에서 판정. Claude 호출 없음"""
+    if rcept in cached and cached[rcept].get("std"):
+        return cached[rcept]
+    try:
+        std, how = detect_std(fetch_document_plain(rcept))
+    except Exception as e:
+        log(f"      회계기준 판정 실패 rcept={rcept}: {str(e)[:100]}")
+        return {"std": None, "how": None}
+    log(f"      회계기준 rcept={rcept}: {std or '미확인'}{f' ({how})' if how else ''}")
+    return {"std": std, "how": how}
 
 
 _PLAIN = {}   # 같은 실행에서 손익·재무상태표 추출이 같은 원본을 두 번 받지 않도록
@@ -762,20 +825,29 @@ def main():
             pass
     old_cache = old.get("_cache", {})
     old_fin = old.get("_cache_fin", {})
+    old_std = old.get("_cache_std", {})
     today = datetime.datetime.now(KST).date()
     years = [today.year - i for i in range(0, YEARS_BACK + 1)]
 
     result = {"updated_at": today.isoformat(),
               "cadence": "월 1회 자동 체크 — 새 감사보고서/사업보고서만 추출 (DART OpenAPI)",
               "source_note": "DART: 사업보고서 제출 법인은 구조화 API(별도 우선), 외감 법인은 감사보고서 원본을 Claude로 추출. 단위: 원. null = 미확인(§29-D)",
-              "entities": [], "_cache": {}, "_cache_fin": {}}
+              "entities": [], "_cache": {}, "_cache_fin": {}, "_cache_std": {}}
 
     for eid, name, etype, link, code, route, fy_m, note in ENTITIES:
         log(f"[{eid}] {name} ({route}) corp={code or '-'}")
         recs, fin_by_end = {}, {}
+        std_by_rcept, meta, cfs, cfs_report = {}, {}, None, None
         if route == "api":
             fins = {} if eid in FIN_IDS else None
-            recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m, fin=fins)
+            recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m, fin=fins, meta=meta)
+            # v3.4 연결 요약(비교 화면은 별도 유지, 상세에서 참고) — DART API 호출만
+            crecs, csrc = fetch_full_statements(code, "CFS", years, fy_m)
+            if crecs:
+                cfs = {"source": csrc, "years": [{"end": e, "rev": r.get("rev"), "op": r.get("op"), "ni": r.get("ni")}
+                                                 for e, r in sorted(crecs.items())][-3:]}
+                c = cfs["years"][-1]
+                log(f"    연결 요약 {c['end']}: 매출 {c['rev']} / 영업이익 {c['op']} / 순이익 {c['ni']}")
             for r in recs.values():
                 r["source"] = src_txt
             for end, f in (fins or {}).items():
@@ -794,6 +866,13 @@ def main():
                 reports = list_audit_reports(code)
                 recs, cache = fetch_doc_years(name, code, old_cache.get(eid, {}), reports)
                 result["_cache"][eid] = cache
+                for rcept, _, _ in reports[:2]:      # v3.4 회계기준(원문 정규식, 접수번호별 1회)
+                    std_by_rcept[rcept] = report_std(rcept, old_std.get(eid, {}))
+                result["_cache_std"][eid] = std_by_rcept
+                if code in _CFS_RPT:
+                    r_, d_, n_ = _CFS_RPT[code]
+                    cfs_report = {"rcept": r_, "date": d_, "name": n_}
+                    log(f"    연결감사보고서 있음: {n_} {d_} rcept={r_}(수치 미수집)")
                 if eid in FIN_IDS:
                     fins, fcache = fetch_fin_years(name, reports, old_fin.get(eid, {}), recs)
                     result["_cache_fin"][eid] = fcache
@@ -804,17 +883,22 @@ def main():
         years_out = []
         for end in ends:
             r = recs[end]
+            std = (std_by_rcept.get(r.get("rcept_no")) or {}).get("std") if route == "doc" else meta.get("std")
             years_out.append({"fy": f"FY{end[2:4]}", "end": end,
                               "rev": r.get("rev"), "op": r.get("op"), "ni": r.get("ni"),
                               "inv": r.get("inv"), "cogs": r.get("cogs"),
-                              "source": r.get("source")})
+                              "source": r.get("source"), "fs": "별도", "std": std})
             if end in fin_by_end:
                 years_out[-1]["fin"] = fin_by_end[end]
         if not years_out:
             years_out = [{"fy": None, "end": None, "rev": None, "op": None, "ni": None, "inv": None, "source": None}]
+        has = bool(ends)
         result["entities"].append({
             "id": eid, "name": name, "type": etype, "link": link,
             "corp_code": code, "route": route, "fy_end_month": fy_m, "note": note,
+            "fs": "별도" if has else None, "currency": (meta.get("currency") or "KRW") if has else None,
+            "acct_std": next((y.get("std") for y in reversed(years_out) if y.get("std")), None) if has else None,
+            "cfs": cfs, "cfs_report": cfs_report,
             "years": years_out,
         })
         log(f"    → {len(ends)}개년 수록")
@@ -824,6 +908,10 @@ def main():
         json.dump(result, f, ensure_ascii=False, indent=1)
     n = sum(1 for e in result["entities"] if e["years"] and e["years"][0].get("rev") is not None)
     log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인")
+    from collections import Counter
+    sc = Counter(e.get("acct_std") or "미확인" for e in result["entities"] if e.get("fs"))
+    log(f"  회계기준: {' · '.join(f'{k} {v}' for k, v in sc.most_common())} · 연결 요약 {sum(1 for e in result['entities'] if e.get('cfs'))}곳"
+        f" · 연결감사보고서 있음 {sum(1 for e in result['entities'] if e.get('cfs_report'))}곳")
     fy = [y for e in result["entities"] if e["id"] in FIN_IDS for y in e["years"] if y.get("fin")]
     log(f"  재무상태표·현금흐름: {sum(1 for e in result['entities'] if e['id'] in FIN_IDS and any(y.get('fin') for y in e['years']))}"
         f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건"
@@ -836,7 +924,8 @@ def main():
     except Exception as e:
         log(f"[WARN] corpCode 로드 실패: {str(e)[:120]} — 상장사 처리 생략")
         return
-    listed = {"updated_at": today.isoformat(), "basis": "DART 연결 전체재무제표(사업보고서)", "items": {}}
+    listed = {"updated_at": today.isoformat(),
+              "basis": "DART 전체재무제표(사업보고서) — 연결 우선, 지정 예외·연결 없는 회사는 별도(종목별 fs)", "items": {}}
     for tk in KR_LISTED:
         sc = tk.split(".")[0]
         hit = cmap.get(sc)
@@ -849,16 +938,20 @@ def main():
         fs = FS_OVERRIDE.get(tk, "CFS"); fym = LISTED_FY_MONTH.get(tk, 12)
         if fs != "CFS":
             log(f"    기준 예외: {'별도' if fs == 'OFS' else fs}")
-        recs, src_txt = fetch_full_statements(code, fs, years, fym)
+        meta = {}
+        recs, src_txt = fetch_full_statements(code, fs, years, fym, meta=meta)
         if not recs and fs == "CFS":
             log("    연결 없음 → 별도 시도")
-            recs, src_txt = fetch_full_statements(code, "OFS", years, fym)
+            recs, src_txt = fetch_full_statements(code, "OFS", years, fym, meta=meta)
         ys = []
         for end in sorted(recs):
             r = recs[end]
             ys.append({"end": end, "rev": r.get("rev"), "cogs": r.get("cogs"), "op": r.get("op"),
                        "ni": r.get("ni"), "inv": r.get("inv")})
-        listed["items"][tk] = {"corp_code": code, "corp_name": cname, "source": src_txt, "years": ys[-3:]}
+        listed["items"][tk] = {"corp_code": code, "corp_name": cname, "source": src_txt, "years": ys[-3:],
+                               "fs": meta.get("fs"), "std": meta.get("std"), "currency": meta.get("currency"),
+                               "fs_note": "지정 별도(LS증권 연결 편입)" if tk in FS_OVERRIDE else
+                                          ("연결재무제표 없음 → 별도" if fs == "CFS" and meta.get("fs") == "별도" else None)}
     with open(LISTED_PATH, "w", encoding="utf-8") as f:
         json.dump(listed, f, ensure_ascii=False, indent=1)
     ok = sum(1 for v in listed["items"].values() if v.get("years"))
