@@ -2,7 +2,7 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v32.10: (대표 지시 2026-10-09) ① 재고 증감은 늘면 빨강·줄면 초록(fmtInv) — 재고 경고 카드에서 늘어난 재고가 초록으로 덮이던 버그,
-        기업 표·상세·비교 표의 재고 색 반대 문제. 재고 경고: '재고일수 N일' 표기, 9곳 이상이면 전체 보기, 기준 문구, KPI 설명을
+        기업 표·상세·비교 표의 재고 색 반대 문제. 재고 경고: 9곳 이상이면 전체 보기, 기준 문구, KPI 설명을
         '재고가 매출보다 빨리 느는 곳'으로. ② 재무 지표 '확인 필요' 각주를 '값 확인(…)'으로(dart_fetch v3.5 capex·lease 포함).
         ③ 스케쳐스코리아(krd:skechers_kr) 로고·뉴스 연결
 v32.9: 기준·통화 표기(대표 요청 2026-10-09, dart_fetch v3.4·fetch_data v4.11) — ① 국내 법인 카드에 회계기준(K-IFRS/일반기업회계기준,
@@ -741,7 +741,7 @@ function koreaCard(x){
       const yoy=(p&&p.rev)?(l.rev/p.rev-1)*100:null, iy=(p&&l.inv&&p.inv)?(l.inv/p.inv-1)*100:null;
       const dio=dioOf(l.inv,l.rev,null,l.cogs);
       h+=ksigRow('국내 법인','DART',`${logoImg('krd:'+kd.id,false,kd.name)}${esc(kd.name)}`,
-        `매출 ${fmt(yoy,1,true)} · 재고 ${fmt(iy,1,true)}`,
+        `매출 ${fmt(yoy,1,true)} · 재고 ${fmtInv(iy)}`,
         `${dio!=null?`재고일수 ${Math.round(dio)}일 · `:''}FY ${ym(l.end)} 결산 · 원화`);
     } else {
       h+=ksigRow('국내 법인','DART',`${esc(kd.name)}`,'<span class="na">공시 없음</span>',esc((kd.note||'').split(' — ')[0]));
@@ -1229,10 +1229,10 @@ function buildHome(){
   const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.logo}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
   h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${outlier.length?`<div class="note">순위 제외(±100% 초과, 기저·인수 효과 가능): ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}</div>`:''}</div>`;
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
-  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rk(r,`<span>재고 <b>${fmtInv(r.inv_yoy)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · <span class="na">재고일수 ${Math.round(r.dio)}일</span>`:''}</span>`);
+  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rk(r,`<span>재고 <b>${fmtInv(r.inv_yoy)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · <span class="na">${Math.round(r.dio)}일</span>`:''}</span>`);
     return (warn.slice(0,8).map(row).join('')||'<div class="na">해당 없음</div>')
-      +(warn.length>8?`<div id="warnMore" style="display:none">${warn.slice(8).map(row).join('')}</div><div class="go" style="margin-top:6px;cursor:pointer" onclick="const m=document.getElementById('warnMore');m.style.display=m.style.display==='none'?'':'none';this.textContent=m.style.display==='none'?'전체 보기(${warn.length}곳) ▾':'접기 ▴'">전체 보기(${warn.length}곳) ▾</div>`:''); })()}
-    <div class="note">기준: 재고가 전년보다 10% 이상 늘고, 매출 증가율보다 10%p 이상 빠른 곳</div></div>`;
+      +(warn.length>8?`<div id="warnMore" style="display:none">${warn.slice(8).map(row).join('')}</div><div style="margin-top:6px;cursor:pointer;color:var(--accent);font-size:var(--fs-sm)" onclick="const m=document.getElementById('warnMore');m.style.display=m.style.display==='none'?'':'none';this.textContent=m.style.display==='none'?'전체 보기(${warn.length}곳) ▾':'접기 ▴'">전체 보기(${warn.length}곳) ▾</div>`:''); })()}
+    <div class="note">기준: 재고가 전년보다 10% 이상 늘고, 매출 증가율보다 10%p 이상 빠른 곳 · ○일 = 재고일수</div></div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
   document.getElementById('homeBody').innerHTML=h;
   statusWarn();
@@ -1395,7 +1395,7 @@ function krdCard(e, linked){
       <td>${y.rev!=null?moneyShort(y.rev,'KRW'):'―'}</td><td>${fmt(yoy,1,true)}</td>
       <td>${opm!=null?opm.toFixed(1)+'%':'―'}</td>
       <td>${y.ni!=null?moneyShort(y.ni,'KRW'):'―'}</td>
-      <td>${y.inv!=null?moneyShort(y.inv,'KRW'):'―'}</td><td>${fmt(iy,1,true)}</td></tr>`;
+      <td>${y.inv!=null?moneyShort(y.inv,'KRW'):'―'}</td><td>${fmtInv(iy)}</td></tr>`;
   });
   h+=`</table></div>`;
   const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);

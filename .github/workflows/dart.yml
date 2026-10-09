@@ -17,7 +17,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60   # v3.5 재추출(FIN_V 올림) 첫 실행은 25분+ — 30분이면 커밋 전에 잘릴 수 있음
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

@@ -5,7 +5,7 @@ v3.5: (대표 지시 2026-10-09) ① 설비투자(CAPEX)를 영업용 유형·�
       시설장치·비품·소프트웨어 등)으로 공시한 회사가 0으로 잡혀 FCF가 부풀던 문제(피스피스스튜디오 FY24 +121억 → 약 −162억,
       에이유브랜즈 3년 0). 사용권자산·투자부동산·금융자산·종속/관계기업·대여금은 제외. 감사보고서 경로는 투자활동 유출 원본 줄
       (capex_lines)을 받아 코드로 합산하고 부채·투자 원본 줄을 캐시(raw)에 저장 → 이후 분류 규칙만 바꿀 땐 재추출 없음(FIN_V=4,
-      1회 재추출 약 3달러). 취득 행이 아예 없으면 0 대신 '확인 필요'(bad: capex). ② K-IFRS 법인인데 리스부채가 0이면 '확인 필요'
+      1회 재추출 약 3달러). 취득 행이 없거나 분류 못 한 취득·증가 행이 있으면 0 대신 '확인 필요'(bad: capex) + 로그에 행 이름. ② K-IFRS 법인인데 리스부채가 0이면 '확인 필요'
       (bad: lease — 순부채 지표만 가림). ③ 스케쳐스코리아(01171509, 감사보고서 경로) 추가. ④ 재추출할 때 원문 다운로드가 실패하면
       (DART 점검 등) 이전 추출값을 그대로 쓰고 다음 실행에서 다시 추출. ⑤ 검증 모드 DART_ONLY(dart.yml 수동 실행 입력 only) —
       지정 법인만 처리하고 파일을 쓰지 않음(브랜치 검증 때 전체 재추출 이중 과금 방지)
@@ -14,7 +14,7 @@ v3.4: 기준 정보 저장(대표 요청 2026-10-09) — ① 회계기준: 감�
       사업보고서 경로·상장사는 API 계정 ID(ifrs-full_)로 K-IFRS 판정. ② 연결/별도(fs)·통화(currency) 필드 저장 — 국내 법인은 별도,
       상장사는 실제로 쓴 기준(연결 우선, LS네트웍스 지정 별도, 연결 없으면 별도). ③ 사업보고서 경로 6곳은 연결 요약(cfs: 매출·영업이익·
       순이익 3개년)도 함께 받음, 감사보고서 경로는 연결감사보고서가 따로 있으면 접수번호만 기록(cfs_report). ④ DART 연결 실패 시 3회 재시도
-      (응답 끊김·점검 페이지 포함, 실행 18분 이후엔 재시도 없음 — 30분 제한 보호). '미확인' 보고서는 판정 규칙 버전(STD_VER)이 같으면
+      (응답 끊김·점검 페이지 포함, 실행 18분 이후엔 재시도 없음 — 30분 제한 보호 · v3.5에서 40분/60분으로). '미확인' 보고서는 판정 규칙 버전(STD_VER)이 같으면
       다시 받지 않음. ⑤ 한 법인이 실패하거나(연결 끊김 등) 수치가 0개면 실행 전체를 멈추지 않고 그 법인만 이전 값 유지([ERROR] 줄),
       상장사도 0개년이면 이전 값 유지. 원본이 zip이 아니면 DART 상태 코드·문구를 로그에 남김. '수치 0개 → 이전 값'은 그 법인
       처리 중 DART 오류(예외·013 아닌 상태 코드)가 있었을 때만(경로를 'none'으로 고치는 등 정상적인 '없음'은 반영), 이전 값을 쓸 때도
@@ -205,7 +205,7 @@ def log(msg):
 
 
 _T0 = time.time()
-RETRY_UNTIL = 18 * 60   # v3.4 실행 18분이 지나면 재시도 안 함 — 재시도 대기가 쌓여 30분 제한(timeout-minutes)에 걸리지 않게
+RETRY_UNTIL = 40 * 60   # 실행 40분이 지나면 재시도 안 함 — 재시도 대기가 쌓여 60분 제한(timeout-minutes, v3.5에서 30→60)에 걸리지 않게
 
 
 def _mask(e):
@@ -231,7 +231,7 @@ def dart(url, params, as_bytes=False, timeout=90):
 
 def _dart(url, params, as_bytes=False, timeout=90):
     """DART 호출 — 연결 실패·시간 초과·응답 끊김·5xx·JSON 아닌 응답(점검 페이지)은 3회까지 재시도
-    (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 18분이 지나면 재시도 없이 바로 오류."""
+    (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 40분이 지나면 재시도 없이 바로 오류."""
     params = dict(params, crtfc_key=DART_KEY)
     for attempt in range(3):
         try:
@@ -323,26 +323,55 @@ FIN_ACC_BS = {
 }
 FIN_OCF = (["ifrs-full_CashFlowsFromUsedInOperatingActivities"], ["영업활동현금흐름", "영업활동으로인한현금흐름"])
 CAPEX_PREFIX = ("ifrs-full_PurchaseOfPropertyPlantAndEquipment", "ifrs-full_PurchaseOfIntangibleAssets")
-# v3.5 설비투자 = 영업용 유형·무형자산 취득 행만(이름 포함 목록). 회사마다 '건물의 취득'·'시설장치의 취득'처럼 세부 행으로
-# 공시해 '유형자산의 취득' 한 줄만 보던 v3.4까지는 투자가 0으로 잡혀 FCF가 부풀었음(피스피스스튜디오 FY24 +121억 → 약 −162억).
-# 사용권자산·투자부동산·금융자산·종속/관계기업·대여금·회원권은 설비투자가 아님
-CAPEX_PAT = re.compile(r"^(유형자산|무형자산|건물|토지|구축물|시설장치|기계장치|비품|집기비품|공기구비품|차량운반구|공구와기구|공구기구|"
-                       r"건설중인(유형|무형)?자산|기타유형자산|기타무형자산|임차시설물|임차개량자산|시설물|인테리어|"
-                       r"(컴퓨터)?소프트웨어|상표권|디자인권|저작권|(기타)?산업재산권|특허권|개발비|라이선스|라이센스)(의)?(취득|구입|증가)$")
-CAPEX_EXCL = re.compile(r"사용권|투자부동산|금융|종속|관계|공동|대여|회원권|보증금|매각|처분|감소")
+# v3.5 설비투자 = 영업용 유형·무형자산 취득 행만. 회사마다 '건물의 취득'·'시설장치의 취득'처럼 세부 행으로 공시해
+# '유형자산의 취득' 한 줄만 보던 v3.4까지는 투자가 0으로 잡혀 FCF가 부풀었음(피스피스스튜디오 FY24 +121억 → 약 −162억).
+# 투자활동의 취득·증가 행을 ① 설비투자 ② 설비투자 아님(금융자산·종속/관계기업·대여금·보증금·사용권자산·투자부동산 등)
+# ③ 모름 으로 나누고, ③이 하나라도 있으면 0이 아니라 '확인 필요'(None) — 조용히 0으로 부풀지 않게. 모르는 이름은 로그에 남김
+CAPEX_ASSET = re.compile(
+    r"^(기타의?)?(유형자산|무형자산|토지|건물|구축물|시설장치|기계장치|기계|설비|비품|집기|집기비품|기구비품|공기구비품|공구기구비품|"
+    r"공구와기구|공구기구|공구|기구|사무용비품|전산비품|전산장비|전산기기|전산설비|전산기구|차량운반구|차량|금형|"
+    r"건설중인(유형|무형)?자산|미착기계|임차시설물|임차점포시설물|임차개량자산|시설물|인테리어|매장인테리어|"
+    r"(컴퓨터|전산)?소프트웨어|상표권|디자인권|저작권|(기타)?산업재산권|특허권|실용신안권|개발비|라이선스|라이센스|"
+    r"(임차)?권리금)$")
+CAPEX_EXCL = re.compile(r"사용권|투자|금융|종속|관계|공동|대여|회원권|보증금|매도가능|만기보유|공정가치|상각후원가|영업권|선급|"
+                        r"이연|파생|예치|예금|적금|출자|지분|주식|채권|사업결합|현금|보조금|미수|자기|차입|사채|부채|자본|배당|비유동자산|유동자산")
+CAPEX_IDS = {f"dart_PurchaseOf{x}" for x in ("Land", "Buildings", "Structure", "Machinery", "Vehicles", "OfficeEquipment",
+             "ConstructionInProgress", "ComputerSoftware", "OtherPropertyPlantAndEquipment", "OtherIntangibleAssets",
+             "CopyrightsPatentsAndOtherIndustrialPropertyRightsServiceAndOperatingRights", "ToolsFurnitureAndFixtures")}
+
+
+def capex_kind(name):
+    """현금흐름표 행 이름 → 'capex' | 'other'(설비투자 아님) | 'unknown'(취득 성격인데 모름) | None(취득 행 아님)"""
+    nm = re.sub(r"\s+", "", name or "")
+    nm = re.sub(r"^(\(?\d+\)|\d+\.|[가-하]\.|[①-⑳]|[IVX]+\.)+", "", nm)
+    nm = re.sub(r"[\(（][^)）]*[\)）]$", "", nm)                       # 끝 괄호(주석 12 등)
+    m = re.match(r"^(.*?)(의)?(취득|구입|증가|대여|예치|지급)$", nm)
+    if not m or not m.group(1):
+        return None
+    base = re.sub(r"유[·ㆍ,]?무형자산", "유형자산·무형자산", m.group(1))
+    if CAPEX_EXCL.search(base):
+        return "other"
+    parts = [x for x in re.split(r"및|와|과|[·ㆍ,/]", base) if x]
+    if parts and all(CAPEX_ASSET.match(x) for x in parts):
+        return "capex"
+    return "capex" if CAPEX_ASSET.match(base) else "unknown"
 
 
 def capex_sum(lines):
-    """[(이름, 금액)] → 설비투자 합(절댓값). 취득 성격 행이 하나도 없으면 None(확인 필요), 있는데 해당 없으면 0"""
-    tot, found_any, hit = 0, False, False
+    """[(이름, 금액)] → (설비투자 합 또는 None, 모르는 행 이름). 취득 행이 없거나 모르는 행이 있으면 None(확인 필요)"""
+    tot, seen, unk = 0, False, []
     for nm, v in lines:
-        nm = re.sub(r"\s+", "", nm or "")
-        nm = re.sub(r"^[\(（]?\d+[\)）]|^\d+\.", "", nm)
-        if re.search(r"취득|구입|증가|대여|예치", nm):
-            found_any = True
-        if CAPEX_PAT.match(nm) and not CAPEX_EXCL.search(nm):
-            tot += abs(v or 0); hit = True
-    return tot if (hit or found_any) else None
+        k = capex_kind(nm)
+        if k is None:
+            continue
+        seen = True
+        if k == "capex":
+            tot += abs(v or 0)
+        elif k == "unknown" and v:
+            unk.append(re.sub(r"\s+", "", nm))
+    return (tot if seen and not unk else None), unk
+
+
 DA_IDS = {"ifrs-full_AdjustmentsForDepreciationExpense", "ifrs-full_AdjustmentsForAmortisationExpense",
           "ifrs-full_AdjustmentsForDepreciationAndAmortisationExpense"}
 DA_NAMES = {"감가상각비", "사용권자산상각비", "사용권자산감가상각비", "무형자산상각비", "감가상각비및무형자산상각비"}
@@ -375,13 +404,19 @@ def fin_from_rows(rows, amt_key):
     r = _exact(rows, "CF", *FIN_OCF)
     rec["ocf"] = to_int(r.get(amt_key)) if r else None
     cf = [r for r in rows if r.get("sj_div") == "CF"]
-    cap = []   # 이름 포함 목록으로 고르고, 이름이 목록에 없어도 IFRS 유형·무형자산 취득 ID면 포함(제외 단어가 없을 때)
+    # 설비투자: 투자활동 구간(머리 행 ord 사이)의 행만. 이름이 목록에 없어도 유형·무형자산 취득 ID면 포함(제외 단어가 없을 때)
+    hdr = sorted(int(r.get("ord") or 0) for r in cf if (r.get("account_id") or "").startswith("ifrs-full_CashFlowsFromUsedIn"))
+    inv_o = next((int(r.get("ord") or 0) for r in cf if r.get("account_id") == "ifrs-full_CashFlowsFromUsedInInvestingActivities"), None)
+    nxt = next((o for o in hdr if inv_o is not None and o > inv_o), 10 ** 9)
+    cap = []
     for r in cf:
-        nm = _nm(r)
-        if (r.get("account_id") or "").startswith(CAPEX_PREFIX) and not CAPEX_EXCL.search(nm):
+        o, nm, aid = int(r.get("ord") or 0), _nm(r), r.get("account_id") or ""
+        if inv_o is not None and not inv_o < o < nxt:
+            continue
+        if (aid.startswith(CAPEX_PREFIX) or aid in CAPEX_IDS) and not CAPEX_EXCL.search(nm):
             nm = "유형자산의취득"
         cap.append((nm, to_int(r.get(amt_key))))
-    rec["capex"] = capex_sum(cap) if cf else None
+    rec["capex"], rec["capex_unk"] = capex_sum(cap) if cf else (None, [])
     da = [r for r in cf if (r.get("account_id") or "") in DA_IDS or _nm(r) in DA_NAMES]
     rec["da"] = sum(abs(to_int(r.get(amt_key)) or 0) for r in da) if da else None
     # 부채 항목: 유동부채·비유동부채 머리 행 바로 뒤(ord 순)부터 다음 합계·머리 행 전까지
@@ -758,8 +793,8 @@ def apply_raw(rec, raw):
     rec.update(borrow=(c["debt"] + c["rcps"]) if lines else None, debt=c["debt"] if lines else None,
                rcps=c["rcps"] if lines else None, lease=c["lease"] if lines else None, debt_lines=c["debt_lines"],
                lines_ok=bool(lines) and rec.get("liab") is not None
-               and abs(c["line_sum"] - rec["liab"]) <= 0.01 * max(abs(rec["liab"]), 1),
-               capex=capex_sum(raw.get("capex") or []))
+               and abs(c["line_sum"] - rec["liab"]) <= 0.01 * max(abs(rec["liab"]), 1))
+    rec["capex"], rec["capex_unk"] = capex_sum(raw.get("capex") or [])
     return rec
 
 
@@ -806,6 +841,9 @@ def fin_cross(a, b, rev):
     return bad
 
 
+_FIN_FALLBACK = []   # v3.5 재추출 실패로 옛 추출값을 쓴 보고서(검증 모드에서 '검증 안 됨'으로 셈)
+
+
 def fetch_fin_years(name, reports, cached, pl_recs):
     """reports: 감사보고서 목록(최신순). cached: {rcept_no: {end: rec}}. 반환 {end: rec}, 새 캐시"""
     out, new_cache, seen = {}, {}, {}
@@ -823,6 +861,7 @@ def fetch_fin_years(name, reports, cached, pl_recs):
                     continue
                 # v3.5 원문 다운로드·추출 실패(DART 점검 등) → 이전 추출값을 그대로 쓰고 캐시도 유지(다음 실행에서 다시 추출)
                 log(f"      실패: {_mask(e)[:120]} — 이전 추출값 유지(옛 규칙)")
+                _FIN_FALLBACK.append(f"{name} {dt}")
                 recs = cached[rcept]
                 ex = None
             if ex is not None:
@@ -853,7 +892,8 @@ def fetch_fin_years(name, reports, cached, pl_recs):
             log(f"      {end}: 자산 {rec.get('assets')} / 부채 {rec.get('liab')} / 자본 {rec.get('equity')} / 현금 {rec.get('cash')}"
                 f" / 차입금 {rec.get('borrow')} (차입·사채 {rec.get('debt')} + RCPS {rec.get('rcps')}: {'·'.join(rec.get('debt_lines') or [])})"
                 f" / 리스 {rec.get('lease')} / OCF {rec.get('ocf')} / CAPEX {rec.get('capex')} / 상각 {rec.get('da')}"
-                f"{'' if rec.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}")
+                f"{'' if rec.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + rec['chk'] if rec.get('chk') else ''}"
+                f"{' ⚠ 모르는 투자 행(CAPEX 확인 필요): ' + '·'.join(rec['capex_unk']) if rec.get('capex_unk') else ''}")
         new_cache[rcept] = recs
     # 보고서 간 대조: 최신 보고서의 전기 값(out에 쓰는 값)과 직전 보고서의 당기 값
     for end, lst in seen.items():
@@ -927,6 +967,7 @@ def main():
     old_std = old.get("_cache_std", {})
     old_ent = {e.get("id"): e for e in old.get("entities", [])}
     failed = []
+    _FIN_FALLBACK.clear()
     only = {x.strip() for x in os.environ.get("DART_ONLY", "").split(",") if x.strip()}
     ents = [e for e in ENTITIES if not only or e[0] in only]
     if only:   # v3.5 브랜치 검증용 — 지정 법인만 처리하고 파일은 쓰지 않음(전체 재추출 이중 과금 방지)
@@ -965,8 +1006,9 @@ def main():
                     log(f"    [재무상태표·현금흐름 API] {end}: 자산 {f.get('assets')} / 부채 {f.get('liab')} / 자본 {f.get('equity')}"
                         f" / 현금 {f.get('cash')} / 차입금 {f.get('borrow')} ({'·'.join(f.get('debt_lines') or [])}) / 리스 {f.get('lease')}"
                         f" / OCF {f.get('ocf')} / CAPEX {f.get('capex')} / 상각 {f.get('da')}"
-                        f"{'' if f.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + f['chk'] if f.get('chk') else ''}")
-                    fin_by_end[end] = {k: v for k, v in f.items() if k not in ("fin_v", "raw")}
+                        f"{'' if f.get('lines_ok') else ' ⚠ 부채 항목 합≠부채총계'}{' ⚠ ' + f['chk'] if f.get('chk') else ''}"
+                        f"{' ⚠ 모르는 투자 행: ' + '·'.join(f['capex_unk']) if f.get('capex_unk') else ''}")
+                    fin_by_end[end] = {k: v for k, v in f.items() if k not in ("fin_v", "raw", "capex_unk")}
             elif route == "doc":
                 if not ANTHROPIC_KEY:
                     raise RuntimeError("ANTHROPIC_API_KEY 미설정 — 감사보고서 추출 불가")
@@ -984,7 +1026,7 @@ def main():
                     if eid in FIN_IDS:
                         fins, fcache = fetch_fin_years(name, reports, old_fin.get(eid, {}), recs)
                         result["_cache_fin"][eid] = fcache
-                        fin_by_end = {end: {k: v for k, v in f.items() if k not in ("fin_v", "raw")} for end, f in fins.items()}
+                        fin_by_end = {end: {k: v for k, v in f.items() if k not in ("fin_v", "raw", "capex_unk")} for end, f in fins.items()}
             else:
                 log("    공시 미발견 경로 — 수치 없음")
             ends = sorted(recs)[-3:]
@@ -1034,9 +1076,17 @@ def main():
         result["failed"] = failed   # 수집 상태 화면에 '일부 실패' 표시
     if all_failed:   # 새로 받은 게 없음 → 갱신일을 옮기지 않아 '지연' 경고가 뜨게
         result["updated_at"] = old.get("updated_at") or result["updated_at"]
-    if only:
-        log(f"[검증 모드] 끝 — 저장하지 않음 · 실패 {len(failed)}곳{': ' + ', '.join(failed) if failed else ''}")
-        return bool(failed)
+    if only:   # 실패·미확인 id·수치 0개·옛 추출값 사용을 모두 '검증 안 됨'으로 셈
+        unknown = sorted(only - {e[0] for e in ents})
+        empty = [e["id"] for e in result["entities"] if e.get("route") in ("api", "doc") and e.get("corp_code")
+                 and not any(y.get("rev") is not None for y in e.get("years") or [])]
+        probs = ([f"실패 {', '.join(failed)}"] if failed else []) + ([f"없는 id {', '.join(unknown)}"] if unknown else []) \
+            + ([f"수치 0개 {', '.join(empty)}"] if empty else []) \
+            + ([f"옛 추출값 사용 {len(_FIN_FALLBACK)}건({'; '.join(_FIN_FALLBACK)})"] if _FIN_FALLBACK else [])
+        log(f"[검증 모드] 끝 — 저장하지 않음 · {'검증 안 됨: ' + ' / '.join(probs) if probs else '모두 새로 받음'}")
+        if probs:
+            raise SystemExit(1)
+        return False
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=1)
