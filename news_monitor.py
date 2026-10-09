@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.8: 국내 유통사 8곳 뉴스 보완(대표 지시 2026-10-09) — 검색어 정리(렉스몬드 새 상호·REXMONDE, 대표 이름, 동명 회사 거르기:
+     대림코퍼레이션은 신발 관련어와 함께·DL그룹 제외, 티원글로벌은 병행수입·운동화 등과 함께, 스타인터내셔널은 르까프·스코노 등과 함께),
+     국내 유통사만 검색 창 30일·보관 90일(SLOW_GROUPS), 로그에 회사별 검색 건수. '이미 본 기사' 목록을 오래된 것부터 지우게 수정.
+     업계지 RSS는 약관(재배포·AI 이용 금지) 때문에 넣지 않음
 v2.7: 네이버 뉴스 검색 제거(대표 지시 2026-10-09) — 네이버 검색 API 특약 개정(2026-09 시행)이 검색 결과를 AI에 넣는 것을
      금지해, 국내 유통사 8곳도 구글 뉴스 RSS만 사용. 네이버 키는 데이터랩(검색어 트렌드, naver_trend.py)에만 씀
 v2.6: ① 국내 유통사 8곳은 네이버 뉴스 검색(NAVER API HUB, 검색어 트렌드와 같은 키)도 함께 수집 — 구글 뉴스에 작은 국내 회사 기사가
@@ -122,14 +126,15 @@ BRANDS = {
     "me_retail":  ["중동 유통", "retail", '"Middle East" sportswear retail OR "GCC" fashion retail OR "Saudi" sports retail'],
     "sa_retail":  ["남미 유통", "retail", '"Latin America" sportswear retail OR "Brazil" sneaker market'],
     # ── 국내 비교 유통사 (kr_peer, v2.5) — 키 = DART 법인 id, 트렉시(자사)는 제외 ──
-    "daelim_corp": ["대림코퍼레이션", "kr_peer", '"대림코퍼레이션"'],
-    "rexmond":    ["렉스몬드(오케이몰)", "kr_peer", '"오케이몰" OR 렉스몬드'],
-    "bazig":      ["베이지그", "kr_peer", '"베이지그"'],
-    "creed":      ["크리드네트웍스", "kr_peer", '"크리드네트웍스"'],
+    # v2.8 국내 유통사: 새 상호·대표 이름 추가, 흔한 이름은 업종어와 함께 나올 때만(DART 기업정보로 대표·상호 확인)
+    "daelim_corp": ["대림코퍼레이션", "kr_peer", '"대림코퍼레이션" (신발 OR 슈즈 OR 운동화 OR 스니커즈 OR 심건섭) -이해욱 -대림산업 -DL'],
+    "rexmond":    ["렉스몬드(오케이몰)", "kr_peer", '렉스몬드 OR REXMONDE OR "오케이몰" OR "장성덕 대표"'],
+    "bazig":      ["베이지그", "kr_peer", '"베이지그" OR 뷰라브 OR VURAV'],
+    "creed":      ["크리드네트웍스", "kr_peer", '"크리드네트웍스" OR "금윤섭"'],
     "hana_int":   ["한아아이앤티(하하몰)", "kr_peer", '"한아아이앤티" OR "하하몰"'],
-    "t1global":   ["티원글로벌", "kr_peer", '"티원글로벌"'],
-    "bbluein":    ["비블루아이앤", "kr_peer", '"비블루아이앤"'],
-    "starintl":   ["스타인터내셔널", "kr_peer", '"스타인터내셔널"'],
+    "t1global":   ["티원글로벌", "kr_peer", '"티원글로벌" (병행수입 OR 유경안 OR 운동화 OR 스니커즈 OR 이커머스)'],
+    "bbluein":    ["비블루아이앤", "kr_peer", '"비블루아이앤" OR "비블루멀티샵" OR "전명섭 대표"'],
+    "starintl":   ["스타인터내셔널", "kr_peer", '"스타인터내셔널" (르까프 OR LECAF OR 스코노 OR 본더치 OR 엘르스포츠 OR 차윤복)'],
     # ── 국내 패션 브랜드 (kr_fb, v2.5) — 더보기 › 패션 브랜드 비교 13곳 ──
     "aubrandz":   ["에이유브랜즈(락피쉬)", "kr_fb", '"에이유브랜즈" OR 락피쉬웨더웨어'],
     "piecepeace": ["피스피스스튜디오(마르디)", "kr_fb", '"피스피스스튜디오" OR 마르디메크르디 OR "마르디 메크르디"'],
@@ -183,6 +188,9 @@ INDUSTRY = {
 
 MAX_PER_QUERY = 10
 KEEP_DAYS = 14
+# v2.8 국내 유통사는 기사가 드물어(렉스몬드만 월 1~3건) 30일 창으로 찾고 90일 보관 — 이미 본 기사는 다시 판정하지 않음
+SLOW_GROUPS = {"kr_peer": (30, 90)}   # group: (검색 창 일, 보관 일)
+SEEN_MAX = 8000   # 하루 신규 약 80~230건 × 30일 창(국내 유통사)을 덮도록 5000 → 8000
 NEWS_PATH = "docs/news.json"
 
 # 선별 모델. SHADOW_MODEL은 SHADOW_UNTIL(KST, 포함)까지 같은 헤드라인을 따로 선별해 비교 기록만 남김
@@ -262,10 +270,15 @@ def collect(known_titles=frozenset()):
         raw[iid] = {**it, "id": iid, **meta}
         return True
 
+    slow = []
     for slug, (name, grp, q) in BRANDS.items():
-        for it in fetch_rss(q):
-            add(it, scope="brand", key=slug, label=name, group=grp)
+        got = fetch_rss(q, days=SLOW_GROUPS.get(grp, (3,))[0])
+        added = sum(add(it, scope="brand", key=slug, label=name, group=grp) for it in got)
+        if grp in SLOW_GROUPS:
+            slow.append(f"{name} {len(got)}건(새 제목 {added})")
         time.sleep(0.7)
+    if slow:
+        print(f"국내 유통사 검색(최근 {SLOW_GROUPS['kr_peer'][0]}일): " + " · ".join(slow), flush=True)
     for cat, (label, queries) in INDUSTRY.items():
         for q in queries:
             for it in fetch_rss(q):
@@ -403,10 +416,11 @@ def main():
             fs = datetime.date.fromisoformat(it.get("first_seen", "1970-01-01"))
         except Exception:
             fs = datetime.date(1970, 1, 1)
-        if (today - fs).days <= KEEP_DAYS:
+        if (today - fs).days <= SLOW_GROUPS.get(it.get("group"), (0, KEEP_DAYS))[1]:
             kept.append(it)
     known = {it["id"] for it in kept}
-    seen_ids = set(old.get("seen_ids", [])) | known
+    old_seen = list(old.get("seen_ids", []))
+    seen_ids = set(old_seen) | known
 
     recent_days = {(today - datetime.timedelta(days=d)).isoformat() for d in range(3)}
     recent = [it.get("summary") or it.get("title", "") for it in kept
@@ -454,8 +468,11 @@ def main():
         print(f"  {GROUP_LABEL[g]}: 신규 {len(nn)}건({len({v['key'] for v in nn})}곳) → 선별 {len(pk)}건"
               + (f" — {', '.join(sorted({new_items[k]['label'] for k in pk}))}" if pk else ""), flush=True)
 
-    # 선별 실패 시에는 seen에 넣지 않아 다음 회차에 재판정
-    seen_list = list(seen_ids | (set(new_items.keys()) if picked or not new_items else set()))[-5000:]
+    # 선별 실패 시에는 seen에 넣지 않아 다음 회차에 재판정. v2.8 오래된 것부터 지움(전엔 집합→목록 변환 순서라 무작위로
+    # 잘려 이미 본 기사가 다시 Claude로 가던 문제) — 보관 중인 기사 id는 항상 남김
+    # 보관 중인 기사(known)는 매 실행 kept에서 다시 더해지므로 목록엔 '거른 기사'까지 들어온 순서대로만 둠
+    add_ids = list(new_items.keys()) if picked or not new_items else []
+    seen_list = list(dict.fromkeys(old_seen + add_ids))[-SEEN_MAX:]
 
     kept.sort(key=lambda x: (x["first_seen"], x["importance"]), reverse=True)
     out = {"generated_at":
