@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 5: KOSIS 국내 수요 지표 (v4)
+v5.1: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 못 받은 시계열·해외직구는 이전 kosis.json 값을 이어 쓰고 stale_since
+    (마지막 정상 수집일) 표시, 최상위 failed 목록(수집 상태 '일부 실패')에 기록. 하나도 못 받으면 갱신 시각을 옮기지 않음.
+    절반 넘게 못 받으면 '실패 표시'(soft_fail.txt → 워크플로우 마지막 단계 빨간 X → 낮 점검 알림)
 v5: 해외직구(온라인쇼핑동향 해외직접구매액, 분기) 추가 — 표 ID를 추측하지 않고 ① 통계표 검색 API
     ② 후보 표 1분기 표본 조회로 표 이름에 '직접구매'가 있는 표를 찾아 사용(찾은 과정 로그 출력).
     나라(전체·미국·중국·일본·유럽)×상품군(전체·의류·패션·스포츠) 12분기 → kosis.json 'cross_border'
@@ -36,6 +39,7 @@ MONTHS = 25          # 최근 25개월 (YoY 계산 위해 13개월 이상 필요
 TIMEOUT = 60
 RETRY = 2
 OUT_PATH = "docs/kosis.json"
+SCRIPT = "kosis_fetch"
 SEARCH_URL = "https://kosis.kr/openapi/statisticsSearch.do"
 
 # ── 해외직구(v5) ─────────────────────────────────────
@@ -88,6 +92,23 @@ SERIES = [
 
 def log(msg):
     print(msg, flush=True)
+
+
+def soft_fail(msg):
+    """심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    print(f"실패 표시: {msg}", flush=True)
+    with open("soft_fail.txt", "a", encoding="utf-8") as f:
+        f.write(f"{SCRIPT}: {msg}\n")
+
+
+def load_prev():
+    """이전 kosis.json(없거나 깨졌으면 빈 dict)"""
+    try:
+        with open(OUT_PATH, encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
 
 
 def api(tbl, itm, obj_codes, months, prd_se="M"):
@@ -403,6 +424,34 @@ def main():
             out["cross_border"] = cb
     except Exception as e:
         log(f"  [WARN] 해외직구 실패: {str(e)[:160]}")
+
+    # v5.1 못 받은 항목은 이전 값을 이어 씀(stale_since = 그 값을 마지막으로 정상 수집한 날짜, 이미 있으면 그대로)
+    prev = load_prev()
+    pdate = str(prev.get("generated_at") or "")[:10] or None
+    psers = prev.get("series") or {}
+    failed, kept = [], []
+    for key, *_ in SERIES:
+        if key in out["series"]:
+            continue
+        failed.append(key)
+        if (psers.get(key) or {}).get("values"):
+            out["series"][key] = dict(psers[key], stale_since=psers[key].get("stale_since") or pdate)
+            kept.append(key)
+    if not out.get("cross_border"):
+        failed.append("cross_border")
+        pcb = prev.get("cross_border")
+        if pcb and pcb.get("series"):
+            out["cross_border"] = dict(pcb, stale_since=pcb.get("stale_since") or pdate)
+            kept.append("cross_border")
+    total = len(SERIES) + 1
+    if failed:
+        out["failed"] = failed   # 수집 상태 화면 '일부 실패 n곳(이전 값)' — dart_fetch와 같은 필드
+        log(f"수집 결과: 정상 {total - len(failed)} · 이전 값 {len(kept)} · 값 없음 {len(failed) - len(kept)}"
+            f" — 못 받음: {', '.join(failed)}")
+    if len(failed) == total and prev.get("generated_at"):
+        out["generated_at"] = prev["generated_at"]   # 새로 받은 게 없음 → 갱신 시각을 옮기지 않아 '지연'이 뜨게
+    if len(failed) * 2 > total:
+        soft_fail(f"KOSIS {total}개 중 {len(failed)}개 못 받음(이전 값 {len(kept)}개)")
 
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:

@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.12: (대표 지시 2026-10-09) ① 순위 숫자 바로잡기 — 성장 순위에 기준(분기 '26.06 / 연간 FY25, 오래된 결산도 연도만 붙여 둠),
+        공시(SEC·IR) 분기가 야후보다 45일 넘게 새로우면 '새 실적 반영 대기', 딕스는 인수 효과 기간(ACQ)엔 순위·재고 경고에서 빼고 각주,
+        삼성물산(전사 수치)은 순위·재고 경고·KPI에서 뺌. ② 휴대폰 화면 다듬기(KPI·이름 2줄·그래프·뉴스·지표 추이·소싱 칩·DART 링크 등).
+        ③ 수집 상태에 일부 실패 수(이전 값 + 값 없음, 각 수집 스크립트의 실패 목록 기준), 이전 값 쓴 종목·환율에 '이전 값(MM/DD)'
 v32.11: (대표 지시 2026-10-09) ① 종합 탭 맨 위 '오늘 볼 것' 4줄 — 환율(감시 통화 중 1년 평균 대비 가장 싼 통화) · 다음 해외 세일
         2개(진행 중/D-day) · 오늘 ★3 뉴스 · 트렉시 유통사 비교 위치, 누르면 해당 화면. 이미 페이지에 있는 데이터만 씀.
         ② 뉴스 탭 기본 보기 = 오늘 전체 + 최근 7일 ★3(날짜마다 '★1~2 N건 더 보기', 8일 이전은 맨 아래 펼치기) — 칩으로
@@ -170,6 +174,7 @@ TEMPLATE = r"""<!DOCTYPE html>
   --bg:#0f1420;--card:#1a2233;--line:#2a3550;--tx:#e8ecf4;--sub:#8b96ad;
   --pos:#3ddc84;--neg:#ff6b6b;--accent:#4d9fff;--accent-prev:#3a4a68;--barbg:#0c101a;
 }
+:root{--chart-prev:#a8bdd6}[data-theme="dark"]{--chart-prev:#6b7fa6}   /* v32.12 종합 그래프 작년 선(다크에서 밝게) */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;overflow:hidden}
@@ -294,11 +299,13 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .src-legend span{display:inline-flex;align-items:center;gap:4px}
 .src-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;box-sizing:border-box}
 .src-regs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.src-regs button{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:inherit}
+.src-regs button{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:inherit;padding:6px 2px}
 .src-regs b{font-size:var(--fs-base)}
 .src-regs .rl{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
 .src-regs .tops{display:none;font-size:var(--fs-xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .lvchip{font-size:var(--fs-xs);font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.src-regs .lvw{display:flex;flex-direction:column;align-items:center;gap:1px}
+.src-regs .hin{font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap}
 .src-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .src-btns button{min-height:42px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--accent);font-size:var(--fs-sm);font-weight:600;cursor:pointer;font-family:inherit}
 /* PC: 지도 왼쪽 · 오른쪽 열이 지도 높이를 채움(빈 공간 없음) — 기본 규칙 뒤에 둬야 적용됨 */
@@ -347,7 +354,7 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;min-width:0;overflow:hidden}
 .kpi .l{font-size:var(--fs-xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi .v{font-size:var(--fs-lg);font-weight:700;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kpi .s{font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .s{font-size:var(--fs-2xs);color:var(--sub);line-height:1.3;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;word-break:keep-all;overflow-wrap:anywhere}   /* v32.12 휴대폰에서 2줄까지(띄어쓰기에서 줄바꿈) */
 @media(min-width:480px){.kpi .v{font-size:var(--fs-xl)}}
 .hgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .hgrid>.card{min-width:0}
@@ -358,6 +365,16 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .rk>span:last-child,.rk>b{flex:none;white-space:nowrap}
 .rk:last-child{border-bottom:none}
 .rk .g{font-size:var(--fs-2xs);color:var(--sub);margin-left:4px}
+/* v32.12 순위 줄: 윗줄 법인명 · 아랫줄 브랜드·그룹·기준(휴대폰에서 이름이 잘리지 않게) */
+.rk-n{display:flex;align-items:center;min-width:0}
+.rk-t{display:flex;flex-direction:column;min-width:0;line-height:1.3}
+.rk-t>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk-s{font-size:var(--fs-2xs);color:var(--sub)}
+.rk-v2{display:flex;flex-direction:column;align-items:flex-end;line-height:1.35}
+.rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
+.wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:500;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px}
+.wait-b{color:var(--accent);border:1px solid var(--accent)}
+.stl{color:var(--down);border:1px solid var(--down)}
 /* A안 — 기업 */
 .search{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:var(--fs-base);margin-bottom:8px;background:var(--card);color:var(--tx)}
 #coTbl th{white-space:nowrap;font-size:var(--fs-2xs);padding:7px 3px}
@@ -367,6 +384,8 @@ table.nowrap th{font-size:var(--fs-2xs)}
 @media(max-width:480px){#coTbl .mini{grid-template-columns:1fr}}
 tr.co{cursor:pointer}tr.co td:first-child{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis}
 tr.co td:first-child .lg{vertical-align:-4px}
+.nm-sub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin-left:24px;white-space:normal;line-height:1.5}
+.nm-sub .wait-b,.nm-sub .stl{margin-left:0}
 @media(max-width:400px){tr.co td:first-child{max-width:132px}}
 tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:var(--fs-sm)}
@@ -390,8 +409,9 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .sl-row{padding:8px 0;border-bottom:1px solid var(--line)}
 .sl-row:last-child{border-bottom:0}
 .sl-row .t1{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-base)}
+.sl-row .t1>span:first-child{min-width:0}.sl-row .t1>span:last-child{flex:none;white-space:nowrap}
 .sl-row .t2{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
-.sl-k{font-size:var(--fs-2xs);border:1px solid var(--line);border-radius:6px;padding:0 4px;margin-left:4px;color:var(--sub);font-weight:400}
+.sl-k{font-size:var(--fs-2xs);border:1px solid var(--line);border-radius:6px;padding:0 4px;margin-left:4px;color:var(--sub);font-weight:400;white-space:nowrap}
 .calday{font-size:var(--fs-sm);margin-top:8px;color:var(--sub)}
 .cl{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-base)}
 .cl:last-child{border-bottom:none}
@@ -404,7 +424,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .ndate{font-size:var(--fs-sm);color:var(--sub);margin:14px 0 6px;font-weight:600}
 #newsChips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
 #newsChips::-webkit-scrollbar{display:none}
-.nmore{font-size:var(--fs-xs);color:var(--accent);cursor:pointer;margin:2px 0 8px}
+.nmore{display:flex;align-items:center;min-height:44px;font-size:var(--fs-sm);color:var(--accent);cursor:pointer;margin:0 0 4px}   /* v32.12 터치 높이 */
 #todayCard .card{padding:10px 12px;margin-bottom:10px}
 #todayCard h3{margin:0 0 4px}
 .td-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
@@ -413,6 +433,9 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .td-t{flex:1;min-width:0;font-size:var(--fs-sm);line-height:1.35}
 .td-s{display:block;font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .td-go{flex:none;color:var(--sub)}
+.hc-leg{display:flex;gap:12px;font-size:var(--fs-xs);color:var(--sub);margin:-4px 0 4px}
+.hc-leg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:3px;margin-right:4px}
+.hc-svg{display:block;width:100%;height:auto}
 .nitem{padding:10px 0;border-bottom:1px solid var(--line)}
 .nitem:last-child{border-bottom:none}
 .nitem .nsum{font-size:var(--fs-base);line-height:1.5}
@@ -472,7 +495,8 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .fi-tbl tr.me td{background:var(--barbg)}
 .std-b{display:inline-block;font-size:10px;line-height:1.45;border-radius:4px;padding:0 4px;margin-left:4px;border:1px solid var(--line);color:var(--sub);font-weight:500;vertical-align:middle}
 .std-b.ifrs{color:var(--accent);border-color:var(--accent)}
-.fi-tbl td:first-child .std-b{display:block;width:fit-content;margin:2px 0 0}
+.fi-tbl td:first-child .fi-nsub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin:1px 0 0 24px;line-height:1.4}
+.fi-nsub .std-b{margin-left:0}.fi-nsub .std-b:not(:first-child){margin-left:4px}
 .fi-warn{font-size:var(--fs-xs);color:var(--sub);background:var(--barbg);border-radius:8px;padding:8px 10px;margin:6px 0 8px;line-height:1.5}
 .fi-warn .chip{margin-top:6px}
 .fi-tbl tr.me td:first-child{font-weight:700}
@@ -489,7 +513,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .pg-rk{display:block;font-size:var(--fs-2xs);color:var(--sub)}
 .pg-bars{display:flex;flex-direction:column;gap:6px}
 .pg-row{display:grid;grid-template-columns:96px minmax(0,1fr) 56px;align-items:center;gap:8px;cursor:pointer;font-size:var(--fs-sm);min-height:24px}
-.pg-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub)}
+.pg-nm{overflow:hidden;color:var(--sub);line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere}   /* v32.12 긴 이름은 2줄 */
 .pg-row.me .pg-nm{color:var(--tx);font-weight:700}
 .pg-tr{position:relative;height:14px}
 .pg-bar{position:absolute;top:2px;height:10px;background:var(--sub);opacity:.4;border-radius:0 4px 4px 0}
@@ -529,6 +553,9 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .mi .mr b{display:block;font-size:var(--fs-xs);color:var(--tx)}
 .mbadge{display:inline-block;font-size:var(--fs-2xs);font-weight:700;border-radius:999px;padding:0 7px;line-height:1.7;color:#fff;background:var(--pos)}
 .mbadge.up,.mbadge.late{background:var(--neg)}
+[data-theme="dark"] .mbadge{color:#0f1420}
+.mi .mr b.il{display:inline}
+.mi .mr .nw{white-space:nowrap}
 .fxgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:10px}
 @media(min-width:760px){.fxgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fxc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card);min-width:0}
@@ -622,7 +649,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 <div class="pane" id="p-news">
   <div class="chips" id="newsChips"></div>
   <div id="newsBody"></div>
-  <div class="note">매일 06:30 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
+  <div class="note">매일 03:17 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
   실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
 </div>
 
@@ -651,6 +678,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 const DATA = __DATA__;
 const SEGS = __SEGS__;
 const SEGS_IR = __SEGS_IR__;
+const SEGS_SEC = Object.assign({}, (SEGS&&SEGS.items)||{});   // v32.12 IR로 덮기 전 SEC 추출 — '새 실적 반영 대기' 판정용
 if(SEGS_IR&&SEGS_IR.items){ SEGS.items=SEGS.items||{}; Object.entries(SEGS_IR.items).forEach(([k,v])=>{ if(v&&v.extract) SEGS.items[k]=v; }); }
 const NEWS = __NEWS__;
 const KR = __KR__;
@@ -918,7 +946,7 @@ function sourcingCard(){
       <span><i style="background:#9DB4FF;border:1px dashed #3A4560"></i>빗금 = 추정</span><span><i style="background:#E8590C;border-radius:6px"></i>판매처</span></div></div>
     <div class="src-regs">${SRC_KEYS.map(k=>{const sm=srcSumm(k), lv=SRC_LV[sm.level];
       const tops=(sm.hi.length?sm.hi:srcRanked(k)).slice(0,3).map(o=>o.b.name).join(' · ');
-      return `<button type="button" onclick="openSheet('${k}')"><span class="rl"><b>${SRC_NAMES[k]}</b><span class="tops">${sm.hi.length?'기회 높음: ':'상위: '}${esc(tops)}</span></span><span class="lvchip" style="background:${lv.bg};color:${lv.fg}">${lv.txt} ${sm.hi.length}개</span></button>`;}).join('')}</div>
+      return `<button type="button" onclick="openSheet('${k}')"><span class="rl"><b>${SRC_NAMES[k]}</b><span class="tops">${sm.hi.length?'기회 높음: ':'상위: '}${esc(tops)}</span></span><span class="lvw"><span class="lvchip" style="background:${lv.bg};color:${lv.fg}">${lv.txt}</span><span class="hin">기회 높음 ${sm.hi.length}곳</span></span></button>`;}).join('')}</div>
     <div class="src-btns"><button type="button" onclick="openSheet('matrix')">브랜드 × 지역 전체 표</button><button type="button" onclick="openSheet('method')">가정과 계산 방식</button></div>
   </div></div>`;
 }
@@ -952,7 +980,7 @@ function srcFxHtml(k){
   codes.forEach(c=>{ const f=FXD[c], ch=f.chg_pct;
     const rate=c==='JPY'?Math.round(f.rate*100).toLocaleString('ko-KR'):(f.rate>=100?Math.round(f.rate).toLocaleString('ko-KR'):f.rate.toFixed(1));
     const verdict=ch==null?'':(ch>=2?'<span class="neg">매입 부담 커짐</span>':(ch<=-2?'<span class="pos">매입 부담 줄어듦</span>':'<span class="na">비슷</span>'));
-    h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c==='JPY'?'100엔':c}</span></span><b>${rate}원</b></div>
+    h+=`<div class="sh-fx"><div class="t1"><span>${esc(f.name)} <span class="na">${c==='JPY'?'100엔':c}</span>${staleTag(f.stale_since)}</span><b>${rate}원</b></div>
       <div class="t3">${ch!=null?`1년 전보다 ${ch>0?'+':''}${ch.toFixed(1)}% · `:''}${f.dev_pct!=null?`1년 평균 대비 ${f.dev_pct>0?'+':''}${f.dev_pct.toFixed(1)}% · `:''}${verdict}${c==='USD'&&k==='middleeast'?' · 디르함·리얄은 달러에 고정':''}${f.via?' · '+esc(f.via):''} · ${esc(f.asof||'')} 기준</div></div>`; });
   return h;
 }
@@ -1041,9 +1069,9 @@ function statusCard(){
     const when=r.ts?(r.ts.slice(5,7)+'/'+r.ts.slice(8,10)+(r.date_only?'':' '+r.ts.slice(11,16))):'―';   // 기록된 한국 시각 그대로
     const ageTxt=r.age==null?'':(r.age<1?'오늘':`${Math.floor(r.age)}일 전`);
     h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
-      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref">일부 실패 ${r.failed}곳(이전 값)</div>`:''}</td></tr>`;
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref"><span class="stl" style="margin-left:0">일부 실패 ${r.failed}곳${(r.notes||[]).length?'':'(이전 값)'}</span></div>`:''}${(r.notes||[]).length?`<div class="ref" style="white-space:normal">${(r.notes||[]).map(esc).join(' · ')}</div>`:''}</td></tr>`;
   });
-  h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인</div></div>`;
+  h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 일부 실패 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음'</div></div>`;
   return h;
 }
 function statusWarn(){
@@ -1165,6 +1193,46 @@ function segOf(t){
   const e=(SEGS.items||{})[t];
   return (e&&e.extract)?e:null;
 }
+/* ── v32.12 (대표 지시 2026-10-09) 순위 기준 표시·예외 — weekly_digest.py v1.4와 같은 규칙 ── */
+// 인수 효과 기간: 성장 순위·재고 경고에서 빼고 각주로(값은 기업 탭·상세에 그대로). core = 본체 부문 이름(분기 실적일 때 본체 증가율)
+const ACQ={"DKS":{until:"2026-11-30",why:"풋락커 인수(2025-09) 효과 포함",core:"DICK'S"}};
+// 회사 전체 수치(패션 외 사업 포함): 성장 순위·재고 경고·KPI에서 뺌(기업 탭·상세는 그대로)
+const WHOLE_CO={"028260.KS":"삼성물산은 건설·상사 포함 전사 수치라 제외"};
+const PEND_DAYS=45;   // 공시 분기가 야후 분기보다 이만큼 넘게 새로우면 '새 실적 반영 대기'
+const kstToday=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'});
+const acqOn=t=>{ const a=ACQ[t]; return a&&kstToday()<=a.until?a:null; };
+const fyLbl=d=>d?'FY'+String(d).slice(2,4):'';
+const nmSplit=n=>{ const m=String(n||'').match(/^(.+?)\s*\((.+)\)\s*$/); return (m&&m[2]!=='자사')?{main:m[1],brand:m[2]}:{main:String(n||''),brand:''}; };   // '에스제이그룹(캉골)' → 법인명·브랜드('트렉시(자사)'는 그대로)
+const NM_NOT_BRAND=new Set(['이랜드월드','패션부문','KREAM']);   // 괄호 속이 브랜드가 아닌 이름 — 좁은 칸엔 앞 이름
+const nmBrand=n=>{ const s=nmSplit(n); return (s.brand&&!NM_NOT_BRAND.has(s.brand))?s.brand:s.main; };   // 아주 좁은 칸(순위 막대·KPI)은 브랜드만
+const mdOf=d=>d?`${d.slice(5,7)}/${d.slice(8,10)}`:'';
+const staleTag=d=>d?`<span class="stl" title="${esc(d)} 수집분 — 그 뒤 수집 실패">이전 값(${mdOf(d)})</span>`:'';
+// 오늘 수집 실패 + 이전 값도 없는 종목(fetch_data v4.12 fetch_status.failed)
+const failTag=t=>(((DATA.fetch_status||{}).failed)||[]).includes(t)?'<span class="stl" title="오늘 수집 실패 — 이전 값 없음">값 없음</span>':'';
+const MON3={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+function periodEnd(p){   // 공시 기간 문자열의 종료일 'ended 2026-08-31' / 'ended August 1, 2026' → 'YYYY-MM-DD' (없거나 실적 기간이 아니면 null)
+  p=String(p||''); if(/pro ?forma|target|investor/i.test(p)) return null;
+  let m=p.match(/ended\s+(\d{4}-\d{2}-\d{2})/i); if(m) return m[1];
+  m=p.match(/ended\s+([A-Za-z]{3})[a-z]*\.?\s+(\d{1,2}),?\s+(\d{4})/i);
+  const mo=m&&MON3[m[1].toLowerCase()];
+  return mo?`${m[3]}-${String(mo).padStart(2,'0')}-${m[2].padStart(2,'0')}`:null;
+}
+function pendOf(x){   // 야후 분기(q_end)보다 공시(SEC·IR) 분기 종료일이 45일 넘게 새로우면 {end, src} — 값은 그대로 두고 표시만
+  if(!x||!x.q_end) return null;
+  let best=null;
+  [[SEGS_SEC[x.ticker],'SEC'],[((SEGS_IR&&SEGS_IR.items)||{})[x.ticker],'IR']].forEach(([e,src])=>{
+    const d=(e&&e.extract)?periodEnd(e.extract.period):null;
+    if(d&&(!best||d>best.end)) best={end:d,src};
+  });
+  return (best&&(new Date(best.end)-new Date(x.q_end))/86400000>PEND_DAYS)?best:null;
+}
+const isQtrPeriod=p=>/\bQ[1-4]\b|quarter|thirteen weeks|13 weeks|three months|분기/i.test(p||'')&&!/pro ?forma|누적|six months|nine months|26 weeks|39 weeks|twenty-six|thirty-nine/i.test(p||'');
+function acqCore(t){   // 인수 회사의 본체 매출 증가율 — 공시 추출이 분기 실적이고 본체 부문에 당기·전년 매출이 있을 때만
+  const a=ACQ[t], s=segOf(t), ex=s&&s.extract; if(!a||!ex||!isQtrPeriod(ex.period)) return null;
+  const c=(ex.sub_segments||[]).find(z=>z.name===a.core);
+  return (c&&c.revenue!=null&&c.prev_revenue)?(c.revenue/c.prev_revenue-1)*100:null;
+}
+const pendTag=p=>p?`<span class="wait-b" title="${esc(p.src)} 공시 ${esc(p.end)} 분기 발표됨 — 야후 미반영, 값은 이전 분기">새 실적 반영 대기</span>`:'';
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
 // 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
@@ -1175,7 +1243,8 @@ function rows_all(){
     const fy=x.fy.length?x.fy[x.fy.length-1]:{};
     out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), logo:logoImg(x.ticker,false,x.name), listed:true,
       rev:fy.rev, cur:finCurOf(x), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
-      inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x});
+      inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x,
+      q_end:x.q_end||null, fy_end:fy.end||null, stale:x.stale_since||null, pend:pendOf(x)});   // v32.12 기준 표시·이전 값·반영 대기
   });
   ((KRD&&KRD.entities)||[]).filter(e=>!PEER_ONLY.has('krd:'+e.id)).forEach(e=>{
     const ys=(e.years||[]).filter(y=>y.rev!=null); const last=ys[ys.length-1], prev=ys[ys.length-2];
@@ -1202,7 +1271,7 @@ function todayCardHtml(today){
     // '오늘'은 보는 사람의 한국 날짜로 판단 — 아침(대시보드 갱신 전)엔 어제 알림·뉴스를 날짜로 표시
     const kst=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'}), la=fxAlertsAll()[0];
     const newA=la&&(la.date===kst||la.date===String(DATA.generated_at||'').slice(0,10));
-    rows.push({ic:'💱',t:`${nm(b.c)} ${wonR(b.f.rate*fxMul(b.c))}원 · 1년 평균보다 <b class="${b.f.dev_pct<=0?'pos':'neg'}">${Math.abs(b.f.dev_pct).toFixed(1)}% ${b.f.dev_pct<=0?'쌈':'비쌈'}</b>`,
+    rows.push({ic:'💱',t:`${nm(b.c)} ${wonR(b.f.rate*fxMul(b.c))}원${staleTag(b.f.stale_since)} · 1년 평균보다 <b class="${b.f.dev_pct<=0?'pos':'neg'}">${Math.abs(b.f.dev_pct).toFixed(1)}% ${b.f.dev_pct<=0?'쌈':'비쌈'}</b>`,
       s:(newA?`${la.date===kst?'오늘':mdTxt(la.date)} 알림: ${fxAlertTxt(la)} · `:'')+fx.filter(x=>x!==b).map(x=>`${FX_SH[x.c]} ${pctU(x.f.dev_pct)}`).join(' · ')+' (1년 평균 대비)',act:"goMore('fx')"});
   }
   const sales=saleAll(today).filter(e=>e.e>=today).sort((a,c)=>a.s-c.s).slice(0,2);
@@ -1219,66 +1288,94 @@ function todayCardHtml(today){
   if(!rows.length) return '';
   return `<div class="card"><h3>오늘 볼 것</h3>${rows.map(r=>`<div class="td-row" role="button" tabindex="0" onclick="${r.act}" onkeydown="if(event.key==='Enter'){${r.act}}"><span class="td-ic">${r.ic}</span><span class="td-t">${r.t}<span class="td-s">${esc(r.s)}</span></span><span class="td-go">›</span></div>`).join('')}</div>`;
 }
+/* v32.12 종합 '국내 의류 소매판매' 그래프 — 카드 폭에 맞춰 그림(휴대폰에서도 글자 11px · 위아래 빈 공간 없음), 범례는 그래프 밖 */
+let HC_W=0;
+function homeChartHtml(){
+  const kr=(KR&&KR.series&&KR.series.retail_apparel)?KR.series.retail_apparel:null; if(!kr) return '';
+  const ps=Object.keys(kr.values).sort(), krLast=ps[ps.length-1], krYoy=kr.yoy?kr.yoy[krLast]:null, krTrend=krTrendOf(kr);
+  const yNow=krLast.slice(0,4), yPrev=String(+yNow-1);
+  const cur=[],prev=[]; for(let m=1;m<=12;m++){const mm=String(m).padStart(2,'0'); cur.push(kr.values[yNow+mm]??null); prev.push(kr.values[yPrev+mm]??null);}
+  const all=[...cur,...prev].filter(v=>v!=null); const mn=Math.min(...all), mx=Math.max(...all), rg=(mx-mn)||1;
+  const hb=document.getElementById('homeBody'), cw=hb?hb.clientWidth:0;
+  const W=HC_W=Math.max(280,Math.round((cw||370)-30)), H=140, L=10, R=10, T=8, B=22;   // 카드 안쪽 폭 = 그리는 폭(1배) → 글자 크기 그대로
+  const xs=i=>L+i*(W-L-R)/11, ys=v=>T+(H-T-B)-(v-mn)/rg*(H-T-B);
+  const line=(arr,color,w)=>{const pts=arr.map((v,i)=>v==null?null:`${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).filter(Boolean).join(' ');return `<polyline fill="none" stroke="${color}" stroke-width="${w}" stroke-linejoin="round" points="${pts}"/>`;};
+  const lastIdx=cur.map((v,i)=>v!=null?i:-1).filter(i=>i>=0).pop();
+  return `<div class="card span2" id="hcCard"><h3>국내 의류 소매판매 — 올해 vs 작년 (월별 지수) <span class="go" onclick="sw('kr')">국내 ▸</span></h3>
+    <div class="hc-leg"><span><i style="background:var(--accent)"></i>${yNow} 올해</span><span><i style="background:var(--chart-prev)"></i>${yPrev} 작년</span></div>
+    <svg class="hc-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="국내 의류 소매판매지수 ${yNow}년 vs ${yPrev}년">
+      ${line(prev,'var(--chart-prev)',2)}${line(cur,'var(--accent)',2.5)}
+      ${lastIdx!=null?`<circle cx="${xs(lastIdx).toFixed(1)}" cy="${ys(cur[lastIdx]).toFixed(1)}" r="4" fill="var(--accent)"/>`:''}
+      ${[0,3,6,9,11].map(i=>`<text x="${xs(i).toFixed(1)}" y="${H-6}" text-anchor="${i===0?'start':(i===11?'end':'middle')}" font-size="11" fill="var(--sub)">${i+1}월</text>`).join('')}
+    </svg>
+    <div class="note">${fmtPrd(krLast)} ${kr.values[krLast].toFixed(1)} (작년 ${(kr.values[yPrev+krLast.slice(4,6)]??'―')}, ${fmt(krYoy,1,true)})${krTrend?' · '+krTrend:''}</div></div>`;
+}
+function krTrendOf(kr){
+  const ps=Object.keys(kr.values).sort(), y3=ps.slice(-3).map(p=>kr.yoy?kr.yoy[p]:null);
+  if(!y3.every(v=>v!=null)) return '';
+  return (y3[0]>y3[1]&&y3[1]>y3[2])?'3개월 둔화':(y3[0]<y3[1]&&y3[1]<y3[2])?'3개월 가속':'';
+}
+window.addEventListener('resize',()=>{   // 화면 폭이 바뀌면(회전 등) 그래프만 다시 그림
+  const c=document.getElementById('hcCard'), hb=document.getElementById('homeBody');
+  if(c&&hb&&hb.clientWidth&&Math.abs(hb.clientWidth-30-HC_W)>20) c.outerHTML=homeChartHtml();
+});
+/* v32.12 순위 줄 — 윗줄 법인명, 아랫줄 브랜드 · 그룹 · 기준(분기 '26.06 / 연간 FY25) + 이전 값·반영 대기 표시 */
+function rkRow(r,valHtml){
+  const n=nmSplit(r.name), sub=[n.brand,r.group,r.basis].filter(Boolean).map(esc).join(' · ');
+  return `<div class="rk" onclick="goDetail('${r.key}')"><span class="rk-n">${r.logo}<span class="rk-t"><span class="rk-m">${esc(n.main)}</span><span class="rk-s">${sub}${staleTag(r.stale)}${failTag(r.key)}${pendTag(r.pend)}</span></span></span>${valHtml}</div>`;
+}
 function buildHome(){
   const rows=rows_all();
   const today=new Date(); today.setHours(0,0,0,0);
-  // 성장(최근 분기 매출 전년 대비; 국내 법인은 연간)
-  const growthAll=rows.map(r=>({...r, g:(r.q_yoy!=null?r.q_yoy:r.rev_yoy), basis:(r.q_yoy!=null?'분기':'연간')})).filter(r=>r.g!=null);
+  // 성장(최근 분기 매출 전년 대비; 분기 없으면 연간) — v32.12 기준 표시: 분기 '26.06 / 연간 FY25(오래된 결산도 순위에 두고 연도만 표시)
+  const basisOf=r=>r.q_yoy!=null?{g:r.q_yoy,basis:`분기 ${ym(r.q_end)||''}`.trim(),bs:ym(r.q_end)||'분기'}
+                                :{g:r.rev_yoy,basis:`연간 ${fyLbl(r.fy_end)}`.trim(),bs:fyLbl(r.fy_end)||'연간'};
+  const growthAll=rows.filter(r=>!WHOLE_CO[r.key]).map(r=>({...r,...basisOf(r)})).filter(r=>r.g!=null);   // 전사 수치(삼성물산) 제외
+  const acq=growthAll.filter(r=>acqOn(r.key));   // 인수 효과 기간(딕스) — 순위에서 빼고 각주
   // ±100% 초과는 기저·인수 효과 가능성이 커서 순위에서 제외(각주로 표기, §29-D: 값은 기업 탭에 그대로)
-  const outlier=growthAll.filter(r=>Math.abs(r.g)>100);
-  const growth=growthAll.filter(r=>Math.abs(r.g)<=100);
+  const outlier=growthAll.filter(r=>!acqOn(r.key)&&Math.abs(r.g)>100);
+  const growth=growthAll.filter(r=>!acqOn(r.key)&&Math.abs(r.g)<=100);
   const up=[...growth].sort((a,b)=>b.g-a.g).slice(0,4);
   const dn=[...growth].sort((a,b)=>a.g-b.g).slice(0,4);
-  // 재고 경고: 재고 증가율이 매출 증가율보다 10p 이상 높고 재고 +10% 이상
-  const warn=rows.filter(r=>r.inv_yoy!=null&&r.rev_yoy!=null&&r.inv_yoy>=10&&r.inv_yoy-r.rev_yoy>=10)
-    .sort((a,b)=>(b.inv_yoy-b.rev_yoy)-(a.inv_yoy-a.rev_yoy));
+  // 재고 경고: 재고 증가율이 매출 증가율보다 10p 이상 높고 재고 +10% 이상 — 전사 수치·인수 효과 기간은 제외(각주)
+  const warnAll=rows.filter(r=>r.inv_yoy!=null&&r.rev_yoy!=null&&r.inv_yoy>=10&&r.inv_yoy-r.rev_yoy>=10).map(r=>({...r,basis:`연간 ${fyLbl(r.fy_end)}`.trim()}));
+  const warnAcq=warnAll.filter(r=>!WHOLE_CO[r.key]&&acqOn(r.key));
+  const warn=warnAll.filter(r=>!WHOLE_CO[r.key]&&!acqOn(r.key)).sort((a,b)=>(b.inv_yoy-b.rev_yoy)-(a.inv_yoy-a.rev_yoy));
   // 실적 일정
   const ev=rows.filter(r=>r.earn).map(r=>({...r,d:new Date(r.earn+'T00:00:00')})).map(r=>({...r,dn:Math.round((r.d-today)/86400000)}))
     .filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn-b.dn);
   // 국내 의류 소매
   const kr=(KR&&KR.series&&KR.series.retail_apparel)?KR.series.retail_apparel:null;
   let krLast=null, krYoy=null, krTrend='';
-  if(kr){ const ps=Object.keys(kr.values).sort(); krLast=ps[ps.length-1]; krYoy=kr.yoy?kr.yoy[krLast]:null;
-    const y3=ps.slice(-3).map(p=>kr.yoy?kr.yoy[p]:null);
-    if(y3.every(v=>v!=null)) krTrend = (y3[0]>y3[1]&&y3[1]>y3[2])?'3개월 둔화':(y3[0]<y3[1]&&y3[1]<y3[2])?'3개월 가속':''; }
+  if(kr){ const ps=Object.keys(kr.values).sort(); krLast=ps[ps.length-1]; krYoy=kr.yoy?kr.yoy[krLast]:null; krTrend=krTrendOf(kr); }
 
+  // v32.12 KPI 설명은 휴대폰에서 2줄까지 — 고정 문구는 짧게, 회사 이름은 브랜드(괄호 속)로
   const kp=[
-    up[0]?{l:'성장 1위',v:fmt(up[0].g,1,true),s:`${up[0].name} ${up[0].basis}`,act:`goDetail('${up[0].key}')`}:{l:'성장 1위',v:'―',s:'',act:"sw('co')"},
-    {l:'재고 경고',v:`<span class="${warn.length?'neg':''}">${warn.length}곳</span>`,s:'재고가 매출보다 빨리 느는 곳 · 누르면 목록',act:"focusCard('warnCard')"},
-    ev[0]?{l:'실적 발표',v:`D-${ev[0].dn}`,s:`${ev[0].name} ${ev[0].d.getMonth()+1}/${ev[0].d.getDate()}`,act:"sw('cal')"}:{l:'실적 발표',v:'―',s:'90일 내 없음',act:"sw('cal')"},
-    kr?{l:'국내 의류 소매',v:fmt(krYoy,1,true),s:`${fmtPrd(krLast)} · ${krTrend||'전년 동월 대비'}`,act:"sw('kr')"}:{l:'국내 의류 소매',v:'―',s:'미수집',act:"sw('kr')"},
+    up[0]?{l:'성장 1위',v:fmt(up[0].g,1,true),s:`${nmBrand(up[0].name)} · ${up[0].bs}`,act:`goDetail('${up[0].key}')`}:{l:'성장 1위',v:'―',s:'',act:"sw('co')"},
+    {l:'재고 경고',v:`<span class="${warn.length?'neg':''}">${warn.length}곳</span>`,s:'재고 증가 > 매출 증가',act:"focusCard('warnCard')"},
+    ev[0]?{l:'실적 발표',v:`D-${ev[0].dn}`,s:`${nmBrand(ev[0].name)} ${ev[0].d.getMonth()+1}/${ev[0].d.getDate()}`,act:"sw('cal')"}:{l:'실적 발표',v:'―',s:'90일 내 없음',act:"sw('cal')"},
+    kr?{l:'의류 소매',v:fmt(krYoy,1,true),s:`${+krLast.slice(4,6)}월 · ${krTrend||'전년 동월 대비'}`,act:"sw('kr')"}:{l:'의류 소매',v:'―',s:'미수집',act:"sw('kr')"},
   ];
   document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi" onclick="${k.act}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${esc(k.s)}</div></div>`).join('');
   document.getElementById('todayCard').innerHTML=todayCardHtml(today);
 
   let h='';
-  // 올해 vs 작년 꺾은선 (국내 의류 소매판매지수)
-  if(kr){
-    const ps=Object.keys(kr.values).sort(); const yNow=krLast.slice(0,4), yPrev=String(+yNow-1);
-    const cur=[],prev=[]; for(let m=1;m<=12;m++){const mm=String(m).padStart(2,'0'); cur.push(kr.values[yNow+mm]??null); prev.push(kr.values[yPrev+mm]??null);}
-    const all=[...cur,...prev].filter(v=>v!=null); const mn=Math.min(...all), mx=Math.max(...all), rg=(mx-mn)||1;
-    const W=700,H=140,L=24,R=16,T=18,B=22; const xs=i=>L+i*(W-L-R)/11, ys=v=>T+(H-T-B)-(v-mn)/rg*(H-T-B);
-    const line=(arr,color,w)=>{const pts=arr.map((v,i)=>v==null?null:`${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).filter(Boolean).join(' ');return `<polyline fill="none" stroke="${color}" stroke-width="${w}" points="${pts}"/>`;};
-    const lastIdx=cur.map((v,i)=>v!=null?i:-1).filter(i=>i>=0).pop();
-    h+=`<div class="card span2"><h3>국내 의류 소매판매 — 올해 vs 작년 (월별 지수) <span class="go" onclick="sw('kr')">국내 ▸</span></h3>
-    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" style="display:block">
-      ${line(prev,'var(--accent-prev)',2)}${line(cur,'var(--accent)',2.5)}
-      ${lastIdx!=null?`<circle cx="${xs(lastIdx)}" cy="${ys(cur[lastIdx])}" r="4" fill="var(--accent)"/>`:''}
-      ${[0,3,6,9,11].map(i=>`<text x="${xs(i)-8}" y="${H-6}" style="font-size:10px;fill:var(--sub)">${i+1}월</text>`).join('')}
-      <text x="${W-150}" y="12" style="font-size:10px;fill:var(--accent)">— ${yNow}</text><text x="${W-90}" y="12" style="font-size:10px;fill:var(--sub)">— ${yPrev}</text>
-    </svg>
-    <div class="note">${fmtPrd(krLast)} ${kr.values[krLast].toFixed(1)} (작년 ${(kr.values[yPrev+krLast.slice(4,6)]??'―')}, ${fmt(krYoy,1,true)})${krTrend?' · '+krTrend:''}</div></div>`;
-  }
+  // 올해 vs 작년 꺾은선 (국내 의류 소매판매지수) — 폭은 homeBody 기준이라 아래에서 카드를 넣은 뒤 그림
+  if(kr) h+=`<div class="card span2" id="hcCard"></div>`;
   h+=sourcingCard();
-  const rk=(r,valHtml)=>`<div class="rk" onclick="goDetail('${r.key}')"><span>${r.logo}${esc(r.name)}<span class="g">${esc(r.group)}${r.basis?' · '+r.basis:''}</span></span>${valHtml}</div>`;
-  h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rk(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${outlier.length?`<div class="note">순위 제외(±100% 초과, 기저·인수 효과 가능): ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}</div>`:''}</div>`;
-  h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rk(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
-  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rk(r,`<span>재고 <b>${fmtInv(r.inv_yoy)}</b> · 매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · <span class="na">${Math.round(r.dio)}일</span>`:''}</span>`);
+  const ex=[outlier.length?`±100% 초과(기저·인수 효과 가능) ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}`:'',
+    ...acq.map(r=>{ const c=acqCore(r.key); return `${esc(r.name)} ${fmt(r.g,0,true)}(인수 효과${c!=null?', 본체 '+fmt(c,1,true):''})`; })].filter(Boolean);
+  h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rkRow(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${ex.length?`<div class="note">순위 제외: ${ex.join(' · ')}</div>`:''}</div>`;
+  h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rkRow(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
+  const wex=[...Object.entries(WHOLE_CO).filter(([k])=>rows.some(r=>r.key===k)).map(([,v])=>esc(v)),
+    ...warnAcq.map(r=>`${esc(r.name)}는 인수 효과 기간(~${mdTxt(acqOn(r.key).until)})이라 제외`)];
+  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rkRow(r,`<span class="rk-v2"><span>재고 <b>${fmtInv(r.inv_yoy)}</b></span><small>매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · ${Math.round(r.dio)}일`:''}</small></span>`);
     return (warn.slice(0,8).map(row).join('')||'<div class="na">해당 없음</div>')
       +(warn.length>8?`<div id="warnMore" style="display:none">${warn.slice(8).map(row).join('')}</div><div style="margin-top:6px;cursor:pointer;color:var(--accent);font-size:var(--fs-sm)" onclick="const m=document.getElementById('warnMore');m.style.display=m.style.display==='none'?'':'none';this.textContent=m.style.display==='none'?'전체 보기(${warn.length}곳) ▾':'접기 ▴'">전체 보기(${warn.length}곳) ▾</div>`:''); })()}
-    <div class="note">기준: 재고가 전년보다 10% 이상 늘고, 매출 증가율보다 10%p 이상 빠른 곳 · ○일 = 재고일수</div></div>`;
-  h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rk(r,`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
+    <div class="note">기준: 재고가 전년보다 10% 이상 늘고, 매출 증가율보다 10%p 이상 빠른 곳 · 연간 결산 기준 · ○일 = 재고일수${wex.length?'<br>'+wex.join(' · '):''}</div></div>`;
+  h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rkRow({...r,basis:''},`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
   document.getElementById('homeBody').innerHTML=h;
+  if(kr){ const c=document.getElementById('hcCard'); if(c) c.outerHTML=homeChartHtml(); }
   statusWarn();
 }
 
@@ -1301,7 +1398,8 @@ function buildCo(){
   let h=`<tr><th>기업</th><th>매출(원)</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmtInv(r.inv_yoy)}</td></tr>`;
+    const nm=nmSplit(r.name), nsub=[nm.brand?esc(nm.brand):'',staleTag(r.stale),failTag(r.key),pendTag(r.pend)].filter(Boolean).join(' ');   // v32.12 이름 2줄(법인명 / 브랜드·표시)
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(nm.main)}${nsub?`<span class="nm-sub">${nsub}</span>`:''}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmtInv(r.inv_yoy)}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -1313,7 +1411,7 @@ function buildCo(){
       const kd=((KRD&&KRD.entities)||[]).find(e=>e.link===r.key);
       const kdTxt=kd?(()=>{const ys=(kd.years||[]).filter(y=>y.rev!=null);const l=ys[ys.length-1],p=ys[ys.length-2];return l?`${moneyShort(l.rev,'KRW')} ${p?fmt(l.rev/p.rev*100-100,1,true):''}`:'미확인';})():null;
       const evd=r.earn?Math.round((new Date(r.earn+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000):null;
-      mini=`<div class="mini"><div>최근 분기 매출 ${fmt(r.q_yoy,1,true)} <span class="na">${x.q_end?ym(x.q_end):''}</span></div><div>영업이익률 <b>${fy.op_pct!=null?fy.op_pct.toFixed(1)+'%':'―'}</b></div>
+      mini=`<div class="mini"><div>최근 분기 매출 ${fmt(r.q_yoy,1,true)} <span class="na">${x.q_end?ym(x.q_end):''}</span>${r.pend?`<br><span class="na">${esc(r.pend.src)} 공시 ${ym(r.pend.end)} 분기 발표됨 · 야후 미반영</span>`:''}</div><div>영업이익률 <b>${fy.op_pct!=null?fy.op_pct.toFixed(1)+'%':'―'}</b></div>
       <div>지역: ${esc(top)}</div><div>채널: ${esc(chs)}</div>
       <div>${kd?logoImg('krd:'+kd.id,false,kd.name)+esc(kd.name)+' ':'🇰🇷 '}${kd?`<b>${kdTxt}</b>`:'<span class="na">국내 법인 미연결</span>'}</div><div>실적 발표 ${evd!=null&&evd>=0?`<b>D-${evd}</b>`:'<span class="na">―</span>'}</div></div>`;
     } else {
@@ -1442,8 +1540,16 @@ function krdCard(e, linked){
       <td>${y.inv!=null?moneyShort(y.inv,'KRW'):'―'}</td><td>${fmtInv(iy)}</td></tr>`;
   });
   h+=`</table></div>`;
-  const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
-  if(srcs.length) h+=`<div class="src">출처: ${esc(srcs.join(' · '))}</div>`;
+  // v32.12 출처: 같은 보고서(접수번호)는 한 번만, DART 원문 링크로 — 'FY24·FY25 감사보고서 2026.04.10 원문 ▸'
+  const docs=[];
+  ys.filter(y=>y.source).forEach(y=>{
+    const m=String(y.source).match(/rcept=(\d{14})/), kind=/사업보고서/.test(y.source)?'사업보고서':'감사보고서';
+    const k=m?m[1]:y.source, d=docs.find(o=>o.k===k);
+    if(d) d.fy.push(y.fy); else docs.push({k,rc:m?m[1]:null,kind,fy:[y.fy],raw:y.source});
+  });
+  if(docs.length) h+=`<div class="src">출처: ${docs.map(o=>o.rc
+    ?`${esc(o.fy.join('·'))} <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${o.rc}" target="_blank" rel="noopener" style="color:var(--accent);white-space:nowrap">DART ${o.kind} ${ymd(o.rc.slice(0,8))} 원문 ▸</a>`
+    :`${esc(o.fy.join('·'))}: ${esc(String(o.raw).replace(/\(prior\)/g,'(전기)').replace(/\(current\)/g,'(당기)'))}`).join(' · ')}</div>`;
   h+=cfsHtml(e);
   h+=`<div class="note">${fym?fym+' · ':''}별도 재무제표 · ${stdTxt(e)?esc(stdTxt(e))+' · ':''}원화(KRW) · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
   return h;
@@ -1466,8 +1572,12 @@ function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
   const cur=finCurOf(x);
-  let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
+  let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span>${staleTag(x.stale_since)}${failTag(x.ticker)}</div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
+  if(x.stale_since) h+=`<div class="note" style="margin:-6px 0 12px">⚠️ 오늘 수집 실패 — 재무·주가는 ${esc(x.stale_since)} 수집분(이전 값)</div>`;
+  else if(failTag(x.ticker)) h+=`<div class="note" style="margin:-6px 0 12px">⚠️ 오늘 수집 실패 — 이전 값도 없어 비어 있음(다음 수집 때 채워짐)</div>`;
+  const pd=pendOf(x);   // v32.12 공시 분기가 야후보다 새로우면 안내(값은 그대로)
+  if(pd) h+=`<div class="note" style="margin:-6px 0 12px">${pendTag(pd)} ${esc(pd.src)} 공시에 ${esc(pd.end)} 끝난 분기 실적이 있지만 야후에는 아직 ${esc(x.q_end||'')} 분기까지 — 분기 매출 전년 대비는 이전 분기 값</div>`;
   const pxCur=x.currency||'', curDiff=pxCur&&finCur(pxCur)!==cur;
   if(!x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: Yahoo Finance 연간(연결) · 재무 통화 ${esc(cur||'―')}${pxCur==='GBp'?' · 주가 GBp(펜스, 1/100 파운드)':(curDiff?` · 주가 ${esc(pxCur)}(상장 거래소 통화 — 재무 통화와 다름)`:'')}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · ${x.yahoo_cfs_diff?`주가·실적일: Yahoo · 분기 매출 전년 대비는 야후 연결 기준(종속회사 포함)이라 순위에서 뺌(야후 ${fmt(x.q_yoy_yahoo,1,true)})`:'주가·분기 매출 전년 대비·실적일: Yahoo'}</div>`;
@@ -1510,19 +1620,26 @@ function renderDetail(t){
   if(hs.length<3){
     h+=`<div class="na">축적 중 — 현재 ${hs.length}점 (변화가 있을 때와 주 1회 기록되며, 3점 이상부터 추이를 그립니다)</div>`;
   } else {
-    const metrics=[["inv_yoy","재고 YoY","%"],["gm_pct","GM","%"],["latest_q_yoy","분기 매출 YoY","%"],["rev_yoy","FY 매출 YoY","%"]];
-    metrics.forEach(([k,label,unit])=>{
+    // v32.12 변화 없는 지표는 그래프 대신 한 줄(0은 회색), 재고 YoY는 늘면 빨강·줄면 초록(매출·이익률과 반대)
+    const metrics=[["inv_yoy","재고 YoY","%",1],["gm_pct","GM","%"],["latest_q_yoy","분기 매출 YoY","%"],["rev_yoy","FY 매출 YoY","%"]];
+    const flat=[]; let drawn=0;
+    metrics.forEach(([k,label,unit,upBad])=>{
       const pts=hs.filter(p=>p[k]!=null);
       if(pts.length<2) return;
       const vals=pts.map(p=>p[k]);
       const first=pts[0], last=pts[pts.length-1];
       const delta=last[k]-first[k];
+      if(Math.abs(delta)<0.05){ flat.push(`${label} ${last[k].toFixed(1)}${unit}`); return; }
+      drawn++;
+      const good=upBad?delta<0:delta>0;
       h+=`<div class="krhead trend" style="margin-top:8px"><span class="krname">${label}</span>
         <span class="krval">${last[k].toFixed(1)}${unit}
-        <span class="kryoy ${delta>=0?'pos':'neg'}">${delta>=0?'▲':'▼'}${Math.abs(delta).toFixed(1)}p</span></span></div>
+        <span class="kryoy ${good?'pos':'neg'}">${delta>=0?'▲':'▼'}${Math.abs(delta).toFixed(1)}p</span></span></div>
         <div class="krmeta">${first.date} → ${last.date} · ${pts.length}점</div>
-        ${spark(vals,260,26)}`;
+        ${spark(vals,260,26,upBad)}`;
     });
+    if(!drawn) h+=`<div class="na">${flat.length?`첫 기록(${mdTxt(hs[0].date)}) 이후 변화 없음 — 새 결산이 반영되면 바뀝니다`:'추이를 그릴 값 없음'}</div>`;
+    if(flat.length) h+=`<div class="krmeta" style="margin-top:${drawn?8:4}px">${drawn?'변화 없음: ':''}${flat.join(' · ')}</div>`;
     h+=`<div class="note">첫 기록 대비 변화(▲▼ p) · 값은 야후 파이낸스 스냅샷 그대로(§29-D)${x.yahoo_cfs_diff?' · <b class="neg">야후 연결 기준(종속회사 포함)이라 위 DART 별도 수치와 다름</b>':''}</div>`;
   }
   h+=`</div>`;
@@ -1571,10 +1688,11 @@ function renderDetail(t){
   h+=`</div>`;
 
   if(t==='DKS'&&s&&s.extract.sub_segments&&s.extract.sub_segments.length){
+    const qtr=isQtrPeriod(s.extract.period);   // v32.12 분기 실적 자료일 때만 '딕스(본체)' — 프로포마 합산표 등은 공시 이름 그대로
     h+=`<div class="card"><h3>🏬 부문 분해: 딕스 / 풋락커 <span class="tag">공시 추출</span></h3>
     <table><tr><th>부문</th><th>매출</th><th>전년</th><th>YoY</th><th>부문이익</th><th>재고</th></tr>`;
     s.extract.sub_segments.forEach(ss=>{
-      h+=`<tr><td>${ss.name==="DICK'S"?'딕스(본체)':'풋락커(부문)'}</td>
+      h+=`<tr><td>${ss.name==="DICK'S"?(qtr?'딕스(본체)':esc(ss.name)):(qtr?'풋락커(부문)':esc(ss.name))}</td>
       <td>${segMoney(ss.revenue,segCur)}</td>
       <td>${segMoney(ss.prev_revenue,segCur)}</td>
       <td>${fmt(ss.yoy_pct,1,true)}</td>
@@ -1582,7 +1700,7 @@ function renderDetail(t){
       <td>${segMoney(ss.inventory,segCur)}</td></tr>`;
     });
     h+=`</table>`;
-    if(s.extract.period) h+=`<div class="note">기준: ${s.extract.period}</div>`;
+    if(s.extract.period) h+=`<div class="note">기준: ${esc(s.extract.period)}${qtr?'':' — 분기 실적 자료가 아니어서 본체·부문으로 나눠 보지 않음'}</div>`;
     const fl=s.extract.sub_segments.find(z=>z.name==='Foot Locker');
     if(fl&&fl.proforma_comp_pct!=null){
       h+=`<div class="note">풋락커 프로포마 기존점 매출: ${fl.proforma_comp_pct>=0?'+':''}${fl.proforma_comp_pct.toFixed(1)}%
@@ -1693,12 +1811,14 @@ function buildNewsChips(){
 const NEWS_MIN_IMP=3, NEWS_DAYS=7;
 let NEWS_MORE={}, NEWS_BUILT=false;
 const newsDateLbl=d=>{ const t=new Date(d+'T00:00:00'); return isNaN(t)?d:`${t.getMonth()+1}/${t.getDate()}(${'일월화수목금토'[t.getDay()]})`; };
+// v32.12 기사 날짜 한국식 '10/9(금)' — pubDate(영문 GMT)를 한국 날짜로, 못 읽으면 원문 앞부분
+const pubKr=p=>{ const t=new Date(p); return isNaN(t)?String(p).slice(0,16):newsDateLbl(t.toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'})); };
 function newsItemHtml(it){
   const stars='★'.repeat(Math.max(1,Math.min(3,it.importance||1)));
   const tag=it.scope==="brand"?it.label:(it.label||it.key);
   return `<div class="nitem">
       <div class="nsum"><span class="pos">${stars}</span> <a href="${it.link}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
-      <div class="nmeta"><span class="ntag">${esc(tag)}</span>${esc(it.source||'')}${it.pubDate?' · '+esc(String(it.pubDate).slice(0,16)):''}</div>
+      <div class="nmeta"><span class="ntag">${esc(tag)}</span>${esc(it.source||'')}${it.pubDate?' · '+esc(pubKr(it.pubDate)):''}</div>
     </div>`;
 }
 function buildNews(){
@@ -1731,19 +1851,19 @@ function buildNews(){
   if(old.length){
     const n=old.reduce((a,g)=>a+g.items.length,0);
     if(NEWS_MORE.old){ shown+=n; old.forEach(g=>{ body+=`<div class="ndate">${newsDateLbl(g.d)}</div>`+g.items.map(newsItemHtml).join(''); }); }
-    else body+=`<div class="nmore" style="margin-top:12px" onclick="NEWS_MORE.old=1;buildNews()">${NEWS_DAYS+1}일 이전 기사 ${n}건 보기 ▾</div>`;
+    else body+=`<div class="nmore" style="margin-top:8px" onclick="NEWS_MORE.old=1;buildNews()">${old[0].d?newsDateLbl(old[0].d)+' 이전':'이전'} 기사 ${n}건 보기 (${NEWS_DAYS+1}일 넘은 기사) ▾</div>`;
   }
   el.innerHTML=kb+`<div class="note" style="margin:0 0 6px">수집: ${NEWS.generated_at||'―'} · ${compact&&shown<items.length?`전체 ${items.length}건 중 ${shown}건 — 오늘 전체 + 최근 ${NEWS_DAYS}일 ★3`:items.length+'건'}</div>`+body;
 }
 
 /* ── 국내 수요 (KOSIS) ── */
-function spark(vals,w,h){
+function spark(vals,w,h,upBad){   // upBad: 오르면 나쁜 지표(재고) — 색 반대(v32.12)
   if(!vals||vals.length<2) return '';
   const mn=Math.min(...vals), mx=Math.max(...vals), rg=(mx-mn)||1;
   const pts=vals.map((v,i)=>`${(i/(vals.length-1)*w).toFixed(1)},${(h-(v-mn)/rg*h).toFixed(1)}`).join(' ');
-  const up=vals[vals.length-1]>=vals[0];
+  const up=vals[vals.length-1]>=vals[0], col=vals[vals.length-1]===vals[0]?'var(--sub)':((upBad?!up:up)?'var(--pos)':'var(--neg)');
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block;margin-top:6px">
-    <polyline points="${pts}" fill="none" stroke="${up?'var(--pos)':'var(--neg)'}" stroke-width="1.6"/></svg>`;
+    <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.6"/></svg>`;
 }
 function fmtPrd(p){ return p.slice(0,4)+'.'+p.slice(4,6); }
 /* ── v30 국내 수요: 판매 vs 검색 교차 그래프 · 네이버 검색 관심도 ── */
@@ -1777,7 +1897,7 @@ function nvSpark(s,w,h,fluid){
 function nvRowHtml(b,med){
   const go=b.link?`goDetail('${b.link}')`:(b.news?`nvNews('${b.news}')`:'');
   return `<div class="nv-row${b.low?' low':''}"${go?` role="button" tabindex="0" onclick="${go}" onkeydown="if(event.key==='Enter'){${go}}"`:' style="cursor:default"'}>
-    <div class="nv-nm"><span>${esc(b.name)}</span>${b.low?'<em class="nv-low">검색량 적음</em>':''}</div>
+    <div class="nv-nm"><span>${esc(b.name)}</span>${b.low?'<em class="nv-low">검색량 적음</em>':''}${staleTag(b.stale_since)}</div>
     <span class="nv-pill ${nvRel(b.yoy,med)}">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span>
     <div class="nv-bar"><span class="tr"><i style="width:${b.scale!=null?Math.max(2,Math.min(100,b.scale)):0}%"></i></span><b>${nvSc(b.scale)}</b></div>
     <div style="justify-self:end">${nvSpark(b.s,84,24)}</div>
@@ -1843,7 +1963,7 @@ function crossChartHtml(){
   const x=i=>L+(months.length>1?i/(months.length-1):.5)*iw, y=v=>T+(hi-v)/(hi-lo)*ih;
   let g='';
   for(let v=lo; v<=hi+1e-9; v+=step) g+=`<line x1="${L}" x2="${W-R}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}" stroke="var(--line)" stroke-width="${v===0?1.4:.6}"/><text x="${L-5}" y="${(y(v)+3).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--sub)">${v>0?'+':''}${v}%</text>`;
-  months.forEach((m,i)=>{ const last=months.length-1; if((i%3===0&&last-i>=2)||i===last) g+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="${i===months.length-1?'end':(i===0?'start':'middle')}" font-size="9" fill="var(--sub)">${m.slice(2,4)}.${m.slice(5,7)}</text>`; });
+  months.forEach((m,i)=>{ const last=months.length-1; if((i%3===0&&last-i>=3)||i===last) g+=`<text x="${x(i).toFixed(1)}" y="${H-10}" text-anchor="${i===months.length-1?'end':(i===0?'start':'middle')}" font-size="9" fill="var(--sub)">${m.slice(2,4)}.${m.slice(5,7)}</text>`; });
   let ln='';
   vis.forEach(s=>{
     let d='', pen=false, li=-1;
@@ -1975,7 +2095,7 @@ function cmpCardHtml(cid){
   const order=[me,...peers.slice().sort((a,b)=>(b.rev??-1)-(a.rev??-1))].filter(Boolean);
   h+=`<div class="tblwrap"><table class="nowrap"><tr><th>기업</th>${PEER_METRICS.map(([,nm])=>`<th>${nm}</th>`).join('')}</tr>`;
   order.forEach(r=>{
-    h+=`<tr style="cursor:pointer${r.self?';background:var(--barbg)':''}" onclick="goDetail('${r.key}')"><td>${logoImg(r.key,false,r.name)}${r.self?'<b>'+esc(r.name)+'</b>':esc(r.name)}<span class="pg-rk">${r.end?ym(r.end)+' 결산':'미확인'}</span></td>`;
+    h+=`<tr style="cursor:pointer${r.self?';background:var(--barbg)':''}" onclick="goDetail('${r.key}')"><td>${logoImg(r.key,false,r.name)}${r.self?'<b>'+esc(nmSplit(r.name).main)+'</b>':esc(nmSplit(r.name).main)}<span class="pg-rk">${nmSplit(r.name).brand?esc(nmSplit(r.name).brand)+' · ':''}${r.end?ym(r.end)+' 결산':'미확인'}</span></td>`;
     PEER_METRICS.forEach(([k,,,f])=>{
       const v=r[k];
       if(v==null){ h+=`<td><span class="na">―</span></td>`; return; }
@@ -1998,7 +2118,7 @@ function cmpCardHtml(cid){
       const a=X(Math.min(0,r[g])), b=X(Math.max(0,r[g]));
       const from=g==='yoy'?r.p:r.f;
       const tip=`${r.name}: ${ym(from.end)} ${moneyShort(from.rev,'KRW')} → ${ym(r.l.end)} ${moneyShort(r.l.rev,'KRW')} (${g==='yoy'?'전년 대비':'연평균'} ${pp(r[g])})`;
-      h+=`<div class="pg-row${r.self?' me':''}" role="button" tabindex="0" title="${esc(tip)}" data-tip="${esc(tip)}" data-k="${r.key}" onmouseenter="peerTip(this,'${tid}')" onclick="peerTip(this,'${tid}')"><span class="pg-nm">${esc(r.name)}</span>
+      h+=`<div class="pg-row${r.self?' me':''}" role="button" tabindex="0" title="${esc(tip)}" data-tip="${esc(tip)}" data-k="${r.key}" onmouseenter="peerTip(this,'${tid}')" onclick="peerTip(this,'${tid}')"><span class="pg-nm">${esc(nmBrand(r.name))}</span>
         <span class="pg-tr"><i class="pg-zero" style="left:${X(0)}%"></i>${mv!=null?`<i class="pg-med" style="left:${X(mv)}%"></i>`:''}<i class="pg-bar${r[g]<0?' neg':''}" style="left:${a}%;width:${Math.max(b-a,0.8)}%"></i></span><b class="pg-v">${pp(r[g])}</b></div>`;
     });
     h+=`</div><div class="pg-tip" id="${tid}">막대를 누르면 매출 변화가 보입니다</div>`;
@@ -2032,7 +2152,7 @@ const FI_M={
        f:'기말 매출채권 ÷ 매출 × 365',dir:'짧을수록 좋음',why:'오픈마켓·백화점 정산이 들어오는 데 걸리는 날'},
   dpo:{g:'wc',u:['ap'],nm:'매입채무일수',hi:1,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ap!=null&&y.cogs?f.ap/y.cogs*365:null;},
        f:'기말 매입채무 ÷ 매출원가 × 365',dir:'길수록 현금에 유리',why:'공급처 결제를 미룰 수 있는 날. 선결제가 많은 수입 유통은 짧게 나옴'},
-  ccc:{g:'wc',u:['ar','ap'],nm:'현금전환주기',hi:0,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
+  ccc:{g:'wc',u:['ar','ap'],nm:'현금전환주기',hi:0,nr:1,bs:1,fmt:fiDay,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
         return f.ar!=null&&f.ap!=null&&y.inv!=null&&y.cogs?y.inv/y.cogs*365+f.ar/y.rev*365-f.ap/y.cogs*365:null;},
        f:'재고일수 + 매출채권일수 − 매입채무일수',dir:'짧을수록 좋음',why:'물건값을 낸 뒤 판매 대금이 들어올 때까지 묶이는 날. 운전자금 필요량'},
   ocf:{g:'cash',u:['ocf'],nm:'영업현금흐름(OCF)',hi:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return f.ocf;},
@@ -2129,7 +2249,8 @@ function finCardHtml(cid='peer'){
   const cp=v=>fiPct(v,FI_MET==='nd'?0:1);
   h+=`<div class="tblwrap"><table class="fi-tbl"><tr><th>기업</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   order.forEach(r=>{
-    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}${r.std?`<span class="std-b ${r.std==='K-IFRS'?'ifrs':'gaap'}">${esc(STD_SH[r.std]||r.std)}</span>`:''}</td>`;
+    const nm=nmSplit(r.name), sub=(nm.brand?`<span>${esc(nm.brand)}</span>`:'')+(r.std?`<span class="std-b ${r.std==='K-IFRS'?'ifrs':'gaap'}">${esc(STD_SH[r.std]||r.std)}</span>`:'');   // v32.12 법인명 / 브랜드·회계기준
+    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(nm.main)}${sub?`<span class="fi-nsub">${sub}</span>`:''}</td>`;
     fys.forEach(f=>{ const x=fiVal(r,FI_MET,f);
       if(x.v==null){ h+=`<td class="na">${esc(x.t)}</td>`; return; }
       let ex='';
@@ -2147,7 +2268,7 @@ function finCardHtml(cid='peer'){
     const all=bars.map(o=>CL(o.x.c)).concat(md!=null?[CL(md)]:[]), lo=Math.min(0,...all), hi=Math.max(0,...all), sp=(hi-lo)||1, X=t=>(CL(t)-lo)/sp*100;
     h+=`<div class="ndate">FY${String(L).slice(2)} ${m.ref?'비교(참고)':'순위'}${m.cn?' · '+esc(m.cn):''}${m.hi||m.ref?'':' · 낮을수록 위'}</div><div class="pg-bars">`;
     bars.forEach(o=>{ const v=o.x.c, a=X(Math.min(0,v)), b=X(Math.max(0,v));
-      h+=`<div class="pg-row${o.r.self?' me':''}" role="button" tabindex="0" onclick="goDetail('${o.r.key}')"><span class="pg-nm">${esc(o.r.name)}</span><span class="pg-tr"><i class="pg-zero" style="left:${X(0)}%"></i>${md!=null?`<i class="pg-med" style="left:${X(md)}%"></i>`:''}<i class="pg-bar${v<0?' neg':''}" style="left:${a}%;width:${Math.max(b-a,0.8)}%"></i></span><b class="pg-v">${bf(v)}</b></div>`; });
+      h+=`<div class="pg-row${o.r.self?' me':''}" role="button" tabindex="0" onclick="goDetail('${o.r.key}')"><span class="pg-nm" title="${esc(o.r.name)}">${esc(nmBrand(o.r.name))}</span><span class="pg-tr"><i class="pg-zero" style="left:${X(0)}%"></i>${md!=null?`<i class="pg-med" style="left:${X(md)}%"></i>`:''}<i class="pg-bar${v<0?' neg':''}" style="left:${a}%;width:${Math.max(b-a,0.8)}%"></i></span><b class="pg-v">${bf(v)}</b></div>`; });
     h+=`</div>`;
     if(m.clip&&bars.some(o=>Math.abs(o.x.c)>m.clip)) h+=`<div class="note" style="margin-top:4px">막대는 ±${m.clip}%에서 자름(숫자는 실제 값)</div>`;
     const no=rows.filter(r=>fiVal(r,FI_MET,L).v==null);
@@ -2213,7 +2334,7 @@ function buildKR(){
           <span class="krval">${disp}
             <span class="kryoy ${y==null?'na':(y>=0?'pos':'neg')}">${y==null?'―':(y>=0?'+':'')+y.toFixed(1)+'%'}</span>
           </span></div>
-        <div class="krmeta">${fmtPrd(last)} 기준 · ${esc(s.unit||'')} · ${s.table}</div>
+        <div class="krmeta">${fmtPrd(last)} 기준 · ${esc(s.unit||'')} · ${s.table}${staleTag(s.stale_since)}</div>
         ${spark(vals,260,34)}
         <div class="krtbl" id="krt-${k}"><table><tr><th>월</th><th>값</th><th>YoY</th></tr>
         ${prds.slice(-13).reverse().map(p=>{
@@ -2277,11 +2398,11 @@ function fxGauge(f){
 }
 function fxCard(c,f){
   const m=fxMul(c);
-  if(f.avg1y==null) return `<div class="fxc"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b></div><div class="fxv num">${wonR(f.rate*m)}원</div><div class="note">1년 평균 계산 자료 부족 — 1% 칸 알림 없음</div></div>`;
+  if(f.avg1y==null) return `<div class="fxc"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b>${staleTag(f.stale_since)}</div><div class="fxv num">${wonR(f.rate*m)}원</div><div class="note">1년 평균 계산 자료 부족 — 1% 칸 알림 없음</div></div>`;
   const al=f.alerts||[], last=al[al.length-1], now=last&&last.date===f.asof?last:null, ndn=al.filter(a=>a.dir==='dn').length;
   const pill=now?`<span class="fpill ${now.dir}">새 알림 · ${fxLine(now.line)} ${now.dir==='dn'?'아래로':'위로'}</span>`
                 :`<span class="fpill wait">다음 ↓${wonR(f.next_dn*m)} · ↑${wonR(f.next_up*m)}</span>`;
-  return `<div class="fxc ${now?now.dir:''}"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b>${pill}</div>
+  return `<div class="fxc ${now?now.dir:''}"><div class="fxtop"><b>${esc(FX_LBL[c]||c)}</b>${staleTag(f.stale_since)}${pill}</div>
     <div class="fxv num">${wonR(f.rate*m)}원${f.chg_pct!=null?`<small>1년 전 ${wonR(f.yago*m)}원 · <span class="${f.chg_pct<=0?'pos':'neg'}">${pctU(f.chg_pct)}</span></small>`:''}</div>
     <div class="fxmeta"><div><span>1년 평균 대비</span><b class="num ${f.dev_pct<=0?'pos':'neg'}">${pctU(f.dev_pct)}</b></div>
       <div><span>다음 내림 알림</span><b class="num pos">${wonR(f.next_dn*m)}원↓</b></div>
@@ -2300,7 +2421,7 @@ function moreFxHtml(){
   h+=`<div class="fleg"><span><i></i>1년 추이</span><span><i class="avg"></i>1년 평균</span><span><i class="ldn"></i>다음 내림 선</span><span><i class="lup"></i>다음 오름 선</span><span><i class="dn"></i>내림 알림</span><span><i class="up"></i>오름 알림</span><span>칸 막대: 눈금 1% · 굵은 눈금 = 1년 평균 · 검은 표시 = 지금 · 파란 구간 = 최근 30일</span></div>`;
   const rest=Object.keys(FXD).filter(c=>FX_ALERT.indexOf(c)<0);
   if(rest.length) h+=`<div class="card"><h3>알림 없이 표시만</h3>${rest.map(c=>{ const f=FXD[c];
-    return `<div class="fplain"><span>${esc(FX_LBL[c]||f.name||c)}</span><span class="num">${wonR(f.rate*fxMul(c))}원${f.chg_pct!=null?` <span class="${f.chg_pct<=0?'pos':'neg'}">${pctU(f.chg_pct)}</span> <span class="na">1년 전 대비${f.via?' · '+esc(f.via):''}</span>`:''}</span></div>`; }).join('')}</div>`;
+    return `<div class="fplain"><span>${esc(FX_LBL[c]||f.name||c)}${staleTag(f.stale_since)}</span><span class="num">${wonR(f.rate*fxMul(c))}원${f.chg_pct!=null?` <span class="${f.chg_pct<=0?'pos':'neg'}">${pctU(f.chg_pct)}</span> <span class="na">1년 전 대비${f.via?' · '+esc(f.via):''}</span>`:''}</span></div>`; }).join('')}</div>`;
   h+=`<div class="card"><h3>알림을 이렇게 참고</h3><div class="fuse">
     <div><b class="pos">▼ 내릴 때</b><ul><li>외화 값이 싸짐 → 매입 부담 줄어듦</li><li>해외 매입 결제 시점 앞당김 검토</li><li>선매입·추가 발주 검토</li></ul></div>
     <div><b class="neg">▲ 오를 때</b><ul><li>외화 값이 비싸짐 → 매입 부담 커짐</li><li>선물환으로 환율 미리 확정 검토</li><li>결제 시점 조정 · 수출 비중 확대 검토</li></ul></div></div>
@@ -2359,7 +2480,7 @@ function moreCbHtml(){
   const ej=['eu','jp'].map(k=>cbVal(k+'|fashion',L)), ejp=['eu','jp'].map(k=>cbVal(k+'|fashion',P));
   const ejS=ej.every(v=>v!=null)?ej[0]+ej[1]:null, ejP=ejp.every(v=>v!=null)?ejp[0]+ejp[1]:null;
   const kp=(l,v,y,sh)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${cbMoney(v)}</div><div class="s">${y!=null?fmt(y,1,true):'<span class="na">―</span>'}${sh?' · '+sh:''}</div></div>`;
-  h+=`<div class="note" style="margin:0 0 6px">${cbPrd(L)} · 전년 같은 분기 대비</div>`;
+  h+=`<div class="note" style="margin:0 0 6px">${cbPrd(L)} · 전년 같은 분기 대비${staleTag(CB.stale_since)}</div>`;
   h+=`<div class="kpis cbk">${kp('직구 전체',tt,cbYoy(tt,cbVal('total|total',P)))}${kp('의류·패션',tf,cbYoy(tf,cbVal('total|fashion',P)),(tt&&tf!=null)?'전체의 '+Math.round(tf/tt*100)+'%':'')}${kp('유럽+일본 패션',ejS,cbYoy(ejS,ejP),(tf&&ejS!=null)?'패션의 '+Math.round(ejS/tf*100)+'%':'')}</div>`;
   h+=`<div class="card" id="cbCard">${cbBarsHtml()}</div>`;
   h+=cbTrendHtml();
@@ -2409,15 +2530,15 @@ function svCardHtml(){
   return h;
 }
 function moreMenuHtml(){
-  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore();
-  const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`패션 <b>${a.length}</b> · 아이웨어 <b>${b.length}</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
+  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore(), part=statusRows().reduce((a,r)=>a+(r.failed||0),0);
+  const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`<span class="nw">패션 <b class="il">${a.length}</b> · 아이웨어 <b class="il">${b.length}</b></span>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
     ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
     ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',cmpN('fb'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
-    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:'<span class="st-ok">● 정상</span>')}
+    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:(part?`<span class="stl" style="margin-left:0">일부 실패 ${part}곳</span>`:'<span class="st-ok">● 정상</span>'))}
   </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
 }
 function moreFashionHtml(){   // 👕 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
@@ -2528,13 +2649,13 @@ def merge_kr_listed(data):
 
 # 수집 상태: (파일, 표시명, 워크플로우, 주기 표기, 지연 판정 일수)
 STATUS_SOURCES = [
-    ("data.json", "재무·주가", "update-dashboard", "매일 07:30", 2),
-    ("news.json", "뉴스", "update-news", "매일 06:30", 2),
+    ("data.json", "재무·주가", "update-dashboard", "매일 04:17", 2),
+    ("news.json", "뉴스", "update-news", "매일 03:17", 2),
     ("segments.json", "미국 공시 지역·채널", "extract-segments", "매주 월", 9),
     ("segments_ir.json", "유럽·일본 IR", "update-ir", "매주 일", 9),
     ("kr_domestic.json", "국내 법인·상장 재무", "update-dart", "매월 15일", 40),
     ("kosis.json", "국내 소매 지표", "update-kosis", "매월 5일", 40),
-    ("naver_trend.json", "네이버 검색 관심도", "update-dashboard", "매일 07:30", 2),
+    ("naver_trend.json", "네이버 검색 관심도", "update-dashboard", "매일 04:17", 2),
 ]
 
 
@@ -2546,10 +2667,89 @@ def _ts_iso(v):
     return f"{m.group(1)}T{m.group(2) or '00'}:{m.group(3) or '00'}:00+09:00"
 
 
+def _partial(fn, d):
+    """v32.12 부분 실패 요약 — (못 받은 곳 수(이전 값 + 값 없음), 화면에 보일 짧은 설명 목록). 필드가 없으면 (0, [])
+    수는 각 수집 스크립트가 남긴 실패 목록으로 셈: data.json fetch_status(fetch_data v4.12) · naver_trend.json status(v1.7) ·
+    kosis.json failed(v5.1) · segments(_ir).json failed(extract_segments — kept_reason은 설명만) · kr_domestic.json failed(dart_fetch v3.4)"""
+    n, notes = 0, []
+    if fn == "data.json":
+        fs = d.get("fetch_status") or {}
+        kept, bad = fs.get("kept") or [], fs.get("failed") or []
+        fxk, fxf = fs.get("fx_kept") or [], fs.get("fx_failed") or []
+        n = len(kept) + len(bad) + len(fxk) + len(fxf)
+        if kept:
+            notes.append(f"종목 {len(kept)}곳 이전 값")
+        if bad:
+            notes.append(f"종목 {len(bad)}곳 값 없음")
+        if fxk:
+            notes.append("환율 이전 값 " + "·".join(fxk))
+        if fxf:
+            notes.append("환율 없음 " + "·".join(fxf))
+    elif fn == "naver_trend.json":
+        st = d.get("status") or {}
+        kb = st.get("kept_brands") or [b.get("name") for b in d.get("brands") or [] if b.get("stale_since")]
+        fb, bmk, bmf = st.get("failed_brands") or [], st.get("brand_monthly_kept") or [], st.get("brand_monthly_failed") or []
+        m_bad = bool(st) and d.get("monthly") is None          # 월간 합계를 못 받았고 이전 값도 없음
+        n = len(set(kb) | set(fb) | set(bmk) | set(bmf)) + (1 if st.get("monthly_kept") or m_bad else 0)   # 브랜드는 한 번만 셈
+        if kb:
+            notes.append(f"브랜드 {len(kb)}개 이전 값")
+        if fb:
+            notes.append(f"브랜드 {len(fb)}개 값 없음")
+        if st.get("monthly_kept"):
+            notes.append("월간 합계 이전 값")
+        if m_bad:
+            notes.append("월간 합계 값 없음")
+        if bmk:
+            notes.append(f"브랜드 월간 {len(bmk)}개 이전 값")
+        if bmf:
+            notes.append(f"브랜드 월간 {len(bmf)}개 값 없음")
+    elif fn == "kosis.json":
+        ser = d.get("series") or {}
+        kept = [k for k, v in ser.items() if isinstance(v, dict) and v.get("stale_since")]
+        if (d.get("cross_border") or {}).get("stale_since"):
+            kept.append("cross_border")
+        bad = [k for k in d.get("failed") or [] if k not in kept]
+        n = len(set(d.get("failed") or []) | set(kept))      # failed = 이전 값 + 값 없음(kosis_fetch v5.1)
+        if kept:
+            notes.append(f"지표 {len(kept)}개 이전 값" + (" (해외직구 포함)" if "cross_border" in kept else ""))
+        if bad:
+            notes.append(f"지표 {len(bad)}개 값 없음" + (" (해외직구 포함)" if "cross_border" in bad else ""))
+    elif fn in ("segments.json", "segments_ir.json"):
+        # 수 = 이번 실행에서 실패한 종목(failed). kept_reason은 설명만 — 새 공시에 분해가 없어 이전 실적을 지킨 경우·
+        # 지난 실패 사유가 이월된 경우는 실패로 세지 않음
+        items = d.get("items") or {}
+        failed = list(dict.fromkeys(d.get("failed") or []))
+        n = len(failed)
+        kr = {t: v for t, v in items.items() if isinstance(v, dict) and v.get("kept_reason")}
+        bad = [t for t in failed if t not in kr]
+        # 사유 3종(extract_segments v10): 실패해 이전 값(kept_failed) · 더 새 공시를 실적 자료 아님으로 건너뜀(안내) · 새 공시에 분해 없어 이전 실적 유지
+        k_fail = [t for t, v in kr.items() if v.get("kept_failed")]
+        k_note = [t for t, v in kr.items() if not v.get("kept_failed") and "건너뜀" in str(v.get("kept_reason"))]
+        k_keep = [t for t in kr if t not in k_fail and t not in k_note]
+        if k_fail:
+            notes.append("실패·이전 추출 유지 " + "·".join(k_fail))
+        if k_note:
+            notes.append("최신 공시 건너뜀(투자자의 날 등, 확인 필요) " + "·".join(k_note))
+        if k_keep:
+            notes.append("새 공시에 분해 없음·이전 추출 유지 " + "·".join(k_keep))
+        if bad:
+            notes.append(f"종목 {len(bad)}곳 값 없음")
+    elif fn == "news.json":
+        st = d.get("status") or {}      # news_monitor v2.9 — 선별 실패는 1곳으로 셈, 검색어 일부 실패는 설명만
+        if st.get("curate") == "failed":
+            n = 1
+            notes.append(f"Claude 선별 실패(신규 {st.get('new', 0)}건은 다음 실행에서)")
+        if st.get("failed_queries"):
+            notes.append(f"검색어 {st['failed_queries']}/{st.get('queries', '?')}개 실패")
+    else:
+        n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
+    return n, notes
+
+
 def collect_status():
     out = []
     for fn, label, wf, cad, limit in STATUS_SOURCES:
-        ts, date_only, failed = None, False, 0
+        ts, date_only, failed, notes = None, False, 0, []
         p = os.path.join("docs", fn)
         if os.path.exists(p):
             try:
@@ -2558,11 +2758,11 @@ def collect_status():
                 raw = str(d.get("generated_at") or d.get("updated_at") or "")
                 ts = _ts_iso(raw)
                 date_only = not re.search(r"\d{2}:\d{2}", raw)
-                failed = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
-            except Exception:
-                pass
+                failed, notes = _partial(fn, d)
+            except Exception as e:
+                print(f"[WARN] 수집 상태 {fn} 읽기 실패: {str(e)[:100]}")
         out.append({"file": fn, "label": label, "wf": wf, "cadence": cad, "limit": limit,
-                    "ts": ts, "date_only": date_only, "failed": failed})
+                    "ts": ts, "date_only": date_only, "failed": failed, "notes": notes})
     return {"sources": out}
 
 

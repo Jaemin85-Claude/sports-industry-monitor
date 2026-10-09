@@ -3,8 +3,9 @@
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
 v4.12: (대표 지시 2026-10-09) 분기 매출 증감은 최신 분기와 350~380일 전 분기를 짝지어 비교(푸마가 작년 1분기와 비교되던 문제),
       짝이 없으면 비움. 매출·총이익·영업이익은 연도마다 값 단위로 대체 항목을 쓰고, 그래도 비면 같은 결산일 이전 값(푸마 영업이익률).
-      종목·환율 수집이 실패하면 이전 data.json 값을 이어 쓰고 stale_since·최상위 fetch_status 기록, 절반 넘게 실패하거나
-      감시 통화가 실패하면 soft_fail.txt에 표시. 블랙야크아이앤씨는 처음부터 .KQ로, 리얄은 직접 조회 없이 달러 ÷ 3.75(404 로그 소음 제거)
+      종목·환율 수집이 실패하면(감시 통화는 1% 칸 계산 실패 포함) 이전 data.json 값을 이어 쓰고 stale_since·최상위 fetch_status 기록,
+      절반 넘게 실패하거나 감시 통화가 실패하면 soft_fail.txt에 표시. 날짜가 아닌 분기 열은 건너뜀.
+      블랙야크아이앤씨는 처음부터 .KQ로, 리얄은 직접 조회 없이 달러 ÷ 3.75(404 로그 소음 제거)
 v4.11: 환율에 스위스 프랑(CHF)·위안(CNY)·홍콩 달러(HKD)·사우디 리얄(SAR) 추가 — 기업 목록·상세의 외화 매출을 모두
       원화로 환산해 보이기 위함(대표 요청 2026-10-09, 온·안타·리닝·탑스포츠·비바굿즈·세노미). 값만 표시(1% 칸 알림 없음).
       리얄은 달러 고정(1달러 = 3.75리얄)이라 원화·달러 쌍이 모두 비면 달러 환율 ÷ 3.75로 계산
@@ -188,7 +189,11 @@ def _vals(df, names):
 
 
 def _day(c):
-    return datetime.date.fromisoformat(str(c)[:10])
+    """열 이름 → 날짜. 날짜가 아니면(NaT 등) None — 그 열만 건너뛰고 종목 전체를 실패로 만들지 않음"""
+    try:
+        return datetime.date.fromisoformat(str(c)[:10])
+    except ValueError:
+        return None
 
 
 def soft_fail(msg):
@@ -238,10 +243,12 @@ def fetch_one(ticker, name, group, note=None):
         qinc = tk.quarterly_income_stmt
         q_rev = _vals(qinc, ["Total Revenue", "Operating Revenue"])
         if q_rev:
-            qs = sorted((_day(c), v) for c, v in q_rev.items() if v)
+            qs = sorted((e, v) for e, v in ((_day(c), v) for c, v in q_rev.items() if v) if e)
             if qs:
                 q_end, cur = qs[-1]
                 d["q_end"] = q_end.isoformat()
+                # 로그 확인용(저장 안 함): 매출 있는 분기 열 수, 바로 앞 열과의 간격(180일 근처면 반기 자료)
+                d["_q_cols"] = (len(qs), (q_end - qs[-2][0]).days if len(qs) > 1 else None)
                 pair = [(abs((q_end - e).days - 365), e, v) for e, v in qs[:-1]
                         if 350 <= (q_end - e).days <= 380]
                 if pair:
@@ -298,7 +305,7 @@ def fetch_one(ticker, name, group, note=None):
             pass
 
     except Exception as e:
-        d["error"] = str(e)[:200]
+        d["error"] = (str(e) or type(e).__name__)[:200]
         print(f"[WARN] {ticker} 실패: {e}")
     return d
 
@@ -417,13 +424,15 @@ def fetch_fx(prev_fx=None, prev_date=None):
     """환율: 최근 종가와 1년 전(365일 이전 가장 가까운 날) 종가, 변동률.
     원화 직접 쌍이 비거나 이력이 1년이 안 되면 달러 경유(현지통화→달러 × 달러→원화)로 계산.
     v4.12: 수집 실패한 통화는 이전 data.json 값(1% 칸 알림 목록 포함)을 이어 쓰고 stale_since 표시
-    — 알림 first_seen이 끊기지 않아 다음 날 같은 알림이 다시 나가지 않음. 리얄은 직접 조회 없이 달러 ÷ 3.75"""
+    — 알림 first_seen이 끊기지 않아 다음 날 같은 알림이 다시 나가지 않음. 감시 통화는 값을 받았어도 1% 칸 계산이
+    예외·자료 부족이면 실패로 보고 같은 방식(이전 값이 있을 때). 리얄은 직접 조회 없이 달러 ÷ 3.75"""
     prev_fx = prev_fx or {}
     out = {}
     usd = None
     for code, (name, tk) in FX.items():
         if tk is None:      # 리얄: 아래에서 달러로 계산
             continue
+        p_code = prev_fx.get(code) or {}
         try:
             s = _fx_series(tk)
             via = None
@@ -456,7 +465,12 @@ def fetch_fx(prev_fx=None, prev_date=None):
                   f"{' · ' + via if via else ''}")
             if code in FX_ALERT:
                 lv = fx_levels(s)
-                if lv is None:
+                if lv is None and "alerts" in p_code and p_code.get("rate"):
+                    # 어제는 1% 칸 계산이 됐는데 오늘 자료가 짧음 → 오늘 값만 두면 알림 목록이 끊겨
+                    # 다음 날 같은 알림이 다시 '오늘 처음'이 됨. 이전 값(알림 목록 포함)을 통째로 이어 씀(아래 keep_prev)
+                    print(f"  환율 {code}: 1년 평균 계산 자료 부족 ({len(s)}일) — 1% 칸 알림 목록 끊김 방지로 이전 값 사용")
+                    out.pop(code, None)
+                elif lv is None:
                     print(f"  환율 {code}: 1년 평균 계산 자료 부족 ({len(s)}일) — 1% 칸 알림 건너뜀")
                 else:
                     out[code].update(lv)
@@ -468,6 +482,10 @@ def fetch_fx(prev_fx=None, prev_date=None):
                              f"{'아래로' if al[-1]['dir'] == 'dn' else '위로'}" if al else ""))
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
+            # 값은 받았는데 1% 칸 계산 등에서 예외 → 반쪽 값(알림 목록 없음) 대신 이전 값을 이어 씀(아래 keep_prev).
+            # 이전 값이 없으면 받은 값이라도 둠
+            if p_code.get("rate"):
+                out.pop(code, None)
 
     def keep_prev(code):
         p = prev_fx.get(code) or {}
@@ -555,30 +573,37 @@ def main():
                 item2["ticker"] = ticker          # 대시보드 키는 원래 티커 유지
                 item2["yf_ticker"] = alt
                 item = item2
+        q_cols = item.pop("_q_cols", None)        # 로그용(저장 안 함)
         # v4.12: 수집 실패(예외, 또는 연간 재무·주가 둘 다 없음) → 이전 data.json 값 이어 쓰기
         prev = prev_items.get(ticker)
-        if item.get("error") or not _has_data(item):
-            why = item.get("error") or "연간 재무·주가 없음"
-            if _has_data(prev):
-                item = {**prev, "name": name, "group": group, "note": note,
-                        "stale_since": prev.get("stale_since") or prev_date}
-                kept.append(ticker)
-                print(f"  ↳ 수집 실패({why[:80]}) — 이전 값 이어 씀({item['stale_since']} 수집분)", flush=True)
-            else:
-                item["error"] = why
-                failed.append(ticker)
-                print(f"  ↳ 수집 실패({why[:80]}) — 이전 값도 없음", flush=True)
+        why = item.get("error") or (None if _has_data(item) else "연간 재무·주가 없음")
+        if why and _has_data(prev):
+            item = {**prev, "name": name, "group": group, "note": note,
+                    "stale_since": prev.get("stale_since") or prev_date}
+            kept.append(ticker)
+            print(f"  ↳ 수집 실패({why[:80]}) — 이전 값 이어 씀({item['stale_since']} 수집분)", flush=True)
             out["items"].append(item)
             continue
+        if not _has_data(item):                   # 이전 값도 없고 오늘 값도 없음 → '값 없음'
+            item["error"] = why
+            failed.append(ticker)
+            print(f"  ↳ 수집 실패({why[:80]}) — 이전 값도 없음", flush=True)
+            out["items"].append(item)
+            continue
+        if why:     # 예외가 났지만 연간 재무·주가 중 받은 값이 있고 이전 값은 없음 → 받은 값 저장(정상으로 셈, error는 남김)
+            print(f"  ↳ 일부 실패({why[:80]}) — 이전 값이 없어 받은 값만 저장", flush=True)
         n_ok += 1
         got = fill_same_end(item, prev)
         if got:
             print(f"  ↳ 오늘 빈 값은 같은 결산일 이전 값으로: {', '.join(got)}", flush=True)
+        q_txt = ""
+        if item.get("q_end"):
+            q_txt = f" · 분기 {item['q_end']} vs {item.get('q_prev_end') or '전년 짝 없음'}"
+            if q_cols:      # 매출 있는 분기 열 수·바로 앞 열 간격(180일 근처면 반기 자료 — 실데이터 확인용)
+                q_txt += f" (열 {q_cols[0]}개" + (f", 앞 열과 {q_cols[1]}일)" if q_cols[1] else ")")
         print(f"  ↳ 연간 {len(item['fy'])}개 · 재고 {'O' if item.get('inventory') else '-'} · "
               f"주가 {'O' if item.get('price') is not None else '-'} · "
-              f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}"
-              + (f" · 분기 {item['q_end']} vs {item.get('q_prev_end') or '전년 짝 없음'}"
-                 if item.get("q_end") else ""), flush=True)
+              f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}" + q_txt, flush=True)
         out["items"].append(item)
     out["group_order"] = GROUP_ORDER
     print("fetch 환율 ...", flush=True)
@@ -590,11 +615,12 @@ def main():
     fx_failed = [c for c in FX if c not in out["fx"]]
     out["fetch_status"] = {"date": today.isoformat(), "ok": n_ok, "kept": kept, "failed": failed,
                            "fx_kept": fx_kept, "fx_failed": fx_failed}
-    print(f"수집 결과: 정상 {n_ok} · 이전 값 {len(kept)} · 실패 {len(failed)}"
+    # '실패' 대신 '값 없음'(화면 수집 상태와 같은 말) — 정상인 날 로그에 '실패' 글자가 매일 찍히지 않게
+    print(f"수집 결과: 정상 {n_ok} · 이전 값 {len(kept)} · 값 없음 {len(failed)}"
           + (f" · 환율 이전 값 {', '.join(fx_kept)}" if fx_kept else "")
           + (f" · 환율 없음 {', '.join(fx_failed)}" if fx_failed else ""), flush=True)
     if kept or failed:
-        print(f"  이전 값: {', '.join(kept) or '-'} / 빈 값: {', '.join(failed) or '-'}", flush=True)
+        print(f"  이전 값: {', '.join(kept) or '-'} / 값 없음: {', '.join(failed) or '-'}", flush=True)
     os.makedirs("docs", exist_ok=True)
     with open("docs/data.json", "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
@@ -602,7 +628,7 @@ def main():
     # 심각한 실패 → soft_fail.txt (저장은 했고, 워크플로우 마지막 단계가 빨간 X로 끝냄)
     if len(kept) + len(failed) > len(WATCH) / 2:
         soft_fail(f"종목 {len(kept) + len(failed)}/{len(WATCH)}곳 수집 실패"
-                  f"(이전 값 {len(kept)} · 빈 값 {len(failed)})")
+                  f"(이전 값 {len(kept)} · 값 없음 {len(failed)})")
     bad_fx = [c for c in FX_ALERT if c in fx_kept or c in fx_failed]
     if bad_fx:
         soft_fail(f"감시 환율 수집 실패 — {', '.join(bad_fx)}"
