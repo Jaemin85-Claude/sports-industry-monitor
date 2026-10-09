@@ -2,6 +2,8 @@ name: check-files
 
 # 코드·워크플로우가 바뀔 때 CLAUDE.md의 표(운영 구조·파일 식별표)를 기준으로 검사한다.
 #  ① 파이썬 3번째 줄 식별 문구 ② 문법 ③ 워크플로우 이름·실행 대상 파일 ④ docs/*.json 파싱
+#  (2026-10 추가) ⑤ 워크플로우 YAML 읽기·예약(cron) 형식 ⑥ 패키지 설치 후 모든 스크립트 불러오기
+#  ⑦ 화면 실제로 만들어 보기(build_dashboard) + 화면 스크립트 문법 검사(node --check)
 on:
   pull_request:
     branches: [main]
@@ -20,7 +22,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -114,3 +116,61 @@ jobs:
               sys.exit(1)
           print(f"검사 통과: 파이썬 {len(pys)}개 · 워크플로우 {len(ymls)}개 · JSON {len(jsons)}개")
           PY
+      - name: Install packages
+        run: pip install -r requirements.txt pypdf pyyaml
+      - name: Check workflow YAML and script imports
+        run: |
+          python - <<'PY'
+          import glob, importlib, os, re, sys
+          import yaml
+          errs = []
+          for path in sorted(glob.glob(".github/workflows/*.yml")):
+              f = os.path.basename(path)
+              try:
+                  d = yaml.safe_load(open(path, encoding="utf-8"))
+              except Exception as e:
+                  errs.append(f"{f}: YAML 읽기 실패 — {str(e)[:160]}")
+                  continue
+              on = d.get("on", d.get(True)) or {}   # YAML 1.1은 on: 을 True로 읽음
+              if not isinstance(d.get("jobs"), dict) or not d["jobs"]:
+                  errs.append(f"{f}: jobs 없음")
+              if f == "check.yml":
+                  continue
+              sch = on.get("schedule") if isinstance(on, dict) else None
+              if not sch:
+                  errs.append(f"{f}: 예약(schedule) 없음 — 자동 실행이 안 됨")
+              for s in sch or []:
+                  c = str((s or {}).get("cron", ""))
+                  if len(c.split()) != 5 or not re.fullmatch(r"[\d*/,\- ]+", c):
+                      errs.append(f"{f}: cron 형식 오류 '{c}'")
+              if not isinstance(on, dict) or "workflow_dispatch" not in on:
+                  errs.append(f"{f}: 수동 실행(workflow_dispatch) 없음")
+          sys.path.insert(0, ".")
+          for p in sorted(glob.glob("*.py")):
+              m = p[:-3]
+              try:
+                  importlib.import_module(m)   # 모든 스크립트는 __main__ 가드 → 불러오기만, 실행 안 함
+              except Exception as e:
+                  errs.append(f"{p}: 불러오기 실패 — {type(e).__name__}: {str(e)[:160]}")
+          if errs:
+              for e in errs:
+                  print(f"::error::{e}")
+              sys.exit(1)
+          print("검사 통과: 워크플로우 YAML·예약 형식, 스크립트 불러오기")
+          PY
+      - name: Build dashboard and check page script
+        run: |
+          python build_dashboard.py
+          python - <<'PY'
+          import re, sys
+          h = open("docs/index.html", encoding="utf-8").read()
+          i, j = h.find("<script>"), h.rfind("</script>")
+          if i < 0 or j < i:
+              print("::error::index.html에서 <script> 블록을 못 찾음"); sys.exit(1)
+          open("/tmp/page.js", "w", encoding="utf-8").write(h[i + 8:j])
+          for mark in ('id="todayCard"', 'id="newsBody"', 'id="kpis"'):
+              if mark not in h:
+                  print(f"::error::index.html에 {mark} 없음 — 화면 뼈대 확인"); sys.exit(1)
+          print(f"index.html {len(h):,}자 · 스크립트 {j - i - 8:,}자")
+          PY
+          node --check /tmp/page.js && echo "화면 스크립트 문법 통과"

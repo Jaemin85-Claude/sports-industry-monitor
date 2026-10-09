@@ -14,20 +14,24 @@
 
 | 워크플로우 파일 | 이름 | 실행하는 코드 | 만드는 파일 | 자동 실행(KST) |
 |---|---|---|---|---|
-| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·history·index.html) | 매일 07:30 |
-| `news.yml` | update-news | news_monitor.py | `docs/news.json` | 매일 06:30 |
-| `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 05:00 |
-| `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 06:00 |
-| `dart.yml` | update-dart | dart_fetch.py | `docs/kr_domestic.json`, `docs/kr_listed_fin.json` | 매월 15일 07:00 |
-| `kosis.yml` | update-kosis | kosis_fetch.py | `docs/kosis.json` | 매월 5일 06:00 |
+| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·history·index.html) | 매일 04:17 |
+| `news.yml` | update-news | news_monitor.py | `docs/news.json` | 매일 03:17 |
+| `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 01:47 |
+| `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 02:47 |
+| `dart.yml` | update-dart | dart_fetch.py | `docs/kr_domestic.json`, `docs/kr_listed_fin.json` | 매월 15일 03:47 |
+| `kosis.yml` | update-kosis | kosis_fetch.py | `docs/kosis.json` | 매월 5일 02:47 |
 | `check.yml` | check-files | (워크플로우에 내장된 검사) | — | PR·main 코드 푸시 때 |
 
 - 데이터 워크플로우가 `docs/*.json`을 만들고, **update-dashboard가 마지막에 화면을 다시 만든다.**
 - 워크플로우들이 main에 직접 커밋하므로, 작업 시작 전에 항상 최신 main에서 작업 브랜치를 만든다.
-- 자동 실행 시각은 예약 시각이다. GitHub 대기열 때문에 실제 시작은 1.5~3.5시간 늦을 수 있다
-  (2026-09 실측: update-news 07:56~10:04, update-dashboard 09:06~11:09 시작).
+- 자동 실행 시각은 예약 시각이다. GitHub 대기열 때문에 실제 시작은 2~4시간 늦을 수 있다
+  (2026-10 실측: 지연 중앙값 약 3.6시간, update-news 최대 10:47·update-dashboard 11:23 시작 →
+  2026-10-09 대표 승인으로 모든 예약을 약 3시간 앞당김, 순서는 그대로).
+- 수집이 일부 실패하면 스크립트가 **이전 값을 지켜 저장**하고 `soft_fail.txt`에 사유를 남긴다. 워크플로우 마지막 단계
+  'Check partial failures'가 이를 보고 빨간 X로 끝낸다(데이터는 커밋됨 → 12:23 점검이 알림).
 - check-files는 이 문서의 **운영 구조표와 파일 식별표를 검사 기준으로 읽는다.** 새 파일·워크플로우는
-  표에 먼저 등록해야 검사를 통과한다.
+  표에 먼저 등록해야 검사를 통과한다. 그 밖에 워크플로우 YAML·예약 형식, 모든 스크립트 불러오기,
+  화면 실제 빌드 + 화면 스크립트 문법(node --check)도 검사한다(2026-10).
 
 ## 파일 식별표 (반영·수정 전 반드시 확인)
 
@@ -75,8 +79,8 @@
    - 그리고 **항상 마지막에** `update.yml` (화면 다시 만들기)
    - **하나씩 차례로**: 실행 → 끝날 때까지 기다림 → 다음 실행. 실행 전 진행 중인 워크플로우가 없는지 확인.
 7. 로그 핵심 줄만 뽑는다.
-   - 공통: `saved`, `ERROR`, `FATAL`, `Traceback`, `실패`, `Error:`
-   - update-dashboard: `재시도`, `비어 있음`, `환율`, `병합`, 그리고 대표가 지정한 줄
+   - 공통: `saved`, `ERROR`, `FATAL`, `Traceback`, `실패`, `Error:`, `실패 표시`
+   - update-dashboard: `수집 결과`, `재시도`, `비어 있음`, `환율`, `병합`, 그리고 대표가 지정한 줄
    - update-news: `수집`, `신규`
 8. 보고:
    - 반영·수정한 파일과 버전, PR 링크

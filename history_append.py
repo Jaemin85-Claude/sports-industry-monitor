@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 히스토리 축적 (v1)
+v1.1: (대표 지시 2026-10-09) 그날 수집에 실패해 이전 값을 이어 쓴 종목(data.json stale_since)은 새 점을 쌓지 않음
+      — 같은 옛 값이 7일마다 '새 관측'처럼 기록되지 않게
 매일 빌드 직전에 실행. docs/data.json(재무·주가)과 docs/segments.json(공시 추출)의
 핵심 지표를 docs/history.json에 날짜별로 누적한다.
 - 값이 직전 스냅샷과 같으면 저장하지 않되, 7일 이상 지났으면 그래도 1점 저장
@@ -84,6 +86,8 @@ def main():
     for item in data.get("items", []):
         t = item.get("ticker")
         if not t:
+            continue
+        if item.get("stale_since"):     # v1.1 오늘 수집 실패 → 이전 값이라 새 관측이 아님
             continue
         snap = snapshot_from_data(item)
         if all(v is None for v in snap.values()):

@@ -2,8 +2,9 @@ name: update-ir
 
 on:
   schedule:
-    # 매주 일 06:00 KST = 토 21:00 UTC (SEC 추출 05:00 KST 뒤)
-    - cron: "0 21 * * 6"
+    # 2026-10 대표 승인: GitHub 대기열 지연(3~4시간)이 길어져 모든 예약을 약 3시간 앞당김(순서 유지, 정각·30분 피함)
+    # 매주 일 02:47 KST = 토 17:47 UTC
+    - cron: "47 17 * * 6"
   workflow_dispatch:   # 수동 실행 버튼
 
 permissions:
