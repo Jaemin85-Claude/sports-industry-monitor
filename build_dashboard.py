@@ -8,7 +8,8 @@ v32.9: 기준·통화 표기(대표 요청 2026-10-09, dart_fetch v3.4·fetch_da
        외화 'B USD', 기업 목록 외화 매출은 ≈원화 환산 + 원래 통화, 지역·채널 금액에 공시 통화, 현재가 펜스·원·엔 표기, 재무·주가 통화가 다르면 안내.
        ③ 재무 지표 카드: 회사명 아래 회계기준 배지, 안정성에 '순차입금(리스·RCPS 제외)', 기준이 섞인 비교군에서 순부채·부채비율 등에 안내
        리뷰 반영: 기업 목록 매출 단위 '원'은 머리글로(휴대폰 폭 v32.8과 같게, 넘치면 가로 스크롤), 엔화 환산은 100엔 기준, 배지·'회계기준
-       미확인'은 dart v3.4 수집 후에만, 순차입금(리스·RCPS 제외)은 순부채와 겹쳐 '중앙값보다 나은 지표' 점수에서 뺌
+       미확인'은 dart v3.4 수집 후에만, 순차입금(리스·RCPS 제외)은 순부채와 겹쳐 '중앙값보다 나은 지표' 점수에서 뺌.
+       수집 상태: DART 일부 법인 실패(이전 값 유지)면 '일부 실패 N곳' 표시
 v32.8: (대표 요청 2026-10-06) ① 더보기 › 패션 브랜드: 국내 패션 13곳·아이웨어 6곳도 유통사와 같은 재무 지표 카드(그룹·지표 선택은
        카드마다 따로), 맨 아래 '📊 검색 관심도 vs 실적'(같은 해 네이버 검색 증감 vs 매출 증감 · 올해 1월~지난달 · 최근 4주).
        ② 캘린더 탭: 해외 세일 시즌(블프·유럽 법정 세일·광군제·618·박싱데이 등) — 달력에 기간 표시 + '🛍️ 해외 세일 시즌' 카드.
@@ -1019,7 +1020,7 @@ function statusCard(){
     const when=r.ts?(r.ts.slice(5,7)+'/'+r.ts.slice(8,10)+(r.date_only?'':' '+r.ts.slice(11,16))):'―';   // 기록된 한국 시각 그대로
     const ageTxt=r.age==null?'':(r.age<1?'오늘':`${Math.floor(r.age)}일 전`);
     h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
-      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}</td></tr>`;
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref">일부 실패 ${r.failed}곳(이전 값)</div>`:''}</td></tr>`;
   });
   h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인</div></div>`;
   return h;
@@ -2475,7 +2476,7 @@ def _ts_iso(v):
 def collect_status():
     out = []
     for fn, label, wf, cad, limit in STATUS_SOURCES:
-        ts, date_only = None, False
+        ts, date_only, failed = None, False, 0
         p = os.path.join("docs", fn)
         if os.path.exists(p):
             try:
@@ -2484,10 +2485,11 @@ def collect_status():
                 raw = str(d.get("generated_at") or d.get("updated_at") or "")
                 ts = _ts_iso(raw)
                 date_only = not re.search(r"\d{2}:\d{2}", raw)
+                failed = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
             except Exception:
                 pass
         out.append({"file": fn, "label": label, "wf": wf, "cadence": cad, "limit": limit,
-                    "ts": ts, "date_only": date_only})
+                    "ts": ts, "date_only": date_only, "failed": failed})
     return {"sources": out}
 
 

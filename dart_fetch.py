@@ -8,7 +8,10 @@ v3.4: 기준 정보 저장(대표 요청 2026-10-09) — ① 회계기준: 감�
       순이익 3개년)도 함께 받음, 감사보고서 경로는 연결감사보고서가 따로 있으면 접수번호만 기록(cfs_report). ④ DART 연결 실패 시 3회 재시도
       (응답 끊김·점검 페이지 포함, 실행 18분 이후엔 재시도 없음 — 30분 제한 보호). '미확인' 보고서는 판정 규칙 버전(STD_VER)이 같으면
       다시 받지 않음. ⑤ 한 법인이 실패하거나(연결 끊김 등) 수치가 0개면 실행 전체를 멈추지 않고 그 법인만 이전 값 유지([ERROR] 줄),
-      상장사도 0개년이면 이전 값 유지. 원본이 zip이 아니면 DART 상태 코드·문구를 로그에 남김
+      상장사도 0개년이면 이전 값 유지. 원본이 zip이 아니면 DART 상태 코드·문구를 로그에 남김. '수치 0개 → 이전 값'은 그 법인
+      처리 중 DART 오류(예외·013 아닌 상태 코드)가 있었을 때만(경로를 'none'으로 고치는 등 정상적인 '없음'은 반영), 이전 값을 쓸 때도
+      이름·경로·주석은 현재 설정. 모든 법인이 실패하면 갱신일을 옮기지 않고 실행을 실패로 끝냄(점검 알림·수집 지연 경고), 일부 실패는
+      failed 목록 저장(수집 상태에 표시)
 v3.3: 재무상태표·현금흐름 지표 대상을 국내 패션 브랜드 13곳 + 아이웨어 6곳으로 확대(대표 요청 2026-10-06, FIN_IDS 9 → 28곳).
       외감 16곳은 기존 방식(감사보고서 원본 → Claude 추출, 1회 약 $3). 상장 3곳(에이유브랜즈·피스피스스튜디오·에스제이그룹)은
       사업보고서 전체재무제표 API 행에서 바로 계산(Claude 비용 없음) — 부채 항목은 유동·비유동부채 아래 행을 같은 규칙으로 분류하고
@@ -201,7 +204,23 @@ def _mask(e):
     return re.sub(r"crtfc_key=[^&\s'\"]+", "crtfc_key=***", str(e))
 
 
+_DART_ERR = [0]   # v3.4 이번 실행의 DART 오류 수(예외·정상 아닌 상태 코드·zip 아닌 원본) — 법인별 '수치 0개'가 오류 탓인지 판단
+
+
 def dart(url, params, as_bytes=False, timeout=90):
+    """_dart + 오류 횟수 기록. 상태 013(조회 자료 없음)은 오류 아님"""
+    try:
+        out = _dart(url, params, as_bytes, timeout)
+    except Exception:
+        _DART_ERR[0] += 1
+        raise
+    if (as_bytes and out[:2] != b"PK") or (not as_bytes and isinstance(out, dict)
+                                          and out.get("status") not in (None, "000", "013")):
+        _DART_ERR[0] += 1
+    return out
+
+
+def _dart(url, params, as_bytes=False, timeout=90):
     """DART 호출 — 연결 실패·시간 초과·응답 끊김·5xx·JSON 아닌 응답(점검 페이지)은 3회까지 재시도
     (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 18분이 지나면 재시도 없이 바로 오류."""
     params = dict(params, crtfc_key=DART_KEY)
@@ -364,7 +383,7 @@ def fetch_full_statements(corp_code, fs_div, years_try, fy_month=12, fin=None, m
                 "corp_code": corp_code, "bsns_year": str(y),
                 "reprt_code": "11011", "fs_div": fs_div})
         except Exception as e:
-            log(f"    {y} {fs_div}: API 오류 {str(e)[:80]}")
+            log(f"    {y} {fs_div}: API 오류 {_mask(e)[:80]}")
             continue
         if data.get("status") != "000":
             log(f"    {y} {fs_div}: {data.get('status')} {data.get('message')}")
@@ -417,7 +436,7 @@ def fetch_api_years(corp_code, fy_end_month, years):
             data = dart(f"{BASE}/fnlttSinglAcnt.json", {
                 "corp_code": corp_code, "bsns_year": str(y), "reprt_code": "11011"})
         except Exception as e:
-            log(f"    {y}: API 오류 {str(e)[:80]}")
+            log(f"    {y}: API 오류 {_mask(e)[:80]}")
             continue
         if data.get("status") != "000":
             log(f"    {y}: {data.get('status')} {data.get('message')}")
@@ -451,8 +470,10 @@ def list_audit_reports(corp_code):
     data = dart(f"{BASE}/list.json", {
         "corp_code": corp_code, "bgn_de": bgn,
         "page_count": 100, "sort": "date", "sort_mth": "desc"})
-    if data.get("status") != "000":
+    if data.get("status") == "013":   # 기간 안 공시 없음 — 정상적인 '없음'
         return []
+    if data.get("status") != "000":
+        raise RuntimeError(f"DART 공시 목록 {data.get('status')} {data.get('message') or ''}".strip())
     out = []
     for it in data.get("list", []):
         nm = it.get("report_nm") or ""
@@ -747,7 +768,7 @@ def fetch_fin_years(name, reports, cached, pl_recs):
                 log(f"    [재무상태표·현금흐름] {dt} {nm} rcept={rcept}: 추출")
                 ex = claude_extract_fin(name, fin_window(fetch_document_plain(rcept)))
             except Exception as e:
-                log(f"      실패: {str(e)[:120]}")
+                log(f"      실패: {_mask(e)[:120]}")
                 continue
             recs = {}
             for which in ("current", "prior"):
@@ -813,7 +834,7 @@ def fetch_doc_years(name, corp_code, cached, reports=None):
             text = fetch_document_text(rcept)
             ex = claude_extract(name, text)
         except Exception as e:
-            log(f"      실패: {str(e)[:120]}")
+            log(f"      실패: {_mask(e)[:120]}")
             continue
         recs = {}
         for which in ("current", "prior"):
@@ -862,7 +883,7 @@ def main():
 
     for eid, name, etype, link, code, route, fy_m, note in ENTITIES:
         log(f"[{eid}] {name} ({route}) corp={code or '-'}")
-        prev = old_ent.get(eid)
+        prev, err0 = old_ent.get(eid), _DART_ERR[0]
         try:   # v3.4 한 법인 실패(DART 연결 끊김 등)로 실행 전체가 멈추지 않게 — 실패하면 이전 값 유지
             recs, fin_by_end = {}, {}
             std_by_rcept, meta, cfs, cfs_report = {}, {}, None, None
@@ -889,7 +910,7 @@ def main():
                     fin_by_end[end] = {k: v for k, v in f.items() if k != "fin_v"}
             elif route == "doc":
                 if not ANTHROPIC_KEY:
-                    log("    [WARN] ANTHROPIC_API_KEY 미설정 → 추출 생략")
+                    raise RuntimeError("ANTHROPIC_API_KEY 미설정 — 감사보고서 추출 불가")
                 else:
                     reports = list_audit_reports(code)
                     recs, cache = fetch_doc_years(name, code, old_cache.get(eid, {}), reports)
@@ -921,8 +942,9 @@ def main():
             if not years_out:
                 years_out = [{"fy": None, "end": None, "rev": None, "op": None, "ni": None, "inv": None, "source": None}]
             has = bool(ends)
-            if not has and prev and any(y.get("rev") is not None for y in prev.get("years") or []):
-                raise RuntimeError("이번 실행에서 수치 0개(DART 오류 추정)")
+            if (not has and route in ("api", "doc") and code and _DART_ERR[0] > err0
+                    and prev and any(y.get("rev") is not None for y in prev.get("years") or [])):
+                raise RuntimeError(f"DART 오류 {_DART_ERR[0] - err0}건으로 수치 0개")
             result["entities"].append({
                 "id": eid, "name": name, "type": etype, "link": link,
                 "corp_code": code, "route": route, "fy_end_month": fy_m, "note": note,
@@ -938,15 +960,22 @@ def main():
             for k, src in (("_cache", old_cache), ("_cache_fin", old_fin), ("_cache_std", old_std)):
                 if not result[k].get(eid) and eid in src:   # 이번 실행에서 새로 추출한 캐시는 그대로 둠(Claude 재호출 방지)
                     result[k][eid] = src[eid]
-            result["entities"].append(prev or {"id": eid, "name": name, "type": etype, "link": link, "corp_code": code,
-                                               "route": route, "fy_end_month": fy_m, "note": note, "years": [
-                                                   {"fy": None, "end": None, "rev": None, "op": None, "ni": None, "inv": None, "source": None}]})
+            result["entities"].append(dict(prev or {"years": [{"fy": None, "end": None, "rev": None, "op": None, "ni": None,
+                                                                "inv": None, "source": None}]},
+                                           id=eid, name=name, type=etype, link=link, corp_code=code, route=route,
+                                           fy_end_month=fy_m, note=note))
 
+    fetchable = [e[0] for e in ENTITIES if e[5] in ("api", "doc") and e[4]]
+    all_failed = bool(fetchable) and all(i in failed for i in fetchable)
+    if failed:
+        result["failed"] = failed   # 수집 상태 화면에 '일부 실패' 표시
+    if all_failed:   # 새로 받은 게 없음 → 갱신일을 옮기지 않아 '지연' 경고가 뜨게
+        result["updated_at"] = old.get("updated_at") or result["updated_at"]
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=1)
-    n = sum(1 for e in result["entities"] if e["years"] and e["years"][0].get("rev") is not None)
-    log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인")
+    n = sum(1 for e in result["entities"] if e["id"] not in failed and e["years"] and e["years"][0].get("rev") is not None)
+    log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인{f' (+ 이전 값 유지 {len(failed)}곳)' if failed else ''}")
     if failed:
         log(f"  [ERROR] 수집 실패 {len(failed)}곳(이전 값 유지): {', '.join(failed)}")
     from collections import Counter
@@ -963,13 +992,14 @@ def main():
     try:
         cmap = load_corp_map_by_stock()
     except Exception as e:
-        log(f"[WARN] corpCode 로드 실패: {str(e)[:120]} — 상장사 처리 생략")
-        return
+        log(f"[WARN] corpCode 로드 실패: {_mask(e)[:120]} — 상장사 처리 생략")
+        return all_failed
     try:
         with open(LISTED_PATH, encoding="utf-8") as f:
-            old_listed = json.load(f).get("items", {})
+            old_lf = json.load(f)
     except Exception:
-        old_listed = {}
+        old_lf = {}
+    old_listed, kept = old_lf.get("items", {}), []
     listed = {"updated_at": today.isoformat(),
               "basis": "DART 전체재무제표(사업보고서) — 연결 우선, 지정 예외·연결 없는 회사는 별도(종목별 fs)", "items": {}}
     for tk in KR_LISTED:
@@ -984,7 +1014,7 @@ def main():
         fs = FS_OVERRIDE.get(tk, "CFS"); fym = LISTED_FY_MONTH.get(tk, 12)
         if fs != "CFS":
             log(f"    기준 예외: {'별도' if fs == 'OFS' else fs}")
-        meta = {}
+        meta, e0 = {}, _DART_ERR[0]
         recs, src_txt = fetch_full_statements(code, fs, years, fym, meta=meta)
         if not recs and fs == "CFS":
             log("    연결 없음 → 별도 시도")
@@ -994,19 +1024,25 @@ def main():
             r = recs[end]
             ys.append({"end": end, "rev": r.get("rev"), "cogs": r.get("cogs"), "op": r.get("op"),
                        "ni": r.get("ni"), "inv": r.get("inv")})
-        if not ys and (old_listed.get(tk) or {}).get("years"):   # v3.4 API 오류로 0개년이면 이전 값 유지
-            log("    [ERROR] 수치 0개(DART 오류 추정) — 이전 값 유지")
+        if not ys and _DART_ERR[0] > e0 and (old_listed.get(tk) or {}).get("years"):   # v3.4 DART 오류로 0개년이면 이전 값 유지
+            log(f"    [ERROR] DART 오류 {_DART_ERR[0] - e0}건으로 수치 0개 — 이전 값 유지")
             listed["items"][tk] = old_listed[tk]
+            kept.append(tk)
             continue
         listed["items"][tk] = {"corp_code": code, "corp_name": cname, "source": src_txt, "years": ys[-3:],
                                "fs": meta.get("fs"), "std": meta.get("std"), "currency": meta.get("currency"),
                                "fs_note": "지정 별도(LS증권 연결 편입)" if tk in FS_OVERRIDE else
                                           ("연결재무제표 없음 → 별도" if fs == "CFS" and meta.get("fs") == "별도" else None)}
+    if kept and not any(k not in kept and v.get("years") for k, v in listed["items"].items()):
+        listed["updated_at"] = old_lf.get("updated_at") or listed["updated_at"]   # 전부 이전 값이면 갱신일 유지
     with open(LISTED_PATH, "w", encoding="utf-8") as f:
         json.dump(listed, f, ensure_ascii=False, indent=1)
-    ok = sum(1 for v in listed["items"].values() if v.get("years"))
-    log(f"saved {LISTED_PATH} — 상장 {ok}/{len(KR_LISTED)}개사 3개년 확보")
+    ok = sum(1 for k, v in listed["items"].items() if v.get("years") and k not in kept)
+    log(f"saved {LISTED_PATH} — 상장 {ok}/{len(KR_LISTED)}개사 3개년 확보{f' (+ 이전 값 유지 {len(kept)}곳)' if kept else ''}")
+    return all_failed
 
 
 if __name__ == "__main__":
-    main()
+    if main():   # v3.4 모든 법인 실패(DART 장애·키 문제) → 이전 값은 그대로 두고 실행을 실패로 표시(점검 알림)
+        log("[ERROR] 모든 법인 수집 실패 — DART 장애 또는 API 키 문제. 이전 값 유지, 갱신일 그대로")
+        raise SystemExit(1)
