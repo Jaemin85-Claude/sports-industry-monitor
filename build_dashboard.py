@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.9: 기준·통화 표기(대표 요청 2026-10-09, dart_fetch v3.4·fetch_data v4.11) — ① 국내 법인 카드에 회계기준(K-IFRS/일반기업회계기준,
+       연도별 전환 표시)·보고서 종류(사업보고서/감사보고서) 태그, 사업보고서 6곳은 '🔗 연결 기준 요약'(비교 화면은 별도 유지), 연결감사보고서만
+       있는 곳은 DART 원문 링크. 상장사 출처 줄의 '연결' 고정 문구 → 실제 기준. 야후(연결) 매출이 DART와 20% 넘게 다른 종목(LS네트웍스)은
+       분기 매출 증감을 순위에서 빼고 상세에 '야후 연결' 표기. 플랫폼 카드 각주를 회사별 기준으로. ② 금액에 통화 항상 표기 — 원화 '조원/억원',
+       외화 'B USD', 기업 목록 외화 매출은 ≈원화 환산 + 원래 통화, 지역·채널 금액에 공시 통화, 현재가 펜스·원·엔 표기, 재무·주가 통화가 다르면 안내.
+       ③ 재무 지표 카드: 회사명 아래 회계기준 배지, 안정성에 '순차입금(리스·RCPS 제외)', 기준이 섞인 비교군에서 순부채·부채비율 등에 안내
+       리뷰 반영: 기업 목록 매출 단위 '원'은 머리글로(휴대폰 폭 v32.8과 같게, 넘치면 가로 스크롤), 엔화 환산은 100엔 기준, 배지·'회계기준
+       미확인'은 dart v3.4 수집 후에만, 순차입금(리스·RCPS 제외)은 순부채와 겹쳐 '중앙값보다 나은 지표' 점수에서 뺌.
+       수집 상태: DART 일부 법인 실패(이전 값 유지)면 '일부 실패 N곳' 표시
 v32.8: (대표 요청 2026-10-06) ① 더보기 › 패션 브랜드: 국내 패션 13곳·아이웨어 6곳도 유통사와 같은 재무 지표 카드(그룹·지표 선택은
        카드마다 따로), 맨 아래 '📊 검색 관심도 vs 실적'(같은 해 네이버 검색 증감 vs 매출 증감 · 올해 1월~지난달 · 최근 4주).
        ② 캘린더 탭: 해외 세일 시즌(블프·유럽 법정 세일·광군제·618·박싱데이 등) — 달력에 기간 표시 + '🛍️ 해외 세일 시즌' 카드.
@@ -441,6 +450,11 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .fi-tbl td{vertical-align:top;font-variant-numeric:tabular-nums;padding:7px 3px}
 .fi-tbl td:first-child{max-width:124px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fi-tbl tr.me td{background:var(--barbg)}
+.std-b{display:inline-block;font-size:10px;line-height:1.45;border-radius:4px;padding:0 4px;margin-left:4px;border:1px solid var(--line);color:var(--sub);font-weight:500;vertical-align:middle}
+.std-b.ifrs{color:var(--accent);border-color:var(--accent)}
+.fi-tbl td:first-child .std-b{display:block;width:fit-content;margin:2px 0 0}
+.fi-warn{font-size:var(--fs-xs);color:var(--sub);background:var(--barbg);border-radius:8px;padding:8px 10px;margin:6px 0 8px;line-height:1.5}
+.fi-warn .chip{margin-top:6px}
 .fi-tbl tr.me td:first-child{font-weight:700}
 .fi-tbl tr.fi-med td{color:var(--sub);border-bottom:none}
 .fi-tbl tr.fi-gh td{background:var(--barbg);font-size:var(--fs-xs);color:var(--sub);font-weight:700;padding:4px 6px}
@@ -568,7 +582,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
     <input class="search" id="coSearch" placeholder="기업명 검색 (예: 나이키, 아식스)">
     <div class="chips" id="coChips"></div>
     <div id="coPlat"></div>
-    <div class="card" id="coTblCard" style="padding:4px 8px"><table id="coTbl"></table></div>
+    <div class="card" id="coTblCard" style="padding:4px 8px"><div class="tblwrap"><table id="coTbl"></table></div><div class="note" style="margin:6px 4px 4px">외화 매출은 ≈원화 환산(최근 환율, 참고용) · 작은 글씨가 원래 통화</div></div>
     <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
   </div>
   <div id="coDetail" style="display:none">
@@ -1006,7 +1020,7 @@ function statusCard(){
     const when=r.ts?(r.ts.slice(5,7)+'/'+r.ts.slice(8,10)+(r.date_only?'':' '+r.ts.slice(11,16))):'―';   // 기록된 한국 시각 그대로
     const ageTxt=r.age==null?'':(r.age<1?'오늘':`${Math.floor(r.age)}일 전`);
     h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
-      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}</td></tr>`;
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref">일부 실패 ${r.failed}곳(이전 값)</div>`:''}</td></tr>`;
   });
   h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인</div></div>`;
   return h;
@@ -1085,10 +1099,10 @@ const finCurOf=x=>finCur(x.fin_currency||x.currency);   // 재무제표 통화 �
 /* 외화 금액의 원화 근사(v30.2) — data.json fx의 최근 환율, 환율 없으면 null */
 const krwOf=(v,cur)=>{ if(v==null) return null; if(cur==='KRW') return v; const f=(DATA.fx||{})[cur]; return (f&&f.rate)?v*f.rate:null; };
 /* 국내 그룹의 외화 실적: "≈46.9조" + 작은 글씨로 원래 통화 */
-function revKrwCell(rev,cur){
-  const k=krwOf(rev,cur);
-  if(cur==='KRW'||k==null) return moneyShort(rev,cur);
-  return `≈${moneyShort(k,'KRW')}<span class="na" style="font-size:var(--fs-2xs);display:block">${moneyShort(rev,cur)} ${esc(cur)}</span>`;
+function revKrwCell(rev,cur,short){   // short = 기업 목록(폭 좁음): 단위 '원'은 머리글로, ≈조 소수 1자리
+  const k=krwOf(rev,cur), w=x=>short?x.replace(/원$/,''):x;
+  if(cur==='KRW'||k==null) return w(moneyShort(rev,cur));
+  return `≈${w(short&&k>=1e12?(k/1e12).toFixed(1)+'조원':moneyShort(k,'KRW'))}<span class="na" style="font-size:var(--fs-2xs);display:block">${short&&rev>=1e11?Math.round(rev/1e9)+'B '+cur:moneyShort(rev,cur)}</span>`;
 }
 const money=(v,cur)=>{
   if(v===null||v===undefined) return '―';
@@ -1098,18 +1112,28 @@ const money=(v,cur)=>{
   const m=v/1e6;
   return m>=1000?(m/1000).toFixed(2)+'B '+(cur||''):m.toFixed(0)+'M '+(cur||'');
 };
+// v32.9 통화 표기: 원화는 '조원/억원', 외화는 'B USD'처럼 통화 코드를 항상 붙임(통화가 다른 금액이 같은 단위로 보이지 않게)
 const moneyShort=(v,cur)=>{
   if(v===null||v===undefined) return '―';
   if(cur==='KRW'){
-    return v>=1e12?(v/1e12).toFixed(2)+'조':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억';
+    return v>=1e12?(v/1e12).toFixed(2)+'조원':(v/1e8).toLocaleString(undefined,{maximumFractionDigits:0})+'억원';
   }
   const m=v/1e6;
-  return m>=1000?(m/1000).toFixed(1)+'B':m.toFixed(0)+'M';
+  return (m>=1000?(m/1000).toFixed(1)+'B':m.toFixed(0)+'M')+(cur?' '+cur:'');
 };
-const segMoney=v=>{
+const curCode=c=>((String(c||'').match(/[A-Z]{3}/)||[])[0])||'';   // 'EUR millions' → 'EUR'
+const segMoney=(v,cur)=>{   // 공시 추출 금액(백만 단위)
   if(v===null||v===undefined) return '―';
-  return v>=1000?(v/1000).toFixed(2)+'B':v.toFixed(0)+'M';
+  return (v>=1000?(v/1000).toFixed(2)+'B':v.toFixed(0)+'M')+(cur?' '+cur:'');
 };
+/* 현재가: 원·엔은 소수점 없이, 영국 펜스(GBp)는 파운드 환산 병기 */
+function priceTxt(x){
+  if(x.price==null) return '―';
+  const c=x.currency||'';
+  if(c==='GBp') return `${x.price.toFixed(2)}펜스 <span class="na">(${(x.price/100).toFixed(2)} GBP)</span>`;
+  const n=(c==='KRW'||c==='JPY')?Math.round(x.price).toLocaleString():x.price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  return `${n} ${esc(c)}`;
+}
 const ym=d=>d?("'"+d.slice(2,4)+"."+d.slice(5,7)):null;
 function segOf(t){
   const e=(SEGS.items||{})[t];
@@ -1136,7 +1160,7 @@ function rows_all(){
     const diok=last?dioOf(last.inv,last.rev,null,last.cogs):null;
     out.push({key:'krd:'+e.id, name:e.name, group:'국내 법인', flag:'🇰🇷', logo:logoImg('krd:'+e.id,false,e.name), listed:false,
       rev:last?last.rev:null, cur:'KRW', rev_yoy:yoy, gm:gmk, opm, q_yoy:null, inv_yoy:invy, earn:null, dio:diok,
-      note:e.note, route:e.route, fy_end:last?last.end:null});
+      note:e.note, route:e.route, std:e.acct_std||null, fy_end:last?last.end:null});
   });
   return out;
 }
@@ -1218,10 +1242,10 @@ function buildCo(){
   document.getElementById('coTblCard').style.display=plat?'none':'';
   if(plat) return;
   const rows=rows_all().filter(r=>(coFilter==='전체'||r.group===coFilter)&&(!coQuery||r.name.toLowerCase().includes(coQuery)||r.key.toLowerCase().includes(coQuery)));
-  let h=`<tr><th>기업</th><th>매출</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
+  let h=`<tr><th>기업</th><th>매출(원)</th><th>전년 대비</th><th>총이익률</th><th>재고 증감</th></tr>`;
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${String(r.group||'').startsWith('국내')?revKrwCell(r.rev,r.cur):moneyShort(r.rev,r.cur)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(r.name)}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -1237,7 +1261,7 @@ function buildCo(){
       <div>지역: ${esc(top)}</div><div>채널: ${esc(chs)}</div>
       <div>${kd?logoImg('krd:'+kd.id,false,kd.name)+esc(kd.name)+' ':'🇰🇷 '}${kd?`<b>${kdTxt}</b>`:'<span class="na">국내 법인 미연결</span>'}</div><div>실적 발표 ${evd!=null&&evd>=0?`<b>D-${evd}</b>`:'<span class="na">―</span>'}</div></div>`;
     } else {
-      mini=`<div class="mini"><div>구분: ${esc(r.route==='none'?'DART 공시 미발견':'DART 감사보고서(연간)')}</div><div>기준: ${r.fy_end?ym(r.fy_end)+' 결산':'―'}</div>
+      mini=`<div class="mini"><div>구분: ${esc(r.route==='none'?'DART 공시 미발견':'DART '+(r.route==='api'?'사업보고서':'감사보고서')+'(연간 · 별도'+(r.std?' · '+(STD_SH[r.std]||r.std):'')+')')}</div><div>기준: ${r.fy_end?ym(r.fy_end)+' 결산':'―'}</div>
       <div>재고일수 <b>${r.dio!=null?Math.round(r.dio)+'일':'―'}</b></div><div>재고 증감 <b>${fmt(r.inv_yoy,1,true)}</b></div>${r.note?`<div style="grid-column:1/3" class="na">${esc(r.note)}</div>`:''}</div>`;
     }
     h+=`<tr class="cx" data-for="${r.key}" style="display:none"><td colspan="5">${mini}<div class="note" style="margin-top:6px;color:var(--accent);cursor:pointer" onclick="goDetail('${r.key}')">전체 상세 ▸</div></td></tr>`;
@@ -1261,7 +1285,7 @@ function goDetail(t){
   renderDetail(t);
   document.getElementById('content').scrollTo(0,0);
 }
-function pairBars(list, curLabel, prevLabel){
+function pairBars(list, curLabel, prevLabel, cur){
   const items=list.filter(r=>r.revenue!=null);
   if(!items.length) return null;
   const rows=items.map(r=>{
@@ -1284,12 +1308,12 @@ function pairBars(list, curLabel, prevLabel){
     <div class="pname" title="${esc(r.name)}">${esc(r.name)}${shCur?` · 비중 ${shCur}%`:''}${shPrev?` <span class="na">(전년 ${shPrev}%)</span>`:''}${r.derived?'<span class="tag2">역산</span>':''}</div>
     <div class="prow"><div class="yr">${curLabel}</div>
       <div class="pw"><div class="pb now" style="width:${wC}%"></div>
-      <div class="pv">${segMoney(r.cur)}${yoy}</div></div></div>`;
+      <div class="pv">${segMoney(r.cur,cur)}${yoy}</div></div></div>`;
     if(r.prev!=null){
       const wP=Math.max(r.prev/mx*100,6);
       h+=`<div class="prow"><div class="yr">${prevLabel}</div>
       <div class="pw"><div class="pb prev" style="width:${wP}%"></div>
-      <div class="pv">${segMoney(r.prev)}</div></div></div>`;
+      <div class="pv">${segMoney(r.prev,cur)}</div></div></div>`;
     }
     if(r.cn!=null) h+=`<div class="cnline">환율 제외 <span class="${r.cn>=0?'pos':'neg'}">${r.cn>=0?'+':''}${r.cn.toFixed(1)}%</span>${r.yoy!=null?` <span class="na">(보고 통화 ${r.yoy>=0?'+':''}${r.yoy.toFixed(1)}%)</span>`:''}</div>`;
     h+=`</div>`;
@@ -1315,9 +1339,31 @@ function compareCard(gx, e){
     <tr><td>재고일수</td><td>${cell(g.dio,false)}</td><td>${cell(k.dio,false)}</td></tr></table></div>
     <div class="note">글로벌 FY ${fy.end?ym(fy.end):'―'} 연결 · 국내 법인 FY ${ym(l.end)} 별도 — 회계기간·기준이 달라 방향 비교용 · 괄호는 국내−글로벌 차이(p)</div></div>`;
 }
+/* v32.9 기준 표기(dart_fetch v3.4): 회계기준·보고서 종류·연결 요약 */
+const STD_SH={'K-IFRS':'K-IFRS','일반기업회계기준':'K-GAAP','중소기업회계기준':'중소기업회계기준'};
+const srcKind=e=>e.route==='api'?'사업보고서':(e.route==='doc'?'감사보고서':'공시 미발견');
+function stdTxt(e){   // 연도별 기준이 바뀌었으면 '일반기업회계기준 → FY24부터 K-IFRS'
+  const ys=(e.years||[]).filter(y=>y.rev!=null&&y.std);
+  if(!ys.length) return (e.years||[]).some(y=>'std' in y)?'회계기준 미확인':'';   // 필드 자체가 없으면(dart v3.4 실행 전) 표시 안 함
+  const a=ys[0].std, b=ys[ys.length-1].std;
+  return a===b?b:`${a} → ${ys.find(y=>y.std===b).fy}부터 ${b}`;
+}
+const ymd=d=>d&&d.length===8?`${d.slice(0,4)}.${d.slice(4,6)}.${d.slice(6)}`:(d||'');
+function cfsHtml(e){   // 별도 기준 화면 아래 연결 요약(사업보고서 경로) 또는 연결감사보고서 안내
+  const cy=(e.cfs&&e.cfs.years)||[];
+  if(cy.length){
+    let h=`<div class="ndate" style="margin-top:12px">🔗 연결 기준 요약 <span class="na" style="font-weight:400">종속회사 포함 · 사업보고서 연결 재무제표 · 원화</span></div>
+      <div class="tblwrap"><table class="nowrap"><tr><th>결산</th><th>매출</th><th>영업이익</th><th>순이익</th><th>별도 대비 매출</th></tr>`;
+    cy.forEach(c=>{ const sy=(e.years||[]).find(y=>y.end===c.end), r=(sy&&sy.rev&&c.rev)?c.rev/sy.rev:null;
+      h+=`<tr><td>FY${c.end.slice(2,4)}</td><td>${c.rev!=null?moneyShort(c.rev,'KRW'):'―'}</td><td>${c.op!=null?moneyShort(c.op,'KRW'):'―'}</td><td>${c.ni!=null?moneyShort(c.ni,'KRW'):'―'}</td><td>${r!=null?r.toFixed(2)+'배':'―'}</td></tr>`; });
+    return h+`</table></div><div class="note">비교 화면(유통사·패션·아이웨어 비교, 기업 목록)은 다른 회사와 기준을 맞추려고 별도 수치를 씀 · 출처 ${esc(e.cfs.source||'')}</div>`;
+  }
+  if(e.cfs_report) return `<div class="note" style="margin-top:8px">🔗 연결감사보고서도 공시됨(${esc(e.cfs_report.name||'')} · ${esc(ymd(e.cfs_report.date))}) — 이 화면은 별도 기준, 연결 수치는 수집하지 않음 · <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${encodeURIComponent(e.cfs_report.rcept)}" target="_blank" rel="noopener" style="color:var(--accent)">DART 원문 ▸</a></div>`;
+  return '';
+}
 function krdCard(e, linked){
   const title=linked?`🇰🇷 국내 법인 실적 — ${esc(e.name)}`:`🇰🇷 법인 실적`;
-  let h=`<div class="card"><h3>${title} <span class="tag">DART 감사보고서</span></h3>`;
+  let h=`<div class="card"><h3>${title} <span class="tag">DART ${srcKind(e)}</span></h3>`;
   if(e.note) h+=`<div class="note" style="margin:0 0 8px">ℹ️ ${esc(e.note)}</div>`;
   const ys=e.years||[];
   const filled=ys.filter(y=>y.rev!=null);
@@ -1342,7 +1388,8 @@ function krdCard(e, linked){
   h+=`</table></div>`;
   const srcs=ys.filter(y=>y.source).map(y=>y.fy+': '+y.source);
   if(srcs.length) h+=`<div class="src">출처: ${esc(srcs.join(' · '))}</div>`;
-  h+=`<div class="note">${fym?fym+' · ':''}별도(개별) 재무제표 · 원화 · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
+  h+=cfsHtml(e);
+  h+=`<div class="note">${fym?fym+' · ':''}별도 재무제표 · ${stdTxt(e)?esc(stdTxt(e))+' · ':''}원화(KRW) · 연간 — 글로벌 실적과 회계기간·기준이 다를 수 있음</div></div>`;
   return h;
 }
 function renderKrdDetail(id){
@@ -1365,7 +1412,9 @@ function renderDetail(t){
   const cur=finCurOf(x);
   let h=`<div class="det-head">${logoImg(x.ticker,true,x.name)}${x.name} <span class="tk">${flagOf(x.ticker)} ${x.ticker}</span> <span class="tag">${esc(x.group||'')}</span></div>`;
   if(x.note) h+=`<div class="note" style="margin:-6px 0 12px">ℹ️ ${esc(x.note)}</div>`;
-  if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · 주가·분기 매출 전년 대비·실적일: Yahoo</div>`;
+  const pxCur=x.currency||'', curDiff=pxCur&&finCur(pxCur)!==cur;
+  if(!x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: Yahoo Finance 연간(연결) · 재무 통화 ${esc(cur||'―')}${pxCur==='GBp'?' · 주가 GBp(펜스, 1/100 파운드)':(curDiff?` · 주가 ${esc(pxCur)}(상장 거래소 통화 — 재무 통화와 다름)`:'')}</div>`;
+  if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · ${x.yahoo_cfs_diff?`주가·실적일: Yahoo · 분기 매출 전년 대비는 야후 연결 기준(종속회사 포함)이라 순위에서 뺌(야후 ${fmt(x.q_yoy_yahoo,1,true)})`:'주가·분기 매출 전년 대비·실적일: Yahoo'}</div>`;
   if(x.group==='글로벌 브랜드') h+=koreaCard(x);
   h+=`<div class="card"><h3>📈 매출 3개년 — 연간 (${cur}) · YoY는 직전 결산연도 대비</h3>`;
   if(x.fy.length){
@@ -1377,9 +1426,9 @@ function renderDetail(t){
       <div class="bar-val">${moneyShort(y.rev,cur)} ${y.rev_yoy!=null?(y.rev_yoy>=0?'+':'')+y.rev_yoy.toFixed(1)+'%':''}</div></div></div>`;
     });
   } else h+=`<div class="na">미확인(소스 조회 실패)</div>`;
-  if(String(x.group||'').startsWith('국내') && cur!=='KRW' && x.fy.length){
+  if(cur!=='KRW' && x.fy.length){   // v32.9 외화 실적은 모두 원화 환산 참고값
     const ly=x.fy[x.fy.length-1], k=krwOf(ly.rev,cur), f=(DATA.fx||{})[cur];
-    if(k!=null) h+=`<div class="note" style="margin-top:6px">원화 환산 ≈ ${moneyShort(k,'KRW')}원 (${ym(ly.end)}결산 · 최근 환율 1 ${esc(cur)} = ${Math.round(f.rate).toLocaleString()}원 기준, 참고용)</div>`;
+    if(k!=null) h+=`<div class="note" style="margin-top:6px">원화 환산 ≈ ${moneyShort(k,'KRW')} (${ym(ly.end)}결산 · 최근 환율 ${fxMul(cur)} ${esc(cur)} = ${wonR(f.rate*fxMul(cur))}원 기준, 참고용)</div>`;
   }
   h+=`</div>`;
   h+=`<div class="card"><h3>💰 수익성 추이 — 연간</h3><table><tr><th>결산월</th><th>매출총이익률</th><th>영업이익률</th></tr>`;
@@ -1418,11 +1467,12 @@ function renderDetail(t){
         <div class="krmeta">${first.date} → ${last.date} · ${pts.length}점</div>
         ${spark(vals,260,26)}`;
     });
-    h+=`<div class="note">첫 기록 대비 변화(▲▼ p) · 값은 야후 파이낸스 스냅샷 그대로(§29-D)</div>`;
+    h+=`<div class="note">첫 기록 대비 변화(▲▼ p) · 값은 야후 파이낸스 스냅샷 그대로(§29-D)${x.yahoo_cfs_diff?' · <b class="neg">야후 연결 기준(종속회사 포함)이라 위 DART 별도 수치와 다름</b>':''}</div>`;
   }
   h+=`</div>`;
 
   const s=segOf(t);
+  const segCur=curCode((s&&s.extract&&s.extract.currency)||cur);   // 공시 추출 통화(없으면 재무 통화)
   let segEntry=(SEGS.items||{})[t];
   if(!segEntry && isKR(t)) segEntry={error:"공시 추출 미대상 — 한국 상장(DART), 향후 확장"};
   const segTag=(segEntry&&/^IR/.test(segEntry.source||''))?'IR 추출':'공시 추출';
@@ -1436,9 +1486,9 @@ function renderDetail(t){
       const tt=regsAll[0];
       const yoy=tt.yoy_pct!=null?` <span class="${tt.yoy_pct>=0?'pos':'neg'}">${tt.yoy_pct>=0?'+':''}${tt.yoy_pct.toFixed(1)}%</span>`:'';
       bars=`<div class="na">지역별 매출액 미공시 — 이 회사는 지역 분해 금액을 공시하지 않습니다(성장률만 공시하는 경우 하단 주석 참조)</div>
-      <div class="kv"><span class="k">분기 총매출</span><span>${segMoney(tt.revenue)}${yoy}</span></div>`;
+      <div class="kv"><span class="k">분기 총매출</span><span>${segMoney(tt.revenue,segCur)}${yoy}</span></div>`;
     } else {
-      bars=pairBars(s.extract.regions,"당기","전년");
+      bars=pairBars(s.extract.regions,"당기","전년",segCur);
     }
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
     const pctOnly=s.extract.regions.filter(r=>r.revenue==null&&(r.yoy_pct!=null||r.cn_yoy_pct!=null)&&!/total|전체|합계|consolidated/i.test(r.name||''));
@@ -1457,7 +1507,7 @@ function renderDetail(t){
   h+=`</div>`;
   h+=`<div class="card"><h3>🛒 채널 분해 (DTC/도매) — ${segPer} <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.channels&&s.extract.channels.length){
-    const bars=pairBars(s.extract.channels,"당기","전년");
+    const bars=pairBars(s.extract.channels,"당기","전년",segCur);
     h+=bars||`<div class="na">미확인(공시에 수치 미기재)</div>`;
   } else {
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 채널 분해 미기재)'}</div>`;
@@ -1469,11 +1519,11 @@ function renderDetail(t){
     <table><tr><th>부문</th><th>매출</th><th>전년</th><th>YoY</th><th>부문이익</th><th>재고</th></tr>`;
     s.extract.sub_segments.forEach(ss=>{
       h+=`<tr><td>${ss.name==="DICK'S"?'딕스(본체)':'풋락커(부문)'}</td>
-      <td>${segMoney(ss.revenue)}</td>
-      <td>${segMoney(ss.prev_revenue)}</td>
+      <td>${segMoney(ss.revenue,segCur)}</td>
+      <td>${segMoney(ss.prev_revenue,segCur)}</td>
       <td>${fmt(ss.yoy_pct,1,true)}</td>
-      <td>${segMoney(ss.segment_profit)}</td>
-      <td>${segMoney(ss.inventory)}</td></tr>`;
+      <td>${segMoney(ss.segment_profit,segCur)}</td>
+      <td>${segMoney(ss.inventory,segCur)}</td></tr>`;
     });
     h+=`</table>`;
     if(s.extract.period) h+=`<div class="note">기준: ${s.extract.period}</div>`;
@@ -1486,7 +1536,7 @@ function renderDetail(t){
   }
 
   h+=`<div class="card"><h3>(부지표) 주가</h3>
-  <div class="kv"><span class="k">현재가</span><span>${x.price!=null?x.price.toFixed(2)+' '+(x.currency||''):'―'}</span></div>
+  <div class="kv"><span class="k">현재가</span><span>${priceTxt(x)}</span></div>
   <div class="kv"><span class="k">52주 고점比</span><span>${fmt(x.off_high_pct,1,true)}</span></div></div>`;
   h+=naverDetailCard(t);
   h+=newsCard(t);
@@ -1782,9 +1832,12 @@ function platformCardHtml(){
       <td>${r.rev!=null?revKrwCell(r.rev,r.cur):'<span class="na">―</span>'}</td><td>${fmt(r.rev_yoy,1,true)}</td>
       <td>${r.op!=null?fmt(r.op,1,true):'<span class="na">―</span>'}</td><td>${fmt(r.inv_yoy,1,true)}</td></tr>`;
   });
-  const usd=(DATA.fx||{}).USD;
-  h+=`</table></div><div class="note" style="margin-top:6px">매출 큰 순 · 쿠팡은 미국 상장 달러 실적을 최근 환율${usd&&usd.rate?'(1달러 = '+Math.round(usd.rate).toLocaleString()+'원)':''}로 환산한 근사치 ·
-    나머지는 DART 감사보고서(별도) 연간 · 플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세</div></div>`;
+  const usd=(DATA.fx||{}).USD, ents=(KRD&&KRD.entities)||[];
+  const kr=rows.filter(r=>!r.listed&&r.rev!=null).map(r=>({r,e:ents.find(z=>'krd:'+z.id===r.key)})).filter(o=>o.e);
+  const api=kr.filter(o=>o.e.route==='api').map(o=>{const c=(o.e.cfs&&o.e.cfs.years)||[]; return `${esc(o.r.name)} = 사업보고서 별도${c.length&&c[c.length-1].rev!=null?'(연결 매출 '+moneyShort(c[c.length-1].rev,'KRW')+' — 상세 참조)':''}`;});
+  const doc=kr.filter(o=>o.e.route==='doc').map(o=>esc(o.r.name.replace(/\(.*\)/,'')));
+  h+=`</table></div><div class="note" style="margin-top:6px">매출 큰 순 · 쿠팡 = 미국 상장 연결(US GAAP) 달러 실적을 최근 환율${usd&&usd.rate?'(1달러 = '+Math.round(usd.rate).toLocaleString()+'원)':''}로 환산한 근사치 ·
+    ${api.join(' · ')}${api.length?' · ':''}${doc.length?doc.join('·')+' = 감사보고서 별도 연간 · ':''}플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세</div></div>`;
   return h;
 }
 /* ── 비교 카드 (v30.4 수입 브랜드 유통사 → v31.1 공통화) — 수치는 공시 그대로, 자사(트렉시)는 위치·강조로만 앞세움 ── */
@@ -1884,13 +1937,14 @@ function cmpCardHtml(cid){
 }
 // ── 유통사 재무 지표(v32) — 그룹 탭 5개 · 지표 칩 · 3개년 표 · 최근 연도 순위 (dart_fetch v3.0 재무상태표·현금흐름표) ──
 const FI_G=[['pl','손익·성장'],['prof','수익성'],['wc','운전자본'],['cash','현금'],['stab','안정성']];
-const fiEok=v=>{const a=Math.abs(v); const t=a>=1e12?(a/1e12).toFixed(2)+'조':(a>=1e10?Math.round(a/1e8).toLocaleString():(a/1e8).toFixed(1))+'억'; return (v<0?'−':'')+t;};
+const fiEok=v=>{const a=Math.abs(v); const t=a>=1e12?(a/1e12).toFixed(2)+'조원':(a>=1e10?Math.round(a/1e8).toLocaleString():(a/1e8).toFixed(1))+'억원'; return (v<0?'−':'')+t;};
 const fiPct=(v,d=1)=>(v<0?'−':'')+Math.abs(v).toFixed(d)+'%';
 const fiDay=v=>Math.round(v)+'일';
 // f(y): 재무상태표·현금흐름 — 없으면 null, 검증 실패면 '확인 필요'
 const fiF=y=>!y||!y.fin?null:(y.fin.chk?'확인 필요':y.fin);
 const fiNd=f=>f.borrow==null||f.cash==null?null:f.borrow+(f.lease||0)-f.cash-(f.stfin||0);
 const fiDa=(y,f)=>y.op==null||f.da==null?null:y.op+f.da;
+const fiNd2=f=>f.debt==null||f.cash==null?null:f.debt-f.cash-(f.stfin||0);   // v32.9 리스·RCPS 제외 순차입금
 // 지표: v=값(문자열이면 표시만·순위 제외), c=순위·중앙값 비교값(없으면 v), s=보조줄, ref=참고(순위 없음), nr=마이너스가 좋음
 const FI_M={
   rev:{g:'pl',nm:'매출',hi:1,fmt:fiEok,v:y=>y.rev,f:'매출액',dir:'클수록 규모 큼',why:'브랜드 본사 협상력·물류 단가를 좌우하는 기본 체급'},
@@ -1917,6 +1971,11 @@ const FI_M={
        f:'OCF ÷ 영업이익',dir:'100% 이상이 좋음',why:'영업이익이 현금으로 들어왔나. 계속 100% 아래면 재고·채권에 이익이 묶임. 재고가 크게 늘거나 준 해엔 수백 %로 흔들려 3년 흐름으로 봄'},
   nd:{g:'stab',u:['borrow','lease','cash','stfin','equity'],nm:'순부채',hi:0,nr:1,bs:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd(f);},
       c:y=>y.fin.equity>0?fiNd(y.fin)/y.fin.equity*100:null,cn:'순자산 대비 %',f:'차입금·사채 + RCPS 부채 + 리스부채 − 현금·단기금융상품',dir:'낮을수록 좋음 · 마이너스 = 순현금',why:'재고 선매입을 빚으로 하는 정도. 금리 오르면 바로 이익을 깎음'},
+  // v32.9 회계기준이 섞인 비교군용 — K-IFRS(리스부채·RCPS 부채)와 일반기업회계기준(운용리스 부채 없음·RCPS 대개 자본)을 같은 잣대로. alt=순부채와 겹쳐 요약 점수(중앙값보다 나은 지표 수)에선 뺌
+  nd2:{g:'stab',u:['borrow','cash','stfin','equity'],nm:'순차입금(리스·RCPS 제외)',hi:0,nr:1,bs:1,alt:1,fmt:fiEok,v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f; return fiNd2(f);},
+       c:y=>{const f=y.fin, eq=(f.equity||0)+(f.rcps||0), n=fiNd2(f); return n!=null&&eq>0?n/eq*100:null;},cn:'순자산(RCPS 포함) 대비 %',
+       f:'차입금·사채 − 현금·단기금융상품 (리스부채·RCPS 부채 제외, RCPS는 자본으로 봄)',dir:'낮을수록 좋음 · 마이너스 = 순현금',
+       why:'회계기준이 다른 회사를 같은 잣대로 비교 — K-IFRS는 리스부채·RCPS를 부채로 잡아 순부채가 커 보임'},
   ndx:{g:'stab',u:['borrow','lease','cash','stfin','da'],nm:'순부채/EBITDA',hi:0,nr:1,bs:1,fmt:v=>v<0?'순현금':v.toFixed(1)+'배',v:y=>{const f=fiF(y); if(f==null||typeof f==='string') return f;
         const n=fiNd(f), e=fiDa(y,f); if(n==null||e==null) return null; return e>0?n/e:'EBITDA 적자';},
        f:'순부채 ÷ (영업이익 + 감가상각비)',dir:'낮을수록 좋음 · 3배 넘으면 주의',why:'번 돈으로 빚을 몇 년에 갚나. 은행 여신 심사에서 보는 기준'},
@@ -1933,7 +1992,7 @@ function fiRows(cid='peer'){
   const c=CMP[cid], ents=(KRD&&KRD.entities)||[];
   return c.keys.map(k=>{ const e=ents.find(x=>'krd:'+x.id===k); if(!e) return null;
     const by={}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{by[+y.end.slice(0,4)]=y;});
-    return {key:k,name:e.name,self:k===c.self,by};
+    return {key:k,name:e.name,self:k===c.self,by,std:e.acct_std||null};
   }).filter(Boolean);
 }
 function fiVal(r,k,fy){ // {v,c,s} 또는 {t:'사유'}
@@ -1960,7 +2019,7 @@ const fiHas=cid=>fiRows(cid).some(r=>Object.values(r.by).some(y=>y.fin));   // �
 function fiScore(){   // 더보기 메뉴 줄: 자사가 최근 연도 비교군 중앙값보다 나은 지표 수
   const rows=fiRows(), me=rows.find(r=>r.self); if(!me) return null;
   const L=Math.max(...rows.flatMap(r=>Object.keys(r.by).map(Number)));
-  const st=FI_K.filter(k=>!FI_M[k].ref).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
+  const st=FI_K.filter(k=>!FI_M[k].ref&&!FI_M[k].alt).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
   return {L, nb:has.filter(t=>t.better).length, na:has.length, n:rows.length};
 }
 function finCardHtml(cid='peer'){
@@ -1970,7 +2029,7 @@ function finCardHtml(cid='peer'){
   const me=rows.find(r=>r.self), m=FI_M[FI_MET], cls=v=>v<0?(m.nr?'pos':'neg'):'';
   let h=`<div class="card" id="${c.id}">`;   // 제목은 더보기 화면 머리글(v32.4)
   // 자사 요약: 최근 연도 중앙값보다 나은 지표 수 · 그룹별
-  const cmpK=FI_K.filter(k=>!FI_M[k].ref), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
+  const cmpK=FI_K.filter(k=>!FI_M[k].ref&&!FI_M[k].alt), st=Object.fromEntries(cmpK.map(k=>[k,fiStat(rows,k,L)]));
   if(me){
     const has=k=>st[k].me.v!=null&&st[k].md!=null;
     h+=`<div class="nv-sum"><div class="fi-top"><b>${esc(c.selfName)}</b><span class="na">FY${String(L).slice(2)} · ${rows.length}곳 비교</span><span style="margin-left:auto">중앙값보다 나은 지표 <b class="fi-big">${cmpK.filter(k=>st[k].better).length}</b><span class="na">/${cmpK.filter(has).length}</span></span></div><div class="fi-gsum">`;
@@ -1983,6 +2042,10 @@ function finCardHtml(cid='peer'){
   // 선택 지표 요약 3칸
   const s=st[FI_MET]||fiStat(rows,FI_MET,L), s0=fiStat(rows,FI_MET,L-1), mv=s.me, m0=me?fiVal(me,FI_MET,L-1):{t:'―'};
   h+=`<div class="fi-mhead"><b>${esc(m.nm)}</b><span class="na">${esc(m.dir)}</span></div>`;
+  // v32.9 회계기준이 섞인 비교군 — 리스·RCPS 처리 차이가 큰 지표에서 안내
+  const nI=rows.filter(r=>r.std==='K-IFRS').length, nG=rows.filter(r=>r.std==='일반기업회계기준').length, nS=rows.filter(r=>r.std==='중소기업회계기준').length, nU=rows.filter(r=>!r.std).length;
+  if(nI&&(nG||nS||nU)&&['nd','ndx','dr','ocf','fcf','conv','roe'].includes(FI_MET))
+    h+=`<div class="fi-warn">⚠ 회계기준 혼재 — K-IFRS ${nI}곳 · K-GAAP ${nG}곳${nS?` · 중소기업회계기준 ${nS}곳`:''}${nU?` · 미확인 ${nU}곳`:''}. K-IFRS는 리스부채·RCPS를 부채로 잡고 임차료가 감가상각비·이자로 나뉘어, 이 지표가 회사마다 다른 잣대로 계산됨<br><button type="button" class="chip" onclick="fiPick('stab','nd2','${cid}')">순차입금(리스·RCPS 제외)로 비교 ▸</button></div>`;
   if(me){
     const tr=(mv.c!=null&&m0.c!=null&&!m.ref)?(mv.c===m0.c?'변화 없음':((m.hi?mv.c>m0.c:mv.c<m0.c)?'<span class="pos">개선</span>':'<span class="neg">악화</span>')):'<span class="na">―</span>';
     h+=`<div class="fi-mbox"><div><span class="l">${esc(c.selfName)} FY${String(L).slice(2)}</span><span class="v ${mv.v!=null?cls(mv.v):'na'}">${mv.v!=null?m.fmt(mv.v):esc(mv.t)}</span><span class="s">${m.ref?'참고 지표':s.rank?`${s.rank}위/${s.n}`:'순위 없음'}${s.better?' · <b style="color:var(--accent)">중앙값↑</b>':''}</span></div>
@@ -1994,7 +2057,7 @@ function finCardHtml(cid='peer'){
   const cp=v=>fiPct(v,FI_MET==='nd'?0:1);
   h+=`<div class="tblwrap"><table class="fi-tbl"><tr><th>기업</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   order.forEach(r=>{
-    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}</td>`;
+    h+=`<tr class="${r.self?'me':''}" style="cursor:pointer" onclick="goDetail('${r.key}')"><td title="${esc(r.name)}">${logoImg(r.key,false,r.name)}${esc(r.name)}${r.std?`<span class="std-b ${r.std==='K-IFRS'?'ifrs':'gaap'}">${esc(STD_SH[r.std]||r.std)}</span>`:''}</td>`;
     fys.forEach(f=>{ const x=fiVal(r,FI_MET,f);
       if(x.v==null){ h+=`<td class="na">${esc(x.t)}</td>`; return; }
       let ex='';
@@ -2028,7 +2091,7 @@ function fiDetailCard(e){
   if(!(e.years||[]).some(y=>y.fin)) return '';
   const r={key:'krd:'+e.id,name:e.name,by:{}}; (e.years||[]).filter(y=>y.rev!=null&&y.end).forEach(y=>{r.by[+y.end.slice(0,4)]=y;});
   const fys=Object.keys(r.by).map(Number).sort().slice(-3);
-  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART(별도)</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
+  let h=`<div class="card"><h3>📊 재무 지표 3개년 — DART 별도${e.acct_std?' · '+esc(STD_SH[e.acct_std]||e.acct_std):''}</h3><div class="tblwrap"><table class="fi-tbl"><tr><th>지표</th>${fys.map(f=>`<th>FY${String(f).slice(2)}</th>`).join('')}</tr>`;
   FI_G.forEach(([g,gn])=>{
     h+=`<tr class="fi-gh"><td colspan="${fys.length+1}">${gn}</td></tr>`;
     FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
@@ -2102,7 +2165,7 @@ function buildKR(){
 /* ── 더보기 (v31): 메뉴 · 환율 · 해외직구 · 수집 상태 ── */
 let MORE_VIEW=null, CB_CAT='fashion';
 const FX_ALERT=['JPY','EUR','USD'];
-const FX_LBL={JPY:'🇯🇵 엔 (100엔)',EUR:'🇪🇺 유로',USD:'🇺🇸 달러',GBP:'🇬🇧 파운드',BRL:'🇧🇷 브라질 헤알'};
+const FX_LBL={JPY:'🇯🇵 엔 (100엔)',EUR:'🇪🇺 유로',USD:'🇺🇸 달러',GBP:'🇬🇧 파운드',BRL:'🇧🇷 브라질 헤알',CHF:'🇨🇭 스위스 프랑',CNY:'🇨🇳 위안',HKD:'🇭🇰 홍콩 달러',SAR:'🇸🇦 사우디 리얄'};
 const FX_SH={JPY:'엔',EUR:'유로',USD:'달러'};
 const fxMul=c=>c==='JPY'?100:1;
 const wonR=v=>Math.round(v).toLocaleString('ko-KR');
@@ -2338,7 +2401,7 @@ buildHome(); buildCoChips(); buildCo(); buildCal(); buildNewsChips(); buildNews(
 
 
 def merge_kr_listed(data):
-    """국내 상장사 재무를 DART 연결 재무제표로 교체 (야후는 주가·분기YoY·실적일 유지)"""
+    """국내 상장사 재무를 DART 전체재무제표(연결 우선, 종목별 fs)로 교체 (야후는 주가·분기YoY·실적일 유지)"""
     if not os.path.exists("docs/kr_listed_fin.json"):
         return 0
     try:
@@ -2352,6 +2415,16 @@ def merge_kr_listed(data):
         if not e or not e.get("years"):
             continue
         ys = e["years"]
+        # v32.9 야후(연결) 연간 매출이 DART 값과 20% 넘게 다르면 기준이 다른 것(예: LS네트웍스 지정 별도 vs 야후 LS증권 포함 연결)
+        # → 야후 분기 매출 전년 대비는 순위·목록에서 빼고 상세에만 '야후 연결' 표기와 함께 보임
+        # 가장 최근 공통 연도만 비교 — 옛 연도는 DART 재작성(중단영업 등) 값이라 야후와 다를 수 있음(신세계인터내셔날 FY23)
+        dmap = {(y.get("end") or "")[:4]: y.get("rev") for y in ys}
+        diff = [(y["end"], abs(y["rev"] / dmap[(y.get("end") or "")[:4]] - 1)) for y in (item.get("fy") or [])
+                if y.get("rev") and y.get("end") and dmap.get(y["end"][:4])]
+        if diff and max(diff)[1] > 0.2:
+            item["yahoo_cfs_diff"] = True
+            item["q_yoy_yahoo"] = item.get("latest_q_yoy")
+            item["latest_q_yoy"] = None
         fy = []
         for i, y in enumerate(ys):
             rev, cogs, op = y.get("rev"), y.get("cogs"), y.get("op")
@@ -2372,7 +2445,10 @@ def merge_kr_listed(data):
         item["inv_yoy"] = ((last["inv"] / prev["inv"] - 1) * 100) if (prev and last.get("inv") and prev.get("inv")) else None
         item["inv_sales_pct"] = (last["inv"] / last["rev"] * 100) if (last.get("inv") and last.get("rev")) else None
         item["currency"] = "KRW"
-        item["fin_source"] = "DART 연결 재무제표 · " + (e.get("source") or "")
+        item["fin_fs"] = e.get("fs") or ("별도" if "(별도)" in (e.get("source") or "") else "연결")
+        item["acct_std"] = e.get("std")
+        # v32.9 '연결' 고정 문구 대신 실제 기준(source의 연결/별도) + 회계기준 + 예외 사유
+        item["fin_source"] = " · ".join(x for x in ["DART " + (e.get("source") or "").strip(), e.get("std"), e.get("fs_note")] if x)
         n += 1
     return n
 
@@ -2400,7 +2476,7 @@ def _ts_iso(v):
 def collect_status():
     out = []
     for fn, label, wf, cad, limit in STATUS_SOURCES:
-        ts, date_only = None, False
+        ts, date_only, failed = None, False, 0
         p = os.path.join("docs", fn)
         if os.path.exists(p):
             try:
@@ -2409,10 +2485,11 @@ def collect_status():
                 raw = str(d.get("generated_at") or d.get("updated_at") or "")
                 ts = _ts_iso(raw)
                 date_only = not re.search(r"\d{2}:\d{2}", raw)
+                failed = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
             except Exception:
                 pass
         out.append({"file": fn, "label": label, "wf": wf, "cadence": cad, "limit": limit,
-                    "ts": ts, "date_only": date_only})
+                    "ts": ts, "date_only": date_only, "failed": failed})
     return {"sources": out}
 
 

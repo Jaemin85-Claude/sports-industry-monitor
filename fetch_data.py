@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.11: 환율에 스위스 프랑(CHF)·위안(CNY)·홍콩 달러(HKD)·사우디 리얄(SAR) 추가 — 기업 목록·상세의 외화 매출을 모두
+      원화로 환산해 보이기 위함(대표 요청 2026-10-09, 온·안타·리닝·탑스포츠·비바굿즈·세노미). 값만 표시(1% 칸 알림 없음).
+      리얄은 달러 고정(1달러 = 3.75리얄)이라 원화·달러 쌍이 모두 비면 달러 환율 ÷ 3.75로 계산
 v4.10: 글로벌 아이웨어 2곳 추가 — 에실로룩소티카(EL.PA)·사필로(SFL.MI). 수입 후보 글로벌 아이웨어 브랜드의
       본사 실적·재고를 국내 아이웨어(젠틀몬스터·블루엘리펀트 등, dart_fetch v2.8)와 함께 보기 위함(대표 요청)
 v4.9: 환율 1% 칸 알림 — 엔·유로·달러는 2년 일별 환율로 1년 이동평균 대비 %를 계산하고, 1% 단위 선
@@ -121,7 +124,13 @@ FX = {
     "USD": ["달러", "USDKRW=X"],
     "BRL": ["브라질 헤알", "BRLKRW=X"],
     "JPY": ["엔", "JPYKRW=X"],
+    # v4.11 원화 환산용(값만 표시)
+    "CHF": ["스위스 프랑", "CHFKRW=X"],
+    "CNY": ["위안", "CNYKRW=X"],
+    "HKD": ["홍콩 달러", "HKDKRW=X"],
+    "SAR": ["사우디 리얄", "SARKRW=X"],
 }
+SAR_PEG = 3.75   # 1달러 = 3.75리얄(고정)
 # 1% 칸 알림 대상(v4.9) — 파운드·헤알은 값만 표시
 FX_ALERT = ["JPY", "EUR", "USD"]
 FX_ALERT_LABEL = {"JPY": "엔(100엔)", "EUR": "유로", "USD": "달러"}
@@ -411,6 +420,12 @@ def fetch_fx():
                              f"{'아래로' if al[-1]['dir'] == 'dn' else '위로'}" if al else ""))
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
+    if "SAR" not in out and (out.get("USD") or {}).get("rate"):
+        u = out["USD"]
+        out["SAR"] = {"name": FX["SAR"][0], "rate": round(u["rate"] / SAR_PEG, 4),
+                      "yago": round(u["yago"] / SAR_PEG, 4) if u.get("yago") else None,
+                      "chg_pct": u.get("chg_pct"), "asof": u.get("asof"), "via": f"달러 고정 {SAR_PEG}"}
+        print(f"  환율 SAR: {out['SAR']['rate']:,.2f}원 · 달러 고정 {SAR_PEG}으로 계산", flush=True)
     return out
 
 
