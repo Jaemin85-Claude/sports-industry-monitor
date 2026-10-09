@@ -344,6 +344,7 @@ def list_filing_docs(cik, nod, primary):
     base = f"/Archives/edgar/data/{cik}/{nod}/"
     names = []
     trouble = []   # v10: SEC 일시 오류(재시도 후에도) — 목록을 못 얻으면 '오류로 건너뜀'으로 셈
+    listed_ok = False   # 출처 하나라도 정상 응답 = 첨부 없음이 확인된 것(오류로 건너뜀 아님)
 
     def _add(n, size=0):
         if (n and n != primary and not _bad_name(n)
@@ -353,6 +354,7 @@ def list_filing_docs(cik, nod, primary):
     # 1) index.json — 대체 경로가 둘 있어 재시도 없이 한 번만(v10: 5xx마다 4분 기다리던 것 제거)
     try:
         idx = sec_get(f"https://www.sec.gov{base}index.json", retry=False)
+        listed_ok = True
         for it in idx.get("directory", {}).get("item", []):
             n = it["name"]
             if n.lower().endswith((".htm", ".html")):
@@ -367,10 +369,11 @@ def list_filing_docs(cik, nod, primary):
         for idx_url in (f"https://www.sec.gov{base}{acc_dash}-index.htm",
                         f"https://www.sec.gov{base}{acc_dash}-index.html"):
             try:
-                page = sec_get(idx_url, is_json=False, retry=idx_url.endswith(".htm"))
+                page = sec_get(idx_url, is_json=False, retry=idx_url.endswith(".htm") and not listed_ok)
             except Exception as e:
                 trouble.append(_is_transient(e))
                 continue
+            listed_ok = True
             for href in re.findall(r'href=[\"\']([^\"\']+)[\"\']', page, re.I):
                 _add(_href_to_name(href, base))
             if names:
@@ -379,14 +382,15 @@ def list_filing_docs(cik, nod, primary):
     # 3) 디렉터리 목록 — 앞에서 일시 오류로 이미 기다렸으면 한 번만
     if not names:
         try:
-            listing = sec_get(f"https://www.sec.gov{base}", is_json=False, retry=not any(trouble))
+            listing = sec_get(f"https://www.sec.gov{base}", is_json=False, retry=not (any(trouble) or listed_ok))
+            listed_ok = True
             for href in re.findall(r'href=[\"\']([^\"\']+)[\"\']', listing, re.I):
                 _add(_href_to_name(href, base))
         except Exception as e:
             trouble.append(_is_transient(e))
             print(f"  [디렉터리 목록 실패] {str(e)[:120]}")
 
-    if not names and any(trouble):
+    if not names and any(trouble) and not listed_ok:   # 모든 출처가 일시 오류일 때만 '오류로 건너뜀'
         _RETRY["sec"]["skipped"] += 1
     return names
 

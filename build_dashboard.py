@@ -386,7 +386,7 @@ tr.co{cursor:pointer}tr.co td:first-child{font-weight:600;max-width:150px;overfl
 tr.co td:first-child .lg{vertical-align:-4px}
 .nm-sub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin-left:24px;white-space:normal;line-height:1.5}
 .nm-sub .wait-b,.nm-sub .stl{margin-left:0}
-@media(max-width:400px){tr.co td:first-child{max-width:132px}}
+@media(max-width:400px){tr.co td:first-child{max-width:132px;white-space:normal;word-break:keep-all;overflow-wrap:anywhere}}   /* v32.12 긴 이름은 줄바꿈 */
 tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:var(--fs-sm)}
 .mini b{font-weight:600}
@@ -2288,7 +2288,8 @@ function fiDetailCard(e){
   FI_G.forEach(([g,gn])=>{
     h+=`<tr class="fi-gh"><td colspan="${fys.length+1}">${gn}</td></tr>`;
     FI_K.filter(k=>FI_M[k].g===g).forEach(k=>{ const m=FI_M[k];
-      h+=`<tr><td>${esc(m.nm)}</td>${fys.map(f=>{const x=fiVal(r,k,f); return x.v==null?`<td class="na">${esc(x.t)}</td>`:`<td class="${x.v<0?(m.nr?'pos':'neg'):''}">${m.fmt(x.v)}</td>`;}).join('')}</tr>`; });
+      const ns=nmSplit(m.nm);   // v32.12 '순차입금(리스·RCPS 제외)' → 2줄(조건이 잘려 안 보이던 문제)
+      h+=`<tr><td>${esc(ns.main)}${ns.brand?`<span class="fi-nsub" style="margin-left:0">${esc(ns.brand)}</span>`:''}</td>${fys.map(f=>{const x=fiVal(r,k,f); return x.v==null?`<td class="na">${esc(x.t)}</td>`:`<td class="${x.v<0?(m.nr?'pos':'neg'):''}">${m.fmt(x.v)}</td>`;}).join('')}</tr>`; });
   });
   const FI_NM={assets:'자산',liab:'부채',equity:'자본',cash:'현금',stfin:'단기금융상품',ar:'매출채권',ap:'매입채무',borrow:'차입금',lease:'리스부채',inv:'재고',ocf:'OCF',capex:'CAPEX',da:'감가상각비'};
   const chk=(e.years||[]).filter(y=>y.fin&&(y.fin.chk||(y.fin.bad||[]).length));
@@ -2724,12 +2725,16 @@ def _partial(fn, d):
         bad = [t for t in failed if t not in kr]
         # 사유 3종(extract_segments v10): 실패해 이전 값(kept_failed) · 더 새 공시를 실적 자료 아님으로 건너뜀(안내) · 새 공시에 분해 없어 이전 실적 유지
         k_fail = [t for t, v in kr.items() if v.get("kept_failed")]
-        k_note = [t for t, v in kr.items() if not v.get("kept_failed") and "건너뜀" in str(v.get("kept_reason"))]
-        k_keep = [t for t in kr if t not in k_fail and t not in k_note]
+        rs = {t: str(v.get("kept_reason")) for t, v in kr.items() if t not in k_fail}
+        k_note = [t for t, r in rs.items() if re.search(r"건너뜀|투자자의 날|프로포마", r)]
+        k_unread = [t for t, r in rs.items() if t not in k_note and "못 읽음" in r]
+        k_keep = [t for t in rs if t not in k_note and t not in k_unread]
         if k_fail:
             notes.append("실패·이전 추출 유지 " + "·".join(k_fail))
         if k_note:
-            notes.append("최신 공시 건너뜀(투자자의 날 등, 확인 필요) " + "·".join(k_note))
+            notes.append("최신 공시 건너뜀(투자자의 날·프로포마 등) " + "·".join(k_note))
+        if k_unread:
+            notes.append("최신 공시 못 읽음·이전 추출 유지 " + "·".join(k_unread))
         if k_keep:
             notes.append("새 공시에 분해 없음·이전 추출 유지 " + "·".join(k_keep))
         if bad:
