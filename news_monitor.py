@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.7: 네이버 뉴스 검색 제거(대표 지시 2026-10-09) — 네이버 검색 API 특약 개정(2026-09 시행)이 검색 결과를 AI에 넣는 것을
+     금지해, 국내 유통사 8곳도 구글 뉴스 RSS만 사용. 네이버 키는 데이터랩(검색어 트렌드, naver_trend.py)에만 씀
 v2.6: ① 국내 유통사 8곳은 네이버 뉴스 검색(NAVER API HUB, 검색어 트렌드와 같은 키)도 함께 수집 — 구글 뉴스에 작은 국내 회사 기사가
      적어서(10/6 신규 2건). 권한·키 오류면 [WARN] 후 구글만 사용. ② 산업 '통관·상표권'(customs) 검색어 5개 + 선별 기준
      (병행수입 판례·관세청 단속·상표권 분쟁·직구 통관 규정은 포함). ③ 같은 사건 중복 방지 — 최근 3일 선별 요약을 함께 보내
@@ -29,8 +31,6 @@ import re
 import json
 import time
 import hashlib
-import html
-import email.utils
 import datetime
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -181,21 +181,6 @@ INDUSTRY = {
     ]],
 }
 
-# ③ 네이버 뉴스 검색(v2.6) — 구글 뉴스에 기사가 적은 국내 유통사만. slug: [검색어…]
-NAVER_URL = "https://naverapihub.apigw.ntruss.com/search/v1/news"
-NAVER_KEY_ID = os.environ.get("NCP_APIGW_API_KEY_ID", "")
-NAVER_KEY = os.environ.get("NCP_APIGW_API_KEY", "")
-NAVER_NEWS = {
-    "daelim_corp": ["대림코퍼레이션"],
-    "rexmond":     ["오케이몰", "렉스몬드"],
-    "bazig":       ["베이지그"],
-    "creed":       ["크리드네트웍스"],
-    "hana_int":    ["하하몰", "한아아이앤티"],
-    "t1global":    ["티원글로벌"],
-    "bbluein":     ["비블루아이앤"],
-    "starintl":    ["스타인터내셔널"],
-}
-
 MAX_PER_QUERY = 10
 KEEP_DAYS = 14
 NEWS_PATH = "docs/news.json"
@@ -261,32 +246,6 @@ def title_key(title):
     return re.sub(r"[^0-9a-z가-힣]", "", t.lower())[:40]
 
 
-def fetch_naver_news(query, days=3):
-    """네이버 뉴스 검색(최신순 10건) → 최근 N일만. 권한·키 오류는 PermissionError로 올림"""
-    r = requests.get(NAVER_URL, params={"query": query, "display": 10, "sort": "date"},
-                     headers={"X-NCP-APIGW-API-KEY-ID": NAVER_KEY_ID, "X-NCP-APIGW-API-KEY": NAVER_KEY},
-                     timeout=20)
-    if r.status_code in (401, 403):
-        raise PermissionError(f"{r.status_code}: {r.text[:150]}")
-    r.raise_for_status()
-    cutoff = datetime.datetime.now(KST) - datetime.timedelta(days=days)
-    items = []
-    for it in r.json().get("items", []):
-        try:
-            pd = email.utils.parsedate_to_datetime(it.get("pubDate", ""))
-        except Exception:
-            pd = None
-        if pd is None or pd < cutoff:
-            continue
-        title = html.unescape(re.sub(r"<[^>]+>", "", it.get("title", ""))).strip()
-        link = it.get("originallink") or it.get("link") or ""
-        src = urllib.parse.urlparse(link).netloc.replace("www.", "")
-        if title and link:
-            items.append({"title": title, "link": link, "source": src,
-                          "pubDate": pd.astimezone(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")})
-    return items
-
-
 def collect(known_titles=frozenset()):
     """수집 → {id: {…, scope, key}} (scope=brand/industry, key=slug/category).
     known_titles: 보관 중인 기사 제목 키 — 같은 제목은 출처가 달라도 다시 넣지 않음"""
@@ -312,24 +271,6 @@ def collect(known_titles=frozenset()):
             for it in fetch_rss(q):
                 add(it, scope="industry", key=cat, label=label, group=cat)
             time.sleep(0.7)
-    if NAVER_KEY_ID and NAVER_KEY:
-        got = calls = 0
-        try:
-            for slug, kws in NAVER_NEWS.items():
-                name, grp, _ = BRANDS[slug]
-                for kw in kws:
-                    calls += 1
-                    for it in fetch_naver_news(kw):
-                        got += add(it, scope="brand", key=slug, label=name, group=grp)
-                    time.sleep(0.2)
-            print(f"네이버 뉴스(국내 유통사): 검색 {calls}회 · 추가 {got}건", flush=True)
-        except PermissionError as e:
-            print(f"[WARN] 네이버 뉴스 검색 권한 없음({e}) — NCP API HUB 앱에서 '검색' API 사용 설정 필요. 구글 뉴스만 사용",
-                  flush=True)
-        except Exception as e:
-            print(f"[WARN] 네이버 뉴스 검색 실패: {str(e)[:150]} — 구글 뉴스만 사용", flush=True)
-    else:
-        print("[WARN] 네이버 키 없음 — 국내 유통사 네이버 뉴스 검색 건너뜀", flush=True)
     print(f"수집 {len(raw)}건 (중복 제거 후)")
     return raw
 
