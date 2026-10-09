@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.12: (대표 지시 2026-10-09) 분기 매출 증감은 최신 분기와 350~380일 전 분기를 짝지어 비교(푸마가 작년 1분기와 비교되던 문제),
+      짝이 없으면 비움. 매출·총이익·영업이익은 연도마다 값 단위로 대체 항목을 쓰고, 그래도 비면 같은 결산일 이전 값(푸마 영업이익률).
+      종목·환율 수집이 실패하면 이전 data.json 값을 이어 쓰고 stale_since·최상위 fetch_status 기록, 절반 넘게 실패하거나
+      감시 통화가 실패하면 soft_fail.txt에 표시. 블랙야크아이앤씨는 처음부터 .KQ로, 리얄은 직접 조회 없이 달러 ÷ 3.75(404 로그 소음 제거)
 v4.11: 환율에 스위스 프랑(CHF)·위안(CNY)·홍콩 달러(HKD)·사우디 리얄(SAR) 추가 — 기업 목록·상세의 외화 매출을 모두
       원화로 환산해 보이기 위함(대표 요청 2026-10-09, 온·안타·리닝·탑스포츠·비바굿즈·세노미). 값만 표시(1% 칸 알림 없음).
       리얄은 달러 고정(1달러 = 3.75리얄)이라 원화·달러 쌍이 모두 비면 달러 환율 ÷ 3.75로 계산
@@ -113,8 +117,12 @@ WATCH = {
 }
 GROUP_ORDER = ["글로벌 브랜드", "글로벌 유통", "국내 브랜드",
                "국내 패션대기업", "국내 OEM", "국내 유통"]
+# 야후 조회 티커 대체표(v4.12) — 항목 키(history·dart_fetch가 씀)는 그대로 두고 조회만 바꿈.
+#   블랙야크아이앤씨는 코스닥 확인됨 → .KS 404·재시도 로그가 매일 찍히던 것 제거
+YF_ALIAS = {"478560.KS": "478560.KQ"}
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
+SCRIPT = "fetch_data"
 
 # 환율 (소싱 지도: 현지 통화 1단위 = 원화 몇 원) — 코드: [표시명, 야후 티커]
 #   중동(디르함·리얄)은 달러에 고정이라 달러로 대신함
@@ -128,7 +136,7 @@ FX = {
     "CHF": ["스위스 프랑", "CHFKRW=X"],
     "CNY": ["위안", "CNYKRW=X"],
     "HKD": ["홍콩 달러", "HKDKRW=X"],
-    "SAR": ["사우디 리얄", "SARKRW=X"],
+    "SAR": ["사우디 리얄", None],    # v4.12 직접 조회 안 함(SARKRW=X 매일 404) — 달러 환율 ÷ 3.75
 }
 SAR_PEG = 3.75   # 1달러 = 3.75리얄(고정)
 # 1% 칸 알림 대상(v4.9) — 파운드·헤알은 값만 표시
@@ -159,6 +167,37 @@ def _num(v):
         return None
 
 
+def _vals(df, names):
+    """v4.12: 열(연도·분기)마다 names 순서로 처음 있는 값 — 행 단위가 아니라 값 단위 대체
+    (예: 'Operating Income' 행은 있어도 그해 값이 비면 같은 열의 'Total Operating Income As Reported').
+    반환: {열: 값 또는 None}, 해당 행이 하나도 없으면 None"""
+    if df is None or getattr(df, "empty", True):
+        return None
+    rows = [df.loc[n] for n in names if n in df.index]
+    if not rows:
+        return None
+    out = {}
+    for c in df.columns:
+        v = None
+        for r in rows:
+            v = _num(r.get(c))
+            if v is not None:
+                break
+        out[c] = v
+    return out
+
+
+def _day(c):
+    return datetime.date.fromisoformat(str(c)[:10])
+
+
+def soft_fail(msg):
+    """심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    print(f"실패 표시: {msg}", flush=True)
+    with open("soft_fail.txt", "a", encoding="utf-8") as f:
+        f.write(f"{SCRIPT}: {msg}\n")
+
+
 def fetch_one(ticker, name, group, note=None):
     d = {"ticker": ticker, "name": name, "group": group, "note": note,
          "currency": None, "fin_currency": None, "fy": [],
@@ -172,19 +211,19 @@ def fetch_one(ticker, name, group, note=None):
 
         # ── 연간 손익 3개년 ──
         inc = tk.income_stmt
-        rev_r = _row(inc, ["Total Revenue", "Operating Revenue"])
-        gp_r = _row(inc, ["Gross Profit"])
-        op_r = _row(inc, ["Operating Income",
-                          "Total Operating Income As Reported"])
-        if rev_r is not None:
+        rev_v = _vals(inc, ["Total Revenue", "Operating Revenue"])
+        gp_v = _vals(inc, ["Gross Profit"]) or {}
+        op_v = _vals(inc, ["Operating Income",
+                           "Total Operating Income As Reported"]) or {}
+        if rev_v is not None:
             cols = sorted(inc.columns)
             years = []
             for c in cols:
                 years.append({
                     "end": str(c)[:10],
-                    "rev": _num(rev_r.get(c)),
-                    "gp": _num(gp_r.get(c)) if gp_r is not None else None,
-                    "op": _num(op_r.get(c)) if op_r is not None else None,
+                    "rev": rev_v.get(c),
+                    "gp": gp_v.get(c),
+                    "op": op_v.get(c),
                 })
             for i, y in enumerate(years):
                 prev = years[i - 1]["rev"] if i > 0 else None
@@ -194,16 +233,20 @@ def fetch_one(ticker, name, group, note=None):
             d["fy"] = years[-3:]
 
         # ── 최근 분기 매출 YoY (기준일 포함) ──
+        # v4.12: 열 순서(-1 vs -5)가 아니라 날짜로 짝지음 — 매출 값이 있는 최신 분기와 350~380일 전 분기
+        #   (52/53주 회계연도 364·371일 포함). 야후 분기 열이 한 칸 빠지면 엉뚱한 분기와 비교되던 문제(푸마)
         qinc = tk.quarterly_income_stmt
-        q_rev = _row(qinc, ["Total Revenue", "Operating Revenue"])
-        if q_rev is not None:
-            qcols = sorted(qinc.columns)
-            if len(qcols) >= 5:
-                cur = _num(q_rev.get(qcols[-1]))
-                prv = _num(q_rev.get(qcols[-5]))
-                d["q_end"] = str(qcols[-1])[:10]
-                d["q_prev_end"] = str(qcols[-5])[:10]
-                if cur and prv:
+        q_rev = _vals(qinc, ["Total Revenue", "Operating Revenue"])
+        if q_rev:
+            qs = sorted((_day(c), v) for c, v in q_rev.items() if v)
+            if qs:
+                q_end, cur = qs[-1]
+                d["q_end"] = q_end.isoformat()
+                pair = [(abs((q_end - e).days - 365), e, v) for e, v in qs[:-1]
+                        if 350 <= (q_end - e).days <= 380]
+                if pair:
+                    _, pe, prv = min(pair)
+                    d["q_prev_end"] = pe.isoformat()
                     d["latest_q_yoy"] = (cur / prv - 1) * 100
 
         # ── 재고 (기준일 포함) ──
@@ -370,12 +413,17 @@ def build_fx_push(fx, today):
     return {"date": t, "items": items, "text": "\n".join(lines)}
 
 
-def fetch_fx():
+def fetch_fx(prev_fx=None, prev_date=None):
     """환율: 최근 종가와 1년 전(365일 이전 가장 가까운 날) 종가, 변동률.
-    원화 직접 쌍이 비거나 이력이 1년이 안 되면 달러 경유(현지통화→달러 × 달러→원화)로 계산"""
+    원화 직접 쌍이 비거나 이력이 1년이 안 되면 달러 경유(현지통화→달러 × 달러→원화)로 계산.
+    v4.12: 수집 실패한 통화는 이전 data.json 값(1% 칸 알림 목록 포함)을 이어 쓰고 stale_since 표시
+    — 알림 first_seen이 끊기지 않아 다음 날 같은 알림이 다시 나가지 않음. 리얄은 직접 조회 없이 달러 ÷ 3.75"""
+    prev_fx = prev_fx or {}
     out = {}
     usd = None
     for code, (name, tk) in FX.items():
+        if tk is None:      # 리얄: 아래에서 달러로 계산
+            continue
         try:
             s = _fx_series(tk)
             via = None
@@ -420,26 +468,86 @@ def fetch_fx():
                              f"{'아래로' if al[-1]['dir'] == 'dn' else '위로'}" if al else ""))
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
-    if "SAR" not in out and (out.get("USD") or {}).get("rate"):
-        u = out["USD"]
+
+    def keep_prev(code):
+        p = prev_fx.get(code) or {}
+        if not p.get("rate"):
+            return
+        out[code] = {**p, "stale_since": p.get("stale_since") or prev_date}
+        print(f"  환율 {code}: 이전 값 이어 씀 {p['rate']:,.2f}원 ({out[code]['stale_since']} 수집분)", flush=True)
+
+    for code, (name, tk) in FX.items():
+        if tk is not None and code not in out:
+            keep_prev(code)
+    u = out.get("USD") or {}
+    if u.get("rate"):
         out["SAR"] = {"name": FX["SAR"][0], "rate": round(u["rate"] / SAR_PEG, 4),
                       "yago": round(u["yago"] / SAR_PEG, 4) if u.get("yago") else None,
                       "chg_pct": u.get("chg_pct"), "asof": u.get("asof"), "via": f"달러 고정 {SAR_PEG}"}
+        if u.get("stale_since"):     # 달러가 이전 값이면 리얄도 이전 값
+            out["SAR"]["stale_since"] = u["stale_since"]
         print(f"  환율 SAR: {out['SAR']['rate']:,.2f}원 · 달러 고정 {SAR_PEG}으로 계산", flush=True)
-    return out
+    else:
+        keep_prev("SAR")
+    return {c: out[c] for c in FX if c in out}      # 순서는 FX 표 그대로
+
+
+def load_prev():
+    """이전 data.json(v4.12 이어 쓰기·알림 first_seen용) → (종목별 항목, fx, 수집 날짜). 없거나 깨지면 빈 값"""
+    try:
+        with open("docs/data.json", encoding="utf-8") as f:
+            prev = json.load(f)
+    except Exception:
+        return {}, {}, None
+    items = {it["ticker"]: it for it in prev.get("items") or [] if isinstance(it, dict) and it.get("ticker")}
+    ga = str(prev.get("generated_at") or "")[:10]
+    try:
+        pdate = datetime.date.fromisoformat(ga).isoformat()
+    except ValueError:
+        pdate = None
+    return items, prev.get("fx") or {}, pdate
+
+
+def _has_data(item):
+    return bool((item or {}).get("fy")) or (item or {}).get("price") is not None
+
+
+def fill_same_end(item, prev):
+    """v4.12: 야후가 같은 결산일의 총이익·영업이익을 어떤 날만 비우면(푸마 영업이익률) 이전 data.json 값을 이어 씀.
+    매출이 같은(0.5% 이내) 연도만 — 재작성 등으로 매출이 바뀌었으면 섞지 않음. 반환: 채운 항목 목록"""
+    pm = {y.get("end"): y for y in (prev or {}).get("fy") or []}
+    got = []
+    for y in item.get("fy") or []:
+        p = pm.get(y.get("end")) or {}
+        if not (y.get("rev") and p.get("rev")) or abs(p["rev"] / y["rev"] - 1) > 0.005:
+            continue
+        for k, pk in (("gp", "gm_pct"), ("op", "op_pct")):
+            if y.get(k) is None and p.get(k) is not None:
+                y[k] = p[k]
+                y[pk] = (y[k] / y["rev"] * 100) if y[k] else None
+                got.append(f"{y['end'][:4]} {k}")
+    return got
 
 
 def main():
+    today = datetime.datetime.now(KST).date()
+    prev_items, prev_fx, prev_date = load_prev()
+    prev_date = prev_date or today.isoformat()
     out = {"generated_at":
            datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"),
            "items": []}
+    n_ok, kept, failed = 0, [], []
     for ticker, spec in WATCH.items():
         name, group = spec[0], spec[1]
         note = spec[2] if len(spec) > 2 else None
-        print(f"fetch {ticker} ({name}) ...", flush=True)
-        item = fetch_one(ticker, name, group, note)
+        yf_tk = YF_ALIAS.get(ticker, ticker)
+        print(f"fetch {ticker} ({name}){' → ' + yf_tk if yf_tk != ticker else ''} ...", flush=True)
+        item = fetch_one(yf_tk, name, group, note)
+        if yf_tk != ticker:                       # 대체표: 키는 원래 티커, 조회 티커는 따로 기록
+            item["ticker"] = ticker
+            item["yf_ticker"] = yf_tk
         # 한국 종목: 시장 접미사가 틀리면 데이터가 비므로 반대 접미사로 1회 재시도
-        if (item.get("error") or not item.get("fy")) and ticker[-3:] in (".KS", ".KQ"):
+        elif (item.get("error") or not item.get("fy")) and ticker[-3:] in (".KS", ".KQ"):
             alt = ticker[:-3] + (".KQ" if ticker.endswith(".KS") else ".KS")
             print(f"  → {ticker} 비어 있음, {alt} 재시도", flush=True)
             item2 = fetch_one(alt, name, group, note)
@@ -447,27 +555,58 @@ def main():
                 item2["ticker"] = ticker          # 대시보드 키는 원래 티커 유지
                 item2["yf_ticker"] = alt
                 item = item2
+        # v4.12: 수집 실패(예외, 또는 연간 재무·주가 둘 다 없음) → 이전 data.json 값 이어 쓰기
+        prev = prev_items.get(ticker)
+        if item.get("error") or not _has_data(item):
+            why = item.get("error") or "연간 재무·주가 없음"
+            if _has_data(prev):
+                item = {**prev, "name": name, "group": group, "note": note,
+                        "stale_since": prev.get("stale_since") or prev_date}
+                kept.append(ticker)
+                print(f"  ↳ 수집 실패({why[:80]}) — 이전 값 이어 씀({item['stale_since']} 수집분)", flush=True)
+            else:
+                item["error"] = why
+                failed.append(ticker)
+                print(f"  ↳ 수집 실패({why[:80]}) — 이전 값도 없음", flush=True)
+            out["items"].append(item)
+            continue
+        n_ok += 1
+        got = fill_same_end(item, prev)
+        if got:
+            print(f"  ↳ 오늘 빈 값은 같은 결산일 이전 값으로: {', '.join(got)}", flush=True)
         print(f"  ↳ 연간 {len(item['fy'])}개 · 재고 {'O' if item.get('inventory') else '-'} · "
               f"주가 {'O' if item.get('price') is not None else '-'} · "
-              f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}", flush=True)
+              f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}"
+              + (f" · 분기 {item['q_end']} vs {item.get('q_prev_end') or '전년 짝 없음'}"
+                 if item.get("q_end") else ""), flush=True)
         out["items"].append(item)
     out["group_order"] = GROUP_ORDER
     print("fetch 환율 ...", flush=True)
-    out["fx"] = fetch_fx()
-    prev_fx = {}
-    try:
-        with open("docs/data.json", encoding="utf-8") as f:
-            prev_fx = json.load(f).get("fx") or {}
-    except Exception:
-        pass
-    today = datetime.datetime.now(KST).date()
+    out["fx"] = fetch_fx(prev_fx, prev_date)
     mark_first_seen(out["fx"], prev_fx, today)
     out["fx_push"] = build_fx_push(out["fx"], today)
     print(f"  환율 알림: 오늘 새 알림 {len(out['fx_push']['items']) if out['fx_push'] else 0}건", flush=True)
+    fx_kept = [c for c, v in out["fx"].items() if v.get("stale_since")]
+    fx_failed = [c for c in FX if c not in out["fx"]]
+    out["fetch_status"] = {"date": today.isoformat(), "ok": n_ok, "kept": kept, "failed": failed,
+                           "fx_kept": fx_kept, "fx_failed": fx_failed}
+    print(f"수집 결과: 정상 {n_ok} · 이전 값 {len(kept)} · 실패 {len(failed)}"
+          + (f" · 환율 이전 값 {', '.join(fx_kept)}" if fx_kept else "")
+          + (f" · 환율 없음 {', '.join(fx_failed)}" if fx_failed else ""), flush=True)
+    if kept or failed:
+        print(f"  이전 값: {', '.join(kept) or '-'} / 빈 값: {', '.join(failed) or '-'}", flush=True)
     os.makedirs("docs", exist_ok=True)
     with open("docs/data.json", "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     print("saved docs/data.json")
+    # 심각한 실패 → soft_fail.txt (저장은 했고, 워크플로우 마지막 단계가 빨간 X로 끝냄)
+    if len(kept) + len(failed) > len(WATCH) / 2:
+        soft_fail(f"종목 {len(kept) + len(failed)}/{len(WATCH)}곳 수집 실패"
+                  f"(이전 값 {len(kept)} · 빈 값 {len(failed)})")
+    bad_fx = [c for c in FX_ALERT if c in fx_kept or c in fx_failed]
+    if bad_fx:
+        soft_fail(f"감시 환율 수집 실패 — {', '.join(bad_fx)}"
+                  f"({'이전 값 사용' if all(c in fx_kept for c in bad_fx) else '일부 값 없음'})")
 
 
 if __name__ == "__main__":
