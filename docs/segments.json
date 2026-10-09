@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-05 11:08 KST",
+ "generated_at": "2026-10-09 22:18 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -121,16 +121,48 @@
    "error": null
   },
   "ONON": {
-   "accession": "0001858985-26-000021",
-   "source": "6-K 2026-09-22 exhibit991oninvestorday202.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000021/exhibit991oninvestorday202.htm",
+   "accession": "0001858985-26-000018",
+   "source": "6-K 2026-08-11 a26q2-ex993xpressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1858985/000185898526000018/a26q2-ex993xpressrelease.htm",
    "extract": {
-    "period": "FY2029 targets (Investor Day 2026, dated 2026-09-22)",
-    "prev_period": null,
+    "period": "Q2 FY26 ended 2026-06-30",
+    "prev_period": "Q2 FY25 ended 2025-06-30",
     "currency": "CHF",
-    "regions": [],
-    "channels": [],
-    "notes": "이 문서는 실적 보고서가 아닌 2026년 투자자 데이 자료로, 구체적인 지역별·채널별 매출 수치 없이 2029년 중기 재무 목표만 제시되어 있음.",
+    "regions": [
+     {
+      "name": "Americas",
+      "revenue": 451.6,
+      "prev_revenue": 432.3,
+      "yoy_pct": 4.5
+     },
+     {
+      "name": "EMEA",
+      "revenue": 228.2,
+      "prev_revenue": 197.8,
+      "yoy_pct": 15.4
+     },
+     {
+      "name": "Asia-Pacific",
+      "revenue": 170.5,
+      "prev_revenue": 119.2,
+      "yoy_pct": 43.1
+     }
+    ],
+    "channels": [
+     {
+      "name": "Wholesale",
+      "revenue": 461.9,
+      "prev_revenue": 441.0,
+      "yoy_pct": 4.8
+     },
+     {
+      "name": "DTC",
+      "revenue": 388.4,
+      "prev_revenue": 308.3,
+      "yoy_pct": 26.0
+     }
+    ],
+    "notes": "모든 수치는 CHF 기준이며, 불변환율 기준 성장률은 별도로 공시되었으나 본 JSON에는 IFRS 기준 보고 수치만 반영됨.",
     "schema_v": 2
    },
    "error": null
@@ -630,38 +662,39 @@
    "error": null
   },
   "DKS": {
-   "accession": "0001140361-26-037192",
-   "source": "8-K 2026-09-21 ef20082169_ex99-1.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000114036126037192/ef20082169_ex99-1.htm",
+   "accession": "0001089063-26-000033",
+   "source": "8-K 2026-08-25 dks-2026801xex991earningsr.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1089063/000108906326000033/dks-2026801xex991earningsr.htm",
    "extract": {
-    "period": "Pro Forma FY ended 2026-01-31",
-    "prev_period": null,
+    "period": "Q2 FY26 ended 2026-08-01 (13 weeks); also 26 weeks ended 2026-08-01",
+    "prev_period": "Q2 FY25 ended 2025-08-02 (13 weeks); also 26 weeks ended 2025-08-02",
     "currency": "USD",
     "regions": [],
     "channels": [],
     "sub_segments": [
      {
       "name": "DICK'S",
-      "revenue": 17215.12,
-      "prev_revenue": null,
+      "revenue": 3849.887,
+      "prev_revenue": 3646.616,
       "yoy_pct": null,
-      "segment_profit": null,
-      "inventory": null
+      "segment_profit": 485.204,
+      "inventory": 3600.0
      },
      {
       "name": "Foot Locker",
-      "revenue": 4566.0,
+      "revenue": 1736.928,
       "prev_revenue": null,
       "yoy_pct": null,
-      "segment_profit": null,
-      "inventory": null,
-      "proforma_comp_pct": null
+      "segment_profit": -31.876,
+      "inventory": 2000.0,
+      "proforma_comp_pct": -3.6
      }
     ],
-    "notes": "이 문서는 2025년 9월 8일 Foot Locker 인수를 기준으로 작성된 미감사 프로포마 합산 재무제표이며, 실제 과거 비교 수치는 포함되어 있지 않습니다.",
+    "notes": "Foot Locker는 2025년 9월 8일 인수되어 전년도 비교 매출 수치가 없으며, 재고 금액은 문서에서 반올림된 근사치로 명시됨.",
     "schema_v": 2
    },
-   "error": null
+   "error": null,
+   "kept_reason": "최신 공시(2026-09-21)를 프로포마 합산표로 보고 건너뜀 — 확인 필요"
   },
   "ASO": {
    "accession": "0001817358-26-000146",
