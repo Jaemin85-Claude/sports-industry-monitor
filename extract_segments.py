@@ -673,13 +673,14 @@ def classify_notes(notes, label=""):
     todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
     if not todo or not API_KEY:
         return notes
-    lines = "\n".join(f"{k}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
+    lines = "\n".join(f"{k + 1}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
+    n = len(todo)
     prompt = f"""You advise a Korean parallel importer that buys branded footwear and apparel from overseas retailers, outlets and off-price channels.
-For each statement below from {label}'s latest earnings release, decide what it implies for the next few months:
+Below {"is the only statement" if n == 1 else f"are all {n} statements"} taken from {label}'s latest earnings release (the list is complete). For each, decide what it implies for the next few months:
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Respond with ONLY a JSON array of strings, one per statement in the same order, e.g. ["more","neutral"]. No explanation.
+Respond with ONLY a JSON array of exactly {n} string(s), one per statement in the same order, e.g. {'["more"]' if n == 1 else '["more","neutral"]'}. No explanation.
 
 {lines}"""
     try:
