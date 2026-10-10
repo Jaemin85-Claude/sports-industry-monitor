@@ -383,20 +383,23 @@ For each statement below from {label}'s latest earnings release, decide what it 
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Respond with ONLY a JSON array of strings, one per statement in the same order, e.g. ["more","neutral"].
+Respond with ONLY a JSON array of strings, one per statement in the same order, e.g. ["more","neutral"]. No explanation.
 
 {lines}"""
     try:
-        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 100,
+        txt = ""
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 200,
                                "messages": [{"role": "user", "content": prompt}]}, timeout=60)
         txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-        arr = json.loads(re.sub(r"```json|```", "", txt).strip())
+        m = re.search(r"\[[^\[\]]*\]", txt)      # 설명이 앞뒤에 붙어도 첫 JSON 배열만 읽음
+        arr = json.loads(m.group(0) if m else txt.strip())
         if not isinstance(arr, list) or len(arr) != len(todo):
             raise ValueError(f"응답 개수 {len(arr) if isinstance(arr, list) else '?'} ≠ {len(todo)}")
     except SystemExit:
         raise
     except Exception as e:
-        log(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}")
+        head = f" · 응답 앞부분: {txt[:80]!r}" if txt else ""
+        log(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}{head}")
         return notes
     for k, i in enumerate(todo):
         v = str(arr[k]).strip().lower()
