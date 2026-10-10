@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.15: (대표 지시 2026-10-10) 기업 상세에 '🗣️ 본사 발언' — 실적 문서의 재고·할인·유통 통제 문장(원문 + 한국어 요약, 최대 3개).
+        extract_segments v11·ir_fetch v1.3이 원문에 있는 문장만 저장. 새 형식으로 추출되기 전엔 카드 없음
 v32.14: (대표 지시 2026-10-10) 재고 증감을 같은 기간끼리 비교 — 분기 재고·같은 분기 매출이 있으면 최근 분기 vs 1년 전 같은 분기
         (fetch_data v4.13), 없으면 연간 결산끼리. 재고 경고·기업 목록·소싱 지도·상세에 비교 기간('26.06 vs '25.06) 표시
 v32.13: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄 — 딕스 추출 'Q2 … (13 weeks); also 26 weeks …'가 누적으로 잘못 판정돼
@@ -374,7 +376,12 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .rk-t{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .rk-t>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rk-s{font-size:var(--fs-2xs);color:var(--sub)}
-#warnCard .rk-s{white-space:normal}   /* v32.14 비교 기간('26.06 vs '25.06)이 잘리지 않게 */
+#warnCard .rk-s{white-space:normal}
+.mn-row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line)}.mn-row:first-of-type{border-top:0}
+.mn-t{flex:none;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:1px 6px;background:var(--barbg);color:var(--sub)}
+.mn-inventory{color:var(--down)}.mn-discount{color:var(--accent)}
+.mn-b{min-width:0;font-size:var(--fs-sm);line-height:1.45}.mn-b details{margin-top:2px}.mn-b summary{font-size:var(--fs-2xs);color:var(--sub);cursor:pointer}
+.mn-b q{display:block;font-size:var(--fs-2xs);color:var(--sub);margin-top:2px;overflow-wrap:anywhere}   /* v32.14 비교 기간('26.06 vs '25.06)이 잘리지 않게 */
 .rk-v2{display:flex;flex-direction:column;align-items:flex-end;line-height:1.35}
 .rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
 .wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:500;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px}
@@ -1586,6 +1593,17 @@ function renderKrdDetail(id){
   h+=newsCard('krd:'+e.id);
   document.getElementById('detBody').innerHTML=h;
 }
+/* v32.15 본사 발언(대표 지시 2026-10-10) — 실적 문서에서 재고·할인·유통 통제 문장을 원문 그대로(extract_segments v11·ir_fetch v1.3,
+   원문에 글자 그대로 있는 문장만 저장). 새 형식으로 추출된 뒤에만 보이고, 해당 문장이 없으면 '없음' 한 줄 */
+const MGMT_TOPIC={inventory:'재고',discount:'할인·판촉',channel:'유통·도매'};
+function mgmtCardHtml(s,tag){
+  const ex=s&&s.extract; if(!ex||!Array.isArray(ex.mgmt_notes)) return '';
+  const per=(ex.period||'').split(/;| ended/)[0];
+  const rows=ex.mgmt_notes.map(n=>`<div class="mn-row"><span class="mn-t mn-${esc(n.topic)}">${MGMT_TOPIC[n.topic]||esc(n.topic)}</span><div class="mn-b">${esc(n.ko||'')}
+    <details><summary>원문</summary><q>${esc(n.quote)}</q></details></div></div>`).join('');
+  return `<div class="card"><h3>🗣️ 본사 발언 — ${esc(per||'최근 실적')} <span class="tag">${esc(tag)}</span></h3>${rows||'<div class="na">이번 실적 자료에는 재고·할인·유통 관련 발언 없음</div>'}
+    <div class="note">실적 문서에서 재고 처분·할인·유통 통제 관련 문장을 원문 그대로 뽑음(원문에 있는 문장만 표시) · 요약은 참고용</div></div>`;
+}
 function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
   const x=DATA.items.find(i=>i.ticker===t);
@@ -1709,6 +1727,7 @@ function renderDetail(t){
     h+=`<div class="na">미확인${segEntry&&segEntry.error?'('+segEntry.error+')':'(공시에 채널 분해 미기재)'}</div>`;
   }
   h+=`</div>`;
+  h+=mgmtCardHtml(s,segTag);   // v32.15 본사 발언
 
   if(t==='DKS'&&s&&s.extract.sub_segments&&s.extract.sub_segments.length){
     const qtr=isQtrPeriod(s.extract.period);   // v32.12 분기 실적 자료일 때만 '딕스(본체)' — 프로포마 합산표 등은 공시 이름 그대로

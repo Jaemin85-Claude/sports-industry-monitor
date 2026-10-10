@@ -6,6 +6,11 @@ on:
     # 매주 일 02:47 KST = 토 17:47 UTC
     - cron: "47 17 * * 6"
   workflow_dispatch:   # 수동 실행 버튼
+    inputs:
+      only:
+        description: "검증용: 이 티커만 새로 추출해 로그로 확인(쉼표 구분, 예: PUM.DE) — 저장 안 함. 비우면 전체 실행"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -23,6 +28,7 @@ jobs:
       - name: Fetch adidas / PUMA IR segments
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IR_ONLY: ${{ inputs.only }}
           PYTHONUNBUFFERED: "1"
         run: python ir_fetch.py
       - name: Commit
