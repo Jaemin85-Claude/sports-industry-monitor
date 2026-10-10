@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.14: (대표 지시 2026-10-10) 재고 증감을 같은 기간끼리 비교 — 분기 재고·같은 분기 매출이 있으면 최근 분기 vs 1년 전 같은 분기
+        (fetch_data v4.13), 없으면 연간 결산끼리. 재고 경고·기업 목록·소싱 지도·상세에 비교 기간('26.06 vs '25.06) 표시
 v32.13: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄 — 딕스 추출 'Q2 … (13 weeks); also 26 weeks …'가 누적으로 잘못 판정돼
         '본체 +5.6%'·'딕스(본체)' 표가 안 나오던 문제. 부문 표 YoY가 비면 당기·전년 매출로 계산
 v32.12: (대표 지시 2026-10-09) ① 순위 숫자 바로잡기 — 성장 순위에 기준(분기 '26.06 / 연간 FY25, 오래된 결산도 연도만 붙여 둠),
@@ -372,6 +374,7 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .rk-t{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .rk-t>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rk-s{font-size:var(--fs-2xs);color:var(--sub)}
+#warnCard .rk-s{white-space:normal}   /* v32.14 비교 기간('26.06 vs '25.06)이 잘리지 않게 */
 .rk-v2{display:flex;flex-direction:column;align-items:flex-end;line-height:1.35}
 .rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
 .wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:500;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px}
@@ -856,21 +859,21 @@ function srcModel(){
   const out=[];
   Object.entries(SRC_CFG).forEach(([t,cfg])=>{
     const x=DATA.items.find(i=>i.ticker===t); const s=(SEGS.items||{})[t]; const ex=s&&s.extract;
-    if(!x||!ex||!ex.regions||x.inv_yoy==null) return;
-    const fy=x.fy.length?x.fy[x.fy.length-1]:{}; if(fy.rev_yoy==null) return;
+    const ip=x?invPick(x):null;   // v32.14 재고 압력 = 같은 기간 재고 증감 − 같은 기간 매출 증감
+    if(!x||!ex||!ex.regions||ip.inv==null||ip.rev==null) return;
     const regs=ex.regions.filter(r=>g(r)!=null&&!/total|합계|corporate|global brand|converse/i.test(r.name||''));
     if(!regs.length) return;
     const vs=regs.map(g).sort((a,b)=>a-b), n=vs.length, med=n%2?vs[(n-1)/2]:(vs[n/2-1]+vs[n/2])/2;
-    const P=x.inv_yoy-fy.rev_yoy, cells={};
+    const P=ip.inv-ip.rev, cells={};
     SRC_KEYS.forEach(k=>{
       const spec=cfg[k]; const r=spec?regs.find(z=>spec[0].test(z.name||'')):null;
       if(!r){ cells[k]=null; return; }
       const v=g(r), excess=P>=5, weak=v<0||(v<10&&v<med);
       const why=[]; if(excess) why.push(`재고 압력 ${P>0?'+':''}${P.toFixed(1)}%p`); if(weak) why.push(v<0?'지역 역성장':'지역 성장 둔화');
       cells[k]={g:v, basis:r.cn_yoy_pct!=null?'환율 제외':'보고 통화', rname:srcRegName(r.name), proxy:spec[1],
-        A:(excess&&weak)?2:((excess||weak)?1:0), B:(v>=15||x.inv_yoy>=15)?2:((v>=5||x.inv_yoy>=5)?1:0), why:why.join(' · ')||'해당 없음'};
+        A:(excess&&weak)?2:((excess||weak)?1:0), B:(v>=15||ip.inv>=15)?2:((v>=5||ip.inv>=5)?1:0), why:why.join(' · ')||'해당 없음'};
     });
-    out.push({t, name:x.name, inv:x.inv_yoy, rev:fy.rev_yoy, period:(ex.period||'').split(' ended')[0], cells, kr:koreaRegion(t)});
+    out.push({t, name:x.name, inv:ip.inv, rev:ip.rev, invLbl:ip.lbl, period:(ex.period||'').split(' ended')[0], cells, kr:koreaRegion(t)});
   });
   return (SRC_CACHE=out);
 }
@@ -882,8 +885,8 @@ function srcRanked(k){
    → 3점 이상 높음 · 1~2점 보통 · 0점 이하 낮음 */
 function srcRetailSig(k){
   const rs=(SRC_RETAIL[k]||[]).map(t=>{ const x=DATA.items.find(i=>i.ticker===t); if(!x) return null;
-    const fy=x.fy&&x.fy.length?x.fy[x.fy.length-1]:null;
-    return (x.inv_yoy==null||!fy||fy.rev_yoy==null)?null:{name:x.name, d:x.inv_yoy-fy.rev_yoy}; }).filter(Boolean);
+    const ip=invPick(x);
+    return (ip.inv==null||ip.rev==null)?null:{name:x.name, d:ip.inv-ip.rev}; }).filter(Boolean);
   if(!rs.length) return {pt:0, txt:'현지 유통사 자료 없음'};
   const heavy=rs.filter(r=>r.d>=5);
   if(heavy.length) return {pt:1, txt:'현지 유통 재고 무거움 '+heavy.map(r=>r.name).join('·')};
@@ -963,12 +966,11 @@ function srcRetailHtml(k){
   let any=false;
   tks.forEach(t=>{
     const x=DATA.items.find(i=>i.ticker===t); if(!x) return;
-    const fy=x.fy&&x.fy.length?x.fy[x.fy.length-1]:null;
-    const inv=x.inv_yoy, rev=fy?fy.rev_yoy:null; any=true;
+    const ip=invPick(x), inv=ip.inv, rev=ip.rev; any=true;
     let chip='<span class="lvchip" style="background:var(--barbg);color:var(--sub)">미확인</span>', t3='재고 또는 매출 미공시';
     if(inv!=null&&rev!=null){ const d=inv-rev, lv=d>=5?2:(d<=-5?0:1), L=SRC_LV[lv];
       chip=`<span class="lvchip" style="background:${L.bg};color:${L.fg}">재고 ${lv===2?'무거움':(lv===0?'가벼움':'보통')}</span>`;
-      t3=`재고 압력 ${d>0?'+':''}${d.toFixed(1)}%p · ${fy.end?('결산 '+ym(fy.end)):''}`; }
+      t3=`재고 압력 ${d>0?'+':''}${d.toFixed(1)}%p · ${ip.lbl}`; }
     h+=`<div class="sh-row" onclick="closeSheet();goDetail('${t}')">${srcBadge(t,x.name,'#C9D0DD',true)}
       <div class="bx"><div class="t1"><span>${esc(x.name)} ${flagOf(t)||''}</span>${chip}</div>
       <div class="t2">재고 ${inv!=null?pp(inv):'―'} · 매출 ${rev!=null?pp(rev):'―'}</div><div class="t3">${esc(t3)}</div></div></div>`;
@@ -1019,7 +1021,7 @@ function openSheet(kind){
     if(kind==='japan') body+=`<div class="sh-warn">일본을 따로 공시하는 곳은 아식스뿐이고, 아디다스는 일본+한국 합산입니다. 나머지는 아시아·태평양 합산값을 빌려 쓴 추정치입니다.</div>`;
     body+=`<div class="note" style="margin:2px 0 8px"><b>판정 ${lv.txt} (${sm.score}점)</b> — ${sm.parts.map(p=>`${esc(p.txt)} ${p.pt>0?'+':''}${p.pt}`).join(' · ')}</div>`;
     srcRanked(kind).forEach(o=>{ const l=SRC_LV[o.lvl], c=o.c;
-      const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}`;
+      const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}(${o.b.invLbl})`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}(${o.b.invLbl})`;
       const t3=(SRC_PRESET==='A'?'근거: '+c.why:'기준: '+o.b.period)+(c.proxy&&c.proxy.indexOf('차용')>=0?' · 추정(유럽·중동·아프리카 값 차용)':(c.proxy&&kind!=='europe'?' · '+c.proxy:''));
       body+=`<div class="sh-row" onclick="closeSheet();goDetail('${o.b.t}')">${srcBadge(o.b.t,o.b.name,l.ring,true)}
         <div class="bx"><div class="t1"><span>${esc(o.b.name)}</span><span class="lvchip" style="background:${l.bg};color:${l.fg}">${l.txt}</span></div>
@@ -1041,7 +1043,7 @@ function openSheet(kind){
     body+=`</table>`;
   } else if(kind==='method'){
     title='가정과 계산 방식';
-    body=`<div class="sh-mt"><b>재고 과잉형 (보완안)</b><p>브랜드 재고 증가율이 매출 증가율보다 5%p 이상 높고(재고 압력), 그 지역이 역성장하거나 +10% 미만이면서 브랜드의 지역 중 하위권이면 높음. 둘 중 하나만 맞으면 보통.</p>
+    body=`<div class="sh-mt"><b>재고 과잉형 (보완안)</b><p>브랜드 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높고(재고 압력 — 분기 자료가 있으면 최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산), 그 지역이 역성장하거나 +10% 미만이면서 브랜드의 지역 중 하위권이면 높음. 둘 중 하나만 맞으면 보통.</p>
       <b>시장 확대형 (원안)</b><p>지역 성장률 +15% 이상 또는 브랜드 재고 증가 +15% 이상이면 높음, +5% 이상이면 보통.</p>
       <b>지도 배지</b><p>지역마다 기회 수준이 높은 순으로 최대 3개 브랜드를 표시하고 나머지는 +숫자로 묶습니다. 테두리 색이 기회 수준이며, 브랜드를 누르면 기업 상세로 이동합니다.</p>
       <b>지역 판정 (지도 색·지역 칩)</b><p>점수 = 기회 높은 브랜드 수(최대 2점) + 현지 유통 재고(재고 과잉형만: "무거움"인 유통사가 하나라도 있으면 +1, 모두 "가벼움"이면 −1) + 환율(현지 통화 원화 값이 1년 전보다 평균 2% 이상 내리면 매입 부담이 줄어 +1, 2% 이상 오르면 −1). 3점 이상 높음, 1~2점 보통, 0점 이하 낮음. 지역 패널 맨 위에 점수 내역을 표시합니다.</p>
@@ -1241,13 +1243,22 @@ const pendTag=p=>p?`<span class="wait-b" title="${esc(p.src)} 공시 ${esc(p.end
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
 // 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
 const PEER_ONLY=new Set(['krd:trexi']);
+/* v32.14 재고 증감은 같은 기간끼리(대표 지시 2026-10-10): 분기 재고와 같은 분기 매출이 모두 있으면
+   '최근 분기 vs 1년 전 같은 분기'(fetch_data v4.13), 없으면 연간 결산끼리. lbl = 화면에 붙이는 비교 기간 */
+function invPick(x){
+  const fy=x.fy&&x.fy.length?x.fy[x.fy.length-1]:{};
+  if(x.q_inv_yoy!=null&&x.q_inv_rev_yoy!=null&&!x.yahoo_cfs_diff)
+    return {inv:x.q_inv_yoy, rev:x.q_inv_rev_yoy, q:true, end:x.q_inv_date, lbl:`분기 ${ym(x.q_inv_date)} vs ${ym(x.q_inv_prev_date)}`};
+  return {inv:x.inv_yoy, rev:fy.rev_yoy, q:false, end:x.inv_date, lbl:x.inv_date?`결산 ${ym(x.inv_date)}${x.inv_prev_date?' vs '+ym(x.inv_prev_date):''}`:'연간'};
+}
+const invShort=r=>r.inv_end?`${ym(r.inv_end)} ${r.inv_q?'분기':'결산'}`:'';
 function rows_all(){
   const out=[];
   DATA.items.forEach(x=>{
     const fy=x.fy.length?x.fy[x.fy.length-1]:{};
     out.push({key:x.ticker, name:x.name, group:x.group, flag:flagOf(x.ticker), logo:logoImg(x.ticker,false,x.name), listed:true,
       rev:fy.rev, cur:finCurOf(x), rev_yoy:fy.rev_yoy, gm:fy.gm_pct, q_yoy:x.latest_q_yoy, dio:dioOf(x.inventory,fy.rev,fy.gp,null),
-      inv_yoy:x.inv_yoy, earn:x.earn_date, note:x.note, item:x,
+      ...(ip=>({inv_yoy:ip.inv, inv_rev:ip.rev, inv_q:ip.q, inv_end:ip.end, inv_lbl:ip.lbl}))(invPick(x)), earn:x.earn_date, note:x.note, item:x,
       q_end:x.q_end||null, fy_end:fy.end||null, stale:x.stale_since||null, pend:pendOf(x)});   // v32.12 기준 표시·이전 값·반영 대기
   });
   ((KRD&&KRD.entities)||[]).filter(e=>!PEER_ONLY.has('krd:'+e.id)).forEach(e=>{
@@ -1259,6 +1270,7 @@ function rows_all(){
     const diok=last?dioOf(last.inv,last.rev,null,last.cogs):null;
     out.push({key:'krd:'+e.id, name:e.name, group:'국내 법인', flag:'🇰🇷', logo:logoImg('krd:'+e.id,false,e.name), listed:false,
       rev:last?last.rev:null, cur:'KRW', rev_yoy:yoy, gm:gmk, opm, q_yoy:null, inv_yoy:invy, earn:null, dio:diok,
+      inv_rev:yoy, inv_q:false, inv_end:last?last.end:null, inv_lbl:last?`결산 ${ym(last.end)}${prev?' vs '+ym(prev.end):''}`:'연간',
       note:e.note, route:e.route, std:e.acct_std||null, fy_end:last?last.end:null});
   });
   return out;
@@ -1342,9 +1354,10 @@ function buildHome(){
   const up=[...growth].sort((a,b)=>b.g-a.g).slice(0,4);
   const dn=[...growth].sort((a,b)=>a.g-b.g).slice(0,4);
   // 재고 경고: 재고 증가율이 매출 증가율보다 10p 이상 높고 재고 +10% 이상 — 전사 수치·인수 효과 기간은 제외(각주)
-  const warnAll=rows.filter(r=>r.inv_yoy!=null&&r.rev_yoy!=null&&r.inv_yoy>=10&&r.inv_yoy-r.rev_yoy>=10).map(r=>({...r,basis:`연간 ${fyLbl(r.fy_end)}`.trim()}));
+  // v32.14 재고·매출을 같은 기간끼리 비교(분기 자료가 있으면 같은 분기, 없으면 연간 결산) — 비교 기간을 줄에 표시
+  const warnAll=rows.filter(r=>r.inv_yoy!=null&&r.inv_rev!=null&&r.inv_yoy>=10&&r.inv_yoy-r.inv_rev>=10).map(r=>({...r,basis:r.inv_lbl}));
   const warnAcq=warnAll.filter(r=>!WHOLE_CO[r.key]&&acqOn(r.key));
-  const warn=warnAll.filter(r=>!WHOLE_CO[r.key]&&!acqOn(r.key)).sort((a,b)=>(b.inv_yoy-b.rev_yoy)-(a.inv_yoy-a.rev_yoy));
+  const warn=warnAll.filter(r=>!WHOLE_CO[r.key]&&!acqOn(r.key)).sort((a,b)=>(b.inv_yoy-b.inv_rev)-(a.inv_yoy-a.inv_rev));
   // 실적 일정
   const ev=rows.filter(r=>r.earn).map(r=>({...r,d:new Date(r.earn+'T00:00:00')})).map(r=>({...r,dn:Math.round((r.d-today)/86400000)}))
     .filter(r=>r.dn>=0&&r.dn<=90).sort((a,b)=>a.dn-b.dn);
@@ -1373,10 +1386,10 @@ function buildHome(){
   h+=`<div class="card"><h3>성장 하위 · 매출 전년 대비</h3>${dn.map(r=>rkRow(r,`<b>${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}</div>`;
   const wex=[...Object.entries(WHOLE_CO).filter(([k])=>rows.some(r=>r.key===k)).map(([,v])=>esc(v)),
     ...warnAcq.map(r=>`${esc(r.name)}는 인수 효과 기간(~${mdTxt(acqOn(r.key).until)})이라 제외`)];
-  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rkRow(r,`<span class="rk-v2"><span>재고 <b>${fmtInv(r.inv_yoy)}</b></span><small>매출 ${fmt(r.rev_yoy,1,true)}${r.dio!=null?` · ${Math.round(r.dio)}일`:''}</small></span>`);
+  h+=`<div class="card" id="warnCard"><h3>재고 경고 · 재고 증가율이 매출 증가율보다 높은 곳 <span class="na" style="margin-left:auto;font-size:var(--fs-2xs)">기업을 누르면 상세</span></h3>${(()=>{ const row=r=>rkRow(r,`<span class="rk-v2"><span>재고 <b>${fmtInv(r.inv_yoy)}</b></span><small>매출 ${fmt(r.inv_rev,1,true)}${r.dio!=null?` · ${Math.round(r.dio)}일`:''}</small></span>`);
     return (warn.slice(0,8).map(row).join('')||'<div class="na">해당 없음</div>')
       +(warn.length>8?`<div id="warnMore" style="display:none">${warn.slice(8).map(row).join('')}</div><div style="margin-top:6px;cursor:pointer;color:var(--accent);font-size:var(--fs-sm)" onclick="const m=document.getElementById('warnMore');m.style.display=m.style.display==='none'?'':'none';this.textContent=m.style.display==='none'?'전체 보기(${warn.length}곳) ▾':'접기 ▴'">전체 보기(${warn.length}곳) ▾</div>`:''); })()}
-    <div class="note">기준: 재고가 전년보다 10% 이상 늘고, 매출 증가율보다 10%p 이상 빠른 곳 · 연간 결산 기준 · ○일 = 재고일수${wex.length?'<br>'+wex.join(' · '):''}</div></div>`;
+    <div class="note">기준: 재고가 1년 전보다 10% 이상 늘고, 같은 기간 매출 증가율보다 10%p 이상 빠른 곳 · 같은 기간끼리 비교(분기 자료가 있으면 최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산) · ○일 = 재고일수(연간)${wex.length?'<br>'+wex.join(' · '):''}</div></div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rkRow({...r,basis:''},`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
   document.getElementById('homeBody').innerHTML=h;
   if(kr){ const c=document.getElementById('hcCard'); if(c) c.outerHTML=homeChartHtml(); }
@@ -1403,7 +1416,7 @@ function buildCo(){
   rows.forEach(r=>{
     const gmCell=(r.gm!=null)?r.gm.toFixed(1)+'%':(r.opm!=null?r.opm.toFixed(1)+'%<span class="na" style="font-size:var(--fs-2xs)"> 영업</span>':'<span class="na">―</span>');
     const nm=nmSplit(r.name), nsub=[nm.brand?esc(nm.brand):'',staleTag(r.stale),failTag(r.key),pendTag(r.pend)].filter(Boolean).join(' ');   // v32.12 이름 2줄(법인명 / 브랜드·표시)
-    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(nm.main)}${nsub?`<span class="nm-sub">${nsub}</span>`:''}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmtInv(r.inv_yoy)}</td></tr>`;
+    h+=`<tr class="co" data-k="${r.key}"><td>${r.logo}${esc(nm.main)}${nsub?`<span class="nm-sub">${nsub}</span>`:''}</td><td>${revKrwCell(r.rev,r.cur,1)}</td><td>${fmt(r.rev_yoy,1,true)}</td><td>${gmCell}</td><td>${fmtInv(r.inv_yoy)}${r.inv_end?`<span class="nm-sub" style="margin-left:0">${esc(invShort(r))}</span>`:''}</td></tr>`;
     let mini='';
     if(r.listed){
       const x=r.item, s=segOf(r.key);
@@ -1416,11 +1429,12 @@ function buildCo(){
       const kdTxt=kd?(()=>{const ys=(kd.years||[]).filter(y=>y.rev!=null);const l=ys[ys.length-1],p=ys[ys.length-2];return l?`${moneyShort(l.rev,'KRW')} ${p?fmt(l.rev/p.rev*100-100,1,true):''}`:'미확인';})():null;
       const evd=r.earn?Math.round((new Date(r.earn+'T00:00:00')-new Date().setHours(0,0,0,0))/86400000):null;
       mini=`<div class="mini"><div>최근 분기 매출 ${fmt(r.q_yoy,1,true)} <span class="na">${x.q_end?ym(x.q_end):''}</span>${r.pend?`<br><span class="na">${esc(r.pend.src)} 공시 ${ym(r.pend.end)} 분기 발표됨 · 야후 미반영</span>`:''}</div><div>영업이익률 <b>${fy.op_pct!=null?fy.op_pct.toFixed(1)+'%':'―'}</b></div>
+      <div>재고 증감 <b>${fmtInv(r.inv_yoy)}</b> <span class="na">${esc(r.inv_lbl||'')}${r.inv_rev!=null?' · 같은 기간 매출 '+fmt(r.inv_rev,1,true):''}</span></div><div></div>
       <div>지역: ${esc(top)}</div><div>채널: ${esc(chs)}</div>
       <div>${kd?logoImg('krd:'+kd.id,false,kd.name)+esc(kd.name)+' ':'🇰🇷 '}${kd?`<b>${kdTxt}</b>`:'<span class="na">국내 법인 미연결</span>'}</div><div>실적 발표 ${evd!=null&&evd>=0?`<b>D-${evd}</b>`:'<span class="na">―</span>'}</div></div>`;
     } else {
       mini=`<div class="mini"><div>구분: ${esc(r.route==='none'?'DART 공시 미발견':'DART '+(r.route==='api'?'사업보고서':'감사보고서')+'(연간 · 별도'+(r.std?' · '+(STD_SH[r.std]||r.std):'')+')')}</div><div>기준: ${r.fy_end?ym(r.fy_end)+' 결산':'―'}</div>
-      <div>재고일수 <b>${r.dio!=null?Math.round(r.dio)+'일':'―'}</b></div><div>재고 증감 <b>${fmtInv(r.inv_yoy)}</b></div>${r.note?`<div style="grid-column:1/3" class="na">${esc(r.note)}</div>`:''}</div>`;
+      <div>재고일수 <b>${r.dio!=null?Math.round(r.dio)+'일':'―'}</b></div><div>재고 증감 <b>${fmtInv(r.inv_yoy)}</b> <span class="na">${esc(r.inv_lbl||'')}</span></div>${r.note?`<div style="grid-column:1/3" class="na">${esc(r.note)}</div>`:''}</div>`;
     }
     h+=`<tr class="cx" data-for="${r.key}" style="display:none"><td colspan="5">${mini}<div class="note" style="margin-top:6px;color:var(--accent);cursor:pointer" onclick="goDetail('${r.key}')">전체 상세 ▸</div></td></tr>`;
   });
@@ -1608,7 +1622,12 @@ function renderDetail(t){
     <td>${y.op_pct!=null?y.op_pct.toFixed(1)+'%':'―'}</td></tr>`;
   });
   h+=`</table></div>`;
-  h+=`<div class="card"><h3>📦 재고</h3>
+  h+=`<div class="card"><h3>📦 재고</h3>${x.q_inv_yoy!=null&&!x.yahoo_cfs_diff?`
+  <div class="kv"><span class="k">최근 분기 <span class="na">(1년 전 같은 분기와 비교)</span></span><span>${ym(x.q_inv_date)} vs ${ym(x.q_inv_prev_date)}</span></div>
+  <div class="kv"><span class="k">분기 재고자산</span><span>${money(x.q_inv,cur)}</span></div>
+  <div class="kv"><span class="k">재고 증감(같은 분기)</span><span>${fmtInv(x.q_inv_yoy)}</span></div>
+  <div class="kv"><span class="k">매출 증감(같은 분기)</span><span>${x.q_inv_rev_yoy!=null?fmt(x.q_inv_rev_yoy,1,true):'<span class="na">야후 분기 매출 없음</span>'}</span></div>
+  <div class="note" style="margin:4px 0 8px">아래는 연간 결산 기준</div>`:''}
   <div class="kv"><span class="k">기준 시점</span><span>${x.inv_date||'―'}${x.inv_prev_date?' (전년비교: '+x.inv_prev_date+')':''}</span></div>
   <div class="kv"><span class="k">재고자산</span><span>${money(x.inventory,cur)}</span></div>
   <div class="kv"><span class="k">재고 증감(전년 대비)</span><span>${fmtInv(x.inv_yoy)}</span></div>
@@ -2026,7 +2045,7 @@ function platformCardHtml(){
     h+=`<tr class="co" style="cursor:pointer${self?';background:var(--barbg)':''}" onclick="goDetail('${r.key}')">
       <td>${r.logo}${self?'<b>'+esc(r.name)+'</b>':esc(r.name)}<span class="na" style="font-size:var(--fs-2xs);display:block">${KR_PLATFORM_STATUS[r.key]?'<span class="neg">'+esc(KR_PLATFORM_STATUS[r.key])+'</span>':(r.end?ym(r.end)+' 결산':'미확인')}${r.listed?' · 상장':''}</span></td>
       <td>${r.rev!=null?revKrwCell(r.rev,r.cur):'<span class="na">―</span>'}</td><td>${fmt(r.rev_yoy,1,true)}</td>
-      <td>${r.op!=null?fmt(r.op,1,true):'<span class="na">―</span>'}</td><td>${fmtInv(r.inv_yoy)}</td></tr>`;
+      <td>${r.op!=null?fmt(r.op,1,true):'<span class="na">―</span>'}</td><td>${fmtInv(r.listed?r.item.inv_yoy:r.inv_yoy)}</td></tr>`;
   });
   const usd=(DATA.fx||{}).USD, ents=(KRD&&KRD.entities)||[];
   const kr=rows.filter(r=>!r.listed&&r.rev!=null).map(r=>({r,e:ents.find(z=>'krd:'+z.id===r.key)})).filter(o=>o.e);

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.13: (대표 지시 2026-10-10) 분기 재고 — 최신 분기 재고를 1년 전 같은 분기와 비교(q_inv_yoy, 기준일 q_inv_date·q_inv_prev_date)하고
+      같은 분기 매출 증감(q_inv_rev_yoy)도 저장. 연간 재고(inv_yoy)는 그대로 — 화면은 같은 기간끼리 비교하고 기간을 표시
 v4.12: (대표 지시 2026-10-09) 분기 매출 증감은 최신 분기와 350~380일 전 분기를 짝지어 비교(푸마가 작년 1분기와 비교되던 문제),
       짝이 없으면 비움. 매출·총이익·영업이익은 연도마다 값 단위로 대체 항목을 쓰고, 그래도 비면 같은 결산일 이전 값(푸마 영업이익률).
       종목·환율 수집이 실패하면(감시 통화는 1% 칸 계산 실패 포함) 이전 data.json 값을 이어 쓰고 stale_since·최상위 fetch_status 기록,
@@ -209,6 +211,9 @@ def fetch_one(ticker, name, group, note=None):
          "latest_q_yoy": None, "q_end": None, "q_prev_end": None,
          "inventory": None, "inv_yoy": None, "inv_sales_pct": None,
          "inv_date": None, "inv_prev_date": None,
+         # v4.13 분기 재고(동기간 비교): 최신 분기 재고 vs 1년 전 같은 분기 + 같은 분기 매출 증감
+         "q_inv": None, "q_inv_date": None, "q_inv_prev_date": None,
+         "q_inv_yoy": None, "q_inv_rev_yoy": None,
          "price": None, "off_high_pct": None, "earn_date": None,
          "error": None}
     try:
@@ -273,6 +278,30 @@ def fetch_one(ticker, name, group, note=None):
                 last_rev = d["fy"][-1]["rev"] if d["fy"] else None
                 if inv_now and last_rev:
                     d["inv_sales_pct"] = inv_now / last_rev * 100
+
+        # ── v4.13 분기 재고 — 최신 분기 vs 1년 전 같은 분기(350~380일, 분기 매출과 같은 짝짓기) ──
+        #   연간 재고(위)는 그대로 두고 따로 저장(쌓아 온 기록의 뜻이 바뀌지 않게). 같은 분기 매출 증감도 함께 —
+        #   재고 경고·소싱 지도가 '같은 기간 재고 vs 같은 기간 매출'로 비교하도록. 실패해도 종목 전체는 정상
+        try:
+            q_inv = _vals(tk.quarterly_balance_sheet, ["Inventory", "Inventories"])
+        except Exception:
+            q_inv = None
+        if q_inv:
+            qi = sorted((e, v) for e, v in ((_day(c), v) for c, v in q_inv.items() if v) if e)
+            d["_qi_cols"] = len(qi)
+            if qi:
+                ie, iv = qi[-1]
+                pair = [(abs((ie - e).days - 365), e, v) for e, v in qi[:-1] if 350 <= (ie - e).days <= 380]
+                if pair:
+                    _, pe, pv = min(pair)
+                    d.update(q_inv=iv, q_inv_date=ie.isoformat(), q_inv_prev_date=pe.isoformat(),
+                             q_inv_yoy=(iv / pv - 1) * 100)
+                    if q_rev:   # 같은 분기 매출(재무상태표·손익 열 날짜가 며칠 다를 수 있어 7일 안에서 찾음)
+                        qr = [(e, v) for e, v in ((_day(c), v) for c, v in q_rev.items() if v) if e]
+                        near = lambda day: next((v for e, v in qr if abs((e - day).days) <= 7), None)
+                        rc, rp = near(ie), near(pe)
+                        if rc and rp:
+                            d["q_inv_rev_yoy"] = (rc / rp - 1) * 100
 
         # ── 주가 (부지표) ──
         hist = tk.history(period="1y")
@@ -574,6 +603,7 @@ def main():
                 item2["yf_ticker"] = alt
                 item = item2
         q_cols = item.pop("_q_cols", None)        # 로그용(저장 안 함)
+        qi_cols = item.pop("_qi_cols", None)
         # v4.12: 수집 실패(예외, 또는 연간 재무·주가 둘 다 없음) → 이전 data.json 값 이어 쓰기
         prev = prev_items.get(ticker)
         why = item.get("error") or (None if _has_data(item) else "연간 재무·주가 없음")
@@ -601,6 +631,11 @@ def main():
             q_txt = f" · 분기 {item['q_end']} vs {item.get('q_prev_end') or '전년 짝 없음'}"
             if q_cols:      # 매출 있는 분기 열 수·바로 앞 열 간격(180일 근처면 반기 자료 — 실데이터 확인용)
                 q_txt += f" (열 {q_cols[0]}개" + (f", 앞 열과 {q_cols[1]}일)" if q_cols[1] else ")")
+        if item.get("q_inv_date"):     # v4.13 분기 재고 동기간 짝
+            q_txt += (f" · 재고 분기 {item['q_inv_date']} vs {item['q_inv_prev_date']} ({item['q_inv_yoy']:+.1f}%"
+                      + (f" · 같은 분기 매출 {item['q_inv_rev_yoy']:+.1f}%)" if item.get("q_inv_rev_yoy") is not None else ")"))
+        elif qi_cols is not None:
+            q_txt += f" · 재고 분기 짝 없음(열 {qi_cols}개)"
         print(f"  ↳ 연간 {len(item['fy'])}개 · 재고 {'O' if item.get('inventory') else '-'} · "
               f"주가 {'O' if item.get('price') is not None else '-'} · "
               f"통화 {item.get('currency') or '-'}/재무 {item.get('fin_currency') or '-'}" + q_txt, flush=True)
