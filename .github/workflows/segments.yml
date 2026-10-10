@@ -6,6 +6,11 @@ on:
     # 매주 월요일 01:47 KST = 일요일 16:47 UTC (매일 대시보드 빌드보다 먼저)
     - cron: "47 16 * * 0"
   workflow_dispatch:   # 수동 실행 버튼 (테스트용)
+    inputs:
+      only:
+        description: "검증용: 이 티커만 새로 추출해 로그로 확인(쉼표 구분, 예: NKE,CROX,DECK) — 저장 안 함. 비우면 전체 실행"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -23,6 +28,7 @@ jobs:
       - name: Extract segments
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SEG_ONLY: ${{ inputs.only }}
         run: python extract_segments.py
       - name: Commit segments
         run: |

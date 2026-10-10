@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
+v1.3: (대표 지시 2026-10-10) 푸마 보도자료에서 본사 발언(재고·할인·유통 통제 문장 원문 최대 3개, mgmt_notes) 추출 —
+      원문에 글자 그대로 있는 문장만 남김. IR_VER=3으로 1회 재추출. 시험용 IR_ONLY(쉼표 구분 티커) — 저장 안 함
 v1.2: 환율 효과를 뺀 성장률(cn_yoy_pct) 추가 — 아디다스 Fact Sheet 'Change (c.n.)' 열, 푸마 '(ca)',
       아식스 실적 설명자료(결산단신 엔화 성장률과 ±1.5%p 이내로 일치하는 쌍만 채택).
       yoy_pct는 보고 통화 기준으로 통일(푸마 기존 값은 (ca)였음). 괄호 음수 '(0%)' 파싱 보강. IR_VER=2로 1회 재추출
@@ -27,7 +29,7 @@ import requests
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 OUT_PATH = "docs/segments_ir.json"
-IR_VER = 2   # 추출 스키마 버전 — 바뀌면 같은 자료라도 1회 재추출
+IR_VER = 3   # 추출 스키마 버전 — 바뀌면 같은 자료라도 1회 재추출 (v1.3 푸마 mgmt_notes)
 UA = {"User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
       "Accept-Language": "en-US,en;q=0.9"}
@@ -263,15 +265,47 @@ Respond with ONLY JSON, no markdown fences:
   "schema_v": 2, "period": "{period}", "prev_period": "{prev_period}", "currency": "EUR", "unit": "millions",
   "regions": [{{"name": "EMEA", "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null, "cn_yoy_pct": number|null}}],
   "channels": [{{"name": "Wholesale", "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null, "cn_yoy_pct": number|null}}],
-  "sub_segments": [], "notes": "one line on basis (currency-adjusted vs reported) or null"
+  "sub_segments": [], "notes": "one line on basis (currency-adjusted vs reported) or null",
+  "mgmt_notes": [{{"topic": "inventory|discount|channel", "quote": "one sentence copied VERBATIM", "ko": "한국어 한 줄 요약(60자 이내)"}}]
 }}
+mgmt_notes: up to 3 sentences where management describes inventory levels or clearance ("inventory"),
+markdowns / promotions / discounting ("discount"), or off-price / wholesale or distribution reductions or
+control ("channel"). Copy each quote EXACTLY as written (no ellipsis, no paraphrase). If none, use [].
 
 PRESS RELEASE:
 {text[:60000]}"""
-    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1200,
+    data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1800,
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-    return json.loads(re.sub(r"```json|```", "", txt).strip())
+    ex = json.loads(re.sub(r"```json|```", "", txt).strip())
+    ex["mgmt_notes"] = verify_quotes(ex.get("mgmt_notes"), text[:60000])
+    return ex
+
+
+def _norm_q(s):
+    """원문 대조용: 따옴표·대시·공백·대소문자 차이를 없앰"""
+    s = str(s or "").replace("\u2019", "'").replace("\u2018", "'").replace("\u201c", '"').replace("\u201d", '"')
+    s = s.replace("\u2013", "-").replace("\u2014", "-").replace("\xa0", " ")
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def verify_quotes(notes, doc_text):
+    """v1.3 본사 발언 — 원문에 글자 그대로 있는 문장만, 최대 3개(extract_segments v11과 같은 규칙)"""
+    if not isinstance(notes, list):
+        return []
+    body, out, dropped = _norm_q(doc_text), [], 0
+    for n in notes:
+        if not isinstance(n, dict):
+            continue
+        q, topic = str(n.get("quote") or "").strip(), n.get("topic")
+        if topic not in ("inventory", "discount", "channel") or len(q) < 30 or _norm_q(q) not in body:
+            dropped += 1
+            continue
+        out.append({"topic": topic, "quote": q[:400], "ko": str(n.get("ko") or "").strip()[:80]})
+        if len(out) == 3:
+            break
+    log(f"  본사 발언 {len(out)}건" + (f"(원문에 없는 문장 {dropped}건 버림)" if dropped else ""))
+    return out
 
 
 def run_puma(cached):
@@ -511,6 +545,18 @@ def main():
         except Exception:
             pass
     items = dict(old.get("items", {}))
+    only = [x.strip() for x in os.environ.get("IR_ONLY", "").split(",") if x.strip()]
+    if only:    # v1.3 시험 모드: 지정 종목만 캐시 무시하고 추출, 결과는 로그로만(저장 안 함)
+        log(f"[시험 모드] IR_ONLY={','.join(only)} — 저장하지 않음")
+        for tk, fn in (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics)):
+            if tk not in only:
+                continue
+            res = fn(None) or {}
+            ex = res.get("extract") or {}
+            log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}")
+            for n in ex.get("mgmt_notes") or []:
+                log(f"    [{n['topic']}] {n['ko']} — \"{n['quote'][:200]}\"")
+        return
     for tk, fn in (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics)):
         try:
             res = fn(items.get(tk))

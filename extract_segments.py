@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v11: (대표 지시 2026-10-10) 본사 발언 — 실적 문서에서 재고·할인·유통 통제 문장을 원문 그대로 최대 3개(mgmt_notes: topic·quote·ko).
+     원문에 글자 그대로 있는 문장만 남김(코드로 확인). SCHEMA_V=3으로 1회 재추출. 시험용 SEG_ONLY(쉼표 구분 티커) — 저장 안 함
 v10: (대표 지시 2026-10-09) 투자자의 날·중기 목표·프로포마 자료는 실적 자료에서 빼고(파일명·제목·앞부분) 그 전 실적
       공시를 고름(온 9/22·딕스 9/21 오선택 해결, 잘못 저장된 공시는 다시 안 고름). 새 추출이 비었거나 실패하면 이전 실적
       추출 유지(kept_reason, 실패는 kept_failed·failed), 분해 없는 공시는 기록해 매주 Claude 재호출 안 함. SEC·Claude 일시
@@ -38,7 +40,7 @@ _safe_email = CONTACT_EMAIL.encode("ascii", "ignore").decode() or "contact@examp
 UA = {"User-Agent": f"sports-industry-monitor ({_safe_email})"}
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
-SCHEMA_V = 2   # 추출 스키마 버전 (필드 변경 시 +1 → 캐시 자동 무효화)
+SCHEMA_V = 3   # 추출 스키마 버전 (필드 변경 시 +1 → 캐시 자동 무효화) — v11 mgmt_notes 추가
 
 US_TICKERS = ["NKE", "ONON", "DECK", "AS", "LULU", "BIRK",
               "CROX", "VFC", "UAA", "WWW", "COLM",
@@ -540,8 +542,19 @@ Respond with ONLY a JSON object, no markdown fences, no commentary:
     {{"name": "DTC|Wholesale|etc",
       "revenue": number|null, "prev_revenue": number|null, "yoy_pct": number|null}}
   ],{dks_extra}
+  "mgmt_notes": [
+    {{"topic": "inventory|discount|channel",
+      "quote": "one sentence copied VERBATIM from the document",
+      "ko": "그 문장의 한국어 한 줄 요약(60자 이내)"}}
+  ],
   "notes": "one short sentence in Korean about data caveats, or null"
 }}
+mgmt_notes: up to 3 sentences where management describes inventory levels or clearance
+(topic "inventory"), markdowns / promotions / discounting / gross margin pressure from
+promotions (topic "discount"), or off-price / liquidation channels, wholesale or account
+reductions, distribution or supply control (topic "channel"). Copy each quote EXACTLY as
+written (same words and punctuation, no ellipsis, no paraphrase). Prefer explicit or
+forward-looking statements. If there are none, use an empty list.
 If the document contains no regional breakdown, use an empty list for regions.
 Same for channels. If the document is not an earnings report at all, return
 {{"period": null, "prev_period": null, "currency": null, "regions": [],
@@ -551,14 +564,45 @@ DOCUMENT:
 {cap_text(doc_text)}"""
 
     data = anthropic_post({"model": "claude-sonnet-4-6",
-              "max_tokens": 2500,
+              "max_tokens": 3000,
               "messages": [{"role": "user", "content": prompt}]}, timeout=180)
     parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
     obj = json.loads(text)
     obj["schema_v"] = SCHEMA_V
+    obj["mgmt_notes"] = verify_quotes(obj.get("mgmt_notes"), doc_text, ticker)
     return obj
+
+
+MGMT_TOPICS = ("inventory", "discount", "channel")
+
+
+def _norm_q(s):
+    """원문 대조용: 따옴표·대시·공백·대소문자 차이를 없앰"""
+    s = str(s or "").replace("\u2019", "'").replace("\u2018", "'").replace("\u201c", '"').replace("\u201d", '"')
+    s = s.replace("\u2013", "-").replace("\u2014", "-").replace("\xa0", " ")
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def verify_quotes(notes, doc_text, label=""):
+    """v11 본사 발언 — 원문에 글자 그대로 있는 문장만 남김(요약·지어낸 문장 차단), 최대 3개"""
+    if not isinstance(notes, list):
+        return []
+    body = _norm_q(doc_text)
+    out, dropped = [], 0
+    for n in notes:
+        if not isinstance(n, dict):
+            continue
+        q, topic = str(n.get("quote") or "").strip(), n.get("topic")
+        if topic not in MGMT_TOPICS or len(q) < 30 or _norm_q(q) not in body:
+            dropped += 1
+            continue
+        out.append({"topic": topic, "quote": q[:400], "ko": str(n.get("ko") or "").strip()[:80]})
+        if len(out) == 3:
+            break
+    print(f"  {label} 본사 발언 {len(out)}건" + (f"(원문에 없는 문장 {dropped}건 버림)" if dropped else ""), flush=True)
+    return out
 
 
 # ── v10: 이전 값 유지 판단 ──
@@ -747,6 +791,20 @@ def main():
     except Exception as e:   # 저장된 공시 주소의 CIK로 대신 진행
         print(f"[WARN] company_tickers.json 실패 — 저장된 CIK로 진행: {str(e)[:160]}")
         cik_map = {}
+
+    only = [x.strip() for x in os.environ.get("SEG_ONLY", "").split(",") if x.strip()]
+    if only:    # v11 시험 모드: 지정 종목만 새로 추출해 결과를 로그로 보고 저장하지 않음
+        print(f"[시험 모드] SEG_ONLY={','.join(only)} — 저장하지 않음")
+        for t in only:
+            prev = dict(old_items.get(t) or {})
+            if prev.get("extract"):      # 같은 공시라도 다시 추출되게(캐시 무시)
+                prev["extract"] = dict(prev["extract"], schema_v=-1)
+            entry, st = process_ticker(t, prev, cik_map)
+            ex = entry.get("extract") or {}
+            print(f"[{t}] {st} · {entry.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])} · 채널 {len(ex.get('channels') or [])}")
+            for n in ex.get("mgmt_notes") or []:
+                print(f"    [{n['topic']}] {n['ko']} — \"{n['quote'][:200]}\"")
+        return
 
     stat = {}
     for t in US_TICKERS:
