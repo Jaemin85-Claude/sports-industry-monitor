@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-04 08:34 KST",
+ "generated_at": "2026-10-10 16:45 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -75,8 +75,8 @@
     "sub_segments": [],
     "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance"
    },
-   "fetched_at": "2026-10-01",
-   "ir_ver": 2
+   "fetched_at": "2026-10-10",
+   "ir_ver": 3
   },
   "PUM.DE": {
    "accession": "31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
@@ -150,10 +150,27 @@
      }
     ],
     "sub_segments": [],
-    "notes": "Primary growth rates stated on currency-adjusted (ca) basis; EMEA euro decline explicitly stated at -12.6%; total Q2 2026 sales €1,690.6M vs Q2 2025 €1,871.3M, down 9.7% reported and 9.4% ca; prior-year channel revenues not explicitly stated for Q2."
+    "notes": "Primary basis is currency-adjusted (ca); reported euro change stated only for total sales (-9.7%) and EMEA (-12.6%); prev_revenue for channels not explicitly stated for Q2 2025 standalone quarter.",
+    "mgmt_notes": [
+     {
+      "topic": "inventory",
+      "quote": "Inventories decreased 15.3% to € 1,821.1 million, mainly due to lower purchasing volumes; inventory clean-up is on track and normalisation expected by year-end 2026",
+      "ko": "재고가 15.3% 감소했으며, 재고 정리는 순조롭게 진행 중이고 2026년 말까지 정상화될 전망"
+     },
+     {
+      "topic": "channel",
+      "quote": "PUMA continued to reduce undesirable wholesale business, particularly in key regions such as North America and Europe, versus a Q2 2025 which still included a high share of mass merchant business.",
+      "ko": "PUMA는 북미와 유럽 등 주요 지역에서 불필요한 도매 비즈니스를 지속적으로 축소하고 있음"
+     },
+     {
+      "topic": "discount",
+      "quote": "Sales in e-commerce rose despite lower promotions, supported by additional marketplaces in APAC and growth in Greater China.",
+      "ko": "프로모션 축소에도 불구하고 APAC 마켓플레이스 확대와 중화권 성장에 힘입어 이커머스 매출 증가"
+     }
+    ]
    },
-   "fetched_at": "2026-10-01",
-   "ir_ver": 2
+   "fetched_at": "2026-10-10",
+   "ir_ver": 3
   },
   "7936.T": {
    "accession": "Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the",
@@ -192,7 +209,7 @@
       "name": "Greater China",
       "revenue": 81043,
       "prev_revenue": 61966,
-      "yoy_pct": 30.7,
+      "yoy_pct": 30.786237614175516,
       "cn_yoy_pct": 17.6
      },
      {
@@ -219,10 +236,10 @@
     ],
     "channels": [],
     "sub_segments": [],
-    "notes": "Figures are 'Sales to customers' (external sales only), explicitly broken out from intersegment sales in the segment information tables. Unit as stated in the document: millions of yen. Japan 6M 2026 external sales = 90,310 (intersegment 15,784; total segment sales 106,094). Japan 6M 2025 external sales = 75,730 (intersegment 23,532; total segment sales 99,263). Greater China 6M 2026 external sales = 81,043 (intersegment 5; total 81,048). Greater China 6M 2025 external sales = 61,966 (intersegment 65; total 62,032). Others 6M 2026 external sales = 32,269 (intersegment 1; total 32,271). Others 6M 2025 external sales = 24,698 (intersegment 0; total 24,698). The yoy_pct figures shown in the document for segment net sales refer to total sales (including intersegment), not external-only; Japan yoy_pct is set to null as the document's stated 6.9% increase applies to total segment sales (106,094 vs 99,263), not to external-only sales. · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
+    "notes": "Figures are external sales only (Sales to customers), excluding inter-segment sales, as explicitly stated in the segment information table. Unit is millions of yen as shown in the document. Japan 6M 2026 sales to customers: ¥90,310M (inter-segment ¥15,784M; total ¥106,094M). Japan 6M 2025 sales to customers: ¥75,730M (inter-segment ¥23,532M; total ¥99,263M). Greater China 6M 2026 sales to customers: ¥81,043M (inter-segment ¥5M; total ¥81,048M). Greater China 6M 2025 sales to customers: ¥61,966M (inter-segment ¥65M; total ¥62,032M). Others 6M 2026 sales to customers: ¥32,269M (inter-segment ¥1M; total ¥32,271M). YoY % for Japan and Greater China not separately stated for external-only sales in the summary table (summary table shows total sales growth); North America, Europe, Oceania, Southeast and South Asia, and Others YoY % figures are from the summary reportable segment table which reflects total sales (equal to external sales for those segments as inter-segment is zero or negligible). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
    },
-   "fetched_at": "2026-10-01",
-   "ir_ver": 2
+   "fetched_at": "2026-10-10",
+   "ir_ver": 3
   }
  }
 }
