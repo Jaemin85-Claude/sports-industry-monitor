@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.7: (대표 지시 2026-10-10) '■ 이번 주 새 본사 발언' — 지난 7일 안에 새로 뽑힌 실적 문서의 재고·할인·유통 문장(한국어 요약 + 원문 앞부분).
+      추출 시각(extracted_at, extract_segments v11.1·ir_fetch v1.4)이 7일 안이고 문서 날짜가 14일 안인 것만(재추출로 옛 발표가 다시 나오지 않게).
+      알림 3줄에 '본사 발언 n곳'(있을 때만)
 v1.6: (대표 지시 2026-10-10) 재고 증감을 같은 기간끼리(분기 자료가 있으면 같은 분기, 없으면 연간 결산) — 재고 경고·새 실적 줄에 비교 기간 표기
 v1.5: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄(build_dashboard v32.13과 같게) — 딕스 '인수 효과 포함, 본체 +5.6%'
 v1.4: (대표 지시 2026-10-09) 대시보드(build_dashboard v32.12)와 같은 순위 규칙 — 새 실적 줄에 기준(분기 '26.06, 분기 증감이 없으면 연간 FY25),
@@ -266,6 +269,60 @@ def upcoming_earnings(data, today):
     return sorted(out)
 
 
+TOPIC_KO = {"inventory": "재고", "discount": "할인·판촉", "channel": "유통·도매"}
+
+
+def _doc_date(e):
+    """본사 발언이 나온 문서 날짜 — SEC는 source의 공시일, IR은 doc_date(없으면 URL의 dd-mm-yyyy)"""
+    if e.get("doc_date"):
+        return str(e["doc_date"])[:10]
+    m = re.search(r"\b(\d{4}-\d{2}-\d{2})\b", str(e.get("source") or ""))
+    if m:
+        return m.group(1)
+    m = re.search(r"/(\d{2})-(\d{2})-(\d{4})-", str(e.get("url") or ""))
+    return f"{m.group(3)}-{m.group(2)}-{m.group(1)}" if m else None
+
+
+def _kst(v):
+    """'2026-10-12 01:58' / '2026-10-12' → KST datetime, 실패 시 None"""
+    m = re.match(r"(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}):(\d{2}))?", str(v or ""))
+    if not m:
+        return None
+    try:
+        d = datetime.date.fromisoformat(m.group(1))
+    except ValueError:
+        return None
+    return datetime.datetime(d.year, d.month, d.day, int(m.group(2) or 0), int(m.group(3) or 0), tzinfo=KST)
+
+
+def new_mgmt_notes(data, segs, segs_ir, now):
+    """v1.7 이번 주 새 본사 발언 — 추출 시각이 7일 안 + 문서 날짜가 14일 안(추출 시각이 없는 옛 기록은 문서 날짜 7일 안).
+    → [(회사, 문서 날짜, 기간, 노트 목록)] 문서 날짜 최신순"""
+    names = {x.get("ticker"): x.get("name") for x in (data or {}).get("items", [])}
+    today = now.date()
+    found = {}
+    for src in (segs, segs_ir):
+        for t, e in ((src or {}).get("items") or {}).items():
+            ex = (e or {}).get("extract") or {}
+            notes = [n for n in ex.get("mgmt_notes") or [] if isinstance(n, dict) and n.get("quote")]
+            dd = _doc_date(e or {})
+            try:
+                ddate = datetime.date.fromisoformat(dd) if dd else None
+            except ValueError:
+                ddate = None
+            if not notes or not ddate:
+                continue
+            ea = _kst(ex.get("extracted_at") or (e or {}).get("fetched_at"))
+            if ea:
+                fresh = ea > now - datetime.timedelta(days=DAYS) and ddate >= today - datetime.timedelta(days=14)
+            else:
+                fresh = ddate >= today - datetime.timedelta(days=DAYS)
+            if fresh:
+                per = re.split(r";|\(|\bended\b", str(ex.get("period") or ""), flags=re.I)[0].strip()
+                found[t] = (names.get(t) or t, dd, per, notes)
+    return sorted(found.values(), key=lambda r: r[1], reverse=True)
+
+
 SEP_GROUPS = ("kr_peer", "kr_fb", "customs")   # 따로 묶는 뉴스(v1.2) — '중요 뉴스'에서는 제외
 
 
@@ -412,7 +469,7 @@ def inventory_warnings(data, kr, today=None, krf=None):
     return out, skipped
 
 
-def build(today):
+def build(today, now=None):
     data, hist, news = load("data.json"), load("history.json"), load("news.json")
     nv, kr, kosis = load("naver_trend.json"), load("kr_domestic.json"), load("kosis.json")
     data_old, kr_old = load_old("data.json"), load_old("kr_domestic.json")
@@ -435,6 +492,7 @@ def build(today):
     ytd, ytd_p = ytd_search(nv)
     dch = dart_changes(kr, kr_old)
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
+    mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
 
     # ── 휴대폰 알림 3줄 ──
     usd = next((r for r in fx if r[0] == "USD"), None)
@@ -446,7 +504,8 @@ def build(today):
         l2.append(f"달러 {usd[2]:,.0f}원{f'({pct(usd[3])})' if usd[3] is not None else ''}")
     short = [f"📋 스포츠 산업 모니터 주간 요약 {period}",
              " · ".join(l2) or "주가·환율 비교 자료 없음",
-             f"중요 뉴스 {n_imp}건 · 새 실적 {len(res)}곳 · 이번 주 실적 발표 {len(earn)}곳 · 재고 경고 {len(inv)}곳"]
+             f"중요 뉴스 {n_imp}건 · 새 실적 {len(res)}곳{f' · 본사 발언 {len(mg)}곳' if mg else ''} · "
+             f"이번 주 실적 발표 {len(earn)}곳 · 재고 경고 {len(inv)}곳"]
 
     # ── 메일 본문 ──
     L = [f"스포츠 산업 모니터 — 주간 요약 ({period}, {today:%Y-%m-%d} 기준)", ""]
@@ -500,6 +559,17 @@ def build(today):
         L.append(f"  새 실적 반영 대기: {n} — {src} 공시 {ym(end)} 분기 발표됨, 야후는 {ym(q)} 분기까지")
     L.append("")
 
+    L.append("■ 이번 주 새 본사 발언 (실적 문서의 재고·할인·유통 문장 — 한국어 요약 / 원문)")
+    for n, dd, per, notes in mg:
+        L.append(f"  {n} ({dd[5:].replace('-', '/')} 발표{f' · {per}' if per else ''})")
+        for x in notes:
+            q = str(x.get("quote") or "")
+            L.append(f"    [{TOPIC_KO.get(x.get('topic'), x.get('topic'))}] {x.get('ko') or ''}")
+            L.append(f"      \"{q[:160]}{'…' if len(q) > 160 else ''}\"")
+    if not mg:
+        L.append("  없음 — 본사 실적 발표가 나오면 다음 월요일 메일에 모아 보냄")
+    L.append("")
+
     L.append("■ 이번 주 실적 발표 예정")
     L += [f"  {d[5:].replace('-', '/')} {n}" for d, n in earn] or ["  없음"]
     L.append("")
@@ -542,8 +612,8 @@ def build(today):
 
 
 def main():
-    today = datetime.datetime.now(KST).date()
-    short, body = build(today)
+    now = datetime.datetime.now(KST)
+    short, body = build(now.date(), now)
     print("\n".join(short) if "--short" in sys.argv else body)
 
 

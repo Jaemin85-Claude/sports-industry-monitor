@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.6: (대표 지시 2026-10-10) Claude 사용량을 월별로 kr_domestic.json에 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액',
+      응답 토큰 × 공식 가격). 검증 모드(DART_ONLY)는 저장하지 않으므로 기록 안 됨. 추출 규칙은 그대로
 v3.5: (대표 지시 2026-10-09) ① 설비투자(CAPEX)를 영업용 유형·무형자산 '…의 취득' 행 포함 목록으로 합산 — 세부 행(건물·토지·
       시설장치·비품·소프트웨어 등)으로 공시한 회사가 0으로 잡혀 FCF가 부풀던 문제(피스피스스튜디오 FY24 +121억 → 약 −162억,
       에이유브랜즈 3년 0). 사용권자산·투자부동산·금융자산·종속/관계기업·대여금은 제외. 감사보고서 경로는 투자활동 유출 원본 줄
@@ -198,7 +200,40 @@ def anthropic_post(payload, timeout=180):
         raise SystemExit(2)
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
-    return resp.json()
+    data = resp.json()
+    count_usage(payload.get("model"), data)
+    return data
+
+
+# ── v3.6 Claude 사용량(수집 상태 '이번 달 Claude 사용액') — extract_segments v11.1과 같은 방식 ──
+PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰(입력, 출력), 2026-10 기준
+_USAGE = {"calls": 0, "in": 0, "out": 0, "usd": 0.0}
+
+
+def count_usage(model, data):
+    """성공한 Claude 응답 1건의 토큰·금액을 이번 실행 합계에 더함"""
+    u = (data or {}).get("usage") or {}
+    tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    pin, pout = PRICE.get(model, (3.0, 15.0))
+    _USAGE["calls"] += 1
+    _USAGE["in"] += tin
+    _USAGE["out"] += tout
+    _USAGE["usd"] += (tin * pin + tout * pout) / 1e6
+
+
+def usage_months(old):
+    """이전 파일의 월별 기록(claude_usage)에 이번 실행 사용량을 더함 — 최근 3개월만. since = 그 달 기록 시작일"""
+    now = datetime.datetime.now(KST)
+    m = now.strftime("%Y-%m")
+    cu = (old or {}).get("claude_usage") if isinstance(old, dict) else None
+    hist = {k: v for k, v in cu.items() if isinstance(v, dict)} if isinstance(cu, dict) else {}
+    cur = dict(hist.get(m) or {"calls": 0, "in": 0, "out": 0, "usd": 0.0, "since": now.strftime("%Y-%m-%d")})
+    for k in ("calls", "in", "out"):
+        cur[k] = int(cur.get(k) or 0) + _USAGE[k]
+    cur["usd"] = round(float(cur.get("usd") or 0) + _USAGE["usd"], 4)
+    hist[m] = cur
+    return {k: hist[k] for k in sorted(hist)[-3:]}
+
 
 def log(msg):
     print(msg, flush=True)
@@ -1087,9 +1122,12 @@ def main():
         if probs:
             raise SystemExit(1)
         return False
+    result["claude_usage"] = usage_months(old)   # v3.6 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=1)
+    log(f"Claude 사용: 이번 실행 {_USAGE['calls']}회 · ${_USAGE['usd']:.3f} · 이번 달 누적 "
+        f"${result['claude_usage'][max(result['claude_usage'])]['usd']:.2f}")
     n = sum(1 for e in result["entities"] if e["id"] not in failed and e["years"] and e["years"][0].get("rev") is not None)
     log(f"saved {OUT_PATH} — 수치 확보 {n}/{len(ENTITIES)}개 법인{f' (+ 이전 값 유지 {len(failed)}곳)' if failed else ''}")
     if failed:

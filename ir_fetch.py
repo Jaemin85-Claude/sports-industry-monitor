@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
+v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
+      추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
 v1.3: (대표 지시 2026-10-10) 푸마 보도자료에서 본사 발언(재고·할인·유통 통제 문장 원문 최대 3개, mgmt_notes) 추출 —
       원문에 글자 그대로 있는 문장만 남김. IR_VER=3으로 1회 재추출. 시험용 IR_ONLY(쉼표 구분 티커) — 저장 안 함
 v1.2: 환율 효과를 뺀 성장률(cn_yoy_pct) 추가 — 아디다스 Fact Sheet 'Change (c.n.)' 열, 푸마 '(ca)',
@@ -64,7 +66,39 @@ def anthropic_post(payload, timeout=180):
         raise SystemExit(2)
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
-    return resp.json()
+    data = resp.json()
+    count_usage(payload.get("model"), data)
+    return data
+
+
+# ── v1.4 Claude 사용량(수집 상태 '이번 달 Claude 사용액') — extract_segments v11.1과 같은 방식 ──
+PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰(입력, 출력), 2026-10 기준
+_USAGE = {"calls": 0, "in": 0, "out": 0, "usd": 0.0}
+
+
+def count_usage(model, data):
+    """성공한 Claude 응답 1건의 토큰·금액을 이번 실행 합계에 더함"""
+    u = (data or {}).get("usage") or {}
+    tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    pin, pout = PRICE.get(model, (3.0, 15.0))
+    _USAGE["calls"] += 1
+    _USAGE["in"] += tin
+    _USAGE["out"] += tout
+    _USAGE["usd"] += (tin * pin + tout * pout) / 1e6
+
+
+def usage_months(old):
+    """이전 파일의 월별 기록(claude_usage)에 이번 실행 사용량을 더함 — 최근 3개월만. since = 그 달 기록 시작일"""
+    now = datetime.datetime.now(KST)
+    m = now.strftime("%Y-%m")
+    cu = (old or {}).get("claude_usage") if isinstance(old, dict) else None
+    hist = {k: v for k, v in cu.items() if isinstance(v, dict)} if isinstance(cu, dict) else {}
+    cur = dict(hist.get(m) or {"calls": 0, "in": 0, "out": 0, "usd": 0.0, "since": now.strftime("%Y-%m-%d")})
+    for k in ("calls", "in", "out"):
+        cur[k] = int(cur.get(k) or 0) + _USAGE[k]
+    cur["usd"] = round(float(cur.get("usd") or 0) + _USAGE["usd"], 4)
+    hist[m] = cur
+    return {k: hist[k] for k in sorted(hist)[-3:]}
 
 
 def fetch(url, as_bytes=False, timeout=90):
@@ -287,6 +321,7 @@ PRESS RELEASE:
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
     ex = json.loads(re.sub(r"```json|```", "", txt).strip())
+    ex["extracted_at"] = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")   # v1.4 주간 메일 '이번 주 새 본사 발언'
     ex["mgmt_notes"] = verify_quotes(ex.get("mgmt_notes"), text[:60000])
     return ex
 
@@ -311,9 +346,52 @@ def verify_quotes(notes, doc_text):
             dropped += 1
             continue
         out.append({"topic": topic, "quote": q[:400], "ko": str(n.get("ko") or "").strip()[:80]})
-        if len(out) == 3:
-            break
+    out = tidy_notes(out)[:3]      # v1.4 주제 바로잡기·비슷한 문장 빼기 뒤 최대 3개
     log(f"  본사 발언 {len(out)}건" + (f"(원문에 없는 문장 {dropped}건 버림)" if dropped else ""))
+    return out
+
+
+# v1.4 주제별 키워드 — extract_segments v11.1과 같음(붙은 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로)
+TOPIC_KW = {"inventory": re.compile(r"inventor", re.I),
+            "discount": re.compile(r"promot|markdown|discount|(?<!off-)pric(?:e|ing)", re.I),
+            "channel": re.compile(r"wholesale|\bdoors?\b|\baccounts?\b|off-price|distribut(?!ion (?:center|centre|cost))|"
+                                  r"sell-in|marketplace|mass merchant", re.I)}
+_STOP = {"this", "that", "with", "from", "into", "have", "been", "were", "their", "which", "also", "will",
+         "more", "than", "over", "company", "quarter", "year"}
+# 실적 문서 상투어(앞 5글자) — 'Gross margin decreased … basis points, primarily driven by …'가 겹친다고 같은 말로 보지 않게
+_BOIL = {"gross", "margi", "basis", "point", "prima", "drive", "parti", "offse", "decre", "incre", "compa", "expec"}
+
+
+def _words(q):
+    """비슷한 문장 판정용 내용어 — 4글자 이상 영단어 앞 5글자"""
+    return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP and w[:5] not in _BOIL}
+
+
+def _same(n, w, o):
+    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
+    ow = _words(o.get("quote"))
+    sh = len(w & ow)
+    return o.get("topic") == n.get("topic") and sh >= 6 and sh / max(1, min(len(w), len(ow))) > 0.6
+
+
+def tidy_notes(notes, label=""):
+    """v1.4 본사 발언 다듬기 — ① 주제 바로잡기 ② 같은 주제에서 내용어가 6개 이상·60% 넘게 겹치는 문장은 앞의 것만. 몇 번 돌려도 결과가 같음"""
+    out, fixed, dup = [], 0, 0
+    for n in notes or []:
+        if not isinstance(n, dict):
+            continue
+        q = str(n.get("quote") or "")
+        hits = {t: len(p.findall(q)) for t, p in TOPIC_KW.items()}
+        if not hits.get(n.get("topic")) and max(hits.values()) > 0:
+            n = dict(n, topic=max(hits, key=lambda k: hits[k]))
+            fixed += 1
+        w = _words(q)
+        if w and any(_same(n, w, o) for o in out):
+            dup += 1
+            continue
+        out.append(n)
+    if fixed or dup:
+        log(f"  {label} 본사 발언 정리: 주제 바로잡음 {fixed}건 · 비슷한 문장 {dup}건 뺌")
     return out
 
 
@@ -341,6 +419,7 @@ def run_puma(cached):
     ok = any(r.get("revenue") is not None for r in ex.get("regions", []))
     return {"accession": url.rsplit("/", 1)[-1], "source": "IR 보도자료 (HTML)", "url": url,
             "error": None if ok else "지역 금액 미추출", "extract": ex if ok else None,
+            "doc_date": f"{d[0]:04d}-{d[1]:02d}-{d[2]:02d}" if d and d[0] else None,   # v1.4 보도자료 날짜(URL)
             "fetched_at": datetime.datetime.now(KST).strftime("%Y-%m-%d"), "ir_ver": IR_VER}
 
 
@@ -577,11 +656,18 @@ def main():
             log(f"[{tk}] 실패: {str(e)[:200]}")
             if tk in items:
                 log("  이전 결과 유지")
-    out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "items": items}
+    for tk, v in items.items():     # v1.4 캐시에도 같은 정리(새 추출은 이미 정리됨)
+        ex = (v or {}).get("extract")
+        if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):
+            ex["mgmt_notes"] = tidy_notes(ex["mgmt_notes"], tk)
+    out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "items": items,
+           "claude_usage": usage_months(old)}    # v1.4 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     log(f"saved {OUT_PATH} — {sum(1 for v in items.values() if v.get('extract'))}/3 추출")
+    log(f"Claude 사용: 이번 실행 {_USAGE['calls']}회 · ${_USAGE['usd']:.3f} · 이번 달 누적 "
+        f"${out['claude_usage'][max(out['claude_usage'])]['usd']:.2f}")
 
 
 if __name__ == "__main__":

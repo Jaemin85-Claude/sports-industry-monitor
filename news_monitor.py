@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.10: (대표 지시 2026-10-10) Claude 사용량을 월별로 news.json에 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액',
+      본 선별·비교 선별 모두, 응답 토큰 × 공식 가격). 선별 지시문·검색어·★ 기준은 그대로
 v2.9: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 구글 뉴스가 한 건도 안 들어오면(전체 RSS 실패) news.json을 덮지 않고
      '실패 표시'(soft_fail.txt → 워크플로우 마지막 단계 빨간 X → 낮 점검 알림). 검색어 절반 넘게 실패해도 실패 표시(받은 기사는 반영).
      Claude 선별이 일시 오류(429·5xx·연결·시간 초과)면 1분·3분 뒤 두 번 다시 시도, 그래도 실패하면 실패 표시(신규는 다음 회차 재판정).
@@ -240,7 +242,38 @@ def _anthropic_once(payload, timeout):
         raise TransientAPI(f"Anthropic {resp.status_code}: {resp.text[:200]}")
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
-    return resp.json()
+    data = resp.json()
+    count_usage(payload.get("model"), data)
+    return data
+
+
+# ── v2.10 Claude 사용량(수집 상태 '이번 달 Claude 사용액') — 성공한 응답의 토큰 수 × PRICE ──
+_USAGE = {"calls": 0, "in": 0, "out": 0, "usd": 0.0}
+
+
+def count_usage(model, data):
+    """성공한 Claude 응답 1건의 토큰·금액을 이번 실행 합계에 더함"""
+    u = (data or {}).get("usage") or {}
+    tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    pin, pout = PRICE.get(model, (3.0, 15.0))
+    _USAGE["calls"] += 1
+    _USAGE["in"] += tin
+    _USAGE["out"] += tout
+    _USAGE["usd"] += (tin * pin + tout * pout) / 1e6
+
+
+def usage_months(old):
+    """이전 파일의 월별 기록(claude_usage)에 이번 실행 사용량을 더함 — 최근 3개월만. since = 그 달 기록 시작일"""
+    now = datetime.datetime.now(KST)
+    m = now.strftime("%Y-%m")
+    cu = (old or {}).get("claude_usage") if isinstance(old, dict) else None
+    hist = {k: v for k, v in cu.items() if isinstance(v, dict)} if isinstance(cu, dict) else {}
+    cur = dict(hist.get(m) or {"calls": 0, "in": 0, "out": 0, "usd": 0.0, "since": now.strftime("%Y-%m-%d")})
+    for k in ("calls", "in", "out"):
+        cur[k] = int(cur.get(k) or 0) + _USAGE[k]
+    cur["usd"] = round(float(cur.get("usd") or 0) + _USAGE["usd"], 4)
+    hist[m] = cur
+    return {k: hist[k] for k in sorted(hist)[-3:]}
 
 
 def anthropic_post(payload, timeout=180, waits=RETRY_WAITS):
@@ -558,10 +591,13 @@ def main():
                       "new": len(new_items), "curate": curate}}
     if compare:
         out["model_compare"] = compare
+    out["claude_usage"] = usage_months(old)   # v2.10 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)
     with open(NEWS_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     print(f"saved {NEWS_PATH} (보관 {len(kept)}건, 오늘 신규 {len(picked)}건)")
+    print(f"Claude 사용: 이번 실행 {_USAGE['calls']}회 · ${_USAGE['usd']:.3f} · 이번 달 누적 "
+          f"${out['claude_usage'][max(out['claude_usage'])]['usd']:.2f}")
 
 
 if __name__ == "__main__":

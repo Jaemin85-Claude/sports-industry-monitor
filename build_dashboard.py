@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.16: (대표 지시 2026-10-10) 더보기 › 수집 상태에 '🤖 Claude 사용액' — 이번 달(지난달) 작업별 금액·호출 수·원화 환산.
+        각 수집 스크립트가 저장한 월별 claude_usage(news_monitor v2.10 · extract_segments v11.1 · ir_fetch v1.4 · dart_fetch v3.6) 합.
+        기록을 이번 달에 시작했으면 시작일 표시. 더보기 메뉴의 수집 상태 줄에도 이번 달 금액
 v32.15: (대표 지시 2026-10-10) 기업 상세에 '🗣️ 본사 발언' — 실적 문서의 재고·할인·유통 통제 문장(원문 + 한국어 요약, 최대 3개).
         extract_segments v11·ir_fetch v1.3이 원문에 있는 문장만 저장. 새 형식으로 추출되기 전엔 카드 없음
 v32.14: (대표 지시 2026-10-10) 재고 증감을 같은 기간끼리 비교 — 분기 재고·같은 분기 매출이 있으면 최근 분기 vs 1년 전 같은 분기
@@ -156,6 +159,7 @@ docs/data.json + docs/segments.json(있으면) → docs/index.html
 import json
 import re
 import os
+import datetime
 
 TEMPLATE = r"""<!DOCTYPE html>
 <html lang="ko">
@@ -274,6 +278,8 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .warnbar{background:color-mix(in srgb,var(--neg) 10%,var(--card));border:1px solid var(--neg);border-radius:10px;padding:8px 12px;font-size:var(--fs-sm);margin-bottom:10px;cursor:pointer}
 #statusTbl td,#statusTbl th{white-space:nowrap;padding:7px 4px}
 #statusTbl td:first-child{white-space:normal}
+#claudeTbl td,#claudeTbl th{white-space:nowrap;padding:7px 4px}#claudeTbl td:first-child{white-space:normal}
+.cl-tot{font-size:var(--fs-lg);margin:2px 0 8px}.cl-tot b{font-size:var(--fs-xl)}
 .st-ok{color:var(--pos);font-weight:600}.st-late{color:var(--neg);font-weight:600}
 /* v28 소싱 기회 지도 */
 .src-wrap{display:grid;gap:10px;grid-template-columns:minmax(0,1fr);grid-template-areas:"seg" "map" "regs" "btns"}
@@ -1084,6 +1090,24 @@ function statusCard(){
   });
   h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 일부 실패 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음'</div></div>`;
   return h;
+}
+function claudeCard(){   // v32.16 이번 달 Claude 사용액 — 수집 스크립트가 저장한 월별 기록의 합
+  const C=STATUS&&STATUS.claude; if(!C) return '';
+  const usd=v=>v==null?'―':(v>0&&v<0.01?'<$0.01':'$'+Number(v).toFixed(2));
+  const tot=C.rows.reduce((a,r)=>a+(r.usd||0),0), hasPrev=C.rows.some(r=>r.prev!=null), ptot=C.rows.reduce((a,r)=>a+(r.prev||0),0);
+  const k=krwOf(tot,'USD'), mm=+C.month.slice(5,7), pm=+C.prev.slice(5,7), since=C.rows.some(r=>r.since||r.prev_since), psin=C.rows.some(r=>r.prev_since);
+  let h=`<div class="card" id="claudeCard"><h3>🤖 Claude 사용액 — ${mm}월</h3>
+    <div class="cl-tot"><b>${usd(tot)}</b>${k!=null?` <span class="na">≈ ${Math.round(k).toLocaleString()}원</span>`:''}${hasPrev?` <span class="na">· ${pm}월 ${usd(ptot)}${psin?'(일부)':''}</span>`:''}</div>
+    <table id="claudeTbl"><tr><th>작업</th><th>${mm}월</th><th>호출</th>${hasPrev?`<th>${pm}월</th>`:''}</tr>`;
+  C.rows.forEach(r=>{
+    h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.cad)}</div></td><td>${r.rec?usd(r.usd||0):'<span class="na">기록 전</span>'}${r.since?`<div class="ref">${r.since.slice(5).replace('-','/')}부터</div>`:''}</td><td>${r.rec?(r.calls||0)+'회':''}</td>${hasPrev?`<td>${usd(r.prev)}${r.prev_since?`<div class="ref">${r.prev_since.slice(5).replace('-','/')}부터</div>`:''}</td>`:''}</tr>`;
+  });
+  return h+`</table><div class="note">GitHub 워크플로우가 부른 Claude API 사용량(응답 토큰 × 공식 가격)으로 계산한 추정치${since?` · 'MM/DD부터' = 그날 기록 시작(그 전 사용은 빠짐)`:''} · Claude 앱 세션(점검·작업)과 작업 브랜치 시험 실행은 빠짐 · 정확한 청구액은 Anthropic Console(Usage)</div></div>`;
+}
+function claudeMonthTxt(){   // 더보기 메뉴 줄용 '10월 Claude $1.23'
+  const C=STATUS&&STATUS.claude; if(!C) return '';
+  const tot=C.rows.reduce((a,r)=>a+(r.usd||0),0);
+  return ` · ${+C.month.slice(5,7)}월 Claude $${tot.toFixed(2)}`;
 }
 function statusWarn(){
   const late=statusRows().filter(r=>r.late);
@@ -2581,7 +2605,7 @@ function moreMenuHtml(){
     ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',cmpN('fb'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
     ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
-    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부',late.length?`<span class="mbadge late">지연 ${late.length}</span>`:(part?`<span class="stl" style="margin-left:0">일부 실패 ${part}곳</span>`:'<span class="st-ok">● 정상</span>'))}
+    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부'+claudeMonthTxt(),late.length?`<span class="mbadge late">지연 ${late.length}</span>`:(part?`<span class="stl" style="margin-left:0">일부 실패 ${part}곳</span>`:'<span class="st-ok">● 정상</span>'))}
   </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
 }
 function moreFashionHtml(){   // 👕 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
@@ -2594,7 +2618,7 @@ function buildMore(){
     : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreFashionHtml()
     : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
-    : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()
+    : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()+claudeCard()
     : moreMenuHtml();
 }
 function moreOpen(v){ MORE_VIEW=v; buildMore(); document.getElementById('content').scrollTo(0,0); }
@@ -2793,6 +2817,41 @@ def _partial(fn, d):
     return n, notes
 
 
+# v32.16 Claude 사용액: (파일, 표시명, 주기) — 각 수집 스크립트가 월별 claude_usage를 저장
+CLAUDE_SOURCES = [
+    ("news.json", "뉴스 선별", "매일"),
+    ("segments.json", "미국 공시 추출", "매주 월"),
+    ("segments_ir.json", "유럽·일본 IR 추출", "매주 일"),
+    ("kr_domestic.json", "국내 감사보고서 추출", "매월 15일"),
+]
+KST_TZ = datetime.timezone(datetime.timedelta(hours=9))
+
+
+def collect_claude(now=None):
+    """v32.16 작업별 이번 달·지난달 Claude 사용액 — 기록이 하나도 없으면 None.
+    since = 기록을 이번 달 중간에 시작한 작업(이전 달 기록 없음)의 시작일 — 그 전 사용은 빠져 있다는 표시"""
+    now = now or datetime.datetime.now(KST_TZ)
+    month = now.strftime("%Y-%m")
+    prev = (now.replace(day=1) - datetime.timedelta(days=1)).strftime("%Y-%m")
+    rows, any_rec = [], False
+    for fn, label, cad in CLAUDE_SOURCES:
+        cu = {}
+        try:
+            with open(os.path.join("docs", fn), encoding="utf-8") as f:
+                cu = json.load(f).get("claude_usage") or {}
+        except Exception:
+            pass
+        cu = {k: v for k, v in cu.items() if isinstance(v, dict)} if isinstance(cu, dict) else {}
+        any_rec = any_rec or bool(cu)
+        cur, pm = cu.get(month) or {}, cu.get(prev) or {}
+        since = cur.get("since") if cur and not any(k < month for k in cu) else None
+        psince = pm.get("since") if pm and not any(k < prev for k in cu) else None   # 지난달도 기록 시작 달이면 그 전은 빠짐
+        rows.append({"label": label, "cad": cad, "rec": bool(cu), "usd": cur.get("usd"), "calls": cur.get("calls"),
+                     "prev": pm.get("usd"), "since": since if isinstance(since, str) and since[8:10] > "01" else None,
+                     "prev_since": psince if isinstance(psince, str) and psince[8:10] > "01" else None})
+    return {"month": month, "prev": prev, "rows": rows} if any_rec else None
+
+
 def collect_status():
     out = []
     for fn, label, wf, cad, limit in STATUS_SOURCES:
@@ -2810,7 +2869,7 @@ def collect_status():
                 print(f"[WARN] 수집 상태 {fn} 읽기 실패: {str(e)[:100]}")
         out.append({"file": fn, "label": label, "wf": wf, "cadence": cad, "limit": limit,
                     "ts": ts, "date_only": date_only, "failed": failed, "notes": notes})
-    return {"sources": out}
+    return {"sources": out, "claude": collect_claude()}
 
 
 def main():
