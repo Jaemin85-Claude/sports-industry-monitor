@@ -2,7 +2,7 @@
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
 v11.1: (대표 지시 2026-10-10) 본사 발언 다듬기 — 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로 바로잡음(딕스 '재고 평가절하'가
-       '유통'으로 붙음), 내용어가 60% 넘게 겹치는 문장은 하나만(온러닝 '도매 출고 조절' 2문장). 캐시 추출에도 매 실행 적용(Claude 재호출 없음).
+       '유통'으로 붙음), 같은 주제에서 내용어가 6개 이상·60% 넘게 겹치는 문장은 하나만(온러닝 '도매 출고 조절' 2문장). 캐시 추출에도 매 실행 적용(Claude 재호출 없음).
        추출 시각 extracted_at(주간 메일 '이번 주 새 본사 발언'). Claude 사용량을 월별로 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액')
 v11: (대표 지시 2026-10-10) 본사 발언 — 실적 문서에서 재고·할인·유통 통제 문장을 원문 그대로 최대 3개(mgmt_notes: topic·quote·ko).
      원문에 글자 그대로 있는 문장만 남김(코드로 확인). SCHEMA_V=3으로 1회 재추출. 시험용 SEG_ONLY(쉼표 구분 티커) — 저장 안 함
@@ -648,19 +648,29 @@ def verify_quotes(notes, doc_text, label=""):
 
 # v11.1 주제별 키워드 — 붙은 주제의 키워드가 하나도 없고 다른 주제 키워드만 있으면 그 주제로(같은 수면 재고 → 할인 → 유통 순)
 TOPIC_KW = {"inventory": re.compile(r"inventor", re.I),
-            "discount": re.compile(r"promot|markdown|discount|pric(?:e|ing)", re.I),
-            "channel": re.compile(r"wholesale|\bdoors?\b|off-price|distribut|sell-in|marketplace|mass merchant", re.I)}
+            "discount": re.compile(r"promot|markdown|discount|(?<!off-)pric(?:e|ing)", re.I),
+            "channel": re.compile(r"wholesale|\bdoors?\b|\baccounts?\b|off-price|distribut(?!ion (?:center|centre|cost))|"
+                                  r"sell-in|marketplace|mass merchant", re.I)}
 _STOP = {"this", "that", "with", "from", "into", "have", "been", "were", "their", "which", "also", "will",
          "more", "than", "over", "company", "quarter", "year"}
+# 실적 문서 상투어(앞 5글자) — 'Gross margin decreased … basis points, primarily driven by …'가 겹친다고 같은 말로 보지 않게
+_BOIL = {"gross", "margi", "basis", "point", "prima", "drive", "parti", "offse", "decre", "incre", "compa", "expec"}
 
 
 def _words(q):
     """비슷한 문장 판정용 내용어 — 4글자 이상 영단어 앞 5글자(deliberate·deliberately를 같게)"""
-    return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP}
+    return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP and w[:5] not in _BOIL}
+
+
+def _same(n, w, o):
+    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
+    ow = _words(o.get("quote"))
+    sh = len(w & ow)
+    return o.get("topic") == n.get("topic") and sh >= 6 and sh / max(1, min(len(w), len(ow))) > 0.6
 
 
 def tidy_notes(notes, label=""):
-    """v11.1 본사 발언 다듬기 — ① 주제 바로잡기 ② 내용어가 60% 넘게 겹치는 문장은 앞의 것만. 몇 번 돌려도 결과가 같음"""
+    """v11.1 본사 발언 다듬기 — ① 주제 바로잡기 ② 같은 주제에서 내용어가 6개 이상·60% 넘게 겹치는 문장은 앞의 것만. 몇 번 돌려도 결과가 같음"""
     out, fixed, dup = [], 0, 0
     for n in notes or []:
         if not isinstance(n, dict):
@@ -671,7 +681,7 @@ def tidy_notes(notes, label=""):
             n = dict(n, topic=max(hits, key=lambda k: hits[k]))
             fixed += 1
         w = _words(q)
-        if w and any(len(w & _words(o["quote"])) / max(1, min(len(w), len(_words(o["quote"])))) > 0.6 for o in out):
+        if w and any(_same(n, w, o) for o in out):
             dup += 1
             continue
         out.append(n)

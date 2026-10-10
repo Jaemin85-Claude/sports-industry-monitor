@@ -1095,12 +1095,12 @@ function claudeCard(){   // v32.16 이번 달 Claude 사용액 — 수집 스크
   const C=STATUS&&STATUS.claude; if(!C) return '';
   const usd=v=>v==null?'―':(v>0&&v<0.01?'<$0.01':'$'+Number(v).toFixed(2));
   const tot=C.rows.reduce((a,r)=>a+(r.usd||0),0), hasPrev=C.rows.some(r=>r.prev!=null), ptot=C.rows.reduce((a,r)=>a+(r.prev||0),0);
-  const k=krwOf(tot,'USD'), mm=+C.month.slice(5,7), pm=+C.prev.slice(5,7), since=C.rows.some(r=>r.since);
+  const k=krwOf(tot,'USD'), mm=+C.month.slice(5,7), pm=+C.prev.slice(5,7), since=C.rows.some(r=>r.since||r.prev_since), psin=C.rows.some(r=>r.prev_since);
   let h=`<div class="card" id="claudeCard"><h3>🤖 Claude 사용액 — ${mm}월</h3>
-    <div class="cl-tot"><b>${usd(tot)}</b>${k!=null?` <span class="na">≈ ${Math.round(k).toLocaleString()}원</span>`:''}${hasPrev?` <span class="na">· ${pm}월 ${usd(ptot)}</span>`:''}</div>
+    <div class="cl-tot"><b>${usd(tot)}</b>${k!=null?` <span class="na">≈ ${Math.round(k).toLocaleString()}원</span>`:''}${hasPrev?` <span class="na">· ${pm}월 ${usd(ptot)}${psin?'(일부)':''}</span>`:''}</div>
     <table id="claudeTbl"><tr><th>작업</th><th>${mm}월</th><th>호출</th>${hasPrev?`<th>${pm}월</th>`:''}</tr>`;
   C.rows.forEach(r=>{
-    h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.cad)}</div></td><td>${r.rec?usd(r.usd||0):'<span class="na">기록 전</span>'}${r.since?`<div class="ref">${r.since.slice(5).replace('-','/')}부터</div>`:''}</td><td>${r.rec?(r.calls||0)+'회':''}</td>${hasPrev?`<td>${usd(r.prev)}</td>`:''}</tr>`;
+    h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.cad)}</div></td><td>${r.rec?usd(r.usd||0):'<span class="na">기록 전</span>'}${r.since?`<div class="ref">${r.since.slice(5).replace('-','/')}부터</div>`:''}</td><td>${r.rec?(r.calls||0)+'회':''}</td>${hasPrev?`<td>${usd(r.prev)}${r.prev_since?`<div class="ref">${r.prev_since.slice(5).replace('-','/')}부터</div>`:''}</td>`:''}</tr>`;
   });
   return h+`</table><div class="note">GitHub 워크플로우가 부른 Claude API 사용량(응답 토큰 × 공식 가격)으로 계산한 추정치${since?` · 'MM/DD부터' = 그날 기록 시작(그 전 사용은 빠짐)`:''} · Claude 앱 세션(점검·작업)과 작업 브랜치 시험 실행은 빠짐 · 정확한 청구액은 Anthropic Console(Usage)</div></div>`;
 }
@@ -2845,8 +2845,10 @@ def collect_claude(now=None):
         any_rec = any_rec or bool(cu)
         cur, pm = cu.get(month) or {}, cu.get(prev) or {}
         since = cur.get("since") if cur and not any(k < month for k in cu) else None
+        psince = pm.get("since") if pm and not any(k < prev for k in cu) else None   # 지난달도 기록 시작 달이면 그 전은 빠짐
         rows.append({"label": label, "cad": cad, "rec": bool(cu), "usd": cur.get("usd"), "calls": cur.get("calls"),
-                     "prev": pm.get("usd"), "since": since if since and since[8:10] > "01" else None})
+                     "prev": pm.get("usd"), "since": since if isinstance(since, str) and since[8:10] > "01" else None,
+                     "prev_since": psince if isinstance(psince, str) and psince[8:10] > "01" else None})
     return {"month": month, "prev": prev, "rows": rows} if any_rec else None
 
 
