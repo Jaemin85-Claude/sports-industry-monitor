@@ -4,7 +4,8 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v32.17: (대표 지시 2026-10-10, 8번 ①) 더보기 '🧭 브랜드 점검표' — 네이버 감시 브랜드 중 본사가 상장사로 연결된 곳을
         '지금 검토 / 관망 / 주의'로 판정: 국내 수요(검색 전년 대비, 감시 브랜드 중앙값 ±10%p) + 매입 조건(본사 재고 압력 ±5%p ·
         본사 발언 신호(extract_segments v11.2 sig) · 원산지 통화 1년 평균 대비 ±5%/±10%). 다음 세일·최근 뉴스는 참고 줄.
-        본사 자료 없는 브랜드는 검색·환율만 표로(판정 안 함). 소싱 지도에 바로가기, 본사 발언 카드에 신호 표시
+        본사 재고·발언 자료가 둘 다 없는 브랜드는 검색·환율만 표로(판정 안 함). 신호 분류 전 발언은 '분류 전'으로(중립과 구분),
+        재고 줄에 '새 실적 반영 대기'·이전 값 표시, 뉴스는 브랜드 이름이 있는 기사만. 소싱 지도에 바로가기, 본사 발언 카드에 신호 표시
 v32.16: (대표 지시 2026-10-10) 더보기 › 수집 상태에 '🤖 Claude 사용액' — 이번 달(지난달) 작업별 금액·호출 수·원화 환산.
         각 수집 스크립트가 저장한 월별 claude_usage(news_monitor v2.10 · extract_segments v11.1 · ir_fetch v1.4 · dart_fetch v3.6) 합.
         기록을 이번 달에 시작했으면 시작일 표시. 더보기 메뉴의 수집 상태 줄에도 이번 달 금액
@@ -2652,22 +2653,24 @@ function chkMedian(){   // 감시 브랜드(global, 검색량 충분) 전년 대
 }
 function chkDemand(b,med){
   if(b.yoy==null) return {pt:0,na:1,txt:'검색 자료 없음'};
-  if(med==null) return {pt:0,txt:`전년 대비 ${pp(b.yoy)}`};
+  if(med==null) return {pt:0,stale:b.stale_since,txt:`전년 대비 ${pp(b.yoy)}`};
   const rel=b.yoy-med, pt=b.low?0:(rel>=10?1:(rel<=-10?-1:0));
-  return {pt, rel, txt:`전년 대비 ${pp(b.yoy)} · 감시 브랜드 중앙값(${pp(med)})보다 ${rel>=0?'+':''}${rel.toFixed(1)}%p`
+  return {pt, rel, stale:b.stale_since, txt:`전년 대비 ${pp(b.yoy)} · 감시 브랜드 중앙값(${pp(med)})보다 ${rel>=0?'+':''}${rel.toFixed(1)}%p`
     +(b.trend!=null?` · 최근 4주 vs 직전 12주 ${pp(b.trend)}`:'')+(b.low?' · 검색량 적어 점수 제외':'')};
 }
 function chkInv(x){
   const ip=invPick(x);
   if(ip.inv==null||ip.rev==null) return {pt:0,na:1,txt:'같은 기간 재고·매출 자료 없음'};
   const P=ip.inv-ip.rev, pt=P>=5?1:(P<=-5?-1:0);
-  return {pt, txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${P>=0?'+':''}${P.toFixed(1)}%p · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
+  return {pt, stale:x.stale_since, pend:pendOf(x), txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${P>=0?'+':''}${P.toFixed(1)}%p · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
 }
 function chkNotes(t){
   const s=segOf(t), ex=s&&s.extract;
   if(!ex||!Array.isArray(ex.mgmt_notes)) return {pt:0,na:1,list:[],txt:'자료 없음 — 실적 문서 원문을 받지 않는 회사(재무표·야후 수치만)'};
-  const L=ex.mgmt_notes, m=L.filter(n=>n.sig==='more').length, l=L.filter(n=>n.sig==='less').length, per=(ex.period||'').split(/;| ended/)[0];
-  return {pt:m>l?1:(l>m?-1:0), list:L, txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`+(L.length-m-l?` · 중립 ${L.length-m-l}건`:''):'재고·할인·유통 관련 발언 없음')};
+  const L=ex.mgmt_notes, m=L.filter(n=>n.sig==='more').length, l=L.filter(n=>n.sig==='less').length,
+    z=L.filter(n=>n.sig==='neutral').length, u=L.length-m-l-z, per=(ex.period||'').split(/;| ended/)[0];   // u = 아직 신호 분류 전(다음 추출 때 판정)
+  return {pt:m>l?1:(l>m?-1:0), na:(L.length&&u===L.length)?1:0, list:L, txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
+    +(z?` · 중립 ${z}건`:'')+(u?` · 신호 분류 전 ${u}건(다음 추출 때 판정)`:''):'재고·할인·유통 관련 발언 없음')};
 }
 function chkFx(cur){
   const f=(DATA.fx||{})[cur]; if(!f) return {pt:0,na:1,txt:`${cur} 환율 자료 없음`};
@@ -2683,9 +2686,11 @@ function chkSale(cur){
   const dn=Math.round((ev.s-today)/86400000);
   return `${ev.fl} ${ev.sh} ${dn<=0?'진행 중':'D-'+dn}${ev.k==='예상'?'(예상)':''}`;
 }
-function chkNews(key){   // 최근 14일 ★2 이상 브랜드 뉴스 1건(참고)
-  if(!key||!NEWS||!NEWS.items) return null;
-  return newsDedupe(NEWS.items.filter(it=>it.scope==='brand'&&it.key===key&&(it.importance||1)>=2)
+function chkNews(b){   // 최근 14일 ★2 이상 브랜드 뉴스 1건(참고) — 제목·요약에 그 브랜드 이름이 있는 것만(호카·어그처럼 뉴스 묶음을 같이 쓰는 경우)
+  const key=b&&b.news; if(!key||!NEWS||!NEWS.items) return null;
+  const kw=((b.keywords&&b.keywords.length)?b.keywords:[b.name]).map(k=>String(k).toLowerCase()).filter(Boolean);
+  return newsDedupe(NEWS.items.filter(it=>it.scope==='brand'&&it.key===key&&(it.importance||1)>=2
+      &&kw.some(k=>((it.title||'')+' '+(it.summary||'')).toLowerCase().indexOf(k)>=0))
     .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0)),1)[0]||null;
 }
 function chkModel(){
@@ -2694,9 +2699,10 @@ function chkModel(){
   ((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global').forEach(b=>{
     const cur=CHK_CUR[b.name]||null, link=b.link?String(b.link):'';
     const x=link&&!link.startsWith('krd:')?DATA.items.find(i=>i.ticker===link):null;
-    const r={b, x, cur, link, dem:chkDemand(b,med), fx:cur?chkFx(cur):{pt:0,na:1,txt:'원산지 통화 미지정'}, sale:cur?chkSale(cur):'', news:chkNews(b.news)};
+    const r={b, x, cur, link, dem:chkDemand(b,med), fx:cur?chkFx(cur):{pt:0,na:1,txt:'원산지 통화 미지정'}, sale:cur?chkSale(cur):'', news:chkNews(b)};
     if(!x){ rest.push(r); return; }
     r.inv=chkInv(x); r.notes=chkNotes(x.ticker);
+    if(r.inv.na&&r.notes.na){ rest.push(r); return; }   // 본사 재고·발언 근거가 둘 다 없으면 판정하지 않음(환율만으로 판정되지 않게)
     r.buy=r.inv.pt+r.notes.pt+r.fx.pt;
     r.lv=(r.dem.pt>=0&&r.buy>=2)?2:(((r.dem.pt<0&&r.buy<=1)||r.buy<=-1)?0:1);
     main.push(r);
@@ -2706,8 +2712,9 @@ function chkModel(){
   rest.sort((a,b)=>relOf(b)-relOf(a));
   return (CHK_CACHE={main, rest, med});
 }
+const ptx=o=>o.na?'―':(o.pt?sgn(o.pt):'0');
 function chkEv(lbl,o,extra){
-  return `<div class="chk-ev"><span class="chk-pt ${o.pt>0?'p':(o.pt<0?'n':'')}">${o.na?'―':(o.pt?sgn(o.pt):'0')}</span><div><b>${lbl}</b>${esc(o.txt)}${o.stale?staleTag(o.stale):''}${extra||''}</div></div>`;
+  return `<div class="chk-ev"><span class="chk-pt ${o.pt>0?'p':(o.pt<0?'n':'')}">${ptx(o)}</span><div><b>${lbl}</b>${esc(o.txt)}${o.stale?staleTag(o.stale):''}${o.pend?pendTag(o.pend):''}${extra||''}</div></div>`;
 }
 function chkMenuR(){
   const M=chkModel(); if(!M.main.length) return '수집 전';
@@ -2718,33 +2725,34 @@ function chkHtml(){
   const M=chkModel();
   if(!M.main.length&&!M.rest.length) return `<div class="card"><div class="na">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</div></div>`;
   const cnt=l=>M.main.filter(r=>r.lv===l).length;
-  let h=`<div class="card"><h3>🧭 본사 자료가 있는 브랜드 <span class="na" style="font-weight:400">${M.main.length}개 · 판정</span></h3>
+  let h=`<div class="card"><h3>🧭 본사 재고·발언 자료가 있는 브랜드 <span class="na" style="font-weight:400">${M.main.length}개 · 판정</span></h3>
     <div class="chk-sum">${[2,1,0].map(l=>`<span class="chk-lv ${CHK_LV[l].c}">${CHK_LV[l].t} ${cnt(l)}</span>`).join('')}</div>`;
   M.main.forEach(r=>{
     const L=CHK_LV[r.lv];
-    const nl=(r.notes.list||[]).map(n=>`<span class="chk-q">${n.sig==='more'?'▲':(n.sig==='less'?'▼':'·')} ${esc(MGMT_TOPIC[n.topic]||n.topic||'')} — ${esc(n.ko||'')}</span>`).join('');
+    const nl=(r.notes.list||[]).map(n=>`<span class="chk-q">${n.sig==='more'?'▲':(n.sig==='less'?'▼':(n.sig==='neutral'?'·':'?'))} ${esc(MGMT_TOPIC[n.topic]||n.topic||'')} — ${esc(n.ko||'')}</span>`).join('');
     const ctx=[r.sale?'🛍️ 다음 세일 '+r.sale:'', r.news?`📰 ${'★'.repeat(r.news.importance||1)} ${r.news.summary||r.news.title||''} (${(r.news.first_seen||'').slice(5).replace('-','/')})`:''].filter(Boolean);
     h+=`<div class="chk-row" onclick="goDetail('${esc(r.x.ticker)}')">
       <div class="chk-h"><span class="chk-nm">${esc(r.b.name)} <span class="ref">${esc(r.x.name)} · ${esc(r.cur||'')}</span>${staleTag(r.x.stale_since)}</span><span class="chk-lv ${L.c}">${L.t}</span></div>
       ${chkEv('국내 검색',r.dem)}${chkEv('본사 재고',r.inv)}${chkEv('본사 발언',r.notes,nl)}${chkEv('환율',r.fx,CHK_CUR_NOTE[r.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[r.b.name])})</span>`:'')}
-      <div class="chk-sc">수요 ${r.dem.pt?sgn(r.dem.pt):'0'} · 매입 조건 ${r.buy?sgn(r.buy):'0'} (재고 ${r.inv.pt?sgn(r.inv.pt):'0'} · 발언 ${r.notes.pt?sgn(r.notes.pt):'0'} · 환율 ${r.fx.pt?sgn(r.fx.pt):'0'})</div>
+      <div class="chk-sc">수요 ${ptx(r.dem)} · 매입 조건 ${r.buy?sgn(r.buy):'0'} (재고 ${ptx(r.inv)} · 발언 ${ptx(r.notes)} · 환율 ${ptx(r.fx)})${r.lv===2&&r.inv.pt+r.notes.pt<=0?' · 환율 영향이 대부분':''}</div>
       ${ctx.length?`<div class="chk-ctx">${ctx.map(esc).join(' · ')}</div>`:''}</div>`;
   });
   h+=`<div class="note">판정 = 국내 수요 + 매입 조건. 수요: 네이버 검색 전년 대비가 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량 적으면 0).
     매입 조건: 본사 재고 압력(재고 증가율 − 같은 기간 매출 증가율) +5%p 이상 +1 · −5%p 이하 −1, 본사 발언 신호(할인 물량↑가 많으면 +1, 할인·공급↓가 많으면 −1),
     원산지 통화 1년 평균 대비(없으면 1년 전 대비) −5% 이하 +1 · −10% 이하 +2 · +5% 이상 −1 · +10% 이상 −2.
     🟢 지금 검토 = 수요가 약하지 않고 매입 조건 +2 이상 · 🔴 주의 = 수요가 약하면서 매입 조건 +1 이하, 또는 매입 조건 −1 이하 · 나머지 관망.
-    본사 재고는 브랜드가 아니라 본사 전체 기준(호카·어그 = 데커스). 다음 세일·뉴스는 참고. 행을 누르면 기업 상세</div></div>`;
+    본사 재고는 브랜드가 아니라 본사 전체 기준(호카·어그 = 데커스). 본사 발언 ▲ 할인 물량↑ · ▼ 할인·공급↓ · · 중립 · ? 분류 전(Claude 분류).
+    본사 재고·발언 자료가 둘 다 없으면 판정하지 않고 아래 표로. 다음 세일·뉴스는 참고. 행을 누르면 기업 상세</div></div>`;
   if(M.rest.length){
     h+=`<div class="card"><h3>📋 본사 자료가 없는 브랜드 <span class="na" style="font-weight:400">${M.rest.length}개 · 검색·환율만(판정 안 함)</span></h3>
       <table id="chkTbl"><tr><th>브랜드 · 다음 세일</th><th>검색 전년 대비</th><th>원산지 통화</th></tr>`;
     M.rest.forEach(r=>{
-      const d=r.dem, f=r.fx, go=r.link.startsWith('krd:')?` style="cursor:pointer" onclick="goDetail('${esc(r.link)}')"`:'';
-      h+=`<tr${go}><td>${esc(r.b.name)}${r.b.low?'<div class="ref">검색량 적음</div>':''}${r.sale?`<div class="ref">🛍️ ${esc(r.sale)}</div>`:''}${go?'<div class="ref">국내 법인 상세 ▸</div>':''}</td>
+      const d=r.dem, f=r.fx, tk=r.x?r.x.ticker:(r.link.startsWith('krd:')?r.link:''), go=tk?` style="cursor:pointer" onclick="goDetail('${esc(tk)}')"`:'';
+      h+=`<tr${go}><td>${esc(r.b.name)}${r.b.low?'<div class="ref">검색량 적음</div>':''}${r.sale?`<div class="ref">🛍️ ${esc(r.sale)}</div>`:''}${tk?`<div class="ref">${r.x?'기업 상세':'국내 법인 상세'} ▸</div>`:''}</td>
         <td>${r.b.yoy!=null?`<span class="${d.pt>0?'pos':(d.pt<0?'neg':'')}">${pp(r.b.yoy)}</span><div class="ref">중앙값 대비 ${d.rel!=null?(d.rel>=0?'+':'')+d.rel.toFixed(1)+'%p':'―'}</div>`:'―'}</td>
         <td>${esc(r.cur||'―')}${f.v!=null?` <span class="${f.pt>0?'pos':(f.pt<0?'neg':'')}">${f.v>0?'+':''}${f.v.toFixed(1)}%</span>`:''}${CHK_CUR_NOTE[r.b.name]?`<div class="ref">${esc(CHK_CUR_NOTE[r.b.name])}</div>`:''}</td></tr>`;
     });
-    h+=`</table><div class="note">본사가 비상장이거나 연결된 회사가 없어 재고·발언 근거가 없는 브랜드 — 검색(초록 = 중앙값보다 10%p 이상 높음)과 원산지 통화(초록 = 1년 평균 대비 5% 이상 쌈, 평균이 없는 통화는 1년 전 대비)만 참고로 보여 줍니다.</div></div>`;
+    h+=`</table><div class="note">본사가 비상장이거나 연결된 회사가 없거나, 상장사여도 재고·발언 자료가 없는 브랜드 — 검색(초록 = 중앙값보다 10%p 이상 높음)과 원산지 통화(초록 = 1년 평균 대비 5% 이상 쌈, 평균이 없는 통화는 1년 전 대비)만 참고로 보여 줍니다.</div></div>`;
   }
   return h;
 }
