@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v32.13: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄 — 딕스 추출 'Q2 … (13 weeks); also 26 weeks …'가 누적으로 잘못 판정돼
+        '본체 +5.6%'·'딕스(본체)' 표가 안 나오던 문제. 부문 표 YoY가 비면 당기·전년 매출로 계산
 v32.12: (대표 지시 2026-10-09) ① 순위 숫자 바로잡기 — 성장 순위에 기준(분기 '26.06 / 연간 FY25, 오래된 결산도 연도만 붙여 둠),
         공시(SEC·IR) 분기가 야후보다 45일 넘게 새로우면 '새 실적 반영 대기', 딕스는 인수 효과 기간(ACQ)엔 순위·재고 경고에서 빼고 각주,
         삼성물산(전사 수치)은 순위·재고 경고·KPI에서 뺌. ② 휴대폰 화면 다듬기(KPI·이름 2줄·그래프·뉴스·지표 추이·소싱 칩·DART 링크 등).
@@ -1226,7 +1228,9 @@ function pendOf(x){   // 야후 분기(q_end)보다 공시(SEC·IR) 분기 종�
   });
   return (best&&(new Date(best.end)-new Date(x.q_end))/86400000>PEND_DAYS)?best:null;
 }
-const isQtrPeriod=p=>/\bQ[1-4]\b|quarter|thirteen weeks|13 weeks|three months|분기/i.test(p||'')&&!/pro ?forma|누적|six months|nine months|26 weeks|39 weeks|twenty-six|thirty-nine/i.test(p||'');
+// 기간 문구의 첫 구절만 봄 — 'Q2 … (13 weeks); also 26 weeks …'처럼 분기와 누적을 함께 적은 추출(딕스)도 분기로(v32.13)
+const isQtrPeriod=p=>{ const q=String(p||'').split(/;|\balso\b/i)[0];
+  return /\bQ[1-4]\b|quarter|thirteen weeks|13 weeks|three months|분기/i.test(q)&&!/pro ?forma|누적|six months|nine months|26 weeks|39 weeks|twenty-six|thirty-nine/i.test(q); };
 function acqCore(t){   // 인수 회사의 본체 매출 증가율 — 공시 추출이 분기 실적이고 본체 부문에 당기·전년 매출이 있을 때만
   const a=ACQ[t], s=segOf(t), ex=s&&s.extract; if(!a||!ex||!isQtrPeriod(ex.period)) return null;
   const c=(ex.sub_segments||[]).find(z=>z.name===a.core);
@@ -1695,7 +1699,7 @@ function renderDetail(t){
       h+=`<tr><td>${ss.name==="DICK'S"?(qtr?'딕스(본체)':esc(ss.name)):(qtr?'풋락커(부문)':esc(ss.name))}</td>
       <td>${segMoney(ss.revenue,segCur)}</td>
       <td>${segMoney(ss.prev_revenue,segCur)}</td>
-      <td>${fmt(ss.yoy_pct,1,true)}</td>
+      <td>${fmt(ss.yoy_pct!=null?ss.yoy_pct:(ss.revenue!=null&&ss.prev_revenue?(ss.revenue/ss.prev_revenue-1)*100:null),1,true)}</td>
       <td>${segMoney(ss.segment_profit,segCur)}</td>
       <td>${segMoney(ss.inventory,segCur)}</td></tr>`;
     });
