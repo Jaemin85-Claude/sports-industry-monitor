@@ -632,7 +632,8 @@ def main():
             if q_cols:      # 매출 있는 분기 열 수·바로 앞 열 간격(180일 근처면 반기 자료 — 실데이터 확인용)
                 q_txt += f" (열 {q_cols[0]}개" + (f", 앞 열과 {q_cols[1]}일)" if q_cols[1] else ")")
         if item.get("q_inv_date"):     # v4.13 분기 재고 동기간 짝
-            q_txt += f" · 재고 분기 {item['q_inv_date']} vs {item['q_inv_prev_date']}"
+            q_txt += (f" · 재고 분기 {item['q_inv_date']} vs {item['q_inv_prev_date']} ({item['q_inv_yoy']:+.1f}%"
+                      + (f" · 같은 분기 매출 {item['q_inv_rev_yoy']:+.1f}%)" if item.get("q_inv_rev_yoy") is not None else ")"))
         elif qi_cols is not None:
             q_txt += f" · 재고 분기 짝 없음(열 {qi_cols}개)"
         print(f"  ↳ 연간 {len(item['fy'])}개 · 재고 {'O' if item.get('inventory') else '-'} · "

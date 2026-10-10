@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.6: (대표 지시 2026-10-10) 재고 증감을 같은 기간끼리(분기 자료가 있으면 같은 분기, 없으면 연간 결산) — 재고 경고·새 실적 줄에 비교 기간 표기
 v1.5: (2026-10-09) 분기 실적 판정은 기간 문구의 첫 구절만 봄(build_dashboard v32.13과 같게) — 딕스 '인수 효과 포함, 본체 +5.6%'
 v1.4: (대표 지시 2026-10-09) 대시보드(build_dashboard v32.12)와 같은 순위 규칙 — 새 실적 줄에 기준(분기 '26.06, 분기 증감이 없으면 연간 FY25),
       딕스는 인수 효과 기간(ACQ)엔 '인수 효과 포함'(분기 실적이면 본체 증가율)·재고 경고에서 뺌, 삼성물산(전사 수치)은 새 실적·재고 경고에서 뺌,
@@ -240,7 +241,8 @@ def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
             if a:
                 c = acq_core(x["ticker"], segs, segs_ir)
                 extra = f" (인수 효과 포함{f', 본체 {pct(c)}' if c is not None else ''})"
-            out.append((x["name"], basis, qy, x.get("inv_yoy"), f"연간 {fy_lbl(fy_end)}" if fy_end else "", extra))
+            iv, _, ilbl = inv_pick(x, krf)      # v1.6 재고도 같은 기간끼리, 비교 기간 표기
+            out.append((x["name"], basis, qy, iv, ilbl, extra))
     return out, skipped
 
 
@@ -365,14 +367,23 @@ def dart_changes(kr, old):
     return out
 
 
-def inventory_warnings(data, kr, today=None):
-    """재고 경고 — (이름, 재고 증감, 매출 증감, 결산 기준) 목록과 제외 사유 목록.
+def inv_pick(x, krf=None):
+    """v1.6 재고 증감은 같은 기간끼리(build_dashboard v32.14 invPick과 같게) — 분기 재고·같은 분기 매출이 있으면
+    최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산. 반환 (재고 증감, 같은 기간 매출 증감, 비교 기간 표기)"""
+    if x.get("q_inv_yoy") is not None and x.get("q_inv_rev_yoy") is not None and not yahoo_cfs_diff(x, krf):
+        return x["q_inv_yoy"], x["q_inv_rev_yoy"], f"분기 {ym(x.get('q_inv_date'))} vs {ym(x.get('q_inv_prev_date'))}"
+    fy = (x.get("fy") or [{}])[-1]
+    d, p = x.get("inv_date"), x.get("inv_prev_date")
+    return x.get("inv_yoy"), fy.get("rev_yoy"), (f"결산 {ym(d)}" + (f" vs {ym(p)}" if p else "")) if d else ""
+
+
+def inventory_warnings(data, kr, today=None, krf=None):
+    """재고 경고 — (이름, 재고 증감, 같은 기간 매출 증감, 비교 기간) 목록과 제외 사유 목록.
     v1.4 대시보드와 같게 전사 수치(삼성물산)·인수 효과 기간(딕스)은 빼고 사유로 돌려줌"""
     today = today or datetime.datetime.now(KST).date()
     out, skipped = [], []
     for x in (data or {}).get("items", []):
-        fy = (x.get("fy") or [{}])[-1]
-        iv, rv = x.get("inv_yoy"), fy.get("rev_yoy")
+        iv, rv, lbl = inv_pick(x, krf)
         if iv is not None and rv is not None and iv >= 10 and iv - rv >= 10:
             a = acq_on(x["ticker"], today)
             if x["ticker"] in WHOLE_CO:
@@ -380,7 +391,7 @@ def inventory_warnings(data, kr, today=None):
             elif a:
                 skipped.append(f"{x['name']}는 인수 효과 기간(~{int(a['until'][5:7])}/{int(a['until'][8:10])})이라 제외")
             else:
-                out.append((x["name"], iv, rv, fy_lbl(fy.get("end"))))
+                out.append((x["name"], iv, rv, lbl))
     for e in (kr or {}).get("entities", []):
         ys = [y for y in e.get("years", []) if y.get("rev") is not None]
         if len(ys) < 2:
@@ -389,7 +400,7 @@ def inventory_warnings(data, kr, today=None):
         if l.get("inv") and p.get("inv") and p.get("rev"):
             iv, rv = (l["inv"] / p["inv"] - 1) * 100, (l["rev"] / p["rev"] - 1) * 100
             if iv >= 10 and iv - rv >= 10:
-                out.append((e["name"], iv, rv, fy_lbl(l.get("end"))))
+                out.append((e["name"], iv, rv, f"결산 {ym(l.get('end'))} vs {ym(p.get('end'))}"))
     out.sort(key=lambda r: r[1] - r[2], reverse=True)
     return out, skipped
 
@@ -416,7 +427,7 @@ def build(today):
     eye = eye_moves(nv)
     ytd, ytd_p = ytd_search(nv)
     dch = dart_changes(kr, kr_old)
-    inv, inv_skip = inventory_warnings(data, kr, today)
+    inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
 
     # ── 휴대폰 알림 3줄 ──
     usd = next((r for r in fx if r[0] == "USD"), None)
@@ -513,7 +524,7 @@ def build(today):
             L.append(f"  공시 반영: {n} {end[:7] if end else ''} 매출 {won(rev)} ({pct(yoy)}){'' if existed else ' · 새로 추가'}")
     L.append("")
 
-    L.append("■ 재고 경고 (재고 증가율이 매출보다 10%p 이상 높음 · 연간 결산 기준)")
+    L.append("■ 재고 경고 (재고 증가율이 같은 기간 매출보다 10%p 이상 높음 · 분기 자료가 있으면 같은 분기끼리, 없으면 연간 결산)")
     L += [f"  {n}: 재고 {pct(i)} vs 매출 {pct(r)}{f' ({fy})' if fy else ''}" for n, i, r, fy in inv[:6]] or ["  없음"]
     if len(inv) > 6:
         L.append(f"  외 {len(inv) - 6}곳")
