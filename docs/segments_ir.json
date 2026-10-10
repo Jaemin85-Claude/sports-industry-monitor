@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10 16:45 KST",
+ "generated_at": "2026-10-10 23:20 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -240,6 +240,15 @@
    },
    "fetched_at": "2026-10-10",
    "ir_ver": 3
+  }
+ },
+ "claude_usage": {
+  "2026-10": {
+   "calls": 0,
+   "in": 0,
+   "out": 0,
+   "usd": 0.0,
+   "since": "2026-10-10"
   }
  }
 }
