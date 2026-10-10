@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10 16:41 KST",
+ "generated_at": "2026-10-10 23:19 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -160,11 +160,6 @@
       "topic": "discount",
       "quote": "We do not compromise our full-price integrity for volume - even in the heavily promotional environment we saw this quarter in some markets.",
       "ko": "일부 시장의 강한 프로모션 환경에서도 풀프라이스 원칙을 타협하지 않음."
-     },
-     {
-      "topic": "channel",
-      "quote": "This includes the deliberate management of wholesale sell-in, including to secure a strong and clean runway for the upcoming breakthrough innovations.",
-      "ko": "혁신 신제품 출시를 위한 깨끗한 런웨이 확보를 위해 도매 셀인을 의도적으로 관리함."
      }
     ],
     "notes": "지역 매출은 거래 상대방 소재지 기준이며, 6개월 누적 데이터도 문서에 명시되어 있으나 본 JSON은 Q2 분기 수치를 기준으로 작성됨.",
@@ -697,7 +692,7 @@
       "ko": "풋락커 부문의 비생산적 자산 검토 일환으로 재고 최적화·부진 점포 폐쇄·자산 적정화 추진 중"
      },
      {
-      "topic": "channel",
+      "topic": "inventory",
       "quote": "Foot Locker acquisition-related costs of $125.8 million include $40.4 million to write down and liquidate inventory from the Company's review of the Foot Locker Business and merger and integration costs of $85.4 million, which includes severance and other employee-related costs, store closing charges, legal and professional fees, and other costs related to the Foot Locker acquisition.",
       "ko": "풋락커 인수 관련 비용 1억 2,580만 달러 중 4,040만 달러는 재고 평가절하·청산 비용"
      }
@@ -729,6 +724,15 @@
     "schema_v": 3
    },
    "error": null
+  }
+ },
+ "claude_usage": {
+  "2026-10": {
+   "calls": 0,
+   "in": 0,
+   "out": 0,
+   "usd": 0.0,
+   "since": "2026-10-10"
   }
  }
 }
