@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
+v1.5: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언 신호 sig(more·less·neutral) — extract_segments v11.2와 같은 규칙, sig 없는 발언만 1회 분류
 v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
       추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
 v1.3: (대표 지시 2026-10-10) 푸마 보도자료에서 본사 발언(재고·할인·유통 통제 문장 원문 최대 3개, mgmt_notes) 추출 —
@@ -367,6 +368,43 @@ def _words(q):
     return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP and w[:5] not in _BOIL}
 
 
+SIGS = ("more", "less", "neutral")
+
+
+def classify_notes(notes, label=""):
+    """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) — extract_segments v11.2와 같음. 실패하면 그대로(다음 실행에서 다시)"""
+    notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
+    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
+    if not todo or not ANTHROPIC_KEY:
+        return notes
+    lines = "\n".join(f"{k}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
+    prompt = f"""You advise a Korean parallel importer that buys branded footwear and apparel from overseas retailers, outlets and off-price channels.
+For each statement below from {label}'s latest earnings release, decide what it implies for the next few months:
+  "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
+  "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
+  "neutral" - neither, or unclear
+Respond with ONLY a JSON array of strings, one per statement in the same order, e.g. ["more","neutral"].
+
+{lines}"""
+    try:
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 100,
+                               "messages": [{"role": "user", "content": prompt}]}, timeout=60)
+        txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
+        arr = json.loads(re.sub(r"```json|```", "", txt).strip())
+        if not isinstance(arr, list) or len(arr) != len(todo):
+            raise ValueError(f"응답 개수 {len(arr) if isinstance(arr, list) else '?'} ≠ {len(todo)}")
+    except SystemExit:
+        raise
+    except Exception as e:
+        log(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}")
+        return notes
+    for k, i in enumerate(todo):
+        v = str(arr[k]).strip().lower()
+        notes[i]["sig"] = v if v in SIGS else "neutral"
+    log(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" for i in todo))
+    return notes
+
+
 def _same(n, w, o):
     """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
     ow = _words(o.get("quote"))
@@ -642,8 +680,8 @@ def main():
             res = fn(None) or {}
             ex = res.get("extract") or {}
             log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}")
-            for n in ex.get("mgmt_notes") or []:
-                log(f"    [{n['topic']}] {n['ko']} — \"{n['quote'][:200]}\"")
+            for n in classify_notes(ex.get("mgmt_notes") or [], tk):
+                log(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
     for tk, fn in (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics)):
         try:
@@ -659,7 +697,7 @@ def main():
     for tk, v in items.items():     # v1.4 캐시에도 같은 정리(새 추출은 이미 정리됨)
         ex = (v or {}).get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):
-            ex["mgmt_notes"] = tidy_notes(ex["mgmt_notes"], tk)
+            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], tk), tk)   # v1.5 신호 없는 발언만 분류
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "items": items,
            "claude_usage": usage_months(old)}    # v1.4 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)

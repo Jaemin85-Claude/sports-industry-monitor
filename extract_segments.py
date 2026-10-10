@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v11.2: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언마다 병행수입 매입 관점 신호 sig — more(할인·처분 물량 늘어남)·
+       less(할인 줄임·공급 통제·재고 빠듯)·neutral. sig가 없는 발언만 짧게 1회 분류(문서 재추출 없음, 1곳 약 $0.003), 실패하면 다음 실행에서 다시
 v11.1: (대표 지시 2026-10-10) 본사 발언 다듬기 — 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로 바로잡음(딕스 '재고 평가절하'가
        '유통'으로 붙음), 같은 주제에서 내용어가 6개 이상·60% 넘게 겹치는 문장은 하나만(온러닝 '도매 출고 조절' 2문장). 캐시 추출에도 매 실행 적용(Claude 재호출 없음).
        추출 시각 extracted_at(주간 메일 '이번 주 새 본사 발언'). Claude 사용량을 월별로 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액')
@@ -662,6 +664,43 @@ def _words(q):
     return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP and w[:5] not in _BOIL}
 
 
+SIGS = ("more", "less", "neutral")
+
+
+def classify_notes(notes, label=""):
+    """v11.2 본사 발언마다 병행수입 매입 관점 신호(sig) — sig가 없는 발언만 짧게 1회 호출. 실패하면 그대로(다음 실행에서 다시)"""
+    notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
+    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
+    if not todo or not API_KEY:
+        return notes
+    lines = "\n".join(f"{k}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
+    prompt = f"""You advise a Korean parallel importer that buys branded footwear and apparel from overseas retailers, outlets and off-price channels.
+For each statement below from {label}'s latest earnings release, decide what it implies for the next few months:
+  "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
+  "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
+  "neutral" - neither, or unclear
+Respond with ONLY a JSON array of strings, one per statement in the same order, e.g. ["more","neutral"].
+
+{lines}"""
+    try:
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 100,
+                               "messages": [{"role": "user", "content": prompt}]}, timeout=60)
+        txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
+        arr = json.loads(re.sub(r"```json|```", "", txt).strip())
+        if not isinstance(arr, list) or len(arr) != len(todo):
+            raise ValueError(f"응답 개수 {len(arr) if isinstance(arr, list) else '?'} ≠ {len(todo)}")
+    except SystemExit:
+        raise
+    except Exception as e:
+        print(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}", flush=True)
+        return notes
+    for k, i in enumerate(todo):
+        v = str(arr[k]).strip().lower()
+        notes[i]["sig"] = v if v in SIGS else "neutral"
+    print(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" for i in todo), flush=True)
+    return notes
+
+
 def _same(n, w, o):
     """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
     ow = _words(o.get("quote"))
@@ -887,8 +926,8 @@ def main():
             entry, st = process_ticker(t, prev, cik_map)
             ex = entry.get("extract") or {}
             print(f"[{t}] {st} · {entry.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])} · 채널 {len(ex.get('channels') or [])}")
-            for n in ex.get("mgmt_notes") or []:
-                print(f"    [{n['topic']}] {n['ko']} — \"{n['quote'][:200]}\"")
+            for n in classify_notes(ex.get("mgmt_notes") or [], t):
+                print(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
 
     stat = {}
@@ -897,7 +936,7 @@ def main():
         entry, st = process_ticker(t, prev, cik_map)
         ex = entry.get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):   # v11.1 캐시·이전 값에도 같은 정리(새 추출은 이미 정리됨)
-            ex["mgmt_notes"] = tidy_notes(ex["mgmt_notes"], t)
+            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], t), t)   # v11.2 신호 없는 발언만 분류
         out["items"][t] = entry
         stat[t] = st
 
