@@ -372,6 +372,13 @@ def inv_pick(x, krf=None):
     최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산. 반환 (재고 증감, 같은 기간 매출 증감, 비교 기간 표기)"""
     if x.get("q_inv_yoy") is not None and x.get("q_inv_rev_yoy") is not None and not yahoo_cfs_diff(x, krf):
         return x["q_inv_yoy"], x["q_inv_rev_yoy"], f"분기 {ym(x.get('q_inv_date'))} vs {ym(x.get('q_inv_prev_date'))}"
+    e = ((krf or {}).get("items") or {}).get(x.get("ticker")) or {}
+    ys = [y for y in e.get("years") or [] if y.get("rev") is not None]
+    if len(ys) >= 2:     # 국내 상장사 연간은 대시보드(merge_kr_listed)처럼 DART 사업보고서 값
+        l, p = ys[-1], ys[-2]
+        iv = (l["inv"] / p["inv"] - 1) * 100 if l.get("inv") and p.get("inv") else None
+        rv = (l["rev"] / p["rev"] - 1) * 100 if p.get("rev") else None
+        return iv, rv, f"결산 {ym(l.get('end'))} vs {ym(p.get('end'))}"
     fy = (x.get("fy") or [{}])[-1]
     d, p = x.get("inv_date"), x.get("inv_prev_date")
     return x.get("inv_yoy"), fy.get("rev_yoy"), (f"결산 {ym(d)}" + (f" vs {ym(p)}" if p else "")) if d else ""

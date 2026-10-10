@@ -374,6 +374,7 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .rk-t{display:flex;flex-direction:column;min-width:0;line-height:1.3}
 .rk-t>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rk-s{font-size:var(--fs-2xs);color:var(--sub)}
+#warnCard .rk-s{white-space:normal}   /* v32.14 비교 기간('26.06 vs '25.06)이 잘리지 않게 */
 .rk-v2{display:flex;flex-direction:column;align-items:flex-end;line-height:1.35}
 .rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
 .wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:500;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px}
@@ -1020,7 +1021,7 @@ function openSheet(kind){
     if(kind==='japan') body+=`<div class="sh-warn">일본을 따로 공시하는 곳은 아식스뿐이고, 아디다스는 일본+한국 합산입니다. 나머지는 아시아·태평양 합산값을 빌려 쓴 추정치입니다.</div>`;
     body+=`<div class="note" style="margin:2px 0 8px"><b>판정 ${lv.txt} (${sm.score}점)</b> — ${sm.parts.map(p=>`${esc(p.txt)} ${p.pt>0?'+':''}${p.pt}`).join(' · ')}</div>`;
     srcRanked(kind).forEach(o=>{ const l=SRC_LV[o.lvl], c=o.c;
-      const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}(${o.b.invLbl})`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}`;
+      const t2=SRC_PRESET==='A'?`${c.rname} ${pp(c.g)}(${c.basis}) · 재고 ${pp(o.b.inv)} vs 매출 ${pp(o.b.rev)}(${o.b.invLbl})`:`${c.rname} ${pp(c.g)} · 재고 ${pp(o.b.inv)}(${o.b.invLbl})`;
       const t3=(SRC_PRESET==='A'?'근거: '+c.why:'기준: '+o.b.period)+(c.proxy&&c.proxy.indexOf('차용')>=0?' · 추정(유럽·중동·아프리카 값 차용)':(c.proxy&&kind!=='europe'?' · '+c.proxy:''));
       body+=`<div class="sh-row" onclick="closeSheet();goDetail('${o.b.t}')">${srcBadge(o.b.t,o.b.name,l.ring,true)}
         <div class="bx"><div class="t1"><span>${esc(o.b.name)}</span><span class="lvchip" style="background:${l.bg};color:${l.fg}">${l.txt}</span></div>
@@ -1621,7 +1622,7 @@ function renderDetail(t){
     <td>${y.op_pct!=null?y.op_pct.toFixed(1)+'%':'―'}</td></tr>`;
   });
   h+=`</table></div>`;
-  h+=`<div class="card"><h3>📦 재고</h3>${x.q_inv_yoy!=null?`
+  h+=`<div class="card"><h3>📦 재고</h3>${x.q_inv_yoy!=null&&!x.yahoo_cfs_diff?`
   <div class="kv"><span class="k">최근 분기 <span class="na">(1년 전 같은 분기와 비교)</span></span><span>${ym(x.q_inv_date)} vs ${ym(x.q_inv_prev_date)}</span></div>
   <div class="kv"><span class="k">분기 재고자산</span><span>${money(x.q_inv,cur)}</span></div>
   <div class="kv"><span class="k">재고 증감(같은 분기)</span><span>${fmtInv(x.q_inv_yoy)}</span></div>
