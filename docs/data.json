@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-10 16:55 KST",
+ "generated_at": "2026-10-10 23:21 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -51,7 +51,7 @@
    "q_inv_yoy": 0.16023501134998508,
    "q_inv_rev_yoy": -1.1264305668198582,
    "price": 34.709999084472656,
-   "off_high_pct": -48.54412218278353,
+   "off_high_pct": -48.54412800254796,
    "earn_date": "2026-12-17",
    "error": null
   },
@@ -104,8 +104,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 13.4575175822087,
    "q_inv_rev_yoy": 13.289650537634401,
-   "price": 146.5,
-   "off_high_pct": -23.42261224668848,
+   "price": 149.85000610351562,
+   "off_high_pct": -21.67152203259376,
    "earn_date": "2026-10-29",
    "error": null
   },
@@ -914,8 +914,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -15.340988331551298,
    "q_inv_rev_yoy": -9.656388606850852,
-   "price": 22.399999618530273,
-   "off_high_pct": -25.333334604899093,
+   "price": 22.979999542236328,
+   "off_high_pct": -23.40000152587891,
    "earn_date": "2026-10-30",
    "error": null
   },
@@ -1076,8 +1076,8 @@
    "q_inv_prev_date": "2025-03-31",
    "q_inv_yoy": -14.194236926360727,
    "q_inv_rev_yoy": null,
-   "price": 67.80000305175781,
-   "off_high_pct": -28.607363160354303,
+   "price": 68.0,
+   "off_high_pct": -28.39676863451053,
    "earn_date": "2026-11-19",
    "error": null
   },
@@ -1130,8 +1130,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 143.0,
-   "off_high_pct": -54.356217805971184,
+   "price": 146.35000610351562,
+   "off_high_pct": -53.286938442771635,
    "earn_date": null,
    "error": null
   },
@@ -1184,8 +1184,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -13.989923633605915,
    "q_inv_rev_yoy": null,
-   "price": 1.8339999914169312,
-   "off_high_pct": -17.905102146994555,
+   "price": 1.8539999723434448,
+   "off_high_pct": -17.00984784006532,
    "earn_date": null,
    "error": null
   },
@@ -1346,8 +1346,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 19.00460401186215,
    "q_inv_rev_yoy": 11.17878524068212,
-   "price": 15.460000038146973,
-   "off_high_pct": -23.025698263117032,
+   "price": 16.520000457763672,
+   "off_high_pct": -17.748027374406085,
    "earn_date": null,
    "error": null
   },
@@ -1454,8 +1454,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 1.7872711421098586,
    "q_inv_rev_yoy": null,
-   "price": 84.0199966430664,
-   "off_high_pct": -16.552634418477208,
+   "price": 84.5,
+   "off_high_pct": -16.075902483143324,
    "earn_date": null,
    "error": null
   },
@@ -1562,8 +1562,8 @@
    "q_inv_prev_date": "2025-04-30",
    "q_inv_yoy": 13.427279978729057,
    "q_inv_rev_yoy": null,
-   "price": 835.0,
-   "off_high_pct": -1.648998822143699,
+   "price": 838.5,
+   "off_high_pct": -1.2367491166077715,
    "earn_date": null,
    "error": null
   },
@@ -1616,8 +1616,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 24.785964066079824,
    "q_inv_rev_yoy": 20.785862932524424,
-   "price": 22.809999465942383,
-   "off_high_pct": -24.570107015252297,
+   "price": 23.799999237060547,
+   "off_high_pct": -21.296298223548206,
    "earn_date": "2026-11-03",
    "error": null
   },
@@ -1670,8 +1670,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 14.520717181956421,
    "q_inv_rev_yoy": 22.07878087693238,
-   "price": 10.359999656677246,
-   "off_high_pct": -30.70325317322191,
+   "price": 11.390000343322754,
+   "off_high_pct": -23.813706920401522,
    "earn_date": null,
    "error": null
   },
@@ -5688,9 +5688,9 @@
   },
   "BRL": {
    "name": "브라질 헤알",
-   "rate": 268.6205,
+   "rate": 269.4085,
    "yago": 264.3588,
-   "chg_pct": 1.61,
+   "chg_pct": 1.91,
    "asof": "2026-10-10",
    "via": "달러 경유"
   },
@@ -6912,9 +6912,9 @@
   },
   "CNY": {
    "name": "위안",
-   "rate": 200.905,
+   "rate": 200.6434,
    "yago": 199.4402,
-   "chg_pct": 0.73,
+   "chg_pct": 0.6,
    "asof": "2026-10-10",
    "via": "달러 경유"
   },
