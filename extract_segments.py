@@ -549,12 +549,18 @@ Respond with ONLY a JSON object, no markdown fences, no commentary:
   ],
   "notes": "one short sentence in Korean about data caveats, or null"
 }}
-mgmt_notes: up to 3 sentences where management describes inventory levels or clearance
-(topic "inventory"), markdowns / promotions / discounting / gross margin pressure from
-promotions (topic "discount"), or off-price / liquidation channels, wholesale or account
-reductions, distribution or supply control (topic "channel"). Copy each quote EXACTLY as
-written (same words and punctuation, no ellipsis, no paraphrase). Prefer explicit or
-forward-looking statements. If there are none, use an empty list.
+mgmt_notes: up to 3 sentences in which the company states an ACTION, PLAN, REASON or OUTLOOK about:
+  "inventory" - clearing / liquidating / cleaning up / right-sizing inventory, inventory being elevated
+                or "clean", tighter inventory management;
+  "discount"  - promotions, markdowns, discounting, promotional environment, pricing actions
+                (including margin impact explicitly attributed to promotions or markdowns);
+  "channel"   - reducing or exiting wholesale accounts or doors, off-price / liquidation channel sales,
+                limiting or tightening supply to the marketplace, distribution strategy changes.
+EXCLUDE sentences that only report a figure or a change (e.g. "Inventories were $389 million",
+"Wholesale revenues decreased 7.2%") unless the same sentence gives one of the reasons above.
+EXCLUDE margin statements whose stated cause is not promotions/markdowns (e.g. logistics, freight, FX).
+Copy each quote EXACTLY as written (same words and punctuation, no ellipsis, no paraphrase).
+If no sentence qualifies, use an empty list - that is a valid and useful answer.
 If the document contains no regional breakdown, use an empty list for regions.
 Same for channels. If the document is not an earnings report at all, return
 {{"period": null, "prev_period": null, "currency": null, "regions": [],
