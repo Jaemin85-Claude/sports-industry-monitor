@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v11.1: (대표 지시 2026-10-10) 본사 발언 다듬기 — 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로 바로잡음(딕스 '재고 평가절하'가
+       '유통'으로 붙음), 내용어가 60% 넘게 겹치는 문장은 하나만(온러닝 '도매 출고 조절' 2문장). 캐시 추출에도 매 실행 적용(Claude 재호출 없음).
+       추출 시각 extracted_at(주간 메일 '이번 주 새 본사 발언'). Claude 사용량을 월별로 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액')
 v11: (대표 지시 2026-10-10) 본사 발언 — 실적 문서에서 재고·할인·유통 통제 문장을 원문 그대로 최대 3개(mgmt_notes: topic·quote·ko).
      원문에 글자 그대로 있는 문장만 남김(코드로 확인). SCHEMA_V=3으로 1회 재추출. 시험용 SEG_ONLY(쉼표 구분 티커) — 저장 안 함
 v10: (대표 지시 2026-10-09) 투자자의 날·중기 목표·프로포마 자료는 실적 자료에서 빼고(파일명·제목·앞부분) 그 전 실적
@@ -178,8 +181,40 @@ def anthropic_post(payload, timeout=180):
             raise TransientError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
         if resp.status_code != 200:
             raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
-        return resp.json()
+        data = resp.json()
+        count_usage(payload.get("model"), data)
+        return data
     return with_retry("claude", _once)
+
+
+# ── v11.1 Claude 사용량(수집 상태 '이번 달 Claude 사용액') — 응답의 토큰 수 × 공식 가격 ──
+PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰(입력, 출력), 2026-10 기준
+_USAGE = {"calls": 0, "in": 0, "out": 0, "usd": 0.0}
+
+
+def count_usage(model, data):
+    """성공한 Claude 응답 1건의 토큰·금액을 이번 실행 합계에 더함"""
+    u = (data or {}).get("usage") or {}
+    tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    pin, pout = PRICE.get(model, (3.0, 15.0))
+    _USAGE["calls"] += 1
+    _USAGE["in"] += tin
+    _USAGE["out"] += tout
+    _USAGE["usd"] += (tin * pin + tout * pout) / 1e6
+
+
+def usage_months(old):
+    """이전 파일의 월별 기록(claude_usage)에 이번 실행 사용량을 더함 — 최근 3개월만. since = 그 달 기록 시작일"""
+    now = datetime.datetime.now(KST)
+    m = now.strftime("%Y-%m")
+    cu = (old or {}).get("claude_usage") if isinstance(old, dict) else None
+    hist = {k: v for k, v in cu.items() if isinstance(v, dict)} if isinstance(cu, dict) else {}
+    cur = dict(hist.get(m) or {"calls": 0, "in": 0, "out": 0, "usd": 0.0, "since": now.strftime("%Y-%m-%d")})
+    for k in ("calls", "in", "out"):
+        cur[k] = int(cur.get(k) or 0) + _USAGE[k]
+    cur["usd"] = round(float(cur.get("usd") or 0) + _USAGE["usd"], 4)
+    hist[m] = cur
+    return {k: hist[k] for k in sorted(hist)[-3:]}
 
 
 def sec_get(url, is_json=True, retry=True):
@@ -577,6 +612,7 @@ DOCUMENT:
     text = re.sub(r"```json|```", "", text).strip()
     obj = json.loads(text)
     obj["schema_v"] = SCHEMA_V
+    obj["extracted_at"] = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")   # v11.1 주간 메일 '이번 주 새 본사 발언'
     obj["mgmt_notes"] = verify_quotes(obj.get("mgmt_notes"), doc_text, ticker)
     return obj
 
@@ -605,9 +641,42 @@ def verify_quotes(notes, doc_text, label=""):
             dropped += 1
             continue
         out.append({"topic": topic, "quote": q[:400], "ko": str(n.get("ko") or "").strip()[:80]})
-        if len(out) == 3:
-            break
+    out = tidy_notes(out, label)[:3]      # v11.1 주제 바로잡기·비슷한 문장 빼기 뒤 최대 3개
     print(f"  {label} 본사 발언 {len(out)}건" + (f"(원문에 없는 문장 {dropped}건 버림)" if dropped else ""), flush=True)
+    return out
+
+
+# v11.1 주제별 키워드 — 붙은 주제의 키워드가 하나도 없고 다른 주제 키워드만 있으면 그 주제로(같은 수면 재고 → 할인 → 유통 순)
+TOPIC_KW = {"inventory": re.compile(r"inventor", re.I),
+            "discount": re.compile(r"promot|markdown|discount|pric(?:e|ing)", re.I),
+            "channel": re.compile(r"wholesale|\bdoors?\b|off-price|distribut|sell-in|marketplace|mass merchant", re.I)}
+_STOP = {"this", "that", "with", "from", "into", "have", "been", "were", "their", "which", "also", "will",
+         "more", "than", "over", "company", "quarter", "year"}
+
+
+def _words(q):
+    """비슷한 문장 판정용 내용어 — 4글자 이상 영단어 앞 5글자(deliberate·deliberately를 같게)"""
+    return {w[:5] for w in re.findall(r"[a-z]+", _norm_q(q)) if len(w) >= 4 and w not in _STOP}
+
+
+def tidy_notes(notes, label=""):
+    """v11.1 본사 발언 다듬기 — ① 주제 바로잡기 ② 내용어가 60% 넘게 겹치는 문장은 앞의 것만. 몇 번 돌려도 결과가 같음"""
+    out, fixed, dup = [], 0, 0
+    for n in notes or []:
+        if not isinstance(n, dict):
+            continue
+        q = str(n.get("quote") or "")
+        hits = {t: len(p.findall(q)) for t, p in TOPIC_KW.items()}
+        if not hits.get(n.get("topic")) and max(hits.values()) > 0:
+            n = dict(n, topic=max(hits, key=lambda k: hits[k]))
+            fixed += 1
+        w = _words(q)
+        if w and any(len(w & _words(o["quote"])) / max(1, min(len(w), len(_words(o["quote"])))) > 0.6 for o in out):
+            dup += 1
+            continue
+        out.append(n)
+    if fixed or dup:
+        print(f"  {label} 본사 발언 정리: 주제 바로잡음 {fixed}건 · 비슷한 문장 {dup}건 뺌", flush=True)
     return out
 
 
@@ -816,6 +885,9 @@ def main():
     for t in US_TICKERS:
         prev = old_items.get(t) or {}
         entry, st = process_ticker(t, prev, cik_map)
+        ex = entry.get("extract")
+        if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):   # v11.1 캐시·이전 값에도 같은 정리(새 추출은 이미 정리됨)
+            ex["mgmt_notes"] = tidy_notes(ex["mgmt_notes"], t)
         out["items"][t] = entry
         stat[t] = st
 
@@ -825,10 +897,13 @@ def main():
     if len(failed) == len(US_TICKERS):   # 새로 받은 게 없음 → 갱신일을 옮기지 않아 '지연' 경고가 뜨게
         out["generated_at"] = old.get("generated_at") or out["generated_at"]
 
+    out["claude_usage"] = usage_months(old)   # v11.1 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)
     with open(SEG_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     print("saved", SEG_PATH)
+    print(f"Claude 사용: 이번 실행 {_USAGE['calls']}회 · ${_USAGE['usd']:.3f} · 이번 달 누적 "
+          f"${out['claude_usage'][max(out['claude_usage'])]['usd']:.2f}")
     cnt = {k: sum(1 for v in stat.values() if v == k)
            for k in ("new", "cache", "kept", "failed")}
     print(f"추출 결과: 새 추출 {cnt['new']} · 캐시 {cnt['cache']} · "
