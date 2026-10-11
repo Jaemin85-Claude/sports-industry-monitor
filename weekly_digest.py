@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.8: (2026-10-10) 본사 발언 줄에 병행수입 매입 관점 신호(extract_segments v11.2 sig — 할인 물량↑ / 할인·공급↓) 표시
 v1.7: (대표 지시 2026-10-10) '■ 이번 주 새 본사 발언' — 지난 7일 안에 새로 뽑힌 실적 문서의 재고·할인·유통 문장(한국어 요약 + 원문 앞부분).
       추출 시각(extracted_at, extract_segments v11.1·ir_fetch v1.4)이 7일 안이고 문서 날짜가 14일 안인 것만(재추출로 옛 발표가 다시 나오지 않게).
       알림 3줄에 '본사 발언 n곳'(있을 때만)
@@ -270,6 +271,7 @@ def upcoming_earnings(data, today):
 
 
 TOPIC_KO = {"inventory": "재고", "discount": "할인·판촉", "channel": "유통·도매"}
+SIG_KO = {"more": "할인 물량↑", "less": "할인·공급↓"}   # v1.8 병행수입 매입 관점 신호(대시보드 본사 발언·브랜드 점검표와 같음)
 
 
 def _doc_date(e):
@@ -564,7 +566,8 @@ def build(today, now=None):
         L.append(f"  {n} ({dd[5:].replace('-', '/')} 발표{f' · {per}' if per else ''})")
         for x in notes:
             q = str(x.get("quote") or "")
-            L.append(f"    [{TOPIC_KO.get(x.get('topic'), x.get('topic'))}] {x.get('ko') or ''}")
+            sg = SIG_KO.get(x.get("sig"))
+            L.append(f"    [{TOPIC_KO.get(x.get('topic'), x.get('topic'))}{' · ' + sg if sg else ''}] {x.get('ko') or ''}")
             L.append(f"      \"{q[:160]}{'…' if len(q) > 160 else ''}\"")
     if not mg:
         L.append("  없음 — 본사 실적 발표가 나오면 다음 월요일 메일에 모아 보냄")
