@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-11 05:43 KST",
+ "generated_at": "2026-10-11 15:12 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -155,17 +155,20 @@
      {
       "topic": "inventory",
       "quote": "Inventories decreased 15.3% to € 1,821.1 million, mainly due to lower purchasing volumes; inventory clean-up is on track and normalisation expected by year-end 2026",
-      "ko": "재고가 15.3% 감소했으며, 재고 정리는 순조롭게 진행 중이고 2026년 말까지 정상화될 전망"
+      "ko": "재고가 15.3% 감소했으며, 재고 정리는 순조롭게 진행 중이고 2026년 말까지 정상화될 전망",
+      "sig": "less"
      },
      {
       "topic": "channel",
       "quote": "PUMA continued to reduce undesirable wholesale business, particularly in key regions such as North America and Europe, versus a Q2 2025 which still included a high share of mass merchant business.",
-      "ko": "PUMA는 북미와 유럽 등 주요 지역에서 불필요한 도매 비즈니스를 지속적으로 축소하고 있음"
+      "ko": "PUMA는 북미와 유럽 등 주요 지역에서 불필요한 도매 비즈니스를 지속적으로 축소하고 있음",
+      "sig": "less"
      },
      {
       "topic": "discount",
       "quote": "Sales in e-commerce rose despite lower promotions, supported by additional marketplaces in APAC and growth in Greater China.",
-      "ko": "프로모션 축소에도 불구하고 APAC 마켓플레이스 확대와 중화권 성장에 힘입어 이커머스 매출 증가"
+      "ko": "프로모션 축소에도 불구하고 APAC 마켓플레이스 확대와 중화권 성장에 힘입어 이커머스 매출 증가",
+      "sig": "less"
      }
     ]
    },
@@ -244,10 +247,10 @@
  },
  "claude_usage": {
   "2026-10": {
-   "calls": 0,
-   "in": 0,
-   "out": 0,
-   "usd": 0.0,
+   "calls": 1,
+   "in": 339,
+   "out": 10,
+   "usd": 0.0012,
    "since": "2026-10-10"
   }
  }
