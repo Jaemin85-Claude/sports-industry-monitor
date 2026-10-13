@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.11: (대표 승인 2026-10-13 — Claude API 비용 연 $20 이하 목표) 비교 선별 모델을 Haiku 5.5(effort low)로 바꿔 10/21까지
+      본 선별(Sonnet 4.6)과 같은 헤드라인을 따로 골라 model_compare에 기록(화면·본 선별은 그대로) → 결과 보고 뒤 전환 결정.
+      Haiku 5.5 가격($0.10/$0.50, 10만 토큰 넘는 요청은 $0.50/$2.50) 추가, 비교 선별만 생각(thinking) 토큰 몫으로 max_tokens 12000
 v2.10: (대표 지시 2026-10-10) Claude 사용량을 월별로 news.json에 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액',
       본 선별·비교 선별 모두, 응답 토큰 × 공식 가격). 선별 지시문·검색어·★ 기준은 그대로
 v2.9: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 구글 뉴스가 한 건도 안 들어오면(전체 RSS 실패) news.json을 덮지 않고
@@ -204,9 +207,11 @@ NEWS_PATH = "docs/news.json"
 
 # 선별 모델. SHADOW_MODEL은 SHADOW_UNTIL(KST, 포함)까지 같은 헤드라인을 따로 선별해 비교 기록만 남김
 MODEL = "claude-sonnet-4-6"
-SHADOW_MODEL = "claude-haiku-4-5"
-SHADOW_UNTIL = "2026-10-13"
-PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0)}   # $/백만 토큰 (입력, 출력)
+SHADOW_MODEL = "claude-haiku-5-5"   # v2.11 비교 대상(effort low) — 10/21까지
+SHADOW_UNTIL = "2026-10-21"
+PRICE = {"claude-sonnet-4-6": (3.0, 15.0), "claude-haiku-4-5": (1.0, 5.0), "claude-haiku-5-5": (0.10, 0.50)}   # $/백만 토큰 (입력, 출력)
+PRICE_LONG = {"claude-haiku-5-5": (0.50, 2.50)}   # v2.11 입력 10만 토큰 넘는 요청 가격(Haiku 5.5)
+EFFORT = {"claude-haiku-5-5": "low"}   # v2.11 모델별 생각 깊이(선별은 분류 작업이라 low)
 RETRY_WAITS = (60, 180)   # v2.9 Claude 일시 오류 재시도 간격(초) — 1분·3분 뒤 두 번
 SCRIPT = "news_monitor"
 
@@ -255,7 +260,7 @@ def count_usage(model, data):
     """성공한 Claude 응답 1건의 토큰·금액을 이번 실행 합계에 더함"""
     u = (data or {}).get("usage") or {}
     tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
-    pin, pout = PRICE.get(model, (3.0, 15.0))
+    pin, pout = PRICE_LONG[model] if tin > 100_000 and model in PRICE_LONG else PRICE.get(model, (3.0, 15.0))   # v2.11
     _USAGE["calls"] += 1
     _USAGE["in"] += tin
     _USAGE["out"] += tout
@@ -432,9 +437,11 @@ RECENTLY SELECTED (last 3 days, for duplicate checking only):
 
 HEADLINES:
 {corpus}"""
-    data = anthropic_post({"model": model,
-              "max_tokens": 6000,
-              "messages": [{"role": "user", "content": prompt}]}, timeout=240, waits=waits)
+    payload = {"model": model, "max_tokens": 12000 if model in EFFORT else 6000,   # v2.11 Haiku 5.5는 생각 토큰도 max_tokens에 들어감
+               "messages": [{"role": "user", "content": prompt}]}
+    if model in EFFORT:
+        payload["output_config"] = {"effort": EFFORT[model]}
+    data = anthropic_post(payload, timeout=240, waits=waits)
     parts = data.get("content", [])
     text = "".join(p.get("text", "") for p in parts if p.get("type") == "text")
     text = re.sub(r"```json|```", "", text).strip()
@@ -446,8 +453,8 @@ HEADLINES:
     if not isinstance(picked, dict):
         raise ValueError("선별 응답이 JSON 객체가 아님")
     u = data.get("usage") or {}
-    pin, pout = PRICE.get(model, (0.0, 0.0))
     tin, tout = int(u.get("input_tokens") or 0), int(u.get("output_tokens") or 0)
+    pin, pout = PRICE_LONG[model] if tin > 100_000 and model in PRICE_LONG else PRICE.get(model, (0.0, 0.0))
     usage = {"model": model, "in": tin, "out": tout,
              "usd": round((tin * pin + tout * pout) / 1e6, 4),
              "stop": data.get("stop_reason", "")}
