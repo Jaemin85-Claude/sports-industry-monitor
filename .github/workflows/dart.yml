@@ -18,7 +18,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 60   # v3.5 재추출(FIN_V 올림) 첫 실행은 25분+ — 30분이면 커밋 전에 잘릴 수 있음
+    timeout-minutes: 90   # v3.5 재추출(FIN_V 올림) 첫 실행은 25분+ · v3.7 60→90분(시간 예산 Claude 70분·DART 75분 — 최악에도 약 80분 안에 저장·커밋)
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -33,6 +33,7 @@ jobs:
           DART_ONLY: ${{ inputs.only }}
         run: python dart_fetch.py
       - name: Commit domestic data
+        if: ${{ !cancelled() }}   # v3.7 스크립트가 저장 뒤 다른 곳에서 실패해도 저장분은 커밋(검증 모드는 파일을 안 써 'no changes')
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -40,3 +41,12 @@ jobs:
           git commit -m "update dart domestic $(date -u +%F)" || echo "no changes"
           git pull --rebase origin main
           git push
+      - name: Check partial failures
+        # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
+        # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
