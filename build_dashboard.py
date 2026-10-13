@@ -206,8 +206,22 @@ padding-bottom:env(safe-area-inset-bottom,0px)}
 .tab .ic{font-size:19px;line-height:1}
 .tab.on{color:var(--accent);font-weight:600}
 @media(min-width:760px){.tabs{justify-content:center}.tab{flex:0 0 120px}}
+/* v33 A안: 하단 탭·뒤로·시장 칩은 <button> — 브라우저 기본 모양(테두리·배경·글꼴) 지움 */
+button.tab,button.back,button.mk-chip{border:0;background:none;font-family:inherit;line-height:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
+button.tab{line-height:1.2}
+button.back{display:block;width:100%;text-align:left;padding:0}
+.tab:focus-visible,.back:focus-visible,.mk-chip:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .pane{display:none;padding:12px}
 .pane.on{display:block}
+/* v33 A안: 시장 탭 칩 줄 — 밑줄 탭(칩 안의 알약 칩과 구분), 44px, 시장 탭 안에서 위에 고정
+   아래 선은 테두리 대신 안쪽 그림자 — 테두리면 안쪽 높이가 43px이라 44px 칩의 2px 밑줄이 1px 잘림(켜진 칩 밑줄이 선을 덮음) */
+.mk-chips{position:sticky;top:0;z-index:5;display:flex;height:44px;margin:-12px -12px 12px;background:var(--card);box-shadow:inset 0 -1px 0 var(--line);overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.mk-chips::-webkit-scrollbar{display:none}
+button.mk-chip{flex:1 0 auto;height:44px;padding:0 6px;border-bottom:2px solid transparent;color:var(--sub);font-size:var(--fs-base);white-space:nowrap;cursor:pointer}
+button.mk-chip.on{color:var(--accent);font-weight:700;border-bottom-color:var(--accent)}
+.mk{display:none}.mk.on{display:block}
+#p-market .card,#p-market .cal{scroll-margin-top:52px}   /* 칩 줄에 가리지 않게(재고 경고로 스크롤 등) */
+.boot-err{margin:0 0 10px}
 /* 표 */
 table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
 th{color:var(--sub);font-weight:500;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);font-size:var(--fs-sm)}
@@ -658,45 +672,73 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
   <button id="themeBtn" title="테마 전환">🌙</button>
 </header>
 <main class="content" id="content">
-<div class="pane on" id="p-home">
+<!-- v33 A안: 하단 탭 4개(오늘·브랜드·시장·더보기). 옛 종합·기업·캘린더·뉴스·국내 화면은 시장 탭 칩 6개로 그대로 옮김 -->
+<div class="pane on" id="p-today">
   <div id="statusWarn"></div>
   <div id="todayCard"></div>
-  <div class="kpis" id="kpis"></div>
-  <div class="hgrid" id="homeBody"></div>
 </div>
 
-<div class="pane" id="p-co">
-  <div id="coList">
-    <input class="search" id="coSearch" placeholder="기업명 검색 (예: 나이키, 아식스)">
-    <div class="chips" id="coChips"></div>
-    <div id="coPlat"></div>
-    <div class="card" id="coTblCard" style="padding:4px 8px"><div class="tblwrap"><table id="coTbl"></table></div><div class="note" style="margin:6px 4px 4px">외화 매출은 ≈원화 환산(최근 환율, 참고용) · 작은 글씨가 원래 통화</div></div>
-    <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
-  </div>
-  <div id="coDetail" style="display:none">
-    <div class="back" id="coBack">◂ 기업 목록</div>
-    <div id="detBody"></div>
+<div class="pane" id="p-brand">
+  <div id="brandList"></div>
+  <div id="brandDetail" style="display:none">
+    <button type="button" class="back" id="brBack">◂ 점검표</button>
+    <div id="brBody"></div>
   </div>
 </div>
 
-<div class="pane" id="p-cal">
-  <div class="hgrid" id="calGrid"></div>
-  <div class="card" style="margin-top:10px"><h3>90일 이내 실적 발표</h3><div id="calList"></div></div>
-  <div class="card" style="margin-top:10px"><h3>🛍️ 해외 세일 시즌 <span class="na" style="font-weight:400">150일 이내 · 매입 시점 참고</span></h3><div id="saleList"></div></div>
-  <div class="note">달력의 날짜를 누르면 그 날 발표 기업·진행 중인 세일이 표시됩니다 · 연한 주황 칸 = 해외 세일 기간, 🛍 = 시작일 · 일정 미표시 종목은 소스 미제공(미확인)</div>
-</div>
+<div class="pane" id="p-market">
+  <div class="mk-chips" id="mkChips" role="tablist" aria-label="시장">
+    <button type="button" class="mk-chip on" data-c="news" role="tab" aria-selected="true">뉴스</button>
+    <button type="button" class="mk-chip" data-c="cal" role="tab" aria-selected="false">캘린더</button>
+    <button type="button" class="mk-chip" data-c="sig" role="tab" aria-selected="false">실적·재고</button>
+    <button type="button" class="mk-chip" data-c="co" role="tab" aria-selected="false">기업</button>
+    <button type="button" class="mk-chip" data-c="kr" role="tab" aria-selected="false">국내</button>
+    <button type="button" class="mk-chip" data-c="map" role="tab" aria-selected="false">소싱 지도</button>
+  </div>
 
-<div class="pane" id="p-news">
-  <div class="chips" id="newsChips"></div>
-  <div id="newsBody"></div>
-  <div class="note">매일 03:17 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
-  실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
-</div>
+  <div class="mk on" id="mk-news">
+    <div class="chips" id="newsChips"></div>
+    <div id="newsBody"></div>
+    <div class="note">매일 03:17 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체)<br>
+    실제 기사 헤드라인 기반 선별(§29-D) · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
+  </div>
 
-<div class="pane" id="p-kr">
-  <div id="krBody"></div>
-  <div class="note">출처: KOSIS(통계청) — 서비스업동향조사·온라인쇼핑동향조사·소비자물가조사 · 월 1회 갱신<br>
-  지수는 2020=100 기준 · YoY는 전년 동월 대비 · 지표를 누르면 최근 13개월 수치 표</div>
+  <div class="mk" id="mk-cal">
+    <div class="hgrid" id="calGrid"></div>
+    <div class="card" style="margin-top:10px"><h3>90일 이내 실적 발표</h3><div id="calList"></div></div>
+    <div class="card" style="margin-top:10px"><h3>🛍️ 해외 세일 시즌 <span class="na" style="font-weight:400">150일 이내 · 매입 시점 참고</span></h3><div id="saleList"></div></div>
+    <div class="note">달력의 날짜를 누르면 그 날 발표 기업·진행 중인 세일이 표시됩니다 · 연한 주황 칸 = 해외 세일 기간, 🛍 = 시작일 · 일정 미표시 종목은 소스 미제공(미확인)</div>
+  </div>
+
+  <div class="mk" id="mk-sig">
+    <div class="kpis" id="kpis"></div>
+    <div class="hgrid" id="sigBody"></div>
+  </div>
+
+  <div class="mk" id="mk-co">
+    <div id="coList">
+      <input class="search" id="coSearch" placeholder="기업명 검색 (예: 나이키, 아식스)">
+      <div class="chips" id="coChips"></div>
+      <div id="coPlat"></div>
+      <div class="card" id="coTblCard" style="padding:4px 8px"><div class="tblwrap"><table id="coTbl"></table></div><div class="note" style="margin:6px 4px 4px">외화 매출은 ≈원화 환산(최근 환율, 참고용) · 작은 글씨가 원래 통화</div></div>
+      <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
+    </div>
+    <div id="coDetail" style="display:none">
+      <button type="button" class="back" id="coBack">◂ 기업 목록</button>
+      <div id="detBody"></div>
+    </div>
+  </div>
+
+  <div class="mk" id="mk-kr">
+    <div id="hcBox"></div>
+    <div id="krBody"></div>
+    <div class="note">출처: KOSIS(통계청) — 서비스업동향조사·온라인쇼핑동향조사·소비자물가조사 · 월 1회 갱신<br>
+    지수는 2020=100 기준 · YoY는 전년 동월 대비 · 지표를 누르면 최근 13개월 수치 표</div>
+  </div>
+
+  <div class="mk" id="mk-map">
+    <div id="mapBody"></div>
+  </div>
 </div>
 
 <div class="pane" id="p-more">
@@ -704,13 +746,11 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 </div>
 
 </main>
-<nav class="tabs">
-  <div class="tab on" data-p="home"><span class="ic">🏠</span>종합</div>
-  <div class="tab" data-p="co"><span class="ic">🏢</span>기업</div>
-  <div class="tab" data-p="cal"><span class="ic">📅</span>캘린더</div>
-  <div class="tab" data-p="news"><span class="ic">📰</span>뉴스</div>
-  <div class="tab" data-p="kr"><span class="ic">🇰🇷</span>국내</div>
-  <div class="tab" data-p="more"><span class="ic">☰</span>더보기</div>
+<nav class="tabs" aria-label="화면">
+  <button type="button" class="tab on" data-p="today" aria-current="page"><span class="ic">🏠</span>오늘</button>
+  <button type="button" class="tab" data-p="brand"><span class="ic">🏷️</span>브랜드</button>
+  <button type="button" class="tab" data-p="market"><span class="ic">📈</span>시장</button>
+  <button type="button" class="tab" data-p="more"><span class="ic">☰</span>더보기</button>
 </nav>
 <div class="sheet" id="sheet"></div>
 </div>
@@ -887,7 +927,7 @@ const SRC_RNAME=[[/^europe$/i,'유럽'],[/^emea$|europe, middle east/i,'유럽·
   [/^domestic$/i,'미국 내수'],[/^asia[\s\/-]*pacific$|^apac$/i,'아시아·태평양']];
 const srcRegName=n=>{ for(const [re,k] of SRC_RNAME) if(re.test(n||'')) return k; return n; };
 const pp=v=>(v>0?'+':'')+v.toFixed(1)+'%';
-let SRC_PRESET='A', SRC_SHEET=null, SRC_CACHE=null;
+let SRC_PRESET='A', SRC_SHEET=null, SRC_CACHE=null, LAST_SHEET=null, LAST_SHEET_Y=0;   // v33 A안: LAST_SHEET(_Y) = 패널 안에서 다른 화면으로 갈 때 닫은 패널과 그 안 스크롤(돌아오면 다시 엶)
 function srcModel(){
   if(SRC_CACHE) return SRC_CACHE;
   const g=r=>r.cn_yoy_pct!=null?r.cn_yoy_pct:r.yoy_pct;
@@ -987,10 +1027,10 @@ function sourcingCard(){
     <div class="src-regs">${SRC_KEYS.map(k=>{const sm=srcSumm(k), lv=SRC_LV[sm.level];
       const tops=(sm.hi.length?sm.hi:srcRanked(k)).slice(0,3).map(o=>o.b.name).join(' · ');
       return `<button type="button" onclick="openSheet('${k}')"><span class="rl"><b>${SRC_NAMES[k]}</b><span class="tops">${sm.hi.length?'기회 높음: ':'상위: '}${esc(tops)}</span></span><span class="lvw"><span class="lvchip" style="background:${lv.bg};color:${lv.fg}">${lv.txt}</span><span class="hin">기회 높음 ${sm.hi.length}곳</span></span></button>`;}).join('')}</div>
-    <div class="src-btns"><button type="button" onclick="openSheet('matrix')">브랜드 × 지역 전체 표</button><button type="button" onclick="openSheet('method')">가정과 계산 방식</button><button type="button" onclick="goMore('check')">브랜드 점검표 ▸</button></div>
+    <div class="src-btns"><button type="button" onclick="openSheet('matrix')">브랜드 × 지역 전체 표</button><button type="button" onclick="openSheet('method')">가정과 계산 방식</button><button type="button" onclick="sw('brand')">브랜드 점검표 ▸</button></div>
   </div></div>`;
 }
-function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET); }
+function setSrcPreset(p){ SRC_PRESET=p; const c=document.getElementById('srcCard'); if(c) c.outerHTML=sourcingCard(); if(SRC_SHEET) openSheet(SRC_SHEET,true); }   // v33 다시 열기는 기록 안 함
 const SRC_RETAIL={europe:['JD.L','FRAS.L','ZAL.DE','LUXE'],namerica:['DKS','ASO','TJX','ROST','BURL'],japan:['2670.T'],middleeast:['4240.SR'],samerica:['SBFG3.SA','VULC3.SA']};
 const SRC_FXMAP={europe:['EUR','GBP'],namerica:['USD'],japan:['JPY'],middleeast:['USD'],samerica:['BRL']};
 const SRC_NEWSKEYS={europe:['jd','frasers','zalando','gosport'],namerica:['dks','academy'],japan:[],middleeast:['gmg','apparelgrp','alshaya','landmark','cenomi','me_retail'],samerica:['sbf','sa_retail']};
@@ -1046,8 +1086,10 @@ function srcNewsHtml(k){
     <div class="nmeta">${esc(it.label||'')} · ${esc(it.source||'')} · ${esc((it.first_seen||'').slice(5).replace('-','/'))}</div></div>`; });
   return h;
 }
-function openSheet(kind){
-  SRC_SHEET=kind; const sh=document.getElementById('sheet');
+function openSheet(kind,quiet){   // v33 A안: 열 때 기록 1개(휴대폰 뒤로로 닫힘) · quiet = 기록 없이(뒤로 복원·가정 전환)
+  if(!SRC_NAMES[kind]&&kind!=='matrix'&&kind!=='method') return;
+  const sh=document.getElementById('sheet'); if(!sh) return;
+  SRC_SHEET=kind;
   let title='', chip='', body='';
   if(SRC_NAMES[kind]){
     const sm=srcSumm(kind), lv=SRC_LV[sm.level];
@@ -1085,13 +1127,27 @@ function openSheet(kind){
       <b>현지 유통사·환율·뉴스</b><p>유통사는 재고 증가율이 매출 증가율보다 5%p 이상 높으면 "무거움"(처분 물량 가능성), 5%p 이상 낮으면 "가벼움". 환율은 현지 통화 1단위의 원화 값 1년 변동입니다(북미는 달러, 일본은 엔(100엔 단위 표시), 중동은 달러 고정 통화라 달러로 대신). 뉴스는 참고 정보로만 붙입니다.</p>
       <b>데이터 한계</b><p>지역별 재고는 공시되지 않아 브랜드 전체 재고를 씁니다. 국가가 아닌 지역 단위이며, 중동은 유럽·중동·아프리카 또는 신흥시장 합산값을 빌려 쓰고 상장 유통사도 없어 뉴스로 보완합니다.</p></div>`;
   } else return;
-  sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="closeSheet()"></button>
+  sh.innerHTML=`<button type="button" class="sh-bd" aria-label="닫기" onclick="dismissSheet()"></button>
     <div class="sh-pn" role="dialog" aria-modal="true" aria-label="${title}"><div class="sh-grip"></div>
-    <div class="sh-hd"><div class="sh-tt">${title} ${chip}</div><button type="button" class="sh-x" aria-label="닫기" onclick="closeSheet()">✕</button></div>${body}</div>`;
+    <div class="sh-hd"><div class="sh-tt">${title} ${chip}</div><button type="button" class="sh-x" aria-label="닫기" onclick="dismissSheet()">✕</button></div>${body}</div>`;
   sh.classList.add('on');
+  if(!quiet) sheetPush(kind);
 }
-function closeSheet(){ SRC_SHEET=null; const sh=document.getElementById('sheet'); sh.classList.remove('on'); sh.innerHTML=''; }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&SRC_SHEET) closeSheet(); });
+function closeSheetRaw(){ SRC_SHEET=null; const sh=document.getElementById('sheet'); if(sh){ sh.classList.remove('on'); sh.innerHTML=''; } }
+const sheetScrollY=()=>{ const pn=document.querySelector('#sheet .sh-pn'); return pn?pn.scrollTop:0; };   // 패널 안 스크롤(유럽 패널은 화면보다 김)
+function sheetScrollTo(y){ const pn=document.querySelector('#sheet .sh-pn'); if(pn&&y>0) pn.scrollTop=y; }
+/* v33 A안: 패널 안 이동(closeSheet();goDetail()) — 닫은 패널과 그 안 스크롤을 기억했다가 그 화면 기록에 저장 → 뒤로 오면 같은 패널을 같은 자리로 다시 엶.
+   이어서 이동하지 않으면(코드에서 그냥 닫기) 기억은 바로 지움 */
+function closeSheet(){
+  if(SRC_SHEET){ LAST_SHEET=SRC_SHEET; LAST_SHEET_Y=sheetScrollY(); Promise.resolve().then(()=>{ LAST_SHEET=null; }); }
+  closeSheetRaw();
+  const s=history.state; if(s&&s.sheet) hRep({...s,sheet:null});
+}
+function dismissSheet(){   // ✕·배경·Esc: 패널 기록이면 뒤로(기록도 같이 닫힘), 아니면 그냥 닫기
+  const s=history.state; LAST_SHEET=null; closeSheetRaw();
+  if(s&&s.sheet) histBack();
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&SRC_SHEET) dismissSheet(); });
 
 /* ── 수집 상태 (v27) — 열람 시점 기준으로 지연 판정 ── */
 function statusRows(){
@@ -1147,15 +1203,17 @@ function newsDedupe(list, n){
   }
   return out;
 }
+const newsKeyOf=key=>NEWS_KEY[key] || (String(key).startsWith('krd:') ? String(key).slice(4) : null);   // v32.7 국내 비교 회사 = DART 법인 id
 function newsFor(key, n=3){
-  const k = NEWS_KEY[key] || (String(key).startsWith('krd:') ? key.slice(4) : null);   // v32.7 국내 비교 회사 = DART 법인 id
+  const k = newsKeyOf(key);
   if(!k || !NEWS || !NEWS.items) return [];
   return newsDedupe(NEWS.items.filter(it=>it.scope==='brand' && it.key===k)
     .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'') || (b.importance||0)-(a.importance||0)), n);
 }
 function newsCard(key){
-  const list=newsFor(key);
-  let h=`<div class="card"><h3>📰 최근 뉴스 <span class="go" onclick="sw('news')">뉴스 ▸</span></h3>`;
+  const list=newsFor(key), nk=newsKeyOf(key);
+  // v33 A안: '뉴스 ▸' = 시장 › 뉴스, 그 회사 뉴스만(k: 필터 — 위 3건과 같은 키). 보관 기간 안에 없으면 전체
+  let h=`<div class="card"><h3>📰 최근 뉴스 <span class="go" onclick="goNews('${list.length&&nk?'k:'+esc(nk):'all'}')">뉴스 ▸</span></h3>`;
   if(!list.length){ h+=`<div class="na">보관 기간 내 선별 뉴스 없음</div></div>`; return h; }
   list.forEach(it=>{
     h+=`<div class="nitem"><div class="nsum"><a href="${it.link}" target="_blank" rel="noopener">${'★'.repeat(it.importance||1)} ${esc(it.summary||it.title)}</a></div>
@@ -1179,14 +1237,14 @@ function logoImg(t, large, name){
 
 /* ── 테마 ── */
 const btn=document.getElementById('themeBtn');
-function applyTheme(t){
-  if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️';}
-  else{document.documentElement.removeAttribute('data-theme');btn.textContent='🌙';}
+function applyTheme(t){   // v33 버튼이 없어도 화면 전체가 멈추지 않게(null 확인)
+  if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');if(btn) btn.textContent='☀️';}
+  else{document.documentElement.removeAttribute('data-theme');if(btn) btn.textContent='🌙';}
 }
 let theme='light';
 try{theme=localStorage.getItem('sim-theme')||'light';}catch(e){}
 applyTheme(theme);
-btn.onclick=()=>{
+if(btn) btn.onclick=()=>{
   theme=(theme==='dark')?'light':'dark';
   applyTheme(theme);
   try{localStorage.setItem('sim-theme',theme);}catch(e){}
@@ -1350,14 +1408,15 @@ function todayCardHtml(today){
   const todays=imp.filter(i=>i.first_seen===td), top=todays[0]||imp[0];
   const dayW=td&&td===new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'})?'오늘':(td?newsDateLbl(td):'오늘');
   if(top) rows.push({ic:'📰',t:`${todays.length?`${dayW} ★3 <b>${todays.length}건</b>`:`${dayW} ★3 없음 · 최근`} — ${esc(top.summary||top.title)}`,
-    s:`${top.label||top.key||''} · ${top.source||''}${todays.length?'':' · '+top.first_seen}`,act:"newsFilter='all';buildNewsChips();sw('news');buildNews()"});
+    s:`${top.label||top.key||''} · ${top.source||''}${todays.length?'':' · '+top.first_seen}`,act:"goNews('all')"});
   const fs=(typeof fiScore==='function')?fiScore():null;
   if(fs) rows.push({ic:'🏷️',t:`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)} · 중앙값보다 나은 지표 <b>${fs.nb}/${fs.na}</b>`,
     s:`유통사 ${fs.n}곳 재무 지표 비교 · 더보기 › 유통사 비교`,act:"goMore('peer')"});
   if(!rows.length) return '';
   return `<div class="card"><h3>오늘 볼 것</h3>${rows.map(r=>`<div class="td-row" role="button" tabindex="0" onclick="${r.act}" onkeydown="if(event.key==='Enter'){${r.act}}"><span class="td-ic">${r.ic}</span><span class="td-t">${r.t}<span class="td-s">${esc(r.s)}</span></span><span class="td-go">›</span></div>`).join('')}</div>`;
 }
-/* v32.12 종합 '국내 의류 소매판매' 그래프 — 카드 폭에 맞춰 그림(휴대폰에서도 글자 11px · 위아래 빈 공간 없음), 범례는 그래프 밖 */
+/* v32.12 종합 '국내 의류 소매판매' 그래프 — 카드 폭에 맞춰 그림(휴대폰에서도 글자 11px · 위아래 빈 공간 없음), 범례는 그래프 밖
+   v33 A안: 시장 › 국내 칩 첫 카드 — 폭은 국내 칩 영역(#mk-kr) 기준, 칩이 처음 보일 때 그림(hcDraw) */
 let HC_W=0;
 function homeChartHtml(){
   const kr=(KR&&KR.series&&KR.series.retail_apparel)?KR.series.retail_apparel:null; if(!kr) return '';
@@ -1365,12 +1424,12 @@ function homeChartHtml(){
   const yNow=krLast.slice(0,4), yPrev=String(+yNow-1);
   const cur=[],prev=[]; for(let m=1;m<=12;m++){const mm=String(m).padStart(2,'0'); cur.push(kr.values[yNow+mm]??null); prev.push(kr.values[yPrev+mm]??null);}
   const all=[...cur,...prev].filter(v=>v!=null); const mn=Math.min(...all), mx=Math.max(...all), rg=(mx-mn)||1;
-  const hb=document.getElementById('homeBody'), cw=hb?hb.clientWidth:0;
+  const hb=document.getElementById('mk-kr'), cw=hb?hb.clientWidth:0;
   const W=HC_W=Math.max(280,Math.round((cw||370)-30)), H=140, L=10, R=10, T=8, B=22;   // 카드 안쪽 폭 = 그리는 폭(1배) → 글자 크기 그대로
   const xs=i=>L+i*(W-L-R)/11, ys=v=>T+(H-T-B)-(v-mn)/rg*(H-T-B);
   const line=(arr,color,w)=>{const pts=arr.map((v,i)=>v==null?null:`${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).filter(Boolean).join(' ');return `<polyline fill="none" stroke="${color}" stroke-width="${w}" stroke-linejoin="round" points="${pts}"/>`;};
   const lastIdx=cur.map((v,i)=>v!=null?i:-1).filter(i=>i>=0).pop();
-  return `<div class="card span2" id="hcCard"><h3>국내 의류 소매판매 — 올해 vs 작년 (월별 지수) <span class="go" onclick="sw('kr')">국내 ▸</span></h3>
+  return `<div class="card span2" id="hcCard"><h3>국내 의류 소매판매 — 올해 vs 작년 (월별 지수)</h3>
     <div class="hc-leg"><span><i style="background:var(--accent)"></i>${yNow} 올해</span><span><i style="background:var(--chart-prev)"></i>${yPrev} 작년</span></div>
     <svg class="hc-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="국내 의류 소매판매지수 ${yNow}년 vs ${yPrev}년">
       ${line(prev,'var(--chart-prev)',2)}${line(cur,'var(--accent)',2.5)}
@@ -1384,16 +1443,24 @@ function krTrendOf(kr){
   if(!y3.every(v=>v!=null)) return '';
   return (y3[0]>y3[1]&&y3[1]>y3[2])?'3개월 둔화':(y3[0]<y3[1]&&y3[1]<y3[2])?'3개월 가속':'';
 }
-window.addEventListener('resize',()=>{   // 화면 폭이 바뀌면(회전 등) 그래프만 다시 그림
-  const c=document.getElementById('hcCard'), hb=document.getElementById('homeBody');
-  if(c&&hb&&hb.clientWidth&&Math.abs(hb.clientWidth-30-HC_W)>20) c.outerHTML=homeChartHtml();
-});
+function hcDraw(){   // v33 국내 칩이 보일 때만 그림(숨은 칩은 폭 0) — 처음 한 번, 그 뒤엔 폭이 20px 넘게 바뀌었을 때만
+  const box=document.getElementById('hcBox'), hb=document.getElementById('mk-kr');
+  if(!box||!hb||!hb.clientWidth) return;
+  if(!box.dataset.drawn||Math.abs(hb.clientWidth-30-HC_W)>20){ box.innerHTML=homeChartHtml(); box.dataset.drawn='1'; }
+}
+window.addEventListener('resize',()=>{ hcDraw(); });   // 화면 폭이 바뀌면(회전 등) 그래프만 다시 그림(국내 칩이 숨어 있으면 다음에 보일 때)
 /* v32.12 순위 줄 — 윗줄 법인명, 아랫줄 브랜드 · 그룹 · 기준(분기 '26.06 / 연간 FY25) + 이전 값·반영 대기 표시 */
 function rkRow(r,valHtml){
   const n=nmSplit(r.name), sub=[n.brand,r.group,r.basis].filter(Boolean).map(esc).join(' · ');
   return `<div class="rk" onclick="goDetail('${r.key}')"><span class="rk-n">${r.logo}<span class="rk-t"><span class="rk-m">${esc(n.main)}</span><span class="rk-s">${sub}${staleTag(r.stale)}${failTag(r.key)}${pendTag(r.pend)}</span></span></span>${valHtml}</div>`;
 }
-function buildHome(){
+/* v33 A안: 옛 종합(buildHome)을 나눔 — 오늘(지연 띠 + 오늘 볼 것) · 시장 › 실적·재고(KPI·순위·재고 경고·실적 발표) ·
+   시장 › 소싱 지도 · 시장 › 국내(의류 소매 그래프, hcDraw). 계산은 옛 buildHome 그대로 */
+function buildToday(){
+  safe(statusWarn,'수집 지연 띠','p-today');
+  safe(()=>{ const today=new Date(); today.setHours(0,0,0,0); document.getElementById('todayCard').innerHTML=todayCardHtml(today); },'오늘 볼 것','p-today');
+}
+function buildSig(){
   const rows=rows_all();
   const today=new Date(); today.setHours(0,0,0,0);
   // 성장(최근 분기 매출 전년 대비; 분기 없으면 연간) — v32.12 기준 표시: 분기 '26.06 / 연간 FY25(오래된 결산도 순위에 두고 연도만 표시)
@@ -1420,6 +1487,7 @@ function buildHome(){
   if(kr){ const ps=Object.keys(kr.values).sort(); krLast=ps[ps.length-1]; krYoy=kr.yoy?kr.yoy[krLast]:null; krTrend=krTrendOf(kr); }
 
   // v32.12 KPI 설명은 휴대폰에서 2줄까지 — 고정 문구는 짧게, 회사 이름은 브랜드(괄호 속)로
+  // v33 KPI 4칸은 시장 › 실적·재고 맨 위: 성장 1위 → 기업 상세 · 재고 경고 → 아래 재고 경고 카드 · 실적 → 캘린더 · 의류 소매 → 국내
   const kp=[
     up[0]?{l:'성장 1위',v:fmt(up[0].g,1,true),s:`${nmBrand(up[0].name)} · ${up[0].bs}`,act:`goDetail('${up[0].key}')`}:{l:'성장 1위',v:'―',s:'',act:"sw('co')"},
     {l:'재고 경고',v:`<span class="${warn.length?'neg':''}">${warn.length}곳</span>`,s:'재고 증가 > 매출 증가',act:"focusCard('warnCard')"},
@@ -1427,12 +1495,8 @@ function buildHome(){
     kr?{l:'의류 소매',v:fmt(krYoy,1,true),s:`${+krLast.slice(4,6)}월 · ${krTrend||'전년 동월 대비'}`,act:"sw('kr')"}:{l:'의류 소매',v:'―',s:'미수집',act:"sw('kr')"},
   ];
   document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi" onclick="${k.act}"><div class="l">${k.l}</div><div class="v">${k.v}</div><div class="s">${esc(k.s)}</div></div>`).join('');
-  document.getElementById('todayCard').innerHTML=todayCardHtml(today);
 
   let h='';
-  // 올해 vs 작년 꺾은선 (국내 의류 소매판매지수) — 폭은 homeBody 기준이라 아래에서 카드를 넣은 뒤 그림
-  if(kr) h+=`<div class="card span2" id="hcCard"></div>`;
-  h+=sourcingCard();
   const ex=[outlier.length?`±100% 초과(기저·인수 효과 가능) ${outlier.map(r=>esc(r.name)+' '+fmt(r.g,0,true)).join(' · ')}`:'',
     ...acq.map(r=>{ const c=acqCore(r.key); return `${esc(r.name)} ${fmt(r.g,0,true)}(인수 효과${c!=null?', 본체 '+fmt(c,1,true):''})`; })].filter(Boolean);
   h+=`<div class="card"><h3>성장 상위 · 매출 전년 대비 <span class="go" onclick="sw('co')">기업 ▸</span></h3>${up.map(r=>rkRow(r,`<b class="pos">${fmt(r.g,1,true)}</b>`)).join('')||'<div class="na">―</div>'}${ex.length?`<div class="note">순위 제외: ${ex.join(' · ')}</div>`:''}</div>`;
@@ -1444,10 +1508,12 @@ function buildHome(){
       +(warn.length>8?`<div id="warnMore" style="display:none">${warn.slice(8).map(row).join('')}</div><div style="margin-top:6px;cursor:pointer;color:var(--accent);font-size:var(--fs-sm)" onclick="const m=document.getElementById('warnMore');m.style.display=m.style.display==='none'?'':'none';this.textContent=m.style.display==='none'?'전체 보기(${warn.length}곳) ▾':'접기 ▴'">전체 보기(${warn.length}곳) ▾</div>`:''); })()}
     <div class="note">기준: 재고가 1년 전보다 10% 이상 늘고, 같은 기간 매출 증가율보다 10%p 이상 빠른 곳 · 같은 기간끼리 비교(분기 자료가 있으면 최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산) · ○일 = 재고일수(연간)${wex.length?'<br>'+wex.join(' · '):''}</div></div>`;
   h+=`<div class="card"><h3>다가오는 실적 발표 <span class="go" onclick="sw('cal')">캘린더 ▸</span></h3>${ev.slice(0,5).map(r=>rkRow({...r,basis:''},`<span>${r.dn<=7?'🔴':'⚪'} D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
-  document.getElementById('homeBody').innerHTML=h;
-  if(kr){ const c=document.getElementById('hcCard'); if(c) c.outerHTML=homeChartHtml(); }
-  statusWarn();
+  document.getElementById('sigBody').innerHTML=h;
 }
+function buildMap(){   // 시장 › 소싱 지도(하단 패널 #sheet은 공용)
+  document.getElementById('mapBody').innerHTML=sourcingCard()||'<div class="card"><div class="na">소싱 지도 자료 없음 — 본사 지역 분해·재고 자료가 수집되면 표시</div></div>';
+}
+function buildHome(){ buildToday(); buildSig(); buildMap(); }   // 옛 이름(호환)
 
 /* ── 기업 (A안: 검색·칩·압축 표·행 펼침) ── */
 let coFilter='전체', coQuery='';
@@ -1496,20 +1562,9 @@ function buildCo(){
   document.querySelectorAll('#coTbl tr.co').forEach(tr=>tr.onclick=()=>{const x=tr.nextElementSibling; if(x&&x.classList.contains('cx')) x.style.display=x.style.display==='none'?'':'none';});
 }
 function showCoList(){ document.getElementById('coDetail').style.display='none'; document.getElementById('coList').style.display=''; }
-let DET_BACK=null;   // 더보기 화면에서 상세를 열었으면 그 화면 키(뒤로 가기 대상)
-const MORE_NAME={check:'브랜드 점검표',peer:'유통사 비교',fb:'패션 브랜드',ey:'패션 브랜드',fx:'환율',cb:'해외직구',status:'수집 상태'};
-let DET_SCROLL=0;   // 더보기에서 상세로 갈 때 스크롤 위치 — 돌아오면 복원
-function setCoBack(v){ DET_BACK=v||null; const b=document.getElementById('coBack'); if(b) b.textContent=DET_BACK?'◂ '+(MORE_NAME[DET_BACK]||'더보기'):'◂ 기업 목록'; }
-function goDetail(t){
-  const pm=document.getElementById('p-more');
-  setCoBack(pm&&pm.classList.contains('on')?MORE_VIEW:null);
-  DET_SCROLL=DET_BACK?document.getElementById('content').scrollTop:0;
-  sw('co');
-  document.getElementById('coList').style.display='none';
-  document.getElementById('coDetail').style.display='';
-  renderDetail(t);
-  document.getElementById('content').scrollTo(0,0);
-}
+const MORE_NAME={peer:'유통사 비교',fb:'패션 브랜드',ey:'패션 브랜드',fx:'환율',cb:'해외직구',status:'수집 상태'};   // v33 'check'(브랜드 점검표)는 브랜드 탭으로
+// v33 A안: 기업 상세는 시장 › 기업 안 한 화면 — 어디서 열어도 같은 화면, '◂ 뒤로'·휴대폰 뒤로 = 들어온 곳(go·goBack, 아래 '이동 경로')
+function goDetail(t){ go({tab:'market',chip:'co',id:String(t)}); }
 function pairBars(list, curLabel, prevLabel, cur){
   const items=list.filter(r=>r.revenue!=null);
   if(!items.length) return null;
@@ -1779,7 +1834,7 @@ function renderDetail(t){
   if(t==='DKS'&&s&&s.extract.sub_segments&&s.extract.sub_segments.length){
     const qtr=isQtrPeriod(s.extract.period);   // v32.12 분기 실적 자료일 때만 '딕스(본체)' — 프로포마 합산표 등은 공시 이름 그대로
     h+=`<div class="card"><h3>🏬 부문 분해: 딕스 / 풋락커 <span class="tag">공시 추출</span></h3>
-    <table><tr><th>부문</th><th>매출</th><th>전년</th><th>YoY</th><th>부문이익</th><th>재고</th></tr>`;
+    <div class="tblwrap"><table><tr><th>부문</th><th>매출</th><th>전년</th><th>YoY</th><th>부문이익</th><th>재고</th></tr>`;   // v33 휴대폰 폭보다 넓으면 표만 가로 스크롤(390px에서 26px 넘침)
     s.extract.sub_segments.forEach(ss=>{
       h+=`<tr><td>${ss.name==="DICK'S"?(qtr?'딕스(본체)':esc(ss.name)):(qtr?'풋락커(부문)':esc(ss.name))}</td>
       <td>${segMoney(ss.revenue,segCur)}</td>
@@ -1788,7 +1843,7 @@ function renderDetail(t){
       <td>${segMoney(ss.segment_profit,segCur)}</td>
       <td>${segMoney(ss.inventory,segCur)}</td></tr>`;
     });
-    h+=`</table>`;
+    h+=`</table></div>`;
     if(s.extract.period) h+=`<div class="note">기준: ${esc(s.extract.period)}${qtr?'':' — 분기 실적 자료가 아니어서 본체·부문으로 나눠 보지 않음'}</div>`;
     const fl=s.extract.sub_segments.find(z=>z.name==='Foot Locker');
     if(fl&&fl.proforma_comp_pct!=null){
@@ -1853,7 +1908,8 @@ function buildCal(){
   });
   document.getElementById('calGrid').innerHTML=h;
   document.querySelectorAll('.cd[data-day]').forEach(c=>c.onclick=()=>{calSel=(calSel===c.dataset.day)?null:c.dataset.day;buildCal();});
-  document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<div class="cl"><span>${r.dn<=7?'🔴':'⚪'} ${r.logo}${esc(r.name)}</span><span>${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></div>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
+  // v33 A안: 90일 이내 실적 발표 줄을 누르면 기업 상세(옛 종합 '다가오는 실적 발표'와 같게)
+  document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<div class="cl" style="cursor:pointer" onclick="goDetail('${r.key}')"><span>${r.dn<=7?'🔴':'⚪'} ${r.logo}${esc(r.name)}</span><span>${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></div>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
   const lim=addD(today,150), up=SALES.filter(e=>e.e>=today&&e.s<=lim).sort((a,b)=>a.s-b.s);
   document.getElementById('saleList').innerHTML=up.length?up.map(e=>{const live=e.s<=today, dn=Math.round(((live?e.e:e.s)-today)/86400000);
     return `<div class="sl-row"><div class="t1"><span>${e.fl} ${esc(e.nm)}<span class="sl-k">${e.k}</span></span><span>${md2(e.s)}${+e.e!==+e.s?'~'+md2(e.e):''} <span class="${live?'neg':'na'}">${live?'진행 중 · '+dn+'일 남음':'D-'+dn}</span></span></div><div class="t2">${esc(e.note)}</div></div>`;}).join('')
@@ -2016,7 +2072,7 @@ function nvRefresh(){ const c=document.getElementById('nvCard'); if(c) c.outerHT
 function nvSort(s){ NV_SORT=s; nvRefresh(); }
 function nvToggle(){ NV_ALL=!NV_ALL; nvRefresh(); }
 function nvGrp(g){ NV_GRP=g; NV_ALL=false; nvRefresh(); }
-function nvNews(k){ newsFilter='k:'+k; sw('news'); buildNewsChips(); buildNews(); }
+function nvNews(k){ goNews('k:'+k); }   // v33 시장 › 뉴스, 그 브랜드 뉴스만(처음 열 때 한 번만 그림)
 function naverDetailCard(t){
   const bs=nvAll().filter(b=>b.link===t); if(!bs.length) return '';
   let h=`<div class="card"><h3>🔎 네이버 검색 관심도 <span class="go" onclick="NV_GRP='${nvGrpOf(bs[0])}';NV_ALL=false;nvRefresh();sw('kr')">국내 ▸</span></h3>`;
@@ -2500,7 +2556,7 @@ function fxCard(c,f){
     ${fxGauge(f)}${fxSpark(f,c)}
     <div class="fxcnt">1년 평균 ${wonR(f.avg1y*m)}원 · 지난 1년 알림 ${al.length}번 (내림 ${ndn} · 오름 ${al.length-ndn}) · ${esc(f.asof||'')} 기준</div></div>`;
 }
-function moreHead(t,sub){ return `<div class="mhead"><span class="mback" onclick="moreOpen(null)">‹ 더보기</span><div><b>${t}</b><span class="ms">${sub}</span></div></div>`; }
+function moreHead(t,sub){ return `<div class="mhead"><span class="mback" onclick="moreOpen(null)">‹ ${esc(backLbl(ROUTE,'더보기'))}</span><div><b>${t}</b><span class="ms">${sub}</span></div></div>`; }   // v33 '‹ 바로 전 화면'(주소로 바로 열었으면 더보기 메뉴)
 function moreFxHtml(){
   const FXD=DATA.fx||{}, al=fxAlertsAll();
   let h=moreHead('💱 환율','현지 통화 1단위의 원화 값 (엔은 100엔) · 갱신 '+esc(DATA.generated_at||''));
@@ -2624,7 +2680,6 @@ function moreMenuHtml(){
   const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`<span class="nw">패션 <b class="il">${a.length}</b> · 아이웨어 <b class="il">${b.length}</b></span>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
   const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
   return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
-    ${row('check','🧭','브랜드 점검표','본사 재고·발언 · 환율 · 국내 검색 → 브랜드별 판정',chkMenuR())}
     ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
     ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',cmpN('fb'))}
     ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
@@ -2721,22 +2776,23 @@ function chkMenuR(){
   const c=l=>M.main.filter(r=>r.lv===l).length;
   return `<span class="chk-lv chk-go">지금 검토 ${c(2)}</span><br><span class="na">관망 ${c(1)} · 주의 ${c(0)}</span>`;
 }
+function chkRowHtml(r,still){   // v33 점검표 한 줄 — 브랜드 탭 목록과 브랜드 상세(still = 누르기 없음)가 같이 씀
+  const L=CHK_LV[r.lv];
+  const nl=(r.notes.list||[]).map(n=>`<span class="chk-q">${n.sig==='more'?'▲':(n.sig==='less'?'▼':(n.sig==='neutral'?'·':'?'))} ${esc(MGMT_TOPIC[n.topic]||n.topic||'')} — ${esc(n.ko||'')}</span>`).join('');
+  const ctx=[r.sale?'🛍️ 다음 세일 '+r.sale:'', r.news?`📰 ${'★'.repeat(r.news.importance||1)} ${r.news.summary||r.news.title||''} (${(r.news.first_seen||'').slice(5).replace('-','/')})`:''].filter(Boolean);
+  return `<div class="chk-row"${still?' style="cursor:default;border-top:0;padding-top:0"':` onclick="goDetail('${esc(r.x.ticker)}')"`}>
+      <div class="chk-h"><span class="chk-nm">${esc(r.b.name)} <span class="ref">${esc(r.x.name)} · ${esc(r.cur||'')}</span>${staleTag(r.x.stale_since)}</span><span class="chk-lv ${L.c}">${L.t}</span></div>
+      ${chkEv('국내 검색',r.dem)}${chkEv('본사 재고',r.inv)}${chkEv('본사 발언',r.notes,nl)}${chkEv('환율',r.fx,CHK_CUR_NOTE[r.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[r.b.name])})</span>`:'')}
+      <div class="chk-sc">수요 ${ptx(r.dem)} · 매입 조건 ${r.buy?sgn(r.buy):'0'} (재고 ${ptx(r.inv)} · 발언 ${ptx(r.notes)} · 환율 ${ptx(r.fx)})${r.lv===2&&r.inv.pt+r.notes.pt<=0?' · 환율 영향이 대부분':''}</div>
+      ${ctx.length?`<div class="chk-ctx">${ctx.map(esc).join(' · ')}</div>`:''}</div>`;
+}
 function chkHtml(){
   const M=chkModel();
   if(!M.main.length&&!M.rest.length) return `<div class="card"><div class="na">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</div></div>`;
   const cnt=l=>M.main.filter(r=>r.lv===l).length;
   let h=`<div class="card"><h3>🧭 본사 재고·발언 자료가 있는 브랜드 <span class="na" style="font-weight:400">${M.main.length}개 · 판정</span></h3>
     <div class="chk-sum">${[2,1,0].map(l=>`<span class="chk-lv ${CHK_LV[l].c}">${CHK_LV[l].t} ${cnt(l)}</span>`).join('')}</div>`;
-  M.main.forEach(r=>{
-    const L=CHK_LV[r.lv];
-    const nl=(r.notes.list||[]).map(n=>`<span class="chk-q">${n.sig==='more'?'▲':(n.sig==='less'?'▼':(n.sig==='neutral'?'·':'?'))} ${esc(MGMT_TOPIC[n.topic]||n.topic||'')} — ${esc(n.ko||'')}</span>`).join('');
-    const ctx=[r.sale?'🛍️ 다음 세일 '+r.sale:'', r.news?`📰 ${'★'.repeat(r.news.importance||1)} ${r.news.summary||r.news.title||''} (${(r.news.first_seen||'').slice(5).replace('-','/')})`:''].filter(Boolean);
-    h+=`<div class="chk-row" onclick="goDetail('${esc(r.x.ticker)}')">
-      <div class="chk-h"><span class="chk-nm">${esc(r.b.name)} <span class="ref">${esc(r.x.name)} · ${esc(r.cur||'')}</span>${staleTag(r.x.stale_since)}</span><span class="chk-lv ${L.c}">${L.t}</span></div>
-      ${chkEv('국내 검색',r.dem)}${chkEv('본사 재고',r.inv)}${chkEv('본사 발언',r.notes,nl)}${chkEv('환율',r.fx,CHK_CUR_NOTE[r.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[r.b.name])})</span>`:'')}
-      <div class="chk-sc">수요 ${ptx(r.dem)} · 매입 조건 ${r.buy?sgn(r.buy):'0'} (재고 ${ptx(r.inv)} · 발언 ${ptx(r.notes)} · 환율 ${ptx(r.fx)})${r.lv===2&&r.inv.pt+r.notes.pt<=0?' · 환율 영향이 대부분':''}</div>
-      ${ctx.length?`<div class="chk-ctx">${ctx.map(esc).join(' · ')}</div>`:''}</div>`;
-  });
+  M.main.forEach(r=>{ h+=chkRowHtml(r); });
   h+=`<div class="note">판정 = 국내 수요 + 매입 조건. 수요: 네이버 검색 전년 대비가 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량 적으면 0).
     매입 조건: 본사 재고 압력(재고 증가율 − 같은 기간 매출 증가율) +5%p 이상 +1 · −5%p 이하 −1, 본사 발언 신호(할인 물량↑가 많으면 +1, 할인·공급↓가 많으면 −1),
     원산지 통화 1년 평균 대비(없으면 1년 전 대비) −5% 이하 +1 · −10% 이하 +2 · +5% 이상 −1 · +10% 이상 −2.
@@ -2756,37 +2812,251 @@ function chkHtml(){
   }
   return h;
 }
+/* v33 A안: 브랜드 탭 = 옛 더보기 › 브랜드 점검표 본문 그대로(‹ 더보기 없이 탭 제목 한 줄). 줄을 누르면 지금처럼 본사 기업 상세(S2에서 브랜드 상세로) */
+function buildBrand(){
+  document.getElementById('brandList').innerHTML=`<div class="mhead"><b>🧭 브랜드 점검표</b><span class="ms">국내 수요 + 매입 조건 · 매일 갱신</span></div>`+chkHtml();
+}
+function renderBrandDetail(name){   // v33 브랜드 상세 자리(#/brand/<이름>) — S2에서 새 화면(A3)으로 바꿈. 지금은 점검표 줄 + 본사 기업 상세 버튼
+  const el=document.getElementById('brBody'); if(!el) return;
+  const M=chkModel(), r=M.main.find(o=>o.b.name===name), q=r?null:M.rest.find(o=>o.b.name===name);
+  if(!r&&!q){ el.innerHTML='<div class="card"><div class="na">점검표에 없는 브랜드</div></div>'; return; }
+  if(r){ el.innerHTML=`<div class="card">${chkRowHtml(r,true)}<button type="button" class="nv-more" onclick="goDetail('${esc(r.x.ticker)}')">본사 기업 상세 ›</button></div>`; return; }
+  const tk=q.x?q.x.ticker:(q.link.startsWith('krd:')?q.link:'');   // 판정 안 함(본사 자료 없음) — 점검표 아래 표의 한 줄과 같은 내용
+  el.innerHTML=`<div class="card"><div class="chk-h"><span class="chk-nm">${esc(q.b.name)}${q.cur?` <span class="ref">원산지 통화 ${esc(q.cur)}</span>`:''}${q.b.low?' <span class="ref">· 검색량 적음</span>':''}</span><span class="chk-lv chk-wait">판정 안 함</span></div>
+    ${chkEv('국내 검색',q.dem)}${chkEv('환율',q.fx,CHK_CUR_NOTE[q.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[q.b.name])})</span>`:'')}
+    ${q.sale?`<div class="chk-ctx">🛍️ 다음 세일 ${esc(q.sale)}</div>`:''}
+    <div class="note">본사 재고·발언 자료가 없어 판정하지 않음 — 검색·환율만 참고</div>
+    ${tk?`<button type="button" class="nv-more" onclick="goDetail('${esc(tk)}')">${q.x?'본사 기업 상세':'국내 법인 상세'} ›</button>`:''}</div>`;
+}
 function buildMore(){
   const el=document.getElementById('moreBody'); if(!el) return;
-  el.innerHTML = MORE_VIEW==='check'?moreHead('🧭 브랜드 점검표','국내 수요 + 매입 조건 · 매일 갱신')+chkHtml()
-    : MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
+  el.innerHTML = MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
     : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreFashionHtml()
     : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
     : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()+claudeCard()
     : moreMenuHtml();
 }
-function moreOpen(v){ MORE_VIEW=v; buildMore(); document.getElementById('content').scrollTo(0,0); }
-function goMore(v){ sw('more'); moreOpen(v); }
+function moreOpen(v){ if(v==null) goBack({tab:'more'}); else goMore(v); }   // v33 메뉴 줄 · '‹ 뒤로'(바로 전 화면, 없으면 메뉴)
+function goMore(v){ go(v==='check'?{tab:'brand'}:{tab:'more',view:v}); }   // v33 기록 1개(sw+moreOpen 따로 부르지 않음). 옛 'check' = 브랜드 탭, 'ey' = 'fb'
 
-/* ── 탭 / 토글 ── */
-function focusCard(id){
-  sw('home');
-  const el=document.getElementById(id); if(!el) return;
-  el.scrollIntoView({behavior:'smooth',block:'start'});
-  el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),1600);
+/* ── v33 A안: 이동 경로 — 화면 상태 {tab, chip?, view?, id?} 하나를 go()로 그림 ──
+   주소: 오늘 = 해시 없음 · #/brand · #/brand/<브랜드> · #/market/<칩> · #/market/co/<티커> · #/more · #/more/<화면>
+   기록: 화면 이동(탭·상세·더보기 화면·다른 탭으로 건너뛰기) = pushState · 시장 칩 전환·같은 주소 = replaceState ·
+   필터·정렬·펼치기 = 기록 없음. 떠나기 직전 지금 기록에 스크롤·열린 패널 저장 → 뒤로(popstate) 오면 그대로 복원.
+   depth = 앱 안에서 쌓은 기록 수 — '◂ 뒤로'는 depth>0이면 history.back(), 주소로 바로 열었으면(0) 부모 화면으로 바꿔 끼움 */
+const TABS=['today','brand','market','more'];
+const MK_CHIPS=[['news','뉴스'],['cal','캘린더'],['sig','실적·재고'],['co','기업'],['kr','국내'],['map','소싱 지도']];
+const MK_NAME=Object.fromEntries(MK_CHIPS);
+const own=(o,k)=>k!=null&&Object.prototype.hasOwnProperty.call(o,k);   // 이름표는 자기 키만 — 주소의 'constructor'·'toString'·'__proto__'를 칩·화면으로 받지 않게
+const MORE_VIEWS=['peer','fb','fx','cb','status'];   // 'ey'는 'fb' 별칭, 'check'(옛 점검표)는 브랜드 탭
+let ROUTE={tab:'today',depth:0}, MK_CHIP='news', MORE_SHOWN, DET_SHOWN=null, BR_SHOWN=null;
+const scrollBox=()=>document.getElementById('content');
+const setText=(id,t)=>{ const el=document.getElementById(id); if(el) el.textContent=t; };
+function hPush(st,url){ try{ history.pushState(st,'',url==null?location.href:url); return true; }catch(e){ return false; } }   // 파일로 열기 등 기록을 못 쓰는 곳에서도 화면은 그대로 바뀜
+function hRep(st,url){ try{ history.replaceState(st,'',url==null?location.href:url); return true; }catch(e){ return false; } }
+// renderDetail은 모르는 티커에서 오류 → 부모로. 국내 법인(krd:)은 네이버 줄이 가리키는 곳이면 자료가 아직 없어도 상세('미확인')를 엶(옛 동작 — 예: 다음 DART 수집 전 스케쳐스코리아)
+const coKnown=t=>String(t).startsWith('krd:')?(((KRD&&KRD.entities)||[]).some(e=>'krd:'+e.id===t)||nvAll().some(b=>b.link===t)):DATA.items.some(i=>i.ticker===t);
+function brKnown(n){ try{ const M=chkModel(); return M.main.concat(M.rest).some(r=>r.b.name===n); }catch(e){ return false; } }
+const nfKnown=f=>f==='all'||/^k:./.test(f)||NEWS_FILTERS.some(x=>!x.sep&&x.id===f);
+function normRoute(r){   // 모르는 탭·칩·기업·브랜드·화면은 오류 없이 부모로
+  r=r||{};
+  const o={tab:TABS.includes(r.tab)?r.tab:'today'}, id=(r.id==null||r.id==='')?null:String(r.id);
+  if(r.tab&&o.tab!==r.tab) console.warn('모르는 화면 → 오늘:',r.tab);
+  if(o.tab==='market'){
+    o.chip=own(MK_NAME,r.chip)?r.chip:(id&&!r.chip?'co':MK_CHIP);
+    if(r.chip&&!own(MK_NAME,r.chip)) console.warn('모르는 시장 칩:',r.chip);
+    if(o.chip==='co'&&id){ if(coKnown(id)) o.id=id; else console.warn('모르는 기업 → 기업 목록:',id); }
+    if(o.chip==='news'&&r.nf!=null&&nfKnown(r.nf)) o.nf=r.nf;
+  } else if(o.tab==='brand'){
+    if(id){ if(brKnown(id)) o.id=id; else console.warn('모르는 브랜드 → 점검표:',id); }
+  } else if(o.tab==='more'){
+    const v=r.view==='ey'?'fb':r.view;
+    if(v==='check') return {tab:'brand'};
+    if(MORE_VIEWS.includes(v)) o.view=v; else if(v) console.warn('모르는 더보기 화면 → 메뉴:',v);
+  }
+  return o;
 }
-function sw(p){
-  if(SRC_SHEET) closeSheet();
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
-  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
-  if(p!=='co') showCoList();
-  if(p==='news'&&!NEWS_BUILT) buildNews();
-  document.getElementById('content').scrollTo(0,0);
+// 기록에 저장한 스크롤·패널(+패널 안 스크롤)·뒤로 라벨·바로 아래 기록의 화면(fromKey)은 그대로
+const withMeta=(o,st)=>({...o,depth:st.depth||0,from:st.from,fromKey:st.fromKey,scroll:st.scroll,sheet:st.sheet,sheetY:st.sheetY});
+function routeOfHash(h){
+  const s=String(h||'').replace(/^#/,'');
+  if(!s.startsWith('/')) return normRoute({tab:'today'});
+  const p=s.slice(1).split('/').map(x=>{ try{ return decodeURIComponent(x); }catch(e){ return x; } });
+  if(p[0]==='market') return normRoute({tab:'market',chip:p[1]||MK_CHIP,id:p[1]==='co'?p[2]:null});
+  if(p[0]==='brand') return normRoute({tab:'brand',id:p[1]});
+  if(p[0]==='more') return normRoute({tab:'more',view:p[1]});
+  return normRoute({tab:p[0]||'today'});
 }
-document.querySelectorAll('.tab').forEach(t=>{ t.onclick=()=>{ setCoBack(null); sw(t.dataset.p); showCoList(); if(t.dataset.p==='more') moreOpen(null); }; });
-document.getElementById('coBack').onclick=()=>{ const v=DET_BACK; setCoBack(null); if(v){ goMore(v); document.getElementById('content').scrollTo(0,DET_SCROLL); } else showCoList(); };
-document.getElementById('coSearch').addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();});
+function hashOf(r){   // 이름·티커는 encodeURIComponent — '#/' 접두어라 요소 id와 겹치지 않음
+  const e=encodeURIComponent;
+  if(r.tab==='brand') return '#/brand'+(r.id?'/'+e(r.id):'');
+  if(r.tab==='market') return '#/market/'+r.chip+(r.chip==='co'&&r.id?'/'+e(r.id):'');
+  if(r.tab==='more') return '#/more'+(r.view?'/'+r.view:'');
+  return location.href.split('#')[0];   // 오늘 = 해시 없음
+}
+function coName(t){   // 뒤로 라벨용 회사 이름 — 국내 법인(krd:)은 법인명만
+  t=String(t);
+  if(t.startsWith('krd:')){ const e=((KRD&&KRD.entities)||[]).find(z=>'krd:'+z.id===t); return e?nmSplit(e.name).main:t; }
+  const x=DATA.items.find(i=>i.ticker===t); return x?x.name:t;
+}
+function labelOf(r){   // '◂ 뒤로'에 붙는 화면 이름
+  if(!r) return '';
+  if(r.tab==='brand') return r.id||'점검표';
+  if(r.tab==='market') return r.id?coName(r.id):(r.chip==='co'?'기업 목록':(own(MK_NAME,r.chip)?MK_NAME[r.chip]:'시장'));
+  if(r.tab==='more') return own(MORE_NAME,r.view)?MORE_NAME[r.view]:'더보기';
+  return '오늘';
+}
+const backLbl=(st,parent)=>(st&&st.depth>0&&st.from)?st.from:parent;   // 바로 전 화면 이름, 앱 안 전 화면이 없으면 부모
+const scrKey=r=>[r.tab,r.tab==='market'?r.chip:'',r.view||'',r.id||''].join('|');   // 같은 화면인지(스크롤·패널 제외)
+function go(r,opt){   // 화면 이동 하나 = 기록(push/replace) + 그리기
+  opt=opt||{};
+  const st=normRoute(r), cur=history.state||{}, same=scrKey(st)===scrKey(ROUTE);
+  const sheet=SRC_SHEET||LAST_SHEET||null, shY=SRC_SHEET?sheetScrollY():(LAST_SHEET?LAST_SHEET_Y:0); LAST_SHEET=null;
+  if(opt.replace||(same&&!SRC_SHEET)){   // 시장 칩 전환·같은 주소 다시 들어오기 = 바꿔 끼움
+    st.depth=cur.depth||0; st.from=cur.from; st.fromKey=cur.fromKey;
+    hRep(st,hashOf(st));
+  } else {
+    // 떠나기 직전 지금 기록에 스크롤·열린 패널(+패널 안 스크롤)·뉴스 필터 저장 — 뒤로 오면 그대로 복원
+    hRep({...ROUTE,...cur,scroll:scrollBox().scrollTop,sheet,sheetY:sheet?shY:0,...(ROUTE.tab==='market'&&ROUTE.chip==='news'?{nf:newsFilter}:{})});
+    st.depth=(cur.depth||0)+1; st.from=labelOf(ROUTE); st.fromKey=scrKey(ROUTE);   // fromKey = 바로 아래 기록의 화면(칩으로 그 화면에 갈 때 뒤로 처리)
+    hPush(st,hashOf(st));
+  }
+  render(st,false);
+}
+/* history.back()은 popstate가 올 때까지(보통 수십 ms) 기록이 그대로 — 그사이 '◂ 뒤로'를 한 번 더 누르면 두 화면 뒤로 감.
+   우리가 부른 뒤로가 아직 도착하지 않았으면 이번 누름은 무시(popstate가 안 오면 1.5초 뒤 풀림). want = 도착해야 할 화면(칩으로 뒤로 간 경우) */
+let BACK_REQ=0, BACK_WANT=null;
+function histBack(want){
+  if(BACK_REQ&&Date.now()-BACK_REQ<1500) return true;
+  BACK_REQ=Date.now(); BACK_WANT=want||null;
+  try{ history.back(); return true; }catch(e){ BACK_REQ=0; BACK_WANT=null; return false; }
+}
+function goBack(parent){   // 화면 '◂ 뒤로' = 휴대폰 뒤로. 주소로 바로 열어 앱 안 전 화면이 없으면(depth 0) 부모 화면으로 바꿔 끼움
+  const s=history.state;
+  if(s&&s.depth>0&&histBack()) return;
+  go(parent,{replace:true});
+}
+function render(st,restore){   // st = 기록에 든 화면 상태 · restore = 뒤로·앞으로 왔을 때(스크롤·패널 복원)
+  ROUTE=st;
+  closeSheetRaw();
+  const root=st.tab==='market'?!st.id:(st.tab==='today'||(!st.id&&!st.view));   // 탭 첫 화면이면 aria-current=page, 그 아래 화면이면 true
+  document.querySelectorAll('nav.tabs .tab').forEach(b=>{ const on=b.dataset.p===st.tab; b.classList.toggle('on',on);   // 하단 탭 강조 = 화면의 집(기업 상세 → 시장)
+    if(on) b.setAttribute('aria-current',root?'page':'true'); else b.removeAttribute('aria-current'); });
+  document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+st.tab));
+  if(st.tab==='brand') renderBrand(st);
+  else if(st.tab==='market') renderMarket(st);
+  else if(st.tab==='more') renderMore(st);
+  scrollBox().scrollTo(0,restore?(st.scroll||0):0);
+  if(restore&&st.sheet){ openSheet(st.sheet,true); sheetScrollTo(st.sheetY); }   // 패널에서 기업을 열었다 돌아오면 같은 패널을 같은 자리로 다시
+}
+function renderBrand(st){
+  const d=!!st.id, bl=document.getElementById('brandList'), bd=document.getElementById('brandDetail');
+  if(bl) bl.style.display=d?'none':''; if(bd) bd.style.display=d?'':'none';
+  if(!d) return;
+  if(BR_SHOWN!==st.id){ BR_SHOWN=st.id; safe(()=>{ document.getElementById('brBody').innerHTML=''; renderBrandDetail(st.id); },'브랜드 상세','brBody'); }
+  setText('brBack','◂ '+backLbl(st,'점검표'));
+}
+function renderMarket(st){
+  MK_CHIP=st.chip;
+  document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ const on=b.dataset.c===st.chip; b.classList.toggle('on',on); b.setAttribute('aria-selected',on?'true':'false'); });
+  document.querySelectorAll('#p-market .mk').forEach(x=>x.classList.toggle('on',x.id==='mk-'+st.chip));
+  if(st.chip==='news'){   // 뉴스는 칩이 처음 보일 때 한 번만 그림(v32.11) — 필터가 바뀌어 온 경우만 다시
+    // 'k:'(회사·브랜드 하나) 필터는 그 기록(nf)에만 — nf 없이 들어오면(칩·하단 탭·sw) 기본 보기로(map_nav 7.8). 칩에서 고른 필터는 그대로
+    const nf=st.nf!=null?st.nf:(String(newsFilter).startsWith('k:')?'all':newsFilter);
+    if(nf!==newsFilter){ newsFilter=nf; safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildNews,'뉴스','mk-news'); }
+    else if(!NEWS_BUILT) safe(buildNews,'뉴스','mk-news');
+  } else if(st.chip==='kr') safe(hcDraw,'의류 소매 그래프','mk-kr');   // 숨은 칩에서 그리면 폭 0 → 보일 때 그림
+  else if(st.chip==='co'){
+    if(!st.id){ showCoList(); return; }
+    document.getElementById('coList').style.display='none'; document.getElementById('coDetail').style.display='';
+    if(DET_SHOWN!==st.id){ DET_SHOWN=st.id; safe(()=>{ document.getElementById('detBody').innerHTML=''; renderDetail(st.id); },'기업 상세','detBody'); }
+    setText('coBack','◂ '+backLbl(st,'기업 목록'));
+  }
+}
+function renderMore(st){
+  const v=st.view||null;
+  if(MORE_SHOWN!==v){ MORE_SHOWN=v; MORE_VIEW=v; safe(buildMore,'더보기','moreBody'); }
+  document.querySelectorAll('#moreBody .mback').forEach(b=>{ b.textContent='‹ '+backLbl(st,'더보기'); });
+}
+function onHistory(){   // 뒤로·앞으로(popstate)·주소창에서 해시를 바꾼 경우(hashchange)
+  const want=(BACK_REQ&&Date.now()-BACK_REQ<1500)?BACK_WANT:null; BACK_REQ=0; BACK_WANT=null;   // 우리가 부른 뒤로가 도착 — 다시 누를 수 있음
+  let st=history.state;
+  if(!st||!st.tab){ st={...routeOfHash(location.hash),depth:(ROUTE.depth||0)+1,from:labelOf(ROUTE),fromKey:scrKey(ROUTE)}; hRep(st,hashOf(st)); }   // 주소창에서 바꾼 해시 — 모르는 값은 부모로, 주소도 정리
+  else st=withMeta(normRoute(st),st);   // 기록에 든 기업·브랜드가 데이터에서 빠졌으면 부모로
+  if(scrKey(st)===scrKey(ROUTE)){   // 같은 화면(패널 기록) — 패널만 열고 닫음
+    ROUTE=st;
+    if(st.sheet){ if(SRC_SHEET!==st.sheet){ openSheet(st.sheet,true); sheetScrollTo(st.sheetY); } }
+    else if(SRC_SHEET) closeSheetRaw();
+    else if(st.scroll!=null) scrollBox().scrollTo(0,st.scroll);   // 같은 화면 기록이 이어진 드문 경우라도 그 기록의 스크롤로
+  } else render(st,true);
+  if(want&&scrKey(ROUTE)!==scrKey(want)) go(want,{replace:ROUTE.tab==='market'});   // 칩으로 뒤로 갔는데 다른 화면에 닿으면(앞으로 가기 뒤 등) 그 칩으로
+}
+window.addEventListener('popstate',onHistory);
+window.addEventListener('hashchange',()=>{ if(scrKey(routeOfHash(location.hash))!==scrKey(ROUTE)) onHistory(); });
+function sheetPush(kind){   // 하단 패널 = 기록 1개(휴대폰 뒤로로 닫힘). 이미 패널 기록이면 바꿔 끼움
+  const s=history.state||{};
+  if(s.sheet){ hRep({...s,sheet:kind,sheetY:0}); return; }
+  hRep({...ROUTE,...s,scroll:scrollBox().scrollTop,sheet:null,sheetY:0});
+  hPush({...ROUTE,...s,scroll:scrollBox().scrollTop,sheet:kind,sheetY:0,depth:(s.depth||0)+1,fromKey:scrKey(ROUTE)});
+}
+// 옛 함수 이름 호환 — 화면 안 인라인 onclick이 그대로 동작
+const LEGACY_P={home:{tab:'today'},today:{tab:'today'},brand:{tab:'brand'},co:{tab:'market',chip:'co'},cal:{tab:'market',chip:'cal'},news:{tab:'market',chip:'news'},kr:{tab:'market',chip:'kr'},more:{tab:'more'}};
+function sw(p){   // 'home'→오늘 · 'co'·'cal'·'news'·'kr'→시장 칩 · 'more' · 새 이름(today·brand·market)
+  if(p==='market'){ go({tab:'market',chip:MK_CHIP}); return; }
+  if(!own(LEGACY_P,p)) console.warn('sw: 모르는 화면 '+p+' → 오늘');
+  go(own(LEGACY_P,p)?LEGACY_P[p]:{tab:'today'});
+}
+function goNews(f){ go({tab:'market',chip:'news',nf:f}); }   // 시장 › 뉴스 + 필터('all' · 'k:<뉴스 키>' · 칩 id)
+function openBrand(n){ go({tab:'brand',id:n}); }   // 브랜드 상세(S2에서 점검표 줄·오늘 카드가 씀)
+const CARD_HOME={warnCard:['market','sig'],srcCard:['market','map'],hcCard:['market','kr'],saleList:['market','cal'],statusCard:['more','status'],claudeCard:['more','status']};   // 카드 → 그 카드가 있는 화면
+function focusCard(id){   // 그 화면으로 간 뒤(칩 그리기 끝난 다음) 카드로 스크롤 + 강조
+  const h=own(CARD_HOME,id)?CARD_HOME[id]:null;
+  if(!h){ console.warn('focusCard: 카드 위치를 모름 — '+id); return; }
+  const r=normRoute(h[0]==='market'?{tab:'market',chip:h[1]}:{tab:'more',view:h[1]});
+  if(scrKey(r)!==scrKey(ROUTE)) go(r);
+  const el=document.getElementById(id);
+  if(!el){ console.warn('focusCard: 카드가 그려지지 않음 — '+id); return; }
+  const box=el.closest('.card')||el;
+  box.scrollIntoView({behavior:'smooth',block:'start'});
+  box.classList.add('flash'); setTimeout(()=>box.classList.remove('flash'),1600);
+}
+function tabTap(t){   // 하단 탭 = 그 탭의 첫 화면(시장은 마지막으로 본 칩, 기업 칩이면 목록). 이미 첫 화면이면 맨 위로만
+  const r=normRoute(t==='market'?{tab:'market',chip:MK_CHIP}:{tab:t});
+  if(scrKey(r)===scrKey(ROUTE)){ scrollBox().scrollTo({top:0,behavior:'smooth'}); return; }
+  go(r);
+}
+function mkChip(c){   // 시장 칩 전환 = 기록 바꿔 끼움. 이미 그 칩 첫 화면이면 맨 위로만
+  const r=normRoute({tab:'market',chip:c}), k=scrKey(r), s=history.state||{};
+  if(k===scrKey(ROUTE)){ scrollBox().scrollTo({top:0,behavior:'smooth'}); return; }
+  // 바로 아래 기록이 그 칩 화면이면(상세·KPI·네이버 줄로 건너온 경우) 뒤로 — 바꿔 끼우면 같은 화면 기록 두 개가 이어져 휴대폰 뒤로 한 번이 헛돎. 스크롤도 그 자리로
+  if(s.depth>0&&s.fromKey===k&&!SRC_SHEET&&histBack(r)) return;
+  go(r,{replace:ROUTE.tab==='market'});
+}
+function navInit(){   // 처음 열 때 주소 해석(모르는 값은 부모로) → 기록 바꿔 끼움(주소로 열면 depth 0, 새로고침이면 그 기록 그대로) → 그리기
+  try{ history.scrollRestoration='manual'; }catch(e){}   // 스크롤 상자가 window가 아니라 #content — 직접 복원
+  let st={...routeOfHash(location.hash),depth:0};
+  // 새로고침(기록에 같은 화면이 이미 있음): 앱 안 깊이·뒤로 라벨·뉴스 필터·열린 패널은 그대로 — 패널 기록을 패널 없는 depth 0으로 바꾸면
+  // 바로 아래 기록과 같은 화면이 되어 휴대폰 뒤로 한 번이 헛돎. 주소로 처음 열면(기록 없음) depth 0
+  const hs=history.state, hr=hs&&hs.tab?normRoute(hs):null;
+  if(hr&&scrKey(hr)===scrKey(st)) st=withMeta(hr,hs);
+  hRep(st,hashOf(st));
+  render(st,false);
+  if(st.sheet){ openSheet(st.sheet,true); if(!SRC_SHEET) hRep({...st,sheet:null}); }
+}
+/* v33 부팅 보호 — 한 영역이 실패해도 나머지는 그리고, 그 자리에 한 줄 남김 */
+function safe(fn,name,box){
+  try{ return fn(); }catch(e){
+    console.error('['+name+'] 그리기 실패:',e);
+    const el=box&&document.getElementById(box);
+    if(el) el.insertAdjacentHTML('afterbegin',`<div class="note boot-err">⚠️ 이 영역을 그리지 못했습니다(콘솔 참고) — ${esc(name)}</div>`);
+  }
+}
+document.querySelectorAll('nav.tabs .tab').forEach(b=>{ b.onclick=()=>tabTap(b.dataset.p); });
+document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip(b.dataset.c); });
+{ const b=document.getElementById('coBack'); if(b) b.onclick=()=>goBack({tab:'market',chip:'co'}); }
+{ const b=document.getElementById('brBack'); if(b) b.onclick=()=>goBack({tab:'brand'}); }
+{ const b=document.getElementById('coSearch'); if(b) b.addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();}); }
 document.addEventListener('click',e=>{
   const p=e.target.closest('.pname')||e.target.closest('.bar-row .lb');
   if(p){ p.classList.toggle('open'); return; }
@@ -2798,8 +3068,11 @@ document.addEventListener('click',e=>{
   }
 });
 
-document.getElementById('gen').textContent='갱신: '+DATA.generated_at+' · Yahoo·SEC·DART·KOSIS';
-buildHome(); buildCoChips(); buildCo(); buildCal(); buildNewsChips(); buildKR(); buildMore();   // 뉴스는 탭을 처음 열 때(v32.11)
+{ const g=document.getElementById('gen'); if(g) g.textContent='갱신: '+DATA.generated_at+' · Yahoo·SEC·DART·KOSIS'; }
+safe(buildToday,'오늘','p-today'); safe(buildSig,'실적·재고','mk-sig'); safe(buildMap,'소싱 지도','mk-map');
+safe(buildCoChips,'기업 칩','mk-co'); safe(buildCo,'기업 표','mk-co'); safe(buildCal,'캘린더','mk-cal');
+safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildKR,'국내','mk-kr'); safe(buildBrand,'브랜드 점검표','brandList'); safe(buildMore,'더보기','moreBody');
+safe(navInit,'이동 경로','content');   // 뉴스·의류 소매 그래프는 그 칩이 처음 보일 때(v32.11·v33)
 </script>
 </body>
 </html>
