@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 6: DART 국내 법인 실적 (v2.4)
+v3.7: (대표 승인 2026-10-13) Claude 크레딧·키 오류(402·사용 한도 포함)·실행 70분 초과에도 진행분 저장(이후 Claude 호출 중단 — Claude가 필요한 법인만 이전 값,
+      API·캐시 법인은 계속 · 키 미설정은 감사보고서 법인 전체 이전 값)·75분 넘으면 DART 호출도 중단(남은 곳 이전 값). 일부 실패·옛 추출값·건너뛴 보고서·
+      수치 없는/한 기간만 있는 응답·새 법인 0개년(발란 제외)·DART 오류로 전년 보고서로 밀림·상장사 이전 값을 soft_fail.txt → dart.yml 마지막 단계 빨간 X, 저장 직전 바뀐 값 로그(트렉시 맨 위)
 v3.6: (대표 지시 2026-10-10) Claude 사용량을 월별로 kr_domestic.json에 저장(claude_usage — 수집 상태 '이번 달 Claude 사용액',
       응답 토큰 × 공식 가격). 검증 모드(DART_ONLY)는 저장하지 않으므로 기록 안 됨. 추출 규칙은 그대로
 v3.5: (대표 지시 2026-10-09) ① 설비투자(CAPEX)를 영업용 유형·무형자산 '…의 취득' 행 포함 목록으로 합산 — 세부 행(건물·토지·
@@ -181,23 +184,56 @@ ENTITIES = [
     ("davich",      "다비치안경체인",      "안경 유통 체인",         None,     "01336726", "doc",  12, "안경원 체인(유통)"),
     ("trexi",       "트렉시(자사)",        "자사",                   None,     "01454031", "doc",  12, "자사 — 병행수입·브랜드 온라인 벤더, DART 공개 감사보고서(별도) 수치"),
 ]
+# v3.7 감사보고서 원문에 재무제표 수치가 없어 늘 0개년인 법인 — '수치 0개(새 법인)'·'건너뛴 보고서'·'수치 없는 응답' 실패 표시에서 뺌.
+# 이 밖의 법인은 이전 값도 이번 수치도 없으면 고칠 때까지 매 실행 실패 표시(corp_code·경로 확인, 원래 수치 없는 법인이면 여기에 추가)
+NO_FIG_OK = {"balaan"}
 
 
 
-# ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) ──
+# ── Anthropic 호출 공통: 인증/크레딧 오류는 ClaudeFatal(v3.7 — 진행분 저장 뒤 빨간 X) ──
+class ClaudeFatal(Exception):
+    """v3.7 Anthropic 401·402·403·400 credit·사용 한도(·키 미설정·실행 시간 예산 초과) — 법인 반복문이 잡아 그때까지 받은 값을 저장하고
+    이 법인은 이전 값 유지(전에는 SystemExit(2)라 except Exception에 안 잡혀 진행분을 저장하지 못하고 끝남)"""
+
+
+_CLAUDE_FATAL = []   # v3.7 이번 실행의 크레딧·키 오류(상태 코드·응답 문구) — 한 번 나면 이후 Claude를 다시 부르지 않음
+_CLAUDE_LATE = []    # v3.7 실행 시간 예산(CLAUDE_UNTIL)을 넘겨 Claude를 멈춘 경과 분 — 한 번 넘으면 이후 Claude를 부르지 않음
+CLAUDE_UNTIL = 70 * 60   # v3.7 실행 70분이 지나면 Claude 추출 중단 — 90분 제한(timeout-minutes)에 잡이 취소되면 Commit이 건너뛰어져 진행분을 다 잃음
+
+
+def claude_ok():
+    """v3.7 크레딧·키 오류가 이미 났거나 실행 시간 예산을 넘었으면 원문을 받기 전에 바로 ClaudeFatal(헛된 다운로드·반복 호출 없음)"""
+    if _CLAUDE_FATAL:
+        raise ClaudeFatal(f"이번 실행 Claude 호출 중단 — {_CLAUDE_FATAL[0]}")
+    if not _CLAUDE_LATE and time.time() - _T0 > CLAUDE_UNTIL:
+        _CLAUDE_LATE.append(int((time.time() - _T0) // 60))
+        log(f"    [WARN] 실행 {_CLAUDE_LATE[0]}분 — 시간 예산 {CLAUDE_UNTIL // 60}분을 넘어 이후 Claude 추출 중단"
+            f"(90분 제한에 취소되면 진행분을 모두 잃음) · Claude가 필요한 남은 법인은 이전 값 유지")
+    if _CLAUDE_LATE:
+        raise ClaudeFatal(f"실행 시간 {CLAUDE_UNTIL // 60}분 넘어 Claude 추출 중단")
+
+
 def anthropic_post(payload, timeout=180):
-    """401(키 무효/만료)·403·400 credit(잔액 소진) → SystemExit(2)로 즉시 종료.
+    """401(키 무효/만료)·402(결제)·403·400 credit(잔액 소진)·400 사용 한도 → ClaudeFatal(v3.7, 이후 호출은 요청 없이 바로 ClaudeFatal).
     그 외 오류는 응답 본문을 포함해 예외로 올려 호출부가 처리."""
+    claude_ok()
     resp = requests.post(
         "https://api.anthropic.com/v1/messages",
         headers={"x-api-key": ANTHROPIC_KEY, "anthropic-version": "2023-06-01",
                  "content-type": "application/json"},
         json=payload, timeout=timeout)
-    if resp.status_code in (401, 403) or (resp.status_code == 400 and "credit" in resp.text.lower()):
+    # v3.7 402 billing_error(결제)·400 사용 한도('usage limits')도 같은 치명 오류 — 실행 중에 안 풀려 매 법인 헛호출만 됨
+    if resp.status_code in (401, 402, 403) or (resp.status_code == 400 and any(w in resp.text.lower() for w in ("credit", "usage limit"))):
         print(f"[FATAL] Anthropic API {resp.status_code}: {resp.text[:300]}", flush=True)
         print("[FATAL] 키 만료/무효 또는 크레딧 소진 — console.anthropic.com 확인 후 "
               "GitHub Secret ANTHROPIC_API_KEY 갱신", flush=True)
-        raise SystemExit(2)
+        try:   # soft_fail 줄에도 응답 문구(예: 'credit balance is too low')를 남겨 12:23 점검이 크레딧 부족을 알아보게
+            why = ((resp.json() or {}).get("error") or {}).get("message") or resp.text
+        except Exception:
+            why = resp.text
+        why = " ".join(str(why).split()).split(". ")[0][:90]   # 첫 문장만
+        _CLAUDE_FATAL.append(f"Anthropic {resp.status_code} {why}".rstrip())
+        raise ClaudeFatal(_CLAUDE_FATAL[0])
     if resp.status_code != 200:
         raise RuntimeError(f"Anthropic {resp.status_code}: {resp.text[:200]}")
     data = resp.json()
@@ -239,8 +275,18 @@ def log(msg):
     print(msg, flush=True)
 
 
+SCRIPT = "dart_fetch"
+
+
+def soft_fail(msg):
+    """심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    print(f"실패 표시: {msg}", flush=True)
+    with open("soft_fail.txt", "a", encoding="utf-8") as f:
+        f.write(f"{SCRIPT}: {msg}\n")
+
+
 _T0 = time.time()
-RETRY_UNTIL = 40 * 60   # 실행 40분이 지나면 재시도 안 함 — 재시도 대기가 쌓여 60분 제한(timeout-minutes, v3.5에서 30→60)에 걸리지 않게
+RETRY_UNTIL = 65 * 60   # 실행 65분이 지나면 재시도 안 함 — 재시도 대기가 쌓여 90분 제한(timeout-minutes, v3.5에서 30→60, v3.7에서 90)에 걸리지 않게
 
 
 def _mask(e):
@@ -249,11 +295,34 @@ def _mask(e):
 
 
 _DART_ERR = [0]   # v3.4 이번 실행의 DART 오류 수(예외·정상 아닌 상태 코드·zip 아닌 원본) — 법인별 '수치 0개'가 오류 탓인지 판단
+_DART_LATE = []   # v3.7 실행 시간 예산(DART_UNTIL)을 넘겨 DART 호출을 멈춘 경과 분
+DART_UNTIL = 75 * 60   # v3.7 실행 75분이 지나면 DART 호출 중단(남은 법인·상장사는 이전 값) — 국내 파일을 저장한 뒤라도 90분 제한에
+                       # 잡이 취소되면 Commit이 건너뛰어져 저장분(그 실행의 Claude 추출분)까지 잃음
+
+
+class DartLate(RuntimeError):
+    """v3.7 실행 시간 예산(DART_UNTIL)을 넘어 DART를 부르지 않음 — DART 오류로 셈(이전 값 유지 판단)"""
+
+
+def dart_ok():
+    """v3.7 실행 시간 예산을 넘었으면 요청 없이 바로 DartLate(느린 DART에 90분 제한까지 끌려가지 않게)"""
+    if time.time() - _T0 > DART_UNTIL:
+        if not _DART_LATE:
+            _DART_LATE.append(int((time.time() - _T0) // 60))
+            log(f"    [WARN] 실행 {_DART_LATE[0]}분 — 시간 예산 {DART_UNTIL // 60}분을 넘어 이후 DART 호출 중단"
+                f"(90분 제한에 취소되면 저장분도 커밋 안 됨) · 남은 법인·상장사는 이전 값 유지")
+        raise DartLate(f"실행 {DART_UNTIL // 60}분 넘어 DART 호출 중단")
+
+
+def late_note():
+    """v3.7 DART 시간 예산을 넘긴 실행이면 실패 표시 줄 끝에 붙일 안내"""
+    return f" · 실행 {DART_UNTIL // 60}분 넘어 DART 호출 중단(90분 제한 보호) — update-dart 다시 실행" if _DART_LATE else ""
 
 
 def dart(url, params, as_bytes=False, timeout=90):
-    """_dart + 오류 횟수 기록. 상태 013(조회 자료 없음)은 오류 아님"""
+    """_dart + 오류 횟수 기록. 상태 013(조회 자료 없음)은 오류 아님. v3.7 시간 예산을 넘으면 요청 없이 오류(오류 수에 셈)"""
     try:
+        dart_ok()
         out = _dart(url, params, as_bytes, timeout)
     except Exception:
         _DART_ERR[0] += 1
@@ -266,7 +335,7 @@ def dart(url, params, as_bytes=False, timeout=90):
 
 def _dart(url, params, as_bytes=False, timeout=90):
     """DART 호출 — 연결 실패·시간 초과·응답 끊김·5xx·JSON 아닌 응답(점검 페이지)은 3회까지 재시도
-    (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 40분이 지나면 재시도 없이 바로 오류."""
+    (v3.4: 2026-10-07 첫 호출 ConnectTimeout으로 실행 전체 실패). 실행 65분이 지나면 재시도 없이 바로 오류(v3.7 40→65분)."""
     params = dict(params, crtfc_key=DART_KEY)
     for attempt in range(3):
         try:
@@ -626,6 +695,8 @@ def report_std(rcept, cached):
         return c
     try:
         std, how = detect_std(fetch_document_plain(rcept))
+    except DartLate:
+        raise   # v3.7 시간 예산 초과 — 이 법인은 이전 값 유지(회계기준이 '미확인'으로 바뀐 채 저장되지 않게)
     except Exception as e:   # 다운로드 실패만 다음 실행에서 다시 시도
         log(f"      회계기준 판정 실패 rcept={rcept}: {_mask(e)[:140]}")
         return {"std": None, "how": None}
@@ -877,22 +948,39 @@ def fin_cross(a, b, rev):
 
 
 _FIN_FALLBACK = []   # v3.5 재추출 실패로 옛 추출값을 쓴 보고서(검증 모드에서 '검증 안 됨'으로 셈)
+_SKIPPED = []        # v3.7 캐시 없는 보고서의 추출이 실패(Claude 529·시간 초과·JSON 아님·원문 다운로드)해 건너뜀 → 그 연도가 빠진 채 저장
+_NOFIG = []          # v3.7 Claude 응답은 정상 JSON인데 수치가 없음(null·current/prior 없음) → 예외가 아니라 위 두 목록에 안 잡히고
+                     # 그 보고서 연도가 빠진 채 저장(재무는 옛 추출값도 버림 — v3.6과 같은 저장·캐시 규칙, 실패 표시만 추가)
+_HALF = []           # v3.7 한 기간만 수치 있는 응답의 빈 기간 중 다른 보고서도 못 채운 것 — 그 연도가 빠진 채 캐시돼 다시 실행해도
+                     # 안 채워짐(저장·캐시 규칙은 그대로, 실패 표시만)
+
+
+def _half_ends(ex, recs):
+    """v3.7 이번에 추출한 응답에서 결산일은 있는데 수치가 없어 recs에 못 들어간 기간(두 기간 모두 없으면 '수치 없는 응답'이라 뺌)"""
+    if not recs:
+        return []
+    return [p["end"] for p in (ex.get(w) for w in ("current", "prior"))
+            if isinstance(p, dict) and isinstance(p.get("end"), str) and p["end"] and p["end"] not in recs]
 
 
 def fetch_fin_years(name, reports, cached, pl_recs):
     """reports: 감사보고서 목록(최신순). cached: {rcept_no: {end: rec}}. 반환 {end: rec}, 새 캐시"""
-    out, new_cache, seen = {}, {}, {}
+    out, new_cache, seen, half = {}, {}, {}, []
     for rcept, dt, nm in reports[:2]:
         if rcept in cached and cached[rcept] and all(v.get("fin_v") == FIN_V for v in cached[rcept].values()):
             log(f"    [재무상태표·현금흐름] {dt}: 캐시 사용")
             recs = {end: apply_raw(dict(r), r["raw"]) if r.get("raw") else r for end, r in cached[rcept].items()}
         else:
             try:
+                claude_ok()   # v3.7 크레딧·키 오류 뒤면 원문을 받지 않고 바로 법인 반복문으로(이 법인은 이전 값 유지)
                 log(f"    [재무상태표·현금흐름] {dt} {nm} rcept={rcept}: 추출")
                 ex = claude_extract_fin(name, fin_window(fetch_document_plain(rcept)))
+            except ClaudeFatal:
+                raise   # v3.7 옛 추출값으로 넘기지 않음 — 법인 반복문이 진행분 저장·이 법인 이전 값 유지
             except Exception as e:
                 if not cached.get(rcept):
                     log(f"      실패: {_mask(e)[:120]}")
+                    _SKIPPED.append(f"{name} {dt}(재무)")   # v3.7 옛 추출값도 없음 → 그 연도 재무 지표가 빠짐(실패 표시)
                     continue
                 # v3.5 원문 다운로드·추출 실패(DART 점검 등) → 이전 추출값을 그대로 쓰고 캐시도 유지(다음 실행에서 다시 추출)
                 log(f"      실패: {_mask(e)[:120]} — 이전 추출값 유지(옛 규칙)")
@@ -918,6 +1006,8 @@ def fetch_fin_years(name, reports, cached, pl_recs):
                     recs[p["end"]] = rec
                 if not recs:
                     log(f"      수치 없음 — 응답 {json.dumps(ex, ensure_ascii=False)[:150]}")
+                    _NOFIG.append(f"{name} {dt}(재무)")   # v3.7 그 연도 재무 지표가 빠진 채 저장 → 실패 표시(다음 실행에서 다시 추출)
+                half += [(e, f"{name} {dt}(재무 {e})") for e in _half_ends(ex, recs)]   # v3.7 한 기간만 수치(끝에서 판단)
                 time.sleep(1)
         for end, rec in recs.items():
             rec["chk"] = fin_check(rec, pl_recs.get(end))
@@ -941,6 +1031,8 @@ def fetch_fin_years(name, reports, cached, pl_recs):
             bad.append("capex")    # v3.5 투자활동 원본 줄 없음 → FCF 지표만 가림
         if bad:
             out[end] = dict(out[end], bad=bad)
+    # v3.7 빈 기간을 다른 보고서가 채웠거나 손익에도 없는 연도면 잃은 값이 없어 뺌
+    _HALF.extend(lbl for e, lbl in half if e not in out and e in pl_recs)
     return out, new_cache
 
 
@@ -949,7 +1041,7 @@ def fetch_doc_years(name, corp_code, cached, reports=None):
     if reports is None:
         reports = list_audit_reports(corp_code)
     log(f"    감사보고서(별도) {len(reports)}건")
-    out, new_cache = {}, {}
+    out, new_cache, half = {}, {}, []
     for rcept, dt, nm in reports[:2]:   # 최신 2건 = 당기·전기 × 2 → 3개년 확보
         if (rcept in cached and cached[rcept]
                 and all(v.get("schema_v") == SCHEMA_V and "inv" in v and "cogs" in v for v in cached[rcept].values())):
@@ -959,11 +1051,15 @@ def fetch_doc_years(name, corp_code, cached, reports=None):
             new_cache[rcept] = cached[rcept]
             continue
         try:
+            claude_ok()   # v3.7 크레딧·키 오류 뒤면 원본을 받지 않고 바로 법인 반복문으로(이 법인은 이전 값 유지)
             log(f"    {dt} {nm} rcept={rcept}: 원본 다운로드 → 추출")
             text = fetch_document_text(rcept)
             ex = claude_extract(name, text)
+        except ClaudeFatal:
+            raise   # v3.7 이 보고서만 건너뛰지 않음(연도 수가 줄어든 채 저장 방지) — 법인 반복문이 이전 값 유지
         except Exception as e:
             log(f"      실패: {_mask(e)[:120]}")
+            _SKIPPED.append(f"{name} {dt}(손익)")   # v3.7 이 보고서 연도가 빠진 채 저장 → 실패 표시(다음 실행에서 다시 추출)
             continue
         recs = {}
         for which in ("current", "prior"):
@@ -978,12 +1074,88 @@ def fetch_doc_years(name, corp_code, cached, reports=None):
         if not recs:
             log(f"      수치 없음 — 문서 {len(text):,}자 · 손익계산서 {'있음' if '손익계산서' in text else '없음'}"
                 f" · 매출 {'있음' if '매출' in text else '없음'} · 응답 {json.dumps(ex, ensure_ascii=False)[:150]}")
+            _NOFIG.append(f"{name} {dt}(손익)")   # v3.7 이 보고서 연도가 빠진 채 저장 → 실패 표시(원래 수치 없는 발란은 main에서 뺌)
+        half += [(e, f"{name} {dt}(손익 {e})") for e in _half_ends(ex, recs)]   # v3.7 한 기간만 수치(끝에서 판단)
         for end, rec in recs.items():
             out.setdefault(end, rec)
             log(f"      {end}: 매출 {rec['rev']:,} / 원가 {rec.get('cogs')} / 영업이익 {rec['op']} / 순이익 {rec['ni']} / 재고 {rec['inv']}")
         new_cache[rcept] = recs
         time.sleep(1)
+    _HALF.extend(lbl for e, lbl in half if e not in out)   # v3.7 빈 기간을 다른 보고서가 채웠으면 잃은 값이 없어 뺌
     return out, new_cache
+
+
+# ── v3.7 바뀐 값 기록: 저장 직전 이전 파일과 법인·연도별 비교(재추출로 비교 숫자가 바뀐 것을 로그로 남김) ──
+CHG_KEYS = (("rev", "매출"), ("op", "영업이익"), ("ni", "순이익"), ("inv", "재고"))
+CHG_FIN = (("borrow", "차입금"), ("lease", "리스"), ("capex", "CAPEX"), ("ocf", "영업현금흐름"), ("cash", "현금"))
+CHG_MAX = 8   # 법인당 최대 줄 수 — 넘으면 '외 n건'
+
+
+def _eok(v):
+    """원 → 로그용 억 표기(None은 '없음', 100만원 미만은 원 그대로)"""
+    if v is None:
+        return "없음"
+    if abs(v) < 1e6:
+        return f"{v:,}원" if v else "0"
+    return f"{v / 1e8:,.{1 if abs(v) >= 1e9 else 2}f}억"
+
+
+def value_change(a, b):
+    """이전 a → 이번 b가 바뀐 값이면 표기, 아니면 None — 1% 넘는 변화·부호 바뀜·0↔값·없음(None)↔값"""
+    if a == b:
+        return None
+    if a is None or b is None or a == 0 or b == 0:
+        return f"{_eok(a)} → {_eok(b)}"
+    if (a < 0) != (b < 0):
+        return f"{_eok(a)} → {_eok(b)} (부호 바뀜)"
+    if abs(b - a) <= 0.01 * abs(a):
+        return None
+    return f"{_eok(a)} → {_eok(b)} ({(b - a) / abs(a) * 100:+.1f}%)"
+
+
+def entity_changes(o, n):
+    """한 법인의 이전(o) → 이번(n) 바뀐 값 줄 목록 — 새로 생긴/사라진 연도 먼저, 그다음 최근 연도부터 항목 순"""
+    oy = {y["end"]: y for y in (o or {}).get("years") or [] if y.get("end")}
+    ny = {y["end"]: y for y in (n or {}).get("years") or [] if y.get("end")}
+    out = [f"{ny[e].get('fy') or e} 새로 생긴 연도 — 매출 {_eok(ny[e].get('rev'))}" for e in sorted(set(ny) - set(oy), reverse=True)]
+    out += [f"{oy[e].get('fy') or e} 사라진 연도 — 매출 {_eok(oy[e].get('rev'))}" for e in sorted(set(oy) - set(ny), reverse=True)]
+    for e in sorted(set(oy) & set(ny), reverse=True):
+        a, b = oy[e], ny[e]
+        pairs = [(lbl, a.get(k), b.get(k)) for k, lbl in CHG_KEYS]
+        if a.get("fin") or b.get("fin"):   # 재무상태표·현금흐름 지표가 있는 법인만
+            fa, fb = a.get("fin") or {}, b.get("fin") or {}
+            pairs += [(lbl, fa.get(k), fb.get(k)) for k, lbl in CHG_FIN]
+        for lbl, va, vb in pairs:
+            c = value_change(va, vb)
+            if c:
+                out.append(f"{b.get('fy') or e} {lbl} {c}")
+    return out
+
+
+def log_changes(old_ent, new_ents, gone=()):
+    """이전 파일 대비 바뀐 값 로그 — 트렉시 맨 위, 나머지는 바뀐 항목 수 순, 법인당 최대 CHG_MAX줄 + '외 n건'.
+    gone: 이번 목록에서 빠진 이전 법인(연도가 모두 '사라진 연도'로 나옴)"""
+    rows = [(n["id"], n.get("name"), entity_changes(old_ent.get(n["id"]), n), "" if n["id"] in old_ent else " (새 법인)")
+            for n in new_ents]
+    rows += [(o.get("id"), o.get("name"), entity_changes(o, None), " (목록에서 빠짐)") for o in gone]
+    total = sum(len(r[2]) for r in rows)
+    if not total:
+        log("\n[바뀐 값] 이전 파일 대비 바뀐 값 없음")
+        return
+    rows = sorted((r for r in rows if r[2] or r[0] == "trexi"), key=lambda r: (r[0] != "trexi", -len(r[2])))
+    log(f"\n[바뀐 값] 이전 파일 대비 {sum(1 for r in rows if r[2])}곳 {total}건 — 1% 넘는 변화·부호 바뀜·0/없음↔값·"
+        f"새로 생긴/사라진 연도 (트렉시 맨 위, 바뀐 항목 수 순)")
+    for eid, name, lines, tag in rows:
+        log(f"  [{eid}] {name}{tag} — {f'{len(lines)}건' if lines else '바뀐 값 없음'}")
+        for ln in lines[:CHG_MAX]:
+            log(f"    {ln}")
+        if len(lines) > CHG_MAX:
+            log(f"    … 외 {len(lines) - CHG_MAX}건")
+
+
+def _last_end(years):
+    """v3.7 연도 목록에서 매출이 있는 가장 최근 결산일('' = 없음) — DART 오류로 전년 보고서로 밀렸는지 판단"""
+    return max((str(y.get("end") or "") for y in years or [] if isinstance(y, dict) and y.get("rev") is not None), default="")
 
 
 def main():
@@ -1002,7 +1174,16 @@ def main():
     old_std = old.get("_cache_std", {})
     old_ent = {e.get("id"): e for e in old.get("entities", [])}
     failed = []
+    # v3.7 실패 표시용: Claude 중단(크레딧·키·시간 예산)으로 이전 값 유지한 법인, 실제로 쓴 옛 추출값, 건너뛴 보고서,
+    # 수치 없는 응답, 수치 0개인 새 법인, 한 기간만 수치 있는 응답
+    claude_kept, fb_used, skipped, nofig, new0, halfs = [], [], [], [], [], []
     _FIN_FALLBACK.clear()
+    _SKIPPED.clear()
+    _NOFIG.clear()
+    _HALF.clear()
+    _CLAUDE_FATAL.clear()
+    _CLAUDE_LATE.clear()
+    _DART_LATE.clear()
     only = {x.strip() for x in os.environ.get("DART_ONLY", "").split(",") if x.strip()}
     ents = [e for e in ENTITIES if not only or e[0] in only]
     if only:   # v3.5 브랜치 검증용 — 지정 법인만 처리하고 파일은 쓰지 않음(전체 재추출 이중 과금 방지)
@@ -1017,15 +1198,19 @@ def main():
 
     for eid, name, etype, link, code, route, fy_m, note in ents:
         log(f"[{eid}] {name} ({route}) corp={code or '-'}")
-        prev, err0 = old_ent.get(eid), _DART_ERR[0]
+        prev, err0, fb0, sk0, nf0, hf0 = old_ent.get(eid), _DART_ERR[0], len(_FIN_FALLBACK), len(_SKIPPED), len(_NOFIG), len(_HALF)
         try:   # v3.4 한 법인 실패(DART 연결 끊김 등)로 실행 전체가 멈추지 않게 — 실패하면 이전 값 유지
-            recs, fin_by_end = {}, {}
+            if route in ("api", "doc") and code:
+                dart_ok()   # v3.7 DART 시간 예산(75분)을 넘었으면 요청 없이 이 법인은 이전 값 유지
+            recs, fin_by_end, cfs_err = {}, {}, 0
             std_by_rcept, meta, cfs, cfs_report = {}, {}, None, None
             if route == "api":
                 fins = {} if eid in FIN_IDS else None
                 recs, src_txt = fetch_full_statements(code, "OFS", years, fy_m, fin=fins, meta=meta)
                 # v3.4 연결 요약(비교 화면은 별도 유지, 상세에서 참고) — DART API 호출만
+                ce0 = _DART_ERR[0]
                 crecs, csrc = fetch_full_statements(code, "CFS", years, fy_m)
+                cfs_err = _DART_ERR[0] - ce0   # v3.7 연결 호출에서 난 DART 오류만(아래 '연결 요약 밀림' 판단 — 별도 호출 오류와 구분)
                 if crecs:
                     cfs = {"source": csrc, "years": [{"end": e, "rev": r.get("rev"), "op": r.get("op"), "ni": r.get("ni")}
                                                      for e, r in sorted(crecs.items())][-3:]}
@@ -1045,8 +1230,10 @@ def main():
                         f"{' ⚠ 모르는 투자 행: ' + '·'.join(f['capex_unk']) if f.get('capex_unk') else ''}")
                     fin_by_end[end] = {k: v for k, v in f.items() if k not in ("fin_v", "raw", "capex_unk")}
             elif route == "doc":
-                if not ANTHROPIC_KEY:
-                    raise RuntimeError("ANTHROPIC_API_KEY 미설정 — 감사보고서 추출 불가")
+                if not ANTHROPIC_KEY:   # v3.7 키 없음도 Claude 크레딧/키 줄로 셈(DART 수집 실패로 오해하지 않게) — 저장 결과는 v3.6과 같게 캐시가 있어도 이전 값
+                    if not _CLAUDE_FATAL:
+                        _CLAUDE_FATAL.append("ANTHROPIC_API_KEY 미설정")
+                    raise ClaudeFatal("ANTHROPIC_API_KEY 미설정 — 감사보고서 추출 불가")
                 else:
                     reports = list_audit_reports(code)
                     recs, cache = fetch_doc_years(name, code, old_cache.get(eid, {}), reports)
@@ -1085,6 +1272,23 @@ def main():
             if (not has and route in ("api", "doc") and code and _DART_ERR[0] > err0
                     and prev and any(y.get("rev") is not None for y in prev.get("years") or [])):
                 raise RuntimeError(f"DART 오류 {_DART_ERR[0] - err0}건으로 수치 0개")
+            # v3.7 사업보고서 경로: DART 오류가 있었는데 최신 결산일이 이전 값보다 이르면(최신 사업연도 호출만 실패해 전년
+            # 보고서로 밀림) 이전 값 유지 — 한 해 밀린 채 조용히 저장하지 않게. 이전에 있던 연결 요약(cfs)이 없어지거나 밀려도 같음.
+            # 연결 요약이 이번 별도보다 늦거나 없을 때는 연결 호출 자체에 오류가 있었을 때만(이전 파일에 cfs가 없는 10/15 첫 실행도 잡고,
+            # 연결이 원래 늦은 법인에 별도 호출 오류만 난 경우는 오탐 안 함)
+            if route == "api" and has and _DART_ERR[0] > err0 and prev:
+                pe, pc, nc = _last_end(prev.get("years")), _last_end((prev.get("cfs") or {}).get("years")), _last_end((cfs or {}).get("years"))
+                lag = ([f"최신 결산 {ends[-1]} < 이전 {pe}"] if ends[-1] < pe else []) \
+                    + ([f"연결 요약 최신 {nc or '없음'} < 이전 {pc}"] if nc < pc else
+                       [f"연결 요약 최신 {nc or '없음'} < 이번 별도 최신 {ends[-1]}"] if cfs_err and nc < ends[-1] else [])
+                if lag:
+                    raise RuntimeError(f"DART 오류 {_DART_ERR[0] - err0}건으로 {' · '.join(lag)}(전년 보고서로 밀림)")
+            # v3.7 이전 값도 이번 수치도 없는 법인(새로 넣은 법인 등)은 실패 표시 — corp_code·경로 확인용, 고칠 때까지 매 실행.
+            # 원래 수치 없는 법인(NO_FIG_OK — 발란)은 뺌. 이번에 건너뛴 보고서가 있으면 원인이 일시 오류라 그 줄로만 표시.
+            # 이전 파일을 읽는 판단은 결과 목록에 넣기 전에(예외가 나도 법인이 두 번 들어가지 않게)
+            sk = _SKIPPED[sk0:]
+            is_new0 = (not has and route in ("api", "doc") and code and eid not in NO_FIG_OK and not sk
+                       and not any(y.get("rev") is not None for y in (prev or {}).get("years") or []))
             result["entities"].append({
                 "id": eid, "name": name, "type": etype, "link": link,
                 "corp_code": code, "route": route, "fy_end_month": fy_m, "note": note,
@@ -1093,9 +1297,24 @@ def main():
                 "cfs": cfs, "cfs_report": cfs_report,
                 "years": years_out,
             })
+            # v3.7 이 법인이 끝까지 처리됐을 때만 '옛 추출값 사용'·'건너뛴 보고서'·'수치 없는(한 기간만 있는) 응답'으로 셈(원래 수치
+            # 없는 법인은 잃는 값이 없어 뺌, 새 법인 0개년이면 그 줄(corp_code·경로 확인)로만 표시)
+            fb_used += _FIN_FALLBACK[fb0:]
+            if eid not in NO_FIG_OK:
+                skipped += sk
+                halfs += _HALF[hf0:]
+                if not is_new0:
+                    nofig += _NOFIG[nf0:]
+            if is_new0:
+                new0.append(eid)
+                log("    ⚠ 새 법인인데 수치 0개 — corp_code·경로 확인 필요")
             log(f"    → {len(ends)}개년 수록")
         except Exception as e:
             failed.append(eid)
+            if isinstance(e, ClaudeFatal):   # v3.7 크레딧·키 오류·시간 예산 초과 — Claude가 필요한 이 법인만 이전 값(이후 법인은 Claude 없이 계속)
+                claude_kept.append(eid)
+            if eid not in NO_FIG_OK:   # v3.7 새로 추출한 반쪽 캐시는 아래에서 그대로 남으므로 '한 기간만' 표시도 남김
+                halfs += _HALF[hf0:]
             log(f"    [ERROR] 수집 실패 — 이전 값 유지: {type(e).__name__} {_mask(e)[:160]}")
             for k, src in (("_cache", old_cache), ("_cache_fin", old_fin), ("_cache_std", old_std)):
                 if not result[k].get(eid) and eid in src:   # 이번 실행에서 새로 추출한 캐시는 그대로 둠(Claude 재호출 방지)
@@ -1111,21 +1330,33 @@ def main():
         result["failed"] = failed   # 수집 상태 화면에 '일부 실패' 표시
     if all_failed:   # 새로 받은 게 없음 → 갱신일을 옮기지 않아 '지연' 경고가 뜨게
         result["updated_at"] = old.get("updated_at") or result["updated_at"]
-    if only:   # 실패·미확인 id·수치 0개·옛 추출값 사용을 모두 '검증 안 됨'으로 셈
+    # v3.7 저장 직전 바뀐 값 로그(검증 모드도 — 저장은 안 하지만 실제 실행에서 바뀔 값을 미리 봄, 처리한 법인만).
+    # 진단용이라 실패해도(이전 파일 값 모양이 이상한 경우 등) 경고만 남기고 저장은 계속
+    try:
+        ids = {e[0] for e in ENTITIES}
+        log_changes(old_ent, result["entities"], [] if only else [o for i, o in old_ent.items() if i and i not in ids])
+    except Exception as e:
+        log(f"[WARN] 바뀐 값 로그 실패(저장은 계속): {type(e).__name__} {_mask(e)[:120]}")
+    if only:   # 실패·미확인 id·수치 0개·옛 추출값 사용·건너뛴 보고서·수치 없는(한 기간만 있는) 응답을 모두 '검증 안 됨'으로 셈
         unknown = sorted(only - {e[0] for e in ents})
         empty = [e["id"] for e in result["entities"] if e.get("route") in ("api", "doc") and e.get("corp_code")
                  and not any(y.get("rev") is not None for y in e.get("years") or [])]
         probs = ([f"실패 {', '.join(failed)}"] if failed else []) + ([f"없는 id {', '.join(unknown)}"] if unknown else []) \
             + ([f"수치 0개 {', '.join(empty)}"] if empty else []) \
-            + ([f"옛 추출값 사용 {len(_FIN_FALLBACK)}건({'; '.join(_FIN_FALLBACK)})"] if _FIN_FALLBACK else [])
+            + ([f"옛 추출값 사용 {len(_FIN_FALLBACK)}건({'; '.join(_FIN_FALLBACK)})"] if _FIN_FALLBACK else []) \
+            + ([f"추출 실패로 건너뛴 보고서 {len(_SKIPPED)}건({'; '.join(_SKIPPED)})"] if _SKIPPED else []) \
+            + ([f"수치 없는 응답 {len(nofig)}건({'; '.join(nofig)})"] if nofig else []) \
+            + ([f"한 기간만 수치 있는 응답 {len(halfs)}건({'; '.join(halfs)})"] if halfs else [])
         log(f"[검증 모드] 끝 — 저장하지 않음 · {'검증 안 됨: ' + ' / '.join(probs) if probs else '모두 새로 받음'}")
         if probs:
             raise SystemExit(1)
         return False
     result["claude_usage"] = usage_months(old)   # v3.6 월별 Claude 사용량(수집 상태 화면)
     os.makedirs("docs", exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=1)
+    # v3.7 직렬화·인코딩을 파일을 열기(비우기) 전에 끝냄 — 저장 중 예외(짝 없는 \ud8xx 문자 등)가 나도 잘린 파일 대신 이전 파일이 남음
+    data = json.dumps(result, ensure_ascii=False, indent=1).encode("utf-8")
+    with open(OUT_PATH, "wb") as f:
+        f.write(data)
     log(f"Claude 사용: 이번 실행 {_USAGE['calls']}회 · ${_USAGE['usd']:.3f} · 이번 달 누적 "
         f"${result['claude_usage'][max(result['claude_usage'])]['usd']:.2f}")
     n = sum(1 for e in result["entities"] if e["id"] not in failed and e["years"] and e["years"][0].get("rev") is not None)
@@ -1140,6 +1371,31 @@ def main():
     log(f"  재무상태표·현금흐름: {sum(1 for e in result['entities'] if e['id'] in FIN_IDS and any(y.get('fin') for y in e['years']))}"
         f"/{len(FIN_IDS)}개 법인 · {len(fy)}개 연도 · 확인 필요 {sum(1 for y in fy if y['fin'].get('chk'))}건"
         f" · 항목 확인 필요 {sum(1 for y in fy if y['fin'].get('bad'))}건(보고서 간 다름·부채 항목 누락)")
+    # v3.7 부분 실패 → soft_fail.txt(저장·커밋은 하고 dart.yml 마지막 단계 'Check partial failures'가 빨간 X → 12:23 점검 알림).
+    # 종료 코드는 그대로(모든 법인 실패만 1)
+    kept_ids = f"({', '.join(claude_kept)})" if claude_kept else ""
+    if _CLAUDE_FATAL:
+        soft_fail(f"Claude 크레딧/키 오류({_CLAUDE_FATAL[0]}) — {len(claude_kept)}곳 이전 값 유지{kept_ids} · "
+                  f"{'console.anthropic.com 잔액 확인' if ANTHROPIC_KEY else 'GitHub Secret ANTHROPIC_API_KEY 확인'}")
+    elif _CLAUDE_LATE:   # v3.7 시간 예산 초과(크레딧 문제 아님 — 'credit' 글자 없음)
+        soft_fail(f"실행 시간 {CLAUDE_UNTIL // 60}분 넘어 Claude 추출 중단 — {len(claude_kept)}곳 이전 값 유지{kept_ids}"
+                  f" · update-dart 다시 실행하면 남은 곳만 추출")
+    dart_bad = [i for i in failed if i not in claude_kept]
+    if dart_bad:
+        soft_fail(f"DART 국내 법인 {len(dart_bad)}곳 수집 실패 — 이전 값 유지: {', '.join(dart_bad)}{late_note()}")
+    if fb_used:
+        soft_fail(f"재추출 실패로 옛 추출값 사용 {len(fb_used)}건: {', '.join(fb_used)}")
+    if skipped:   # v3.7 캐시 없는 보고서 추출 실패 → 그 연도가 빠진 채 저장(다음 실행에서 그 보고서만 다시 추출)
+        soft_fail(f"추출 실패로 건너뛴 보고서 {len(skipped)}건(그 연도 빠진 채 저장 — update-dart 다시 실행하면 그 보고서만 추출): "
+                  f"{', '.join(skipped)}")
+    if nofig:   # v3.7 Claude가 오류 없이 '수치 없음'으로 답함 → 그 연도가 빠진 채 저장(캐시가 비어 다음 실행에서 그 보고서만 다시 추출)
+        soft_fail(f"수치 없는 응답 {len(nofig)}건(그 연도 빠진 채 저장 — update-dart 다시 실행하면 그 보고서만 다시 추출, "
+                  f"계속 없으면 원문 확인): {', '.join(nofig)}")
+    if new0:
+        soft_fail(f"{', '.join(new0)} 수치 0개(새 법인) — corp_code·경로 확인")
+    if halfs:   # v3.7 한 기간만 수치 있는 응답 — 빈 연도는 캐시에 남아 다시 실행해도 안 채워짐(다른 보고서가 채운 연도는 뺌)
+        soft_fail(f"한 기간만 수치 있는 응답 {len(halfs)}건(그 연도 빠진 채 저장·캐시 — 다시 실행해도 그대로, 원문 확인): "
+                  f"{', '.join(halfs)}")
 
     # ── 국내 상장 20개사: 연결 전체재무제표 3개년 ──
     log("\n[상장] 법인코드 매칭(종목코드) ...")
@@ -1147,6 +1403,8 @@ def main():
         cmap = load_corp_map_by_stock()
     except Exception as e:
         log(f"[WARN] corpCode 로드 실패: {_mask(e)[:120]} — 상장사 처리 생략")
+        soft_fail(f"국내 상장사 {'처리 생략' if _DART_LATE else 'corpCode 로드 실패'} — 상장 {len(KR_LISTED)}곳 이전 값 유지"
+                  f"{late_note()}")   # v3.7 상장사 전체가 이전 값
         return all_failed
     try:
         with open(LISTED_PATH, encoding="utf-8") as f:
@@ -1165,6 +1423,13 @@ def main():
             continue
         code, cname = hit
         log(f"[{tk}] {cname} corp={code}")
+        try:
+            dart_ok()   # v3.7 DART 시간 예산(75분)을 넘었으면 요청 없이 이전 값 유지
+        except DartLate as e:
+            log(f"    [ERROR] {e} — 이전 값 유지")
+            listed["items"][tk] = old_listed.get(tk) or {"error": "실행 시간 초과로 미수집"}
+            kept.append(tk)
+            continue
         fs = FS_OVERRIDE.get(tk, "CFS"); fym = LISTED_FY_MONTH.get(tk, 12)
         if fs != "CFS":
             log(f"    기준 예외: {'별도' if fs == 'OFS' else fs}")
@@ -1178,8 +1443,19 @@ def main():
             r = recs[end]
             ys.append({"end": end, "rev": r.get("rev"), "cogs": r.get("cogs"), "op": r.get("op"),
                        "ni": r.get("ni"), "inv": r.get("inv")})
-        if not ys and _DART_ERR[0] > e0 and (old_listed.get(tk) or {}).get("years"):   # v3.4 DART 오류로 0개년이면 이전 값 유지
-            log(f"    [ERROR] DART 오류 {_DART_ERR[0] - e0}건으로 수치 0개 — 이전 값 유지")
+        # v3.4 DART 오류로 0개년이면 이전 값 유지. v3.7 DART 오류로 최신 결산일이 이전 값보다 이르거나(최신 사업연도 호출만
+        # 실패해 전년 보고서로 밀림) 기준이 바뀌면(연결 호출이 모두 실패해 별도로 넘어감) 같은 방식으로 이전 값 유지.
+        # 이전 항목에 기준(fs) 기록이 없으면(10/15 첫 실행) 이전 출처가 '(연결)'일 때만 — 원래 별도만 있는 회사(036620.KQ)는 오탐 안 함
+        old_it, why = old_listed.get(tk) or {}, None
+        if _DART_ERR[0] > e0 and old_it.get("years"):
+            pe = _last_end(old_it["years"])
+            why = ("수치 0개" if not ys else f"최신 결산 {ys[-1]['end']} < 이전 {pe}(전년 보고서로 밀림)" if ys[-1]["end"] < pe
+                   else f"기준 {old_it['fs']} → {meta['fs']}" if old_it.get("fs") and meta.get("fs") and meta["fs"] != old_it["fs"]
+                   else "연결 호출 실패로 별도로 넘어감(이전 기준 기록 없음)" if (not old_it.get("fs") and fs == "CFS" and meta.get("fs") == "별도"
+                                                                     and "(연결)" in str(old_it.get("source") or ""))
+                   else None)
+        if why:
+            log(f"    [ERROR] DART 오류 {_DART_ERR[0] - e0}건으로 {why} — 이전 값 유지")
             listed["items"][tk] = old_listed[tk]
             kept.append(tk)
             continue
@@ -1189,10 +1465,13 @@ def main():
                                           ("연결재무제표 없음 → 별도" if fs == "CFS" and meta.get("fs") == "별도" else None)}
     if kept and not any(k not in kept and v.get("years") for k, v in listed["items"].items()):
         listed["updated_at"] = old_lf.get("updated_at") or listed["updated_at"]   # 전부 이전 값이면 갱신일 유지
-    with open(LISTED_PATH, "w", encoding="utf-8") as f:
-        json.dump(listed, f, ensure_ascii=False, indent=1)
+    data = json.dumps(listed, ensure_ascii=False, indent=1).encode("utf-8")   # v3.7 국내 파일과 같게 — 실패해도 이전 파일 그대로
+    with open(LISTED_PATH, "wb") as f:
+        f.write(data)
     ok = sum(1 for k, v in listed["items"].items() if v.get("years") and k not in kept)
     log(f"saved {LISTED_PATH} — 상장 {ok}/{len(KR_LISTED)}개사 3개년 확보{f' (+ 이전 값 유지 {len(kept)}곳)' if kept else ''}")
+    if kept:   # v3.7 상장사 이전 값 유지도 실패 표시
+        soft_fail(f"국내 상장사 {len(kept)}곳 DART 오류 — 이전 값 유지: {', '.join(kept)}{late_note()}")
     return all_failed
 
 
