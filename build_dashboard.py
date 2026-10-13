@@ -195,22 +195,16 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;overflow:hidden}
 .app{display:flex;flex-direction:column;height:100vh;height:100dvh}
 .content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-header{flex:none;padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;background:var(--card)}
-header h1{font-size:var(--fs-xl);font-weight:700}
-header .sub{color:var(--sub);font-size:var(--fs-xs);margin-top:4px}
-#themeBtn{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--tx);
-border-radius:10px;padding:8px 12px;font-size:var(--fs-lg);cursor:pointer}
-.tabs{display:flex;flex:none;border-top:1px solid var(--line);background:var(--card);
-padding-bottom:env(safe-area-inset-bottom,0px)}
-.tab{flex:1;text-align:center;padding:7px 0 6px;color:var(--sub);font-size:var(--fs-2xs);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
-.tab .ic{font-size:19px;line-height:1}
-.tab.on{color:var(--accent);font-weight:600}
-@media(min-width:760px){.tabs{justify-content:center}.tab{flex:0 0 120px}}
+/* v33 A안 S2: 전역 머리(header) 없음 — 탭마다 #content 안에 고정 머리(.phead). 하단 탭 4개 = 선 아이콘(24px) + 13px 이름 */
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:none;border-top:1px solid var(--line);background:var(--card);
+padding:2px max(4px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px))}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;color:var(--sub);font-size:13px;font-weight:400;line-height:1.2;cursor:pointer}
+.tab.on{color:var(--accent);font-weight:700}
+@media(min-width:760px){.tabs{grid-template-columns:repeat(4,120px);justify-content:center}}
 /* v33 A안: 하단 탭·뒤로·시장 칩은 <button> — 브라우저 기본 모양(테두리·배경·글꼴) 지움 */
-button.tab,button.back,button.mk-chip{border:0;background:none;font-family:inherit;line-height:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
+button.tab,button.mk-chip{border:0;background:none;font-family:inherit;line-height:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
 button.tab{line-height:1.2}
-button.back{display:block;width:100%;text-align:left;padding:0}
-.tab:focus-visible,.back:focus-visible,.mk-chip:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.tab:focus-visible,.mk-chip:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .pane{display:none;padding:12px}
 .pane.on{display:block}
 /* v33 A안: 시장 탭 칩 줄 — 밑줄 탭(칩 안의 알약 칩과 구분), 44px, 시장 탭 안에서 위에 고정
@@ -294,7 +288,6 @@ select{width:100%;padding:12px;background:var(--card);color:var(--tx);border:1px
 .ksig .kb .d{min-width:0;overflow-wrap:anywhere}
 .ksig .kb .v{flex:none;white-space:nowrap;font-weight:600}
 .ksig .ks{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
-.warnbar{background:color-mix(in srgb,var(--neg) 10%,var(--card));border:1px solid var(--neg);border-radius:10px;padding:8px 12px;font-size:var(--fs-sm);margin-bottom:10px;cursor:pointer}
 #statusTbl td,#statusTbl th{white-space:nowrap;padding:7px 4px}
 #statusTbl td:first-child{white-space:normal}
 #claudeTbl td,#claudeTbl th{white-space:nowrap;padding:7px 4px}#claudeTbl td:first-child{white-space:normal}
@@ -409,21 +402,6 @@ table.nowrap th{font-size:var(--fs-2xs)}
 .mn-b q{display:block;font-size:var(--fs-2xs);color:var(--sub);margin-top:2px;overflow-wrap:anywhere}
 .mn-s{display:inline-block;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 5px;margin-left:4px;vertical-align:1px;white-space:nowrap}
 .mn-more{color:var(--pos);border:1px solid var(--pos)}.mn-less{color:var(--neg);border:1px solid var(--neg)}
-/* v32.17 브랜드 점검표 */
-.chk-sum{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 6px}
-.chk-row{padding:11px 0;border-top:1px solid var(--line);cursor:pointer}
-.chk-h{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
-.chk-nm{font-weight:700;font-size:var(--fs-lg);min-width:0;overflow-wrap:anywhere}.chk-nm .ref{font-weight:400}
-.chk-lv{flex:none;display:inline-block;font-size:var(--fs-xs);font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
-.chk-go{background:var(--pos);color:var(--on-sig)}.chk-wait{background:var(--barbg);color:var(--tx)}.chk-warn{background:var(--neg);color:var(--on-sig)}
-.chk-ev{display:grid;grid-template-columns:26px minmax(0,1fr);gap:7px;font-size:var(--fs-sm);line-height:1.45;margin-top:6px}
-.chk-ev>div{min-width:0;overflow-wrap:anywhere}.chk-ev b{font-weight:600;margin-right:5px}
-.chk-pt{font-weight:700;text-align:center;border-radius:6px;background:var(--barbg);color:var(--sub);font-size:var(--fs-2xs);padding:2px 0;align-self:start}
-.chk-pt.p{color:var(--pos)}.chk-pt.n{color:var(--neg)}
-.chk-q{display:block;color:var(--sub);font-size:var(--fs-xs);margin-top:1px}
-.chk-sc{font-size:var(--fs-xs);color:var(--sub);margin-top:6px}
-.chk-ctx{font-size:var(--fs-xs);color:var(--sub);margin-top:3px;overflow-wrap:anywhere}
-#chkTbl{width:100%;table-layout:fixed}#chkTbl td,#chkTbl th{padding:7px 4px;vertical-align:top;overflow-wrap:anywhere}#chkTbl th:first-child{width:42%}   /* v32.14 비교 기간('26.06 vs '25.06)이 잘리지 않게 */
 .rk-v2{display:flex;flex-direction:column;align-items:flex-end;line-height:1.35}
 .rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
 .wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:500;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px}
@@ -444,7 +422,6 @@ tr.co td:first-child .lg{vertical-align:-4px}
 tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .mini{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:var(--fs-sm)}
 .mini b{font-weight:600}
-.back{color:var(--accent);font-size:var(--fs-base);cursor:pointer;margin-bottom:10px;font-weight:600}
 /* A안 — 캘린더 */
 .cal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
 .cal h3{font-size:var(--fs-base);color:var(--sub);font-weight:500;margin-bottom:6px}
@@ -479,14 +456,6 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 #newsChips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
 #newsChips::-webkit-scrollbar{display:none}
 .nmore{display:flex;align-items:center;min-height:44px;font-size:var(--fs-sm);color:var(--accent);cursor:pointer;margin:0 0 4px}   /* v32.12 터치 높이 */
-#todayCard .card{padding:10px 12px;margin-bottom:10px}
-#todayCard h3{margin:0 0 4px}
-.td-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line);cursor:pointer}
-.td-row:first-of-type{border-top:none}
-.td-ic{flex:none;width:22px;text-align:center}
-.td-t{flex:1;min-width:0;font-size:var(--fs-sm);line-height:1.35}
-.td-s{display:block;font-size:var(--fs-2xs);color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-.td-go{flex:none;color:var(--sub)}
 .hc-leg{display:flex;gap:12px;font-size:var(--fs-xs);color:var(--sub);margin:-4px 0 4px}
 .hc-leg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:3px;margin-right:4px}
 .hc-svg{display:block;width:100%;height:auto}
@@ -592,24 +561,10 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .nv-sub{grid-column:1/-1;font-size:var(--fs-xs);color:var(--sub)}
 .nv-more{width:100%;margin-top:8px;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--accent);font-weight:700;font-size:var(--fs-sm);cursor:pointer;font-family:inherit}
 .nv-det+.nv-det{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
-/* v31 더보기 — 메뉴 · 환율 · 해외직구 · 수집 상태 */
-.mhead{display:flex;align-items:center;gap:12px;margin:2px 0 10px}
-.mhead .mback{color:var(--accent);font-size:var(--fs-sm);cursor:pointer;white-space:nowrap;padding:6px 0}
-.mhead b{font-size:var(--fs-xl)}
-.mhead .ms{display:block;color:var(--sub);font-size:var(--fs-2xs);font-weight:400}
-.mmenu{padding:2px 12px}
-.mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
-.mi:last-child{border-bottom:none}
-.mi .mic{font-size:20px;text-align:center}
-.mi .mt{font-weight:700}
-.mi .md{font-size:var(--fs-xs);color:var(--sub)}
-.mi .mr{font-size:var(--fs-2xs);color:var(--sub);text-align:right;white-space:nowrap}
-.mi .mr b{display:block;font-size:var(--fs-xs);color:var(--tx)}
+/* v31 더보기 — 환율 · 해외직구 · 수집 상태 (메뉴 줄 .mi는 아래 'v33 A안 S2' 블록) */
 .mbadge{display:inline-block;font-size:var(--fs-2xs);font-weight:700;border-radius:999px;padding:0 7px;line-height:1.7;color:#fff;background:var(--pos)}
 .mbadge.up,.mbadge.late{background:var(--neg)}
 [data-theme="dark"] .mbadge{color:#0f1420}
-.mi .mr b.il{display:inline}
-.mi .mr .nw{white-space:nowrap}
 .fxgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:10px}
 @media(min-width:760px){.fxgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .fxc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card);min-width:0}
@@ -660,33 +615,257 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .cb-tr svg{display:block;width:100%;height:36px;margin-top:2px}
 .cb-tr .ax{display:flex;justify-content:space-between;font-size:var(--fs-2xs);color:var(--sub)}
 .cb-read{background:var(--barbg);border-radius:10px;padding:8px 10px;font-size:var(--fs-xs);margin-bottom:10px}
+/* ── v33 A안 S2: 새 화면(탭별 머리·오늘 결정 카드·브랜드 탭·브랜드 상세·더보기 메뉴·하단 탭) ──
+   새 토큰 이름(--fill·--tx2·--muted·--line2·--bad·--warn-*·--hold-*·--accent-fill·--on-accent·--accent-weak)은 전역.
+   옛 이름과 겹치는 바탕·잉크·선·파랑(--bg·--card·--line·--tx·--sub·--accent)은 새 화면(.av) 안에서만 A안 값 — 옛 화면은 S3에서 같이 바꿈.
+   파랑 = #0043FF(v21 CI 블루, 흰 글자 대비 6.47) · 다크 글자 파랑 #7aa2ff(카드 위 7.1) · 채움은 다크도 #0043FF + 흰 글자 */
+:root{--fill:#f3f4f6;--line2:#f0f1f3;--tx2:#374151;--muted:#6b7280;--bad:#9a3412;--warn-bg:#f6ad72;--warn-fg:#5a1f08;--hold-bd:#6b7280;--hold-fg:#374151;
+  --accent-fill:#0043FF;--on-accent:#ffffff;--accent-weak:#eef3ff}
+[data-theme="dark"]{--fill:#1f232b;--line2:#232831;--tx2:#d1d5db;--muted:#9ca3af;--bad:#fb923c;--hold-bd:#9ca3af;--hold-fg:#e5e7eb;--accent-weak:#1b2440}
+.av{--bg:#ffffff;--card:#ffffff;--line:#e5e7eb;--tx:#111111;--sub:#4b5563;--accent:#0043FF;color:var(--tx)}
+[data-theme="dark"] .av{--bg:#0f1115;--card:#16191f;--line:#2b313b;--tx:#f3f4f6;--sub:#9ca3af;--accent:#7aa2ff}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.ic{display:inline-block;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+.ic.s2{stroke-width:2}
+/* 새 단추 공통(브라우저 기본 모양 지움) — 아래 부품 규칙이 덮어씀 */
+.dc-hd,.dc-row,.dc-more,.dc-ev,.dc-peer,.dc-xmore,.td-foot,.hd-pill,.hd-back,.icbtn,.seg4 button,.br-row,.br-rest-row,.br-link,.bd-nx,.bd-link,.bd-hq,.mi,.warnbar{
+  font:inherit;color:inherit;letter-spacing:inherit;margin:0;-webkit-appearance:none;appearance:none;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent}
+.av :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* 둥근 상자(overflow:hidden)를 꽉 채운 줄 단추는 초점 테두리를 안쪽에 — 바깥에 그리면 좌우가 잘림 */
+.av .dc-hd:focus-visible,.av .dc-row:focus-visible,.av .dc-more:focus-visible,.av .br-row:focus-visible,.av .br-rest>summary:focus-visible,.av .br-rest-row:focus-visible,.av .mi:focus-visible{outline-offset:-2px}
+.dc-row:active,.dc-ev:active,.dc-more:active,.br-row:active,.br-rest-row:active,.bd-nx:active,.mi:active,.tab:active{background:var(--fill)}
+/* 틀: 새 화면 칸(.pane.av)은 흰 바탕·옆 16px, 탭마다 고정 머리 */
+.pane.av{padding:0 16px 16px;background:var(--bg);min-height:100%}
+.phead{position:sticky;top:0;z-index:20;margin:0 -16px 12px;padding:10px 16px;background:var(--bg);border-bottom:1px solid var(--line);word-break:keep-all;overflow-wrap:break-word}
+.pane:not(.av) .phead{margin:-12px -12px 12px}
+.phead h1{margin:0;font-size:22px;font-weight:700;line-height:1.3;letter-spacing:-.02em}
+.hd-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hd-tt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.hd-kick,.hd-sub{display:block;font-size:13px;color:var(--sub)}
+.hd-pill{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px;font-weight:600;white-space:nowrap}
+.hd-pill .ic{color:var(--accent)}.hd-pill.late .ic{color:var(--bad)}
+.phead.dethead{display:grid;grid-template-columns:minmax(44px,1fr) minmax(0,max-content) minmax(44px,1fr);align-items:center;column-gap:4px;min-height:56px;padding:0 8px}
+.dethead h1{font-size:17px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;letter-spacing:-.01em}
+.hd-back{display:inline-flex;align-items:center;justify-self:start;gap:2px;max-width:100%;min-width:44px;min-height:44px;padding:0 8px 0 2px;border:0;background:none;font-size:15px;white-space:nowrap}
+.hd-back>span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.hd-sub2{margin:-4px 0 12px;font-size:13px;color:var(--sub);line-height:1.5}
+.icbtn{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;flex:none;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.icbtn[aria-expanded="true"]{background:var(--accent-weak)}
+#p-market.det #mkChips{display:none}   /* 기업 상세 = 칩 줄 대신 상세 머리(뒤로 + 회사 이름) */
+.boot-err{margin:0 0 10px}.av .boot-err{font-size:13px;color:var(--bad)}
+/* 판정 배지 3종 + 판정 안 함 · 새 화면 꼬리표(13px) */
+.vb{display:inline-flex;align-items:center;gap:4px;height:26px;padding:0 9px 0 7px;border-radius:999px;font-size:13px;font-weight:700;line-height:1;white-space:nowrap;flex:none}
+.vb.go{background:var(--accent-fill);color:var(--on-accent)}
+.vb.warn{background:var(--warn-bg);color:var(--warn-fg)}
+.vb.wait{background:var(--card);color:var(--hold-fg);border:1.5px solid var(--hold-bd)}
+.vb.none{background:var(--card);color:var(--sub);border:1.5px dashed var(--hold-bd)}
+.vb.lg{height:30px;padding:0 11px 0 8px;font-size:14px;gap:5px}
+.tg{display:inline-block;font-size:13px;font-weight:600;line-height:1.4;border:1px solid var(--bad);color:var(--bad);border-radius:6px;padding:0 5px;white-space:nowrap;vertical-align:1px}
+.sc-p{color:var(--accent);font-weight:700}.sc-n{color:var(--bad);font-weight:700}.sc-z{color:var(--tx2);font-weight:600}.sc-na{color:var(--sub);font-weight:400}.sc-tx{color:var(--tx);font-weight:600}
+.t-p{color:var(--accent)}.t-n{color:var(--bad)}
+/* 오늘: 수집 지연 띠 · 결정 카드 4장 · 트렉시 위치 · 맺음 줄 */
+.warnbar{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 12px;padding:8px 12px;border:0;border-radius:12px;background:var(--warn-bg);color:var(--warn-fg);font-size:13px;font-weight:600;line-height:1.45;word-break:keep-all;overflow-wrap:break-word}
+.dc{margin:0 0 12px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;word-break:keep-all;overflow-wrap:break-word}
+.dc.dc1{border:1.5px solid var(--tx)}
+.dc-hh{margin:0;font-size:inherit;font-weight:inherit}
+.dc-hd{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 12px 0 16px;border:0;background:none}
+div.dc-hd{cursor:default}
+.dc-no{width:22px;height:22px;flex:none;border-radius:999px;background:var(--tx);color:var(--bg);font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.dc-t{font-size:14px;font-weight:600}
+.dc-meta{margin-left:auto;font-size:13px;color:var(--sub);text-align:right}
+.chev{color:var(--muted)}
+.dc-h{margin:0;padding:0 16px 10px;font-size:20px;font-weight:700;line-height:1.35;letter-spacing:-.02em}
+.dc-p{margin:0;padding:0 16px 12px;font-size:13px;color:var(--sub);line-height:1.5}
+.dc-row{display:flex;align-items:center;gap:10px;width:100%;min-height:60px;padding:9px 12px 9px 16px;border:0;border-top:1px solid var(--line);background:none}
+.dc-rb{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.dc-rt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dc-nm{font-size:17px;font-weight:700}
+.dc-why{font-size:14px;color:var(--tx2);line-height:1.45}
+.dc-hint{font-size:13px;color:var(--sub)}
+.dc-more{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 12px 8px 16px;border:0;border-top:1px solid var(--line);background:none;color:var(--accent)}
+.dc-mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.dc-mt .t{font-size:15px;font-weight:700}.dc-mt .s{font-size:13px;color:var(--sub)}
+.dc-in{padding:0 16px 12px}
+.fx-hero{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin:2px 0 0;font-weight:700}
+.fx-hero .nm,.fx-hero .d{font-size:16px}
+.fx-hero .v{font-size:30px;line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.dc-s{margin:4px 0 0;font-size:13px;color:var(--sub);line-height:1.5}
+.dc-s+.dc-s{margin-top:0}
+.fx-rows{margin-top:10px;border-top:1px solid var(--line)}
+.fx-r{display:grid;grid-template-columns:76px 72px minmax(0,1fr);align-items:center;gap:2px 8px;min-height:40px;padding:2px 0;border-bottom:1px solid var(--line2)}
+.fx-r .fx-st{grid-column:1/-1;padding-bottom:6px;line-height:1}
+.fx-r .nm,.fx-r .v{font-size:15px;font-weight:600}
+.fx-r .v{text-align:right;font-variant-numeric:tabular-nums}
+.fx-r .d{font-size:14px;text-align:right}
+.fx-al{margin:8px 0 0;font-size:13px;color:var(--sub);line-height:1.5}
+.fx-ai{margin:2px 0 0;font-size:14px;color:var(--tx);line-height:1.5}
+.dc-evs,.dc-nws{padding:0 16px 6px}
+.dc-ev{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:54px;padding:7px 0;border:0;border-top:1px solid var(--line);background:none}
+.dc-ev:first-child{border-top:0}
+.dc-ev .d,.bd-nx .d{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+.ev-tt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.ev-tt .t{font-size:15px;font-weight:600}.ev-tt .s{font-size:13px;color:var(--sub)}
+.kind{font-size:13px;font-weight:600;padding:2px 8px;border-radius:6px;background:var(--fill);color:var(--tx2);white-space:nowrap}
+.kind.sale{background:var(--accent-weak);color:var(--accent)}
+.dc-news{display:flex;flex-direction:column;gap:4px;padding:10px 0;border-top:1px solid var(--line);color:var(--tx);text-decoration:none}
+.dc-news:first-child{border-top:0}
+.dc-news .t{font-size:15px;font-weight:600;line-height:1.5}.dc-news .s{font-size:13px;color:var(--sub)}
+.dc-xmore{display:flex;align-items:center;width:100%;min-height:44px;border:0;border-top:1px solid var(--line);background:none;font-size:13px;color:var(--accent)}
+.dc-peer{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:0 0 12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.dc-peer .tt,.bd-hq .tt,.bd-link .tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.dc-peer .s,.bd-hq .s,.bd-link .s{font-size:13px;color:var(--sub)}
+.dc-peer .t,.bd-hq .t,.bd-link .t{font-size:15px;font-weight:600}
+.td-foot{display:block;width:100%;min-height:44px;padding:2px 4px;border:0;background:none;font-size:13px;color:var(--sub);line-height:1.5;text-align:center}
+/* 브랜드 탭: 머리(제목·(i)·판정 필터) · 판정 기준 · 압축 행 · 판정 안 함 접기 */
+#brHead{display:flex;flex-direction:column;gap:10px}
+.seg4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--fill)}
+.seg4 button{min-height:44px;padding:0 2px;border:0;border-radius:9px;background:transparent;color:var(--tx2);font-size:14px;font-weight:400;white-space:nowrap;text-align:center}
+.seg4 button[aria-pressed="true"]{background:var(--tx);color:var(--bg);font-weight:700}
+/* 다크: 반전 강조(번호 원·고른 필터)가 밝은 칸으로 남지 않게(plan_visual 9장) — 번호 원은 테두리 원, 고른 필터는 파랑 채움 + 흰 글자(6.47) */
+[data-theme="dark"] .dc-no{background:transparent;color:var(--tx);box-shadow:inset 0 0 0 1.5px var(--tx)}
+[data-theme="dark"] .seg4 button[aria-pressed="true"]{background:var(--accent-fill);color:var(--on-accent)}
+.tn{font-variant-numeric:tabular-nums}
+.br-info{display:flex;flex-direction:column;gap:8px;margin:0 0 10px;padding:12px 14px;border-radius:14px;background:var(--fill);font-size:14px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word}
+.br-info p{margin:0}.br-info .bi-t{font-size:15px;font-weight:700}.br-info .bi-s{font-size:13px;color:var(--sub)}
+.br-fnote,.br-foot{margin:0 0 10px;padding:0 2px;font-size:13px;color:var(--sub);line-height:1.5;word-break:keep-all;overflow-wrap:break-word}
+.br-list,.br-rest{margin:0 0 10px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
+.br-row{display:flex;align-items:center;gap:8px;width:100%;padding:12px 10px 12px 14px;border:0;border-top:1px solid var(--line);background:none}
+.br-row:first-child{border-top:0}
+.br-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.br-l1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.br-nm{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;min-width:0}
+.br-name{font-size:17px;font-weight:700}
+.br-hq{font-size:13px;color:var(--sub)}
+.br-why{font-size:14px;color:var(--tx2);line-height:1.45}
+.br-cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:2px}
+.br-c{display:flex;align-items:baseline;gap:5px;font-size:13px;color:var(--sub);white-space:nowrap}
+.br-c b{font-size:15px;font-variant-numeric:tabular-nums}
+.br-empty{margin:0 0 10px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--card);font-size:14px;color:var(--sub);line-height:1.5}
+.br-rest>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:8px 12px 8px 14px;cursor:pointer;list-style:none}
+.br-rest>summary::-webkit-details-marker{display:none}
+.br-rest>summary .tt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.br-rest>summary .t{font-size:15px;font-weight:700}.br-rest>summary .s{font-size:13px;color:var(--sub)}
+.br-rest>summary .ic{color:var(--tx2);transition:transform .15s}
+.br-rest[open]>summary .ic{transform:rotate(180deg)}
+.br-rest-in{padding:0 14px 6px}
+.br-rest-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:6px 0;border:0;border-top:1px solid var(--line);background:none}
+.br-rest-row .tt{display:flex;flex-direction:column;min-width:0}
+.br-rest-row .t{font-size:15px;font-weight:600}.br-rest-row .s{font-size:13px;color:var(--sub)}
+.br-rest-row .y{font-size:14px;color:var(--tx2);white-space:nowrap}.br-rest-row .y b{font-size:15px;font-variant-numeric:tabular-nums}
+.br-rest-cur{margin:0;padding:10px 0 6px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.5}
+.br-link{display:flex;align-items:center;width:100%;min-height:44px;padding:0 2px;border:0;background:none;font-size:13px;color:var(--accent)}
+/* 브랜드 상세 */
+.bd{display:flex;flex-direction:column;gap:14px;padding:4px 0 8px;word-break:keep-all;overflow-wrap:break-word}
+.bd h2{margin:0;font-size:16px;font-weight:700}
+.bd-sec,.bd-top,.bd-evs{display:flex;flex-direction:column;gap:8px}
+.bd-vr{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bd-meta{font-size:13px;color:var(--sub)}
+.bd .bd-head{font-size:26px;line-height:1.3;letter-spacing:-.02em}
+.bd-say{margin:0;font-size:15px;line-height:1.6}
+.bd-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
+.bd-tile{display:flex;flex-direction:column;gap:2px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-tile.acc{border:1.5px solid var(--accent)}.bd-tile.acc .tv{color:var(--accent)}
+.bd-tile.warn{border:1.5px solid var(--warn-bg)}.bd-tile.warn .tv{color:var(--bad)}
+.bd-tile .tl{font-size:13px;color:var(--sub)}
+.bd-tile .tv{font-size:28px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.bd-tile .tc{font-size:13px;color:var(--tx2);line-height:1.4}
+.bd-ev{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-ev-hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bd-ev-l{font-size:14px;font-weight:600;color:var(--tx2)}
+.bd-pt{display:inline-flex;align-items:baseline;gap:4px;flex:none;padding:2px 9px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--fill);color:var(--tx2)}
+.bd-pt b{font-size:15px;font-weight:700}
+.bd-pt.p{background:var(--accent-weak);color:var(--accent)}.bd-pt.n{background:var(--warn-bg);color:var(--warn-fg)}
+.bd-ev-v{margin:0;font-size:17px;font-weight:700;line-height:1.4}
+.bd-ev-v .tg{margin-left:6px}
+.bd-ev-x{margin:0;font-size:14px;line-height:1.55;color:var(--tx2)}
+.bd-sp{display:flex;flex-direction:column;gap:2px;margin-top:6px;max-width:480px}   /* PC 폭에서 그래프가 커지지 않게 */
+.bd-sp .cap,.bd-sp .ends{font-size:13px;color:var(--sub)}
+.bd-sp .ends{display:flex;justify-content:space-between;gap:8px}.bd-sp .ends b{font-weight:600;color:var(--tx)}
+.bd-spark{display:block;width:100%;height:auto}
+.bd-spark .sl{fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bd-spark .sd{fill:var(--accent);stroke:var(--card);stroke-width:2}
+.bdq{display:flex;flex-direction:column;margin-top:4px}
+.bdq-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0 0;border-top:1px solid var(--line2)}
+.bdq-t{flex:none;font-size:13px;font-weight:600;line-height:1.5;border-radius:6px;padding:0 6px;background:var(--fill);color:var(--tx2)}
+.bdq-b{min-width:0;font-size:14px;line-height:1.5}
+.bdq-s{display:inline-block;font-size:13px;font-weight:600;line-height:1.4;border-radius:6px;padding:0 5px;margin-left:4px;white-space:nowrap;border:1px solid var(--sub);color:var(--sub)}
+.bdq-s.more{border-color:var(--accent);color:var(--accent)}.bdq-s.less{border-color:var(--bad);color:var(--bad)}
+.bdq-b summary{display:inline-flex;align-items:center;min-height:44px;min-width:44px;font-size:13px;color:var(--accent);cursor:pointer}
+.bdq-b q{display:block;margin-bottom:8px;font-size:13px;color:var(--sub);line-height:1.5;overflow-wrap:anywhere}
+.bd-next,.bd-nws{border:1px solid var(--line);border-radius:14px;padding:0 14px}
+.bd-nx{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:60px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none}
+.bd-nx:first-child{border-top:0}
+div.bd-nx{cursor:default}
+.bd-news{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-top:1px solid var(--line);color:var(--tx);text-decoration:none}
+.bd-news:first-child{border-top:0}
+.bd-news .t{font-size:15px;font-weight:600;line-height:1.5}.bd-news .s{font-size:13px;color:var(--sub)}
+.bd-link{display:flex;align-items:center;gap:8px;width:100%;min-height:52px;padding:8px 0;border:0;border-top:1px solid var(--line);background:none}
+.bd-link .t{color:var(--accent)}
+.bd-none{margin:0;padding:12px 0;font-size:14px;color:var(--sub)}
+.bd-hq{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+/* 더보기 메뉴(머리 '더보기' + 줄 5개 + 화면 테마) */
+.mmenu{margin:0 0 10px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
+.mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:60px;padding:8px 12px 8px 14px;border:0;border-top:1px solid var(--line);background:none}
+.mi:first-child{border-top:0}
+.mi .mic{display:inline-flex;justify-content:center;color:var(--tx2)}
+.mi .mtt{display:flex;flex-direction:column;gap:1px;min-width:0}
+.mi .mt{font-size:15px;font-weight:700}.mi .md{font-size:13px;color:var(--sub);line-height:1.4}
+.mi .mr{font-size:13px;color:var(--sub);text-align:right;line-height:1.45}
+.mi .mr b{font-weight:600;color:var(--tx)}
+.mi .mr .wn{display:inline-block;padding:0 7px;border-radius:999px;background:var(--warn-bg);color:var(--warn-fg);font-weight:700;white-space:nowrap}
+.mnote{margin:0 2px 10px;font-size:13px;color:var(--sub);line-height:1.5;word-break:keep-all;overflow-wrap:break-word}
+.mi .mr .ok{color:var(--accent)}
 </style>
 </head>
 <body>
+<!-- v33 A안: 선 아이콘 스프라이트 — ic('이름', 크기)로 <use href="#i-이름">. 색은 글자색(currentColor)이라 다크 모드 자동 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9v11.5h13V9"/><path d="M10 20.5v-6h4v6"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 3.5h7.8l9.2 9.2-7.8 7.8-9.2-9.2z"/><circle cx="8" cy="8" r="1.6"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="m7.5 14.5 3.5-4 3 2.5 5-6"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></symbol>
+<symbol id="i-go" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"/><path d="m5.3 8.2 1.9 1.9 3.6-3.9"/></symbol>
+<symbol id="i-wait" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"/><path d="M6.5 5.7v4.6"/><path d="M9.5 5.7v4.6"/></symbol>
+<symbol id="i-warn" viewBox="0 0 16 16"><path d="M8 2.3 14.2 13.2H1.8z"/><path d="M8 6.5v3"/><path d="M8 11.3v.1"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><path d="M12 7.6v.1"/></symbol>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.3v.1"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2"/><path d="M12 19.5v2"/><path d="M2.5 12h2"/><path d="M19.5 12h2"/><path d="m5.3 5.3 1.4 1.4"/><path d="m17.3 17.3 1.4 1.4"/><path d="m5.3 18.7 1.4-1.4"/><path d="m17.3 6.7 1.4-1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z"/></symbol>
+<symbol id="i-store" viewBox="0 0 24 24"><path d="M4.5 10.5v10h15v-10"/><path d="M3 9.5 5 4h14l2 5.5"/><path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M10 20.5v-5h4v5"/></symbol>
+<symbol id="i-shirt" viewBox="0 0 24 24"><path d="M9 4 4.5 6.5l1.5 4 2-.8V20h8V9.7l2 .8 1.5-4L15 4a3 3 0 0 1-6 0z"/></symbol>
+<symbol id="i-fx" viewBox="0 0 24 24"><path d="M4 8.5h13.5"/><path d="m14 5 3.5 3.5L14 12"/><path d="M20 15.5H6.5"/><path d="m10 12-3.5 3.5L10 19"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6H21"/></symbol>
+</defs></svg>
 <div class="app">
-<header>
-  <div>
-    <h1>🏭 스포츠 산업 모니터</h1>
-    <div class="sub" id="gen"></div>
-  </div>
-  <button id="themeBtn" title="테마 전환">🌙</button>
-</header>
 <main class="content" id="content">
-<!-- v33 A안: 하단 탭 4개(오늘·브랜드·시장·더보기). 옛 종합·기업·캘린더·뉴스·국내 화면은 시장 탭 칩 6개로 그대로 옮김 -->
-<div class="pane on" id="p-today">
+<!-- v33 A안: 하단 탭 4개(오늘·브랜드·시장·더보기). 전역 머리 없이 탭마다 고정 머리(.phead). 옛 종합·기업·캘린더·뉴스·국내 화면은 시장 탭 칩 6개로 그대로 옮김 -->
+<div class="pane on av" id="p-today">
+  <div class="phead" id="tdHead"></div>
   <div id="statusWarn"></div>
   <div id="todayCard"></div>
 </div>
 
-<div class="pane" id="p-brand">
-  <div id="brandList"></div>
+<div class="pane av" id="p-brand">
+  <div id="brandList">
+    <div class="phead" id="brHead"></div>
+    <div id="brandBody"></div>
+  </div>
   <div id="brandDetail" style="display:none">
-    <button type="button" class="back" id="brBack">◂ 점검표</button>
-    <div id="brBody"></div>
+    <div class="phead dethead"><button type="button" class="hd-back" id="brBack" aria-label="점검표로 돌아가기"><svg class="ic s2" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-left"/></svg><span id="brBackLbl">점검표</span></button><h1 id="brTitle"></h1><span aria-hidden="true"></span></div>
+    <div id="brDetBody"></div>
   </div>
 </div>
 
 <div class="pane" id="p-market">
+  <h1 class="sr">시장</h1>
   <div class="mk-chips" id="mkChips" role="tablist" aria-label="시장">
     <button type="button" class="mk-chip on" data-c="news" role="tab" aria-selected="true">뉴스</button>
     <button type="button" class="mk-chip" data-c="cal" role="tab" aria-selected="false">캘린더</button>
@@ -724,7 +903,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
       <div class="note">행을 누르면 핵심 지표가 펼쳐지고, "전체 상세 ▸"로 3개년·지역/채널·추이를 봅니다 · "―" = 미확인(§29-D) · 국내 법인은 연간 자료</div>
     </div>
     <div id="coDetail" style="display:none">
-      <button type="button" class="back" id="coBack">◂ 기업 목록</button>
+      <div class="phead dethead av"><button type="button" class="hd-back" id="coBack" aria-label="기업 목록으로 돌아가기"><svg class="ic s2" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-left"/></svg><span id="coBackLbl">기업 목록</span></button><h1 id="coTitle"></h1><span aria-hidden="true"></span></div>
       <div id="detBody"></div>
     </div>
   </div>
@@ -746,15 +925,31 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 </div>
 
 </main>
-<nav class="tabs" aria-label="화면">
-  <button type="button" class="tab on" data-p="today" aria-current="page"><span class="ic">🏠</span>오늘</button>
-  <button type="button" class="tab" data-p="brand"><span class="ic">🏷️</span>브랜드</button>
-  <button type="button" class="tab" data-p="market"><span class="ic">📈</span>시장</button>
-  <button type="button" class="tab" data-p="more"><span class="ic">☰</span>더보기</button>
+<nav class="tabs av" aria-label="주 메뉴">
+  <button type="button" class="tab on" data-p="today" aria-current="page"><svg class="ic" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-home"/></svg><span>오늘</span></button>
+  <button type="button" class="tab" data-p="brand"><svg class="ic" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-tag"/></svg><span>브랜드</span></button>
+  <button type="button" class="tab" data-p="market"><svg class="ic" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-chart"/></svg><span>시장</span></button>
+  <button type="button" class="tab" data-p="more"><svg class="ic" width="24" height="24" aria-hidden="true" focusable="false"><use href="#i-grid"/></svg><span>더보기</span></button>
 </nav>
 <div class="sheet" id="sheet"></div>
 </div>
 <script>
+/* v33 A안: 테마 — 더보기 '화면 테마' 줄(id="themeBtn", 저장 키 'sim-theme' 그대로). 데이터보다 먼저 적용해 깜빡임을 줄이고,
+   버튼이 없어도(메뉴를 아직 안 그렸거나 다른 화면) 멈추지 않음 */
+let theme='light';
+try{ theme=localStorage.getItem('sim-theme')||'light'; }catch(e){}
+function applyTheme(t){
+  if(t==='dark') document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme');
+  const b=document.getElementById('themeBtn'); if(!b) return;
+  b.setAttribute('aria-pressed',t==='dark'?'true':'false');
+  const v=b.querySelector('.mr'); if(v) v.innerHTML=`<b>${t==='dark'?'어둡게':'밝게'}</b>`;
+  const u=b.querySelector('.mic use'); if(u) u.setAttribute('href',t==='dark'?'#i-moon':'#i-sun');
+}
+function toggleTheme(){ theme=theme==='dark'?'light':'dark'; applyTheme(theme); try{ localStorage.setItem('sim-theme',theme); }catch(e){} }
+applyTheme(theme);
+/* v33 A안: 선 아이콘(스프라이트) · 로컬 날짜 'YYYY-MM-DD'(toISOString은 한국 시간에서 하루 당겨짐) */
+const ic=(n,s=20,c='')=>`<svg class="ic${c?' '+c:''}" width="${s}" height="${s}" aria-hidden="true" focusable="false"><use href="#i-${n}"/></svg>`;
+const ymdL=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const DATA = __DATA__;
 const SEGS = __SEGS__;
 const SEGS_IR = __SEGS_IR__;
@@ -1187,10 +1382,11 @@ function claudeMonthTxt(){   // 더보기 메뉴 줄용 '10월 Claude $1.23'
   const tot=C.rows.reduce((a,r)=>a+(r.usd||0),0);
   return ` · ${+C.month.slice(5,7)}월 Claude $${tot.toFixed(2)}`;
 }
-function statusWarn(){
+function statusWarn(){   // v33 오늘 맨 위 수집 지연 띠(지연 있을 때만) — 누르면 더보기 › 수집 상태
+  const el=document.getElementById('statusWarn'); if(!el) return;
   const late=statusRows().filter(r=>r.late);
-  document.getElementById('statusWarn').innerHTML=late.length?
-    `<div class="warnbar" onclick="goMore('status')">⚠️ 수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</div>`:'';
+  el.innerHTML=late.length?
+    `<button type="button" class="warnbar" data-go="more:status">${ic('alert',20)}<span>수집 지연: ${late.map(r=>`${esc(r.label)} ${r.age==null?'자료 없음':Math.floor(r.age)+'일'}`).join(' · ')} — 눌러서 확인</span></button>`:'';
 }
 
 /* 같은 기사가 출처만 달리 여러 번 잡히면 하나만 (요약 앞부분 비교) */
@@ -1235,20 +1431,7 @@ function logoImg(t, large, name){
     src="https://www.google.com/s2/favicons?domain=${d}&sz=64">${fb}</span>`;
 }
 
-/* ── 테마 ── */
-const btn=document.getElementById('themeBtn');
-function applyTheme(t){   // v33 버튼이 없어도 화면 전체가 멈추지 않게(null 확인)
-  if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');if(btn) btn.textContent='☀️';}
-  else{document.documentElement.removeAttribute('data-theme');if(btn) btn.textContent='🌙';}
-}
-let theme='light';
-try{theme=localStorage.getItem('sim-theme')||'light';}catch(e){}
-applyTheme(theme);
-if(btn) btn.onclick=()=>{
-  theme=(theme==='dark')?'light':'dark';
-  applyTheme(theme);
-  try{localStorage.setItem('sim-theme',theme);}catch(e){}
-};
+/* 테마(applyTheme·toggleTheme)는 스크립트 맨 앞(v33) */
 
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1315,6 +1498,7 @@ const ACQ={"DKS":{until:"2026-11-30",why:"풋락커 인수(2025-09) 효과 포�
 const WHOLE_CO={"028260.KS":"삼성물산은 건설·상사 포함 전사 수치라 제외"};
 const PEND_DAYS=45;   // 공시 분기가 야후 분기보다 이만큼 넘게 새로우면 '새 실적 반영 대기'
 const kstToday=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'});
+const kstMid=()=>new Date(kstToday()+'T00:00:00');   // v33 S2: 한국 날짜 자정 — D-day·세일이 머리 날짜(KST) 기준(기기 시간대 무관)
 const acqOn=t=>{ const a=ACQ[t]; return a&&kstToday()<=a.until?a:null; };
 const fyLbl=d=>d?'FY'+String(d).slice(2,4):'';
 const nmSplit=n=>{ const m=String(n||'').match(/^(.+?)\s*\((.+)\)\s*$/); return (m&&m[2]!=='자사')?{main:m[1],brand:m[2]}:{main:String(n||''),brand:''}; };   // '에스제이그룹(캉골)' → 법인명·브랜드('트렉시(자사)'는 그대로)
@@ -1350,6 +1534,10 @@ function acqCore(t){   // 인수 회사의 본체 매출 증가율 — 공시 �
   return (c&&c.revenue!=null&&c.prev_revenue)?(c.revenue/c.prev_revenue-1)*100:null;
 }
 const pendTag=p=>p?`<span class="wait-b" title="${esc(p.src)} 공시 ${esc(p.end)} 분기 발표됨 — 야후 미반영, 값은 이전 분기">새 실적 반영 대기</span>`:'';
+// v33 A안 새 화면(오늘·브랜드·브랜드 상세)용 꼬리표(13px) — 이전 값 · 새 실적 반영 대기 · 오래된 자료
+const tagA=(t,title)=>`<span class="tg"${title?` title="${esc(title)}"`:''}>${esc(t)}</span>`;
+const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
+const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
 // 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
@@ -1389,31 +1577,140 @@ function rows_all(){
 const CO_GROUPS = [...GROUPS, '국내 법인'];
 
 /* ── 종합 (A안: 신호) ── */
-/* v32.11 종합 '오늘 볼 것' — 이미 있는 데이터만 모아 4줄. 줄을 누르면 해당 화면 */
-function todayCardHtml(today){
-  const rows=[];
-  const FXD=DATA.fx||{}, fx=FX_ALERT.map(c=>({c,f:FXD[c]})).filter(x=>x.f&&x.f.dev_pct!=null&&x.f.rate);
-  if(fx.length){   // 감시 통화(엔·유로·달러) 중 1년 평균 대비 가장 싼 통화
-    const b=fx.slice().sort((a,c)=>a.f.dev_pct-c.f.dev_pct)[0], nm=c=>c==='JPY'?'100엔':FX_SH[c];
-    // '오늘'은 보는 사람의 한국 날짜로 판단 — 아침(대시보드 갱신 전)엔 어제 알림·뉴스를 날짜로 표시
-    const kst=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'}), la=fxAlertsAll()[0];
-    const newA=la&&(la.date===kst||la.date===String(DATA.generated_at||'').slice(0,10));
-    rows.push({ic:'💱',t:`${nm(b.c)} ${wonR(b.f.rate*fxMul(b.c))}원${staleTag(b.f.stale_since)} · 1년 평균보다 <b class="${b.f.dev_pct<=0?'pos':'neg'}">${Math.abs(b.f.dev_pct).toFixed(1)}% ${b.f.dev_pct<=0?'쌈':'비쌈'}</b>`,
-      s:(newA?`${la.date===kst?'오늘':mdTxt(la.date)} 알림: ${fxAlertTxt(la)} · `:'')+fx.filter(x=>x!==b).map(x=>`${FX_SH[x.c]} ${pctU(x.f.dev_pct)}`).join(' · ')+' (1년 평균 대비)',act:"goMore('fx')"});
-  }
-  const sales=saleAll(today).filter(e=>e.e>=today).sort((a,c)=>a.s-c.s).slice(0,2);
-  if(sales.length) rows.push({ic:'🛍️',t:sales.map(e=>`${e.fl} ${esc(e.sh)} ${e.s<=today?`<b>진행 중</b>(~${md2(e.e)})`:`<b>D-${Math.round((e.s-today)/86400000)}</b>`}`).join(' · '),
-    s:sales.map(e=>e.nm+(e.k==='예상'?'(예상)':'')).join(' · '),act:"sw('cal')"});
-  const NI=(NEWS&&NEWS.items)||[], td=NEWS&&NEWS.today, imp=NI.filter(i=>(i.importance||1)>=3);
-  const todays=imp.filter(i=>i.first_seen===td), top=todays[0]||imp[0];
-  const dayW=td&&td===new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'})?'오늘':(td?newsDateLbl(td):'오늘');
-  if(top) rows.push({ic:'📰',t:`${todays.length?`${dayW} ★3 <b>${todays.length}건</b>`:`${dayW} ★3 없음 · 최근`} — ${esc(top.summary||top.title)}`,
-    s:`${top.label||top.key||''} · ${top.source||''}${todays.length?'':' · '+top.first_seen}`,act:"goNews('all')"});
-  const fs=(typeof fiScore==='function')?fiScore():null;
-  if(fs) rows.push({ic:'🏷️',t:`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)} · 중앙값보다 나은 지표 <b>${fs.nb}/${fs.na}</b>`,
-    s:`유통사 ${fs.n}곳 재무 지표 비교 · 더보기 › 유통사 비교`,act:"goMore('peer')"});
-  if(!rows.length) return '';
-  return `<div class="card"><h3>오늘 볼 것</h3>${rows.map(r=>`<div class="td-row" role="button" tabindex="0" onclick="${r.act}" onkeydown="if(event.key==='Enter'){${r.act}}"><span class="td-ic">${r.ic}</span><span class="td-t">${r.t}<span class="td-s">${esc(r.s)}</span></span><span class="td-go">›</span></div>`).join('')}</div>`;
+/* ── v33 A안 S2: 오늘 = 수집 지연 띠 + 결정 카드 4장(① 매입 검토 ② 환율 타이밍 ③ 다가오는 일정 ④ 오늘 중요 뉴스) + 트렉시 위치 + 맺음 줄 ──
+   모두 이미 페이지에 있는 값(chkModel·DATA.fx·fx_push·saleAll·NEWS·fiScore·STATUS)만 씀. '오늘'·D-day·지연은 보는 사람의 한국 날짜·시각 기준 */
+function todayModel(){
+  const out={fail:{}}, today=kstMid();
+  const kst=kstToday(), g=String(DATA.generated_at||''), dataDay=g.slice(0,10);
+  // 카드마다 따로 계산 — 한 카드(또는 트렉시·맺음 줄)가 실패해도 나머지는 그림(실패한 카드만 그 자리에 안내 한 줄 — todayHtml)
+  const calc=(k,fn)=>{ try{ out[k]=fn(); }catch(e){ console.error('[오늘 볼 것 · '+k+'] 계산 실패:',e); out[k]=null; out.fail[k]=1; } };
+  let M=null; try{ M=chkModel(); }catch(e){ console.error('[오늘 볼 것 · 점검표] 계산 실패:',e); }
+  // ① 매입 검토 — 지금 검토 → 주의 순(점검표 정렬 그대로) 최대 4줄
+  calc('buy',()=>{
+    if(!M) throw new Error('점검표 모델 없음');
+    const gos=M.main.filter(r=>r.lv===2), warn=M.main.filter(r=>r.lv===0), hold=M.main.filter(r=>r.lv===1);
+    const holdByDem=hold.slice().sort((a,c)=>((c.dem.rel??-999)-(a.dem.rel??-999)));   // 관망 중 국내 검색이 강한 순(끝 줄 이름)
+    const pick=[...gos,...warn];
+    if(!M.main.length) return M.rest.length?{n:0,empty:'판정할 브랜드 없음',emptySub:`본사 재고·발언 자료 수집 전 — 판정 안 함 ${M.rest.length}곳은 점검표에서 검색·환율만`,more:`판정 안 함 ${M.rest.length}곳`}
+      :{n:0,empty:'네이버 검색 자료 수집 전'};
+    return {n:M.main.length,
+      head:pick.length?`지금 검토 ${gos.length}곳 · 주의 ${warn.length}곳`:`오늘은 지금 검토·주의 없음 · 관망 ${hold.length}곳`,
+      rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short,
+        hint:pick.length?'':(r.dem.pt>=0?`지금 검토까지 매입 조건 +${2-r.buy}`:'국내 수요 약함')})),
+      more:pick.length>4?`외 ${pick.length-4}곳 · 관망 ${hold.length}곳`
+        :(hold.length?`관망 ${hold.length}곳 · ${holdByDem.slice(0,3).map(r=>r.b.name).join(', ')}${hold.length>3?` 외 ${hold.length-3}곳`:''}`:`판정 안 함 ${M.rest.length}곳`)};
+  });
+  // ② 환율 타이밍 — 감시 통화(엔·유로·달러) 중 1년 평균 대비 가장 싼 통화가 큰 숫자, 나머지 둘 + 파운드(1년 평균 없음 → 1년 전 대비)
+  calc('fx',()=>{
+    const FXD=DATA.fx||{}, fxs=FX_ALERT.map(c=>({c,f:FXD[c]})).filter(o=>o.f&&o.f.rate&&o.f.dev_pct!=null);
+    const fxNm=o=>o.c==='JPY'?'엔(100엔)':(o.f.name||o.c);
+    if(!fxs.length) return {empty:'환율 수집 전 — 다음 갱신 후 표시'};
+    const h=fxs.slice().sort((a,c)=>a.f.dev_pct-c.f.dev_pct)[0], others=[...fxs.filter(o=>o!==h), ...(FXD.GBP&&FXD.GBP.rate?[{c:'GBP',f:FXD.GBP}]:[])];
+    const rows=others.map(o=>{ const dv=o.f.dev_pct!=null, v=dv?o.f.dev_pct:o.f.chg_pct;
+      return {name:fxNm(o), value:wonR(o.f.rate*fxMul(o.c))+'원', diff:v==null?'―':`${dv?'1년 평균':'1년 전'}보다 ${p1(v)}% ${v<0?'쌈':'비쌈'}`, tone:v==null?'':(v<0?'t-p':'t-n'), stale:o.f.stale_since||null}; });
+    const asof=[h,...others].map(o=>o.f.asof).filter(Boolean).sort();
+    const nB=M?[...M.main,...M.rest].filter(r=>r.cur===h.c):[], ptH=chkFx(h.c).pt;   // 점검표가 실패해도 환율은 그림(브랜드 줄만 빠짐)
+    const push=(DATA.fx_push&&DATA.fx_push.items)||[], la=fxAlertsAll()[0];
+    return {asof:asof.length?(asof[0]===asof[asof.length-1]?mdTxt(asof[0]):`${mdTxt(asof[0])}~${mdTxt(asof[asof.length-1])}`)+' 기준':'',
+      hero:{name:fxNm(h), value:wonR(h.f.rate*fxMul(h.c))+'원', dev:`1년 평균보다 ${p1(h.f.dev_pct)}% ${h.f.dev_pct<0?'쌈':'비쌈'}`, tone:h.f.dev_pct<0?'t-p':'t-n',
+        chg:h.f.chg_pct!=null?`1년 전보다 ${p1(h.f.chg_pct)}% ${h.f.chg_pct<0?'쌈':'비쌈'}`:'', stale:h.f.stale_since||null,
+        brands:nB.length>1?`${h.f.name} 원산지 감시 브랜드 ${nB.length}곳 모두 환율 점수 ${sg0(ptH)}`:(nB.length?`${h.f.name} 원산지 감시 브랜드 ${nB[0].b.name} 환율 점수 ${sg0(ptH)}`:'')},
+      rows,
+      // 새 알림 = 휴대폰 알림과 같은 기준(DATA.fx_push — 처음 잡힌 날 first_seen, fetch_data가 만듦)
+      alert:push.length?{n:push.length, day:(DATA.fx_push.date===kst?'오늘':mdTxt(DATA.fx_push.date)), list:push.map(a=>fxAlertTxt({...a,c:a.code}))}
+        :{n:0, day:(!dataDay||dataDay===kst?'오늘':mdTxt(dataDay)), last:la?`마지막 알림 ${mdTxt(la.date)} ${fxAlertTxt(la)}`:'지난 1년 알림 없음'}};
+  });
+  // ③ 다가오는 일정 — 점검표 감시 브랜드의 상장 본사 실적(0~90일, 같은 날 묶어 앞 2묶음) + 해외 세일(150일 안, 같은 시작일 묶어 앞 2묶음)
+  calc('events',()=>{
+    const nvBy={}; nvAll().filter(b=>b.group==='global'&&b.link&&!String(b.link).startsWith('krd:')).forEach(b=>{ (nvBy[b.link]=nvBy[b.link]||[]).push(b.name); });
+    const eg={}; DATA.items.filter(x=>nvBy[x.ticker]&&x.earn_date).forEach(x=>{ const dd=new Date(x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
+      if(!(dn>=0&&dn<=90)) return; (eg[x.earn_date]=eg[x.earn_date]||{dn,dd,xs:[]}).xs.push(x); });
+    const earn=Object.values(eg).sort((a,c)=>a.dn-c.dn).slice(0,2).map(gr=>{
+      const hq=gr.xs.map(x=>nmSplit(x.name).main), notes=[];
+      gr.xs.forEach(x=>{ const bs=nvBy[x.ticker]; if(bs.some(nm=>nm!==nmSplit(x.name).main)) notes.push(`${bs.join('·')} 본사`);
+        (M?M.main:[]).filter(r=>r.x&&r.x.ticker===x.ticker&&r.lv!==1).forEach(r=>notes.push(`${r.b.name} ${r.lv===2?'지금 검토 중':'주의 판정'}`)); });
+      return {dn:gr.dn, d:gr.dn===0?'오늘':'D-'+gr.dn, title:`${hq.join('·')} 실적`, sub:[md2(gr.dd),...notes].join(' · '), kind:'실적', go:gr.xs.length===1?'co:'+gr.xs[0].ticker:'mk:cal'}; });
+    const sgp={}; saleAll(today).filter(e=>e.e>=today&&Math.round((e.s-today)/86400000)<=150).forEach(e=>{ const k=+e.s; (sgp[k]=sgp[k]||[]).push(e); });
+    const sale=Object.values(sgp).sort((a,c)=>a[0].s-c[0].s).slice(0,2).map(es=>{ const e=es[0], live=e.s<=today, dn=Math.round(((live?e.e:e.s)-today)/86400000);
+      return {dn:live?0:dn, d:live?'진행 중':'D-'+dn, title:es.map(z=>z.nm.replace(/\(.*?\)/g,'').trim()).join(' · '),
+        sub:[`${md2(e.s)}~${md2(e.e)}`+(live?` · ${dn}일 남음`:''), ...es.filter(z=>z.k==='예상').map(z=>`${z.sh} 예상`)].join(' · '), kind:'세일', go:'mk:cal:saleList'}; });
+    return [...earn,...sale].sort((a,c)=>a.dn-c.dn);
+  });
+  // ④ 오늘 중요 뉴스 — 그날(뉴스 수집일) 처음 잡힌 ★3, 최대 3건(목록 순서)
+  calc('news',()=>{
+    const NI=(NEWS&&NEWS.items)||[], td=(NEWS&&NEWS.today)||'';
+    if(!NI.length) return {empty:'뉴스 수집 전'};
+    const dayW=(!td||td===kst)?'오늘':newsDateLbl(td), all=NI.filter(i=>i.first_seen===td), top=all.filter(i=>(i.importance||1)>=3);
+    const recent=top.length?null:NI.find(i=>(i.importance||1)>=3);
+    return {head:top.length?`${dayW} 중요 뉴스 ${top.length}건`:`${dayW} ★3 없음`, sub:`${dayW} ${all.length}건 중`,
+      items:(top.length?top.slice(0,3):(recent?[recent]:[])).map(i=>({t:i.summary||i.title||'', link:i.link||'',
+        meta:top.length?[i.label||i.key,i.source].filter(Boolean).join(' · '):[`최근 ${newsDateLbl(i.first_seen)}`,i.label||i.key].filter(Boolean).join(' · ')})),
+      more:top.length>3?top.length-3:0, none:!top.length&&!recent};
+  });
+  // 트렉시 위치 — fiScore 값이 이상하면(연도 없음 → 'FYnfinity') 줄 숨김
+  calc('peer',()=>{ const fs=fiScore(); return (fs&&fs.na&&isFinite(fs.L))?{sub:`${CMP.peer.selfName} 위치 · 유통사 ${fs.n}곳 재무 비교 (FY${String(fs.L).slice(2)})`, main:`중앙값보다 나은 지표 ${fs.nb}/${fs.na}`}:null; });
+  // 맺음 줄 — 갱신 시각 · 수집 상태 · Claude 사용액(수집 상태 카드와 같은 규칙: 1센트 미만 '<$0.01')
+  calc('foot',()=>{
+    const st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0), C=STATUS&&STATUS.claude;
+    const usd=C?(C.rows||[]).reduce((a,r)=>a+(r.usd||0),0):null, mon=C&&C.month?(C.month===kst.slice(0,7)?'이번 달':`${+C.month.slice(5,7)}월`):'이번 달';
+    return `데이터 ${g?`${mdTxt(dataDay)} ${g.slice(11,16)}`:'―'} 갱신 · 수집 ${late?`지연 ${late}`:'정상'}${part?` · 일부 실패 ${part}곳`:''}`
+      +(usd!=null?` · ${mon} Claude 사용액 ${usd>0&&usd<0.01?'<$0.01':'$'+usd.toFixed(2)}`:'');
+  });
+  return out;
+}
+function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 갱신 시각 단추(지연 있으면 경고 아이콘 + '지연 n') → 수집 상태
+  const g=String(DATA.generated_at||''), gd=g.slice(0,10), late=statusRows().filter(r=>r.late).length;
+  const upd=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)} 갱신`:'갱신 시각 없음', vis=upd+(late?` · 지연 ${late}`:'');
+  const date=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
+  return `<div class="hd-row"><div class="hd-tt"><span class="hd-kick">${esc(date)}</span><h1>오늘 볼 것 4가지</h1></div>
+    <button type="button" class="hd-pill${late?' late':''}" id="tdStatus" data-go="more:status" aria-label="${esc(vis)}, 수집 상태 ${late?`지연 ${late}곳`:'정상'}">${ic(late?'alert':'go',16)}<span>${esc(vis)}</span></button></div>`;
+}
+const dcNo=n=>`<span class="dc-no" aria-hidden="true">${n}</span>`;
+const dcHd=(n,t,meta,go)=>`<h2 class="dc-hh"><button type="button" class="dc-hd" data-go="${go}">${dcNo(n)}<span class="dc-t">${esc(t)}</span><span class="dc-meta">${esc(meta)}</span>${ic('right',16,'s2 chev')}</button></h2>`;   // 카드 머리 = 해당 화면으로(결정 D10)
+function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 실패한 카드만 머리 + 안내 한 줄(나머지는 그대로), 트렉시·맺음 줄은 실패하면 숨김
+  const X=m.fail||{};
+  const card=(k,n,t,go,fn)=>{
+    if(!X[k]){ if(m[k]==null) return ''; try{ return fn(m[k]); }catch(e){ console.error('[오늘 볼 것 · '+t+'] 그리기 실패:',e); } }
+    return n?`<section class="dc" aria-label="${esc(t)}">${dcHd(n,t,'',go)}<div class="dc-in">${bootErr(t)}</div></section>`:'';
+  };
+  return card('buy',1,'매입 검토','brand-all',tdBuyHtml)+card('fx',2,'환율 타이밍','more:fx',tdFxHtml)+card('events',3,'다가오는 일정','mk:cal',tdEvHtml)+card('news',4,'중요 뉴스','news:all',tdNewsHtml)
+    +card('peer',0,'트렉시 위치','',p=>`<button type="button" class="dc-peer" data-go="more:peer"><span class="tt"><span class="s">${esc(p.sub)}</span><span class="t">${esc(p.main)}</span></span>${ic('right',20,'s2 chev')}</button>`)
+    +card('foot',0,'맺음 줄','',f=>`<button type="button" class="td-foot" data-go="more:status">${esc(f)}</button>`);
+}
+function tdBuyHtml(B){   // ① 매입 검토(머리는 글자만 — 아래 '점검표 전체 보기'가 링크)
+  let h=`<section class="dc dc1" aria-label="매입 검토"><div class="dc-hd">${dcNo(1)}<span class="dc-t">매입 검토</span><span class="dc-meta">브랜드 점검표 · ${B.n}곳 판정</span></div>`;
+  if(B.empty) h+=`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}`;
+  else { h+=`<h2 class="dc-h">${esc(B.head)}</h2>`;
+    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}</span><span class="dc-why">${esc(r.why)}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
+  // '점검표 전체 보기' = 판정 필터 '전체'로(전에 고른 필터가 남아 글자와 결과가 달라지지 않게 — goKey 'brand-all')
+  if(B.more) h+=`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span><span class="s">${esc(B.more)}</span></span>${ic('arrow',20,'s2')}</button>`;
+  return h+`</section>`;
+}
+function tdFxHtml(F){   // ② 환율 타이밍
+  let h=`<section class="dc" aria-label="환율 타이밍">${dcHd(2,'환율 타이밍',F.asof||'','more:fx')}<div class="dc-in">`;
+  if(F.empty) h+=`<p class="dc-s">${esc(F.empty)}</p>`;
+  else { const H=F.hero, A=F.alert;
+    h+=`<p class="fx-hero"><span class="nm">${esc(H.name)}</span><span class="v">${esc(H.value)}</span><span class="d ${H.tone}">${esc(H.dev)}</span>${staleA(H.stale)}</p>`;
+    if(H.chg) h+=`<p class="dc-s">${esc(H.chg)}</p>`;
+    if(H.brands) h+=`<p class="dc-s">${esc(H.brands)}</p>`;
+    // 이전 값 꼬리표는 이름 칸(76px)을 넘쳐 줄 아래 한 칸에
+    if(F.rows.length) h+=`<div class="fx-rows">${F.rows.map(o=>`<div class="fx-r"><span class="nm">${esc(o.name)}</span><span class="v">${esc(o.value)}</span><span class="d ${o.tone}">${esc(o.diff)}</span>${o.stale?`<span class="fx-st">${staleA(o.stale)}</span>`:''}</div>`).join('')}</div>`;
+    h+=A.n?`<p class="fx-al">${esc(A.day)} 새 환율 알림 ${A.n}건</p>${A.list.map(t=>`<p class="fx-ai">${esc(t)}</p>`).join('')}`
+      :`<p class="fx-al">${esc(A.day)} 새 환율 알림 없음 · ${esc(A.last)}</p>`; }
+  return h+`</div></section>`;
+}
+function tdEvHtml(ev){   // ③ 다가오는 일정
+  return `<section class="dc" aria-label="다가오는 일정">${dcHd(3,'다가오는 일정','본사 실적 · 해외 세일','mk:cal')}<div class="dc-evs">`
+    +(ev.length?ev.map(e=>`<button type="button" class="dc-ev" data-go="${esc(e.go)}"><span class="d">${esc(e.d)}</span><span class="ev-tt"><span class="t">${esc(e.title)}</span><span class="s">${esc(e.sub)}</span></span><span class="kind${e.kind==='세일'?' sale':''}">${e.kind}</span></button>`).join('')
+      :`<p class="dc-s" style="padding-bottom:8px">90일 안 본사 실적·150일 안 해외 세일 없음</p>`)+`</div></section>`;
+}
+function tdNewsHtml(N){   // ④ 오늘 중요 뉴스(기사는 원문 새 창, 카드 머리는 시장 › 뉴스 전체)
+  if(N.empty) return `<section class="dc" aria-label="중요 뉴스">${dcHd(4,'중요 뉴스','','news:all')}<div class="dc-nws"><p class="dc-s" style="padding-bottom:8px">${esc(N.empty)}</p></div></section>`;
+  let h=`<section class="dc" aria-label="${esc(N.head)}">${dcHd(4,N.head,N.sub,'news:all')}<div class="dc-nws">`;
+  h+=N.items.map(i=>`<a class="dc-news" href="${esc(i.link)}" target="_blank" rel="noopener"><span class="t">${esc(i.t)}</span><span class="s">${esc(i.meta)}</span></a>`).join('');
+  if(N.none) h+=`<p class="dc-s" style="padding-bottom:8px">보관 기간 안 ★3 뉴스 없음</p>`;
+  if(N.more) h+=`<button type="button" class="dc-xmore" data-go="news:all">외 ★3 ${N.more}건 — 뉴스에서 보기</button>`;
+  return h+`</div></section>`;
 }
 /* v32.12 종합 '국내 의류 소매판매' 그래프 — 카드 폭에 맞춰 그림(휴대폰에서도 글자 11px · 위아래 빈 공간 없음), 범례는 그래프 밖
    v33 A안: 시장 › 국내 칩 첫 카드 — 폭은 국내 칩 영역(#mk-kr) 기준, 칩이 처음 보일 때 그림(hcDraw) */
@@ -1448,7 +1745,7 @@ function hcDraw(){   // v33 국내 칩이 보일 때만 그림(숨은 칩은 폭
   if(!box||!hb||!hb.clientWidth) return;
   if(!box.dataset.drawn||Math.abs(hb.clientWidth-30-HC_W)>20){ box.innerHTML=homeChartHtml(); box.dataset.drawn='1'; }
 }
-window.addEventListener('resize',()=>{ hcDraw(); });   // 화면 폭이 바뀌면(회전 등) 그래프만 다시 그림(국내 칩이 숨어 있으면 다음에 보일 때)
+window.addEventListener('resize',()=>{ safe(hcDraw,'의류 소매 그래프','mk-kr'); });   // 화면 폭이 바뀌면(회전 등) 그래프만 다시 그림(국내 칩이 숨어 있으면 다음에 보일 때)
 /* v32.12 순위 줄 — 윗줄 법인명, 아랫줄 브랜드 · 그룹 · 기준(분기 '26.06 / 연간 FY25) + 이전 값·반영 대기 표시 */
 function rkRow(r,valHtml){
   const n=nmSplit(r.name), sub=[n.brand,r.group,r.basis].filter(Boolean).map(esc).join(' · ');
@@ -1456,9 +1753,10 @@ function rkRow(r,valHtml){
 }
 /* v33 A안: 옛 종합(buildHome)을 나눔 — 오늘(지연 띠 + 오늘 볼 것) · 시장 › 실적·재고(KPI·순위·재고 경고·실적 발표) ·
    시장 › 소싱 지도 · 시장 › 국내(의류 소매 그래프, hcDraw). 계산은 옛 buildHome 그대로 */
-function buildToday(){
-  safe(statusWarn,'수집 지연 띠','p-today');
-  safe(()=>{ const today=new Date(); today.setHours(0,0,0,0); document.getElementById('todayCard').innerHTML=todayCardHtml(today); },'오늘 볼 것','p-today');
+function buildToday(){   // v33 S2: 오늘을 열 때마다 다시 그림(지연 판정·D-day는 열람 시점) — 머리 · 지연 띠 · 결정 카드
+  paint('tdHead',todayHeadHtml,'오늘 머리');
+  safe(statusWarn,'수집 지연 띠','statusWarn');
+  paint('todayCard',()=>todayHtml(todayModel()),'오늘 볼 것');
 }
 function buildSig(){
   const rows=rows_all();
@@ -1949,8 +2247,12 @@ function buildNewsChips(){
     ? `<span class="chip sep">${f.label}</span>`
     : `<span class="chip ${newsFilter===f.id?'on':''}" data-f="${f.id}">${f.label}</span>`).join('');
   el.querySelectorAll('.chip[data-f]').forEach(c=>{
-    c.onclick=()=>{ newsFilter=c.dataset.f; buildNewsChips(); buildNews(); };
+    c.onclick=()=>setNewsFilter(c.dataset.f);
   });
+}
+function setNewsFilter(f){   // v33 S2: 고른 필터를 지금 기록(nf)에도 저장 — 새로고침·앞으로 가기에서 풀었던 'k:' 필터가 다시 걸리지 않게(기록 수는 그대로)
+  newsFilter=f; buildNewsChips(); buildNews();
+  const s=history.state; if(s&&s.tab==='market'&&s.chip==='news') hRep({...s,nf:f});
 }
 // v32.11 기본 보기(칩 '전체'): 오늘 전체 + 최근 7일 ★3 — ★ 기준은 10/13 모델 비교 뒤 조정
 const NEWS_MIN_IMP=3, NEWS_DAYS=7;
@@ -1978,7 +2280,7 @@ function buildNews(){
   let kb='';
   if(newsFilter.startsWith('k:')){
     const k=newsFilter.slice(2), nm=(NEWS.items.find(i=>i.key===k)||{}).label||(nvAll().find(b=>b.news===k)||{}).name||k;
-    kb=`<div class="nv-sum" style="display:flex;align-items:center;gap:8px">${esc(nm)} 뉴스만 보는 중<button type="button" class="chip" style="margin-left:auto" onclick="newsFilter='all';buildNewsChips();buildNews()">전체 보기</button></div>`;
+    kb=`<div class="nv-sum" style="display:flex;align-items:center;gap:8px">${esc(nm)} 뉴스만 보는 중<button type="button" class="chip" style="margin-left:auto" onclick="setNewsFilter('all')">전체 보기</button></div>`;
   }
   if(!items.length){ el.innerHTML=kb+'<div class="na">해당 구분의 보관 기간 내 뉴스 없음</div>'; return; }
   const compact=newsFilter==='all', t0=new Date((today||'')+'T00:00:00');
@@ -2040,8 +2342,13 @@ function nvSpark(s,w,h,fluid){
     ${fluid?'':`<circle cx="${w}" cy="${(h-2-(cur[n-1]-mn)/rg*(h-4)).toFixed(1)}" r="2" fill="var(--accent)"/>`}</svg>`;
 }
 function nvRowHtml(b,med){
-  const go=b.link?`goDetail('${b.link}')`:(b.news?`nvNews('${b.news}')`:'');
-  return `<div class="nv-row${b.low?' low':''}"${go?` role="button" tabindex="0" onclick="${go}" onkeydown="if(event.key==='Enter'){${go}}"`:' style="cursor:default"'}>
+  // v33 S2: 수입·해외 브랜드 줄 → 브랜드 상세(판정과 이어짐, 결정 D5 — 이름은 data 속성). 국내 패션·아이웨어는 그대로 기업 상세·뉴스
+  if(b.group==='global'&&brKnown(b.name)) return nvRowInner(b,med,` data-brand="${esc(b.name)}" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}"`);
+  const act=b.link?`goDetail('${b.link}')`:(b.news?`nvNews('${b.news}')`:'');
+  return nvRowInner(b,med,act?` role="button" tabindex="0" onclick="${act}" onkeydown="if(event.key==='Enter'){${act}}"`:' style="cursor:default"');
+}
+function nvRowInner(b,med,attrs){
+  return `<div class="nv-row${b.low?' low':''}"${attrs}>
     <div class="nv-nm"><span>${esc(b.name)}</span>${b.low?'<em class="nv-low">검색량 적음</em>':''}${staleTag(b.stale_since)}</div>
     <span class="nv-pill ${nvRel(b.yoy,med)}">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span>
     <div class="nv-bar"><span class="tr"><i style="width:${b.scale!=null?Math.max(2,Math.min(100,b.scale)):0}%"></i></span><b>${nvSc(b.scale)}</b></div>
@@ -2061,11 +2368,11 @@ function naverCardHtml(){
     ${grps.length>1?`<div class="seg2" style="margin-bottom:8px;grid-template-columns:repeat(${grps.length},minmax(0,1fr))">${grps.map(([g,l])=>`<button type="button" class="${NV_GRP===g?'on':''}" aria-pressed="${NV_GRP===g}" onclick="nvGrp('${g}')">${l} ${nvBrands(g).length}</button>`).join('')}</div>`:''}
     <div class="note" style="margin:0 0 8px">주간 검색 지수 · 나이키 최근 4주 = 100 · ${nvWk(NAVER.end)} 주까지 · ${bs.length}개 브랜드${NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':NV_GRP==='eye'?' · 글로벌 아이웨어 + 국내 젠틀몬스터·블루엘리펀트, 중앙값은 이들끼리 · 명품은 선글라스·안경 검색어만':''}</div>
     <div class="seg2" style="margin-bottom:10px"><button type="button" class="${NV_SORT==='yoy'?'on':''}" aria-pressed="${NV_SORT==='yoy'}" onclick="nvSort('yoy')">전년 대비순</button><button type="button" class="${NV_SORT==='size'?'on':''}" aria-pressed="${NV_SORT==='size'}" onclick="nvSort('size')">규모순</button></div>
-    <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b> — 대부분이 같이 움직이면 네이버 검색 전반의 변화라, 중앙값보다 나은지로 봅니다.${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
+    <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b> <span class="na">(${bs.filter(b=>b.yoy!=null).length}개 브랜드 전체${NV_GRP==='global'?' — 브랜드 점검표 중앙값은 검색량 충분한 브랜드만':''})</span> — 대부분이 같이 움직이면 네이버 검색 전반의 변화라, 중앙값보다 나은지로 봅니다.${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
   shown.forEach(b=>{ h+=nvRowHtml(b,med); });
   if(rows.length>NV_TOP) h+=`<button type="button" class="nv-more" onclick="nvToggle()">${NV_ALL?`상위 ${NV_TOP}개만 보기 ▴`:`전체 ${rows.length}개 보기 ▾`}</button>`;
   h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--up)"></i>중앙값보다 5%p 이상 좋음</span><span><i style="background:var(--down)"></i>5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span><span>그래프: 최근 1년 실선 · 그 전 1년 점선</span></div>
-    <div class="note" style="margin-top:6px">전년 대비 = 최근 4주 vs 1년 전 같은 4주(지수 비율 = 실제 검색 횟수 비율). 규모 1 미만은 검색량이 적어 흐리게 표시. 누르면 기업 상세 또는 그 브랜드 뉴스로 이동. 출처: ${esc(NAVER.source||'네이버 데이터랩')}</div></div>`;
+    <div class="note" style="margin-top:6px">전년 대비 = 최근 4주 vs 1년 전 같은 4주(지수 비율 = 실제 검색 횟수 비율). 규모 1 미만은 검색량이 적어 흐리게 표시. 누르면 브랜드 상세(수입·해외)·기업 상세 또는 그 브랜드 뉴스로 이동. 출처: ${esc(NAVER.source||'네이버 데이터랩')}</div></div>`;
   return h;
 }
 function nvRefresh(){ const c=document.getElementById('nvCard'); if(c) c.outerHTML=naverCardHtml(); }
@@ -2356,6 +2663,7 @@ const fiHas=cid=>fiRows(cid).some(r=>Object.values(r.by).some(y=>y.fin));   // �
 function fiScore(){   // 더보기 메뉴 줄: 자사가 최근 연도 비교군 중앙값보다 나은 지표 수
   const rows=fiRows(), me=rows.find(r=>r.self); if(!me) return null;
   const L=Math.max(...rows.flatMap(r=>Object.keys(r.by).map(Number)));
+  if(!isFinite(L)) return null;   // v33 연도 자료가 없으면 'FYnfinity'가 되지 않게 없음으로
   const st=FI_K.filter(k=>!FI_M[k].ref&&!FI_M[k].alt).map(k=>fiStat(rows,k,L)), has=st.filter(t=>t.me.v!=null&&t.md!=null);
   return {L, nb:has.filter(t=>t.better).length, na:has.length, n:rows.length};
 }
@@ -2556,10 +2864,13 @@ function fxCard(c,f){
     ${fxGauge(f)}${fxSpark(f,c)}
     <div class="fxcnt">1년 평균 ${wonR(f.avg1y*m)}원 · 지난 1년 알림 ${al.length}번 (내림 ${ndn} · 오름 ${al.length-ndn}) · ${esc(f.asof||'')} 기준</div></div>`;
 }
-function moreHead(t,sub){ return `<div class="mhead"><span class="mback" onclick="moreOpen(null)">‹ ${esc(backLbl(ROUTE,'더보기'))}</span><div><b>${t}</b><span class="ms">${sub}</span></div></div>`; }   // v33 '‹ 바로 전 화면'(주소로 바로 열었으면 더보기 메뉴)
+function moreHead(t,sub){   // v33 S2: 더보기 하위 화면 머리 = '‹ 바로 전 화면'(주소로 바로 열었으면 더보기) + 제목, 그 아래 부제 한 줄
+  const lb=backLbl(ROUTE,'더보기');
+  return `<div class="phead dethead av"><button type="button" class="hd-back mback" onclick="moreOpen(null)" aria-label="${esc(jo(lb,'으로','로',1))} 돌아가기">${ic('left',24,'s2')}<span class="hd-bl">${esc(lb)}</span></button><h1>${esc(t)}</h1><span aria-hidden="true"></span></div>${sub?`<p class="hd-sub2">${sub}</p>`:''}`;
+}
 function moreFxHtml(){
   const FXD=DATA.fx||{}, al=fxAlertsAll();
-  let h=moreHead('💱 환율','현지 통화 1단위의 원화 값 (엔은 100엔) · 갱신 '+esc(DATA.generated_at||''));
+  let h=moreHead('환율','현지 통화 1단위의 원화 값 (엔은 100엔) · 갱신 '+esc(DATA.generated_at||''));
   h+=`<div class="card"><h3>최근 알림 <span class="na" style="font-size:var(--fs-2xs)">1년 평균 대비 1% 선을 새로 넘은 날</span></h3>`
     +(al.length?`<div class="frec">${al.slice(0,6).map(a=>`<div><span class="d">${mdTxt(a.date)}</span><i class="${a.dir}"></i><span>${esc(fxAlertTxt(a))}</span></div>`).join('')}</div>`:'<div class="na">지난 1년 알림 없음</div>')+`</div>`;
   const cards=FX_ALERT.filter(c=>FXD[c]).map(c=>fxCard(c,FXD[c])).join('');
@@ -2619,7 +2930,7 @@ function cbTrendHtml(){
 }
 function moreCbHtml(){
   const CB=KR&&KR.cross_border;
-  let h=moreHead('🌏 해외직구','통계청 온라인쇼핑동향 · 해외직접구매액 · 분기');
+  let h=moreHead('해외직구','통계청 온라인쇼핑동향 · 해외직접구매액 · 분기');
   if(!CB||!CB.series) return h+'<div class="card"><div class="na">해외직구 자료 수집 전 — update-kosis 실행 후 표시</div></div>';
   const L=CB.last, P=cbPrev(L);
   const tt=cbVal('total|total',L), tf=cbVal('total|fashion',L);
@@ -2675,21 +2986,26 @@ function svCardHtml(){
   h+=`</table></div><div class="note" style="margin-top:6px">검색 = 네이버 검색량(브랜드 검색어 합 · 수입 법인은 취급 브랜드 합: 룩소티카코리아 = 레이밴·오클리·프라다, 케어링아이웨어코리아 = 구찌·생로랑·까르띠에·린드버그, 시원아이웨어 = 디올). 매출 = DART 별도 재무제표 전년 대비. 같은 해 검색 = 결산 연도 1~12월 합 vs 전년. 올해 = 1월부터 지난달까지 vs 전년 같은 기간. 검색은 온라인 관심의 흐름일 뿐 매출과 1:1이 아니고, 아이아이컴바인드 매출에는 탬버린즈·누데이크가 들어 있습니다. 하고하우스·시선인터내셔널·다비치는 브랜드 검색어가 없어 제외. 행을 누르면 기업 상세</div></div>`;
   return h;
 }
-function moreMenuHtml(){
-  const la=fxAlertsAll()[0], CB=KR&&KR.cross_border, late=statusRows().filter(r=>r.late), fs=fiScore(), part=statusRows().reduce((a,r)=>a+(r.failed||0),0);
-  const cmpN=()=>{const a=cmpData(CMP.fb), b=cmpData(CMP.ey); const L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop(); return a.length||b.length?`<span class="nw">패션 <b class="il">${a.length}</b> · 아이웨어 <b class="il">${b.length}</b></span>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전';};
-  const row=(v,ic,t,d,r)=>`<div class="mi" onclick="moreOpen('${v}')"><span class="mic">${ic}</span><span><span class="mt">${t}</span><br><span class="md">${d}</span></span><span class="mr">${r}</span></div>`;
-  return `<div class="mhead"><b>더보기</b></div><div class="card mmenu">
-    ${row('peer','🏷️','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',fs?`${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}<br>중앙값보다 나음 <b>${fs.nb}/${fs.na}</b>`:'수집 전')}
-    ${row('fb','👕','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',cmpN('fb'))}
-    ${row('fx','💱','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',la?`<span class="mbadge ${la.dir}">${mdTxt(la.date)} 알림</span><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음')}
-    ${row('cb','🌏','해외직구','나라별·상품군별 직구 금액 (분기)',CB&&CB.last?`<b>${cbPrdS(CB.last)}</b>분기 자료`:'수집 전')}
-    ${row('status','⚙️','수집 상태','자료별 마지막 갱신 · 지연 여부'+claudeMonthTxt(),late.length?`<span class="mbadge late">지연 ${late.length}</span>`:(part?`<span class="stl" style="margin-left:0">일부 실패 ${part}곳</span>`:'<span class="st-ok">● 정상</span>'))}
-  </div><div class="note">새 지표는 하단 탭을 늘리지 않고 여기에 추가합니다.</div>`;
+function moreMenuHtml(){   // v33 S2: 머리 '더보기' + 메뉴 줄 5개(선 아이콘) + '화면 테마'(id="themeBtn") · 오른쪽 = 지금 상태
+  // 오른쪽 값은 줄마다 따로 — 하나가 깨져도 그 칸만 '―'
+  const sv=(nm,fn,dflt)=>{ try{ return fn(); }catch(e){ console.error('[더보기 · '+nm+' 줄] 계산 실패:',e); return dflt==null?'―':dflt; } };
+  const row=(v,icn,t,d,r)=>`<button type="button" class="mi" data-go="more:${v}"><span class="mic">${ic(icn,22)}</span><span class="mtt"><span class="mt">${t}</span><span class="md">${d}</span></span><span class="mr">${r}</span></button>`;
+  return `<div class="phead"><h1>더보기</h1></div><nav class="mmenu" aria-label="더보기 화면">
+    ${row('peer','store','유통사 비교','수입 브랜드 유통사 재무 지표 · 3개년',sv('유통사 비교',()=>{ const fs=fiScore(); return fs?`<b>${esc(CMP.peer.selfName)} FY${String(fs.L).slice(2)}</b><br>중앙값보다 나음 ${fs.nb}/${fs.na}`:'수집 전'; }))}
+    ${row('fb','shirt','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',sv('패션 브랜드',()=>{ const a=cmpData(CMP.fb), b=cmpData(CMP.ey), L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop();
+      return a.length||b.length?`패션 <b>${a.length}</b> · 아이웨어 <b>${b.length}</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전'; }))}
+    ${row('fx','fx','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',sv('환율',()=>{ const la=fxAlertsAll()[0]; return la?`<b>${mdTxt(la.date)} 알림</b><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음'; }))}
+    ${row('cb','globe','해외직구','나라별·상품군별 직구 금액 (분기)',sv('해외직구',()=>{ const CB=KR&&KR.cross_border; return CB&&CB.last?`<b>${cbPrdS(CB.last)}</b><br>분기 자료`:'수집 전'; }))}
+    ${row('status','pulse','수집 상태','자료별 마지막 갱신 · 지연 여부'+sv('Claude 사용액',claudeMonthTxt,''),sv('수집 상태',()=>{ const st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0);
+      return late?`<span class="wn">지연 ${late}</span>`:(part?`<span class="wn">일부 실패 ${part}곳</span>`:'<b class="ok">정상</b>'); }))}
+    ${themeRowHtml()}
+  </nav><p class="mnote">새 지표는 하단 탭(4개)을 늘리지 않고 시장 칩이나 여기에 추가합니다.</p>`;
 }
+// '화면 테마' 줄(자료와 무관) — 메뉴가 통째로 실패해도 buildMore가 남김
+const themeRowHtml=()=>`<button type="button" class="mi" id="themeBtn" aria-pressed="${theme==='dark'}" onclick="toggleTheme()"><span class="mic">${ic(theme==='dark'?'moon':'sun',22)}</span><span class="mtt"><span class="mt">화면 테마</span><span class="md">밝게 · 어둡게 바꾸기</span></span><span class="mr"><b>${theme==='dark'?'어둡게':'밝게'}</b></span></button>`;
 function moreFashionHtml(){   // 👕 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
   const sec=cid=>{const c=CMP[cid], n=cmpData(c).length; return n?`<div class="ndate" style="margin-top:16px">${c.icon} ${esc(c.name)} <span class="na" style="font-weight:400">${n}곳 · ${esc(c.tag)}</span></div>`+(fiHas(cid)?finCardHtml(cid):cmpCardHtml(cid)):'';};
-  return moreHead('👕 패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적 · DART 연간')+sec('fb')+sec('ey')+svCardHtml();
+  return moreHead('패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적 · DART 연간')+sec('fb')+sec('ey')+svCardHtml();
 }
 /* ── 🧭 브랜드 점검표(v32.17, 대표 지시 2026-10-10) — 국내 수요 + 매입 조건(본사 재고·본사 발언·환율)으로 브랜드별 판정.
    대상: 네이버 검색 감시 브랜드(global) 중 본사가 상장사로 연결된 곳. 본사 자료가 없는 브랜드는 아래 표에 검색·환율만 ── */
@@ -2699,54 +3015,54 @@ const CHK_CUR={'나이키':'USD','뉴발란스':'USD','우포스':'USD','아디�
   '비비안웨스트우드':'GBP','에코(ECCO)':'EUR','단톤':'EUR','어그':'USD','샤카웨어':'USD','스케쳐스':'USD'};   // 원산지(본사) 통화
 const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신'};
 const CHK_SALE={EUR:['🇫🇷','🇮🇹'],GBP:['🇬🇧'],USD:['🇺🇸'],JPY:['🇯🇵']};   // 통화 지역의 해외 세일(캘린더 탭과 같은 일정)
-const CHK_LV={2:{t:'지금 검토',c:'chk-go'},1:{t:'관망',c:'chk-wait'},0:{t:'주의',c:'chk-warn'}};
+const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
 const sgn=v=>(v>0?'+':(v<0?'−':''))+Math.abs(v);
 let CHK_CACHE=null;
 function chkMedian(){   // 감시 브랜드(global, 검색량 충분) 전년 대비의 중앙값 — 시장 전체 흐름을 빼고 브랜드 힘만 보려고
   const v=((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global'&&b.yoy!=null&&!b.low).map(b=>b.yoy).sort((a,b)=>a-b), n=v.length;
   return n?(n%2?v[(n-1)/2]:(v[n/2-1]+v[n/2])/2):null;
 }
+// v33 S2: chk*는 화면(브랜드 탭·상세·오늘)에 쓰는 원래 숫자도 돌려줌 — 점수·판정 규칙(±10%p·±5%p·±5/±10%)은 그대로
 function chkDemand(b,med){
-  if(b.yoy==null) return {pt:0,na:1,txt:'검색 자료 없음'};
-  if(med==null) return {pt:0,stale:b.stale_since,txt:`전년 대비 ${pp(b.yoy)}`};
+  if(b.yoy==null) return {pt:0,na:1,yoy:null,med,low:!!b.low,trend:b.trend,txt:'검색 자료 없음'};
+  if(med==null) return {pt:0,yoy:b.yoy,med,low:!!b.low,trend:b.trend,stale:b.stale_since,txt:`전년 대비 ${pp(b.yoy)}`};
   const rel=b.yoy-med, pt=b.low?0:(rel>=10?1:(rel<=-10?-1:0));
-  return {pt, rel, stale:b.stale_since, txt:`전년 대비 ${pp(b.yoy)} · 감시 브랜드 중앙값(${pp(med)})보다 ${rel>=0?'+':''}${rel.toFixed(1)}%p`
+  return {pt, rel, yoy:b.yoy, med, low:!!b.low, trend:b.trend, stale:b.stale_since, txt:`전년 대비 ${pp(b.yoy)} · 감시 브랜드 중앙값(${pp(med)})보다 ${rel>=0?'+':''}${rel.toFixed(1)}%p`
     +(b.trend!=null?` · 최근 4주 vs 직전 12주 ${pp(b.trend)}`:'')+(b.low?' · 검색량 적어 점수 제외':'')};
 }
 function chkInv(x){
   const ip=invPick(x);
   if(ip.inv==null||ip.rev==null) return {pt:0,na:1,txt:'같은 기간 재고·매출 자료 없음'};
   const P=ip.inv-ip.rev, pt=P>=5?1:(P<=-5?-1:0);
-  return {pt, stale:x.stale_since, pend:pendOf(x), txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${P>=0?'+':''}${P.toFixed(1)}%p · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
+  return {pt, P, inv:ip.inv, rev:ip.rev, lbl:ip.lbl, q:ip.q, end:ip.end, stale:x.stale_since, pend:pendOf(x), txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${P>=0?'+':''}${P.toFixed(1)}%p · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
 }
 function chkNotes(t){
   const s=segOf(t), ex=s&&s.extract;
-  if(!ex||!Array.isArray(ex.mgmt_notes)) return {pt:0,na:1,list:[],txt:'자료 없음 — 실적 문서 원문을 받지 않는 회사(재무표·야후 수치만)'};
+  if(!ex||!Array.isArray(ex.mgmt_notes)) return {pt:0,na:1,none:1,list:[],m:0,l:0,z:0,u:0,txt:'발언 자료 없음 — 이 회사 실적 자료에서 뽑은 발언이 없음(표 형식 자료·야후 수치만)'};
   const L=ex.mgmt_notes, m=L.filter(n=>n.sig==='more').length, l=L.filter(n=>n.sig==='less').length,
     z=L.filter(n=>n.sig==='neutral').length, u=L.length-m-l-z, per=(ex.period||'').split(/;| ended/)[0];   // u = 아직 신호 분류 전(다음 추출 때 판정)
-  return {pt:m>l?1:(l>m?-1:0), na:(L.length&&u===L.length)?1:0, list:L, txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
+  return {pt:m>l?1:(l>m?-1:0), na:(L.length&&u===L.length)?1:0, list:L, m, l, z, u, per, tag:/^IR/.test(s.source||'')?'IR 추출':'공시 추출', txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
     +(z?` · 중립 ${z}건`:'')+(u?` · 신호 분류 전 ${u}건(다음 추출 때 판정)`:''):'재고·할인·유통 관련 발언 없음')};
 }
 function chkFx(cur){
   const f=(DATA.fx||{})[cur]; if(!f) return {pt:0,na:1,txt:`${cur} 환율 자료 없음`};
   const dev=f.dev_pct!=null, v=dev?f.dev_pct:f.chg_pct;
-  if(v==null) return {pt:0,na:1,txt:`${f.name} 변동 자료 없음`};
+  if(v==null) return {pt:0,na:1,name:f.name,txt:`${f.name} 변동 자료 없음`};
   const pt=v<=-10?2:(v<=-5?1:(v>=10?-2:(v>=5?-1:0)));
-  return {pt, v, stale:f.stale_since, txt:`${f.name} ${dev?'1년 평균 대비':'1년 전 대비'} ${v>0?'+':''}${v.toFixed(1)}% · ${pt>0?'매입 부담 줄어듦':(pt<0?'매입 부담 커짐':'비슷')}`};
+  return {pt, v, basis:dev?'avg':'yago', name:f.name, rate:f.rate, mul:fxMul(cur), chg:f.chg_pct, dev:f.dev_pct, asof:f.asof, stale:f.stale_since, txt:`${f.name} ${dev?'1년 평균 대비':'1년 전 대비'} ${v>0?'+':''}${v.toFixed(1)}% · ${pt>0?'매입 부담 줄어듦':(pt<0?'매입 부담 커짐':'비슷')}`};
 }
-function chkSale(cur){
-  const today=new Date(); today.setHours(0,0,0,0); const fl=CHK_SALE[cur]||[];
-  const ev=saleAll(today).filter(e=>fl.indexOf(e.fl)>=0&&e.e>=today).sort((a,b)=>a.s-b.s)[0];
-  if(!ev) return '';
-  const dn=Math.round((ev.s-today)/86400000);
-  return `${ev.fl} ${ev.sh} ${dn<=0?'진행 중':'D-'+dn}${ev.k==='예상'?'(예상)':''}`;
+function chkSaleEv(cur){   // v33 S2: 통화 지역의 다음 해외 세일 사건 {e, dn, live} — 브랜드 상세 '다음 일정'(캘린더 탭과 같은 일정)
+  const today=kstMid(); const fl=CHK_SALE[cur]||[];
+  const e=saleAll(today).filter(e=>fl.indexOf(e.fl)>=0&&e.e>=today).sort((a,b)=>a.s-b.s)[0];
+  return e?{e, dn:Math.round((e.s-today)/86400000), live:e.s<=today}:null;
 }
-function chkNews(b){   // 최근 14일 ★2 이상 브랜드 뉴스 1건(참고) — 제목·요약에 그 브랜드 이름이 있는 것만(호카·어그처럼 뉴스 묶음을 같이 쓰는 경우)
-  const key=b&&b.news; if(!key||!NEWS||!NEWS.items) return null;
+// 최근 14일 ★2 이상 브랜드 뉴스(참고) — 제목·요약에 그 브랜드 이름(키워드)이 있는 것만(호카·어그처럼 뉴스 묶음을 같이 쓰는 경우), 최대 n건
+function chkNewsList(b,n){
+  const key=b&&b.news; if(!key||!NEWS||!NEWS.items) return [];
   const kw=((b.keywords&&b.keywords.length)?b.keywords:[b.name]).map(k=>String(k).toLowerCase()).filter(Boolean);
   return newsDedupe(NEWS.items.filter(it=>it.scope==='brand'&&it.key===key&&(it.importance||1)>=2
       &&kw.some(k=>((it.title||'')+' '+(it.summary||'')).toLowerCase().indexOf(k)>=0))
-    .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0)),1)[0]||null;
+    .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0)),n||3);
 }
 function chkModel(){
   if(CHK_CACHE) return CHK_CACHE;
@@ -2754,7 +3070,8 @@ function chkModel(){
   ((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global').forEach(b=>{
     const cur=CHK_CUR[b.name]||null, link=b.link?String(b.link):'';
     const x=link&&!link.startsWith('krd:')?DATA.items.find(i=>i.ticker===link):null;
-    const r={b, x, cur, link, dem:chkDemand(b,med), fx:cur?chkFx(cur):{pt:0,na:1,txt:'원산지 통화 미지정'}, sale:cur?chkSale(cur):'', news:chkNews(b)};
+    // v33 S2: 옛 점검표 카드용 sale·news는 뺌(다음 세일·뉴스는 상세에서 chkSaleEv·chkNewsList) — 세일·뉴스 자료가 깨져도 판정 목록은 그려짐
+    const r={b, x, cur, link, dem:chkDemand(b,med), fx:cur?chkFx(cur):{pt:0,na:1,txt:'원산지 통화 미지정'}};
     if(!x){ rest.push(r); return; }
     r.inv=chkInv(x); r.notes=chkNotes(x.ticker);
     if(r.inv.na&&r.notes.na){ rest.push(r); return; }   // 본사 재고·발언 근거가 둘 다 없으면 판정하지 않음(환율만으로 판정되지 않게)
@@ -2767,75 +3084,279 @@ function chkModel(){
   rest.sort((a,b)=>relOf(b)-relOf(a));
   return (CHK_CACHE={main, rest, med});
 }
-const ptx=o=>o.na?'―':(o.pt?sgn(o.pt):'0');
-function chkEv(lbl,o,extra){
-  return `<div class="chk-ev"><span class="chk-pt ${o.pt>0?'p':(o.pt<0?'n':'')}">${ptx(o)}</span><div><b>${lbl}</b>${esc(o.txt)}${o.stale?staleTag(o.stale):''}${o.pend?pendTag(o.pend):''}${extra||''}</div></div>`;
-}
-function chkMenuR(){
-  const M=chkModel(); if(!M.main.length) return '수집 전';
-  const c=l=>M.main.filter(r=>r.lv===l).length;
-  return `<span class="chk-lv chk-go">지금 검토 ${c(2)}</span><br><span class="na">관망 ${c(1)} · 주의 ${c(0)}</span>`;
-}
-function chkRowHtml(r,still){   // v33 점검표 한 줄 — 브랜드 탭 목록과 브랜드 상세(still = 누르기 없음)가 같이 씀
-  const L=CHK_LV[r.lv];
-  const nl=(r.notes.list||[]).map(n=>`<span class="chk-q">${n.sig==='more'?'▲':(n.sig==='less'?'▼':(n.sig==='neutral'?'·':'?'))} ${esc(MGMT_TOPIC[n.topic]||n.topic||'')} — ${esc(n.ko||'')}</span>`).join('');
-  const ctx=[r.sale?'🛍️ 다음 세일 '+r.sale:'', r.news?`📰 ${'★'.repeat(r.news.importance||1)} ${r.news.summary||r.news.title||''} (${(r.news.first_seen||'').slice(5).replace('-','/')})`:''].filter(Boolean);
-  return `<div class="chk-row"${still?' style="cursor:default;border-top:0;padding-top:0"':` onclick="goDetail('${esc(r.x.ticker)}')"`}>
-      <div class="chk-h"><span class="chk-nm">${esc(r.b.name)} <span class="ref">${esc(r.x.name)} · ${esc(r.cur||'')}</span>${staleTag(r.x.stale_since)}</span><span class="chk-lv ${L.c}">${L.t}</span></div>
-      ${chkEv('국내 검색',r.dem)}${chkEv('본사 재고',r.inv)}${chkEv('본사 발언',r.notes,nl)}${chkEv('환율',r.fx,CHK_CUR_NOTE[r.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[r.b.name])})</span>`:'')}
-      <div class="chk-sc">수요 ${ptx(r.dem)} · 매입 조건 ${r.buy?sgn(r.buy):'0'} (재고 ${ptx(r.inv)} · 발언 ${ptx(r.notes)} · 환율 ${ptx(r.fx)})${r.lv===2&&r.inv.pt+r.notes.pt<=0?' · 환율 영향이 대부분':''}</div>
-      ${ctx.length?`<div class="chk-ctx">${ctx.map(esc).join(' · ')}</div>`:''}</div>`;
-}
-function chkHtml(){
-  const M=chkModel();
-  if(!M.main.length&&!M.rest.length) return `<div class="card"><div class="na">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</div></div>`;
-  const cnt=l=>M.main.filter(r=>r.lv===l).length;
-  let h=`<div class="card"><h3>🧭 본사 재고·발언 자료가 있는 브랜드 <span class="na" style="font-weight:400">${M.main.length}개 · 판정</span></h3>
-    <div class="chk-sum">${[2,1,0].map(l=>`<span class="chk-lv ${CHK_LV[l].c}">${CHK_LV[l].t} ${cnt(l)}</span>`).join('')}</div>`;
-  M.main.forEach(r=>{ h+=chkRowHtml(r); });
-  h+=`<div class="note">판정 = 국내 수요 + 매입 조건. 수요: 네이버 검색 전년 대비가 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량 적으면 0).
-    매입 조건: 본사 재고 압력(재고 증가율 − 같은 기간 매출 증가율) +5%p 이상 +1 · −5%p 이하 −1, 본사 발언 신호(할인 물량↑가 많으면 +1, 할인·공급↓가 많으면 −1),
-    원산지 통화 1년 평균 대비(없으면 1년 전 대비) −5% 이하 +1 · −10% 이하 +2 · +5% 이상 −1 · +10% 이상 −2.
-    🟢 지금 검토 = 수요가 약하지 않고 매입 조건 +2 이상 · 🔴 주의 = 수요가 약하면서 매입 조건 +1 이하, 또는 매입 조건 −1 이하 · 나머지 관망.
-    본사 재고는 브랜드가 아니라 본사 전체 기준(호카·어그 = 데커스). 본사 발언 ▲ 할인 물량↑ · ▼ 할인·공급↓ · · 중립 · ? 분류 전(Claude 분류).
-    본사 재고·발언 자료가 둘 다 없으면 판정하지 않고 아래 표로. 다음 세일·뉴스는 참고. 행을 누르면 기업 상세</div></div>`;
-  if(M.rest.length){
-    h+=`<div class="card"><h3>📋 본사 자료가 없는 브랜드 <span class="na" style="font-weight:400">${M.rest.length}개 · 검색·환율만(판정 안 함)</span></h3>
-      <table id="chkTbl"><tr><th>브랜드 · 다음 세일</th><th>검색 전년 대비</th><th>원산지 통화</th></tr>`;
-    M.rest.forEach(r=>{
-      const d=r.dem, f=r.fx, tk=r.x?r.x.ticker:(r.link.startsWith('krd:')?r.link:''), go=tk?` style="cursor:pointer" onclick="goDetail('${esc(tk)}')"`:'';
-      h+=`<tr${go}><td>${esc(r.b.name)}${r.b.low?'<div class="ref">검색량 적음</div>':''}${r.sale?`<div class="ref">🛍️ ${esc(r.sale)}</div>`:''}${tk?`<div class="ref">${r.x?'기업 상세':'국내 법인 상세'} ▸</div>`:''}</td>
-        <td>${r.b.yoy!=null?`<span class="${d.pt>0?'pos':(d.pt<0?'neg':'')}">${pp(r.b.yoy)}</span><div class="ref">중앙값 대비 ${d.rel!=null?(d.rel>=0?'+':'')+d.rel.toFixed(1)+'%p':'―'}</div>`:'―'}</td>
-        <td>${esc(r.cur||'―')}${f.v!=null?` <span class="${f.pt>0?'pos':(f.pt<0?'neg':'')}">${f.v>0?'+':''}${f.v.toFixed(1)}%</span>`:''}${CHK_CUR_NOTE[r.b.name]?`<div class="ref">${esc(CHK_CUR_NOTE[r.b.name])}</div>`:''}</td></tr>`;
-    });
-    h+=`</table><div class="note">본사가 비상장이거나 연결된 회사가 없거나, 상장사여도 재고·발언 자료가 없는 브랜드 — 검색(초록 = 중앙값보다 10%p 이상 높음)과 원산지 통화(초록 = 1년 평균 대비 5% 이상 쌈, 평균이 없는 통화는 1년 전 대비)만 참고로 보여 줍니다.</div></div>`;
+/* ── v33 A안 S2: 판정 이유 · 점수 칸 · 상세 모델 — Claude·무작위 없이 chkModel 값만(판정 규칙은 위 그대로 · 주간 메일과 같은 규칙) ── */
+const JONG_D={0:21,1:8,3:16,6:1,7:8,8:8};   // 숫자 끝을 읽는 소리의 받침(영·일·삼·육·칠·팔)
+const jo=(s,a,b,ro)=>{ s=String(s); const ch=s[s.length-1]||'', c=ch.charCodeAt(0);
+  const j=(c>=0xAC00&&c<=0xD7A3)?(c-0xAC00)%28:(/\d/.test(ch)?(JONG_D[ch]||0):0);
+  return s+((j&&!(ro&&j===8))?a:b); };   // 조사 — 받침 있으면 a, 없으면 b(ro=1이면 ㄹ 받침도 '로')
+const sg0=v=>v?sgn(v):'0';
+const p1=v=>Math.abs(v).toFixed(1);
+/* 판정 이유 {head 상세 제목, short 목록·오늘 한 줄(최대 2구절), say 상세 한 문장} — 구절 순서 재고 → 발언 → 환율. 계절 영향이 섞인 trend는 쓰지 않음 */
+function chkWhy(r){
+  const d=r.dem, i=r.inv||{pt:0,na:1}, n=r.notes||{pt:0,na:1}, x=r.fx||{pt:0,na:1};
+  const cur=x.name||r.cur||'', base=x.basis==='avg'?'1년 평균':'1년 전';
+  const fxS=x.na?'':`${cur} ${p1(x.v)}% ${x.v<0?'쌈':'비쌈'}`;                              // '유로 11.1% 쌈'
+  const fxC=x.na?'':`${jo(cur,'이','가')} ${base}보다 ${p1(x.v)}% ${x.v<0?'싸':'비싸'}`;     // '유로가 1년 평균보다 11.1% 싸'
+  // 성분별 문구 — nm 이름 · ps/ns 짧은 구절(유리/불리) · pn 이점 명사 · pc/nc 문장 조각[중간(~고), 끝(~서/~해), 양보(~지만)]
+  const C={
+    inv:{nm:'본사 재고', ps:'본사 재고 증가로 처분 물량 기대', ns:'본사 재고 빠듯', pn:'처분 물량 기대',
+         pc:i.na?[]:[`본사 재고가 매출보다 ${p1(i.P)}%p 빨리 늘었고`,`본사 재고가 매출보다 ${p1(i.P)}%p 빨리 늘어`,`본사 재고가 매출보다 ${p1(i.P)}%p 빨리 늘었지만`],
+         nc:['본사 재고가 빠듯하고','본사 재고가 빠듯해']},
+    notes:{nm:'본사 발언', ps:'본사 할인 물량 확대 발언', ns:'본사 할인·공급 축소 발언', pn:'할인 물량 확대 발언',
+         pc:['본사가 할인 물량 확대를 언급했고','본사가 할인 물량 확대를 언급해','본사가 할인 물량 확대를 언급했지만'],
+         nc:['본사가 할인·공급 축소를 언급했고','본사가 할인·공급 축소를 언급해']},
+    fx:{nm:'환율', ps:fxS, ns:fxS, pn:`${cur} 이점`, pc:[fxC+'고',fxC+'서',fxC+'지만'], nc:[fxC+'고',fxC+'서']}
+  };
+  const P={inv:i.pt, notes:n.pt, fx:x.pt}, K=['inv','notes','fx'], O={inv:i,notes:n,fx:x};
+  const pos=K.filter(k=>P[k]>0), neg=K.filter(k=>P[k]<0), neu=K.filter(k=>P[k]===0&&!O[k].na);
+  const chain=(ks,f)=>ks.map((k,j)=>C[k][f][j<ks.length-1?0:1]).join(', ');   // 'A하고, B해서'
+  const list=ks=>ks.map((k,j)=>j<ks.length-1?jo(C[k].nm,'과','와'):jo(C[k].nm,'은','는')).join(' ');   // '본사 재고와 본사 발언은'
+  const dS=d.yoy!=null?`국내 검색 ${pctU(d.yoy)}로 약함`:'국내 검색 약함';
+  const buyS=`매입 조건 ${sg0(r.buy)}${pos.length&&r.buy>0?`(${pos.map(k=>C[k].nm).join('·')})`:''}`;
+  let head, short, say;
+  if(r.lv===2){
+    if(i.pt+n.pt<=0){   // 옛 점검표 '환율 영향이 대부분'과 같은 조건(환율 +2, 재고+발언 0)
+      head='환율 영향이 대부분'; short=[head, fxS];
+      // '보통'은 점수 0인 성분만 — 검색 +1·재고/발언 상쇄는 따로(타일·근거 카드와 같은 말)
+      const zs=[d.na||d.pt?null:'국내 검색', i.na||i.pt?null:'본사 재고', n.na||n.pt?null:'본사 발언'].filter(Boolean);
+      const zl=zs.map((t,j)=>j<zs.length-1?jo(t,'과','와'):jo(t,'은','는')).join(' '), dh=d.pt>0?`국내 검색은 감시 브랜드 중앙값보다 ${p1(d.rel)}%p 높고`:'';
+      const cl=[dh?[dh,dh]:null, zs.length?[zl+' 보통이고',zl+' 보통인데']:null,   // [중간, 끝]
+        i.pt&&n.pt?[`본사 재고와 본사 발언은 ${sgn(i.pt)}·${sgn(n.pt)}로 서로 상쇄되고`,`본사 재고와 본사 발언은 ${sgn(i.pt)}·${sgn(n.pt)}로 서로 상쇄되지만`]:null].filter(Boolean);
+      say=`${cl.map((c,j)=>c[j<cl.length-1?0:1]+', ').join('')}${fxC}서 매입 조건이 ${jo(sgn(r.buy),'이','가')} 됐습니다.`;
+    } else {
+      head=C[pos[0]].ps; short=pos.slice(0,2).map(k=>C[k].ps);
+      say=`${chain(pos,'pc')} 매입 조건이 ${jo(sgn(r.buy),'이','가')} 됐습니다.`;
+    }
+  } else if(r.lv===0){
+    if(d.pt<0){
+      head='국내 수요 약함'; short=[dS, neg.length?C[neg[0]].ns:buyS];
+      say=`네이버 검색이 감시 브랜드 중앙값보다 ${p1(d.rel)}%p 낮고, `+(r.buy>0?`매입 조건은 ${sgn(r.buy)}에 그쳐`:`매입 조건도 ${jo(sg0(r.buy),'이라','라')}`)+' 주의로 봅니다.';
+    } else {
+      head='매입 조건 불리'; short=neg.slice(0,2).map(k=>C[k].ns);
+      say=`${pos.length?C[pos[0]].pn+'에도 ':''}${chain(neg,'nc')} 매입 조건이 ${jo(sgn(r.buy),'이','가')} 됐습니다(주의 기준 −1 이하).`;
+    }
+  } else if(d.pt<0){   // 관망: 매입 조건은 좋지만 수요가 약함
+    head='매입 조건은 좋지만 수요 약함'; short=[dS, `매입 조건 ${sgn(r.buy)}`];
+    say=`매입 조건은 ${jo(sgn(r.buy),'으로','로',1)} 지금 검토 기준(+2)을 넘지만, 국내 검색이 중앙값보다 ${p1(d.rel)}%p 낮아 관망으로 봅니다.`;
+  } else {             // 관망: 수요는 괜찮고 매입 조건 0~+1
+    const off=pos.length&&neg.length;
+    const s2=off?`${neg.length>1?jo(neg.map(k=>C[k].nm).join('·'),'이','가')+' 불리해':C[neg[0]].nc[1]} ${jo(C[pos[0]].pn,'과','와')} 상쇄`:pos.length?`${pos.map(k=>C[k].nm).join('·')}만 유리`:'특이 신호 없음';
+    if(d.pt>0){
+      head='수요는 강하지만 매입 조건 부족'; short=[`국내 검색 중앙값보다 +${p1(d.rel)}%p`, s2];
+      say=`국내 검색은 감시 브랜드 중앙값보다 ${p1(d.rel)}%p 높지만 매입 조건이 ${jo(sg0(r.buy),'이라','라')} 지금 검토 기준(+2)에 못 미칩니다.`;
+    } else if(off){
+      head='유리·불리 신호가 상쇄'; short=[s2];
+      say=`${s2}되고, 매입 조건이 ${jo(sg0(r.buy),'이라','라')} 지금 검토 기준(+2)에 못 미칩니다.`;
+    } else if(pos.length){
+      head=s2; short=[s2, C[pos[0]].ps];
+      say=`${C[pos[0]].pc[2]} ${neu.length?list(neu)+' 보통이라':'다른 본사 자료가 없어'} 매입 조건이 ${sgn(r.buy)}에 그칩니다(지금 검토는 +2부터).`;
+    } else {
+      head='특이 신호 없음'; short=[head, '매입 조건 0'];
+      const ok=[d.na?'':'국내 검색', i.na?'':'본사 재고', n.na?'':'본사 발언', x.na?'':'환율'].filter(Boolean);   // 자료 있는 성분만
+      say=`${jo(ok.join('·'),'이','가')}${ok.length>1?' 모두':''} 보통 범위라 관망으로 봅니다.`;
+    }
   }
+  return {head, short:short.filter(Boolean).join(' · '), say};
+}
+/* 브랜드 행 점수 4칸(수요·재고·발언·환율) — tone p 유리 · n 불리 · z 보통 · na 자료 없음 */
+function chkCells(r){
+  return [['수요',r.dem],['재고',r.inv],['발언',r.notes],['환율',r.fx]].map(([k,o])=>({k, v:(!o||o.na)?'―':(o.pt?sgn(o.pt):'0'),
+    tone:(!o||o.na)?'na':(o.pt>0?'p':(o.pt<0?'n':'z'))}));
+}
+const chkHq=r=>r.x?nmSplit(r.x.name).main:'';   // '데커스(HOKA)' → '데커스'
+const chkCurKo=r=>CHK_CUR_NOTE[r.b.name]||((DATA.fx||{})[r.cur]||{}).name||r.cur||'통화 미지정';
+function chkFind(n){ const M=chkModel(); return M.main.concat(M.rest).find(r=>r.b.name===n)||null; }
+const krdOf=l=>String(l||'').startsWith('krd:')?(((KRD&&KRD.entities)||[]).find(e=>'krd:'+e.id===l)||null):null;   // 'krd:' 연결은 법인이 수집돼 있을 때만
+/* 브랜드 상세 모델 — 판정 안 함(rest)도 같은 틀: 근거 2장(국내 수요·원산지 통화) */
+function chkDetail(r){
+  const judged=r.lv!=null;
+  if(!judged) r={...r, inv:r.inv||{pt:0,na:1,txt:''}, notes:r.notes||{pt:0,na:1,none:1,list:[],m:0,l:0,z:0,u:0}};
+  const d=r.dem, i=r.inv, n=r.notes, x=r.fx, hq=chkHq(r), ke=krdOf(r.link), gd=String(DATA.generated_at||'').slice(0,10);
+  const base=x.basis==='avg'?'1년 평균':'1년 전', fxNm=r.cur==='JPY'?'엔(100엔)':(x.name||r.cur||''), curKo=(r.cur||CHK_CUR_NOTE[r.b.name])?chkCurKo(r):'';   // curKo '' = CHK_CUR에 없음(미지정)
+  const w=judged?chkWhy(r):{head:'판정 안 함 — 검색·환율만 참고',
+    say:((r.x?`본사 ${hq}의 재고·발언 자료가 없어`:(ke?'국내 법인만 연결돼 본사 재고·발언 자료가 없어':'본사가 비상장이거나 연결된 상장사가 없어'))+' 판정하지 않습니다.'
+      +(d.rel!=null?(p1(d.rel)==='0.0'?' 국내 검색은 감시 브랜드 중앙값과 같고':` 국내 검색은 감시 브랜드 중앙값보다 ${p1(d.rel)}%p ${d.rel>=0?'높':'낮'}고`):'')
+      +(x.na?'':`${d.rel!=null?',':''} ${jo(x.name,'은','는')} ${base}보다 ${p1(x.v)}% ${x.v<0?'쌉':'비쌉'}니다.`)).replace(/고$/,'습니다.')};
+  const sib=nvAll().filter(b=>b.group==='global'&&r.x&&b.link===r.x.ticker).map(b=>b.name);
+  const word=(o,a,b)=>o.na?'자료 없음':(o.pt>0?a:(o.pt<0?b:'보통'));
+  const tone=o=>o.na?'':(o.pt>0?'p':(o.pt<0?'n':''));
+  const today=kstMid();
+  const s8=(r.b.s||[]).slice(-8), wk=((NAVER&&NAVER.weeks)||[]).slice(-8);
+  const sparkOk=s8.length===8&&wk.length===8&&s8.every(v=>typeof v==='number'&&isFinite(v));
+  const oldInv=!i.na&&i.q===false&&!!i.end&&(today-new Date(i.end+'T00:00:00'))/86400000>270;   // 연간 결산 재고가 9개월 넘음 — 표시만, 점수 그대로(결정 D14)
+  const unc=n.list.length&&n.u===n.list.length;
+  const ev=[
+    {id:'dem', label:'국내 수요', score:d.na?'':sg0(d.pt), tone:tone(d), word:d.low?'보통(검색량 적음)':word(d,'강함','약함'),
+      value:d.yoy!=null?`네이버 검색 전년 대비 ${pctU(d.yoy)}`:'네이버 검색 자료 없음', tags:staleA(r.b.stale_since),
+      explain:d.yoy==null?'이 브랜드의 네이버 검색 자료가 없어 점수에 넣지 않았습니다.'
+        :d.low?'검색량이 적어(나이키 대비 규모 1 미만) 변동이 커서 점수에 넣지 않습니다.'
+        :d.rel==null?'비교할 중앙값이 없어 0으로 둡니다.'
+        :(p1(d.rel)==='0.0'?`감시 브랜드 중앙값(${pctU(d.med)})과 같아 보통으로 봅니다.`
+          :`감시 브랜드 중앙값(${pctU(d.med)})보다 ${p1(d.rel)}%p ${d.rel>=0?'높':'낮'}${d.pt===0?'지만 ±10%p 안이라 보통으로 봅니다.':(d.pt>0?'아 +1입니다.':'아 −1입니다.')}`)
+          +(d.trend!=null?` 최근 4주는 직전 12주보다 ${pctU(d.trend)}(계절 영향 포함).`:''),
+      spark:sparkOk?{vals:s8, wk}:null},
+    {id:'inv', label:'본사 재고', score:i.na?'':sg0(i.pt), tone:tone(i), word:word(i,'유리','불리'),
+      value:i.na?'같은 기간 재고·매출 자료 없음':`재고 압력 ${i.P>=0?'+':'−'}${p1(i.P)}%p`,
+      tags:(i.na?'':staleA(i.stale)+pendA(i.pend))+(oldInv?tagA(`결산 ${ym(i.end)} · 오래된 자료`,'연간 결산 재고가 9개월 넘게 지남 — 점수는 그대로'):''),
+      explain:i.na?'본사 재고와 같은 기간 매출이 없어 점수에 넣지 않았습니다.'
+        :`재고 ${pctU(i.inv)} vs 매출 ${pctU(i.rev)}(${i.lbl}). `+(Math.abs(i.P)<1?'재고 증가율과 매출 증가율이 거의 같습니다. ':'')
+          +(i.pt===0?'차이가 5%p 이상이어야 신호로 봅니다.':i.pt>0?'재고가 매출보다 5%p 넘게 빨리 늘어 할인·처분 물량이 나올 수 있습니다.':'재고가 매출보다 5%p 넘게 덜 늘어 처분 물량이 적을 수 있습니다.')
+          +(sib.length>1?` 본사 전체 기준(${sib.join('·')} = ${hq}).`:'')
+          +(i.pend?` 본사가 ${mdTxt(i.pend.end)} 끝난 분기 실적을 냈지만 야후 미반영 — 이전 분기 값입니다.`:'')},
+    {id:'notes', label:'본사 발언', score:n.na?'':sg0(n.pt), tone:tone(n), word:unc?'분류 전':word(n,'유리','불리'),
+      value:n.none?'발언 자료 없음':!n.list.length?'재고·할인·유통 관련 발언 없음'
+        :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
+      explain:n.none?`${hq||r.b.name} 본사 실적 자료에서 재고 처분·할인 관련 발언을 뽑지 못해(표 형식 자료·야후 수치만) 점수에 넣지 않았습니다.`
+        :!n.list.length?`${n.per||'최근 실적'} 자료에 재고·할인·유통 관련 발언이 없어 0입니다.`
+        :unc?'발언은 뽑혔지만 신호(할인 물량↑/할인·공급↓) 분류 전이라 점수에 넣지 않았습니다. 매주 공시 추출 때 분류됩니다.'
+        :`할인 물량을 늘린다는 발언 ${n.m}건, 할인·공급을 줄인다는 발언 ${n.l}건이라 ${sg0(n.pt)}입니다.${n.per?` (${n.per}${n.tag?' · '+n.tag:''})`:''}`,
+      list:(n.list||[]).map(q=>({sig:q.sig||null, topic:q.topic, ko:q.ko, quote:q.quote}))},
+    {id:'fx', label:`원산지 통화 · ${x.name||curKo||'미지정'}`, score:x.na?'':sg0(x.pt), tone:tone(x), word:word(x,'유리','불리'),
+      value:(x.na||x.rate==null)?'환율 자료 없음':`${fxNm} ${wonR(x.rate*x.mul)}원 · ${base}보다 ${p1(x.v)}% ${x.v<0?'쌈':'비쌈'}`, tags:x.na?'':staleA(x.stale),
+      explain:x.na?'원산지 통화 환율이 없어 점수에 넣지 않았습니다.'
+        :(x.basis==='avg'&&x.chg!=null?`1년 전보다${(x.chg<0)===(x.v<0)?'도':'는'} ${p1(x.chg)}% ${x.chg<0?'쌉':'비쌉'}니다. `:x.basis==='yago'?'1년 평균을 계산하지 않는 통화라 1년 전 대비로 봅니다. ':'')
+          +(x.pt===0?'±5% 안이라 0입니다.':`${Math.abs(x.v)>=10?'10':'5'}% 이상 ${x.v<0?'싸서':'비싸서'} ${sgn(x.pt)}`+((judged&&r.lv===2&&i.pt+n.pt<=0)?` — 매입 조건 ${jo(sgn(r.buy),'이','가')} 모두 환율에서 나왔습니다.`:'입니다.'))
+          +(CHK_CUR_NOTE[r.b.name]?` (${CHK_CUR_NOTE[r.b.name]})`:'')}
+  ];
+  const nx=[];
+  if(r.x&&r.x.earn_date){ const dd=new Date(r.x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
+    if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · 발표 후 재고 점수 다시 계산`, kind:'실적', go:'co:'+r.x.ticker}); }
+  if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후 미제공 — 시장 › 캘린더 참고', kind:'실적'});
+  const se=chkSaleEv(r.cur), curNm=((DATA.fx||{})[r.cur]||{}).name||r.cur||'';
+  if(se){ const e=se.e, yy=e.s.getFullYear()!==today.getFullYear();
+    nx.push({dn:se.dn, d:se.live?'진행 중':'D-'+se.dn, title:e.nm, kind:'세일', go:'mk:cal:saleList',
+      sub:se.live?`${md2(e.s)}~${md2(e.e)} · ${curNm} 지역 세일`:`${yy?ymdL(e.s):md2(e.s)}${e.k==='예상'?' 예상':''} · ${curNm} 지역 다음 세일`}); }
+  nx.sort((a,c)=>a.dn-c.dn);
+  const sameKey=r.b.news?nvAll().filter(b=>b.group==='global'&&b.news===r.b.news).map(b=>b.name):[];
+  return {name:r.b.name, lv:judged?r.lv:null, verdict:judged?CHK_LV[r.lv].t:'판정 안 함',
+    meta:`${r.x?`본사 ${hq}`:(ke?`국내 법인 ${nmSplit(ke.name).main}`:'본사 연결 없음')} · 원산지 통화 ${curKo||'미지정'}${gd?` · ${mdTxt(gd)} ${judged?'판정':'기준'}`:''}`,
+    head:w.head, say:w.say,
+    tiles:{dem:{v:d.na?'―':sg0(d.pt), cap:d.na?'검색 자료 없음':d.low?'검색량 적어 점수 제외':d.pt>0?'강함 · 중앙값보다 10%p 이상 높음':d.pt<0?'약함 · 중앙값보다 10%p 이상 낮음':'보통 · 약하지 않음'},
+           buy:!judged?{v:'―', cap:'본사 자료 없음 — 판정 안 함', ring:''}
+             :{v:sg0(r.buy), cap:r.lv===2?'지금 검토 기준 +2 충족':r.buy<=-1?'주의 기준(−1 이하)':d.pt<0?(r.buy>=2?'+2 넘지만 국내 수요 약함':'수요 약함 + 매입 +1 이하 = 주의'):`지금 검토까지 +${2-r.buy}`,
+               ring:r.buy>=2?'acc':(r.buy<=-1?'warn':'')}},
+    ev:judged?ev:[ev[0],ev[3]], next:nx,
+    news:chkNewsList(r.b,3).map(it=>({t:it.summary||it.title||'', link:it.link||'', meta:[mdTxt(it.first_seen), it.source, '★'.repeat(Math.max(1,Math.min(3,it.importance||1)))].filter(Boolean).join(' · ')})),
+    newsAll:r.b.news?{key:r.b.news, label:(sameKey.length?sameKey:[r.b.name]).join('·')}:null,
+    hqLink:r.x?{go:'co:'+r.x.ticker, title:`본사 ${hq} 기업 상세`, sub:'재무 · 지역·부문 매출'}:(ke?{go:'co:'+r.link, title:'국내 법인 상세', sub:'DART 연간 실적'}:null)};
+}
+/* 판정 배지 3종(+ 판정 안 함) — 지금 검토 = 파랑 채움 + 체크 원 · 관망 = 흰 바탕 회색 테두리 + 일시정지 원 · 주의 = 주황 + 삼각형 */
+const VB={2:['go','go','지금 검토'],1:['wait','wait','관망'],0:['warn','warn','주의']};
+const vbadge=(lv,big)=>(lv==null||!VB[lv])?`<span class="vb none${big?' lg':''}">${ic('info',big?17:15)}판정 안 함</span>`:`<span class="vb ${VB[lv][0]}${big?' lg':''}">${ic(VB[lv][1],big?17:15)}${VB[lv][2]}</span>`;
+/* 최근 8주 네이버 검색 지수 — 회색 선 + 마지막 주 파란 점(값이 다 같으면 가운데 수평선) */
+function spark8(vals,wk){
+  const W=328,H=56,PX=6,PT=8,PB=8, n=vals.length, lo=Math.min(...vals), hi=Math.max(...vals);
+  const pts=vals.map((v,i)=>[PX+i*(W-2*PX)/Math.max(1,n-1), hi===lo?(PT+(H-PT-PB)/2):(PT+(hi-v)/(hi-lo)*(H-PT-PB))]), L=pts[n-1];
+  const lbl=`최근 8주 네이버 검색 지수, ${nvWk(wk[0])} 주 ${vals[0].toFixed(1)}에서 ${nvWk(wk[n-1])} 주 ${vals[n-1].toFixed(1)}`;
+  return `<svg class="bd-spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(lbl)}"><polyline class="sl" points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}"/><circle class="sd" cx="${L[0].toFixed(1)}" cy="${L[1].toFixed(1)}" r="5"/></svg>`;
+}
+
+/* ── v33 A안 S2: 브랜드 탭(A2) — 머리(제목·판정 기준 (i)·판정 필터 4칸) + 압축 행 + 판정 안 함 접기. 필터·(i)·접기는 기록 없이 메모리만 ── */
+let BR_FILTER='all', BR_INFO=false, BR_REST=false;
+const BR_F=[['all','전체',null],['go','지금 검토',2],['wait','관망',1],['warn','주의',0]];
+const BR_NOTE={all:'점수: + 매입에 유리, − 불리, 0 보통, ― 자료 없음', go:'지금 검토 = 국내 수요가 약하지 않고 매입 조건 +2 이상',
+  wait:'관망 = 지금 검토에도 주의에도 해당하지 않음', warn:'주의 = 국내 수요가 약하고 매입 조건 +1 이하, 또는 매입 조건 −1 이하'};
+const chkMedN=()=>((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global'&&b.yoy!=null&&!b.low).length;   // chkMedian과 같은 거름(검색량 충분)
+function buildBrand(){
+  const M=chkModel(), cnt=lv=>M.main.filter(r=>r.lv===lv).length, gd=String(DATA.generated_at||'').slice(0,10);
+  paint('brHead',()=>`<div class="hd-row"><div class="hd-tt"><h1>브랜드 점검표</h1><span class="hd-sub">본사 자료가 있는 ${M.main.length}곳${gd?` · ${mdTxt(gd)} 기준`:''}</span></div>
+    <button type="button" class="icbtn" id="brInfoBtn" aria-label="판정 기준 보기" aria-expanded="${BR_INFO}" aria-controls="brInfo" onclick="brInfo()">${ic('info',22)}</button></div>
+    <div class="seg4" role="group" aria-label="판정으로 거르기">${BR_F.map(([f,l,lv])=>`<button type="button" data-filter="${f}" aria-pressed="${BR_FILTER===f}" onclick="brFilter('${f}')">${l} <span class="tn">${lv==null?M.main.length:cnt(lv)}</span></button>`).join('')}</div>`,'브랜드 점검표 머리');
+  paint('brandBody',brandBodyHtml,'브랜드 점검표');
+}
+function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머리의 단추는 그대로 두고 눌림 표시만). 스크롤은 부르는 쪽에서
+  BR_FILTER=f;
+  document.querySelectorAll('#brHead [data-filter]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.filter===f?'true':'false'));
+  paint('brandBody',brandBodyHtml,'브랜드 점검표');
+}
+function brFilter(f){ if(!own(BR_NOTE,f)) return; brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 목록 맨 위로
+function brInfo(){   // (i) 판정 기준 — 펼침만 바꿈(다시 그리지 않음). 목록을 내린 채 열면 패널이 머리 위(화면 밖)에 펼쳐지므로 머리 바로 아래로 올림
+  BR_INFO=!BR_INFO; const p=document.getElementById('brInfo'), b=document.getElementById('brInfoBtn'), hd=document.getElementById('brHead');
+  if(p) p.hidden=!BR_INFO; if(b) b.setAttribute('aria-expanded',BR_INFO?'true':'false');
+  if(BR_INFO&&p&&hd){ const d=p.getBoundingClientRect().top-hd.getBoundingClientRect().bottom-(parseFloat(getComputedStyle(hd).marginBottom)||0); if(d<0) scrollBox().scrollBy(0,d); }
+}
+function brandBodyHtml(){
+  const M=chkModel();
+  const lvOf={go:2,wait:1,warn:0}, rows=M.main.filter(r=>BR_FILTER==='all'||r.lv===lvOf[BR_FILTER]), medT=M.med!=null?pctU(M.med):'―', medN=chkMedN();
+  // 판정 기준 패널은 자료가 없어도 그림 — 머리의 (i) 단추가 늘 펼칠 것이 있게
+  let h=`<section id="brInfo" class="br-info" aria-label="판정 기준"${BR_INFO?'':' hidden'}><p class="bi-t">판정 = 국내 수요 + 매입 조건</p>
+    <p><b>국내 수요</b> 네이버 검색 전년 대비가 감시 브랜드 중앙값(${M.med!=null?`${medT}, 검색량 충분한 ${medN}곳 기준`:'자료 수집 전'})보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)</p>
+    <p><b>매입 조건</b> 본사 재고 + 본사 발언 + 환율. 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높으면 +1(처분 물량 기대), 5%p 이상 낮으면 −1. 할인 물량을 늘린다는 발언이 많으면 +1, 할인·공급을 줄인다는 발언이 많으면 −1. 원산지 통화가 1년 평균(없으면 1년 전)보다 5% 이상 싸면 +1, 10% 이상 싸면 +2, 비싸면 같은 폭으로 −1·−2</p>
+    <p><b>판정</b> 수요가 약하지 않고 매입 조건 +2 이상이면 지금 검토. 수요가 약하고 매입 조건 +1 이하이거나, 매입 조건이 −1 이하면 주의. 나머지는 관망</p>
+    <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
+  if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
+  h+=`<p class="br-fnote">${BR_NOTE[BR_FILTER]}</p>`;
+  if(!M.main.length) h+=`<p class="br-empty">판정할 브랜드 없음 — 본사 재고·발언 자료 수집 전${BR_FILTER==='all'&&M.rest.length?` · 아래 판정 안 함 ${M.rest.length}곳은 검색·환율만`:''}</p>`;
+  else h+=rows.length?`<section class="br-list" aria-label="판정 목록">${rows.map(brRowHtml).join('')}</section>`:`<p class="br-empty">이 판정에 해당하는 브랜드가 없습니다</p>`;
+  if(BR_FILTER==='all'&&M.rest.length) h+=brRestHtml(M);
+  // 맺음: 점검표 중앙값(검색량 충분한 N곳)과 시장 › 국내 네이버 카드 중앙값(전체)이 다른 이유를 밝힘 · 같은 본사를 쓰는 브랜드 묶음은 자동
+  const grp={}; nvAll().filter(b=>b.group==='global').forEach(b=>{ const r=M.main.find(o=>o.b===b); if(r&&r.x) (grp[r.x.ticker]=grp[r.x.ticker]||{hq:chkHq(r),bs:[]}).bs.push(b.name); });
+  const same=Object.values(grp).filter(g=>g.bs.length>1).map(g=>`${g.bs.join('·')} = ${g.hq}`);
+  h+=`<p class="br-foot">검색은 네이버 전년 대비, 감시 브랜드 중앙값 ${medT}(검색량 충분한 ${medN}곳). 본사 재고는 본사 전체 기준${same.length?`(${esc(same.join(', '))})`:''}.</p>`;
+  h+=`<button type="button" class="br-link" data-go="mk:map">지역별로 보기 › 소싱 지도</button>`;
   return h;
 }
-/* v33 A안: 브랜드 탭 = 옛 더보기 › 브랜드 점검표 본문 그대로(‹ 더보기 없이 탭 제목 한 줄). 줄을 누르면 지금처럼 본사 기업 상세(S2에서 브랜드 상세로) */
-function buildBrand(){
-  document.getElementById('brandList').innerHTML=`<div class="mhead"><b>🧭 브랜드 점검표</b><span class="ms">국내 수요 + 매입 조건 · 매일 갱신</span></div>`+chkHtml();
+function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄 이유 / 점수 4칸 — 누르면 브랜드 상세(이름은 data 속성: 따옴표 안전)
+  return `<button type="button" class="br-row" data-brand="${esc(r.b.name)}"><span class="br-m">
+    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}</span>${vbadge(r.lv)}</span>
+    <span class="br-why">${esc(chkWhy(r).short)}</span>
+    <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
 }
-function renderBrandDetail(name){   // v33 브랜드 상세 자리(#/brand/<이름>) — S2에서 새 화면(A3)으로 바꿈. 지금은 점검표 줄 + 본사 기업 상세 버튼
-  const el=document.getElementById('brBody'); if(!el) return;
-  const M=chkModel(), r=M.main.find(o=>o.b.name===name), q=r?null:M.rest.find(o=>o.b.name===name);
-  if(!r&&!q){ el.innerHTML='<div class="card"><div class="na">점검표에 없는 브랜드</div></div>'; return; }
-  if(r){ el.innerHTML=`<div class="card">${chkRowHtml(r,true)}<button type="button" class="nv-more" onclick="goDetail('${esc(r.x.ticker)}')">본사 기업 상세 ›</button></div>`; return; }
-  const tk=q.x?q.x.ticker:(q.link.startsWith('krd:')?q.link:'');   // 판정 안 함(본사 자료 없음) — 점검표 아래 표의 한 줄과 같은 내용
-  el.innerHTML=`<div class="card"><div class="chk-h"><span class="chk-nm">${esc(q.b.name)}${q.cur?` <span class="ref">원산지 통화 ${esc(q.cur)}</span>`:''}${q.b.low?' <span class="ref">· 검색량 적음</span>':''}</span><span class="chk-lv chk-wait">판정 안 함</span></div>
-    ${chkEv('국내 검색',q.dem)}${chkEv('환율',q.fx,CHK_CUR_NOTE[q.b.name]?` <span class="na">(${esc(CHK_CUR_NOTE[q.b.name])})</span>`:'')}
-    ${q.sale?`<div class="chk-ctx">🛍️ 다음 세일 ${esc(q.sale)}</div>`:''}
-    <div class="note">본사 재고·발언 자료가 없어 판정하지 않음 — 검색·환율만 참고</div>
-    ${tk?`<button type="button" class="nv-more" onclick="goDetail('${esc(tk)}')">${q.x?'본사 기업 상세':'국내 법인 상세'} ›</button>`:''}</div>`;
+function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로)
+  const k=M.rest.filter(r=>r.dem.pt>0).length, byCur={};
+  M.rest.forEach(r=>{ if(r.cur) (byCur[r.cur]=byCur[r.cur]||[]).push(r); });
+  const curs=Object.keys(byCur).sort((a,c)=>byCur[c].length-byCur[a].length);
+  const curTxt=curs.map((c,j)=>{ const f=chkFx(c), nm=c==='JPY'?'엔':(f.name||c);
+    return `${nm}${j?'':' 원산지'} ${byCur[c].length}곳 — ${f.na?'환율 자료 없음':`${f.basis==='avg'?'1년 평균':'1년 전'}보다 ${p1(f.v)}% ${f.v<0?'쌈':'비쌈'}`}`; }).join(' · ');
+  const rows=M.rest.map(r=>{ const d=r.dem, sub=(CHK_CUR_NOTE[r.b.name]||(r.cur?`${chkCurKo(r)} 원산지`:'원산지 통화 미지정'))+(r.b.low?' · 검색량 적음':'');
+    return `<button type="button" class="br-rest-row" data-brand="${esc(r.b.name)}"><span class="tt"><span class="t">${esc(r.b.name)}</span><span class="s">${esc(sub)}</span></span>`
+      +`<span class="y">검색 <b class="${d.pt>0?'sc-p':d.pt<0?'sc-n':'sc-tx'}">${r.b.yoy!=null?pctU(r.b.yoy):'―'}</b></span></button>`; }).join('');
+  return `<details id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
+    +`<span class="s">본사 자료가 없어 검색·환율만 참고${k?` · 검색 강함 ${k}곳`:''}</span></span>${ic('down',20,'s2')}</summary>`
+    +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
-function buildMore(){
-  const el=document.getElementById('moreBody'); if(!el) return;
-  el.innerHTML = MORE_VIEW==='peer'?moreHead(CMP.peer.icon+' '+CMP.peer.name,'연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
+/* ── v33 A안 S2: 브랜드 상세(A3) — 판정·한 문장 이유·타일 2칸 → 판단 근거 4장(판정 안 함 2장) → 다음 일정 → 최근 뉴스 → 본사 기업 상세 ── */
+function brDetailHtml(d){
+  const T=d.tiles, judged=d.lv!=null;
+  const ptB=e=>`<span class="bd-pt${e.tone?' '+e.tone:''}">${e.score!==''?`<b>${esc(e.score)}</b>`:''}${esc(e.word)}</span>`;
+  const SIGT={more:'할인 물량↑',less:'할인·공급↓',neutral:'중립'};
+  let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>
+    <h2 class="bd-head">${esc(d.head)}</h2><p class="bd-say">${esc(d.say)}</p>
+    <div class="bd-tiles"><div class="bd-tile"><span class="tl">국내 수요</span><span class="tv">${esc(T.dem.v)}</span><span class="tc">${esc(T.dem.cap)}</span></div>
+    <div class="bd-tile${T.buy.ring?' '+T.buy.ring:''}"><span class="tl">매입 조건</span><span class="tv">${esc(T.buy.v)}</span><span class="tc">${esc(T.buy.cap)}</span></div></div></section>`;
+  h+=`<section class="bd-sec" aria-labelledby="bdEvH"><h2 id="bdEvH">${judged?'판단 근거 4가지':'참고 근거 2가지'}</h2><div class="bd-evs">`;
+  d.ev.forEach(e=>{
+    h+=`<div class="bd-ev" data-ev="${e.id}"><div class="bd-ev-hd"><span class="bd-ev-l">${esc(e.label)}</span>${ptB(e)}</div><p class="bd-ev-v">${esc(e.value)}${e.tags||''}</p><p class="bd-ev-x">${esc(e.explain)}</p>`;
+    if(e.spark){ const S=e.spark; h+=`<div class="bd-sp"><span class="cap">최근 8주 검색 지수</span>${spark8(S.vals,S.wk)}<div class="ends"><span>첫 주(${nvWk(S.wk[0])}) ${S.vals[0].toFixed(1)}</span><b>마지막 주(${nvWk(S.wk[7])}) ${S.vals[7].toFixed(1)}</b></div></div>`; }
+    if(e.list&&e.list.length) h+=`<div class="bdq">${e.list.map(q=>`<div class="bdq-row"><span class="bdq-t">${esc(MGMT_TOPIC[q.topic]||q.topic||'기타')}</span><div class="bdq-b">${esc(q.ko||'')}<span class="bdq-s${q.sig==='more'||q.sig==='less'?' '+q.sig:''}">${SIGT[q.sig]||'분류 전'}</span>${q.quote?`<details><summary>원문</summary><q>${esc(q.quote)}</q></details>`:''}</div></div>`).join('')}</div>`;
+    h+=`</div>`;
+  });
+  h+=`</div></section><section class="bd-sec" aria-labelledby="bdNxH"><h2 id="bdNxH">다음 일정</h2>`;
+  h+=d.next.length?`<div class="bd-next">${d.next.map(n=>{ const inner=`<span class="d">${esc(n.d)}</span><span class="ev-tt"><span class="t">${esc(n.title)}</span><span class="s">${esc(n.sub)}</span></span><span class="kind${n.kind==='세일'?' sale':''}">${n.kind}</span>`;
+      return n.go?`<button type="button" class="bd-nx" data-go="${esc(n.go)}">${inner}</button>`:`<div class="bd-nx">${inner}</div>`; }).join('')}</div>`
+    :`<p class="bd-none">본사 실적·통화 지역 세일 일정 없음</p>`;
+  h+=`</section><section class="bd-sec" aria-labelledby="bdNwH"><h2 id="bdNwH">최근 뉴스</h2><div class="bd-nws">`;
+  h+=d.news.length?d.news.map(n=>`<a class="bd-news" href="${esc(n.link)}" target="_blank" rel="noopener"><span class="t">${esc(n.t)}</span><span class="s">${esc(n.meta)}</span></a>`).join('')
+    :`<p class="bd-none">최근 14일 중요(★2 이상) 뉴스 없음</p>`;
+  if(d.newsAll) h+=`<button type="button" class="bd-link" data-go="news:k:${esc(d.newsAll.key)}"><span class="tt"><span class="t">${esc(d.newsAll.label)} 뉴스 모두 보기</span><span class="s">시장 › 뉴스</span></span>${ic('right',20,'s2 chev')}</button>`;
+  h+=`</div></section>`;
+  if(d.hqLink) h+=`<button type="button" class="bd-hq" data-go="${esc(d.hqLink.go)}"><span class="tt"><span class="t">${esc(d.hqLink.title)}</span><span class="s">${esc(d.hqLink.sub)}</span></span>${ic('right',20,'s2 chev')}</button>`;
+  return h+`</div>`;
+}
+function renderBrandDetail(name){   // #/brand/<이름> — 판정 9곳·판정 안 함 21곳 모두 같은 틀
+  const r=chkFind(name);
+  paint('brDetBody',()=>r?brDetailHtml(chkDetail(r)):`<p class="br-empty">점검표에 없는 브랜드</p>`,'브랜드 상세');
+}
+function buildMore(){   // v33 S2: 메뉴 화면은 A안 칸(.av — 흰 바탕), 하위 화면은 옛 칸 그대로(S3에서 정리). 그리다 실패하면 머리 + 안내만(옛 화면이 남지 않게)
+  const el=document.getElementById('moreBody'), pn=document.getElementById('p-more'); if(!el) return;
+  if(pn) pn.classList.toggle('av',!MORE_VIEW);
+  const head=()=>moreHead(MORE_NAME[MORE_VIEW]||'더보기','');
+  paint('moreBody',()=>MORE_VIEW==='peer'?moreHead('유통사 비교','수입 브랜드 유통사 재무 지표 · 연간 · DART 감사보고서(별도) · '+fiRows().length+'곳')+finCardHtml()
     : (MORE_VIEW==='fb'||MORE_VIEW==='ey')?moreFashionHtml()
     : MORE_VIEW==='fx'?moreFxHtml()
     : MORE_VIEW==='cb'?moreCbHtml()
-    : MORE_VIEW==='status'?moreHead('⚙️ 수집 상태','열람 시점 기준 지연 판정')+statusCard()+claudeCard()
-    : moreMenuHtml();
+    : MORE_VIEW==='status'?moreHead('수집 상태','열람 시점 기준 지연 판정 · 화면 갱신 '+esc(DATA.generated_at||'―')+' · 출처 Yahoo·SEC·DART·KOSIS')+statusCard()+claudeCard()
+    : moreMenuHtml(),'더보기',MORE_VIEW?head:()=>`<div class="phead"><h1>더보기</h1></div><nav class="mmenu" aria-label="더보기 화면">${themeRowHtml()}</nav>`);
 }
 function moreOpen(v){ if(v==null) goBack({tab:'more'}); else goMore(v); }   // v33 메뉴 줄 · '‹ 뒤로'(바로 전 화면, 없으면 메뉴)
 function goMore(v){ go(v==='check'?{tab:'brand'}:{tab:'more',view:v}); }   // v33 기록 1개(sw+moreOpen 따로 부르지 않음). 옛 'check' = 브랜드 탭, 'ey' = 'fb'
@@ -2911,6 +3432,7 @@ const backLbl=(st,parent)=>(st&&st.depth>0&&st.from)?st.from:parent;   // 바로
 const scrKey=r=>[r.tab,r.tab==='market'?r.chip:'',r.view||'',r.id||''].join('|');   // 같은 화면인지(스크롤·패널 제외)
 function go(r,opt){   // 화면 이동 하나 = 기록(push/replace) + 그리기
   opt=opt||{};
+  if(BACK_REQ&&Date.now()-BACK_REQ<1500){ goAfterBack(r,opt); return; }   // v33 S2: 뒤로가 아직 도착 전이면 도착 뒤 이어서(누른 이동이 사라지지 않게)
   const st=normRoute(r), cur=history.state||{}, same=scrKey(st)===scrKey(ROUTE);
   const sheet=SRC_SHEET||LAST_SHEET||null, shY=SRC_SHEET?sheetScrollY():(LAST_SHEET?LAST_SHEET_Y:0); LAST_SHEET=null;
   if(opt.replace||(same&&!SRC_SHEET)){   // 시장 칩 전환·같은 주소 다시 들어오기 = 바꿔 끼움
@@ -2926,7 +3448,8 @@ function go(r,opt){   // 화면 이동 하나 = 기록(push/replace) + 그리기
 }
 /* history.back()은 popstate가 올 때까지(보통 수십 ms) 기록이 그대로 — 그사이 '◂ 뒤로'를 한 번 더 누르면 두 화면 뒤로 감.
    우리가 부른 뒤로가 아직 도착하지 않았으면 이번 누름은 무시(popstate가 안 오면 1.5초 뒤 풀림). want = 도착해야 할 화면(칩으로 뒤로 간 경우) */
-let BACK_REQ=0, BACK_WANT=null;
+let BACK_REQ=0, BACK_WANT=null, GO_NEXT=null;
+function goAfterBack(r,opt){ GO_NEXT=[r,opt]; setTimeout(()=>{ if(GO_NEXT&&!(BACK_REQ&&Date.now()-BACK_REQ<1500)){ const [a,o]=GO_NEXT; GO_NEXT=null; go(a,o); } },1600); }   // popstate가 끝내 안 오면 1.6초 뒤 실행
 function histBack(want){
   if(BACK_REQ&&Date.now()-BACK_REQ<1500) return true;
   BACK_REQ=Date.now(); BACK_WANT=want||null;
@@ -2937,28 +3460,52 @@ function goBack(parent){   // 화면 '◂ 뒤로' = 휴대폰 뒤로. 주소로 
   if(s&&s.depth>0&&histBack()) return;
   go(parent,{replace:true});
 }
-function render(st,restore){   // st = 기록에 든 화면 상태 · restore = 뒤로·앞으로 왔을 때(스크롤·패널 복원)
+function render(st,restore,init){   // st = 기록에 든 화면 상태 · restore = 뒤로·앞으로 왔을 때(스크롤·패널 복원) · init = navInit
   ROUTE=st;
   closeSheetRaw();
   const root=st.tab==='market'?!st.id:(st.tab==='today'||(!st.id&&!st.view));   // 탭 첫 화면이면 aria-current=page, 그 아래 화면이면 true
   document.querySelectorAll('nav.tabs .tab').forEach(b=>{ const on=b.dataset.p===st.tab; b.classList.toggle('on',on);   // 하단 탭 강조 = 화면의 집(기업 상세 → 시장)
     if(on) b.setAttribute('aria-current',root?'page':'true'); else b.removeAttribute('aria-current'); });
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id==='p-'+st.tab));
-  if(st.tab==='brand') renderBrand(st);
+  if(st.tab==='today') safe(buildToday,'오늘','p-today');   // v33 S2: 오늘은 열 때마다 다시 그림(지연 판정·D-day는 열람 시점, 몇 ms)
+  else if(st.tab==='brand') renderBrand(st);
   else if(st.tab==='market') renderMarket(st);
   else if(st.tab==='more') renderMore(st);
-  scrollBox().scrollTo(0,restore?(st.scroll||0):0);
+  scrollSet(restore?(st.scroll||0):0,init&&!restore);
   if(restore&&st.sheet){ openSheet(st.sheet,true); sheetScrollTo(st.sheetY); }   // 패널에서 기업을 열었다 돌아오면 같은 패널을 같은 자리로 다시
+  phSoon();
 }
+/* v33 S2: 화면을 바꾼 뒤 스크롤 — 부드러운 스크롤(focusCard·탭 다시 누름)이 도는 중에 화면이 바뀌면 남은 한 걸음이 복원 위치를 밀어냄(예: 300 → 335).
+   다음 프레임에 한 번 더 맞춤. focusCard는 새로 부드럽게 스크롤하기 전에 이 예약을 취소. lazy(처음 열 때, 이미 0) = 스크립트 안 레이아웃 강제 없이 다음 프레임 확인만 */
+let SCROLL_RAF=0;
+function scrollSet(y,lazy){
+  const b=scrollBox(); if(!lazy) b.scrollTo(0,y); cancelAnimationFrame(SCROLL_RAF);
+  SCROLL_RAF=requestAnimationFrame(()=>{ SCROLL_RAF=0; if(Math.abs(b.scrollTop-y)>1) b.scrollTo(0,y); });
+}
+/* v33 S2: #content scroll-padding-top = 보이는 고정 머리(.phead) 높이 + 8px — 키보드 초점·scrollIntoView가 머리 밑에 숨지 않게.
+   화면을 바꾼 다음 프레임·머리 크기가 바뀔 때 잼. 시장 칩 줄은 제외(시장 카드는 scroll-margin-top 52px) */
+let PH_RAF=0;
+function phSync(){
+  if(PH_RAF){ cancelAnimationFrame(PH_RAF); PH_RAF=0; } const c=scrollBox(); if(!c) return; let h=0;
+  document.querySelectorAll('.pane.on .phead').forEach(e=>{ h=Math.max(h,e.offsetHeight); });
+  const v=h?(h+8)+'px':''; if(c.style.scrollPaddingTop!==v) c.style.scrollPaddingTop=v;
+}
+function phSoon(){ if(!PH_RAF) PH_RAF=requestAnimationFrame(phSync); }
+try{ const ro=new ResizeObserver(phSoon); ['tdHead','brHead'].forEach(id=>{ const e=document.getElementById(id); if(e) ro.observe(e); }); }catch(e){}
+window.addEventListener('resize',phSoon);
 function renderBrand(st){
   const d=!!st.id, bl=document.getElementById('brandList'), bd=document.getElementById('brandDetail');
   if(bl) bl.style.display=d?'none':''; if(bd) bd.style.display=d?'':'none';
   if(!d) return;
-  if(BR_SHOWN!==st.id){ BR_SHOWN=st.id; safe(()=>{ document.getElementById('brBody').innerHTML=''; renderBrandDetail(st.id); },'브랜드 상세','brBody'); }
-  setText('brBack','◂ '+backLbl(st,'점검표'));
+  if(BR_SHOWN!==st.id){ BR_SHOWN=st.id; setText('brTitle',st.id); renderBrandDetail(st.id); }   // 목록(필터·펼침·스크롤)은 그대로 두고 상세만 그림
+  backLabel('brBack','brBackLbl',backLbl(st,'점검표'));
+}
+function backLabel(btn,span,lb){   // v33 S2: 상세 머리 '‹ 바로 전 화면' 글자 + 화면 읽기 이름('…로 돌아가기')
+  setText(span,lb); const b=document.getElementById(btn); if(b) b.setAttribute('aria-label',jo(lb,'으로','로',1)+' 돌아가기');
 }
 function renderMarket(st){
   MK_CHIP=st.chip;
+  { const pm=document.getElementById('p-market'); if(pm) pm.classList.toggle('det',st.chip==='co'&&!!st.id); }   // v33 S2: 기업 상세 = 칩 줄 대신 상세 머리
   document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ const on=b.dataset.c===st.chip; b.classList.toggle('on',on); b.setAttribute('aria-selected',on?'true':'false'); });
   document.querySelectorAll('#p-market .mk').forEach(x=>x.classList.toggle('on',x.id==='mk-'+st.chip));
   if(st.chip==='news'){   // 뉴스는 칩이 처음 보일 때 한 번만 그림(v32.11) — 필터가 바뀌어 온 경우만 다시
@@ -2970,14 +3517,15 @@ function renderMarket(st){
   else if(st.chip==='co'){
     if(!st.id){ showCoList(); return; }
     document.getElementById('coList').style.display='none'; document.getElementById('coDetail').style.display='';
-    if(DET_SHOWN!==st.id){ DET_SHOWN=st.id; safe(()=>{ document.getElementById('detBody').innerHTML=''; renderDetail(st.id); },'기업 상세','detBody'); }
-    setText('coBack','◂ '+backLbl(st,'기업 목록'));
+    if(DET_SHOWN!==st.id){ DET_SHOWN=st.id; setText('coTitle',coName(st.id)); safe(()=>{ document.getElementById('detBody').innerHTML=''; renderDetail(st.id); },'기업 상세','detBody'); }
+    backLabel('coBack','coBackLbl',backLbl(st,'기업 목록'));
   }
 }
 function renderMore(st){
   const v=st.view||null;
   if(MORE_SHOWN!==v){ MORE_SHOWN=v; MORE_VIEW=v; safe(buildMore,'더보기','moreBody'); }
-  document.querySelectorAll('#moreBody .mback').forEach(b=>{ b.textContent='‹ '+backLbl(st,'더보기'); });
+  const lb=backLbl(st,'더보기');
+  document.querySelectorAll('#moreBody .mback').forEach(b=>{ const t=b.querySelector('.hd-bl'); if(t) t.textContent=lb; b.setAttribute('aria-label',jo(lb,'으로','로',1)+' 돌아가기'); });
 }
 function onHistory(){   // 뒤로·앞으로(popstate)·주소창에서 해시를 바꾼 경우(hashchange)
   const want=(BACK_REQ&&Date.now()-BACK_REQ<1500)?BACK_WANT:null; BACK_REQ=0; BACK_WANT=null;   // 우리가 부른 뒤로가 도착 — 다시 누를 수 있음
@@ -2991,6 +3539,7 @@ function onHistory(){   // 뒤로·앞으로(popstate)·주소창에서 해시�
     else if(st.scroll!=null) scrollBox().scrollTo(0,st.scroll);   // 같은 화면 기록이 이어진 드문 경우라도 그 기록의 스크롤로
   } else render(st,true);
   if(want&&scrKey(ROUTE)!==scrKey(want)) go(want,{replace:ROUTE.tab==='market'});   // 칩으로 뒤로 갔는데 다른 화면에 닿으면(앞으로 가기 뒤 등) 그 칩으로
+  if(GO_NEXT){ const [a,o]=GO_NEXT; GO_NEXT=null; go(a,o); }   // v33 S2: 뒤로 도착 전에 누른 이동
 }
 window.addEventListener('popstate',onHistory);
 window.addEventListener('hashchange',()=>{ if(scrKey(routeOfHash(location.hash))!==scrKey(ROUTE)) onHistory(); });
@@ -3018,6 +3567,8 @@ function focusCard(id){   // 그 화면으로 간 뒤(칩 그리기 끝난 다�
   const el=document.getElementById(id);
   if(!el){ console.warn('focusCard: 카드가 그려지지 않음 — '+id); return; }
   const box=el.closest('.card')||el;
+  cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0;   // 방금 화면을 바꾼 render의 '한 번 더 맞춤'이 이 스크롤을 끊지 않게
+  phSync();   // 방금 바꾼 화면의 머리 높이로 scroll-padding 먼저(다음 프레임 예약을 기다리면 전 화면 값으로 스크롤)
   box.scrollIntoView({behavior:'smooth',block:'start'});
   box.classList.add('flash'); setTimeout(()=>box.classList.remove('flash'),1600);
 }
@@ -3041,16 +3592,39 @@ function navInit(){   // 처음 열 때 주소 해석(모르는 값은 부모로
   const hs=history.state, hr=hs&&hs.tab?normRoute(hs):null;
   if(hr&&scrKey(hr)===scrKey(st)) st=withMeta(hr,hs);
   hRep(st,hashOf(st));
-  render(st,false);
+  render(st,false,true);
   if(st.sheet){ openSheet(st.sheet,true); if(!SRC_SHEET) hRep({...st,sheet:null}); }
 }
-/* v33 부팅 보호 — 한 영역이 실패해도 나머지는 그리고, 그 자리에 한 줄 남김 */
+/* v33 부팅 보호 — 한 영역이 실패해도 나머지는 그리고, 그 자리에 한 줄 남김(같은 영역이 다시 실패해도 줄이 쌓이지 않음) */
+const bootErr=name=>`<div class="note boot-err" data-n="${esc(name)}">${ic('alert',16)} 이 영역을 그리지 못했습니다(콘솔 참고) — ${esc(name)}</div>`;
 function safe(fn,name,box){
   try{ return fn(); }catch(e){
     console.error('['+name+'] 그리기 실패:',e);
-    const el=box&&document.getElementById(box);
-    if(el) el.insertAdjacentHTML('afterbegin',`<div class="note boot-err">⚠️ 이 영역을 그리지 못했습니다(콘솔 참고) — ${esc(name)}</div>`);
+    const el=box&&document.getElementById(box); if(!el) return;
+    [...el.querySelectorAll('.boot-err')].forEach(n=>{ if(n.dataset.n===name) n.remove(); });
+    el.insertAdjacentHTML('afterbegin',bootErr(name));
   }
+}
+/* v33 S2: 칸 하나를 통째로 다시 그림 — 실패하면 옛 내용 대신 안내 한 줄(keep = 그래도 남길 머리, 예: 더보기 하위 화면의 뒤로 단추) */
+const PANE_OF={tdHead:'p-today',todayCard:'p-today',brHead:'p-brand',brandBody:'p-brand',brDetBody:'p-brand',moreBody:'p-more'};
+function paint(id,fn,name,keep){
+  const el=document.getElementById(id);
+  if(!el){ safe(()=>{ throw new Error('#'+id+' 칸 없음'); },name,PANE_OF[id]); return false; }   // 칸이 빠졌으면 그 탭에 안내 한 줄(나머지 화면은 그대로)
+  try{ el.innerHTML=fn(); return true; }
+  catch(e){ console.error('['+name+'] 그리기 실패:',e); let k=''; try{ k=keep?keep():''; }catch(_){}
+    el.innerHTML=k+bootErr(name); return false; }
+}
+/* v33 S2: 새 화면 단추의 목적지(data-go) — 'today' · 'brand' · 'brand-all'(필터 '전체'로) · 'brand:<이름>' · 'co:<티커>' · 'more' · 'more:<화면>' · 'news:<필터>' · 'mk:<칩>' · 'mk:<칩>:<카드 id>' */
+function goKey(k){
+  k=String(k||'');
+  if(k==='today'||k==='brand'||k==='more') return go({tab:k});
+  if(k==='brand-all'){ if(BR_FILTER!=='all') brSetFilter('all'); return go({tab:'brand'}); }   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
+  if(k.startsWith('brand:')) return openBrand(k.slice(6));
+  if(k.startsWith('co:')) return goDetail(k.slice(3));
+  if(k.startsWith('more:')) return goMore(k.slice(5));
+  if(k.startsWith('news:')) return goNews(k.slice(5));
+  if(k.startsWith('mk:')){ const [c,f]=k.slice(3).split(':'); if(f&&own(CARD_HOME,f)) return focusCard(f); return go({tab:'market',chip:c}); }
+  console.warn('goKey: 모르는 목적지 '+k);
 }
 document.querySelectorAll('nav.tabs .tab').forEach(b=>{ b.onclick=()=>tabTap(b.dataset.p); });
 document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip(b.dataset.c); });
@@ -3060,6 +3634,10 @@ document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip
 document.addEventListener('click',e=>{
   const p=e.target.closest('.pname')||e.target.closest('.bar-row .lb');
   if(p){ p.classList.toggle('open'); return; }
+  const br=e.target.closest('[data-brand]');   // v33 S2: 브랜드 행·판정 안 함 행·국내 네이버 수입·해외 줄 → 브랜드 상세(이름은 data 속성 — 따옴표 안전)
+  if(br){ e.preventDefault(); openBrand(br.dataset.brand); return; }
+  const g=e.target.closest('[data-go]');   // v33 S2: 새 화면 단추(오늘 카드·브랜드 탭·브랜드 상세·더보기 메뉴) → goKey
+  if(g){ e.preventDefault(); goKey(g.dataset.go); return; }
   const r=e.target.closest('tr.mrow');
   if(r){
     r.classList.toggle('open');
@@ -3068,10 +3646,10 @@ document.addEventListener('click',e=>{
   }
 });
 
-{ const g=document.getElementById('gen'); if(g) g.textContent='갱신: '+DATA.generated_at+' · Yahoo·SEC·DART·KOSIS'; }
-safe(buildToday,'오늘','p-today'); safe(buildSig,'실적·재고','mk-sig'); safe(buildMap,'소싱 지도','mk-map');
+// v33 S2: 옛 머리의 갱신 문구(#gen)는 오늘 머리 단추·맺음 줄로, 출처(Yahoo·SEC·DART·KOSIS)는 더보기 › 수집 상태 부제로. 오늘은 화면을 열 때 그림(render)
+safe(buildSig,'실적·재고','mk-sig'); safe(buildMap,'소싱 지도','mk-map');
 safe(buildCoChips,'기업 칩','mk-co'); safe(buildCo,'기업 표','mk-co'); safe(buildCal,'캘린더','mk-cal');
-safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildKR,'국내','mk-kr'); safe(buildBrand,'브랜드 점검표','brandList'); safe(buildMore,'더보기','moreBody');
+safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildKR,'국내','mk-kr'); safe(buildBrand,'브랜드 점검표','brandBody'); safe(buildMore,'더보기','moreBody');
 safe(navInit,'이동 경로','content');   // 뉴스·의류 소매 그래프는 그 칩이 처음 보일 때(v32.11·v33)
 </script>
 </body>
