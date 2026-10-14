@@ -2,8 +2,9 @@
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
 v2.12: (대표 승인 2026-10-14 '추천대로') 지난 뉴스 검색용 1년 보관 — 선별한 기사를 docs/news_archive.json에 365일 쌓음
-      (같은 제목 재수집은 최신 1건, 한 줄에 기사 1건). 파일이 없거나 복구가 덜 끝났으면 news.json의 git 기록(8/31~)에서 되살림.
-      news.json status.archive에 건수·시작일(수집 상태·검색창 안내). 보관 저장이 실패해도 news.json은 저장하고 실패 표시
+      (같은 제목·같은 브랜드/산업으로 다시 잡힌 기사는 최신 1건 + 별점은 그중 가장 높은 것, 한 줄에 기사 1건). 파일이 없거나 복구가
+      덜 끝났으면 news.json의 git 기록(8/31~)에서 되살림. news.json status.archive에 건수·시작일(일부만 복구면 partial — 수집 상태 표시).
+      보관 저장이 실패해도 news.json은 저장하고 실패 표시
 v2.11: (대표 승인 2026-10-13 — Claude API 비용 연 $20 이하 목표) 비교 선별 모델을 Haiku 5.5(effort low)로 바꿔 10/21까지
       본 선별(Sonnet 4.6)과 같은 헤드라인을 따로 골라 model_compare에 기록(화면·본 선별은 그대로) → 결과 보고 뒤 전환 결정.
       Haiku 5.5 가격($0.10/$0.50, 10만 토큰 넘는 요청은 $0.50/$2.50) 추가, 비교 선별만 생각(thinking) 토큰 몫으로 max_tokens 12000
@@ -211,8 +212,8 @@ NEWS_PATH = "docs/news.json"
 # v2.12 지난 뉴스 검색용 1년 보관 — 선별 기사만(거른 기사 없음), 수집일(first_seen) 기준 365일
 ARCHIVE_PATH = "docs/news_archive.json"
 ARCHIVE_DAYS = 365
-ARCH_KEYS = ("id", "scope", "key", "label", "group", "category", "summary", "importance",
-             "title", "link", "source", "pubDate", "first_seen")
+ARCH_KEYS = ("id", "scope", "key", "label", "group", "summary", "importance",
+             "title", "link", "source", "pubDate", "first_seen")   # 화면이 쓰는 칸만(category는 안 씀)
 
 # 선별 모델. SHADOW_MODEL은 SHADOW_UNTIL(KST, 포함)까지 같은 헤드라인을 따로 선별해 비교 기록만 남김
 MODEL = "claude-sonnet-4-6"
@@ -501,16 +502,20 @@ def compare_models(new_items, picked, usage, today, recent=()):
 
 # ── v2.12 지난 뉴스 1년 보관(docs/news_archive.json) — 대시보드 시장 › 뉴스 검색창이 검색할 때만 내려받음 ──
 def _arch_item(it):
-    """보관용 기사 1건(news.json 기사와 같은 칸) — id·제목·주소·수집일이 없거나 깨진 것은 None"""
+    """보관용 기사 1건(news.json 기사의 화면용 칸) — id·제목·주소·수집일이 없거나 깨진 것은 None"""
     if not isinstance(it, dict):
         return None
     iid, title, link, fs = it.get("id"), it.get("title"), it.get("link"), it.get("first_seen")
     if not (isinstance(iid, str) and iid and isinstance(title, str) and title.strip() and isinstance(link, str)
-            and link and isinstance(fs, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", fs)):
+            and link and isinstance(fs, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", fs)):
+        return None
+    try:
+        datetime.date.fromisoformat(fs)
+    except ValueError:
         return None
     try:
         imp = min(3, max(1, int(it.get("importance") or 1)))
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         imp = 1
     a = {k: ("" if it.get(k) is None else str(it.get(k))) for k in ARCH_KEYS}
     a["importance"] = imp
@@ -551,7 +556,11 @@ def backfill_git(today):
         except Exception:
             bad += 1
             continue
-        for it in (d.get("items") or []) if isinstance(d, dict) else []:
+        items = d.get("items") if isinstance(d, dict) else None
+        if not isinstance(items, list):
+            bad += 1
+            continue
+        for it in items:
             a = _arch_item(it)
             if a:
                 found[a["id"]] = a
@@ -560,23 +569,43 @@ def backfill_git(today):
 
 
 def merge_archive(base, add, today):
-    """보관 기사 합치기 — 같은 id는 add(이번 news.json 보관분)가 덮음 · 수집일 365일 넘은 것은 뺌 ·
-    같은 제목(구글 뉴스가 며칠 뒤 다시 내보낸 같은 기사)은 최신 1건 → 최신순(수집일·중요도) 목록"""
+    """보관 기사 합치기 — 같은 id는 add(이번 news.json 보관분)가 덮음(별점은 둘 중 높은 것) · 수집일 365일 넘은 것은 뺌 ·
+    같은 제목 + 같은 구분(scope·key — 구글 뉴스가 며칠 뒤 다시 내보낸 같은 기사)은 최신 1건, 별점은 그중 가장 높은 것.
+    다른 브랜드·산업으로 잡힌 같은 제목은 따로 둠(칩 안에서도 찾게 — 화면이 검색할 때 1건으로 보여 줌) → 최신순(수집일·중요도)"""
     by = {}
     for it in list(base) + list(add):
         a = _arch_item(it)
         if a:
+            p = by.get(a["id"])
+            if p and p["importance"] > a["importance"]:
+                a["importance"] = p["importance"]
             by[a["id"]] = a
     cut = (today - datetime.timedelta(days=ARCHIVE_DAYS)).isoformat()
     rows = sorted((a for a in by.values() if a["first_seen"] >= cut),
                   key=lambda a: (a["first_seen"], a["importance"], a["id"]), reverse=True)
-    out, seen = [], set()
+    out, keep = [], {}
     for a in rows:
         tk = title_key(a["title"])
-        if tk and tk in seen:
+        g = (tk, a["scope"], a["key"]) if tk else None
+        if g in keep:
+            keep[g]["importance"] = max(keep[g]["importance"], a["importance"])
             continue
-        seen.add(tk)
+        if g:
+            keep[g] = a
         out.append(a)
+    out.sort(key=lambda a: (a["first_seen"], a["importance"], a["id"]), reverse=True)   # 별점을 올린 뒤 다시 정렬(다음 실행과 순서 같게)
+    return out
+
+
+def _backfill_info(b):
+    """복구 기록 — 알려진 칸·형식만(이전 파일의 이상한 값이 그대로 다시 쓰이지 않게)"""
+    b = b if isinstance(b, dict) else {}
+    out = {"done": b.get("done") is True}
+    for k in ("versions", "bad"):
+        v = b.get(k)
+        out[k] = v if isinstance(v, int) and not isinstance(v, bool) and v >= 0 else 0
+    at = b.get("at")
+    out["at"] = at if isinstance(at, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", at) else None
     return out
 
 
@@ -585,14 +614,15 @@ def save_archive(items, backfill, today):
     다 만든 뒤 JSON 확인 → 임시 파일 → 바꿔치기(중간에 멈춰도 옛 파일 그대로)"""
     meta = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "today": today.isoformat(),
             "keep_days": ARCHIVE_DAYS, "n": len(items), "since": items[-1]["first_seen"] if items else None,
-            "backfill": backfill}
-    head = json.dumps(meta, ensure_ascii=False, separators=(",", ":"))
-    body = ",\n".join(json.dumps(a, ensure_ascii=False, separators=(",", ":")) for a in items)
+            "backfill": _backfill_info(backfill)}
+    dump = lambda o: json.dumps(o, ensure_ascii=False, separators=(",", ":"), allow_nan=False)   # NaN은 브라우저가 못 읽음
+    head = dump(meta)
+    body = ",\n".join(dump(a) for a in items)
     txt = head[:-1] + ',\n"items":[\n' + body + "\n]}\n"
     json.loads(txt)
     tmp = ARCHIVE_PATH + ".tmp"
     with open(tmp, "wb") as f:
-        f.write(txt.encode("utf-8"))
+        f.write(txt.encode("utf-8", "replace"))   # 짝 없는 대리 문자(깨진 글자)는 '?'로
     os.replace(tmp, ARCHIVE_PATH)
     return meta
 
@@ -609,9 +639,11 @@ def update_archive(kept, today):
         items = merge_archive(base, kept, today)
         meta = save_archive(items, bf, today)
         print(f"saved {ARCHIVE_PATH} (보관 {meta['n']}건 · {meta['since'] or '―'}부터)", flush=True)
+        res = {"ok": True, "n": meta["n"], "since": meta["since"]}
         if not bf.get("done"):
+            res["partial"] = True   # 수집 상태에 '일부만 복구' 표시(빨간 X·점검 알림과 맞춤)
             soft_fail("뉴스 보관 파일을 git 기록 일부로 만듦 — 지난 기사가 빠졌을 수 있음(다음 실행에서 다시 복구)")
-        return {"ok": True, "n": meta["n"], "since": meta["since"]}
+        return res
     except Exception as e:
         soft_fail(f"뉴스 보관 파일 저장 실패 — {type(e).__name__}: {str(e)[:120]}")
         return {"ok": False}
@@ -722,7 +754,7 @@ def main():
            "today": today.isoformat(),
            "items": kept, "seen_ids": seen_list, "seen_titles": seen_titles, "seen_since": since,
            # v2.9 이번 실행 수집 결과(수집 상태·점검용): 검색어 수·실패 수·받은 헤드라인·신규·선별 결과(ok/failed/none)
-           # v2.12 archive = 1년 보관 {ok, n(건수), since(가장 오래된 수집일)} — 검색창 안내·수집 상태
+           # v2.12 archive = 1년 보관 {ok, n(건수), since(가장 오래된 수집일), partial(git 기록 일부로 만듦)} — 검색창 안내·수집 상태
            "status": {"queries": st["queries"], "failed_queries": nfail, "headlines": st["headlines"],
                       "new": len(new_items), "curate": curate, "archive": arch}}
     if compare:

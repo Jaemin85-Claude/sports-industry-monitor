@@ -2,9 +2,10 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.1: (대표 승인 2026-10-14 '추천대로') 시장 › 뉴스 맨 위 지난 뉴스 검색창 — 요약·원문 제목·브랜드·매체에서 찾음(띄어 쓴 낱말은 모두 들어간 기사,
-       대소문자·악센트 무시). 최근 기사는 바로, 1년 보관(news_archive.json, news_monitor v2.12)은 검색창을 누를 때 한 번 내려받아 합침(같은 제목은 1건).
-       결과 = 최신순·월별 30건씩, 찾은 낱말 강조, 고른 칩(구분) 안에서, 맨 아래 'Google 뉴스에서 더 찾기'. 검색어는 화면 기록에(뒤로 오면 그대로).
-       수집 상태 뉴스 줄에 보관 건수(저장 실패면 일부 실패)
+       대소문자·악센트 무시). 최근 기사는 바로, 1년 보관(news_archive.json, news_monitor v2.12)은 검색창을 처음 누를 때 한 번 내려받아 나눠 합침.
+       결과 = 최신순·월별 30건씩(같은 제목은 1건 — 별점은 그중 가장 높은 것), 찾은 낱말 강조, 고른 칩(구분) 안에서, 맨 아래 'Google 뉴스에서 더 찾기'.
+       검색어·펼친 수는 화면 기록에(뒤로·새로고침에도 그대로), 한글 조합 중 0건은 깜빡이지 않게. 기사 날짜 형식기는 한 번만 만듦(뉴스 목록도 빨라짐).
+       수집 상태 뉴스 줄에 보관 건수(저장 실패·일부만 복구면 일부 실패)
 v33: (대표 승인 2026-10-12 'A안 · 오늘의 결정') 하단 탭 6개 → 4개(오늘·브랜드·시장·더보기). 오늘 = 수집 지연 띠 + 결정 카드 4장(① 매입 검토 ② 환율 타이밍
      ③ 다가오는 일정 ④ 오늘 중요 뉴스) + 트렉시 위치 + 갱신·수집 상태·이번 달 Claude 사용액. 브랜드 = 점검표 탭(판정 필터·한 줄 이유·점수 4칸·판정 기준(i)·
      판정 안 함 접기) + 브랜드 상세(판정 이유·근거 4장·최근 8주 검색·다음 일정·뉴스·본사 기업 상세). 시장 = 칩 6개(뉴스 · 캘린더 · 실적·재고 · 기업 · 국내 ·
@@ -903,7 +904,7 @@ div.bd-nx{cursor:default}
     <div class="chips" id="newsChips"></div>
     <div id="newsBody"></div>
     <div class="note">매일 03:17 수집 · 최근 14일 보관(국내 유통사 90일) · ★=중요도 · 기본 보기는 그날 수집 전체 + 최근 7일 ★3(칩으로 거르면 전체) · 날짜 머리글 = 수집일, 기사 줄 날짜 = 게재일<br>
-    검색창 = 요약·원문 제목·브랜드·매체에서 지난 1년 선별 기사까지 찾음(누를 때 보관 파일을 한 번 받음 · 고른 칩 안에서) · 실제 기사 헤드라인 기반 선별 · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
+    검색창 = 요약·원문 제목·브랜드·매체에서 지난 1년 선별 기사까지 찾음(검색창을 처음 누르면 지난 기사를 한 번 내려받음 · 고른 칩 안에서) · 실제 기사 헤드라인 기반 선별 · 관세·환율·정책 뉴스는 제외 · 헤드라인을 누르면 원문</div>
   </div>
 
   <div class="mk" id="mk-cal">
@@ -2379,50 +2380,73 @@ function buildNewsChips(){
   });
 }
 function setNewsFilter(f){   // v33 S2: 고른 필터를 지금 기록(nf)에도 저장 — 새로고침·앞으로 가기에서 풀었던 'k:' 필터가 다시 걸리지 않게(기록 수는 그대로)
-  newsFilter=f; NS_SHOW=NS_PAGE; buildNewsChips(); buildNews();
-  const s=history.state; if(s&&s.tab==='market'&&s.chip==='news') hRep({...s,nf:f});
+  newsFilter=f; NS_SHOW=NS_PAGE; buildNewsChips(); safe(buildNews,'뉴스','mk-news');
+  const s=history.state; if(s&&s.tab==='market'&&s.chip==='news') hRep({...s,nf:f,ns:NS_SHOW});
 }
 // v32.11 기본 보기(칩 '전체'): 오늘 전체 + 최근 7일 ★3 — ★ 기준은 10/13 모델 비교 뒤 조정
 const NEWS_MIN_IMP=3, NEWS_DAYS=7;
 let NEWS_MORE={}, NEWS_BUILT=false;
 const newsDateLbl=d=>{ const t=new Date(d+'T00:00:00'); return isNaN(t)?d:`${t.getMonth()+1}/${t.getDate()}(${'일월화수목금토'[t.getDay()]})`; };
 // v32.12 기사 날짜 한국식 '10/9(금)' — pubDate(영문 GMT)를 한국 날짜로, 못 읽으면 원문 앞부분
-const pubKr=p=>{ const t=new Date(p); return isNaN(t)?String(p).slice(0,16):newsDateLbl(t.toLocaleDateString('sv-SE',{timeZone:'Asia/Seoul'})); };
+let KST_DAY=null;   // v33.1 형식기는 처음 쓸 때 한 번만 만듦(기사마다 새로 만들면 검색 결과·더 보기가 느림 — 결과 글자는 같음)
+const pubKr=p=>{ const t=new Date(p); if(isNaN(t)) return String(p).slice(0,16); if(!KST_DAY) KST_DAY=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}); return newsDateLbl(KST_DAY.format(t)); };
 const newsDay=it=>it.pubDate?pubKr(it.pubDate):(it.first_seen?newsDateLbl(it.first_seen):'');   // 기사 줄 날짜 = 게재일(없으면 수집일) — 모든 화면 같게
 function newsItemHtml(it,more){   // more = '더 보기'로 새로 보인 기사 표시(초점 옮길 곳)
   const stars='★'.repeat(Math.max(1,Math.min(3,it.importance||1)));
-  const tag=it.scope==="brand"?it.label:(it.label||it.key);
+  const tag=it.scope==="brand"?it.label:(it.label||it.key), day=newsDay(it);
   return `<div class="nitem"${more?` data-more="${more}"`:''}>
       <div class="nsum"><span class="stars">${stars}</span> <a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
-      <div class="nmeta"><span class="ntag">${esc(tag)}</span>${esc(it.source||'')}${newsDay(it)?' · '+esc(newsDay(it)):''}</div>
+      <div class="nmeta"><span class="ntag">${esc(tag)}</span>${esc(it.source||'')}${day?' · '+esc(day):''}</div>
     </div>`;
 }
 function newsAll(b){ const f=document.activeElement===b; setNewsFilter('all'); refocus(f,'#newsChips .chip[data-f="all"]'); }   // v33 키보드 초점 = 칩 '전체'
 const newsKeyName=k=>(((NEWS&&NEWS.items)||[]).find(i=>i.key===k&&i.label)||{}).label||(nvAll().find(b=>b.news===k)||{}).name||k;   // 'k:' 필터 이름(회사·브랜드)
-/* v33.1 지난 뉴스 검색 — 최근 기사(NEWS.items) + 1년 보관(news_archive.json, news_monitor v2.12). 보관 파일은 검색창을 처음 누를 때 한 번 받음 */
-const NS_PAGE=30;
-let NEWS_Q='', NS_SHOW=NS_PAGE, NS_ARCH=null, NS_ST='', NS_IDX=null, NS_T=0;
-const nsQ=v=>String(v||'').normalize('NFC').replace(/\s+/g,' ').trim().slice(0,60);
-const nsFold=s=>String(s==null?'':s).normalize('NFC').toLowerCase().replace(/[\u00c0-\u024f]/g,c=>c.normalize('NFD')[0]);   // 대소문자·악센트(é→e) 무시 — 글자 수 그대로(강조 위치)
-const nsTk=t=>String(t||'').replace(/\s+-\s+[^-]{1,40}$/,'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'').slice(0,40);   // 같은 기사 제목 키 = news_monitor title_key
+/* v33.1 지난 뉴스 검색 — 최근 기사(NEWS.items) + 1년 보관(news_archive.json, news_monitor v2.12). 보관 파일은 검색창을 처음 누를 때 한 번 받고
+   찾을 목록은 800건씩 나눠 만듦(1년치 약 1만 건에서도 입력이 멈추지 않게). 같은 제목은 검색할 때 최신 1건(별점은 그중 가장 높은 것) */
+const NS_PAGE=30, NS_CHUNK=800;
+let NEWS_Q='', NS_SHOW=NS_PAGE, NS_SHOWN=-1, NS_ST='', NS_RROWS=null, NS_AROWS=null, NS_IDX=null, NS_MEMO=null, NS_T=0, NS_COMP=false, NS_RESTORE=null;
+const NQ_MEM={};   // 휴대폰 '뒤로'로 떠날 때 아직 반영 안 된 입력(0.2초 안) — 앞으로 가기로 그 기록에 오면 이것
+const nsQ=v=>String(v||'').normalize('NFC').replace(/\s+/g,' ').trim().slice(0,60).replace(/[\ud800-\udbff]$/,'');   // 60자에서 잘린 이모지 반쪽은 뺌
+const nsFold=s=>String(s==null?'':s).normalize('NFC').toLowerCase().replace(/[À-ɏ]/g,c=>c.normalize('NFD')[0]);   // 대소문자·악센트(é→e) 무시 — 글자 수 그대로(강조 위치)
+const nsTk=t=>String(t||'').slice(0,300).replace(/\s+-\s+[^-]{1,40}$/,'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'').slice(0,40);   // 같은 기사 제목 키 = news_monitor title_key
+const nsS=v=>typeof v==='string'?v:(typeof v==='number'&&isFinite(v)?String(v):'');   // 기사 칸은 글자·숫자만 — 이상한 기사 하나가 검색 전체를 깨지 않게
 const nsYmd=d=>{ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d||''); return m?`${m[1]}.${+m[2]}.${+m[3]}`:''; };
-function nsLoad(){   // 보관 파일 받기(한 번) — 실패하면 '다시 시도'로 다시
+const nsEnc=s=>{ try{ return encodeURIComponent(s); }catch(e){ return encodeURIComponent(String(s).replace(/[\ud800-\udfff]/g,'')); } };   // 짝 없는 대리 문자면 빼고
+function nsRow(it){   // 찾을 목록 한 줄 = 칸을 고른 기사 사본 + 수집일·별점 + 찾을 글자(요약·제목·브랜드·매체·키) + 제목 키
+  if(!it||typeof it!=='object') return null;
+  const x={}; ['id','scope','key','label','group','summary','title','link','source','pubDate','first_seen'].forEach(k=>{ x[k]=nsS(it[k]); });
+  if(!x.id) return null;
+  x.importance=Math.max(1,Math.min(3,Math.round(+nsS(it.importance))||1));
+  return {it:x, d:x.first_seen, m:x.importance, h:nsFold([x.summary,x.title,x.label,x.source,x.key].join('\n')), tk:nsTk(x.title)};
+}
+function nsLoad(){   // 보관 파일 받기(한 번) → 찾을 목록을 나눠 만듦. 실패하면 '다시 시도'·검색창 다시 누르기로 다시
   if(NS_ST==='loading'||NS_ST==='ok') return;
   NS_ST='loading';
-  fetch('news_archive.json?v='+encodeURIComponent((NEWS&&NEWS.generated_at)||''))
+  fetch('news_archive.json?v='+nsEnc((NEWS&&NEWS.generated_at)||''))
     .then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
-    .then(d=>{ NS_ARCH=(d&&Array.isArray(d.items))?d.items:[]; NS_ST='ok'; })
-    .catch(e=>{ console.warn('뉴스 보관 파일을 못 받음:',e); NS_ST='fail'; })
-    .then(()=>{ NS_IDX=null; if(NEWS_Q) safe(buildNews,'뉴스','mk-news'); });
+    .then(d=>new Promise(done=>{ const L=(d&&Array.isArray(d.items))?d.items:[], out=[]; let i=0;
+      const step=()=>{ const e=Math.min(L.length,i+NS_CHUNK); for(;i<e;i++){ const r=nsRow(L[i]); if(r) out.push(r); } if(i<L.length) setTimeout(step,0); else done(out); };
+      step(); }))
+    .then(rows=>new Promise(done=>{ NS_AROWS=rows; NS_IDX=null; setTimeout(()=>{ nsIndex(); NS_ST='ok'; done(); },0); }))   // 합친 목록도 따로 한 번(첫 검색 때 멈추지 않게)
+    .catch(e=>{ console.warn('뉴스 보관 파일을 못 받음:',e); NS_ST='fail'; NS_AROWS=null; NS_IDX=null; })
+    .then(()=>{ NS_MEMO=null; if(NEWS_Q) nsRefresh(); else NS_RESTORE=null; });
 }
-function nsIndex(){   // 찾을 목록 — 최근 기사 먼저(같은 id·같은 제목이면 최근 것 1건), 최신순(수집일·중요도)
+function nsIndex(){   // 찾을 목록 — 최근 기사 먼저, 같은 id는 1건(별점은 높은 것), 최신순(수집일·별점)
   if(NS_IDX) return NS_IDX;
-  const ids=new Set(), tks=new Set(), out=[];
-  const add=it=>{ if(!it||typeof it!=='object'||!it.id||ids.has(it.id)) return; const tk=nsTk(it.title); if(tk&&tks.has(tk)) return;
-    ids.add(it.id); if(tk) tks.add(tk); out.push({it, d:String(it.first_seen||''), m:+it.importance||1, h:nsFold([it.summary,it.title,it.label,it.source,it.key].join('\n'))}); };
-  ((NEWS&&NEWS.items)||[]).forEach(add); (NS_ARCH||[]).forEach(add);
-  out.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:b.m-a.m);   // 1년 보관(약 1만 건)도 빠르게 — localeCompare 대신 문자열 비교
+  if(!NS_RROWS) NS_RROWS=((NEWS&&NEWS.items)||[]).map(nsRow).filter(Boolean);
+  const by=new Map(), out=[];
+  NS_RROWS.concat(NS_AROWS||[]).forEach(r=>{ const p=by.get(r.it.id); if(p){ if(r.m>p.m) p.m=r.m; return; } by.set(r.it.id,r); out.push(r); });
+  out.sort((a,b)=>a.d<b.d?1:a.d>b.d?-1:b.m-a.m);   // localeCompare 대신 문자열 비교(빠름)
   return NS_IDX=out;
+}
+function nsRows(q){   // 검색어·칩에 맞는 기사 — 같은 제목(다른 날짜·브랜드로 다시 잡힌 같은 기사)은 최신 1건, 별점은 그중 가장 높은 것. 마지막 결과 기억
+  const idx=nsIndex(), key=q+'\u0001'+newsFilter;
+  if(NS_MEMO&&NS_MEMO.key===key&&NS_MEMO.idx===idx) return NS_MEMO;
+  const terms=[...new Set(nsFold(q).split(' ').filter(Boolean))], seen=new Map(), rows=[];
+  idx.forEach(r=>{ if(!newsMatch(r.it)||!terms.every(t=>r.h.includes(t))) return;
+    const k=r.tk?seen.get(r.tk):null; if(k){ if(r.m>k.mx) k.mx=r.m; return; }
+    const o={r,mx:r.m}; if(r.tk) seen.set(r.tk,o); rows.push(o); });
+  return NS_MEMO={key,idx,terms,rows};
 }
 function nsMark(s,terms){   // 찾은 낱말 <mark> — 원문 조각마다 이스케이프. 대소문자 바꾸기로 글자 수가 달라지면 강조 없이
   s=String(s==null?'':s); const f=nsFold(s); if(f.length!==s.length) return esc(s);
@@ -2433,52 +2457,69 @@ function nsMark(s,terms){   // 찾은 낱말 <mark> — 원문 조각마다 이�
   let h='', p=0; M.forEach(([a,b])=>{ h+=esc(s.slice(p,a))+'<mark>'+esc(s.slice(a,b))+'</mark>'; p=b; });
   return h+esc(s.slice(p));
 }
-function nsItemHtml(it,terms,more){
-  const main=String(it.summary||it.title||''), fm=nsFold(main), ft=it.summary?nsFold(it.title):'';
+function nsItemHtml(o,terms,more){   // o = {r: 찾을 목록 줄, mx: 같은 제목 중 가장 높은 별점}
+  const it=o.r.it, main=it.summary||it.title, fm=nsFold(main), ft=it.summary?nsFold(it.title):'', day=newsDay(it);
   const showT=!!ft&&terms.some(t=>!fm.includes(t)&&ft.includes(t));   // 요약에 없는 낱말을 원문 제목에서 찾았으면 제목도
   const tag=it.scope==='brand'?it.label:(it.label||it.key);
   return `<div class="nitem"${more?' data-more="ns"':''}>
-      <div class="nsum"><span class="stars">${'★'.repeat(Math.max(1,Math.min(3,+it.importance||1)))}</span> <a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${nsMark(main,terms)}</a></div>`
+      <div class="nsum"><span class="stars">${'★'.repeat(o.mx)}</span> <a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${nsMark(main,terms)}</a></div>`
     +(showT?`<div class="ntitle">${nsMark(it.title,terms)}</div>`:'')
-    +`<div class="nmeta"><span class="ntag">${nsMark(tag||'',terms)}</span>${nsMark(it.source||'',terms)}${newsDay(it)?' · '+esc(newsDay(it)):''}</div>
+    +`<div class="nmeta"><span class="ntag">${nsMark(tag,terms)}</span>${nsMark(it.source,terms)}${day?' · '+esc(day):''}</div>
     </div>`;
 }
-function newsSearch(el){   // 검색 결과 = 머리 줄(건수·범위·칩) + 월별 기사 + 더 보기 + Google 뉴스
-  const terms=[...new Set(nsFold(NEWS_Q).split(' ').filter(Boolean))], idx=nsIndex();
-  const rows=idx.filter(r=>newsMatch(r.it)&&terms.every(t=>r.h.includes(t))), n=rows.length;
-  const A=(NEWS&&NEWS.status&&NEWS.status.archive)||{}, since=nsYmd(NS_ST==='ok'&&idx.length?idx[idx.length-1].it.first_seen:A.since);
+function newsSearch(el){   // 검색 결과 = 머리 줄(건수·기간·칩) + 월별 기사 + 더 보기 + Google 뉴스
+  const {terms,rows}=nsRows(NEWS_Q), n=rows.length, idx=nsIndex();
+  const okD=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(Date.parse(d));   // 깨진 수집일(0000-00-00 등)은 기간 시작일로 안 씀
+  let o=idx.length-1; while(o>=0&&!okD(idx[o].d)) o--;
+  const A=(NEWS&&NEWS.status&&NEWS.status.archive)||{}, since=nsYmd(NS_ST==='ok'&&o>=0?idx[o].d:A.since);
   const f=newsFilter, fl=f==='all'?'':(f.startsWith('k:')?newsKeyName(f.slice(2)):((NEWS_FILTERS.find(x=>x.id===f)||{}).label||f));
-  const rng=NS_ST==='ok'?(since?`${since} 이후 기사 전체에서`:'지난 1년 기사 전체에서'):(NS_ST==='fail'?'최근 기사에서만 — 지난 기사를 못 불러옴':'최근 기사에서 · 지난 1년 기사 불러오는 중…');
-  let h=`<div class="note ns-st"><span>‘${esc(NEWS_Q)}’ ${n?n+'건':'없음'} · ${rng}${fl?` · ${esc(fl)} 안에서`:''}</span>`
+  const rng=NS_ST==='ok'?(since?`${since} 이후`:'지난 1년'):(NS_ST==='fail'?'최근 기사만 — 지난 기사를 못 불러옴':'최근 기사만 — 지난 1년 기사 불러오는 중…');
+  let h=`<div class="note ns-st"><span>‘${esc(NEWS_Q)}’ ${n?n+'건':'없음'} · ${rng}${fl?` · ${esc(fl)}만`:''}</span>`
     +(fl?`<button type="button" class="chip" onclick="newsAll(this)">전체에서 찾기</button>`:'')
     +(NS_ST==='fail'?`<button type="button" class="chip" onclick="nsRetry(this)">다시 시도</button>`:'')+`</div>`;
-  if(!n) h+=`<div class="na">${NS_ST==='loading'||NS_ST===''?'지난 기사를 불러오는 중입니다':'맞는 기사가 없습니다 — 낱말을 줄이거나 다른 말(영문 브랜드명 등)로 찾아 보세요'}</div>`;
+  if(!n) h+=`<div class="na">${NS_ST==='ok'||NS_ST==='fail'?'맞는 기사가 없습니다 — 낱말을 줄이거나 다른 말(영문 브랜드명 등)로 찾아 보세요':'지난 기사를 불러오는 중입니다'}</div>`;
   let cur='';
-  rows.slice(0,NS_SHOW).forEach((r,i)=>{
-    const m=/^(\d{4})-(\d{2})/.exec(r.it.first_seen||''), g=m?`${m[1]}년 ${+m[2]}월`:'날짜 미상';
+  rows.slice(0,NS_SHOW).forEach((x,i)=>{
+    const m=okD(x.r.d)&&/^(\d{4})-(\d{2})/.exec(x.r.d), g=m?`${m[1]}년 ${+m[2]}월`:'날짜 미상';
     if(g!==cur){ cur=g; h+=`<div class="ndate">${g}</div>`; }
-    h+=nsItemHtml(r.it,terms,NS_SHOW>NS_PAGE&&i>=NS_SHOW-NS_PAGE);
+    h+=nsItemHtml(x,terms,NS_SHOW>NS_PAGE&&i>=NS_SHOW-NS_PAGE);
   });
   if(n>NS_SHOW) h+=`<button type="button" class="nmore" onclick="nsMore(this)">${Math.min(NS_PAGE,n-NS_SHOW)}건 더 보기 (남은 ${n-NS_SHOW}건) ${ic('down',16)}</button>`;
-  const g='https://news.google.com/search?q='+encodeURIComponent(NEWS_Q)+'&hl=ko&gl=KR&ceid=KR%3Ako';
-  h+=`<a class="nmore" href="${esc(g)}" target="_blank" rel="noopener">Google 뉴스에서 ‘${esc(NEWS_Q)}’ 더 찾기 ${ic('right',16)}</a>`;
-  el.innerHTML=h;
+  h+=`<a class="nmore" href="${esc('https://news.google.com/search?q='+nsEnc(NEWS_Q)+'&hl=ko&gl=KR&ceid=KR%3Ako')}" target="_blank" rel="noopener">Google 뉴스에서 ‘${esc(NEWS_Q)}’ 더 찾기 ${ic('right',16)}</a>`;
+  el.innerHTML=h; NS_SHOWN=n;
   setText('newsSrchLive',NS_ST==='loading'&&!n?'':`검색 결과 ${n}건`);
 }
-function nsSet(v){   // 검색어 바뀜 → 다시 그림 + 지금 기록(nq)에 저장(뒤로·새로고침에도 그대로, 기록 수는 그대로)
-  const q=nsQ(v); if(q===NEWS_Q) return;
-  NEWS_Q=q; NS_SHOW=NS_PAGE; if(q) nsLoad();
-  safe(buildNews,'뉴스','mk-news');
-  const s=history.state; if(s&&s.tab==='market'&&s.chip==='news') hRep({...s,nq:q});
+function nsMem(q){   // 지금 기록에 검색어·펼친 수 저장 — 뒤로·새로고침에도 그대로(기록 수는 그대로)
+  const s=history.state; if(s&&s.tab==='market'&&s.chip==='news') hRep({...s,nq:q,ns:NS_SHOW});
+  if(ROUTE.k) delete NQ_MEM[ROUTE.k];
 }
-function nsMore(b){ const f=document.activeElement===b; NS_SHOW+=NS_PAGE; safe(buildNews,'뉴스','mk-news'); refocus(f,'#newsBody [data-more="ns"] a'); }   // 펼친 뒤 키보드 초점 = 새로 보인 첫 기사
-function nsRetry(b){ const f=document.activeElement===b; NS_ST=''; nsLoad(); safe(buildNews,'뉴스','mk-news'); refocus(f,'#newsSearch'); }
+function nsSet(v,composing){   // 검색어 바뀜 → 다시 그림 + 기록에 저장
+  const q=nsQ(v); if(q===NEWS_Q) return;
+  if(q) nsLoad();
+  // 한글 조합 중(받침이 다음 글자로 옮겨 가기 전, 예: '아딛')에 0건이면 지금 화면 그대로 — '없음'이 글자마다 깜빡이지 않게. 조합이 끝나면 다시 찾음
+  if(composing&&q&&!nsRows(q).rows.length&&(!NEWS_Q||NS_SHOWN>0)) return;
+  NEWS_Q=q; NS_SHOW=NS_PAGE;
+  safe(buildNews,'뉴스','mk-news');
+  nsMem(q);
+}
+function nsFlush(){ if(!NS_T) return; clearTimeout(NS_T); NS_T=0; const i=document.getElementById('newsSearch'); if(i) nsSet(i.value,false); }   // 0.2초 안 입력을 지금 반영(화면을 떠나기 전)
+function nsRefresh(){   // 보관 기사가 온 뒤 다시 그림 — 결과 안 키보드 초점은 같은 기사로, 뒤로 와서 기다리던 스크롤 자리로
+  const box=document.getElementById('newsBody'), a=document.activeElement, inBox=!!(a&&box&&a!==box&&box.contains(a));
+  const href=inBox&&a.getAttribute('href'), tx=inBox&&(a.textContent||'').trim();
+  safe(buildNews,'뉴스','mk-news');
+  if(inBox){ const n=(href&&[...box.querySelectorAll('a[href]')].find(x=>x.getAttribute('href')===href))||[...box.querySelectorAll('button,a[href]')].find(x=>(x.textContent||'').trim()===tx)||document.getElementById('newsSearch');
+    if(n) try{ n.focus({preventScroll:true}); }catch(e){} }
+  const R=NS_RESTORE; NS_RESTORE=null;
+  if(R&&R.k===ROUTE.k) requestAnimationFrame(()=>scrollBox().scrollTo(0,R.y));
+}
+function nsMore(b){ const f=document.activeElement===b; NS_SHOW+=NS_PAGE; safe(buildNews,'뉴스','mk-news'); nsMem(NEWS_Q); refocus(f,'#newsBody [data-more="ns"] a'); }   // 펼친 뒤 키보드 초점 = 새로 보인 첫 기사
+function nsRetry(b){ const f=document.activeElement===b; NS_ST=''; nsLoad(); safe(buildNews,'뉴스','mk-news'); refocus(f&&KB_LAST,'#newsSearch'); }   // 휴대폰에서 누르면 자판이 뜨지 않게(키보드로 누를 때만 검색창으로)
 function newsMore(k,b){ const f=document.activeElement===b; NEWS_MORE[k]=1; buildNews(); refocus(f,`#newsBody [data-more="${k}"] a`); }   // v33 펼친 뒤 키보드 초점 = 새로 보인 첫 기사
 function buildNews(){
   NEWS_BUILT=true;
   const el=document.getElementById('newsBody');
   if(NEWS_Q) return newsSearch(el);   // v33.1 검색 중이면 검색 결과
-  setText('newsSrchLive','');
+  NS_SHOWN=-1; setText('newsSrchLive','');
   if(!NEWS||!NEWS.items){
     el.innerHTML='<div class="na">뉴스 데이터 없음 — 뉴스 워크플로우(update-news) 첫 실행 전이거나 수집 실패(미확인)</div>';
     return;
@@ -3604,7 +3645,8 @@ function normRoute(r){   // 모르는 탭·칩·기업·브랜드·화면은 오
     if(r.chip&&!own(MK_NAME,r.chip)) console.warn('모르는 시장 칩:',r.chip);
     if(o.chip==='co'&&id){ if(coKnown(id)) o.id=id; else console.warn('모르는 기업 → 기업 목록:',id); }
     if(o.chip==='news'&&r.nf!=null&&nfKnown(r.nf)) o.nf=r.nf;
-    if(o.chip==='news'&&typeof r.nq==='string') o.nq=nsQ(r.nq);   // v33.1 검색어
+    if(o.chip==='news'&&typeof r.nq==='string') o.nq=nsQ(r.nq);   // v33.1 검색어 · 펼친 검색 결과 수
+    if(o.chip==='news'&&Number.isInteger(r.ns)&&r.ns>0) o.ns=Math.min(r.ns,3000);
   } else if(o.tab==='brand'){
     if(id){ if(brKnown(id)) o.id=id; else console.warn('모르는 브랜드 → 점검표:',id); }
   } else if(o.tab==='more'){
@@ -3648,6 +3690,7 @@ const backLbl=(st,parent)=>(st&&st.depth>0&&st.from)?st.from:parent;   // 바로
 const scrKey=r=>[r.tab,r.tab==='market'?r.chip:'',r.view||'',r.id||''].join('|');   // 같은 화면인지(스크롤·패널 제외)
 function go(r,opt){   // 화면 이동 하나 = 기록(push/replace) + 그리기
   opt=opt||{};
+  nsFlush();   // v33.1 0.2초 안 검색 입력을 떠나는 기록에 먼저 반영
   if(BACK_REQ&&Date.now()-BACK_REQ<1500){ goAfterBack(r,opt); return; }   // v33 S2: 뒤로가 아직 도착 전이면 도착 뒤 이어서(누른 이동이 사라지지 않게)
   const st=normRoute(r), cur=history.state||{}, same=scrKey(st)===scrKey(ROUTE);
   const sheet=SRC_SHEET||LAST_SHEET||null, shY=SRC_SHEET?sheetScrollY():(LAST_SHEET?LAST_SHEET_Y:0); LAST_SHEET=null;
@@ -3658,7 +3701,7 @@ function go(r,opt){   // 화면 이동 하나 = 기록(push/replace) + 그리기
     const lk=cur.k||ROUTE.k;   // 패널이 열려 있으면 패널 기록 키 — 뒤로 오면 패널 안 누른 줄로
     if(lk){ SCROLL_MEM[lk]=scrollBox().scrollTop; focusRemember(lk); }
     // 떠나기 직전 지금 기록에 스크롤·열린 패널(+패널 안 스크롤)·뉴스 필터 저장 — 뒤로 오면 그대로 복원
-    hRep({...ROUTE,...cur,scroll:scrollBox().scrollTop,sheet,sheetY:sheet?shY:0,...(ROUTE.tab==='market'&&ROUTE.chip==='news'?{nf:newsFilter,nq:NEWS_Q}:{})});
+    hRep({...ROUTE,...cur,scroll:scrollBox().scrollTop,sheet,sheetY:sheet?shY:0,...(ROUTE.tab==='market'&&ROUTE.chip==='news'?{nf:newsFilter,nq:NEWS_Q,ns:NS_SHOW}:{})});
     st.depth=(cur.depth||0)+1; st.from=labelOf(ROUTE); st.fromKey=scrKey(ROUTE); st.k=newKey();   // fromKey = 바로 아래 기록의 화면(칩으로 그 화면에 갈 때 뒤로 처리)
     hPush(st,hashOf(st));
   }
@@ -3692,6 +3735,7 @@ function render(st,restore,init){   // st = 기록에 든 화면 상태 · resto
   else if(st.tab==='more') renderMore(st);
   const mem=restore&&st.k?SCROLL_MEM[st.k]:null;   // 메모리(떠날 때 스크롤)가 기록에 든 값보다 새것
   scrollSet(restore?(mem!=null?mem:(st.scroll||0)):0,init&&!restore);
+  NS_RESTORE=(restore&&st.tab==='market'&&st.chip==='news'&&NEWS_Q&&NS_ST==='loading')?{k:st.k,y:mem!=null?mem:(st.scroll||0)}:null;   // v33.1 보관 기사가 오면 이 자리로 다시(그전엔 결과가 짧아 스크롤이 잘림)
   if(restore&&st.sheet){ openSheet(st.sheet,true); sheetScrollTo(st.sheetY); }   // 패널에서 기업을 열었다 돌아오면 같은 패널을 같은 자리로 다시
   phSoon();
   try{ document.title=st.tab==='today'?'스포츠 산업 모니터':labelOf(st)+' · 스포츠 산업 모니터'; }catch(e){}
@@ -3769,11 +3813,13 @@ function renderMarket(st){
   if(st.chip==='news'){   // 뉴스는 칩이 처음 보일 때 한 번만 그림(v32.11) — 필터가 바뀌어 온 경우만 다시
     // 'k:'(회사·브랜드 하나) 필터는 그 기록(nf)에만 — nf 없이 들어오면(칩·하단 탭·sw) 기본 보기로(map_nav 7.8). 칩에서 고른 필터는 그대로
     const nf=st.nf!=null?st.nf:(String(newsFilter).startsWith('k:')?'all':newsFilter);
-    // v33.1 검색어: 기록에 있으면 그것(뒤로·앞으로·새로고침·goNews는 ''), 없으면(칩·하단 탭) 그대로
-    const nq=st.nq!=null?st.nq:NEWS_Q, qc=nq!==NEWS_Q;
-    if(qc){ NEWS_Q=nq; NS_SHOW=NS_PAGE; const i=document.getElementById('newsSearch'); if(i) i.value=nq; if(nq) nsLoad(); }
-    if(nf!==newsFilter){ newsFilter=nf; NS_SHOW=NS_PAGE; safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildNews,'뉴스','mk-news'); }
+    // v33.1 검색어: '뒤로'로 떠날 때 못 넣은 입력(NQ_MEM) > 기록(nq — 뒤로·앞으로·새로고침, goNews는 '') > 없으면(칩·하단 탭) 그대로
+    const nq=own(NQ_MEM,st.k)?NQ_MEM[st.k]:(st.nq!=null?st.nq:NEWS_Q), qc=nq!==NEWS_Q;
+    if(st.k) delete NQ_MEM[st.k];
+    if(qc){ NEWS_Q=nq; NS_SHOW=(st.nq===nq&&st.ns>0)?st.ns:NS_PAGE; const i=document.getElementById('newsSearch'); if(i) i.value=nq; if(nq) nsLoad(); }
+    if(nf!==newsFilter){ newsFilter=nf; if(!qc) NS_SHOW=NS_PAGE; safe(buildNewsChips,'뉴스 칩','mk-news'); safe(buildNews,'뉴스','mk-news'); }
     else if(!NEWS_BUILT||qc) safe(buildNews,'뉴스','mk-news');
+    { const s=history.state; if(s&&s.tab==='market'&&s.chip==='news'&&(s.nf!==newsFilter||s.nq!==NEWS_Q||s.ns!==NS_SHOW)) hRep({...s,nf:newsFilter,nq:NEWS_Q,ns:NS_SHOW}); }   // 보이는 필터·검색어를 이 기록에(칩 전환 뒤 새로고침에도 그대로)
   } else if(st.chip==='kr') safe(hcDraw,'의류 소매 그래프','mk-kr');   // 숨은 칩에서 그리면 폭 0 → 보일 때 그림
   else if(st.chip==='co'){
     if(!st.id){ showCoList(); return; }
@@ -3791,6 +3837,7 @@ function renderMore(st){
 function onHistory(){   // 뒤로·앞으로(popstate)·주소창에서 해시를 바꾼 경우(hashchange)
   const want=(BACK_REQ&&Date.now()-BACK_REQ<1500)?BACK_WANT:null; BACK_REQ=0; BACK_WANT=null;   // 우리가 부른 뒤로가 도착 — 다시 누를 수 있음
   if(ROUTE.k){ SCROLL_MEM[ROUTE.k]=scrollBox().scrollTop; focusRemember(ROUTE.k); }   // 떠나는 화면의 스크롤·초점(앞으로 가기로 돌아올 때)
+  if(NS_T){ clearTimeout(NS_T); NS_T=0; const i=document.getElementById('newsSearch'); if(i&&ROUTE.k) NQ_MEM[ROUTE.k]=nsQ(i.value); }   // v33.1 0.2초 안에 '뒤로' — 못 넣은 검색 입력은 떠나는 기록 몫(앞으로 오면 그대로)
   let st=history.state;
   if(!st||!st.tab){ st={...routeOfHash(location.hash),depth:(ROUTE.depth||0)+1,from:labelOf(ROUTE),fromKey:scrKey(ROUTE),k:newKey()}; hRep(st,hashOf(st)); }   // 주소창에서 바꾼 해시 — 모르는 값은 부모로, 주소도 정리
   else st=withMeta(normRoute(st),st);   // 기록에 든 기업·브랜드가 데이터에서 빠졌으면 부모로
@@ -3902,11 +3949,13 @@ document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip
 { const b=document.getElementById('coBack'); if(b) b.onclick=()=>goBack({tab:'market',chip:'co'}); }
 { const b=document.getElementById('brBack'); if(b) b.onclick=()=>goBack({tab:'brand'}); }
 { const b=document.getElementById('coSearch'); if(b) b.addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();}); }
-{ const b=document.getElementById('newsSearch'); if(b){   // v33.1 지난 뉴스 검색 — 누르면 보관 파일을 미리 받기 시작, 입력은 0.2초 모아서
+{ const b=document.getElementById('newsSearch'); if(b){   // v33.1 지난 뉴스 검색 — 누르면 보관 파일을 미리 받기 시작, 입력은 0.2초 모아서(한글 조합 중인지 함께)
   b.addEventListener('focus',nsLoad);
-  b.addEventListener('input',()=>{ clearTimeout(NS_T); NS_T=setTimeout(()=>nsSet(b.value),200); });
-  b.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing){ clearTimeout(NS_T); nsSet(b.value); if(matchMedia('(pointer:coarse)').matches) b.blur(); } });   // 휴대폰 '검색' = 자판 닫고 결과
+  b.addEventListener('input',e=>{ NS_COMP=!!e.isComposing; clearTimeout(NS_T); NS_T=setTimeout(()=>{ NS_T=0; nsSet(b.value,NS_COMP); },200); });
+  b.addEventListener('compositionend',()=>{ NS_COMP=false; clearTimeout(NS_T); NS_T=setTimeout(()=>{ NS_T=0; nsSet(b.value,false); },200); });
+  b.addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing){ clearTimeout(NS_T); NS_T=0; nsSet(b.value,false); if(matchMedia('(pointer:coarse)').matches) b.blur(); } });   // 휴대폰 '검색' = 자판 닫고 결과
 } }
+['wheel','touchstart','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ NS_RESTORE=null; },{capture:true,passive:true}));   // 직접 움직이면 보관 기사 도착 뒤 스크롤 맞추기 안 함
 ['newsChips','coChips'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('focusin',e=>{ const t=e.target; if(!t||!t.closest||!t.closest('.chip')) return;   // Tab으로 간 칩을 상자 안으로
   const r=t.getBoundingClientRect(), b=el.getBoundingClientRect(); if(r.left<b.left+4) el.scrollLeft-=b.left+8-r.left; else if(r.right>b.right-4) el.scrollLeft+=r.right-b.right+8; }); });
 document.addEventListener('click',e=>{   // v33 키보드: 누른 단추가 카드째 다시 그려져 사라지면 새로 그린 같은 단추로 초점(body로 떨어지지 않게)
@@ -4100,7 +4149,10 @@ def _partial(fn, d):
             n += 1
             notes.append("검색용 1년 보관 파일 저장 실패")
         elif isinstance(ar, dict) and isinstance(ar.get("n"), int) and ar["n"] > 0:
-            notes.append(f"검색용 보관 {ar['n']:,}건" + (f"({ar['since']}부터)" if isinstance(ar.get("since"), str) and ar["since"] else ""))
+            part = ar.get("partial") is True     # git 기록 일부로 만듦(news_monitor가 실패 표시 — 점검 알림과 맞춤)
+            n += 1 if part else 0
+            notes.append(f"검색용 보관 {ar['n']:,}건" + (f"({ar['since']}부터)" if isinstance(ar.get("since"), str) and ar["since"] else "")
+                         + (" — 일부만 복구(다음 실행에서 다시)" if part else ""))
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes

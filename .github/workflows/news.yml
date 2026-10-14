@@ -35,6 +35,8 @@ jobs:
         run: python news_monitor.py
       - name: Commit news
         run: |
+          # v2.12 작업 브랜치 실행은 저장하지 않음 — git 전체 기록을 받은 브랜치 실행이 데이터 커밋을 브랜치(PR)에 올리지 않게(로그 확인용)
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then echo "브랜치 실행 — 커밋·푸시 안 함(데이터는 main 실행에서만 저장)"; exit 1; fi
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add docs/news.json
