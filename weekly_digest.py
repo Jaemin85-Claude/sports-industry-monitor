@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.9: (대표 승인 2026-10-14) '■ 브랜드 점검표 판정' — 매일 기록한 판정(history.json verdicts, history_append v1.2 · 대시보드와 같은 규칙)으로
+      지금 판정(지금 검토·주의는 점수 4칸)과 지난 7일 판정 변화(바뀐 점수 포함). 알림 3줄에 '판정 변화 n건'(기록이 있을 때).
+      대시보드 바로가기 링크 — 브랜드 상세(#/brand/이름)·기업 상세(#/market/co/티커)·환율·뉴스·캘린더·실적·재고·국내 화면(휴대폰 메일에서 바로 열림)
 v1.8: (2026-10-10) 본사 발언 줄에 병행수입 매입 관점 신호(extract_segments v11.2 sig — 할인 물량↑ / 할인·공급↓) 표시
 v1.7: (대표 지시 2026-10-10) '■ 이번 주 새 본사 발언' — 지난 7일 안에 새로 뽑힌 실적 문서의 재고·할인·유통 문장(한국어 요약 + 원문 앞부분).
       추출 시각(extracted_at, extract_segments v11.1·ir_fetch v1.4)이 7일 안이고 문서 날짜가 14일 안인 것만(재추출로 옛 발표가 다시 나오지 않게).
@@ -28,11 +31,19 @@ import sys
 import json
 import datetime
 import subprocess
+from urllib.parse import quote
+
+sys.dont_write_bytecode = True   # v1.9 build_dashboard(판정 규칙 판·이름)를 불러와도 __pycache__를 남기지 않음 — 점검 세션 저장소를 깨끗하게(읽기 전용)
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 DOCS = "docs"
 DASH_URL = "https://jaemin85-claude.github.io/sports-industry-monitor/"
 DAYS = 7
+
+
+def dash(*path):
+    """v1.9 대시보드 바로가기 — 화면 주소(#/brand/이름 · #/market/co/티커 · #/more/fx). 이름·티커는 퍼센트 인코딩(메일 앱이 링크로 인식)"""
+    return DASH_URL + "#/" + "/".join(quote(str(p), safe="") for p in path)
 
 
 def load(name):
@@ -214,7 +225,7 @@ def acq_core(t, segs, segs_ir):
 
 
 def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
-    """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임)
+    """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임, 티커)
     v1.4 전사 수치(삼성물산)는 빼고 두 번째 값으로 돌려줌, 인수 효과 기간(딕스)은 '인수 효과 포함'"""
     if not old:
         return [], []
@@ -246,7 +257,7 @@ def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
                 c = acq_core(x["ticker"], segs, segs_ir)
                 extra = f" (인수 효과 포함{f', 본체 {pct(c)}' if c is not None else ''})"
             iv, _, ilbl = inv_pick(x, krf)      # v1.6 재고도 같은 기간끼리, 비교 기간 표기
-            out.append((x["name"], basis, qy, iv, ilbl, extra))
+            out.append((x["name"], basis, qy, iv, ilbl, extra, x["ticker"]))
     return out, skipped
 
 
@@ -299,7 +310,7 @@ def _kst(v):
 
 def new_mgmt_notes(data, segs, segs_ir, now):
     """v1.7 이번 주 새 본사 발언 — 추출 시각이 7일 안 + 문서 날짜가 14일 안(추출 시각이 없는 옛 기록은 문서 날짜 7일 안).
-    → [(회사, 문서 날짜, 기간, 노트 목록)] 문서 날짜 최신순"""
+    → [(회사, 문서 날짜, 기간, 노트 목록, 티커)] 문서 날짜 최신순"""
     names = {x.get("ticker"): x.get("name") for x in (data or {}).get("items", [])}
     today = now.date()
     found = {}
@@ -321,8 +332,50 @@ def new_mgmt_notes(data, segs, segs_ir, now):
                 fresh = ddate >= today - datetime.timedelta(days=DAYS)
             if fresh:
                 per = re.split(r";|\(|\bended\b", str(ex.get("period") or ""), flags=re.I)[0].strip()
-                found[t] = (names.get(t) or t, dd, per, notes)
+                found[t] = (names.get(t) or t, dd, per, notes, t)
     return sorted(found.values(), key=lambda r: r[1], reverse=True)
+
+
+PT_KO = ("수요", "재고", "발언", "환율")
+
+
+def _pt(v):
+    return "―" if v is None else (f"+{v}" if v > 0 else (f"−{-v}" if v < 0 else "0"))
+
+
+def verdict_summary(hist, today):
+    """v1.9 브랜드 점검표 판정 — history.json verdicts(history_append v1.2). 규칙 판(CHK_RULE)이 같은 기록만.
+    판정 변화는 비교 기준(sig: 감시 브랜드·본사 연결·통화표)이 같은 이웃 기록끼리만 — 대시보드와 같음. 모양이 틀린 값은 그 브랜드만 비교에서 뺌.
+    → (최신 기록 또는 None, 지난 7일 변화 [(날짜, 브랜드, 전 판정, 새 판정, 바뀐 점수)], 첫 기록 날짜, 기준이 바뀐 날 목록)"""
+    from build_dashboard import CHK_RULE, chk_entry_ok, chk_records
+    t = today.isoformat()
+    V = []
+    for r in chk_records(hist):
+        if r["rule"] != CHK_RULE or r["date"] > t:
+            continue
+        V.append({**r, "b": {n: x[:5] for n, x in r["b"].items() if chk_entry_ok(x)},
+                  "bad": {n for n, x in r["b"].items() if not chk_entry_ok(x)}})
+    if not V:
+        return None, [], None, []
+    start = (today - datetime.timedelta(days=DAYS)).isoformat()
+    lv = lambda rec, n: rec["b"][n][0] if n in rec["b"] else None
+    ev, reset = [], []
+    for a, b in zip(V, V[1:]):
+        if b["date"] < start:      # 기간 첫날(지난 월요일) 기록도 포함 — 그날 기록은 보통 지난 메일(07:47) 뒤에 생김
+            continue
+        if a.get("sig") != b.get("sig"):      # 감시 브랜드·통화표가 바뀐 날 — 비교하지 않음
+            reset.append(b["date"])
+            continue
+        for n in list(b["b"]) + [n for n in a["b"] if n not in b["b"]]:
+            if n in a["bad"] or n in b["bad"]:
+                continue
+            pa, pb = lv(a, n), lv(b, n)
+            if pa == pb:
+                continue
+            xa, xb = a["b"].get(n), b["b"].get(n)
+            why = [f"{k} {_pt(xa[j + 1])} → {_pt(xb[j + 1])}" for j, k in enumerate(PT_KO) if xa and xb and xa[j + 1] != xb[j + 1]]
+            ev.append((b["date"], n, pa, pb, why))
+    return V[-1], ev, V[0]["date"], reset
 
 
 SEP_GROUPS = ("kr_peer", "kr_fb", "customs")   # 따로 묶는 뉴스(v1.2) — '중요 뉴스'에서는 제외
@@ -495,6 +548,7 @@ def build(today, now=None):
     dch = dart_changes(kr, kr_old)
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
     mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
+    vd, vev, vfirst, vreset = verdict_summary(hist, today)
 
     # ── 휴대폰 알림 3줄 ──
     usd = next((r for r in fx if r[0] == "USD"), None)
@@ -506,17 +560,54 @@ def build(today, now=None):
         l2.append(f"달러 {usd[2]:,.0f}원{f'({pct(usd[3])})' if usd[3] is not None else ''}")
     short = [f"📋 스포츠 산업 모니터 주간 요약 {period}",
              " · ".join(l2) or "주가·환율 비교 자료 없음",
-             f"중요 뉴스 {n_imp}건 · 새 실적 {len(res)}곳{f' · 본사 발언 {len(mg)}곳' if mg else ''} · "
+             f"중요 뉴스 {n_imp}건 · 새 실적 {len(res)}곳{f' · 본사 발언 {len(mg)}곳' if mg else ''}{f' · 판정 변화 {len(vev)}건' if vd else ''} · "
              f"이번 주 실적 발표 {len(earn)}곳 · 재고 경고 {len(inv)}곳"]
 
     # ── 메일 본문 ──
     L = [f"스포츠 산업 모니터 — 주간 요약 ({period}, {today:%Y-%m-%d} 기준)", ""]
     L += ["■ 한 줄 요약", *[f"  {s}" for s in short[1:]], ""]
 
+    from build_dashboard import CHK_LV
+    L.append("■ 브랜드 점검표 판정" + (f" ({vd['date'][5:].replace('-', '/')} 기준 · 대시보드 '브랜드' 탭과 같은 규칙)" if vd else ""))
+    if vd:
+        lvl = lambda v: CHK_LV.get(v, "판정 안 함")
+        rows = sorted(vd["b"].items(), key=lambda kv: (-kv[1][0], -sum(x or 0 for x in kv[1][1:5]), kv[0]))
+        for k in (2, 0):
+            g = [(n, x) for n, x in rows if x[0] == k]
+            if g:
+                L.append(f"  {lvl(k)} {len(g)}곳")
+                for n, x in g:
+                    L.append(f"    {n} — " + " · ".join(f"{p} {_pt(x[j + 1] if len(x) > j + 1 else None)}" for j, p in enumerate(PT_KO)))
+                    L.append(f"      {dash('brand', n)}")
+        hold = [n for n, x in rows if x[0] == 1]
+        if hold:
+            L.append(f"  {lvl(1)} {len(hold)}곳: " + " · ".join(hold))
+        if vev:
+            L.append(f"  지난 7일 판정 변화 {len(vev)}건")
+            linked = {n for n, x in rows if x[0] in (2, 0)}     # 위 지금 검토·주의 줄에 링크가 있음
+            last = {n: i for i, (_, n, _, _, _) in enumerate(vev)}
+            for i, (d, n, a, b, why) in enumerate(vev):
+                L.append(f"    {d[5:].replace('-', '/')} {n} {lvl(a)} → {lvl(b)}" + (f" ({', '.join(why)})" if why else ""))
+                if n not in linked and last[n] == i:        # 브랜드마다 마지막 변화 줄에 한 번
+                    L.append(f"      {dash('brand', n)}")
+        else:
+            L.append("  지난 7일 판정 변화 없음")
+        if vreset:
+            L.append(f"  ※ {', '.join(d[5:].replace('-', '/') for d in vreset)}: 감시 브랜드·본사 연결·통화표가 바뀌어 그날 판정 변화는 비교하지 않음")
+        if vd["date"] < (today - datetime.timedelta(days=2)).isoformat():
+            L.append(f"  ※ 판정 기록이 {vd['date'][5:].replace('-', '/')}에서 멈춤 — 대시보드 갱신(update-dashboard) 확인 필요")
+        if vfirst and vfirst >= (today - datetime.timedelta(days=DAYS)).isoformat():
+            L.append(f"  ※ 판정 기록은 {vfirst[5:].replace('-', '/')}부터 — 그 전 변화는 비교하지 않음")
+        L.append(f"  점검표 전체: {dash('brand')}")
+    else:
+        L.append("  판정 기록 없음 — 대시보드 갱신(매일) 때부터 쌓임")
+    L.append("")
+
     L.append("■ 중요 뉴스 (지난 7일)")
     if nws:
         for imp, lab, s, d in nws:
             L.append(f"  {'★' * imp} [{lab}] {s} ({d[5:].replace('-', '/')})")
+        L.append(f"  뉴스 전체: {dash('market', 'news')}")
     else:
         L.append("  해당 없음")
     L.append("")
@@ -544,15 +635,18 @@ def build(today, now=None):
                  + (f" (이전 값 {st[5:].replace('-', '/')})" if st else ""))
     if not fx:
         L.append("  자료 없음")
-    elif any(r[5] is not None for r in fx):
+    elif any(r[5] is not None for r in fx if r[0] in FX_SH):     # 1% 칸 알림 통화(엔·유로·달러) — 파운드는 1년 평균만
         L.append("  1% 칸 알림(지난 7일): " + (" · ".join(fxa) if fxa else "없음"))
+    if fx:
+        L.append(f"  환율 화면: {dash('more', 'fx')}")
     L.append("")
 
     L.append("■ 새로 반영된 실적")
     if res:
-        for n, basis, qy, iv, ib, extra in res:
+        for n, basis, qy, iv, ib, extra, tk in res:
             L.append(f"  {n}: {basis} 매출 전년 대비 {qy if isinstance(qy, str) else pct(qy)}{extra}"
                      f" · 재고 {pct(iv)}{f'({ib})' if ib else ''}")
+            L.append(f"    {dash('market', 'co', tk)}")
     else:
         L.append("  없음")
     if res_skip:
@@ -562,8 +656,9 @@ def build(today, now=None):
     L.append("")
 
     L.append("■ 이번 주 새 본사 발언 (실적 문서의 재고·할인·유통 문장 — 한국어 요약 / 원문)")
-    for n, dd, per, notes in mg:
+    for n, dd, per, notes, tk in mg:
         L.append(f"  {n} ({dd[5:].replace('-', '/')} 발표{f' · {per}' if per else ''})")
+        L.append(f"    {dash('market', 'co', tk)}")
         for x in notes:
             q = str(x.get("quote") or "")
             sg = SIG_KO.get(x.get("sig"))
@@ -575,6 +670,8 @@ def build(today, now=None):
 
     L.append("■ 이번 주 실적 발표 예정")
     L += [f"  {d[5:].replace('-', '/')} {n}" for d, n in earn] or ["  없음"]
+    if earn:
+        L.append(f"  캘린더: {dash('market', 'cal')}")
     L.append("")
 
     L.append("■ 국내")
@@ -602,6 +699,7 @@ def build(today, now=None):
     if dch:
         for n, end, rev, yoy, existed in dch:
             L.append(f"  공시 반영: {n} {end[:7] if end else ''} 매출 {won(rev)} ({pct(yoy)}){'' if existed else ' · 새로 추가'}")
+    L.append(f"  국내 화면: {dash('market', 'kr')}")
     L.append("")
 
     L.append("■ 재고 경고 (재고 증가율이 같은 기간 매출보다 10%p 이상 높음 · 분기 자료가 있으면 같은 분기끼리, 없으면 연간 결산)")
@@ -610,6 +708,8 @@ def build(today, now=None):
         L.append(f"  외 {len(inv) - 6}곳")
     if inv_skip:
         L.append("  ※ " + " · ".join(inv_skip))
+    if inv:
+        L.append(f"  실적·재고 화면: {dash('market', 'sig')}")
     L += ["", f"대시보드: {DASH_URL}", "※ 공시·수집값 그대로 비교한 자동 요약입니다."]
     return short, "\n".join(L)
 

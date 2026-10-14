@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.14: (대표 승인 2026-10-14) 파운드(GBP)도 1년 평균 대비(avg1y·dev_pct)를 저장 — 브랜드 점검표 환율 점수가 파운드 원산지 5곳
+      (클락스·닥터마틴·헌터·핏플랍·비비안웨스트우드)도 엔·유로·달러와 같은 '1년 평균 대비' 기준이 되게. 1% 칸 알림·휴대폰 알림은 그대로 3개 통화.
+      파운드가 3일 넘게 이전 값이거나 값이 없으면 soft_fail(점검표 환율 점수가 조용히 멈추지 않게)
 v4.13: (대표 지시 2026-10-10) 분기 재고 — 최신 분기 재고를 1년 전 같은 분기와 비교(q_inv_yoy, 기준일 q_inv_date·q_inv_prev_date)하고
       같은 분기 매출 증감(q_inv_rev_yoy)도 저장. 연간 재고(inv_yoy)는 그대로 — 화면은 같은 기간끼리 비교하고 기간을 표시
 v4.12: (대표 지시 2026-10-09) 분기 매출 증감은 최신 분기와 350~380일 전 분기를 짝지어 비교(푸마가 작년 1분기와 비교되던 문제),
@@ -142,8 +145,10 @@ FX = {
     "SAR": ["사우디 리얄", None],    # v4.12 직접 조회 안 함(SARKRW=X 매일 404) — 달러 환율 ÷ 3.75
 }
 SAR_PEG = 3.75   # 1달러 = 3.75리얄(고정)
-# 1% 칸 알림 대상(v4.9) — 파운드·헤알은 값만 표시
+# 1% 칸 알림 대상(v4.9) — 헤알 등은 값만 표시
 FX_ALERT = ["JPY", "EUR", "USD"]
+FX_AVG = ["GBP"]      # v4.14 1년 평균 대비만(1% 칸 알림 없음) — 브랜드 점검표 원산지 통화
+FX_AVG_STALE_DAYS = 3  # v4.14 이 일수 넘게 이전 값이면(또는 값이 없으면) 빨간 X — 점검표 환율 점수가 멈추지 않게
 FX_ALERT_LABEL = {"JPY": "엔(100엔)", "EUR": "유로", "USD": "달러"}
 FX_LOOKBACK = 30      # 최근 30영업일 안에 이미 닿은 선은 다시 알리지 않음
 FX_MIN_POINTS = 200   # 1년 평균 계산에 필요한 최소 일수
@@ -405,6 +410,14 @@ def fx_levels(s):
     }
 
 
+def fx_avg(s):
+    """v4.14 1년 평균 대비만(알림 없음) — fx_levels와 같은 계산(365일 이동평균, 최소 200일). 자료 부족이면 None"""
+    if s.rolling("365D").count().iloc[-1] < FX_MIN_POINTS:
+        return None
+    avg = float(s.rolling("365D").mean().iloc[-1])
+    return {"avg1y": round(avg, 4), "dev_pct": round((float(s.iloc[-1]) / avg - 1) * 100, 2)}
+
+
 def fx_rate_txt(code, rate):
     return f"{rate * 100:,.0f}" if code == "JPY" else f"{rate:,.0f}"
 
@@ -509,6 +522,18 @@ def fetch_fx(prev_fx=None, prev_date=None):
                           f"지난 1년 알림 {len(al)}건(내림 {n_dn}·오름 {len(al) - n_dn})"
                           + (f" · 최근 {al[-1]['date']} {_line_txt(al[-1]['line'])} "
                              f"{'아래로' if al[-1]['dir'] == 'dn' else '위로'}" if al else ""))
+            elif code in FX_AVG:
+                av = fx_avg(s)
+                if av is None and p_code.get("dev_pct") is not None and p_code.get("rate"):
+                    # 어제는 1년 평균 대비가 있었는데 오늘 자료가 짧음 → 오늘 값만 두면 점검표 환율 점수가 하루만 '1년 전 대비'로
+                    # 바뀌어 판정이 흔들림. 이전 값을 통째로 이어 씀(아래 keep_prev, 이전 값 표시)
+                    print(f"  환율 {code}: 1년 평균 계산 자료 부족 ({len(s)}일) — 기준이 바뀌지 않게 이전 값 사용")
+                    out.pop(code, None)
+                elif av is None:
+                    print(f"  환율 {code}: 1년 평균 계산 자료 부족 ({len(s)}일) — 1년 전 대비만")
+                else:
+                    out[code].update(av)
+                    print(f"  환율 {code}: 1년 평균 {av['avg1y']:,.4f} 대비 {av['dev_pct']:+.1f}% (1% 칸 알림 없음)")
         except Exception as e:
             print(f"  환율 {code} 실패: {str(e)[:100]}")
             # 값은 받았는데 1% 칸 계산 등에서 예외 → 반쪽 값(알림 목록 없음) 대신 이전 값을 이어 씀(아래 keep_prev).
@@ -668,6 +693,15 @@ def main():
     if bad_fx:
         soft_fail(f"감시 환율 수집 실패 — {', '.join(bad_fx)}"
                   f"({'이전 값 사용' if all(c in fx_kept for c in bad_fx) else '일부 값 없음'})")
+    # v4.14 파운드(점검표 원산지 통화, 1% 칸 알림 없음)는 하루 이틀 실패는 '이전 값' 표시만, 3일 넘게 이전 값이거나 값이 없으면 빨간 X
+    for c in FX_AVG:
+        st = str((out["fx"].get(c) or {}).get("stale_since") or "")[:10]
+        try:
+            old = st and (today - datetime.date.fromisoformat(st)).days > FX_AVG_STALE_DAYS
+        except ValueError:
+            old = True
+        if c in fx_failed or old:
+            soft_fail(f"점검표 환율 {c} {'값 없음' if c in fx_failed else st + '부터 이전 값'} — 브랜드 점검표 환율 점수가 멈춤")
 
 
 if __name__ == "__main__":
