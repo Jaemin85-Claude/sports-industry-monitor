@@ -33,6 +33,8 @@ import datetime
 import subprocess
 from urllib.parse import quote
 
+sys.dont_write_bytecode = True   # v1.9 build_dashboard(판정 규칙 판·이름)를 불러와도 __pycache__를 남기지 않음 — 점검 세션 저장소를 깨끗하게(읽기 전용)
+
 KST = datetime.timezone(datetime.timedelta(hours=9))
 DOCS = "docs"
 DASH_URL = "https://jaemin85-claude.github.io/sports-industry-monitor/"
@@ -223,7 +225,7 @@ def acq_core(t, segs, segs_ir):
 
 
 def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
-    """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임)
+    """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임, 티커)
     v1.4 전사 수치(삼성물산)는 빼고 두 번째 값으로 돌려줌, 인수 효과 기간(딕스)은 '인수 효과 포함'"""
     if not old:
         return [], []
@@ -308,7 +310,7 @@ def _kst(v):
 
 def new_mgmt_notes(data, segs, segs_ir, now):
     """v1.7 이번 주 새 본사 발언 — 추출 시각이 7일 안 + 문서 날짜가 14일 안(추출 시각이 없는 옛 기록은 문서 날짜 7일 안).
-    → [(회사, 문서 날짜, 기간, 노트 목록)] 문서 날짜 최신순"""
+    → [(회사, 문서 날짜, 기간, 노트 목록, 티커)] 문서 날짜 최신순"""
     names = {x.get("ticker"): x.get("name") for x in (data or {}).get("items", [])}
     today = now.date()
     found = {}
@@ -346,23 +348,24 @@ def verdict_summary(hist, today):
     → (최신 기록 또는 None, 지난 7일 변화 [(날짜, 브랜드, 전 판정, 새 판정, 바뀐 점수)], 첫 기록 날짜)"""
     from build_dashboard import CHK_RULE
     t = today.isoformat()
-    V = sorted((r for r in (hist or {}).get("verdicts") or [] if isinstance(r, dict) and r.get("rule") == CHK_RULE
-                and isinstance(r.get("b"), dict) and isinstance(r.get("date"), str) and r["date"] <= t), key=lambda r: r["date"])
+    ok = lambda x: isinstance(x, list) and len(x) >= 5 and x[0] in (0, 1, 2) and all(v is None or isinstance(v, int) for v in x[1:5])
+    V = sorted(({**r, "b": {n: x for n, x in r["b"].items() if ok(x)}} for r in (hist or {}).get("verdicts") or []
+                if isinstance(r, dict) and r.get("rule") == CHK_RULE and isinstance(r.get("b"), dict)
+                and isinstance(r.get("date"), str) and r["date"] <= t), key=lambda r: r["date"])   # 모양이 틀린 값은 빼고(메일 전체가 멈추지 않게)
     if not V:
         return None, [], None
     start = (today - datetime.timedelta(days=DAYS)).isoformat()
-    lv = lambda rec, n: (rec["b"].get(n) or [None])[0] if isinstance(rec["b"].get(n), list) else None
+    lv = lambda rec, n: rec["b"][n][0] if n in rec["b"] else None
     ev = []
     for a, b in zip(V, V[1:]):
-        if b["date"] <= start:
+        if b["date"] < start:      # 기간 첫날(지난 월요일) 기록도 포함 — 그날 기록은 보통 지난 메일(07:47) 뒤에 생김
             continue
         for n in list(b["b"]) + [n for n in a["b"] if n not in b["b"]]:
             pa, pb = lv(a, n), lv(b, n)
             if pa == pb:
                 continue
             xa, xb = a["b"].get(n), b["b"].get(n)
-            why = [f"{k} {_pt(xa[j + 1])} → {_pt(xb[j + 1])}" for j, k in enumerate(PT_KO)
-                   if isinstance(xa, list) and isinstance(xb, list) and len(xa) > j + 1 and len(xb) > j + 1 and xa[j + 1] != xb[j + 1]]
+            why = [f"{k} {_pt(xa[j + 1])} → {_pt(xb[j + 1])}" for j, k in enumerate(PT_KO) if xa and xb and xa[j + 1] != xb[j + 1]]
             ev.append((b["date"], n, pa, pb, why))
     return V[-1], ev, V[0]["date"]
 
@@ -574,12 +577,16 @@ def build(today, now=None):
             L.append(f"  {lvl(1)} {len(hold)}곳: " + " · ".join(hold))
         if vev:
             L.append(f"  지난 7일 판정 변화 {len(vev)}건")
-            for d, n, a, b, why in vev:
+            linked = {n for n, x in rows if x[0] in (2, 0)}     # 위 지금 검토·주의 줄에 링크가 있음
+            last = {n: i for i, (_, n, _, _, _) in enumerate(vev)}
+            for i, (d, n, a, b, why) in enumerate(vev):
                 L.append(f"    {d[5:].replace('-', '/')} {n} {lvl(a)} → {lvl(b)}" + (f" ({', '.join(why)})" if why else ""))
-                if b is not None and b != 2 and b != 0:     # 지금 검토·주의는 위에 링크가 있음
+                if n not in linked and last[n] == i:        # 브랜드마다 마지막 변화 줄에 한 번
                     L.append(f"      {dash('brand', n)}")
         else:
             L.append("  지난 7일 판정 변화 없음")
+        if vd["date"] < (today - datetime.timedelta(days=2)).isoformat():
+            L.append(f"  ※ 판정 기록이 {vd['date'][5:].replace('-', '/')}에서 멈춤 — 대시보드 갱신(update-dashboard) 확인 필요")
         if vfirst and vfirst > (today - datetime.timedelta(days=DAYS)).isoformat():
             L.append(f"  ※ 판정 기록은 {vfirst[5:].replace('-', '/')}부터 — 그 전 변화는 비교하지 않음")
         L.append(f"  점검표 전체: {dash('brand')}")
@@ -619,7 +626,7 @@ def build(today, now=None):
                  + (f" (이전 값 {st[5:].replace('-', '/')})" if st else ""))
     if not fx:
         L.append("  자료 없음")
-    elif any(r[5] is not None for r in fx):
+    elif any(r[5] is not None for r in fx if r[0] in FX_SH):     # 1% 칸 알림 통화(엔·유로·달러) — 파운드는 1년 평균만
         L.append("  1% 칸 알림(지난 7일): " + (" · ".join(fxa) if fxa else "없음"))
     if fx:
         L.append(f"  환율 화면: {dash('more', 'fx')}")

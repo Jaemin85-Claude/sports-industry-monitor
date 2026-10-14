@@ -3,7 +3,7 @@
 sports-industry-monitor — 히스토리 축적 (v1)
 v1.2: (대표 승인 2026-10-14) 브랜드 점검표 판정을 자료 날짜마다 기록(verdicts) — 화면과 같은 규칙(build_dashboard chk_verdicts,
       국내 상장사는 화면처럼 DART 재무 병합 뒤). 화면 '어제와 달라진 판정'·주간 메일 판정 요약에 씀. 같은 날 다시 돌면 덮어씀.
-      판정 계산이 실패해도 재무·주가 기록은 저장하고 soft_fail.txt에 남김(빨간 X → 12:23 점검 알림)
+      판정 계산이 실패하거나 판정한 브랜드가 없으면(자료 문제) 재무·주가 기록은 저장하고 soft_fail.txt에 남김(빨간 X → 12:23 점검 알림)
 v1.1: (대표 지시 2026-10-09) 그날 수집에 실패해 이전 값을 이어 쓴 종목(data.json stale_since)은 새 점을 쌓지 않음
       — 같은 옛 값이 7일마다 '새 관측'처럼 기록되지 않게
 매일 빌드 직전에 실행. docs/data.json(재무·주가)과 docs/segments.json(공시 추출)의
@@ -89,22 +89,26 @@ def soft_fail(msg):
 
 def append_verdicts(hist, data, today):
     """v1.2 브랜드 점검표 판정 기록 — {date, rule, b: {브랜드: [판정, 수요, 재고, 발언, 환율]}}.
-    날짜는 data.json 수집 날짜(화면이 '오늘'로 보는 날) — 같은 날 다시 돌면 덮어씀. 판정한 브랜드가 없으면(자료 문제) 남기지 않음"""
+    날짜는 data.json 수집 날짜(화면이 '오늘'로 보는 날 — 화면과 같은 글자로 비교) — 같은 날 다시 돌면 덮어씀.
+    판정한 브랜드가 없거나(자료 문제) 수집 날짜가 없으면 그날 기록을 남기지 않고 soft_fail"""
     from build_dashboard import CHK_LV, CHK_RULE, chk_verdicts, merge_kr_listed
-    d = copy.deepcopy(data)       # 재무·주가 기록(위)은 야후 값 그대로 — 판정만 화면처럼 DART 병합 뒤
-    merge_kr_listed(d)
-    v = chk_verdicts(d, load(NAVER_PATH, None), load(SEG_PATH, None), load(SEG_IR_PATH, None))
     day = str(data.get("generated_at") or "")[:10]
     try:
         datetime.date.fromisoformat(day)
-    except ValueError:
-        day = today
-    if not v:
-        print(f"판정 기록 건너뜀 {day} — 판정한 브랜드 없음(네이버·본사 자료 확인)", flush=True)
+    except ValueError:      # 화면은 generated_at 앞 10글자로 비교 — 다른 날짜로 바꿔 쓰면 화면과 어긋남
+        soft_fail(f"브랜드 판정 기록 건너뜀 — data.json 수집 날짜 없음({day or '빈 값'})")
         return
-    ser = [r for r in hist.get("verdicts") or [] if isinstance(r, dict) and r.get("date") and r.get("date") != day]
-    prev = next((r for r in reversed(sorted(ser, key=lambda r: r["date"]))
-                 if r["date"] < day and r.get("rule") == CHK_RULE and isinstance(r.get("b"), dict)), None)
+    d = copy.deepcopy(data)       # 재무·주가 기록(위)은 야후 값 그대로 — 판정만 화면처럼 DART 병합 뒤
+    merge_kr_listed(d)
+    v = chk_verdicts(d, load(NAVER_PATH, None), load(SEG_PATH, None), load(SEG_IR_PATH, None))
+    ser = [r for r in hist.get("verdicts") or [] if isinstance(r, dict) and isinstance(r.get("date"), str)
+           and isinstance(r.get("b"), dict) and r["date"] and r["date"] != day]   # 같은 날 기록은 새로(또는 지움)
+    if not v:      # 판정할 브랜드가 하나도 없는 건 자료 문제(네이버·본사 자료) — 그날 기록을 지우고 빨간 X로 알림
+        hist["verdicts"] = sorted(ser, key=lambda r: r["date"])[-VERDICT_MAX:]
+        soft_fail(f"브랜드 판정 기록 건너뜀 {day} — 판정한 브랜드 없음(네이버 검색·본사 자료 확인)")
+        return
+    lv = lambda rec, n: (rec["b"].get(n) or [None])[0] if isinstance(rec["b"].get(n), list) else None
+    prev = next((r for r in reversed(sorted(ser, key=lambda r: r["date"])) if r["date"] < day and r.get("rule") == CHK_RULE), None)
     ser.append({"date": day, "rule": CHK_RULE, "b": v})
     ser.sort(key=lambda r: r["date"])
     hist["verdicts"] = ser[-VERDICT_MAX:]
@@ -112,9 +116,8 @@ def append_verdicts(hist, data, today):
     if prev is None:
         chg = "비교할 이전 기록 없음"
     else:
-        moved = [f"{n} {CHK_LV.get((prev['b'].get(n) or [None])[0], '판정 안 함')}→{CHK_LV[x[0]]}"
-                 for n, x in v.items() if (prev["b"].get(n) or [None])[0] != x[0]]
-        gone = [f"{n} {CHK_LV.get((prev['b'].get(n) or [None])[0], '?')}→판정 안 함" for n in prev["b"] if n not in v]
+        moved = [f"{n} {CHK_LV.get(lv(prev, n), '판정 안 함')}→{CHK_LV[x[0]]}" for n, x in v.items() if lv(prev, n) != x[0]]
+        gone = [f"{n} {CHK_LV.get(lv(prev, n), '?')}→판정 안 함" for n in prev["b"] if n not in v and lv(prev, n) is not None]
         chg = f"{prev['date']} 대비 바뀜 {len(moved) + len(gone)}곳" + (f"({', '.join(moved + gone)})" if moved or gone else "")
     print(f"판정 기록 {day}: {cnt} · {chg}", flush=True)
 
