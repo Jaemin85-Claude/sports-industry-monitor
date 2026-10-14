@@ -20,6 +20,15 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - name: Fetch history for news archive
+        # v2.12 지난 뉴스 1년 보관(docs/news_archive.json)이 없거나 복구가 덜 끝났으면 git 전체 기록을 받아
+        # news_monitor가 news.json 지난 버전(8/31~)에서 되살림 — 보통 첫 실행 1회, 그 뒤엔 건너뜀
+        run: |
+          if python -c 'import json,sys; d=json.load(open("docs/news_archive.json",encoding="utf-8")); sys.exit(0 if (d.get("backfill") or {}).get("done") else 1)' 2>/dev/null; then
+            echo "뉴스 보관 파일 있음 — git 기록 받기 건너뜀"
+          else
+            git fetch --quiet --unshallow origin || echo "::warning::git 기록 받기 실패 — 보관 파일 복구는 다음 실행에서 다시"
+          fi
       - name: Collect and curate news
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -29,6 +38,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add docs/news.json
+          if [ -f docs/news_archive.json ]; then git add docs/news_archive.json; fi
           git commit -m "update news $(date -u +%F)" || echo "no changes"
           git pull --rebase origin main
           git push

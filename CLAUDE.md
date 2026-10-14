@@ -15,7 +15,7 @@
 | 워크플로우 파일 | 이름 | 실행하는 코드 | 만드는 파일 | 자동 실행(KST) |
 |---|---|---|---|---|
 | `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·history·index.html) | 매일 04:17 |
-| `news.yml` | update-news | news_monitor.py | `docs/news.json` | 매일 03:17 |
+| `news.yml` | update-news | news_monitor.py | `docs/news.json`, `docs/news_archive.json` | 매일 03:17 |
 | `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 01:47 |
 | `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 02:47 |
 | `dart.yml` | update-dart | dart_fetch.py | `docs/kr_domestic.json`, `docs/kr_listed_fin.json` | 매월 15일 03:47 |
@@ -113,6 +113,10 @@
   시장 › 뉴스 기본 보기는 오늘 전체 + 최근 7일 ★3(칩으로 거르면 전체). 시장 › 캘린더 아래 '해외 세일 시즌'(코드 규칙으로 날짜 계산,
   '예상'은 해마다 발표되는 행사 — 가까운 세일·감시 브랜드 본사 실적 D-day는 오늘 ③에도). 시장 › 뉴스 칩: 국내 비교(유통사·패션 브랜드),
   산업 › 통관·상표권. 화면 주소로 바로 열기: #/brand/아디다스 · #/market/co/NKE · #/more/fx (휴대폰 '뒤로'는 들어온 화면으로).
+  시장 › 뉴스 맨 위 검색창(2026-10-14 대표 승인): 요약·원문 제목·브랜드·매체에서 최근 기사 + 지난 1년 기사를 찾고(고른 칩 안에서),
+  맨 아래 'Google 뉴스에서 더 찾기'. 1년 보관 = `docs/news_archive.json`(news_monitor가 매일 선별 기사를 쌓음 · 같은 제목은 최신 1건 ·
+  파일이 없거나 복구가 덜 끝났으면 news.json git 기록 8/31~에서 되살림 — news.yml이 그때만 git 전체 기록을 받음). 대시보드는 검색창을
+  누를 때만 이 파일을 내려받는다(첫 화면 무게 그대로).
   뉴스는 구글 뉴스 RSS만 쓴다 — 네이버 검색 API 특약(2026-09 개정)이 검색 결과를 AI에 넣는 것을
   금지해 네이버 뉴스 검색은 쓰지 않는다(2026-10-09 대표 지시). 네이버 키는 데이터랩(검색어 트렌드)에만 쓴다.
 - 재무 기준 표기(2026-10): 국내 비교 화면(더보기 › 유통사 비교·패션 브랜드)은 **별도** 재무제표로 통일, 연결이 있는 법인은 기업 상세에
