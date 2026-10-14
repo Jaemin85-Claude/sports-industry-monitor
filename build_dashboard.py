@@ -5,7 +5,8 @@ v33.2: (대표 승인 2026-10-14) '어제와 달라진 판정' — 브랜드 점
        CHK_CUR 한 곳에서 화면에 넣음)해 history_append v1.2가 매일 history.json verdicts에 기록. 화면은 지금 판정을 바로 전 기록과 비교:
        오늘 ① 매입 검토에 '어제와 달라진 판정 n곳 · 클락스 관망 → 지금 검토(환율 0 → +1)'(없으면 머리에 '어제와 같음'),
        브랜드 목록 행·판정 안 함 행에 '어제 관망' 꼬리표, 브랜드 상세에 판정 기록 한 줄(바뀐 점수 또는 같은 판정이 이어진 첫 날).
-       규칙 판(CHK_RULE)이 다른 기록과는 비교하지 않음(화면에는 지금 규칙의 최근 60개만 넣음 · verdicts_from = 지금 규칙의 첫 기록일).
+       규칙 판(CHK_RULE)이나 비교 기준(chk_sig: 감시 브랜드·본사 연결·원산지 통화표)이 다른 기록과는 비교하지 않음 — 목록이 바뀐 날 생긴
+       판정 변화를 '어제와 달라진 판정'으로 보이지 않게(화면에는 비교할 수 있는 기록의 최근 60개만 · verdicts_start = 첫 기록일).
        오늘 기록이 화면 판정과 다르거나 기록 모양이 틀린 브랜드는 비교에서 빼고 더보기 › 수집 상태에 '판정 기록 비교 제외 n곳'.
        환율 화면 '알림 없이 표시만'의 파운드에 1년 평균 대비(fetch_data v4.14, 점수 기준이라 먼저)
 v33.1: (대표 승인 2026-10-14 '추천대로') 시장 › 뉴스 맨 위 지난 뉴스 검색창 — 요약·원문 제목·브랜드·매체에서 찾음(띄어 쓴 낱말은 모두 들어간 기사,
@@ -183,6 +184,7 @@ docs/data.json + docs/segments.json(있으면) → docs/index.html
 import json
 import re
 import os
+import hashlib
 import datetime
 
 TEMPLATE = r"""<!DOCTYPE html>
@@ -706,7 +708,7 @@ div.dc-hd{cursor:default}
 .dc-nm{font-size:var(--fs-name);font-weight:700}
 .dc-why{font-size:14px;color:var(--tx2);line-height:1.45}
 .dc-hint{font-size:13px;color:var(--sub)}
-.dc-chg{margin:0;padding:0 16px 10px;font-size:13px;color:var(--tx2);line-height:1.5}.dc-chg b{color:var(--tx);font-weight:600}
+.dc-chg{margin:0;padding:0 16px 10px;font-size:13px;color:var(--tx2);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dc-chg b{color:var(--tx);font-weight:600}
 .tg.chg{border-color:var(--hold-bd);color:var(--tx2);font-weight:500}
 .dc-more{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 12px 8px 16px;border-top:1px solid var(--line);color:var(--accent)}
 .dc-mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
@@ -1480,7 +1482,7 @@ function statusCard(){
   });
   h+=`</table><div class="note">지연 = 주기보다 오래 갱신되지 않음 → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 일부 실패 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음'</div>`;
   // v33.2 판정 기록 비교에서 뺀 브랜드 — 화면 판정과 기록(파이썬)이 다르거나 기록 모양이 틀림 → 판정 규칙 두 곳(build_dashboard JS·파이썬) 확인
-  try{ const sk=chkHist().skip; if(sk.length) h+=`<div class="note"><span class="stl" style="margin-left:0">판정 기록 비교 제외 ${sk.length}곳</span> ${esc(sk.join(', '))} — 화면 판정과 판정 기록이 달라 '어제와 달라진 판정'에서 뺌(판정 규칙 확인 필요)</div>`; }catch(e){ console.error('[수집 상태 · 판정 기록] 확인 실패:',e); }
+  try{ const sk=chkHist().skip; if(sk.length) h+=`<div class="note"><span class="stl" style="margin-left:0">판정 기록 비교 제외 ${sk.length}곳</span> ${esc(sk.join(', '))} — 화면 판정과 기록이 다르거나 기록 모양이 틀려 '어제와 달라진 판정'에서 뺌(판정 규칙 두 곳 확인 필요)</div>`; }catch(e){ console.error('[수집 상태 · 판정 기록] 확인 실패:',e); }
   h+=`</div>`;
   return h;
 }
@@ -1724,9 +1726,11 @@ function todayModel(){
     if(!M.main.length) return M.rest.length?{n:0,empty:'판정할 브랜드 없음',emptySub:`본사 재고·발언 자료 수집 전 — 판정 안 함 ${M.rest.length}곳은 점검표에서 검색·환율만`,more:`판정 안 함 ${M.rest.length}곳`}
       :{n:0,empty:'네이버 검색 자료 수집 전'};
     // v33.2 어제와 달라진 판정(판정 기록이 있을 때) — 계산이 실패해도 카드는 그대로
-    // 한 곳이면 바뀐 점수까지, 두 곳이면 판정만, 세 곳 이상이면 이름만 4곳까지(꼬리표·상세에 판정·점수) — 첫 화면에서 ②가 덜 밀리게
-    let chg=null; try{ const C=chkHist(), L=C.list, k=L.length, mx=k>2?4:2;
-      if(C.prev) chg={vs:chkLbl(C).vs, n:k, list:L.slice(0,mx).map(c=>k===1?chkChgTxt(c):k===2?`${c.name} ${lvT(c.from)} → ${lvT(c.to)}`:c.name), sep:k>2?'·':' · ', more:Math.max(0,k-mx), skip:C.skip.length}; }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
+    // 한 줄(넘치면 …, 전체는 title) — 한 곳이면 바뀐 점수까지, 두 곳이면 판정만, 세 곳 이상이면 이름만 4곳까지(꼬리표·상세에 판정·점수) — 첫 화면에서 ②가 덜 밀리게.
+    // 지금 검토·주의로 바뀐 곳 먼저
+    let chg=null; try{ const C=chkHist(), pri=c=>(c.to===2||c.to===0)?0:1, L=C.list.slice().sort((a,c)=>pri(a)-pri(c)), k=L.length, mx=k>2?4:2;
+      if(C.prev) chg={vs:chkLbl(C).vs, n:k, list:L.slice(0,mx).map(c=>k===1?chkChgTxt(c):k===2?`${c.name} ${lvT(c.from)} → ${lvT(c.to)}`:c.name), sep:k>2?'·':' · ', more:Math.max(0,k-mx), skip:C.skip.length,
+        full:L.map(chkChgTxt).join(' · ')}; }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
     return {n:M.main.length, chg,
       head:pick.length?`지금 검토 ${gos.length}곳 · 주의 ${warn.length}곳`:`오늘은 지금 검토·주의 없음 · 관망 ${hold.length}곳`,
       rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short,
@@ -1820,7 +1824,8 @@ function tdBuyHtml(B){   // ① 매입 검토(머리는 글자만 — 아래 '�
   let h=`<section class="dc dc1" aria-label="매입 검토"><div class="dc-hd">${dcNo(1)}<span class="dc-t">매입 검토</span><span class="dc-meta">${same?`${B.n}곳 판정 · ${esc(G.vs)} 같음`:`브랜드 점검표 · ${B.n}곳 판정`}</span></div>`;
   if(B.empty) h+=`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}`;
   else { h+=`<h2 class="dc-h">${esc(B.head)}</h2>`;
-    if(G&&G.n) h+=`<p class="dc-chg"><b>${esc(G.vs)} 달라진 판정 ${G.n}곳</b> · ${esc(G.list.join(G.sep))}${G.more?` 외 ${G.more}곳`:''}</p>`;
+    // 한 곳이면 '1곳'을 빼서 '클락스 관망 → 지금 검토'가 좁은 화면(360px)에서도 한 줄에 — 넘치는 끝(바뀐 점수)부터 …
+    if(G&&G.n) h+=`<p class="dc-chg" title="${esc(G.full)}"><b>${esc(G.vs)} 달라진 판정${G.n>1?` ${G.n}곳`:''}</b> · ${esc(G.list.join(G.sep))}${G.more?` 외 ${G.more}곳`:''}</p>`;
     h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}${chgTag(r.name)}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
   // '점검표 전체 보기' = 판정 필터 '전체'로(전에 고른 필터가 남아 글자와 결과가 달라지지 않게 — goKey 'brand-all')
   if(B.more) h+=`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span><span class="s">${esc(B.more)}</span></span>${ic('arrow',20,'s2')}</button>`;
@@ -3285,6 +3290,7 @@ function moreFashionHtml(){   // 패션 브랜드: 국내 패션 브랜드 비�
    대상: 네이버 검색 감시 브랜드(global) 중 본사가 상장사로 연결된 곳. 본사 자료가 없는 브랜드는 아래 표에 검색·환율만 ── */
 const CHK_CUR=__CHK_CUR__;   // 원산지(본사) 통화 — 파이썬 CHK_CUR(이 파일 아래, 판정 기록과 같은 표)에서 넣음
 const CHK_RULE=__CHK_RULE__;   // v33.2 판정 규칙 판 — 기록(history.json verdicts)의 rule이 같을 때만 '어제와 달라진 판정'을 비교
+const CHK_SIG=__CHK_SIG__;   // v33.2 비교 기준(감시 브랜드·본사 연결·원산지 통화표, 파이썬 chk_sig) — 같은 기록끼리만 비교(화면에는 같은 것만 들어옴)
 const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신'};
 const CHK_SALE={EUR:['FR','IT'],GBP:['GB'],USD:['US'],JPY:['JP']};   // 통화 지역의 해외 세일(캘린더와 같은 일정, saleEvents의 나라 코드 cc)
 const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
@@ -3340,7 +3346,7 @@ function chkModel(){
   if(CHK_CACHE) return CHK_CACHE;
   const med=chkMedian(), main=[], rest=[];
   ((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global').forEach(b=>{
-    const cur=CHK_CUR[b.name]||null, link=b.link?String(b.link):'';
+    const cur=own(CHK_CUR,b.name)?CHK_CUR[b.name]:null, link=b.link?String(b.link):'';
     const x=link&&!link.startsWith('krd:')?DATA.items.find(i=>i.ticker===link):null;
     // v33 S2: 옛 점검표 카드용 sale·news는 뺌(다음 세일·뉴스는 상세에서 chkSaleEv·chkNewsList) — 세일·뉴스 자료가 깨져도 판정 목록은 그려짐
     const r={b, x, cur, link, dem:chkDemand(b,med), fx:cur?chkFx(cur):{pt:0,na:1,txt:'원산지 통화 미지정'}};
@@ -3367,24 +3373,29 @@ let CHK_HIST=null;
 function chkHist(){
   if(CHK_HIST) return CHK_HIST;
   const dd=String(DATA.generated_at||'').slice(0,10), H=(HIST&&Array.isArray(HIST.verdicts))?HIST.verdicts:[];
-  const V=H.filter(r=>r&&r.rule===CHK_RULE&&typeof r.date==='string'&&r.b&&typeof r.b==='object'&&!Array.isArray(r.b)).sort((a,c)=>a.date<c.date?-1:(a.date>c.date?1:0));
+  // 비교할 수 있는 기록만 — 규칙 판·비교 기준(sig: 감시 브랜드·본사 연결·통화표)이 같고 모양이 맞는 것(파이썬이 같은 것만 넣지만 한 번 더)
+  const V=H.filter(r=>r&&r.rule===CHK_RULE&&r.sig===CHK_SIG&&typeof r.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&r.b&&typeof r.b==='object'&&!Array.isArray(r.b))
+    .sort((a,c)=>a.date<c.date?-1:(a.date>c.date?1:0));
   const prev=V.filter(r=>r.date<dd).pop()||null, cur=V.filter(r=>r.date===dd).pop()||null, M=chkModel();
-  // 기록의 판정 — 0·1·2(정수)면 그 값, 기록에 없으면 null(판정 안 함), 모양이 틀리면 undefined(비교하지 않음)
-  const lvOf=(rec,n)=>{ if(!rec||!own(rec.b,n)) return null; const v=rec.b[n]; return (Array.isArray(v)&&Number.isInteger(v[0])&&own(CHK_LV,v[0]))?v[0]:undefined; };
+  // 기록의 판정 — [판정 0·1·2, 점수 4개(정수·null)]면 판정 값, 기록에 없으면 null(판정 안 함), 모양이 틀리면 undefined(비교하지 않음) — 파이썬 chk_entry_ok와 같은 기준
+  const lvOf=(rec,n)=>{ if(!rec||!own(rec.b,n)) return null; const v=rec.b[n];
+    return (Array.isArray(v)&&v.length>=5&&Number.isInteger(v[0])&&own(CHK_LV,v[0])&&v.slice(1,5).every(p=>p===null||Number.isInteger(p)))?v[0]:undefined; };
   const by=Object.create(null), list=[], skip=[];
   if(prev){
-    const now=new Set(M.main.map(r=>r.b.name)), shown=new Set(M.main.concat(M.rest).map(r=>r.b.name));   // shown = 지금 점검표에 있는 브랜드(감시에서 뺀 브랜드는 비교 안 함)
+    const now=new Set(M.main.map(r=>r.b.name)), shown=new Set(M.main.concat(M.rest).map(r=>r.b.name));   // shown = 지금 점검표에 있는 브랜드
     M.main.forEach(r=>{ const n=r.b.name;
       if(cur&&lvOf(cur,n)!==r.lv){ skip.push(n); return; }
       const pl=lvOf(prev,n); if(pl===undefined){ skip.push(n); return; } if(pl===r.lv) return;
       const p=prev.b[n], np=[r.dem,r.inv,r.notes,r.fx].map(o=>(!o||o.na)?null:o.pt);
-      const why=pl!=null?CHK_PT.map((k,j)=>{ const a=p[j+1]==null?null:p[j+1]; return a!==np[j]?[k,ptT(a),'→',ptT(np[j])].join(NB):''; }).filter(Boolean):[];
+      const why=pl!=null?CHK_PT.map((k,j)=>{ const a=p[j+1]; return a!==np[j]?[k,ptT(a),'→',ptT(np[j])].join(NB):''; }).filter(Boolean):[];
       list.push(by[n]={name:n, from:pl, to:r.lv, why}); });
-    Object.keys(prev.b).forEach(n=>{ if(now.has(n)||!shown.has(n)) return; const pl=lvOf(prev,n); if(pl==null) return;   // null = 그때도 판정 안 함, undefined = 모양 틀림
-      if(cur&&lvOf(cur,n)!==null){ skip.push(n); return; }
+    Object.keys(prev.b).forEach(n=>{ if(now.has(n)||!shown.has(n)) return; const pl=lvOf(prev,n); if(pl===null) return;   // null = 그때도 판정 안 함
+      if(pl===undefined||(cur&&lvOf(cur,n)!==null)){ skip.push(n); return; }   // 모양 틀림 · 오늘 기록은 판정했는데 화면은 판정 안 함
       list.push(by[n]={name:n, from:pl, to:null, why:[]}); });
-    if(skip.length) console.error('[판정 기록] 화면 판정과 기록이 다르거나 기록 모양이 틀림 — 비교에서 뺌:',skip.join(', '));
   }
+  // 오늘 기록만 판정한 브랜드(화면은 판정 안 함) — 어제 기록에 없어도 계산 어긋남이라 알림
+  if(cur) Object.keys(cur.b).forEach(n=>{ if(!M.main.some(r=>r.b.name===n)&&skip.indexOf(n)<0&&lvOf(cur,n)!==null) skip.push(n); });
+  if(skip.length) console.error('[판정 기록] 화면 판정과 기록이 다르거나 기록 모양이 틀림 — 비교에서 뺌:',skip.join(', '));
   const gap=prev?Math.round((new Date(dd+'T00:00:00')-new Date(prev.date+'T00:00:00'))/86400000):0;
   return (CHK_HIST={prev, V, by, list, skip, dd, gap});
 }
@@ -3401,12 +3412,12 @@ function chgTag(n){
   const Lb=chkLbl(C);
   return `<span class="tg chg" title="${esc(`${Lb.pl} ${lvT(c.from)} → ${Lb.cl} ${lvT(c.to)}`)}">${esc(c.from==null?'새로 판정':`${Lb.pl} ${lvT(c.from)}`)}</span>`;
 }
-function chkSince(n,lv){   // 같은 판정이 이어진 첫 기록 날짜 — {d, first: 지금 규칙의 첫 기록부터 내내, cut: 화면에 넣은 기록 처음부터 내내(그 전 기록은 화면에 없음)}
+function chkSince(n,lv){   // 같은 판정이 이어진 첫 기록 날짜 — {d, first: 판정 기록을 시작한 날부터 내내, cut: 비교할 수 있는 기록 처음부터 내내(그 전은 기준이 다르거나 화면에 없음)}
   const C=chkHist(), V=C.V.filter(r=>r.date<=C.dd); let d=null;
   for(let j=V.length-1;j>=0;j--){ const v=V[j].b[n]; if(Array.isArray(v)&&v[0]===lv) d=V[j].date; else break; }
   if(!d) return null;
-  const all=d===V[0].date, from=HIST&&HIST.verdicts_from;
-  return {d, first:all&&(!from||from===d), cut:all&&!!from&&from<d};
+  const all=d===V[0].date, st=HIST&&HIST.verdicts_start;
+  return {d, first:all&&(!st||st===d), cut:all&&!!st&&st<d};
 }
 /* ── v33 A안 S2: 판정 이유 · 점수 칸 · 상세 모델 — Claude·무작위 없이 chkModel 값만(판정 규칙은 위 그대로 · 주간 메일과 같은 규칙) ── */
 const JONG_D={0:21,1:8,3:16,6:1,7:8,8:8};   // 숫자 끝을 읽는 소리의 받침(영·일·삼·육·칠·팔)
@@ -3589,7 +3600,9 @@ const BR_F=[['all','전체',null],['go','지금 검토',2],['wait','관망',1],[
 const BR_NOTE={all:'점수: + 매입에 유리, − 불리, 0 보통, ― 자료 없음', go:'지금 검토 = 국내 수요가 약하지 않고 매입 조건 +2 이상',
   wait:'관망 = 지금 검토에도 주의에도 해당하지 않음', warn:'주의 = 국내 수요가 약하고 매입 조건 +1 이하, 또는 매입 조건 −1 이하'};
 const chkMedN=()=>((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global'&&b.yoy!=null&&!b.low).length;   // chkMedian과 같은 거름(검색량 충분)
+let BR_DAY=null;   // v33.2 브랜드 목록을 그린 한국 날짜
 function buildBrand(){
+  BR_DAY=kstToday();
   const M=chkModel(), cnt=lv=>M.main.filter(r=>r.lv===lv).length, gd=String(DATA.generated_at||'').slice(0,10);
   paint('brHead',()=>`<div class="hd-row"><div class="hd-tt"><h1>브랜드 점검표</h1><span class="hd-sub">본사 자료가 있는 ${M.main.length}곳${gd?` · ${mdTxt(gd)} 기준`:''}</span></div>
     <button type="button" class="icbtn" id="brInfoBtn" aria-label="판정 기준 보기" aria-expanded="${BR_INFO}" aria-controls="brInfo" onclick="brInfo()">${ic('info',22)}</button></div>
@@ -3874,6 +3887,7 @@ function phSoon(){ if(!PH_RAF) PH_RAF=requestAnimationFrame(phSync); }
 try{ const ro=new ResizeObserver(phSoon); ['tdHead','brHead'].forEach(id=>{ const e=document.getElementById(id); if(e) ro.observe(e); }); }catch(e){}
 window.addEventListener('resize',phSoon);
 function renderBrand(st){
+  if(BR_DAY&&BR_DAY!==kstToday()){ BR_SHOWN=null; safe(buildBrand,'브랜드 점검표','brandBody'); }   // v33.2 자정이 지나면 목록·상세를 다시(꼬리표 '어제'·'오늘' → 날짜)
   const d=!!st.id, bl=document.getElementById('brandList'), bd=document.getElementById('brandDetail');
   if(bl) bl.style.display=d?'none':''; if(bd) bd.style.display=d?'':'none';
   if(!d) return;
@@ -4084,6 +4098,31 @@ CHK_CUR = {   # 원산지(본사) 통화 — 네이버 감시 브랜드(global)�
 }
 CHK_LV = {2: "지금 검토", 1: "관망", 0: "주의"}
 VERDICT_EMBED = 60   # 화면에 넣는 판정 기록 수(history.json에는 history_append가 최대 400일)
+
+
+def chk_sig(naver):
+    """판정 비교 기준(sig) — 감시 브랜드(global)의 이름·본사 연결과 원산지 통화표(CHK_CUR). 브랜드 추가·삭제·연결 변경이나 CHK_CUR 수정이
+    있으면 값이 바뀌어 그 전 기록과 비교하지 않음(감시 브랜드 중앙값·판정 대상이 바뀌어 생긴 변화를 '어제와 달라진 판정'으로 보이지 않게).
+    입력 측정 방식(재고 비교 기간·환율 기준·검색 전년 대비·발언 신호)이나 판정 규칙을 바꾸면 CHK_RULE을 올림"""
+    bs = sorted((str(b.get("name")), str(b.get("link") or "")) for b in ((naver or {}).get("brands") or [])
+                if isinstance(b, dict) and b.get("group") == "global")
+    raw = json.dumps([bs, sorted(CHK_CUR.items())], ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()[:10]
+
+
+def chk_entry_ok(x):
+    """판정 기록의 한 브랜드 값이 올바른지 — [판정 0·1·2, 수요, 재고, 발언, 환율](점수는 정수 또는 None). 화면 chkHist lvOf와 같은 기준 —
+    틀린 값은 판정 변화 비교에서 뺌(화면은 '판정 기록 비교 제외')"""
+    return (isinstance(x, list) and len(x) >= 5 and type(x[0]) is int and x[0] in CHK_LV
+            and all(v is None or type(v) is int for v in x[1:5]))
+
+
+def chk_records(hist):
+    """history.json verdicts에서 모양이 맞는 기록만(날짜 YYYY-MM-DD 문자열 · rule 정수 · b dict) — 날짜순"""
+    vs = (hist or {}).get("verdicts") if isinstance(hist, dict) else None
+    return sorted((r for r in (vs if isinstance(vs, list) else []) if isinstance(r, dict) and isinstance(r.get("date"), str)
+                   and re.fullmatch(r"\d{4}-\d{2}-\d{2}", r["date"]) and type(r.get("rule")) is int and isinstance(r.get("b"), dict)),
+                  key=lambda r: r["date"])
 
 
 def _chk_median(brands):
@@ -4441,12 +4480,6 @@ def main():
                 hist = json.load(f)
         except Exception:
             pass
-    # v33.2 판정 기록은 지금 규칙 판(CHK_RULE)의 최근 VERDICT_EMBED개만 화면에 넣음(화면은 바로 전 기록·같은 판정이 이어진 날짜만 씀).
-    # verdicts_from = 지금 규칙의 첫 기록 날짜(잘라 넣어도 '기록을 시작한 날'과 '적어도 그날부터'를 구분)
-    if isinstance(hist, dict) and isinstance(hist.get("verdicts"), list):
-        cv = sorted((r for r in hist["verdicts"] if isinstance(r, dict) and r.get("rule") == CHK_RULE and isinstance(r.get("date"), str)),
-                    key=lambda r: r["date"])
-        hist = {**hist, "verdicts": cv[-VERDICT_EMBED:], "verdicts_from": cv[0]["date"] if cv else None}
     kr = None
     if os.path.exists("docs/kosis.json"):
         try:
@@ -4470,6 +4503,13 @@ def main():
                 news.pop(k, None)
         except Exception:
             pass
+    # v33.2 판정 기록은 지금과 비교할 수 있는 것(규칙 판 CHK_RULE · 비교 기준 sig가 같음)의 최근 VERDICT_EMBED개만 화면에 넣음
+    # (화면은 바로 전 기록·같은 판정이 이어진 날짜만 씀). verdicts_start = 모든 기록의 첫 날짜('판정 기록을 시작한 날' vs '적어도 그날부터')
+    sig = chk_sig(naver)
+    if isinstance(hist, dict) and "verdicts" in hist:
+        rs = chk_records(hist)
+        cv = [r for r in rs if r["rule"] == CHK_RULE and r.get("sig") == sig]
+        hist = {**hist, "verdicts": cv[-VERDICT_EMBED:], "verdicts_start": rs[0]["date"] if rs else None}
     def js(v):   # v33 내장 데이터 — 뉴스 요약 등에 '</script'·'<!--'가 들어와도 화면 스크립트가 끊기지 않게(JSON 안에서는 같은 글자: \/ = /, \u0021 = !)
         return json.dumps(v, ensure_ascii=False).replace("</", "<\\/").replace("<!--", "<\\u0021--")
     html = (TEMPLATE
@@ -4484,7 +4524,8 @@ def main():
             .replace("__STATUS__", js(collect_status()))
             .replace("__WMAP__", js(wmap))
             .replace("__CHK_CUR__", js(CHK_CUR))
-            .replace("__CHK_RULE__", str(CHK_RULE)))
+            .replace("__CHK_RULE__", str(CHK_RULE))
+            .replace("__CHK_SIG__", json.dumps(sig)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")

@@ -3,6 +3,7 @@
 sports-industry-monitor — 히스토리 축적 (v1)
 v1.2: (대표 승인 2026-10-14) 브랜드 점검표 판정을 자료 날짜마다 기록(verdicts) — 화면과 같은 규칙(build_dashboard chk_verdicts,
       국내 상장사는 화면처럼 DART 재무 병합 뒤). 화면 '어제와 달라진 판정'·주간 메일 판정 요약에 씀. 같은 날 다시 돌면 덮어씀.
+      기록마다 비교 기준 sig(감시 브랜드·본사 연결·원산지 통화표) — 바뀐 날은 비교하지 않음(목록 변경으로 생긴 판정 변화를 걸러냄).
       판정 계산이 실패하거나 판정한 브랜드가 없으면(자료 문제) 재무·주가 기록은 저장하고 soft_fail.txt에 남김(빨간 X → 12:23 점검 알림)
 v1.1: (대표 지시 2026-10-09) 그날 수집에 실패해 이전 값을 이어 쓴 종목(data.json stale_since)은 새 점을 쌓지 않음
       — 같은 옛 값이 7일마다 '새 관측'처럼 기록되지 않게
@@ -15,9 +16,13 @@ v1.1: (대표 지시 2026-10-09) 그날 수집에 실패해 이전 값을 이어
 """
 
 import os
+import re
+import sys
 import copy
 import json
 import datetime
+
+sys.dont_write_bytecode = True   # v1.2 build_dashboard(판정 규칙)를 불러와도 저장소에 __pycache__를 남기지 않음
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 DATA_PATH = "docs/data.json"
@@ -88,37 +93,47 @@ def soft_fail(msg):
 
 
 def append_verdicts(hist, data, today):
-    """v1.2 브랜드 점검표 판정 기록 — {date, rule, b: {브랜드: [판정, 수요, 재고, 발언, 환율]}}.
+    """v1.2 브랜드 점검표 판정 기록 — {date, rule, sig, b: {브랜드: [판정, 수요, 재고, 발언, 환율]}}.
     날짜는 data.json 수집 날짜(화면이 '오늘'로 보는 날 — 화면과 같은 글자로 비교) — 같은 날 다시 돌면 덮어씀.
+    sig = 비교 기준(감시 브랜드·본사 연결·원산지 통화표, build_dashboard chk_sig) — 다르면 화면·주간 메일이 비교하지 않음.
     판정한 브랜드가 없거나(자료 문제) 수집 날짜가 없으면 그날 기록을 남기지 않고 soft_fail"""
-    from build_dashboard import CHK_LV, CHK_RULE, chk_verdicts, merge_kr_listed
+    from build_dashboard import CHK_LV, CHK_RULE, chk_entry_ok, chk_records, chk_sig, chk_verdicts, merge_kr_listed
     day = str(data.get("generated_at") or "")[:10]
-    try:
-        datetime.date.fromisoformat(day)
-    except ValueError:      # 화면은 generated_at 앞 10글자로 비교 — 다른 날짜로 바꿔 쓰면 화면과 어긋남
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):      # 화면은 generated_at 앞 10글자로 비교 — 다른 날짜로 바꿔 쓰면 화면과 어긋남
         soft_fail(f"브랜드 판정 기록 건너뜀 — data.json 수집 날짜 없음({day or '빈 값'})")
         return
+    if day != today:
+        print(f"  참고: data.json 수집 날짜 {day} ≠ 오늘 {today} — 그 날짜 기록을 다시 씀(수집이 갱신되지 않았는지 확인)", flush=True)
     d = copy.deepcopy(data)       # 재무·주가 기록(위)은 야후 값 그대로 — 판정만 화면처럼 DART 병합 뒤
     merge_kr_listed(d)
-    v = chk_verdicts(d, load(NAVER_PATH, None), load(SEG_PATH, None), load(SEG_IR_PATH, None))
-    ser = [r for r in hist.get("verdicts") or [] if isinstance(r, dict) and isinstance(r.get("date"), str)
-           and isinstance(r.get("b"), dict) and r["date"] and r["date"] != day]   # 같은 날 기록은 새로(또는 지움)
+    naver = load(NAVER_PATH, None)
+    v = chk_verdicts(d, naver, load(SEG_PATH, None), load(SEG_IR_PATH, None))
+    sig = chk_sig(naver)
+    ser = [r for r in chk_records(hist) if r["date"] != day]      # 모양이 틀린 기록은 걸러냄 · 같은 날 기록은 새로(또는 지움)
     if not v:      # 판정할 브랜드가 하나도 없는 건 자료 문제(네이버·본사 자료) — 그날 기록을 지우고 빨간 X로 알림
-        hist["verdicts"] = sorted(ser, key=lambda r: r["date"])[-VERDICT_MAX:]
+        hist["verdicts"] = ser[-VERDICT_MAX:]
         soft_fail(f"브랜드 판정 기록 건너뜀 {day} — 판정한 브랜드 없음(네이버 검색·본사 자료 확인)")
         return
-    lv = lambda rec, n: (rec["b"].get(n) or [None])[0] if isinstance(rec["b"].get(n), list) else None
-    prev = next((r for r in reversed(sorted(ser, key=lambda r: r["date"])) if r["date"] < day and r.get("rule") == CHK_RULE), None)
-    ser.append({"date": day, "rule": CHK_RULE, "b": v})
+    prev = next((r for r in reversed(ser) if r["date"] < day and r["rule"] == CHK_RULE), None)
+    ser.append({"date": day, "rule": CHK_RULE, "sig": sig, "b": v})
     ser.sort(key=lambda r: r["date"])
     hist["verdicts"] = ser[-VERDICT_MAX:]
     cnt = " · ".join(f"{CHK_LV[k]} {sum(1 for x in v.values() if x[0] == k)}" for k in (2, 1, 0))
     if prev is None:
         chg = "비교할 이전 기록 없음"
+    elif prev.get("sig") != sig:
+        chg = f"{prev['date']} 뒤로 감시 브랜드·본사 연결·통화표가 바뀌어 비교 안 함"
     else:
-        moved = [f"{n} {CHK_LV.get(lv(prev, n), '판정 안 함')}→{CHK_LV[x[0]]}" for n, x in v.items() if lv(prev, n) != x[0]]
-        gone = [f"{n} {CHK_LV.get(lv(prev, n), '?')}→판정 안 함" for n in prev["b"] if n not in v and lv(prev, n) is not None]
-        chg = f"{prev['date']} 대비 바뀜 {len(moved) + len(gone)}곳" + (f"({', '.join(moved + gone)})" if moved or gone else "")
+        BAD = object()      # 모양이 틀린 값(0 == False 혼동을 피해 따로 표시)
+
+        def lv(n):     # 기록에 없으면 None(판정 안 함), 모양이 틀리면 BAD(비교 안 함) — 화면 lvOf와 같은 기준
+            x = prev["b"].get(n)
+            return None if n not in prev["b"] else (x[0] if chk_entry_ok(x) else BAD)
+        moved = [f"{n} {CHK_LV.get(lv(n), '판정 안 함')}→{CHK_LV[x[0]]}" for n, x in v.items() if lv(n) is not BAD and lv(n) != x[0]]
+        gone = [f"{n} {CHK_LV[lv(n)]}→판정 안 함" for n in prev["b"] if n not in v and lv(n) is not None and lv(n) is not BAD]
+        bad = [n for n in prev["b"] if lv(n) is BAD]
+        chg = (f"{prev['date']} 대비 바뀜 {len(moved) + len(gone)}곳" + (f"({', '.join(moved + gone)})" if moved or gone else "")
+               + (f" · 기록 모양이 틀려 비교 제외 {', '.join(bad)}" if bad else ""))
     print(f"판정 기록 {day}: {cnt} · {chg}", flush=True)
 
 

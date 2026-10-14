@@ -345,29 +345,37 @@ def _pt(v):
 
 def verdict_summary(hist, today):
     """v1.9 브랜드 점검표 판정 — history.json verdicts(history_append v1.2). 규칙 판(CHK_RULE)이 같은 기록만.
-    → (최신 기록 또는 None, 지난 7일 변화 [(날짜, 브랜드, 전 판정, 새 판정, 바뀐 점수)], 첫 기록 날짜)"""
-    from build_dashboard import CHK_RULE
+    판정 변화는 비교 기준(sig: 감시 브랜드·본사 연결·통화표)이 같은 이웃 기록끼리만 — 대시보드와 같음. 모양이 틀린 값은 그 브랜드만 비교에서 뺌.
+    → (최신 기록 또는 None, 지난 7일 변화 [(날짜, 브랜드, 전 판정, 새 판정, 바뀐 점수)], 첫 기록 날짜, 기준이 바뀐 날 목록)"""
+    from build_dashboard import CHK_RULE, chk_entry_ok, chk_records
     t = today.isoformat()
-    ok = lambda x: isinstance(x, list) and len(x) >= 5 and x[0] in (0, 1, 2) and all(v is None or isinstance(v, int) for v in x[1:5])
-    V = sorted(({**r, "b": {n: x for n, x in r["b"].items() if ok(x)}} for r in (hist or {}).get("verdicts") or []
-                if isinstance(r, dict) and r.get("rule") == CHK_RULE and isinstance(r.get("b"), dict)
-                and isinstance(r.get("date"), str) and r["date"] <= t), key=lambda r: r["date"])   # 모양이 틀린 값은 빼고(메일 전체가 멈추지 않게)
+    V = []
+    for r in chk_records(hist):
+        if r["rule"] != CHK_RULE or r["date"] > t:
+            continue
+        V.append({**r, "b": {n: x[:5] for n, x in r["b"].items() if chk_entry_ok(x)},
+                  "bad": {n for n, x in r["b"].items() if not chk_entry_ok(x)}})
     if not V:
-        return None, [], None
+        return None, [], None, []
     start = (today - datetime.timedelta(days=DAYS)).isoformat()
     lv = lambda rec, n: rec["b"][n][0] if n in rec["b"] else None
-    ev = []
+    ev, reset = [], []
     for a, b in zip(V, V[1:]):
         if b["date"] < start:      # 기간 첫날(지난 월요일) 기록도 포함 — 그날 기록은 보통 지난 메일(07:47) 뒤에 생김
             continue
+        if a.get("sig") != b.get("sig"):      # 감시 브랜드·통화표가 바뀐 날 — 비교하지 않음
+            reset.append(b["date"])
+            continue
         for n in list(b["b"]) + [n for n in a["b"] if n not in b["b"]]:
+            if n in a["bad"] or n in b["bad"]:
+                continue
             pa, pb = lv(a, n), lv(b, n)
             if pa == pb:
                 continue
             xa, xb = a["b"].get(n), b["b"].get(n)
             why = [f"{k} {_pt(xa[j + 1])} → {_pt(xb[j + 1])}" for j, k in enumerate(PT_KO) if xa and xb and xa[j + 1] != xb[j + 1]]
             ev.append((b["date"], n, pa, pb, why))
-    return V[-1], ev, V[0]["date"]
+    return V[-1], ev, V[0]["date"], reset
 
 
 SEP_GROUPS = ("kr_peer", "kr_fb", "customs")   # 따로 묶는 뉴스(v1.2) — '중요 뉴스'에서는 제외
@@ -540,7 +548,7 @@ def build(today, now=None):
     dch = dart_changes(kr, kr_old)
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
     mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
-    vd, vev, vfirst = verdict_summary(hist, today)
+    vd, vev, vfirst, vreset = verdict_summary(hist, today)
 
     # ── 휴대폰 알림 3줄 ──
     usd = next((r for r in fx if r[0] == "USD"), None)
@@ -563,8 +571,7 @@ def build(today, now=None):
     L.append("■ 브랜드 점검표 판정" + (f" ({vd['date'][5:].replace('-', '/')} 기준 · 대시보드 '브랜드' 탭과 같은 규칙)" if vd else ""))
     if vd:
         lvl = lambda v: CHK_LV.get(v, "판정 안 함")
-        rows = sorted(vd["b"].items(), key=lambda kv: (-(kv[1][0] if kv[1][0] is not None else -1),
-                                                      -sum(x or 0 for x in kv[1][1:]), kv[0]))
+        rows = sorted(vd["b"].items(), key=lambda kv: (-kv[1][0], -sum(x or 0 for x in kv[1][1:5]), kv[0]))
         for k in (2, 0):
             g = [(n, x) for n, x in rows if x[0] == k]
             if g:
@@ -585,9 +592,11 @@ def build(today, now=None):
                     L.append(f"      {dash('brand', n)}")
         else:
             L.append("  지난 7일 판정 변화 없음")
+        if vreset:
+            L.append(f"  ※ {', '.join(d[5:].replace('-', '/') for d in vreset)}: 감시 브랜드·본사 연결·통화표가 바뀌어 그날 판정 변화는 비교하지 않음")
         if vd["date"] < (today - datetime.timedelta(days=2)).isoformat():
             L.append(f"  ※ 판정 기록이 {vd['date'][5:].replace('-', '/')}에서 멈춤 — 대시보드 갱신(update-dashboard) 확인 필요")
-        if vfirst and vfirst > (today - datetime.timedelta(days=DAYS)).isoformat():
+        if vfirst and vfirst >= (today - datetime.timedelta(days=DAYS)).isoformat():
             L.append(f"  ※ 판정 기록은 {vfirst[5:].replace('-', '/')}부터 — 그 전 변화는 비교하지 않음")
         L.append(f"  점검표 전체: {dash('brand')}")
     else:
