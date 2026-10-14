@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.2: (대표 승인 2026-10-14) '어제와 달라진 판정' — 브랜드 점검표 판정을 파이썬으로도 계산(chk_verdicts, 화면 chkModel과 같은 규칙·
+       CHK_CUR 한 곳에서 화면에 넣음)해 history_append v1.2가 매일 history.json verdicts에 기록. 화면은 지금 판정을 바로 전 기록과 비교:
+       오늘 ① 매입 검토에 '어제와 달라진 판정 n곳 · 클락스 관망 → 지금 검토(환율 0 → +1)'(없으면 머리에 '어제와 같음'),
+       브랜드 목록 행·판정 안 함 행에 '어제 관망' 꼬리표, 브랜드 상세에 판정 기록 한 줄(바뀐 점수 또는 같은 판정이 이어진 첫 날).
+       규칙 판(CHK_RULE)이 다른 기록과는 비교하지 않음. 환율 화면 '알림 없이 표시만'의 파운드에 1년 평균 대비(fetch_data v4.14)
 v33.1: (대표 승인 2026-10-14 '추천대로') 시장 › 뉴스 맨 위 지난 뉴스 검색창 — 요약·원문 제목·브랜드·매체에서 찾음(띄어 쓴 낱말은 모두 들어간 기사,
        대소문자·악센트 무시). 최근 기사는 바로, 1년 보관(news_archive.json, news_monitor v2.12)은 검색창을 처음 누를 때 한 번 내려받아 나눠 합침.
        결과 = 최신순·월별 30건씩(같은 제목은 1건 — 별점은 그중 가장 높은 것), 찾은 낱말 강조, 고른 칩(구분) 안에서, 맨 아래 'Google 뉴스에서 더 찾기'.
@@ -688,7 +693,7 @@ a.nmore{text-decoration:none}
 .dc-hd{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 12px 0 16px}
 div.dc-hd{cursor:default}
 .dc-no{width:22px;height:22px;flex:none;border-radius:999px;background:var(--tx);color:var(--bg);font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
-.dc-t{font-size:14px;font-weight:600}
+.dc-t{font-size:14px;font-weight:600;white-space:nowrap}
 .dc-meta{margin-left:auto;font-size:13px;color:var(--sub);text-align:right}
 .chev{color:var(--muted)}
 .dc-h{margin:0;padding:0 16px 10px;font-size:var(--fs-title);font-weight:700;line-height:1.35;letter-spacing:-.02em}
@@ -699,6 +704,8 @@ div.dc-hd{cursor:default}
 .dc-nm{font-size:var(--fs-name);font-weight:700}
 .dc-why{font-size:14px;color:var(--tx2);line-height:1.45}
 .dc-hint{font-size:13px;color:var(--sub)}
+.dc-chg{margin:0;padding:0 16px 10px;font-size:13px;color:var(--tx2);line-height:1.5}.dc-chg b{color:var(--tx);font-weight:600}
+.tg.chg{border-color:var(--hold-bd);color:var(--tx2);font-weight:500}
 .dc-more{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 12px 8px 16px;border-top:1px solid var(--line);color:var(--accent)}
 .dc-mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dc-mt .t{font-size:15px;font-weight:700}.dc-mt .s{font-size:13px;color:var(--sub)}
@@ -769,7 +776,7 @@ div.dc-hd{cursor:default}
 .br-rest-in{padding:0 14px 6px}
 .br-rest-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:48px;padding:6px 0;border-top:1px solid var(--line)}
 .br-rest-row .tt{display:flex;flex-direction:column;min-width:0}
-.br-rest-row .t{font-size:15px;font-weight:600}.br-rest-row .s{font-size:13px;color:var(--sub)}
+.br-rest-row .t{font-size:15px;font-weight:600}.br-rest-row .t .tg{margin-left:6px}.br-rest-row .s{font-size:13px;color:var(--sub)}
 .br-rest-row .y{font-size:14px;color:var(--tx2);white-space:nowrap}.br-rest-row .y b{font-size:15px;font-variant-numeric:tabular-nums}
 .br-rest-cur{margin:0;padding:10px 0 6px;border-top:1px solid var(--line);font-size:13px;color:var(--sub);line-height:1.5}
 .br-link{display:flex;align-items:center;width:100%;min-height:44px;padding:0 2px;font-size:13px;color:var(--accent)}
@@ -781,6 +788,7 @@ div.dc-hd{cursor:default}
 .bd-meta{font-size:13px;color:var(--sub)}
 .bd .bd-head{font-size:var(--fs-dhead);line-height:1.3;letter-spacing:-.02em}
 .bd-say{margin:0;font-size:15px;line-height:1.6}
+.bd-chg{margin:0;font-size:13px;color:var(--tx2);line-height:1.5}
 .bd-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
 .bd-tile{display:flex;flex-direction:column;gap:2px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
 .bd-tile.acc{border:1.5px solid var(--accent)}.bd-tile.acc .tv{color:var(--accent)}
@@ -1710,14 +1718,18 @@ function todayModel(){
     const pick=[...gos,...warn];
     if(!M.main.length) return M.rest.length?{n:0,empty:'판정할 브랜드 없음',emptySub:`본사 재고·발언 자료 수집 전 — 판정 안 함 ${M.rest.length}곳은 점검표에서 검색·환율만`,more:`판정 안 함 ${M.rest.length}곳`}
       :{n:0,empty:'네이버 검색 자료 수집 전'};
-    return {n:M.main.length,
+    // v33.2 어제와 달라진 판정(판정 기록이 있을 때) — 계산이 실패해도 카드는 그대로
+    // 한 곳이면 바뀐 점수까지, 여러 곳이면 이름·판정만 3곳까지(바뀐 점수는 브랜드 상세) — 첫 화면에서 ②가 덜 밀리게
+    let chg=null; try{ const C=chkHist(), L=C.list, one=L.length===1;
+      if(C.prev) chg={pl:C.pl, n:L.length, list:L.slice(0,3).map(c=>one?chkChgTxt(c):`${c.name} ${lvT(c.from)} → ${lvT(c.to)}`), more:Math.max(0,L.length-3), skip:C.skip.length}; }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
+    return {n:M.main.length, chg,
       head:pick.length?`지금 검토 ${gos.length}곳 · 주의 ${warn.length}곳`:`오늘은 지금 검토·주의 없음 · 관망 ${hold.length}곳`,
       rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short,
         hint:pick.length?'':(r.dem.pt>=0?`지금 검토까지 매입 조건 +${2-r.buy}`:'국내 수요 약함')})),
       more:pick.length>4?`외 ${pick.length-4}곳 · 관망 ${hold.length}곳`
         :(hold.length?`관망 ${hold.length}곳 · ${holdByDem.slice(0,3).map(r=>r.b.name).join(', ')}${hold.length>3?` 외 ${hold.length-3}곳`:''}`:`판정 안 함 ${M.rest.length}곳`)};
   });
-  // ② 환율 타이밍 — 감시 통화(엔·유로·달러) 중 1년 평균 대비 가장 싼 통화가 큰 숫자, 나머지 둘 + 파운드(1년 평균 없음 → 1년 전 대비)
+  // ② 환율 타이밍 — 감시 통화(엔·유로·달러) 중 1년 평균 대비 가장 싼 통화가 큰 숫자, 나머지 둘 + 파운드(v33.2 1년 평균 대비 · 없으면 1년 전 대비)
   calc('fx',()=>{
     const FXD=DATA.fx||{}, fxs=FX_ALERT.map(c=>({c,f:FXD[c]})).filter(o=>o.f&&o.f.rate&&o.f.dev_pct!=null);
     const fxNm=o=>o.c==='JPY'?'엔(100엔)':(o.f.name||o.c);
@@ -1799,10 +1811,12 @@ function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 
     +card('foot',0,'맺음 줄','',f=>`<button type="button" class="td-foot" data-go="more:status">${esc(f.t)}${f.c?` · ${esc(f.c).replace(/(Claude 사용액 \S+)$/,'<span class="nw">$1</span>')}`:''}</button>`);
 }
 function tdBuyHtml(B){   // ① 매입 검토(머리는 글자만 — 아래 '점검표 전체 보기'가 링크)
-  let h=`<section class="dc dc1" aria-label="매입 검토"><div class="dc-hd">${dcNo(1)}<span class="dc-t">매입 검토</span><span class="dc-meta">브랜드 점검표 · ${B.n}곳 판정</span></div>`;
+  const G=B.chg, same=G&&!G.n&&!G.skip;   // v33.2 판정 기록 비교 — 바뀐 곳이 있으면 머리 아래 한 줄, 없으면 머리 끝에 '어제와 같음'
+  let h=`<section class="dc dc1" aria-label="매입 검토"><div class="dc-hd">${dcNo(1)}<span class="dc-t">매입 검토</span><span class="dc-meta">${same?`${B.n}곳 판정 · ${esc(jo(G.pl,'과','와'))} 같음`:`브랜드 점검표 · ${B.n}곳 판정`}</span></div>`;
   if(B.empty) h+=`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}`;
   else { h+=`<h2 class="dc-h">${esc(B.head)}</h2>`;
-    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
+    if(G&&G.n) h+=`<p class="dc-chg"><b>${esc(jo(G.pl,'과','와'))} 달라진 판정 ${G.n}곳</b> · ${esc(G.list.join(' · '))}${G.more?` 외 ${G.more}곳`:''}</p>`;
+    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}${chgTag(r.name)}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
   // '점검표 전체 보기' = 판정 필터 '전체'로(전에 고른 필터가 남아 글자와 결과가 달라지지 않게 — goKey 'brand-all')
   if(B.more) h+=`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span><span class="s">${esc(B.more)}</span></span>${ic('arrow',20,'s2')}</button>`;
   return h+`</section>`;
@@ -3130,8 +3144,9 @@ function moreFxHtml(){
   h+=cards?`<div class="fxgrid">${cards}</div>`:'<div class="card"><div class="na">환율 수집 전 — 다음 갱신 후 표시</div></div>';
   h+=`<div class="fleg"><span><i></i>1년 추이</span><span><i class="avg"></i>1년 평균</span><span><i class="ldn"></i>다음 내림 선</span><span><i class="lup"></i>다음 오름 선</span><span><i class="dn"></i>내림 알림</span><span><i class="up"></i>오름 알림</span><span>칸 막대: 눈금 1% · 굵은 눈금 = 1년 평균 · 네모 표시 = 지금 · 파란 구간 = 최근 30일</span></div>`;
   const rest=Object.keys(FXD).filter(c=>FX_ALERT.indexOf(c)<0);
+  // v33.2 파운드는 1년 평균 대비도(fetch_data v4.14, 브랜드 점검표 환율 점수 기준) — 1% 칸 알림은 없음
   if(rest.length) h+=`<div class="card"><h3>알림 없이 표시만</h3>${rest.map(c=>{ const f=FXD[c];
-    return `<div class="fplain"><span>${esc(FX_LBL[c]||f.name||c)}${staleTag(f.stale_since)}</span><span class="num">${wonR(f.rate*fxMul(c))}원${f.chg_pct!=null?` <span class="${fxC(f.chg_pct)}">${pctU(f.chg_pct)}</span> <span class="na">1년 전 대비${f.via?' · '+esc(f.via):''}</span>`:''}</span></div>`; }).join('')}</div>`;
+    return `<div class="fplain"><span>${esc(FX_LBL[c]||f.name||c)}${staleTag(f.stale_since)}</span><span class="num">${wonR(f.rate*fxMul(c))}원${f.chg_pct!=null?` <span class="${fxC(f.chg_pct)}">${pctU(f.chg_pct)}</span> <span class="na">1년 전 대비${f.via?' · '+esc(f.via):''}</span>`:''}${f.dev_pct!=null?`<br><span class="${fxC(f.dev_pct)}">${pctU(f.dev_pct)}</span> <span class="na">1년 평균 대비</span>`:''}</span></div>`; }).join('')}</div>`;
   h+=`<div class="card"><h3>알림을 이렇게 참고</h3><div class="fuse">
     <div><b class="pos">▼ 내릴 때</b><ul><li>외화 값이 싸짐 → 매입 부담 줄어듦</li><li>해외 매입 결제 시점 앞당김 검토</li><li>선매입·추가 발주 검토</li></ul></div>
     <div><b class="neg">▲ 오를 때</b><ul><li>외화 값이 비싸짐 → 매입 부담 커짐</li><li>선물환으로 환율 미리 확정 검토</li><li>결제 시점 조정 · 수출 비중 확대 검토</li></ul></div></div>
@@ -3262,10 +3277,8 @@ function moreFashionHtml(){   // 패션 브랜드: 국내 패션 브랜드 비�
 }
 /* ── 브랜드 점검표(v32.17, 대표 지시 2026-10-10) — 국내 수요 + 매입 조건(본사 재고·본사 발언·환율)으로 브랜드별 판정.
    대상: 네이버 검색 감시 브랜드(global) 중 본사가 상장사로 연결된 곳. 본사 자료가 없는 브랜드는 아래 표에 검색·환율만 ── */
-const CHK_CUR={'나이키':'USD','뉴발란스':'USD','우포스':'USD','아디다스':'EUR','호카':'USD','드래곤디퓨전':'EUR','메종키츠네':'EUR',
-  '푸마':'EUR','킨(KEEN)':'USD','가니':'EUR','언더아머':'USD','헌터':'GBP','닥터마틴':'GBP','크록스':'USD','핏플랍':'GBP','락포트':'USD',
-  '피레넥스':'EUR','클락스':'GBP','브룩스':'USD','파라부트':'EUR','와일드동키':'EUR','휴먼메이드':'JPY','CEP':'EUR','노르다':'USD',
-  '비비안웨스트우드':'GBP','에코(ECCO)':'EUR','단톤':'EUR','어그':'USD','샤카웨어':'USD','스케쳐스':'USD'};   // 원산지(본사) 통화
+const CHK_CUR=__CHK_CUR__;   // 원산지(본사) 통화 — 파이썬 CHK_CUR(이 파일 아래, 판정 기록과 같은 표)에서 넣음
+const CHK_RULE=__CHK_RULE__;   // v33.2 판정 규칙 판 — 기록(history.json verdicts)의 rule이 같을 때만 '어제와 달라진 판정'을 비교
 const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신'};
 const CHK_SALE={EUR:['FR','IT'],GBP:['GB'],USD:['US'],JPY:['JP']};   // 통화 지역의 해외 세일(캘린더와 같은 일정, saleEvents의 나라 코드 cc)
 const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
@@ -3336,6 +3349,49 @@ function chkModel(){
   main.sort((a,b)=>(b.lv-a.lv)||((b.buy+b.dem.pt)-(a.buy+a.dem.pt))||(relOf(b)-relOf(a)));
   rest.sort((a,b)=>relOf(b)-relOf(a));
   return (CHK_CACHE={main, rest, med});
+}
+/* ── v33.2 판정 기록 — history_append가 자료 날짜마다 저장(history.json verdicts: {date, rule, b:{브랜드:[판정, 수요, 재고, 발언, 환율]}},
+   판정은 파이썬 chk_verdicts = 위 chkModel과 같은 규칙). 지금 판정을 보는 자료 날짜 바로 전 기록과 비교해 '어제와 달라진 판정'.
+   규칙 판(CHK_RULE)이 다른 기록은 비교하지 않음 · 오늘 기록이 화면 판정과 다른 브랜드(계산 어긋남)는 비교에서 빼고 콘솔에 남김 ── */
+const CHK_PT=['수요','재고','발언','환율'];
+const lvT=v=>v==null?'판정 안 함':CHK_LV[v].t;
+const ptT=v=>v==null?'―':sg0(v);
+let CHK_HIST=null;
+function chkHist(){
+  if(CHK_HIST) return CHK_HIST;
+  const dd=String(DATA.generated_at||'').slice(0,10), H=(HIST&&Array.isArray(HIST.verdicts))?HIST.verdicts:[];
+  const V=H.filter(r=>r&&r.rule===CHK_RULE&&typeof r.date==='string'&&r.b&&typeof r.b==='object').sort((a,c)=>a.date<c.date?-1:(a.date>c.date?1:0));
+  const prev=V.filter(r=>r.date<dd).pop()||null, cur=V.filter(r=>r.date===dd).pop()||null, M=chkModel();
+  const lvOf=(rec,n)=>{ const v=rec&&rec.b[n]; return (Array.isArray(v)&&own(CHK_LV,v[0]))?v[0]:null; };
+  const by={}, list=[], skip=[];
+  if(prev){
+    const now=new Set(M.main.map(r=>r.b.name));
+    M.main.forEach(r=>{ const n=r.b.name;
+      if(cur&&lvOf(cur,n)!==r.lv){ skip.push(n); return; }
+      const pl=lvOf(prev,n); if(pl===r.lv) return;
+      const p=prev.b[n], np=[r.dem,r.inv,r.notes,r.fx].map(o=>(!o||o.na)?null:o.pt);
+      const why=(pl!=null&&Array.isArray(p))?CHK_PT.map((k,j)=>{ const a=p[j+1]==null?null:p[j+1]; return a!==np[j]?`${k} ${ptT(a)} → ${ptT(np[j])}`:''; }).filter(Boolean):[];
+      list.push(by[n]={name:n, from:pl, to:r.lv, why}); });
+    Object.keys(prev.b).forEach(n=>{ const pl=lvOf(prev,n); if(pl==null||now.has(n)) return;
+      if(cur&&lvOf(cur,n)!=null){ skip.push(n); return; }
+      list.push(by[n]={name:n, from:pl, to:null, why:[]}); });
+    if(skip.length) console.error('[판정 기록] 화면 판정과 오늘 기록이 다름(계산 어긋남) — 비교에서 뺌:',skip.join(', '));
+  }
+  // 날짜 이름 — 자료가 오늘(한국 날짜) 것이고 바로 전 기록이 하루 전이면 '오늘'·'어제', 아니면 날짜
+  const cl=dd===kstToday()?'오늘':mdTxt(dd), gap=prev?Math.round((new Date(dd+'T00:00:00')-new Date(prev.date+'T00:00:00'))/86400000):0;
+  return (CHK_HIST={prev, V, by, list, skip, dd, cl, pl:prev?((cl==='오늘'&&gap===1)?'어제':mdTxt(prev.date)):''});
+}
+const chkChgTxt=c=>`${c.name} ${lvT(c.from)} → ${lvT(c.to)}${c.why.length?`(${c.why.join(', ')})`:''}`;
+// 판정이 바뀐 브랜드 꼬리표 — '어제 관망'(바뀌기 전 판정), 새로 판정된 브랜드는 '새로 판정'
+function chgTag(n){
+  let C; try{ C=chkHist(); }catch(e){ console.error('[판정 기록] 비교 실패:',e); return ''; }
+  const c=C.by[n]; if(!c) return '';
+  return `<span class="tg chg" title="${esc(`${C.pl} ${lvT(c.from)} → ${C.cl} ${lvT(c.to)}`)}">${esc(c.from==null?'새로 판정':`${C.pl} ${lvT(c.from)}`)}</span>`;
+}
+function chkSince(n,lv){   // 같은 판정이 이어진 첫 기록 날짜 — {d, all: 남은 기록 처음부터 내내}
+  const C=chkHist(), V=C.V.filter(r=>r.date<=C.dd); let d=null;
+  for(let j=V.length-1;j>=0;j--){ const v=V[j].b[n]; if(Array.isArray(v)&&v[0]===lv) d=V[j].date; else break; }
+  return d?{d, all:!!V.length&&d===V[0].date}:null;
 }
 /* ── v33 A안 S2: 판정 이유 · 점수 칸 · 상세 모델 — Claude·무작위 없이 chkModel 값만(판정 규칙은 위 그대로 · 주간 메일과 같은 규칙) ── */
 const JONG_D={0:21,1:8,3:16,6:1,7:8,8:8};   // 숫자 끝을 읽는 소리의 받침(영·일·삼·육·칠·팔)
@@ -3482,7 +3538,14 @@ function chkDetail(r){
       sub:se.live?`${md2(e.s)}~${md2(e.e)} · ${curNm} 지역 세일`:`${yy?ymdL(e.s):md2(e.s)}${e.k==='예상'?' 예상':''} · ${curNm} 지역 다음 세일`}); }
   nx.sort((a,c)=>a.dn-c.dn);
   const sameKey=r.b.news?nvAll().filter(b=>b.group==='global'&&b.news===r.b.news).map(b=>b.name):[];
-  return {name:r.b.name, lv:judged?r.lv:null, verdict:judged?CHK_LV[r.lv].t:'판정 안 함',
+  // v33.2 판정 기록 한 줄 — 바뀌었으면 '어제(10/13) 관망 → 오늘 지금 검토 · 환율 0 → +1', 그대로면 같은 판정이 이어진 첫 날
+  let hist='';
+  try{ const C=chkHist(), c=C.by[r.b.name];
+    if(c) hist=`${C.pl==='어제'?`어제(${mdTxt(C.prev.date)})`:mdTxt(C.prev.date)} ${lvT(c.from)} → ${C.cl} ${lvT(c.to)}${c.why.length?` · ${c.why.join(', ')}`:''}`;
+    else if(judged&&C.prev&&C.skip.indexOf(r.b.name)<0){ const sn=chkSince(r.b.name,r.lv);
+      if(sn) hist=sn.all?(HIST.verdicts_cut?`${mdTxt(sn.d)} 이전부터 계속 ${lvT(r.lv)}`:`판정 기록을 시작한 ${mdTxt(sn.d)}부터 계속 ${lvT(r.lv)}`):`${mdTxt(sn.d)}부터 계속 ${lvT(r.lv)}`; }
+  }catch(e){ console.error('[브랜드 상세 · 판정 기록] 비교 실패:',e); }
+  return {name:r.b.name, lv:judged?r.lv:null, verdict:judged?CHK_LV[r.lv].t:'판정 안 함', hist,
     meta:`${r.x?`본사 ${hq}`:(ke?`국내 법인 ${nmSplit(ke.name).main}`:'본사 연결 없음')} · 원산지 통화 ${curKo||'미지정'}${gd?` · ${mdTxt(gd)} ${judged?'판정':'기준'}`:''}`,
     head:w.head, say:w.say,
     tiles:{dem:{v:d.na?'―':sg0(d.pt), cap:d.na?'검색 자료 없음':d.low?'검색량 적어 점수 제외':d.pt>0?'강함 · 중앙값보다 10%p 이상 높음':d.pt<0?'약함 · 중앙값보다 10%p 이상 낮음':'보통 · 약하지 않음'},
@@ -3552,7 +3615,7 @@ function brandBodyHtml(){
 }
 function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄 이유 / 점수 4칸 — 누르면 브랜드 상세(이름은 data 속성: 따옴표 안전)
   return `<button type="button" class="br-row" data-brand="${esc(r.b.name)}"><span class="br-m">
-    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}</span>${vbadge(r.lv)}</span>
+    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${chgTag(r.b.name)}${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}</span>${vbadge(r.lv)}</span>
     <span class="br-why">${nb(esc(chkWhy(r).short))}</span>
     <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
 }
@@ -3563,7 +3626,7 @@ function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음)
   const curTxt=curs.map((c,j)=>{ const f=chkFx(c), nm=c==='JPY'?'엔':(f.name||c);
     return `${nm}${j?'':' 원산지'} ${byCur[c].length}곳 — ${f.na?'환율 자료 없음':`${f.basis==='avg'?'1년 평균':'1년 전'}보다 ${p1(f.v)}% ${f.v<0?'쌈':'비쌈'}`}`; }).join(' · ');
   const rows=M.rest.map(r=>{ const d=r.dem, sub=(CHK_CUR_NOTE[r.b.name]||(r.cur?`${chkCurKo(r)} 원산지`:'원산지 통화 미지정'))+(r.b.low?' · 검색량 적음':'');
-    return `<button type="button" class="br-rest-row" data-brand="${esc(r.b.name)}"><span class="tt"><span class="t">${esc(r.b.name)}</span><span class="s">${esc(sub)}</span></span>`
+    return `<button type="button" class="br-rest-row" data-brand="${esc(r.b.name)}"><span class="tt"><span class="t">${esc(r.b.name)}${chgTag(r.b.name)}</span><span class="s">${esc(sub)}</span></span>`
       +`<span class="y">검색 <b class="${d.pt>0?'sc-p':d.pt<0?'sc-n':'sc-tx'}">${r.b.yoy!=null?pctU(r.b.yoy):'―'}</b></span></button>`; }).join('');
   return `<details id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
     +`<span class="s">본사 자료가 없어 검색·환율만 참고${k?` · 검색 강함 ${k}곳`:''}</span></span>${ic('down',20,'s2')}</summary>`
@@ -3574,7 +3637,7 @@ function brDetailHtml(d){
   const T=d.tiles, judged=d.lv!=null;
   const ptB=e=>`<span class="bd-pt${e.tone?' '+e.tone:''}">${e.score!==''?`<b>${esc(e.score)}</b>`:''}${esc(e.word)}</span>`;
   const SIGT={more:'할인 물량↑',less:'할인·공급↓',neutral:'중립'};
-  let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>
+  let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>${d.hist?`<p class="bd-chg">${esc(d.hist)}</p>`:''}
     <h2 class="bd-head">${esc(d.head)}</h2><p class="bd-say">${esc(d.say)}</p>
     <div class="bd-tiles"><div class="bd-tile"><span class="tl">국내 수요</span><span class="tv">${esc(T.dem.v)}</span><span class="tc">${nb(esc(T.dem.cap))}</span></div>
     <div class="bd-tile${T.buy.ring?' '+T.buy.ring:''}"><span class="tl">매입 조건</span><span class="tv">${esc(T.buy.v)}</span><span class="tc">${nb(esc(T.buy.cap))}</span></div></div></section>`;
@@ -3993,6 +4056,116 @@ WF_GO=true; requestAnimationFrame(()=>setTimeout(webFont,0));   // v33 첫 화�
 """
 
 
+# ── v33.2 브랜드 점검표 판정 — 파이썬 쌍둥이(history_append가 매일 history.json verdicts에 기록, weekly_digest가 요약) ──
+# 화면 JS chkMedian·chkDemand·chkInv(invPick)·chkNotes(segOf)·chkFx·chkModel과 같은 규칙. 규칙(점수 기준·판정식·대상)을 바꾸면
+# 양쪽을 함께 고치고 CHK_RULE을 올림 — 기록의 rule이 다르면 화면·주간 메일이 판정 변화를 비교하지 않음(규칙이 바뀐 날 '변화'가 잘못 뜨지 않게)
+CHK_RULE = 1
+CHK_CUR = {   # 원산지(본사) 통화 — 네이버 감시 브랜드(global)를 추가하면 함께 넣음(화면 JS CHK_CUR로 그대로 들어감)
+    "나이키": "USD", "뉴발란스": "USD", "우포스": "USD", "아디다스": "EUR", "호카": "USD", "드래곤디퓨전": "EUR", "메종키츠네": "EUR",
+    "푸마": "EUR", "킨(KEEN)": "USD", "가니": "EUR", "언더아머": "USD", "헌터": "GBP", "닥터마틴": "GBP", "크록스": "USD", "핏플랍": "GBP",
+    "락포트": "USD", "피레넥스": "EUR", "클락스": "GBP", "브룩스": "USD", "파라부트": "EUR", "와일드동키": "EUR", "휴먼메이드": "JPY",
+    "CEP": "EUR", "노르다": "USD", "비비안웨스트우드": "GBP", "에코(ECCO)": "EUR", "단톤": "EUR", "어그": "USD", "샤카웨어": "USD",
+    "스케쳐스": "USD",
+}
+CHK_LV = {2: "지금 검토", 1: "관망", 0: "주의"}
+VERDICT_EMBED = 60   # 화면에 넣는 판정 기록 수(history.json에는 history_append가 최대 400일)
+
+
+def _chk_median(brands):
+    """감시 브랜드(global, 검색량 충분) 전년 대비의 중앙값 — JS chkMedian"""
+    v = sorted(b["yoy"] for b in brands if b.get("group") == "global" and b.get("yoy") is not None and not b.get("low"))
+    n = len(v)
+    if not n:
+        return None
+    return v[(n - 1) // 2] if n % 2 else (v[n // 2 - 1] + v[n // 2]) / 2
+
+
+def _chk_dem(b, med):
+    """국내 수요 점수(None = 검색 자료 없음) — JS chkDemand"""
+    if b.get("yoy") is None:
+        return None
+    if med is None:
+        return 0
+    rel = b["yoy"] - med
+    return 0 if b.get("low") else (1 if rel >= 10 else (-1 if rel <= -10 else 0))
+
+
+def _chk_inv(x):
+    """본사 재고 점수(None = 같은 기간 재고·매출 없음) — JS chkInv·invPick(분기 재고가 있으면 같은 분기끼리, 없으면 연간 결산)"""
+    fy = ((x.get("fy") or [{}])[-1]) or {}
+    if x.get("q_inv_yoy") is not None and x.get("q_inv_rev_yoy") is not None and not x.get("yahoo_cfs_diff"):
+        iv, rv = x["q_inv_yoy"], x["q_inv_rev_yoy"]
+    else:
+        iv, rv = x.get("inv_yoy"), fy.get("rev_yoy")
+    if iv is None or rv is None:
+        return None
+    p = iv - rv
+    return 1 if p >= 5 else (-1 if p <= -5 else 0)
+
+
+def _js_true(v):
+    """JS 참·거짓 — 빈 dict·list도 참(파이썬과 다름)"""
+    if v is None or v is False or v == "":
+        return False
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return v == v and v != 0
+    return True
+
+
+def _chk_notes(t, segs, segs_ir):
+    """본사 발언 점수(None = 발언 자료 없음·모두 신호 분류 전) — JS chkNotes·segOf(IR 추출이 있으면 IR, 없으면 공시)"""
+    e = None
+    for src in (segs_ir, segs):
+        c = ((src or {}).get("items") or {}).get(t)
+        if isinstance(c, dict) and _js_true(c.get("extract")):
+            e = c
+            break
+    ex = e["extract"] if e else None
+    if not isinstance(ex, dict) or not isinstance(ex.get("mgmt_notes"), list):
+        return None
+    sig = [n.get("sig") if isinstance(n, dict) else None for n in ex["mgmt_notes"]]
+    m, l, z = sig.count("more"), sig.count("less"), sig.count("neutral")
+    if sig and len(sig) - m - l - z == len(sig):
+        return None
+    return 1 if m > l else (-1 if l > m else 0)
+
+
+def _chk_fx(f):
+    """원산지 통화 점수(None = 환율 자료 없음) — JS chkFx(1년 평균 대비, 없으면 1년 전 대비)"""
+    if not f:
+        return None
+    v = f.get("dev_pct") if f.get("dev_pct") is not None else f.get("chg_pct")
+    if v is None:
+        return None
+    return 2 if v <= -10 else (1 if v <= -5 else (-2 if v >= 10 else (-1 if v >= 5 else 0)))
+
+
+def chk_verdicts(data, naver, segs, segs_ir):
+    """브랜드 점검표 판정 — 화면 chkModel과 같은 대상·규칙. data는 merge_kr_listed를 거친 것(화면과 같은 재고·매출).
+    반환 {브랜드: [판정, 수요, 재고, 발언, 환율]} — 판정 2 지금 검토 · 1 관망 · 0 주의, 점수는 화면 점수 칸 그대로(None = 자료 없음).
+    본사가 상장사로 연결되지 않았거나 본사 재고·발언 자료가 둘 다 없는 브랜드(판정 안 함)는 넣지 않음"""
+    brands = [b for b in ((naver or {}).get("brands") or []) if isinstance(b, dict) and b.get("group") == "global"]
+    med = _chk_median(brands)
+    items = (data or {}).get("items") or []
+    fxd = (data or {}).get("fx") or {}
+    out = {}
+    for b in brands:
+        link = str(b.get("link") or "")
+        x = next((i for i in items if i.get("ticker") == link), None) if link and not link.startswith("krd:") else None
+        if x is None:
+            continue
+        inv, notes = _chk_inv(x), _chk_notes(x.get("ticker"), segs, segs_ir)
+        if inv is None and notes is None:
+            continue
+        cur = CHK_CUR.get(b.get("name"))
+        dem, fx = _chk_dem(b, med), (_chk_fx(fxd.get(cur)) if cur else None)
+        buy = (inv or 0) + (notes or 0) + (fx or 0)
+        dp = dem or 0
+        lv = 2 if (dp >= 0 and buy >= 2) else (0 if ((dp < 0 and buy <= 1) or buy <= -1) else 1)
+        out[b["name"]] = [lv, dem, inv, notes, fx]
+    return out
+
+
 def merge_kr_listed(data):
     """국내 상장사 재무를 DART 전체재무제표(연결 우선, 종목별 fs)로 교체 (야후는 주가·분기YoY·실적일 유지)"""
     if not os.path.exists("docs/kr_listed_fin.json"):
@@ -4253,6 +4426,9 @@ def main():
                 hist = json.load(f)
         except Exception:
             pass
+    # v33.2 판정 기록은 최근 VERDICT_EMBED개만 화면에 넣음(화면은 바로 전 기록·같은 판정이 이어진 날짜만 씀) — 잘랐으면 verdicts_cut
+    if isinstance(hist, dict) and isinstance(hist.get("verdicts"), list) and len(hist["verdicts"]) > VERDICT_EMBED:
+        hist = {**hist, "verdicts": hist["verdicts"][-VERDICT_EMBED:], "verdicts_cut": True}
     kr = None
     if os.path.exists("docs/kosis.json"):
         try:
@@ -4288,7 +4464,9 @@ def main():
             .replace("__KRD__", js(krd))
             .replace("__SEGS_IR__", js(segs_ir))
             .replace("__STATUS__", js(collect_status()))
-            .replace("__WMAP__", js(wmap)))
+            .replace("__WMAP__", js(wmap))
+            .replace("__CHK_CUR__", js(CHK_CUR))
+            .replace("__CHK_RULE__", str(CHK_RULE)))
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
