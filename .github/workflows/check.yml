@@ -3,7 +3,8 @@ name: check-files
 # 코드·워크플로우가 바뀔 때 CLAUDE.md의 표(운영 구조·파일 식별표)를 기준으로 검사한다.
 #  ① 파이썬 3번째 줄 식별 문구 ② 문법 ③ 워크플로우 이름·실행 대상 파일 ④ docs/*.json 파싱
 #  (2026-10 추가) ⑤ 워크플로우 YAML 읽기·예약(cron) 형식 ⑥ 패키지 설치 후 모든 스크립트 불러오기
-#  ⑦ 화면 실제로 만들어 보기(build_dashboard) + 화면 스크립트 문법 검사(node --check)
+#  ⑦ 화면 실제로 만들어 보기(build_dashboard) + 화면 뼈대 표식(id) + 화면 스크립트 문법 검사(node --check)
+#     표식(2026-10 A안 v33): 오늘 todayCard·statusWarn · 브랜드 brandBody · 시장 mkChips·newsBody·kpis
 on:
   pull_request:
     branches: [main]
@@ -168,7 +169,7 @@ jobs:
           if i < 0 or j < i:
               print("::error::index.html에서 <script> 블록을 못 찾음"); sys.exit(1)
           open("/tmp/page.js", "w", encoding="utf-8").write(h[i + 8:j])
-          for mark in ('id="todayCard"', 'id="newsBody"', 'id="kpis"'):
+          for mark in ('id="todayCard"', 'id="statusWarn"', 'id="brandBody"', 'id="mkChips"', 'id="newsBody"', 'id="kpis"'):
               if mark not in h:
                   print(f"::error::index.html에 {mark} 없음 — 화면 뼈대 확인"); sys.exit(1)
           print(f"index.html {len(h):,}자 · 스크립트 {j - i - 8:,}자")
