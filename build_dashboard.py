@@ -4392,7 +4392,7 @@ def _partial(fn, d):
             num = lambda k: dc[k] if isinstance(dc.get(k), int) and not isinstance(dc.get(k), bool) and dc[k] > 0 else 0
             if dc.get("broken") is True:   # news_monitor가 실패 표시 — 점검 알림과 맞춤
                 n += 1
-                notes.append("구글 링크를 못 풀어 원문 날짜 확인 안 됨(옛 기사는 Claude 확인으로만)")
+                notes.append("구글 링크를 못 풀어 원문 날짜·글 번호 확인 안 됨(옛 기사는 Claude 확인으로만)")
             elif dc.get("error") is True:
                 n += 1
                 notes.append("옛 기사 확인 오류(이번 실행은 거르지 않음)")
