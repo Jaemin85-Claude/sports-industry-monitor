@@ -8,15 +8,17 @@ v2.13: (대표 지시 2026-10-15 '전체 점검') 옛 기사 거르기 — 구�
         날짜는 안 믿음). 원문은 날짜만 읽음(내용 저장·AI 전송 없음)
       ② 그누보드 글 번호 — 원문이 봇 확인 화면이라 날짜를 못 읽는 그누보드 게시판(패션포스트 fpost.co.kr·미주조선일보
         chosundaily.com, 봇 확인은 우회 안 함)은 주소의 글 번호(wr_id)가 같은 게시판 최신 번호보다 10%(300개) 넘게 뒤면 뺌
-        (boards에 최신 번호·오른 날·본 글 수 기억). 믿을 만한 게시판(글 5건 넘게 봄·3주 안에 최신 번호 오름)에서 번호로 옛 글이
-        아니면 Claude 판단은 안 씀. 3주 넘게 안 오른 최신 번호보다 여러 글이 모두 한참 아래면 번호를 새로 매긴 것으로 보고 다시 잡음(실패 표시)
+        (구글 날짜가 며칠 전이면 그동안 늘었을 번호(하루 40개)만큼 넉넉히 — 1년 보관분 점검 때 수집 당시 최신 기사 보호,
+        boards에 최신 번호·오른 날·본 글 수 기억, 기사에 글 번호(wr) 저장 — 게시판 최신 번호를 아직 모르면 다음 실행에서 다시 판정).
+        믿을 만한 게시판(글 5건 넘게 봄·3주 안에 최신 번호 오름)에서 번호로 최근 글이면 dchk 'n' — 그 뒤로도 Claude에 안 물음.
+        3주 넘게 안 오른 최신 번호보다 여러 글이 모두 한참 아래면 번호를 새로 매긴 것으로 보고 다시 잡음(실패 표시)
       ③ Claude 짧은 확인(선별 지시문은 그대로) — 원문 날짜·글 번호로 못 가린 것만, 그 매체에 옛 기사가 몰려 있을 때(이번 판단 +
         최근 60일 기억 3건 이상)만 뺌(한두 건은 미리 발표된 일·비슷한 옛 사건 착각일 수 있어 — 10/15 시험에서 최근 기사 3건 오판).
-        근거가 부족해 남긴 판단은 기사 ai_old에 두고 다음 실행에서 다시 판정
+        근거가 부족해 남긴 판단은 기사 ai_old(시기@판단일)에 두고 7일 동안만 다시 판정(몇 달 뒤 다른 근거 하나로 정상 기사를 늦게 빼지 않게)
       뺀 제목은 1년 기억(stale_titles — 새 구글 주소로 다시 와도 막음, 원문 날짜로 확인된 같은 제목 원본은 남김), 1년 보관 제목은 다시
       받지 않음. 남은 기사엔 원문 날짜(orig_date — 화면 날짜)·확인 방법(dchk). 1년 보관분은 처음 몇 번의 실행에 나눠 점검.
       status.date_check. 구글 링크를 하나도 못 풀면(한 실행 5건 넘게 실패, 또는 3회 연속) 실패 표시. 확인 중 오류면 그 실행의 확인
-      표시를 되돌리고 실패 표시. news.yml 수동 실행 입력 probe(매체 이름·기사 id) = 원문 날짜 진단만(Claude 안 씀·저장 안 함)
+      표시를 되돌리고 실패 표시. 원문 받기는 1MB·25초까지(넘으면 잘린 페이지로 판정하지 않고 다음 실행에서 다시). news.yml 수동 실행 입력 probe(매체 이름·기사 id) = 원문 날짜 진단만(Claude 안 씀·저장 안 함)
 v2.12: (대표 승인 2026-10-14 '추천대로') 지난 뉴스 검색용 1년 보관 — 선별한 기사를 docs/news_archive.json에 365일 쌓음
       (같은 제목·같은 브랜드/산업으로 다시 잡힌 기사는 최신 1건 + 별점은 그중 가장 높은 것, 한 줄에 기사 1건). 파일이 없거나 복구가
       덜 끝났으면 news.json의 git 기록(8/31~)에서 되살림. news.json status.archive에 건수·시작일(일부만 복구면 partial — 수집 상태 표시).
@@ -233,7 +235,8 @@ ARCHIVE_PATH = "docs/news_archive.json"
 ARCHIVE_DAYS = 365
 ARCH_KEYS = ("id", "scope", "key", "label", "group", "summary", "importance",
              "title", "link", "source", "pubDate", "first_seen")   # 화면이 쓰는 칸만(category는 안 씀)
-ARCH_OPT = ("orig_date", "dchk", "ai_old")   # v2.13 있을 때만 넣는 칸 — 원문 날짜(화면 날짜)·옛 기사 확인 방법·Claude가 말한 옛 사건 시기
+ARCH_OPT = ("orig_date", "dchk", "ai_old", "wr")   # v2.13 있을 때만 넣는 칸 — 원문 날짜(화면 날짜)·옛 기사 확인 방법(a Claude·
+                                                    # n 글 번호·p 원문)·Claude가 말한 옛 사건 시기@판단일·그누보드 글 번호(호스트/게시판#번호)
 
 # v2.13 옛 기사 거르기 — 구글 뉴스가 지난 기사(몇 년 전 것 포함)를 새 날짜로 다시 내보내는 경우
 STALE_GAP = 14        # 원문 날짜가 구글 날짜보다 이 일수 넘게 앞서면 옛 기사(보관 14일과 같음)
@@ -248,6 +251,8 @@ SUS_MIN = 2           # 옛 기사가 이만큼(최근 60일) 나온 매체는 �
 # (원문 페이지가 막혀 날짜를 못 읽는 패션포스트 fpost.co.kr·미주조선일보 chosundaily.com이 그누보드 — 2026-10-15 진단)
 BOARD_LAG = 0.1       # 최신 번호의 10% 넘게 뒤(그리고 BOARD_LAG_MIN개 넘게)면 옛 글 — 글이 늘어나는 빠르기를 몰라 넉넉히
 BOARD_LAG_MIN = 300
+BOARD_RATE_MAX = 40   # 게시판 하루 최대 글 수(넉넉히) — 구글 날짜가 며칠 전인 기사는 그동안 늘었을 번호만큼 기준을 넓힘
+                      # (1년 보관분 점검 때 수집 당시엔 최신이던 기사를 지금 번호로 옛 글로 보지 않게 — 패션포스트 하루 20~30건)
 BOARD_MIN_MAX = 1000  # 최신 번호가 이보다 작은(글이 적은) 게시판은 번호로 판단하지 않음
 BOARD_KEEP = 180      # 게시판 최신 번호 기억(일, news.json boards)
 BOARD_FRESH_OBS = 5   # 게시판 글을 모두 이만큼 넘게 봤고 최신 번호가 BOARD_STALE_DAYS 안에 올랐으면 '믿을 만한 게시판' —
@@ -257,6 +262,8 @@ BOARD_STALE_DAYS = 21 # 최신 번호가 이만큼 안 올랐는데 여러 글�
 HOST_SKIP = 3         # 한 실행에서 날짜를 하나도 못 읽고 봇 확인 화면(날짜 없음·403)만 이만큼 나온 곳은 원문 받기를 건너뜀(글 번호만 봄)
 TRANSIENT_MAX = 3     # 구글 일시 오류(연결·5xx)가 이만큼 연달아 나면 이번 실행 원문 확인을 멈춤(남은 기사는 다음 실행에서)
 NODECODE_ALERT = 3    # 구글 링크를 하나도 못 푼 실행이 이만큼 이어지면 실패 표시(막힘·방식 변경)
+AI_REJUDGE_DAYS = 7   # 근거가 부족해 남긴 Claude 판단(ai_old)은 이 기간만 다시 판정(그 뒤엔 남김으로 끝 — 몇 달 뒤 다른 근거 하나로
+                      # 정상 기사를 늦게 빼지 않게)
 WAVE_MIN = 3          # 원문 날짜 없이 Claude 판단만으로 빼려면 그 매체의 옛 기사 근거(이번 Claude 옛 사건 + 최근 60일 기억)가 이만큼
 T0 = time.monotonic()
 BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -573,15 +580,30 @@ class GTransient(Exception):
     """구글 일시 오류(5xx 등) — 이 기사는 확인 안 한 것으로 두고 다음 실행에서 다시"""
 
 
+class SlowRead(Exception):
+    """받는 데 total초가 넘음(조금씩 흘려보내는 곳) — 잘린 페이지를 다 받은 것처럼 쓰지 않게"""
+
+
 def _get_capped(url, cap, total=25):
     """GET(연결 5초·읽기 15초, 넘겨주기 따라감) — 본문은 cap 바이트·전체 total초까지만(조금씩 흘려보내는 곳 대비) → (응답, 본문 바이트)"""
     t0 = time.monotonic()
     with requests.get(url, headers=BROWSER_UA, timeout=(5, 15), stream=True) as r:
         buf = bytearray()
-        for chunk in r.iter_content(65536):
-            buf += chunk
-            if len(buf) >= cap or time.monotonic() - t0 > total:
-                break
+        if hasattr(r.raw, "read1"):   # 한 번에 받은 만큼만 읽어 시간 제한을 자주 확인(길이를 미리 알리는 느린 곳도)
+            while len(buf) < cap:
+                if time.monotonic() - t0 > total:
+                    raise SlowRead(f"{total}초 넘음({len(buf):,}바이트)")
+                chunk = r.raw.read1(16384, decode_content=True)
+                if not chunk:
+                    break
+                buf += chunk
+        else:
+            for chunk in r.iter_content(16384):
+                buf += chunk
+                if len(buf) >= cap:
+                    break
+                if time.monotonic() - t0 > total:
+                    raise SlowRead(f"{total}초 넘음({len(buf):,}바이트)")
         return r, bytes(buf[:cap])
 
 
@@ -614,7 +636,10 @@ def gn_resolve(link):
     old = _gn_old(aid)
     if old:
         return old
-    r, page = _get_capped(f"https://news.google.com/rss/articles/{aid}?hl=ko&gl=KR&ceid=KR:ko", 2_000_000)
+    try:
+        r, page = _get_capped(f"https://news.google.com/rss/articles/{aid}?hl=ko&gl=KR&ceid=KR:ko", 2_000_000)
+    except SlowRead as e:   # 잘린 구글 페이지는 서명이 끝부분에 있어 '모르는 기사'로 오판 — 일시 오류로 다음 실행에서 다시
+        raise GTransient(str(e)) from e
     host = (urllib.parse.urlparse(r.url).hostname or "").lower()
     if r.status_code == 429 or (host != "news.google.com" and (host == "google.com" or host.endswith(".google.com"))):
         raise GBlocked(f"{r.status_code} {host}")
@@ -889,7 +914,7 @@ def date_check(kept, base, today, stale, boards=None):
     for it in list(kept) + list(base or []):
         if isinstance(it, dict) and isinstance(it.get("id"), str) and isinstance(it.get("title"), str):
             pool.setdefault(it["id"], []).append(it)
-    ck = lambda i: {c for x in pool[i] for c in str(x.get("dchk") or "") if c in "ap"}
+    ck = lambda i: {c for x in pool[i] for c in str(x.get("dchk") or "") if c in "anp"}
     has_od = lambda i: any(isinstance(x.get("orig_date"), str) and x["orig_date"] for x in pool[i])
     src = lambda i: str(pool[i][0].get("source") or "")
     norm = lambda h: str(h or "").lower().removeprefix("www.")
@@ -897,7 +922,7 @@ def date_check(kept, base, today, stale, boards=None):
     def mark(i, c=None, **kv):
         for x in pool[i]:
             if c:
-                x["dchk"] = "".join(sorted(({ch for ch in str(x.get("dchk") or "") if ch in "ap"}) | {c}))
+                x["dchk"] = "".join(sorted(({ch for ch in str(x.get("dchk") or "") if ch in "anp"}) | {c}))
             for k2, v2 in kv.items():
                 if v2 is None:
                     x.pop(k2, None)
@@ -917,10 +942,14 @@ def date_check(kept, base, today, stale, boards=None):
     out, logs, hosts = set(), [], {}   # hosts: id → 원문 주소의 호스트(www. 뺌)
     new_flags = {}   # 이번 실행 Claude 옛 사건 {id: (시기, 근거)}
     old_flags = {}   # 지난 실행에서 Claude가 옛 사건이라 했지만 아직 못 가린 것(기사 ai_old)
+    rjcut = (today - datetime.timedelta(days=AI_REJUDGE_DAYS)).isoformat()
     for i in pool:
         ao = next((x.get("ai_old") for x in pool[i] if isinstance(x.get("ai_old"), str)), None)
-        if ao and re.fullmatch(r"(19|20)[0-9]{2}(-[0-9]{2})?", ao) and not has_od(i):
-            old_flags[i] = (ao, "지난 확인")
+        m_ao = re.fullmatch(r"((?:19|20)[0-9]{2}(?:-[0-9]{2})?)@([0-9]{4}-[0-9]{2}-[0-9]{2})", ao or "")
+        if m_ao and m_ao.group(2) >= rjcut and not has_od(i) and "n" not in ck(i):
+            old_flags[i] = (m_ao.group(1), f"{m_ao.group(2)} 판단")
+        elif ao:
+            mark(i, ai_old=None)   # 다시 판정하는 기간이 지났거나 원문 날짜·글 번호로 가려진 것 — 남김으로 끝
 
     def ai_pass(todo):
         """Claude 확인(AI_CHUNK건씩) → 확인 못 하고 남긴 건수. 실패하면 멈추고 다음 실행에서 다시"""
@@ -951,7 +980,7 @@ def date_check(kept, base, today, stale, boards=None):
         logs.append(f"  옛 기사 제외{'(지금 보이는 기사)' if i in in_kept else ''}: {x['title'][:70]} — {why}")
 
     # ① Claude — 지난 기사(처음 몇 번의 실행은 1년 보관분 점검)
-    todo = [i for i in order if tier[i] and "a" not in ck(i) and not has_od(i)]
+    todo = [i for i in order if tier[i] and not ({"a", "n"} & ck(i)) and not has_od(i)]
     left_ai = max(0, len(todo) - AI_CHECK_MAX) + ai_pass(todo[:AI_CHECK_MAX])
     flagged = {**old_flags, **new_flags}
 
@@ -1010,6 +1039,7 @@ def date_check(kept, base, today, stale, boards=None):
             bp = board_post(url)
             if bp:
                 posts[i] = bp
+                mark(i, wr=f"{bp[0]}#{bp[1]}")   # 글 번호를 기사에 저장 — 게시판 최신 번호를 아직 모르면 다음 실행에서 다시 판정
             h = hosts[i] = norm(urllib.parse.urlparse(url).hostname)
             if hstat.get(h, [0, 0])[0] == 0 and hstat.get(h, [0, 0])[1] >= HOST_SKIP:
                 res[i], why[i] = None, {"host": h, "why": "skip"}   # 봇 확인 화면만 나오는 곳 — 원문 받기 건너뜀(글 번호만)
@@ -1086,6 +1116,7 @@ def date_check(kept, base, today, stale, boards=None):
     for bk, wr in posts.values():
         bmax[bk], bobs[bk] = max(bmax.get(bk, 0), wr), bobs.get(bk, 0) + 1
     scut = (today - datetime.timedelta(days=BOARD_STALE_DAYS)).isoformat()
+    reset = set()   # 이번 실행에서 최신 번호를 다시 잡은 게시판 — 이번엔 '믿을 만한 게시판'으로 보지 않음
     for bk, wr in bmax.items():
         prev = boards.get(bk)
         if prev and wr < (1 - BOARD_LAG) * prev[0] and bobs[bk] >= BOARD_FRESH_OBS:
@@ -1093,27 +1124,40 @@ def date_check(kept, base, today, stale, boards=None):
                 soft_fail(f"게시판 {bk} 글 번호가 줄었음({prev[0]} → {wr}, {BOARD_STALE_DAYS}일 넘게 더 큰 번호 없음) — "
                           "번호를 새로 매긴 것으로 보고 최신 번호를 다시 잡음(확인 필요)")
                 boards[bk] = [wr, tod, bobs[bk]]
+                reset.add(bk)
                 continue
             print(f"  [WARN] 게시판 {bk}: 이번에 본 글 {bobs[bk]}건이 모두 최신 번호({prev[0]})보다 한참 아래 — 옛 글 묶음으로 봄",
                   flush=True)
         n = min((prev[2] if prev else 0) + bobs[bk], 10 ** 6)
         boards[bk] = [wr, tod, n] if not prev or wr > prev[0] else [prev[0], prev[1], n]
-    board_ok = lambda bk: (bk in boards and boards[bk][0] >= BOARD_MIN_MAX and boards[bk][2] >= BOARD_FRESH_OBS
-                           and boards[bk][1] > scut)   # 믿을 만한 게시판(글을 충분히 봤고 최신 번호가 최근에 오름)
-    board_young = set()   # 믿을 만한 게시판에서 번호로 옛 글이 아닌 것 — Claude 판단은 쓰지 않음
-    for i in sorted((i for i in posts if not res.get(i) and i not in out), key=lambda i: pos[i]):
-        (bk, wr), x = posts[i], pool[i][0]
+    board_ok = lambda bk: (bk in boards and bk not in reset and boards[bk][0] >= BOARD_MIN_MAX
+                           and boards[bk][2] >= BOARD_FRESH_OBS and boards[bk][1] > scut)   # 믿을 만한 게시판(글을 충분히 봤고 최신 번호가 최근에 오름)
+    # 이번에 본 글 + 지난 실행에서 번호를 저장해 둔 글(그때 게시판 최신 번호를 몰라 못 가린 것 — 10/15 시험 카녜이) — 원문 날짜 없는 것만
+    judge = dict(posts)
+    for i in pool:
+        if i in judge or i in out or res.get(i) or has_od(i) or "n" in ck(i):
+            continue
+        m_wr = next((re.fullmatch(r"([\w.-]{1,100}/[\w-]{1,40})#([1-9][0-9]{0,8})", str(x.get("wr") or ""))
+                     for x in pool[i] if x.get("wr")), None)
+        if m_wr and m_wr.group(1) in boards:
+            judge[i] = (m_wr.group(1), int(m_wr.group(2)))
+    board_young = set()   # 믿을 만한 게시판에서 번호로 최근 글인 것 — Claude 판단은 쓰지 않음
+    for i in sorted((i for i in judge if not res.get(i) and i not in out), key=lambda i: pos[i]):
+        (bk, wr), x = judge[i], pool[i][0]
         if x.get("group") in SLOW_GROUPS:   # 국내 유통사(30일 창·90일 보관)는 원래 몇 주 된 글도 받으므로 번호로 판단 안 함
             continue
-        mx = boards[bk][0]
-        if mx >= BOARD_MIN_MAX and mx - wr >= max(BOARD_LAG_MIN, BOARD_LAG * mx):
+        mx, g = boards[bk][0], rss_day(x)
+        lag, base_lag = mx - wr, max(BOARD_LAG_MIN, BOARD_LAG * mx)
+        if mx >= BOARD_MIN_MAX and lag >= base_lag + BOARD_RATE_MAX * max(0, (today - g).days):
             st["board"] = st.get("board", 0) + 1
-            drop(i, [f"#{wr}/{mx}", tod, "n", src(i)], f"{src(i)} · 게시판 글 번호 {wr}(최신 {mx}) / 구글 {rss_day(x)}")
-        elif board_ok(bk):
+            drop(i, [f"#{wr}/{mx}", tod, "n", src(i)], f"{src(i)} · 게시판 글 번호 {wr}(최신 {mx}) / 구글 {g}")
+        elif board_ok(bk) and lag < base_lag:
             board_young.add(i)
+            mark(i, "n", ai_old=None)   # 글 번호로 최근 글 — 다음 실행에서도 Claude에 묻지 않음
 
     # ③ Claude — 최근 선별 중 원문 날짜를 못 읽은 것
-    todo3 = [i for i in order if tier[i] == 0 and "a" not in ck(i) and not has_od(i) and i not in out and i not in board_young]
+    todo3 = [i for i in order if tier[i] == 0 and not ({"a", "n"} & ck(i)) and not has_od(i) and i not in out
+             and i not in board_young]
     left_ai += ai_pass(todo3)
     flagged = {**old_flags, **new_flags}
     st["ai_old"] = len(new_flags)
@@ -1122,8 +1166,8 @@ def date_check(kept, base, today, stale, boards=None):
     #    원문 날짜·글 번호로 밝혀진 옛 기사는 WAVE_MIN만큼). 한두 건만 걸린 매체는 Claude 착각(미리 발표된 일·비슷한 옛 사건)일 수 있어 남김
     #    (2026-10-15 시험: Claude만 옛 사건이라 한 기사 중 시부야 세이부 폐점·아르노 나이키 이사·글렌 마틴스 디젤 퇴임은 최근 기사)
     wave = {}   # 매체 이름·원문 호스트 → 옛 기사 근거 수(원문 날짜로 아니라고 밝혀진 Claude 판단은 세지 않음)
-    for i in new_flags:
-        if not res.get(i) and ai_stale(new_flags[i][0], rss_day(pool[i][0])):
+    for i in new_flags:   # 원문 날짜·글 번호로 최근 글인 것은 근거로 안 셈
+        if not res.get(i) and i not in board_young and ai_stale(new_flags[i][0], rss_day(pool[i][0])):
             for key in {src(i), hosts.get(i, "")} - {""}:
                 wave[key] = wave.get(key, 0) + 1
     for v in stale.values():
@@ -1143,7 +1187,8 @@ def date_check(kept, base, today, stale, boards=None):
         if max(wave.get(s, 0), wave.get(hosts.get(i, ""), 0) if hosts.get(i) else 0) >= WAVE_MIN:
             drop(i, [when, tod, "a", s], f"{s} · Claude {when} {why_} / 구글 {g}")
         else:
-            mark(i, ai_old=when)   # 다음 실행에서 근거가 쌓이거나 원문·글 번호로 가려지면 다시 판정
+            if i in new_flags:   # 다음 실행들(AI_REJUDGE_DAYS일)에서 근거가 쌓이거나 원문·글 번호로 가려지면 다시 판정
+                mark(i, ai_old=f"{when}@{tod}")
             if i in new_flags:
                 st["ai_kept"] = st.get("ai_kept", 0) + 1
                 logs.append(f"  (Claude만 옛 사건({when})이라 함 — {s} 옛 기사 근거 부족해 남김) {x['title'][:60]}")
@@ -1184,11 +1229,14 @@ def _arch_item(it):
     od, ck = it.get("orig_date"), it.get("dchk")   # v2.13 있을 때만
     if isinstance(od, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", od):
         a["orig_date"] = od
-    if isinstance(ck, str) and ck and set(ck) <= set("ap"):
+    if isinstance(ck, str) and ck and set(ck) <= set("anp"):
         a["dchk"] = "".join(sorted(set(ck)))
     ao = it.get("ai_old")
-    if isinstance(ao, str) and re.fullmatch(r"(19|20)[0-9]{2}(-[0-9]{2})?", ao):
+    if isinstance(ao, str) and re.fullmatch(r"(19|20)[0-9]{2}(-[0-9]{2})?@[0-9]{4}-[0-9]{2}-[0-9]{2}", ao):
         a["ai_old"] = ao
+    wr = it.get("wr")
+    if isinstance(wr, str) and re.fullmatch(r"[\w.-]{1,100}/[\w-]{1,40}#[1-9][0-9]{0,8}", wr):
+        a["wr"] = wr
     return a
 
 
@@ -1252,7 +1300,7 @@ def merge_archive(base, add, today, drop_keys=frozenset(), drop_ids=frozenset())
             if p and p["importance"] > a["importance"]:
                 a["importance"] = p["importance"]
             if p:
-                for k2 in ("orig_date", "ai_old"):
+                for k2 in ("orig_date", "ai_old", "wr"):
                     if k2 not in a and p.get(k2):
                         a[k2] = p[k2]
                 ck = set(a.get("dchk", "")) | set(p.get("dchk", ""))
@@ -1432,7 +1480,8 @@ def main():
     boards = load_boards(old, today)   # v2.13 그누보드 게시판 최신 글 번호
     kept = [it for it in kept if title_key(it.get("title", "")) not in stale or verified_fresh(it)]
     base, bf = archive_base(today)   # v2.12 1년 보관 — v2.13 수집 전에 읽어 1년 안에 고른 기사 제목은 다시 받지 않음(옛 기사 재게시 대비)
-    arch_titles = {title_key(str(x.get("title") or "")) for x in (base or []) if isinstance(x, dict)}
+    arch_titles = {tk for tk in (title_key(str(x.get("title") or "")) for x in (base or []) if isinstance(x, dict))
+                   if len(tk) >= 8}   # 너무 짧은 제목 키는 다른 기사와 겹칠 수 있어 빼고
     known = {it["id"] for it in kept}
     old_seen = list(old.get("seen_ids", []))
     seen_ids = set(old_seen) | known
@@ -1497,7 +1546,7 @@ def main():
         })
 
     # v2.13 옛 기사 거르기 — 오늘 선별 + 보관 중 기사(news.json·1년 보관), 뺀 기사는 아래 seen에 남아 다시 판정하지 않음
-    keys3 = ("dchk", "orig_date", "ai_old")
+    keys3 = ("dchk", "orig_date", "ai_old", "wr")
     snap = [(x, {k: x[k] for k in keys3 if k in x}) for x in list(kept) + list(base or []) if isinstance(x, dict)]
     snap_stale, snap_boards = dict(stale), {k: list(v) for k, v in boards.items()}
     try:
