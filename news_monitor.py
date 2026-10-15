@@ -246,6 +246,7 @@ BOARD_LAG_MIN = 300
 BOARD_MIN_MAX = 1000  # 최신 번호가 이보다 작은(글이 적은) 게시판은 번호로 판단하지 않음
 BOARD_KEEP = 180      # 게시판 최신 번호 기억(일, news.json boards)
 BOARD_FRESH = 0.01    # 최신 번호에서 1% 안쪽 글은 최근 글로 봄 — Claude가 옛 사건이라 해도 원문 날짜처럼 남김
+BOARD_FRESH_OBS = 5   # 단, 이번 실행에서 그 게시판 글을 이만큼 넘게 봤을 때만(1~2건만 보면 옛 글이 '최신 번호'가 됨 — 10/15 시험)
 HOST_SKIP = 3         # 한 실행에서 날짜를 하나도 못 읽고 이만큼 실패한 곳(봇 확인 화면 등)은 원문 받기를 건너뜀(글 번호만 봄)
 WAVE_MIN = 3          # 원문 날짜 없이 Claude 판단만으로 빼려면 그 매체의 옛 기사 근거(이번 Claude 옛 사건 + 최근 60일 기억)가 이만큼
 T0 = time.monotonic()
@@ -953,7 +954,10 @@ def date_check(kept, base, today, stale, boards=None):
                 if not res[i]:
                     why[i] = info
                 hs = hstat.setdefault(h, [0, 0])
-                hs[0 if res[i] else 1] += 1
+                if res[i]:
+                    hs[0] += 1
+                elif not str(info.get("why") or "").startswith("err:"):   # 접속 오류(시간 초과 등)는 그때뿐일 수 있어 세지 않음
+                    hs[1] += 1
         else:
             gfail.append(i)
         if gn:
@@ -1003,12 +1007,21 @@ def date_check(kept, base, today, stale, boards=None):
                 logs.append(f"  (원문 날짜가 최근이라 남김 — Claude는 {flagged[i][0]}) {x['title'][:60]} · 원문 {real}")
 
     # ②-2 그누보드 글 번호 — 이번에 본 번호로 게시판 최신 번호를 올리고, 원문 날짜를 못 읽은 글은 번호로 판정
-    for i, (k, wr) in posts.items():
-        if wr > boards.get(k, [0])[0]:
+    bmax, bobs = {}, {}   # 이번 실행에서 본 게시판별 최대 번호·글 수
+    for k, wr in posts.values():
+        bmax[k], bobs[k] = max(bmax.get(k, 0), wr), bobs.get(k, 0) + 1
+    for k, wr in bmax.items():
+        if k in boards and bobs[k] >= BOARD_FRESH_OBS and wr < (1 - BOARD_LAG) * boards[k][0]:
+            # 여러 글을 봤는데 모두 기억한 최신 번호보다 한참 아래 — 게시판 번호를 새로 매겼을 수 있어 다시 잡음(최신 글을 옛 글로 빼지 않게)
+            print(f"  [WARN] 게시판 {k} 글 번호가 줄었음({boards[k][0]} → {wr}) — 최신 번호를 다시 잡음", flush=True)
+            boards[k] = [wr, tod]
+        elif wr > boards.get(k, [0])[0]:
             boards[k] = [wr, tod]
     for i in sorted((i for i in posts if not res.get(i) and i not in out), key=lambda i: pos[i]):
         (k, wr), x = posts[i], pool[i][0]
         mx = boards[k][0]
+        if x.get("group") in SLOW_GROUPS:   # 국내 유통사(30일 창·90일 보관)는 원래 몇 주 된 글도 받으므로 번호로 판단 안 함
+            continue
         if mx >= BOARD_MIN_MAX and mx - wr >= max(BOARD_LAG_MIN, BOARD_LAG * mx):
             st["board"] = st.get("board", 0) + 1
             drop(i, [f"#{wr}/{mx}", tod, "n", str(x.get("source") or "")],
@@ -1034,7 +1047,7 @@ def date_check(kept, base, today, stale, boards=None):
         g, (when, why), s = rss_day(x), flagged[i], str(x.get("source") or "")
         if not ai_stale(when, g):
             continue
-        if i in posts and boards[posts[i][0]][0] >= BOARD_MIN_MAX \
+        if i in posts and bobs.get(posts[i][0], 0) >= BOARD_FRESH_OBS and boards[posts[i][0]][0] >= BOARD_MIN_MAX \
                 and boards[posts[i][0]][0] - posts[i][1] <= BOARD_FRESH * boards[posts[i][0]][0]:
             logs.append(f"  (글 번호가 게시판 최신 쪽이라 남김 — Claude는 {when}) {x['title'][:60]}")
             continue
