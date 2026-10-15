@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-15 11:32 KST",
+ "generated_at": "2026-10-16 07:14 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -50,8 +50,8 @@
    "q_inv_prev_date": "2025-05-31",
    "q_inv_yoy": 0.16023501134998508,
    "q_inv_rev_yoy": -1.1264305668198582,
-   "price": 35.29999923706055,
-   "off_high_pct": -47.66948170088266,
+   "price": 37.13999938964844,
+   "off_high_pct": -44.94177168001987,
    "earn_date": "2026-12-17",
    "error": null
   },
@@ -104,8 +104,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 13.4575175822087,
    "q_inv_rev_yoy": 13.289650537634401,
-   "price": 153.25,
-   "off_high_pct": -19.89430257204785,
+   "price": 154.39999389648438,
+   "off_high_pct": -19.29318633638214,
    "earn_date": "2026-10-29",
    "error": null
   },
@@ -158,8 +158,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 31.21531631520533,
    "q_inv_rev_yoy": 13.494394020288315,
-   "price": 35.5,
-   "off_high_pct": -29.883469778639814,
+   "price": 35.189998626708984,
+   "off_high_pct": -30.49575768452778,
    "earn_date": "2026-11-11",
    "error": null
   },
@@ -212,8 +212,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -4.917990324377087,
    "q_inv_rev_yoy": 5.701486100081077,
-   "price": 82.81999969482422,
-   "off_high_pct": -31.51976350012945,
+   "price": 86.58000183105469,
+   "off_high_pct": -28.410782137199398,
    "earn_date": "2026-10-22",
    "error": null
   },
@@ -266,8 +266,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 18.766437069505315,
    "q_inv_rev_yoy": 32.05532637709294,
-   "price": 28.81999969482422,
-   "off_high_pct": -31.315537836870234,
+   "price": 29.940000534057617,
+   "off_high_pct": -28.646327008293603,
    "earn_date": "2026-11-17",
    "error": null
   },
@@ -320,8 +320,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": -0.6455470604968205,
    "q_inv_rev_yoy": -4.339742414420289,
-   "price": 94.08999633789062,
-   "off_high_pct": -56.41560394212235,
+   "price": 99.08999633789062,
+   "off_high_pct": -54.09950245661692,
    "earn_date": null,
    "error": null
   },
@@ -374,8 +374,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 25.988639476377905,
    "q_inv_rev_yoy": null,
-   "price": 4609.0,
-   "off_high_pct": -12.724862715394814,
+   "price": 4580.0,
+   "off_high_pct": -13.274001136148462,
    "earn_date": "2026-11-13",
    "error": null
   },
@@ -428,8 +428,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 25.41277977791756,
    "q_inv_rev_yoy": 13.303844470129533,
-   "price": 33.91999816894531,
-   "off_high_pct": -30.733107364912826,
+   "price": 35.88999938964844,
+   "off_high_pct": -26.710233826836895,
    "earn_date": null,
    "error": null
   },
@@ -482,8 +482,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -3.930531969511475,
    "q_inv_rev_yoy": 2.6183841102931815,
-   "price": 117.54000091552734,
-   "off_high_pct": -16.750478870268193,
+   "price": 124.7699966430664,
+   "off_high_pct": -11.6297227242801,
    "earn_date": "2026-10-29",
    "error": null
   },
@@ -536,8 +536,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -11.051764522977992,
    "q_inv_rev_yoy": -5.184799388413253,
-   "price": 16.479999542236328,
-   "off_high_pct": -22.58019020673141,
+   "price": 17.0,
+   "off_high_pct": -20.137329912391067,
    "earn_date": "2026-10-28",
    "error": null
   },
@@ -590,8 +590,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -2.853229336441798,
    "q_inv_rev_yoy": -3.186845938691507,
-   "price": 4.789999961853027,
-   "off_high_pct": -41.1547941053557,
+   "price": 4.880000114440918,
+   "off_high_pct": -40.04914117179388,
    "earn_date": "2026-11-06",
    "error": null
   },
@@ -644,8 +644,8 @@
    "q_inv_prev_date": "2025-03-31",
    "q_inv_yoy": 6.4844126350560805,
    "q_inv_rev_yoy": null,
-   "price": 4325.0,
-   "off_high_pct": -1.1428571428571455,
+   "price": 4375.0,
+   "off_high_pct": 0.0,
    "earn_date": "2026-11-12",
    "error": null
   },
@@ -698,8 +698,8 @@
    "q_inv_prev_date": "2025-03-31",
    "q_inv_yoy": 20.945810837832425,
    "q_inv_rev_yoy": null,
-   "price": 2314.0,
-   "off_high_pct": -43.67845748584407,
+   "price": 2344.0,
+   "off_high_pct": -42.948273270016635,
    "earn_date": "2026-11-10",
    "error": null
   },
@@ -752,8 +752,8 @@
    "q_inv_prev_date": "2025-03-31",
    "q_inv_yoy": 2.7162035591632883,
    "q_inv_rev_yoy": null,
-   "price": 2174.5,
-   "off_high_pct": -29.047893726446727,
+   "price": 2179.0,
+   "off_high_pct": -28.901056847073427,
    "earn_date": "2026-11-05",
    "error": null
   },
@@ -806,8 +806,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -0.5570495582020718,
    "q_inv_rev_yoy": null,
-   "price": 75.6500015258789,
-   "off_high_pct": -11.348148521668511,
+   "price": 75.44999694824219,
+   "off_high_pct": -11.582527579884005,
    "earn_date": null,
    "error": null
   },
@@ -860,8 +860,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 12.699999809265137,
-   "off_high_pct": -42.169534801594686,
+   "price": 12.779999732971191,
+   "off_high_pct": -41.805248748583644,
    "earn_date": null,
    "error": null
   },
@@ -877,10 +877,10 @@
      "end": "2023-12-31",
      "rev": 8601700000.0,
      "gp": 3986600000.0,
-     "op": 621600000.0,
+     "op": 621500000.0,
      "rev_yoy": 1.6136844219206026,
      "gm_pct": 46.346652405919755,
-     "op_pct": 7.2264784868107474
+     "op_pct": 7.22531592592162
     },
     {
      "end": "2024-12-31",
@@ -895,10 +895,10 @@
      "end": "2025-12-31",
      "rev": 7296200000.0,
      "gp": 3279600000.0,
-     "op": -357200000.0,
+     "op": -357400000.0,
      "rev_yoy": -13.119790426291978,
      "gm_pct": 44.94942572846139,
-     "op_pct": -4.8956991310545215
+     "op_pct": -4.898440283983444
     }
    ],
    "latest_q_yoy": -9.656388606850852,
@@ -914,8 +914,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -15.340988331551298,
    "q_inv_rev_yoy": -9.656388606850852,
-   "price": 23.40999984741211,
-   "off_high_pct": -21.966667175292965,
+   "price": 23.549999237060547,
+   "off_high_pct": -21.500002543131515,
    "earn_date": "2026-10-30",
    "error": null
   },
@@ -968,8 +968,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -14.77848101265823,
    "q_inv_rev_yoy": 6.7903838043019915,
-   "price": 18.829999923706055,
-   "off_high_pct": -30.34043518216416,
+   "price": 20.020000457763672,
+   "off_high_pct": -25.938155858143286,
    "earn_date": "2026-11-12",
    "error": null
   },
@@ -1022,8 +1022,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -5.627399725329552,
    "q_inv_rev_yoy": 1.5061644356179071,
-   "price": 57.70000076293945,
-   "off_high_pct": -14.458765685123476,
+   "price": 60.81999969482422,
+   "off_high_pct": -9.833314105130764,
    "earn_date": "2026-10-29",
    "error": null
   },
@@ -1076,9 +1076,9 @@
    "q_inv_prev_date": "2025-03-31",
    "q_inv_yoy": -14.194236926360727,
    "q_inv_rev_yoy": null,
-   "price": 68.9000015258789,
-   "off_high_pct": -27.4490772008811,
-   "earn_date": "2026-11-19",
+   "price": 68.19999694824219,
+   "off_high_pct": -28.18617410866674,
+   "earn_date": "2026-11-12",
    "error": null
   },
   {
@@ -1130,8 +1130,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 146.3000030517578,
-   "off_high_pct": -53.30289878125745,
+   "price": 148.10000610351562,
+   "off_high_pct": -52.72836068864891,
    "earn_date": null,
    "error": null
   },
@@ -1184,8 +1184,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -13.989923633605915,
    "q_inv_rev_yoy": null,
-   "price": 1.8799999952316284,
-   "off_high_pct": -15.846015106602673,
+   "price": 1.8890000581741333,
+   "off_high_pct": -15.443147466802564,
    "earn_date": null,
    "error": null
   },
@@ -1238,8 +1238,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 1978.0,
-   "off_high_pct": -8.847926267281103,
+   "price": 1915.0,
+   "off_high_pct": -11.751152073732719,
    "earn_date": null,
    "error": null
   },
@@ -1346,8 +1346,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 19.00460401186215,
    "q_inv_rev_yoy": 11.17878524068212,
-   "price": 15.739999771118164,
-   "off_high_pct": -21.631598400323337,
+   "price": 15.149999618530273,
+   "off_high_pct": -24.569169529563172,
    "earn_date": null,
    "error": null
   },
@@ -1400,8 +1400,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 63.49828462176188,
    "q_inv_rev_yoy": 53.20546501194532,
-   "price": 136.9600067138672,
-   "off_high_pct": -42.19255578236353,
+   "price": 140.83999633789062,
+   "off_high_pct": -40.554907762789995,
    "earn_date": "2026-11-24",
    "error": null
   },
@@ -1454,8 +1454,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 1.7872711421098586,
    "q_inv_rev_yoy": null,
-   "price": 87.91999816894531,
-   "off_high_pct": -12.679213017604418,
+   "price": 92.26000213623047,
+   "off_high_pct": -8.368787974125313,
    "earn_date": null,
    "error": null
   },
@@ -1508,8 +1508,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 4.3976407512106075,
    "q_inv_rev_yoy": 2.9657377809503283,
-   "price": 55.77000045776367,
-   "off_high_pct": -8.048724373054805,
+   "price": 58.470001220703125,
+   "off_high_pct": -3.597080583216672,
    "earn_date": "2026-12-08",
    "error": null
   },
@@ -1562,8 +1562,8 @@
    "q_inv_prev_date": "2025-04-30",
    "q_inv_yoy": 13.427279978729057,
    "q_inv_rev_yoy": null,
-   "price": 845.0,
-   "off_high_pct": -0.7050528789659172,
+   "price": 859.0,
+   "off_high_pct": 0.0,
    "earn_date": null,
    "error": null
   },
@@ -1616,8 +1616,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 24.785964066079824,
    "q_inv_rev_yoy": 20.785862932524424,
-   "price": 24.3799991607666,
-   "off_high_pct": -19.378309043336618,
+   "price": 23.959999084472656,
+   "off_high_pct": -20.767198195032577,
    "earn_date": "2026-11-03",
    "error": null
   },
@@ -1670,8 +1670,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 14.520717181956421,
    "q_inv_rev_yoy": 22.07878087693238,
-   "price": 10.529999732971191,
-   "off_high_pct": -29.566143845242188,
+   "price": 10.289999961853027,
+   "off_high_pct": -31.17147240979874,
    "earn_date": null,
    "error": null
   },
@@ -1724,8 +1724,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 3.0648705067514825,
    "q_inv_rev_yoy": 11.505281837928738,
-   "price": 14.09000015258789,
-   "off_high_pct": -43.730033396881154,
+   "price": 13.529999732971191,
+   "off_high_pct": -45.37747483678194,
    "earn_date": null,
    "error": null
   },
@@ -1778,8 +1778,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 9.3100004196167,
-   "off_high_pct": -11.417695367574742,
+   "price": 9.539999961853027,
+   "off_high_pct": -9.229307763126538,
    "earn_date": "2026-11-18",
    "error": null
   },
@@ -1832,8 +1832,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 2896.5,
-   "off_high_pct": -0.41210731763086095,
+   "price": 2911.5,
+   "off_high_pct": 0.0,
    "earn_date": "2027-01-06",
    "error": null
   },
@@ -1886,8 +1886,8 @@
    "q_inv_prev_date": "2025-02-28",
    "q_inv_yoy": -8.629247168554299,
    "q_inv_rev_yoy": null,
-   "price": 1.0399999618530273,
-   "off_high_pct": -64.47846880601038,
+   "price": 1.0449999570846558,
+   "off_high_pct": -64.30769237033279,
    "earn_date": "2026-10-28",
    "error": null
   },
@@ -1940,8 +1940,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 6.6467715680955,
    "q_inv_rev_yoy": 5.409346573154639,
-   "price": 142.8300018310547,
-   "off_high_pct": -14.921528450117815,
+   "price": 144.5800018310547,
+   "off_high_pct": -13.87911912922174,
    "earn_date": "2026-11-18",
    "error": null
   },
@@ -1994,8 +1994,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 18.358740801653074,
    "q_inv_rev_yoy": 13.306452779739097,
-   "price": 230.57000732421875,
-   "off_high_pct": -9.487269659738573,
+   "price": 234.8300018310547,
+   "off_high_pct": -7.814963107282058,
    "earn_date": "2026-11-19",
    "error": null
   },
@@ -2048,8 +2048,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 8.943225045836423,
    "q_inv_rev_yoy": 10.986476879904439,
-   "price": 263.260009765625,
-   "off_high_pct": -29.267307547555653,
+   "price": 267.7900085449219,
+   "off_high_pct": -28.050187595492982,
    "earn_date": "2026-11-27",
    "error": null
   },
@@ -2156,8 +2156,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 17.09328377665289,
    "q_inv_rev_yoy": 5.477015984077482,
-   "price": 70500.0,
-   "off_high_pct": -18.1184668989547,
+   "price": 71000.0,
+   "off_high_pct": -17.53774680603949,
    "earn_date": null,
    "error": null
   },
@@ -2210,8 +2210,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -13.564779130703908,
    "q_inv_rev_yoy": -1.2342250852569125,
-   "price": 6220.0,
-   "off_high_pct": -34.417924690910816,
+   "price": 6380.0,
+   "off_high_pct": -32.73092596913361,
    "earn_date": null,
    "error": null
   },
@@ -2264,8 +2264,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 1.0756328502574686,
    "q_inv_rev_yoy": 7.786968440765407,
-   "price": 48600.0,
-   "off_high_pct": -51.02473082614827,
+   "price": 48750.0,
+   "off_high_pct": -50.87357258795737,
    "earn_date": null,
    "error": null
   },
@@ -2318,8 +2318,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 13.32062684920472,
    "q_inv_rev_yoy": -0.26291324448486364,
-   "price": 2060.0,
-   "off_high_pct": -65.8208345073726,
+   "price": 2020.0,
+   "off_high_pct": -66.48450762373427,
    "earn_date": null,
    "error": null
   },
@@ -2372,8 +2372,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -20.337886000069638,
    "q_inv_rev_yoy": 333.22663331071175,
-   "price": 2740.0,
-   "off_high_pct": -40.820734341252695,
+   "price": 2790.0,
+   "off_high_pct": -39.740820734341256,
    "earn_date": null,
    "error": null
   },
@@ -2426,8 +2426,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -4.726119638970672,
    "q_inv_rev_yoy": 9.184280400595068,
-   "price": 3400.0,
-   "off_high_pct": -52.21351838882584,
+   "price": 3545.0,
+   "off_high_pct": -50.175565496584596,
    "earn_date": null,
    "error": null
   },
@@ -2480,8 +2480,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 117.15740506144532,
    "q_inv_rev_yoy": 134.19333916925572,
-   "price": 290500.0,
-   "off_high_pct": -37.459634015069966,
+   "price": 298000.0,
+   "off_high_pct": -35.84499461786868,
    "earn_date": "2026-11-05",
    "error": null
   },
@@ -2534,8 +2534,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 24.26438740837069,
    "q_inv_rev_yoy": 74.96398303460792,
-   "price": 3160.0,
-   "off_high_pct": -11.023737502647457,
+   "price": 3050.0,
+   "off_high_pct": -14.121012462998339,
    "earn_date": null,
    "error": null,
    "yf_ticker": "478560.KQ"
@@ -2589,8 +2589,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 10770.0,
-   "off_high_pct": -36.27218934911242,
+   "price": 10640.0,
+   "off_high_pct": -37.0414201183432,
    "earn_date": null,
    "error": null
   },
@@ -2643,8 +2643,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -7.860056788153291,
    "q_inv_rev_yoy": 7.426221486586582,
-   "price": 20500.0,
-   "off_high_pct": -26.654740608228977,
+   "price": 20750.0,
+   "off_high_pct": -25.760286225402506,
    "earn_date": null,
    "error": null
   },
@@ -2751,8 +2751,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 20.927259890263382,
    "q_inv_rev_yoy": 19.686337083712637,
-   "price": 268000.0,
-   "off_high_pct": -49.90654205607476,
+   "price": 267500.0,
+   "off_high_pct": -50.0,
    "earn_date": "2026-10-27",
    "error": null
   },
@@ -2859,8 +2859,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 4.7933214836370475,
    "q_inv_rev_yoy": 2.7219138289507505,
-   "price": 2650.0,
-   "off_high_pct": -54.310344827586206,
+   "price": 2700.0,
+   "off_high_pct": -53.448275862068975,
    "earn_date": null,
    "error": null
   },
@@ -2913,8 +2913,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 8.590136968530926,
    "q_inv_rev_yoy": 18.222850678662383,
-   "price": 8550.0,
-   "off_high_pct": -42.022943159413195,
+   "price": 8600.0,
+   "off_high_pct": -41.68389604338638,
    "earn_date": null,
    "error": null
   },
@@ -2967,8 +2967,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 4.317834993171554,
    "q_inv_rev_yoy": 17.61305317283246,
-   "price": 176200.0,
-   "off_high_pct": -28.17497312325685,
+   "price": 172800.0,
+   "off_high_pct": -28.338024313958666,
    "earn_date": null,
    "error": null
   },
@@ -3021,8 +3021,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -6.593380631914458,
    "q_inv_rev_yoy": 4.040108451159652,
-   "price": 83200.0,
-   "off_high_pct": -58.808962639989026,
+   "price": 82400.0,
+   "off_high_pct": -59.20503030691222,
    "earn_date": "2026-11-06",
    "error": null
   },
@@ -3075,8 +3075,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -2.0373876430405446,
    "q_inv_rev_yoy": 5.110210461425924,
-   "price": 267500.0,
-   "off_high_pct": -65.42258249521471,
+   "price": 265000.0,
+   "off_high_pct": -65.74573592983887,
    "earn_date": null,
    "error": null
   },
@@ -3129,8 +3129,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": 1.0759937295133026,
    "q_inv_rev_yoy": -1.1324192388186494,
-   "price": 77500.0,
-   "off_high_pct": -62.35399555033335,
+   "price": 76600.0,
+   "off_high_pct": -62.79117495684561,
    "earn_date": null,
    "error": null
   },
@@ -3183,8 +3183,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -9.540481400437638,
    "q_inv_rev_yoy": 3.8948850305021043,
-   "price": 14.399999618530273,
-   "off_high_pct": -55.18207550630814,
+   "price": 14.789999961853027,
+   "off_high_pct": -53.96825561723948,
    "earn_date": "2026-11-03",
    "error": null
   }
@@ -3200,9 +3200,9 @@
  "fx": {
   "EUR": {
    "name": "유로",
-   "rate": 1514.4,
+   "rate": 1503.8,
    "yago": 1658.13,
-   "chg_pct": -8.67,
+   "chg_pct": -9.31,
    "asof": "2026-10-15",
    "via": null,
    "hist": [
@@ -4240,13 +4240,13 @@
     ],
     [
      "2026-10-15",
-     1514.4
+     1503.8
     ]
    ],
-   "avg1y": 1686.0203,
-   "dev_pct": -10.18,
-   "next_dn": 1500.5581,
-   "next_up": 1517.4183,
+   "avg1y": 1685.9794,
+   "dev_pct": -10.81,
+   "next_dn": 1500.5217,
+   "next_up": 1517.3815,
    "seen30": [
     -11.8,
     -5.98
@@ -4424,19 +4424,19 @@
   },
   "GBP": {
    "name": "파운드",
-   "rate": 1786.55,
+   "rate": 1778.64,
    "yago": 1904.1929,
-   "chg_pct": -6.18,
+   "chg_pct": -6.59,
    "asof": "2026-10-15",
    "via": null,
-   "avg1y": 1948.7752,
-   "dev_pct": -8.32
+   "avg1y": 1948.7447,
+   "dev_pct": -8.73
   },
   "USD": {
    "name": "달러",
-   "rate": 1349.78,
+   "rate": 1341.21,
    "yago": 1429.4301,
-   "chg_pct": -5.57,
+   "chg_pct": -6.17,
    "asof": "2026-10-15",
    "via": null,
    "hist": [
@@ -5474,13 +5474,13 @@
     ],
     [
      "2026-10-15",
-     1349.78
+     1341.21
     ]
    ],
-   "avg1y": 1454.1608,
-   "dev_pct": -7.18,
-   "next_dn": 1337.828,
-   "next_up": 1352.3696,
+   "avg1y": 1454.1278,
+   "dev_pct": -7.77,
+   "next_dn": 1337.7975,
+   "next_up": 1352.3388,
    "seen30": [
     -8.29,
     -5.03
@@ -5682,17 +5682,17 @@
   },
   "BRL": {
    "name": "브라질 헤알",
-   "rate": 267.3931,
+   "rate": 263.0288,
    "yago": 260.7735,
-   "chg_pct": 2.54,
+   "chg_pct": 0.86,
    "asof": "2026-10-15",
    "via": "달러 경유"
   },
   "JPY": {
    "name": "엔",
-   "rate": 8.541,
+   "rate": 8.466,
    "yago": 9.4202,
-   "chg_pct": -9.33,
+   "chg_pct": -10.13,
    "asof": "2026-10-15",
    "via": null,
    "hist": [
@@ -6730,13 +6730,13 @@
     ],
     [
      "2026-10-15",
-     8.541
+     8.466
     ]
    ],
-   "avg1y": 9.219,
-   "dev_pct": -7.35,
-   "next_dn": 8.4815,
-   "next_up": 8.5737,
+   "avg1y": 9.2187,
+   "dev_pct": -8.17,
+   "next_dn": 8.3891,
+   "next_up": 8.4812,
    "seen30": [
     -8.8,
     -4.8
@@ -6898,40 +6898,40 @@
   },
   "CHF": {
    "name": "스위스 프랑",
-   "rate": 1629.3,
+   "rate": 1622.4399,
    "yago": 1783.3768,
-   "chg_pct": -8.64,
+   "chg_pct": -9.02,
    "asof": "2026-10-15",
    "via": null
   },
   "CNY": {
    "name": "위안",
-   "rate": 201.6977,
+   "rate": 200.4678,
    "yago": 200.2452,
-   "chg_pct": 0.73,
+   "chg_pct": 0.11,
    "asof": "2026-10-15",
    "via": "달러 경유"
   },
   "HKD": {
    "name": "홍콩 달러",
-   "rate": 171.67,
+   "rate": 170.48,
    "yago": 183.872,
-   "chg_pct": -6.64,
+   "chg_pct": -7.28,
    "asof": "2026-10-15",
    "via": null
   },
   "SAR": {
    "name": "사우디 리얄",
-   "rate": 359.9413,
+   "rate": 357.656,
    "yago": 381.1814,
-   "chg_pct": -5.57,
+   "chg_pct": -6.17,
    "asof": "2026-10-15",
    "via": "달러 고정 3.75"
   }
  },
  "fx_push": null,
  "fetch_status": {
-  "date": "2026-10-15",
+  "date": "2026-10-16",
   "ok": 59,
   "kept": [],
   "failed": [],
