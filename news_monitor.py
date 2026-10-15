@@ -54,6 +54,7 @@ v2: 범위 확장 — 감시 브랜드 31개사 + 명품 12개 + 산업 카테�
 
 import os
 import re
+import sys
 import json
 import time
 import base64
@@ -645,37 +646,56 @@ def _date_in_url(u):
     return _to_date("-".join(m.groups())) if m else None
 
 
-def page_date(url, cap=1_000_000):
-    """원문 페이지 발행일(한국 날짜) — 발행일 메타(없으면 JSON-LD datePublished)와 첫 '입력·송고(등록·승인·작성은 시각까지)' 표시 중
-    이른 것(사이트를 옮겨 메타만 옮긴 날로 바뀐 경우). 둘 다 없거나 못 받으면 주소 속 날짜, 그것도 없으면 None"""
-    try:
-        r, raw = _get_capped(url, cap)
-    except Exception:
-        return _date_in_url(url)
-    if not r.ok:
-        return _date_in_url(r.url or url)
+def _page_html(r, raw):
+    """응답 바이트 → 글자(헤더·<meta charset>의 문자 집합, EUC-KR 계열은 cp949)"""
     cs = re.search(r"charset=[\"']?([\w-]+)", (r.headers.get("content-type") or "") + raw[:4096].decode("ascii", "ignore"))
     enc = (cs.group(1) if cs else "utf-8").lower()
     try:
-        html = raw.decode("cp949" if enc in ("euc-kr", "ks_c_5601-1987", "ksc5601", "x-windows-949") else enc, "replace")
+        return raw.decode("cp949" if enc in ("euc-kr", "ks_c_5601-1987", "ksc5601", "x-windows-949") else enc, "replace")
     except LookupError:
-        html = raw.decode("utf-8", "replace")
+        return raw.decode("utf-8", "replace")
+
+
+def _html_dates(html):
+    """페이지 속 발행일 후보 [(어디서, 날짜 글자)] — 발행일 메타 1개(없으면 JSON-LD datePublished) + 처음 나온 이름표 1개"""
     found = []
     for tag in re.findall(r"<meta\b[^>]{0,600}>", html, re.I):   # 속성 순서는 제각각(content=가 먼저 오기도)
         a = {k.lower(): v for k, v in re.findall(r'([\w:.-]+)\s*=\s*["\']([^"\']*)["\']', tag)}
         if (a.get("property") or a.get("name") or a.get("itemprop") or "").lower() in PUB_META and _to_date(a.get("content")):
-            found.append(a["content"])
+            found.append(("meta", a["content"]))
             break
     if not found:   # JSON-LD는 메타가 없을 때만(관련 기사 목록의 날짜가 섞일 수 있음)
         m = re.search(r'"datePublished"\s*:\s*"([^"]{8,40})"', html)
         if m:
-            found.append(m.group(1))
+            found.append(("jsonld", m.group(1)))
     for lb in PUB_LABEL.finditer(html):   # 페이지에서 처음 나온 이름표 1개
         if lb.group(1) in ("입력", "송고") or lb.group(3):
-            found.append(lb.group(2))
+            found.append(("label", lb.group(2)))
             break
-    days = [d for d in map(_to_date, found) if d]
-    return min(days) if days else _date_in_url(r.url or url)
+    return found
+
+
+def page_date(url, cap=1_000_000, info=None):
+    """원문 페이지 발행일(한국 날짜) — 발행일 메타(없으면 JSON-LD datePublished)와 첫 '입력·송고(등록·승인·작성은 시각까지)' 표시 중
+    이른 것(사이트를 옮겨 메타만 옮긴 날로 바뀐 경우). 둘 다 없거나 못 받으면 주소 속 날짜, 그것도 없으면 None.
+    info(dict)를 주면 못 읽은 까닭(why: err:오류 이름·http상태·url(주소 날짜)·nodate)·최종 주소를 적음 — 로그의 매체별 요약용"""
+    info = {} if info is None else info
+    try:
+        r, raw = _get_capped(url, cap)
+    except Exception as e:
+        info.update(why=f"err:{type(e).__name__}", host=urllib.parse.urlparse(url).hostname or "")
+        return _date_in_url(url)
+    info.update(host=urllib.parse.urlparse(r.url or url).hostname or "", status=r.status_code, bytes=len(raw))
+    if not r.ok:
+        info["why"] = f"http{r.status_code}"
+        return _date_in_url(r.url or url)
+    days = [d for d in (_to_date(v) for _, v in _html_dates(_page_html(r, raw))) if d]
+    if days:
+        info["why"] = "page"
+        return min(days)
+    d = _date_in_url(r.url or url)
+    info["why"] = "url" if d else "nodate"
+    return d
 
 
 def rss_day(it):
@@ -851,7 +871,7 @@ def date_check(kept, base, today, stale):
                     and (tier[i] == 0 or i in flagged or str(pool[i][0].get("source") or "") in sus)),
                    key=lambda i: (rank(i), pos[i]))
     deadline = min(time.monotonic() + DATE_BUDGET, T0 + RUN_LIMIT)
-    res, gfail = {}, []
+    res, gfail, why = {}, [], {}
     for i in queue:
         if time.monotonic() > deadline:
             break
@@ -870,7 +890,10 @@ def date_check(kept, base, today, stale):
             st["tries"] += 1
             st["decoded"] += bool(url)
         if url:
-            res[i] = page_date(url)
+            info = {}
+            res[i] = page_date(url, info=info)
+            if not res[i]:
+                why[i] = info
         else:
             gfail.append(i)
         if gn:
@@ -884,6 +907,16 @@ def date_check(kept, base, today, stale):
     st["page"] = len(res) + len(gfail)
     st["dated"] = sum(1 for d in res.values() if d)
     left_page = len(queue) - st["page"]
+    if why:   # 원문 날짜를 못 읽은 곳 — 매체(주소)별 까닭(err:접속 오류·http상태·nodate 날짜 표시 없음)
+        agg = {}
+        for v in why.values():
+            k = (v.get("host") or "?").removeprefix("www.")
+            agg.setdefault(k, {})
+            agg[k][v.get("why") or "?"] = agg[k].get(v.get("why") or "?", 0) + 1
+        top = sorted(agg.items(), key=lambda kv: -sum(kv[1].values()))
+        print(f"  원문 날짜 못 읽음 {len(why)}건: " + " · ".join(
+            f"{h} {sum(c.values())}({', '.join(f'{w} {n}' for w, n in sorted(c.items(), key=lambda x: -x[1]))})"
+            for h, c in top[:8]) + (f" 외 {len(top) - 8}곳" if len(top) > 8 else ""), flush=True)
     if st["tries"] >= 5 and not st["decoded"]:
         st["broken"] = True
         soft_fail(f"구글 뉴스 링크를 하나도 못 풂(0/{st['tries']}) — 원문 날짜 확인 안 됨(구글 방식 변경 가능), "
@@ -1095,7 +1128,70 @@ def update_archive(kept, today, base, bf, drop_keys=frozenset(), drop_ids=frozen
         return {"ok": False}
 
 
+PROBE_MAX = 15   # 원문 날짜 진단 1회 기사 수
+
+
+def probe(spec):
+    """원문 날짜 진단(news.yml 수동 실행 입력 probe) — 매체 이름·기사 id(쉼표 구분)에 맞는 보관 기사(news.json·1년 보관, 최신순)
+    최대 PROBE_MAX건의 구글 링크 풀기·원문 페이지 날짜 단서를 로그로 보여 줌. Claude 안 씀·저장 안 함(날짜 형식을 모르는 매체 확인용)"""
+    keys = [k.strip() for k in str(spec).split(",") if k.strip()]
+    items = {}
+    for path in (NEWS_PATH, ARCHIVE_PATH):
+        try:
+            with open(path, encoding="utf-8") as f:
+                for it in json.load(f).get("items") or []:
+                    if isinstance(it, dict) and isinstance(it.get("id"), str):
+                        items.setdefault(it["id"], it)
+        except Exception as e:
+            print(f"  [WARN] {path} 못 읽음: {str(e)[:100]}", flush=True)
+    pick = [items[k] for k in keys if k in items]   # 기사 id를 먼저, 그다음 매체 이름에 맞는 기사(최신순)
+    pick += [it for it in sorted(items.values(), key=lambda x: str(x.get("first_seen") or ""), reverse=True)
+             if it not in pick and str(it.get("source") or "") in keys]
+    pick = pick[:PROBE_MAX]
+    print(f"원문 날짜 진단: {', '.join(keys)} — {len(pick)}건", flush=True)
+    near = re.compile(r"(?:19|20)?\d\d\s*[-./년]\s*\d\d?\s*[-./월]\s*\d\d?(?:\s*일)?(?:\s*\(?[월화수목금토일]?\)?\s*(?:오전|오후)?\s*\d\d?:\d\d)?")
+    for it in pick:
+        print(f"\n[{it['id']}] {str(it.get('source') or '')} · 구글 {rss_day(it)} · {str(it.get('title') or '')[:60]}", flush=True)
+        t = time.monotonic()
+        try:
+            url = gn_resolve(str(it.get("link") or "")) if is_gn_link(it.get("link")) else it.get("link")
+        except GBlocked as e:
+            print(f"  구글이 막음({e}) — 진단 멈춤", flush=True)
+            break
+        except Exception as e:
+            url = None
+            print(f"  구글 링크 풀기 오류: {type(e).__name__} {str(e)[:120]}", flush=True)
+        print(f"  원문 주소: {url} ({time.monotonic() - t:.1f}초)", flush=True)
+        time.sleep(DATE_PAUSE)
+        if not url:
+            continue
+        try:
+            r, raw = _get_capped(url, 1_000_000)
+        except Exception as e:
+            print(f"  원문 받기 오류: {type(e).__name__} {str(e)[:160]}", flush=True)
+            continue
+        html = _page_html(r, raw)
+        print(f"  HTTP {r.status_code} · {len(raw):,}바이트 · {r.headers.get('content-type', '')} · 최종 {r.url}", flush=True)
+        metas = []
+        for tag in re.findall(r"<meta\b[^>]{0,600}>", html, re.I):
+            m = {k.lower(): v for k, v in re.findall(r'([\w:.-]+)\s*=\s*["\']([^"\']*)["\']', tag)}
+            nm = (m.get("property") or m.get("name") or m.get("itemprop") or "").lower()
+            if re.search(r"date|time|publish|regdate|created", nm):
+                metas.append(f"{nm}={m.get('content', '')[:40]}")
+        print(f"  날짜 메타: {' | '.join(metas[:8]) or '없음'}", flush=True)
+        jl = re.findall(r'"date(?:Published|Created|Modified)"\s*:\s*"([^"]{8,40})"', html)
+        print(f"  JSON-LD: {' | '.join(jl[:4]) or '없음'}", flush=True)
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"(?is)<(script|style)\b.*?</\1>", " ", html)))
+        ctx = [text[max(0, m.start() - 24):m.end()].strip() for m in near.finditer(text)][:6]
+        print(f"  본문 속 날짜(앞 24자 포함): {' | '.join(ctx) or '없음'}", flush=True)
+        print(f"  이름표 후보: {_html_dates(html) or '없음'} · 주소 속 날짜: {_date_in_url(r.url or url)}", flush=True)
+        print(f"  → 원문 날짜 판정: {page_date(url)}", flush=True)
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[1] == "--probe":   # v2.13 원문 날짜 진단(Claude 안 씀·저장 안 함)
+        probe(sys.argv[2])
+        return
     if not API_KEY:
         print("[ERROR] ANTHROPIC_API_KEY 미설정")
         raise SystemExit(1)

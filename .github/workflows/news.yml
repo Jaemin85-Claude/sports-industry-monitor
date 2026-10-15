@@ -6,6 +6,11 @@ on:
     # 매일 03:17 KST = 전일 18:17 UTC (04:17 대시보드 빌드보다 먼저)
     - cron: "17 18 * * *"
   workflow_dispatch:   # 수동 실행 버튼 (테스트용)
+    inputs:
+      probe:
+        description: "원문 날짜 진단만 — 매체 이름·기사 id 쉼표 구분(예: 패션포스트,fpost.co.kr). Claude 안 씀·저장 안 함"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -32,9 +37,15 @@ jobs:
       - name: Collect and curate news
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python news_monitor.py
-      - name: Commit news
+          PROBE: ${{ inputs.probe }}
         run: |
+          # v2.13 수동 실행 입력 probe가 있으면 원문 날짜 진단만(news_monitor.py --probe) — 로그 확인용
+          if [ -n "$PROBE" ]; then python news_monitor.py --probe "$PROBE"; else python news_monitor.py; fi
+      - name: Commit news
+        env:
+          PROBE: ${{ inputs.probe }}
+        run: |
+          if [ -n "$PROBE" ]; then echo "원문 날짜 진단 실행 — 저장 안 함"; exit 0; fi
           # v2.12 작업 브랜치 실행은 저장하지 않음 — git 전체 기록을 받은 브랜치 실행이 데이터 커밋을 브랜치(PR)에 올리지 않게(로그 확인용)
           if [ "$GITHUB_REF" != "refs/heads/main" ]; then echo "브랜치 실행 — 커밋·푸시 안 함(데이터는 main 실행에서만 저장)"; exit 1; fi
           git config user.name "github-actions"
