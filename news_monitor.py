@@ -235,6 +235,7 @@ RUN_LIMIT = 18 * 60   # 실행 시작 뒤 이 시간(초)이 지나면 새 확�
 AI_CHECK_MAX = 1000   # 한 실행에 Claude로 확인할 기사 수(처음 1년 보관분 약 1,500건 점검은 두 번의 실행에 나눔)
 AI_CHUNK = 200        # Claude 1회 요청에 넣는 기사 수
 SUS_MIN = 2           # 옛 기사가 이만큼(최근 60일) 나온 매체는 남은 기사도 원문 날짜 확인
+WAVE_MIN = 3          # 원문 날짜 없이 Claude 판단만으로 빼려면 그 매체의 옛 기사 근거(이번 Claude 옛 사건 + 최근 60일 기억)가 이만큼
 T0 = time.monotonic()
 BROWSER_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                             "Chrome/128.0.0.0 Safari/537.36",
@@ -724,7 +725,10 @@ store or figures) that you know for certain already happened before {today.year}
 executive appointment or departure, an acquisition or sale, a store opening, a court ruling, or a
 quarterly result with the same figures that you remember from an earlier year.
 Do NOT flag recurring kinds of news that could happen again (price increases, collaborations,
-openings, results) unless the details match a specific past event you remember. If unsure, do not flag.
+openings, results) unless the details match a specific past event you remember.
+Your knowledge may end well before today: an event that was announced or planned earlier (a store
+closing on a set date, an executive leaving later, a deal closing later, a board appointment) may be
+happening only now - do not flag a headline about it taking place. If unsure, do not flag.
 
 Respond with ONLY a JSON object, no markdown fences:
 {{"old": [{{"id": "<id>", "when": "YYYY-MM or YYYY (when that event happened)", "why": "짧은 한국어 근거(30자 이내)"}}]}}
@@ -797,7 +801,8 @@ def date_check(kept, base, today, stale):
     ② 원문 페이지: p가 없는 기사 중 오늘 선별 → ①에서 Claude가 옛 사건이라 한 것 → 최근 이틀 선별 → 옛 기사가 SUS_MIN건 넘게 나온
        매체, DATE_BUDGET초 안에서. 원문 날짜가 구글 날짜보다 STALE_GAP일 넘게 앞서면 옛 기사(원문 날짜가 Claude보다 우선)
     ③ Claude(최근 선별): 원문 날짜를 못 읽은 것만(비용 — 원문 날짜가 있으면 묻지 않음)
-    ④ 원문 날짜를 못 읽은 기사는 Claude가 옛 사건이라고 한 것만 옛 기사(사건 시기가 구글 날짜보다 STALE_GAP+31일 넘게 앞섬)"""
+    ④ 원문 날짜를 못 읽은 기사는 Claude가 옛 사건이라고 한 것만 옛 기사(사건 시기가 구글 날짜보다 STALE_GAP+31일 넘게 앞섬) —
+       그 매체에 옛 기사 근거가 WAVE_MIN건 넘을 때만(한두 건은 Claude 착각일 수 있어 남김)"""
     pool = {}   # id → 같은 기사의 사본들(news.json·보관 파일 — 확인 결과를 모두에 적음)
     for it in list(kept) + list(base or []):
         if isinstance(it, dict) and isinstance(it.get("id"), str) and isinstance(it.get("title"), str):
@@ -935,12 +940,26 @@ def date_check(kept, base, today, stale):
     left_ai += ai_pass([i for i in order if tier[i] == 0 and "a" not in ck(i) and not has_od(i) and i not in out])
     st["ai_old"] = len(flagged)
 
-    # ④ 원문 날짜가 없으면 Claude 판단
+    # ④ 원문 날짜가 없으면 Claude 판단 — 그 매체에 옛 기사가 몰려 있을 때만(이번 Claude 옛 사건 + 최근 60일 기억 ≥ WAVE_MIN, 또는
+    #    원문 날짜로 밝혀진 옛 기사). 한두 건만 걸린 매체는 Claude 착각(미리 발표된 일·비슷한 옛 사건)일 수 있어 남김
+    #    (2026-10-15 시험: Claude만 옛 사건이라 한 기사 중 시부야 세이부 폐점·아르노 나이키 이사·글렌 마틴스 디젤 퇴임은 최근 기사)
+    wave = {}
+    for i in flagged:
+        s = str(pool[i][0].get("source") or "")
+        wave[s] = wave.get(s, 0) + 1
+    for v in stale.values():
+        if v[1] >= mcut:
+            wave[v[3]] = wave.get(v[3], 0) + (WAVE_MIN if v[2] == "p" else 1)
     for i in sorted((i for i in flagged if not res.get(i)), key=lambda i: pos[i]):
         x = pool[i][0]
-        g, (when, why) = rss_day(x), flagged[i]
-        if ai_stale(when, g):
-            drop(i, [when, tod, "a", str(x.get("source") or "")], f"{x.get('source') or ''} · Claude {when} {why} / 구글 {g}")
+        g, (when, why), s = rss_day(x), flagged[i], str(x.get("source") or "")
+        if not ai_stale(when, g):
+            continue
+        if wave.get(s, 0) >= WAVE_MIN:
+            drop(i, [when, tod, "a", s], f"{s} · Claude {when} {why} / 구글 {g}")
+        else:
+            st["ai_kept"] = st.get("ai_kept", 0) + 1
+            logs.append(f"  (Claude만 옛 사건({when})이라 함 — {s} 옛 기사 근거 부족해 남김) {x['title'][:60]}")
     st["stale"], st["stale_shown"] = len(out), len(out & in_kept)
     st["left_ai"], st["left_page"] = left_ai, left_page
     for ln in logs[:200]:
@@ -1172,6 +1191,9 @@ def probe(spec):
             continue
         html = _page_html(r, raw)
         print(f"  HTTP {r.status_code} · {len(raw):,}바이트 · {r.headers.get('content-type', '')} · 최종 {r.url}", flush=True)
+        if len(raw) < 8000:   # 작은 페이지(알림·넘겨주기·차단 화면)는 앞부분을 그대로
+            head = re.sub(r"\s+", " ", html)[:500]
+            print(f"  페이지 앞부분: {head}", flush=True)
         metas = []
         for tag in re.findall(r"<meta\b[^>]{0,600}>", html, re.I):
             m = {k.lower(): v for k, v in re.findall(r'([\w:.-]+)\s*=\s*["\']([^"\']*)["\']', tag)}
