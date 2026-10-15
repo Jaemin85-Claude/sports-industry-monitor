@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.3: (대표 지시 2026-10-15 — 2019년 기사가 최근 나이키 뉴스로 보임) 뉴스 날짜를 원문 날짜(news_monitor v2.13 orig_date — 원문 페이지에서
+       확인한 발행일)로 먼저 보이고, 올해가 아닌 날짜엔 연도('2025.12.30(화)'). 지난 뉴스 검색에도 원문 날짜. 수집 상태 뉴스 줄에 옛 기사
+       제외 건수(구글이 새 날짜로 다시 낸 지난 기사)·구글 링크 풀기 실패. news.json stale_titles(옛 기사 제목 기억)는 페이지에서 뺌
 v33.2: (대표 승인 2026-10-14) '어제와 달라진 판정' — 브랜드 점검표 판정을 파이썬으로도 계산(chk_verdicts, 화면 chkModel과 같은 규칙·
        CHK_CUR 한 곳에서 화면에 넣음)해 history_append v1.2가 매일 history.json verdicts에 기록. 화면은 지금 판정을 바로 전 기록과 비교:
        오늘 ① 매입 검토에 '어제와 달라진 판정 n곳 · 클락스 관망 → 지금 검토(환율 0 → +1)'(없으면 머리에 '어제와 같음'),
@@ -2410,11 +2413,15 @@ function setNewsFilter(f){   // v33 S2: 고른 필터를 지금 기록(nf)에도
 // v32.11 기본 보기(칩 '전체'): 오늘 전체 + 최근 7일 ★3 — ★ 기준은 10/13 모델 비교 뒤 조정
 const NEWS_MIN_IMP=3, NEWS_DAYS=7;
 let NEWS_MORE={}, NEWS_BUILT=false;
-const newsDateLbl=d=>{ const t=new Date(d+'T00:00:00'); return isNaN(t)?d:`${t.getMonth()+1}/${t.getDate()}(${'일월화수목금토'[t.getDay()]})`; };
+// v33.3 올해가 아닌 날짜엔 연도 — '2025.12.30(화)'(올해는 '10/9(금)' 그대로). 올해(한국)는 1분에 한 번만 다시 셈
+let NEWS_YR=0, NEWS_YT=0;
+const newsYear=()=>{ const n=Date.now(); if(!NEWS_YR||n-NEWS_YT>60000){ NEWS_YT=n; NEWS_YR=+kstToday().slice(0,4); } return NEWS_YR; };
+const newsDateLbl=d=>{ const t=new Date(d+'T00:00:00'); if(isNaN(t)) return d; const w=`(${'일월화수목금토'[t.getDay()]})`;
+  return t.getFullYear()===newsYear()?`${t.getMonth()+1}/${t.getDate()}${w}`:`${t.getFullYear()}.${t.getMonth()+1}.${t.getDate()}${w}`; };
 // v32.12 기사 날짜 한국식 '10/9(금)' — pubDate(영문 GMT)를 한국 날짜로, 못 읽으면 원문 앞부분
 let KST_DAY=null;   // v33.1 형식기는 처음 쓸 때 한 번만 만듦(기사마다 새로 만들면 검색 결과·더 보기가 느림 — 결과 글자는 같음)
 const pubKr=p=>{ const t=new Date(p); if(isNaN(t)) return String(p).slice(0,16); if(!KST_DAY) KST_DAY=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul'}); return newsDateLbl(KST_DAY.format(t)); };
-const newsDay=it=>it.pubDate?pubKr(it.pubDate):(it.first_seen?newsDateLbl(it.first_seen):'');   // 기사 줄 날짜 = 게재일(없으면 수집일) — 모든 화면 같게
+const newsDay=it=>/^\d{4}-\d{2}-\d{2}$/.test(it.orig_date||'')?newsDateLbl(it.orig_date):it.pubDate?pubKr(it.pubDate):(it.first_seen?newsDateLbl(it.first_seen):'');   // 기사 줄 날짜 = 원문 날짜(v33.3, news_monitor가 원문 페이지에서 확인) → 구글 게재일 → 수집일 — 모든 화면 같게
 function newsItemHtml(it,more){   // more = '더 보기'로 새로 보인 기사 표시(초점 옮길 곳)
   const stars='★'.repeat(Math.max(1,Math.min(3,it.importance||1)));
   const tag=it.scope==="brand"?it.label:(it.label||it.key), day=newsDay(it);
@@ -2438,7 +2445,7 @@ const nsYmd=d=>{ const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d||''); return m?`${m[1
 const nsEnc=s=>{ try{ return encodeURIComponent(s); }catch(e){ return encodeURIComponent(String(s).replace(/[\ud800-\udfff]/g,'')); } };   // 짝 없는 대리 문자면 빼고
 function nsRow(it){   // 찾을 목록 한 줄 = 칸을 고른 기사 사본 + 수집일·별점 + 찾을 글자(요약·제목·브랜드·매체·키) + 제목 키
   if(!it||typeof it!=='object') return null;
-  const x={}; ['id','scope','key','label','group','summary','title','link','source','pubDate','first_seen'].forEach(k=>{ x[k]=nsS(it[k]); });
+  const x={}; ['id','scope','key','label','group','summary','title','link','source','pubDate','first_seen','orig_date'].forEach(k=>{ x[k]=nsS(it[k]); });   // v33.3 원문 날짜
   if(!x.id) return null;
   x.importance=Math.max(1,Math.min(3,Math.round(+nsS(it.importance))||1));
   return {it:x, d:x.first_seen, m:x.importance, h:nsFold([x.summary,x.title,x.label,x.source,x.key].join('\n')), tk:nsTk(x.title)};
@@ -4380,6 +4387,21 @@ def _partial(fn, d):
             n += 1 if part else 0
             notes.append(f"검색용 보관 {ar['n']:,}건" + (f"({ar['since']}부터)" if isinstance(ar.get("since"), str) and ar["since"] else "")
                          + (" — 일부만 복구(다음 실행에서 다시)" if part else ""))
+        dc = st.get("date_check")   # v33.3 news_monitor v2.13 옛 기사 거르기(구글이 새 날짜로 다시 낸 지난 기사)
+        if isinstance(dc, dict):
+            num = lambda k: dc[k] if isinstance(dc.get(k), int) and not isinstance(dc.get(k), bool) and dc[k] > 0 else 0
+            if dc.get("broken") is True:   # news_monitor가 실패 표시 — 점검 알림과 맞춤
+                n += 1
+                notes.append("구글 링크를 못 풀어 원문 날짜 확인 안 됨(옛 기사는 Claude 확인으로만)")
+            elif dc.get("error") is True:
+                n += 1
+                notes.append("옛 기사 확인 오류(이번 실행은 거르지 않음)")
+            if dc.get("blocked") is True:
+                notes.append("구글이 원문 확인을 막음(다음 실행에서)")
+            if num("stale") or num("memory"):
+                notes.append(f"옛 기사 이번 {num('stale')}건 제외" + (f" · 기억 {num('memory')}건" if num("memory") else ""))
+            if num("left_ai") or num("left_page"):
+                notes.append(f"옛 기사 점검 남음 {num('left_ai') + num('left_page')}건(다음 실행에서)")
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes
@@ -4499,7 +4521,7 @@ def main():
         try:
             with open("docs/news.json", encoding="utf-8") as f:
                 news = json.load(f)
-            for k in ("seen_ids", "seen_titles", "seen_since", "model_compare"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로
+            for k in ("seen_ids", "seen_titles", "seen_since", "model_compare", "stale_titles"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로 · v33.3 옛 기사 제목 기억
                 news.pop(k, None)
         except Exception:
             pass
