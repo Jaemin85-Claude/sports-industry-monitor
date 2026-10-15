@@ -9,8 +9,9 @@ v2.13: (대표 지시 2026-10-15 '전체 점검') 옛 기사 거르기 — 구�
       ② 그누보드 글 번호 — 원문이 봇 확인 화면이라 날짜를 못 읽는 그누보드 게시판(패션포스트 fpost.co.kr·미주조선일보
         chosundaily.com, 봇 확인은 우회 안 함)은 주소의 글 번호(wr_id)가 같은 게시판 최신 번호보다 10%(300개) 넘게 뒤면 뺌
         (구글 날짜가 며칠 전이면 그동안 늘었을 번호(하루 40개)만큼 넉넉히 — 1년 보관분 점검 때 수집 당시 최신 기사 보호,
-        boards에 최신 번호·오른 날·본 글 수 기억, 기사에 글 번호(wr) 저장 — 게시판 최신 번호를 아직 모르면 다음 실행에서 다시 판정).
-        믿을 만한 게시판(글 5건 넘게 봄·3주 안에 최신 번호 오름)에서 번호로 최근 글이면 dchk 'n' — 그 뒤로도 Claude에 안 물음.
+        boards에 최신 번호·오른 날·본 글 수·처음 번호·처음 날 기억, 기사에 글 번호(wr) 저장 — 게시판 최신 번호를 아직 모르면 다음 실행에서 다시 판정).
+        믿을 만한 게시판(글 5건 넘게 봄·7일 넘게 지켜보며 최신 번호가 하루 1개 넘게 늘고 최근 7일 안에 오름 — 새 글이 안 올라오는
+        옛 게시판은 최신 번호 자체가 옛 글이라 제외)에서 번호로 최근 글이면 dchk 'n' — 그 뒤로도 Claude에 안 물음.
         3주 넘게 안 오른 최신 번호보다 여러 글이 모두 한참 아래면 번호를 새로 매긴 것으로 보고 다시 잡음(실패 표시)
       ③ Claude 짧은 확인(선별 지시문은 그대로) — 원문 날짜·글 번호로 못 가린 것만, 그 매체에 옛 기사가 몰려 있을 때(이번 판단 +
         최근 60일 기억 3건 이상)만 뺌(한두 건은 미리 발표된 일·비슷한 옛 사건 착각일 수 있어 — 10/15 시험에서 최근 기사 3건 오판).
@@ -255,9 +256,11 @@ BOARD_RATE_MAX = 40   # 게시판 하루 최대 글 수(넉넉히) — 구글 �
                       # (1년 보관분 점검 때 수집 당시엔 최신이던 기사를 지금 번호로 옛 글로 보지 않게 — 패션포스트 하루 20~30건)
 BOARD_MIN_MAX = 1000  # 최신 번호가 이보다 작은(글이 적은) 게시판은 번호로 판단하지 않음
 BOARD_KEEP = 180      # 게시판 최신 번호 기억(일, news.json boards)
-BOARD_FRESH_OBS = 5   # 게시판 글을 모두 이만큼 넘게 봤고 최신 번호가 BOARD_STALE_DAYS 안에 올랐으면 '믿을 만한 게시판' —
-                      # 그 게시판 글은 번호 규칙이 판정(번호로 옛 글이 아니면 Claude가 옛 사건이라 해도 남김). 1~2건만 본 게시판은
-                      # 옛 글이 '최신 번호'가 될 수 있어(10/15 시험 카녜이·구찌 가옥) Claude·매체 근거 규칙으로
+BOARD_FRESH_OBS = 5   # '믿을 만한 게시판' = 글을 모두 이만큼 넘게 봤고, BOARD_GROW_DAYS일 넘게 지켜보는 동안 최신 번호가 하루 1개 넘게
+                      # 늘었고, 최근 BOARD_GROW_DAYS일 안에 올랐음(새 글이 꾸준히 올라오는 게시판) — 그 게시판에서 번호로 최근 글이면
+                      # Claude가 옛 사건이라 해도 남김. 1~2건만 본 게시판이나 새 글이 안 올라오는 옛 게시판은 최신 번호 자체가 옛 글일 수
+                      # 있어(10/15 시험 카녜이·구찌 가옥) Claude·매체 근거 규칙으로
+BOARD_GROW_DAYS = 7
 BOARD_STALE_DAYS = 21 # 최신 번호가 이만큼 안 올랐는데 여러 글이 모두 한참 아래면 번호를 새로 매긴 것으로 보고 다시 잡음(실패 표시)
 HOST_SKIP = 3         # 한 실행에서 날짜를 하나도 못 읽고 봇 확인 화면(날짜 없음·403)만 이만큼 나온 곳은 원문 받기를 건너뜀(글 번호만 봄)
 TRANSIENT_MAX = 3     # 구글 일시 오류(연결·5xx)가 이만큼 연달아 나면 이번 실행 원문 확인을 멈춤(남은 기사는 다음 실행에서)
@@ -868,17 +871,18 @@ def board_post(url):
 
 
 def load_boards(old, today):
-    """게시판 최신 글 번호 기억(news.json boards) {'호스트/게시판': [최신 번호, 그 번호로 오른 날, 지금까지 본 글 수]}
-    — BOARD_KEEP일 지난 것·이상한 값은 뺌"""
+    """게시판 최신 글 번호 기억(news.json boards) {'호스트/게시판': [최신 번호, 그 번호로 오른 날, 지금까지 본 글 수,
+    처음 기억한 번호, 처음 기억한 날]} — 처음 값과 비교해 새 글이 꾸준히 올라오는 게시판인지 봄. BOARD_KEEP일 지난 것·이상한 값은 뺌"""
     cut = (today - datetime.timedelta(days=BOARD_KEEP)).isoformat()
     b = old.get("boards") if isinstance(old, dict) else None
     isint = lambda v: isinstance(v, int) and not isinstance(v, bool)
     out = {}
     for k, v in (b.items() if isinstance(b, dict) else ()):
-        if (isinstance(k, str) and "/" in k and isinstance(v, list) and len(v) in (2, 3) and isint(v[0]) and v[0] > 0
-                and isinstance(v[1], str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", v[1]) and v[1] >= cut
-                and (len(v) == 2 or (isint(v[2]) and v[2] >= 0))):
-            out[k] = [v[0], v[1], v[2] if len(v) == 3 else 0]
+        isday = lambda d: isinstance(d, str) and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", d)
+        if (isinstance(k, str) and "/" in k and isinstance(v, list) and len(v) in (2, 3, 5) and isint(v[0]) and v[0] > 0
+                and isday(v[1]) and v[1] >= cut and (len(v) == 2 or (isint(v[2]) and v[2] >= 0))
+                and (len(v) < 5 or (isint(v[3]) and 0 < v[3] <= v[0] and isday(v[4]) and v[4] <= v[1]))):
+            out[k] = [v[0], v[1], v[2] if len(v) >= 3 else 0] + ([v[3], v[4]] if len(v) == 5 else [v[0], v[1]])
     return out
 
 
@@ -1004,9 +1008,9 @@ def date_check(kept, base, today, stale, boards=None):
     deadline = min(time.monotonic() + DATE_BUDGET, T0 + RUN_LIMIT)
     res, gfail, why, posts, hstat = {}, [], {}, {}, {}   # hstat: 호스트 → [날짜 읽음, 봇 확인 화면]
     boards = {} if boards is None else boards
-    for bk, v in list(boards.items()):   # [최신 번호, 오른 날] 옛 모양은 본 글 수 0으로
-        if isinstance(v, list) and len(v) == 2:
-            boards[bk] = [v[0], v[1], 0]
+    for bk, v in list(boards.items()):   # 옛 모양([최신 번호, 오른 날(, 본 글 수)])은 본 글 수 0·처음 값 = 지금 값으로
+        if isinstance(v, list) and len(v) in (2, 3):
+            boards[bk] = [v[0], v[1], v[2] if len(v) == 3 else 0, v[0], v[1]]
     streak = [0]   # 구글 일시 오류 연속 횟수
 
     def check_one(i):
@@ -1123,15 +1127,23 @@ def date_check(kept, base, today, stale, boards=None):
             if prev[1] <= scut:   # 기억한 최신 번호가 3주 넘게 안 올랐는데 여러 글이 모두 한참 아래 — 번호를 새로 매긴 것으로 봄
                 soft_fail(f"게시판 {bk} 글 번호가 줄었음({prev[0]} → {wr}, {BOARD_STALE_DAYS}일 넘게 더 큰 번호 없음) — "
                           "번호를 새로 매긴 것으로 보고 최신 번호를 다시 잡음(확인 필요)")
-                boards[bk] = [wr, tod, bobs[bk]]
+                boards[bk] = [wr, tod, bobs[bk], wr, tod]
                 reset.add(bk)
                 continue
             print(f"  [WARN] 게시판 {bk}: 이번에 본 글 {bobs[bk]}건이 모두 최신 번호({prev[0]})보다 한참 아래 — 옛 글 묶음으로 봄",
                   flush=True)
         n = min((prev[2] if prev else 0) + bobs[bk], 10 ** 6)
-        boards[bk] = [wr, tod, n] if not prev or wr > prev[0] else [prev[0], prev[1], n]
-    board_ok = lambda bk: (bk in boards and bk not in reset and boards[bk][0] >= BOARD_MIN_MAX
-                           and boards[bk][2] >= BOARD_FRESH_OBS and boards[bk][1] > scut)   # 믿을 만한 게시판(글을 충분히 봤고 최신 번호가 최근에 오름)
+        first = [prev[3], prev[4]] if prev else [wr, tod]
+        boards[bk] = ([wr, tod, n] if not prev or wr > prev[0] else [prev[0], prev[1], n]) + first
+    gcut = (today - datetime.timedelta(days=BOARD_GROW_DAYS)).isoformat()
+
+    def board_ok(bk):
+        """믿을 만한 게시판 — 글을 충분히 봤고, 7일 넘게 지켜보는 동안 최신 번호가 하루 1개 넘게 늘었고, 최근 7일 안에 오름"""
+        b = boards.get(bk)
+        if not b or bk in reset or b[0] < BOARD_MIN_MAX or b[2] < BOARD_FRESH_OBS or b[1] < gcut or b[4] > gcut:
+            return False
+        days = (datetime.date.fromisoformat(b[1]) - datetime.date.fromisoformat(b[4])).days
+        return days >= BOARD_GROW_DAYS and b[0] - b[3] >= days
     # 이번에 본 글 + 지난 실행에서 번호를 저장해 둔 글(그때 게시판 최신 번호를 몰라 못 가린 것 — 10/15 시험 카녜이) — 원문 날짜 없는 것만
     judge = dict(posts)
     for i in pool:
