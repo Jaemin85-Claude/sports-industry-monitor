@@ -3,7 +3,7 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.3: (대표 지시 2026-10-15 — 2019년 기사가 최근 나이키 뉴스로 보임) 뉴스 날짜를 원문 날짜(news_monitor v2.13 orig_date — 원문 페이지에서
        확인한 발행일)로 먼저 보이고, 올해가 아닌 날짜엔 연도('2025.12.30(화)'). 지난 뉴스 검색에도 원문 날짜. 수집 상태 뉴스 줄에 옛 기사
-       제외 건수(구글이 새 날짜로 다시 낸 지난 기사)·구글 링크 풀기 실패. news.json stale_titles(옛 기사 제목 기억)는 페이지에서 뺌
+       제외 건수(구글이 새 날짜로 다시 낸 지난 기사)·구글 링크 풀기 실패. news.json stale_titles·boards(옛 기사 기억)는 페이지에서 뺌
 v33.2: (대표 승인 2026-10-14) '어제와 달라진 판정' — 브랜드 점검표 판정을 파이썬으로도 계산(chk_verdicts, 화면 chkModel과 같은 규칙·
        CHK_CUR 한 곳에서 화면에 넣음)해 history_append v1.2가 매일 history.json verdicts에 기록. 화면은 지금 판정을 바로 전 기록과 비교:
        오늘 ① 매입 검토에 '어제와 달라진 판정 n곳 · 클락스 관망 → 지금 검토(환율 0 → +1)'(없으면 머리에 '어제와 같음'),
@@ -4521,7 +4521,7 @@ def main():
         try:
             with open("docs/news.json", encoding="utf-8") as f:
                 news = json.load(f)
-            for k in ("seen_ids", "seen_titles", "seen_since", "model_compare", "stale_titles"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로 · v33.3 옛 기사 제목 기억
+            for k in ("seen_ids", "seen_titles", "seen_since", "model_compare", "stale_titles", "boards"):   # v32.11 화면에 안 쓰는 항목(약 100KB) — 원본 news.json은 그대로 · v33.3 옛 기사 제목 기억·게시판 글 번호
                 news.pop(k, None)
         except Exception:
             pass
