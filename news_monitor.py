@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.14: (대표 지시 2026-10-16 '만들어줘' — 물류비·운송기간 추이) 산업 '물류·운임'(logistics) 검색어 5개 + 선별 기준 — 해상·항공 운임(KCCI·SCFI·
+      관세청 운송비용), 호르무즈·홍해·수에즈·희망봉 우회와 중동 하늘길, 선사 할증료, 항만 적체·정시율처럼 한국 수입 원가·운송기간에 걸리는
+      소식만(해운사 주가·조선 수주·유가만 다룬 기사·국내 택배는 제외). 화면 = 시장 › 뉴스 '산업 › 물류·운임' 칩 · 더보기 › 물류 아래 5건
 v2.13: (대표 지시 2026-10-15 '전체 점검') 옛 기사 거르기 — 구글 뉴스가 몇 년 전 기사를 새 날짜로 다시 내보냄(패션포스트 지난 기사
       대량: 2019년 '나이키, 존 도나호 영입'이 10/8 기사로 들어옴). 오늘 선별 기사 + 보관 중 기사(news.json·1년 보관)를
       ① 원문 날짜 — 구글 링크를 원문 주소로 풀어 원문 페이지 발행일(메타·'입력' 표시·주소 속 날짜 중 가장 이른 것, 5분 안에서 —
@@ -190,7 +193,7 @@ BRANDS = {
 }
 GROUP_LABEL = {"sports": "스포츠·아웃도어", "fashion": "패션", "luxury": "명품",
                "retail": "유통·그외", "kr_peer": "국내 유통사", "kr_fb": "국내 패션",
-               "customs": "통관·상표권"}
+               "customs": "통관·상표권", "logistics": "물류·운임"}
 
 # ────────────────────────────────────────────────
 # ② 산업 뉴스 — 카테고리별 검색어
@@ -221,6 +224,14 @@ INDUSTRY = {
         '상표권 침해 소송 패션 OR 상표권 분쟁 브랜드',
         '해외직구 통관 OR 목록통관 OR 특송 통관 OR 직구 면세한도',
         '"parallel import" OR "grey market" trademark ruling',
+    ]],
+    # v2.14 수입 원가·운송기간에 걸리는 물류 소식(더보기 › 물류)
+    "logistics": ["물류·운임", [
+        '해상운임 OR 컨테이너 운임 OR KCCI OR SCFI',
+        '항공화물 운임 OR 항공 화물 유류할증료 OR 항공화물 적체',
+        '호르무즈 해협 선박 OR 홍해 컨테이너선 OR 수에즈 운하 운항 OR 희망봉 우회',
+        '수출입 운송비용 OR 물류비 부담 수입 OR 선사 할증료 OR 전쟁위험 할증료',
+        '"container shipping" rates OR "freight rates" Asia OR "Red Sea" shipping OR "Strait of Hormuz" shipping',
     ]],
 }
 
@@ -468,7 +479,7 @@ pricing/discount pressure, inventory issues, notable collaborations or category
 strategy, retail channel shifts, consumer trend shifts.
 EXCLUDE: product reviews, promotions/sales ads, sports match results, celebrity
 outfit gossip, unrelated namesakes, tariff/FX/policy items (handled elsewhere) —
-except items tagged industry/customs (below).
+except items tagged industry/customs or industry/logistics (below).
 
 Items tagged industry/customs matter directly to a parallel importer: include
 court rulings or disputes on parallel imports and trademarks (fashion, sports,
@@ -476,6 +487,16 @@ luxury, eyewear brands), customs enforcement (counterfeit seizures, inspections
 of imported goods), and changes to import clearance or overseas direct-purchase
 rules (duty-free limits, list clearance). Exclude trademark cases in unrelated
 industries (food, pharma, IT) and general trade/tariff policy.
+
+Items tagged industry/logistics matter because the company imports goods into
+Korea by sea and air: include ocean or air freight rate moves (KCCI, SCFI,
+Drewry, Korea Customs monthly freight-cost releases), disruptions on routes to
+Korea (Strait of Hormuz, Red Sea / Bab el-Mandeb, Suez vs Cape of Good Hope
+rerouting, Middle East airspace closures), carrier surcharges (war-risk,
+emergency, fuel), port congestion and schedule reliability. Exclude shipping or
+airline stock-price and earnings items without freight-rate content,
+shipbuilding orders, crude-oil price items without a freight angle, domestic
+parcel/courier labor news, and general geopolitics without a logistics impact.
 
 DUPLICATES: when several headlines report the same event, select only the most
 informative one. Do not select an event that already appears in RECENTLY
@@ -491,12 +512,12 @@ product promotions or celebrity items.
 
 For each selected item: one-sentence Korean summary faithful to the headline
 (never invent facts), importance 1-3 (3 = strategic/urgent), and a category
-from: brand, sports, fashion, retail, customs.
+from: brand, sports, fashion, retail, customs, logistics.
 
 Respond with ONLY a JSON object, no markdown fences:
 {{
   "<id>": {{"summary": "한국어 한 문장", "importance": 1|2|3,
-            "category": "brand|sports|fashion|retail|customs"}}
+            "category": "brand|sports|fashion|retail|customs|logistics"}}
 }}
 Omit ids that should not be selected. If nothing qualifies, return {{}}.
 

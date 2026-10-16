@@ -33,6 +33,17 @@ jobs:
         if: steps.naver.outcome == 'failure'
         run: |
           echo "naver_trend: 네이버 검색 관심도 수집 실패(이전 값 유지)" >> soft_fail.txt
+      - name: Logistics data
+        # v2026-10-16 물류(logistics_fetch v1): 관세청 운송비용·KCCI·IMF PortWatch·정시율 → docs/logistics.json (더보기 › 물류)
+        id: logi
+        continue-on-error: true   # 물류 수집이 멈춰도 대시보드 갱신은 계속
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python logistics_fetch.py
+      - name: Note logistics failure
+        if: steps.logi.outcome == 'failure'
+        run: |
+          echo "logistics_fetch: 물류 자료 수집 실패(이전 값 유지)" >> soft_fail.txt
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
