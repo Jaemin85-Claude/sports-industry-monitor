@@ -3276,6 +3276,7 @@ const lgC=(r,upGood)=>{ if(r==null||upGood==null) return ''; const v=+((r-1)*100
 // 비율 → '+12.3%'(두 배 미만) · '×4.5'(두 배 이상) · '−83%'
 const lgChg=(r,upGood)=>r==null||!isFinite(r)?'<span class="na">―</span>':`<span class="${lgC(r,upGood)}">${r>=2?'×'+r.toFixed(1):pp((r-1)*100)}</span>`;
 const lgN=(v,d=0)=>v==null?'―':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:d});
+const lgU=(v,u,d=0,pre='')=>v==null?'―':pre+lgN(v,d)+u;   // 값이 있을 때만 단위·기호('$―'·'―척' 안 나오게)
 function lgSpark(pts,o={}){   // pts=[[날짜·달, 값]] → 작은 선 그래프(전쟁 시작 세로 점선 · 마지막 점). o.accent = 파랑 선
   const P=pts.filter(p=>p[1]!=null); if(P.length<2) return '';
   const W=200,H=o.h||36,pd=3, vs=P.map(p=>p[1]), lo=Math.min(...vs,o.min??Infinity), hi=Math.max(...vs), rg=(hi-lo)||1, n=P.length-1;
@@ -3326,7 +3327,7 @@ function lgKcciCard(){
   const R52=K.R.slice(-52);
   h+=`<div class="cb-trend lg-tr">${LG_KCCI.map(([c,nm],k)=>{ const i=K.cols.indexOf(c)+1; if(i<1) return '';
     const v=K.L[i], rp=lgRatio(v,K.P[i]), rw=lgRatio(v,K.W&&K.W[i]);
-    return `<div class="cb-tr"><div class="h"><b>${esc(nm)}</b><span class="num">${c==='KCCI'?'':'$'}${lgN(v)}</span></div>
+    return `<div class="cb-tr"><div class="h"><b>${esc(nm)}</b><span class="num">${lgU(v,'',0,c==='KCCI'?'':'$')}</span></div>
       <div class="lg-sub">전주 ${lgChg(rp,false)} · 전쟁 전 ${lgChg(rw,false)}</div>${lgSpark(R52.map(r=>[r[0],r[i]]),{accent:k===0,label:nm+' 최근 52주'})}
       <div class="ax"><span>${lgYmW(R52[0][0])}</span><span>${lgMd(K.L[0])}</span></div></div>`; }).join('')}</div>`;
   return h+`<div class="note">한국해양진흥공사 KCCI(부산에서 나가는 수출 운임, 한국향 아님) — 중동 항로 할증·선복 변화와 선사 운임 흐름을 보는 용도 · ${lgMd(K.L[0])} 발표 · 전쟁 전 = ${K.W?lgMd(K.W[0]):'―'} 발표 · 그래프 = 최근 52주, 점선 = 전쟁 시작</div></div>`;
@@ -3339,6 +3340,10 @@ function lgWk(it){   // 마지막 '거의 다 찬' 주(4일 이상) — 없으�
   const W=(it&&it.weeks)||[]; for(let i=W.length-1;i>=0;i--) if((W[i][3]||0)>=4) return W[i]; return W[W.length-1]||null;
 }
 function lgItem(blk,id){ const B=LOGI&&LOGI[blk]; return B&&B.items?B.items.find(x=>x.id===id)||null:null; }
+function lgMiss(B){   // 이번 수집에서 값이 아예 없는 항목 이름(status.failed의 '항만 입항(푸자이라)' 꼴) — 카드에 '값 없음'으로
+  const lb=B&&B.label, f=((LOGI&&LOGI.status)||{}).failed||[]; if(!lb) return [];
+  return f.filter(x=>typeof x==='string'&&x.startsWith(lb+'(')&&x.endsWith(')')).flatMap(x=>x.slice(lb.length+1,-1).split('·')).filter(Boolean);
+}
 function lgSuezShare(){   // 컨테이너선: 수에즈 ÷ (수에즈 + 희망봉) — 최근 주 · 전쟁 전 · 1년 전
   const s=lgItem('choke','chokepoint1'), c=lgItem('choke','chokepoint7'); if(!s||!c) return null;
   const sh=(a,b)=>(a!=null&&b!=null&&a+b>0)?a/(a+b)*100:null, ws=lgWk(s), wc=c.weeks.find(w=>ws&&w[0]===ws[0]);
@@ -3354,9 +3359,10 @@ function lgChokeCard(){
   if(sw&&sw.now!=null) h+=`<div class="lg-share"><div><span>수에즈 쪽 비율</span><b class="num">${sw.now.toFixed(0)}%</b><span class="na">컨테이너선 · ${lgMd(sw.wk)} 주</span></div>
     <div class="lg-shx">전쟁 전 ${sw.pre!=null?sw.pre.toFixed(0)+'%':'―'} · 1년 전 ${sw.ya!=null?sw.ya.toFixed(0)+'%':'―'}<br>유럽↔아시아 배가 희망봉으로 돌면 수에즈보다 약 1~2주 더 걸립니다 — 이 비율이 오르면 운송기간이 줄어드는 신호</div></div>`;
   h+=`<div class="cb-trend lg-tr">${B.items.map((it,k)=>{ const w=lgWk(it), b=it.base||[], W=it.weeks||[];
-    return `<div class="cb-tr"><div class="h"><b>${esc(it.name)}</b><span class="num">${w?lgN(w[2],1):'―'}척</span></div>
-      <div class="lg-sub">전쟁 전 ${lgN(b[1],1)}척 ${lgBaseChg(w&&w[2],b[1],LG_GOOD[it.id])} · 전체 ${w?lgN(w[1],0):'―'}척${staleTag(it.stale_since)}</div>
-      ${lgSpark(W.map(x=>[x[0],x[2]]),{accent:k===0,min:0,label:it.name+' 컨테이너선 주별'})}<div class="ax"><span>${W.length?lgYmW(W[0][0]):''}</span><span>${w?lgMd(w[0])+' 주':''}</span></div></div>`; }).join('')}</div>`;
+    return `<div class="cb-tr"><div class="h"><b>${esc(it.name)}</b><span class="num">${lgU(w&&w[2],'척',1)}</span></div>
+      <div class="lg-sub">전쟁 전 ${lgU(b[1],'척',1)} ${lgBaseChg(w&&w[2],b[1],LG_GOOD[it.id])} · 전체 ${lgU(w&&w[1],'척')}${staleTag(it.stale_since)}</div>
+      ${lgSpark(W.filter(x=>!w||x[0]<=w[0]).map(x=>[x[0],x[2]]),{accent:k===0,min:0,label:it.name+' 컨테이너선 주별'})}<div class="ax"><span>${W.length?lgYmW(W[0][0]):''}</span><span>${w?lgMd(w[0])+' 주':''}</span></div></div>`; }).join('')}</div>`;
+  const ms=lgMiss(B); if(ms.length) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> ${esc(ms.join(', '))}</div>`;
   return h+`<div class="note">배 위치 신호(AIS) 기준 하루 통과 척수의 주별 평균 — 신호를 끈 배는 빠져 호르무즈는 실제보다 적게 잡힘 · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균 · 희망봉이 줄면 수에즈로 돌아온 것(파랑) · 그래프 = 2025년부터, 점선 = 전쟁 시작</div></div>`;
 }
 function lgPortCard(){
@@ -3364,7 +3370,8 @@ function lgPortCard(){
   let h=`<div class="card"><h3>항만 입항 <span class="na" style="font-weight:400">IMF PortWatch · 하루 평균 · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
   if(!B||!B.items||!B.items.length) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
   h+=B.items.map(it=>{ const w=lgWk(it), b=it.base||[];
-    return `<div class="fplain"><span>${esc(it.name)}${staleTag(it.stale_since)}<br><span class="na">${w?lgMd(w[0])+' 주':''}</span></span><span class="num">컨테이너선 ${w?lgN(w[2],1):'―'}척 · 전체 ${w?lgN(w[1],1):'―'}척<br><span class="na">전쟁 전 ${lgN(b[1],1)}척</span> ${lgBaseChg(w&&w[2],b[1],LG_GOOD[it.id])}</span></div>`; }).join('');
+    return `<div class="fplain"><span>${esc(it.name)}${staleTag(it.stale_since)}<br><span class="na">${w?lgMd(w[0])+' 주':''}</span></span><span class="num">컨테이너선 ${lgU(w&&w[2],'척',1)} · 전체 ${lgU(w&&w[1],'척',1)}<br><span class="na">전쟁 전 ${lgU(b[1],'척',1)}</span> ${lgBaseChg(w&&w[2],b[1],LG_GOOD[it.id])}</span></div>`; }).join('');
+  h+=lgMiss(B).map(nm=>`<div class="fplain"><span>${esc(nm)}</span><span class="na"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span></span></div>`).join('');
   return h+`<div class="note">제벨알리(두바이)는 걸프 안쪽 — 호르무즈가 막히자 화물이 해협 밖 코르파칸·푸자이라(아랍에미리트 동해안)로 돌아 트럭으로 들어갑니다(대기 1~2주 보도)</div></div>`;
 }
 /* 전 세계 정시율 — Sea-Intelligence GLP(월) */
@@ -3378,8 +3385,8 @@ function lgGlpCard(){
   h+=`<div class="lg-share"><div><span>${lgMon(G.L[0])} 정시 도착</span><b class="num">${lgN(G.L[1],1)}%</b><span class="na">늦은 배 평균 ${G.L[2]!=null?lgN(G.L[2],2)+'일':'―'} 지연</span></div>
     <div class="lg-shx">전쟁 전(${lgMon(LG_PRE_M)}) <span class="nw">${G.W?lgN(G.W[1],1)+'%':'―'}</span> · <span class="nw">늦은 배 ${G.W&&G.W[2]!=null?lgN(G.W[2],2)+'일':'―'}</span><br>정시율이 내리고 지연이 늘면 도착일이 들쭉날쭉해집니다 — 재고·판매 일정에 여유를 둡니다</div></div>`;
   const fl=Math.max(0,Math.min(30,Math.floor(Math.min(...M.map(m=>m[1]))/10)*10-10));   // 막대 바닥 = 가장 낮은 값보다 조금 아래(차이가 보이게) — 숫자는 막대 위에
-  h+=`<div class="lg-bars" role="img" aria-label="최근 ${M.length}달 정시율 ${M.map(m=>`${+m[0].slice(5,7)}월 ${m[1]}%`).join(', ')}">${M.map(m=>`<div><span class="v num">${Math.round(m[1])}</span><span class="bw"><span class="b${m[0]===G.L[0]?' on':''}" style="height:${Math.max(4,Math.min(100,(m[1]-fl)/(100-fl)*100)).toFixed(1)}%"></span></span><span class="m">${+m[0].slice(5,7)}</span></div>`).join('')}</div>`;
-  return h+`<div class="note">막대 아래 = 달 · 전 세계 컨테이너선이 일정대로(하루 안) 도착한 비율 · 매월 말 전달 자료를 보도자료에서 읽음 · 항로별 값은 유료 보고서라 없음</div></div>`;
+  h+=`<div class="lg-bars" role="img" aria-label="최근 ${M.length}달 정시율 ${M.map(m=>`${m[0].slice(0,4)}년 ${+m[0].slice(5,7)}월 ${m[1]}%`).join(', ')}">${M.map(m=>`<div><span class="v num">${Math.round(m[1])}</span><span class="bw"><span class="b${m[0]===G.L[0]?' on':''}" style="height:${Math.max(4,Math.min(100,(m[1]-fl)/(100-fl)*100)).toFixed(1)}%"></span></span><span class="m">${+m[0].slice(5,7)}</span></div>`).join('')}</div>`;
+  return h+`<div class="note">막대 아래 = 달(${lgMon(M[0][0])}~${lgMon(G.L[0])}) · 전 세계 컨테이너선이 일정대로(하루 안) 도착한 비율 · 매월 말 전달 자료를 보도자료에서 읽음 · 항로별 값은 유료 보고서라 없음</div></div>`;
 }
 function lgNewsCard(){
   const L=((NEWS&&NEWS.items)||[]).filter(it=>it.scope==='industry'&&it.key==='logistics').sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0));
@@ -3396,10 +3403,10 @@ function lgKpis(){   // 맨 위 6칸 — 한국향 유럽(바닷길·항공) · 
   const se=kv(S,'유럽연합'), ae=kv(A,'유럽연합'), me=K?(()=>{ const i=K.cols.indexOf('KMEI')+1; return i<1?null:{v:K.L[i],w:K.W&&K.W[i],d:K.L[0]}; })():null;
   const hw=lgWk(hz), kp=(l,v,s)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${s}</div></div>`;
   return `<div class="kpis lgk">
-    ${kp('유럽→한국 바닷길',se?lgN(se.v)+'<small>천원</small>':'―',se?`40ft · ${lgMon(se.m)} · 전쟁 전 ${lgChg(lgRatio(se.v,se.w),false)}`:'수집 전')}
-    ${kp('유럽→한국 항공',ae?lgN(ae.v)+'<small>원</small>':'―',ae?`kg당 · ${lgMon(ae.m)} · 전쟁 전 ${lgChg(lgRatio(ae.v,ae.w),false)}`:'수집 전')}
-    ${kp('부산→중동',me?'$'+lgN(me.v):'―',me?`40ft · ${lgMd(me.d)} · 전쟁 전 ${lgChg(lgRatio(me.v,me.w),false)}`:'수집 전')}
-    ${kp('호르무즈 컨테이너선',hw?lgN(hw[2],1)+'<small>척</small>':'―',hw?`하루 · 전쟁 전 ${lgN(hz.base&&hz.base[1],1)}척`:'수집 전')}
+    ${kp('유럽→한국 바닷길',lgU(se&&se.v,'<small>천원</small>'),se?`40ft · ${lgMon(se.m)} · 전쟁 전 ${lgChg(lgRatio(se.v,se.w),false)}`:'수집 전')}
+    ${kp('유럽→한국 항공',lgU(ae&&ae.v,'<small>원</small>'),ae?`kg당 · ${lgMon(ae.m)} · 전쟁 전 ${lgChg(lgRatio(ae.v,ae.w),false)}`:'수집 전')}
+    ${kp('부산→중동',lgU(me&&me.v,'',0,'$'),me?`40ft · ${lgMd(me.d)} · 전쟁 전 ${lgChg(lgRatio(me.v,me.w),false)}`:'수집 전')}
+    ${kp('호르무즈 컨테이너선',lgU(hw&&hw[2],'<small>척</small>',1),hw?`하루 · 전쟁 전 ${lgU(hz.base&&hz.base[1],'척',1)}`:'수집 전')}
     ${kp('수에즈 쪽 비율',sw&&sw.now!=null?sw.now.toFixed(0)+'%':'―',sw&&sw.pre!=null?`컨테이너선 · 전쟁 전 ${sw.pre.toFixed(0)}%`:'수집 전')}
     ${kp('전 세계 정시율',G?lgN(G.L[1],1)+'%':'―',G?`${lgMon(G.L[0])} · 전쟁 전 ${G.W?lgN(G.W[1],1)+'%':'―'}`:'수집 전')}
   </div>`;
@@ -3413,7 +3420,7 @@ function moreLogiHtml(){
   h+=sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
   h+=sf('부산발 운임',lgKcciCard)+sf('해협 통과',lgChokeCard)+sf('항만 입항',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
-  h+=`<div class="note">출처: 관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음${bad.length?` · <span class="stl" style="margin-left:0">이번 수집 일부 실패: ${esc(bad.join(', '))}</span>`:''}</div>`;
+  h+=`<div class="note">출처: 관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음${bad.length?` · <span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}`:''}</div>`;
   return h;
 }
 /* ── 검색 관심도 vs 실적(v32.8) — 국내 패션·아이웨어: 같은 해 네이버 검색 증감 vs 매출 증감, 올해 검색 추이 ── */
@@ -4721,6 +4728,7 @@ def main():
                 logi = json.load(f)
             if isinstance(logi.get("glp"), dict):
                 logi["glp"].pop("skip", None)   # 정시율 기사 건너뜀 기억 — 화면에 안 씀
+                logi["glp"].pop("fmt_skip", None)
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None

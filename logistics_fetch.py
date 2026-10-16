@@ -10,13 +10,17 @@ v1: (대표 지시 2026-10-16 '만들어줘') 지정학 리스크(2026-02-28 미
     ② KCCI(한국해양진흥공사 컨테이너선운임지수, 매주 월 14시): 부산발 13개 항로 + 종합(항로는 40ft당 달러) — 중동·북유럽·지중해 등.
        첫 실행에 2022-11부터 시계열을 받아 두고 매일 최근 10주를 다시 받아 합침(이용허락 제한 없음)
     ③ IMF PortWatch(무료 API, 주 1회 갱신 · 약 1주 늦음): 해협 하루 통과 척수(전체·컨테이너선) — 호르무즈·바브엘만데브·수에즈·희망봉,
-       항만 하루 입항 — 부산·제벨알리·코르파칸·푸자이라. 주별 평균 + 전쟁 전(2026-01-01~02-27) 평균. 배 위치 신호(AIS) 기준이라
-       신호를 끈 배는 빠짐(호르무즈는 실제보다 적게 잡힘). 출처 'IMF PortWatch'
+       항만 하루 입항 — 부산·제벨알리·코르파칸·푸자이라(항만 표는 portid로 찾음 — 이름으로는 너무 느려 서버가 거절).
+       주별 평균 + 전쟁 전(2026-01-01~02-27) 평균. 배 위치 신호(AIS) 기준이라 신호를 끈 배는 빠짐(호르무즈는 실제보다 적게 잡힘).
+       출처 'IMF PortWatch'
     ④ Sea-Intelligence 전 세계 정시율(월간 보도자료 GLP): 정시 도착 비율(%)·늦은 배 평균 지연(일) — 본문의
        'In <달> <연도>, … to <값>%' 문장에서 숫자만 읽음(제목 숫자는 안 씀 — '65%-68%' 같은 범위가 있음). 새 기사만 받고 최근 25달 보관
     못 받은 자료는 이전 값을 이어 쓰고 stale_since(마지막 정상 수집일) 표시 · 최상위 status(ok·kept·failed).
-    한 실행에서 절반 넘게 실패하거나, 한 자료라도 기준일(월간 자료 10일 · KCCI 5일 · PortWatch 7일) 넘게 이전 값이면
-    실패 표시(soft_fail.txt → 낮 점검 알림)
+    한 실행 최대 8분(출처가 멈춰도 대시보드 갱신이 끝나게 — 넘으면 남은 자료는 이전 값).
+    한 실행에서 절반 넘게 실패하거나, 한 자료(·해협·항만 항목)라도 기준일(월간 자료 10일 · KCCI 5일 · PortWatch 7일) 넘게
+    이전 값이거나 값 없음(처음 실패한 날 = failed_since)이면 실패 표시(soft_fail.txt → 낮 점검 알림).
+    정시율은 가장 최근 달이 125일 넘게 그대로면 실패로 봄(이전 값 → 기준일 경고). 형식이 달라 못 읽은 기사는 읽는 규칙 판(GLP_PARSER)이
+    바뀌면 다시 읽음. 이전 파일이 손상돼 있어도(목록·글자·빠진 칸) 그 부분만 버리고 새로 받음
 출력: docs/logistics.json
 §29-D: 출처가 준 값만 저장(추정값·임의 값 없음)
 """
@@ -37,6 +41,8 @@ OUT = "docs/logistics.json"
 KST = datetime.timezone(datetime.timedelta(hours=9))
 UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"}
 TIMEOUT = (15, 40)             # (연결, 읽기) 초 — 연결이 안 되는 곳은 빨리 포기
+RUN_LIMIT = 8 * 60             # 한 실행 최대 8분 — 넘으면 남은 요청은 바로 실패(이전 값 유지), 대시보드 갱신 작업(20분 제한)은 계속
+T_END = float("inf")           # main()이 시작할 때 정함
 WAR_START = "2026-02-28"                       # 전쟁 시작(미국·이스라엘의 이란 공격) — '전쟁 전' 비교 기준
 BASE_FROM, BASE_TO = "2026-01-01", "2026-02-27"   # 해협·항만 '전쟁 전 평균' 기간(일별 값 평균)
 STALE_ALERT = {"kcs_sea_import": 10, "kcs_sea_export": 10, "kcs_air_import": 10,   # 이 일수 넘게 이전 값이면 실패 표시 —
@@ -51,6 +57,9 @@ KCS = [  # (블록 키, 데이터 번호, 이름, 단위)
 KCS_PAGE = "https://www.data.go.kr/data/{}/fileData.do"
 KCS_DOWN = "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={}&fileDetailSn=1&insertDataPrcus=N"
 
+LABELS = {**{k: n for k, _, n, _ in KCS}, "kcci": "KCCI 부산발 운임", "choke": "해협 통과", "ports": "항만 입항",
+          "glp": "전 세계 정시율"}   # 블록 키 → 이름(저장 순서)
+
 # ② KCCI — 해양진흥공사 해양정보서비스
 KCCI_CUR = "https://www.kobc.or.kr/ebz/shippinginfo/kcci/gridList.do?mId=0304000000"
 KCCI_TS = "https://www.kobc.or.kr/ebz/shippinginfo/timeseries/gridList.do?mId=0304000000"
@@ -62,17 +71,21 @@ KCCI_NAMES = {"KCCI": "종합", "KUWI": "미주 서안", "KUEI": "미주 동안"
 
 # ③ IMF PortWatch — ArcGIS FeatureServer(무료, 키 없음)
 PW = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/{}/FeatureServer/0/query"
-PW_FROM_YEAR = 2025            # 해협 주별 값은 2025년부터(작년 같은 때와 비교) — 항만은 2026년부터(최근 주·전쟁 전만 씀, 질의가 느림)
-PORTS_FROM_YEAR = 2026
+PW_FROM_YEAR = 2025            # 주별 값은 2025년부터(작년 같은 때와 비교)
 CHOKE = [("chokepoint6", "호르무즈 해협"), ("chokepoint4", "바브엘만데브 해협"),
          ("chokepoint1", "수에즈 운하"), ("chokepoint7", "희망봉")]
 PORTS = [("Busan", "부산"), ("Jebel Ali", "제벨알리"), ("Khor Fakkan", "코르파칸"), ("Fujairah", "푸자이라")]
+# 항만 일별 표는 portid에만 색인이 있음 — 이름(portname)으로 찾으면 40~55초 걸리다 서버가 거절(10/16 GitHub 서버 시험),
+# portid로는 0.3~0.6초. 번호는 PortWatch 항만 목록(PortWatch_ports_database)에서 확인
+PORT_IDS = {"Busan": "port1065", "Jebel Ali": "port744", "Khor Fakkan": "port561", "Fujairah": "port362"}
 
 # ④ Sea-Intelligence 보도자료
 GLP_LIST = "https://www.sea-intelligence.com/press-room"
 GLP_SITE = "https://www.sea-intelligence.com"
 GLP_MAX_FETCH = 30             # 한 실행에 새로 읽는 기사 수 상한
 GLP_KEEP = 25                  # 보관하는 달 수(최근 2년)
+GLP_PARSER = 2                 # 기사 읽는 규칙 판 — 올리면 '형식 다름'으로 건너뛴 기사를 다시 읽음
+GLP_STALE_DAYS = 125           # 가장 최근 달(1일 기준)이 이보다 오래면 새 기사를 못 읽는 것(보통 60~95일) → 이전 값 + 경고 기준일
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
           "september", "october", "november", "december"]
 
@@ -92,15 +105,25 @@ class NetError(RuntimeError):
     """연결 안 됨·시간 초과·5xx — 잠시 뒤 다시 해 볼 만한 오류(형식 오류와 구분)"""
 
 
+def time_left():
+    return T_END - time.monotonic()
+
+
 def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
-    """GET(또는 data가 있으면 POST) — 연결 오류·5xx는 5초 뒤 한 번 더(NetError). 4xx는 바로 RuntimeError"""
+    """GET(또는 data가 있으면 POST) — 연결 오류·5xx는 5초 뒤 한 번 더(NetError). 4xx는 바로 RuntimeError.
+    실행 시간(RUN_LIMIT)이 거의 다 되면 보내지 않고 NetError, 남은 시간보다 길게 기다리지 않음"""
     err = None
     for k in range(tries):
+        left = time_left()
+        if left < 5:
+            raise NetError(f"시간 초과 — 이번 실행의 물류 수집 시간({RUN_LIMIT // 60}분)을 다 씀")
+        to = timeout if isinstance(timeout, tuple) else (timeout, timeout)
+        to = (min(to[0], left), min(to[1], left))
         try:
             if data is None:
-                r = requests.get(url, params=params, headers=UA, timeout=timeout)
+                r = requests.get(url, params=params, headers=UA, timeout=to)
             else:
-                r = requests.post(url, params=params, data=data, headers=UA, timeout=timeout)
+                r = requests.post(url, params=params, data=data, headers=UA, timeout=to)
             if r.status_code >= 500:
                 raise requests.HTTPError(f"HTTP {r.status_code}")
             if r.status_code != 200:
@@ -108,7 +131,7 @@ def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
             return r
         except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
             err = e
-            if k + 1 < tries:
+            if k + 1 < tries and time_left() > 15:
                 time.sleep(5)
     raise NetError(f"{type(err).__name__}: {str(err)[:150]}")
 
@@ -252,7 +275,9 @@ def parse_kcci_series(page):
 
 def fetch_kcci(prev):
     """이번 주 표 + 시계열(처음엔 2022-11부터, 그 뒤엔 최근 10주) → 이전 값과 합쳐 날짜순"""
-    have = {r[0]: dict(zip(prev["cols"], r[1:])) for r in (prev or {}).get("rows") or [] if r and r[0]}
+    cols0, rows0 = (prev or {}).get("cols"), (prev or {}).get("rows")
+    ok_prev = isinstance(cols0, list) and isinstance(rows0, list)   # 손상된 이전 값은 없는 것으로(처음부터 다시 받음)
+    have = {r[0]: dict(zip(cols0, r[1:])) for r in (rows0 if ok_prev else []) if isinstance(r, list) and r and isinstance(r[0], str)}
     have = {d: {c: v for c, v in vs.items() if v is not None} for d, vs in have.items()}
     today = today_kst()
     s_day = KCCI_FROM if len(have) < 52 else (datetime.date.fromisoformat(max(have)) - datetime.timedelta(days=KCCI_REFRESH_DAYS)).isoformat()
@@ -306,7 +331,7 @@ def pw_rows(layer, where, fields):
     out, off = [], 0
     while True:
         r = http(PW.format(layer), params={"where": where, "outFields": ",".join(fields), "orderByFields": "date ASC",
-                                          "resultOffset": off, "resultRecordCount": 1000, "f": "json"}, timeout=60)
+                                          "resultOffset": off, "resultRecordCount": 1000, "f": "json"}, timeout=(15, 60))
         d = r.json()
         if "error" in d:
             raise RuntimeError(f"PortWatch 오류: {str(d['error'])[:150]}")
@@ -367,8 +392,9 @@ def fetch_pw(kind, prev):
         where = lambda i: f"portid='{i}' AND year>={PW_FROM_YEAR}"
     else:
         layer, fields, items = "Daily_Ports_Data", ["portcalls", "portcalls_container"], PORTS
-        where = lambda i: f"portname='{i}' AND year>={PORTS_FROM_YEAR}"
-    old = {x.get("id"): x for x in (prev or {}).get("items") or []}
+        where = lambda i: f"portid='{PORT_IDS[i]}' AND year>={PW_FROM_YEAR}"
+    items0 = (prev or {}).get("items")
+    old = {x.get("id"): x for x in (items0 if isinstance(items0, list) else []) if isinstance(x, dict)}
     out, bad, kept = [], [], []
     for iid, name in items:
         try:
@@ -460,9 +486,11 @@ def parse_glp(page, title=""):
 
 def fetch_glp(prev):
     """목록에서 'Global Schedule Reliability' 기사 중 아직 안 읽은 것만 읽음(처음엔 둘째 쪽까지 — 지난 2년, 한 번에 GLP_MAX_FETCH건까지)"""
-    old = {r[0]: r for r in (prev or {}).get("months") or [] if r and r[0]}
-    skip = list((prev or {}).get("skip") or [])   # 읽었지만 쓰지 않은 기사(형식이 다름·같은 달 중복·보관 기간 지남) — 매일 다시 받지 않게
-    known = {r[3] for r in old.values() if len(r) > 3} | set(skip)
+    m0, s0, f0 = (prev or {}).get("months"), (prev or {}).get("skip"), (prev or {}).get("fmt_skip")
+    old = {r[0]: r for r in (m0 if isinstance(m0, list) else []) if isinstance(r, list) and len(r) >= 4 and isinstance(r[0], str)}
+    skip = [u for u in (s0 if isinstance(s0, list) else []) if isinstance(u, str)]   # 쓰지 않는 기사(같은 달 중복·보관 기간 지남) — 다시 받지 않음
+    fmt = {u: v for u, v in (f0 if isinstance(f0, dict) else {}).items() if isinstance(u, str)}   # 형식 다름 {주소: 읽는 규칙 판}
+    known = {r[3] for r in old.values()} | set(skip) | {u for u, v in fmt.items() if v == GLP_PARSER}   # 규칙 판이 바뀌면 다시 읽음
     arts = glp_list(http(GLP_LIST).text)
     if not arts:
         raise RuntimeError("보도자료 목록을 못 읽음")
@@ -476,7 +504,11 @@ def fetch_glp(prev):
         log(f"  정시율: 새 기사 {len(todo)}건 중 {GLP_MAX_FETCH}건만 읽음 — 나머지는 다음 실행에서")
         todo = todo[:GLP_MAX_FETCH]
     new = dict(old)
-    for url, title in todo:
+    for n, (url, title) in enumerate(todo):
+        if time_left() < 30:
+            log(f"  정시율: 시간이 모자라 새 기사 {len(todo) - n}건은 다음 실행에서")
+            todo = todo[:n]
+            break
         try:
             page = http(url).text
         except Exception as e:
@@ -485,9 +517,10 @@ def fetch_glp(prev):
         try:
             ym, rel, delay = parse_glp(page, title)
         except ValueError as e:
-            log(f"  정시율 기사 형식 다름({title[:50]}): {str(e)[:120]} — 건너뜀")
-            skip.append(url)
+            log(f"  정시율 기사 형식 다름({title[:50]}): {str(e)[:120]} — 건너뜀(읽는 규칙 판 {GLP_PARSER})")
+            fmt[url] = GLP_PARSER
             continue
+        fmt.pop(url, None)
         if ym in new and new[ym][3] != url:
             log(f"  정시율 {ym}: 이미 다른 기사로 있음 — 그대로 둠({title[:50]})")
             skip.append(url)
@@ -503,14 +536,21 @@ def fetch_glp(prev):
             skip.append(new[k][3])
     months = [new[k] for k in keys[-GLP_KEEP:]]
     log(f"  정시율: {len(months)}달 · {months[0][0]}~{months[-1][0]} · 새로 읽은 기사 {len(todo)}건")
-    return {"months": months, "skip": skip[-200:]}
+    gap = (today_kst() - datetime.date.fromisoformat(months[-1][0] + "-01")).days
+    if gap > GLP_STALE_DAYS:   # 매달 말 전달 자료가 나옴 — 한 달 넘게 밀리면 기사 형식·제목이 바뀌었을 수 있음
+        raise RuntimeError(f"가장 최근 달이 {months[-1][0]} — {gap}일째 새 달 없음(형식 다름 {len(fmt)}건)")
+    return {"months": months, "skip": skip[-200:], "fmt_skip": dict(list(fmt.items())[-100:])}
 
 
 # ───────────────────────── 실행 ─────────────────────────
-def run_block(key, label, fn, prev_all, out, status, defer=False):
+def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
     """블록 하나 — 성공하면 새 값(fetched = 오늘), 실패하면 이전 값 + stale_since(마지막 정상 수집일).
+    이전 값도 없으면(값 없음) fails[1][key]에 처음 실패한 날을 남김(해협·항만은 항목별 'key:이름') — 기준일이 지나면 경고.
     defer=True면 연결 오류(NetError)일 때 아무것도 기록하지 않고 False — main이 다른 자료를 다 받은 뒤 한 번 더 부름"""
     prev = prev_all.get(key)
+    prev = prev if isinstance(prev, dict) else None   # 손상된 이전 값(목록·글자)은 없는 것으로
+    fs_old, fs_new = fails
+    today = today_kst().isoformat()
     log(f"[{label}]")
     try:
         blk = fn(prev)
@@ -518,28 +558,35 @@ def run_block(key, label, fn, prev_all, out, status, defer=False):
         if defer and isinstance(e, NetError):
             log(f"  {label}: 연결 안 됨 — 다른 자료를 받은 뒤 한 번 더 ({str(e)[:150]})")
             return False
-        log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else ""))
+        log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
         if prev:
             blk = dict(prev)
-            blk["stale_since"] = prev.get("stale_since") or prev.get("fetched") or today_kst().isoformat()
+            blk["stale_since"] = prev.get("stale_since") or prev.get("fetched") or today
             out[key] = blk
             status["kept"].append(label)
         else:
             status["failed"].append(label)
+            fs_new[key] = fs_old.get(key) or today
         return True
     inner = blk.pop("kept", []) or []
     bad = blk.pop("failed", []) or []
-    blk["fetched"] = today_kst().isoformat()
+    blk["fetched"] = today
     blk["label"] = label
     out[key] = blk
-    if inner or bad:   # 해협·항만: 일부 항목만 이전 값·값 없음
-        status["kept"].append(f"{label}({'·'.join(inner + bad)})")
-    else:
+    if inner:   # 해협·항만: 일부 항목만 이전 값
+        status["kept"].append(f"{label}({'·'.join(inner)})")
+    if bad:     # 해협·항만: 일부 항목은 값 없음
+        status["failed"].append(f"{label}({'·'.join(bad)})")
+        for nm in bad:
+            fs_new[f"{key}:{nm}"] = fs_old.get(f"{key}:{nm}") or today
+    if not inner and not bad:
         status["ok"].append(label)
     return True
 
 
 def main():
+    global T_END
+    T_END = time.monotonic() + RUN_LIMIT
     prev_all = {}
     if os.path.exists(OUT):
         try:
@@ -547,45 +594,64 @@ def main():
                 prev_all = json.load(f)
         except Exception as e:
             log(f"[WARN] 이전 {OUT} 읽기 실패: {str(e)[:120]}")
+    if not isinstance(prev_all, dict):
+        log(f"[WARN] 이전 {OUT} 형식이 다름 — 이전 값 없이 받음")
+        prev_all = {}
+    fs0 = prev_all.get("failed_since")
+    fails = ({k: v for k, v in fs0.items() if isinstance(v, str)} if isinstance(fs0, dict) else {}, {})
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "war_start": WAR_START,
            "base_period": [BASE_FROM, BASE_TO]}
     status = {"ok": [], "kept": [], "failed": []}
     later = []
     for key, ds, name, unit in KCS:
         fn = lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit)
-        if not run_block(key, name, fn, prev_all, out, status, defer=True):
+        if not run_block(key, name, fn, prev_all, out, status, fails, defer=True):
             later.append((key, name, fn))
-    run_block("kcci", "KCCI 부산발 운임", fetch_kcci, prev_all, out, status)
-    run_block("choke", "해협 통과", lambda p: fetch_pw("choke", p), prev_all, out, status)
-    run_block("ports", "항만 입항", lambda p: fetch_pw("ports", p), prev_all, out, status)
-    run_block("glp", "전 세계 정시율", fetch_glp, prev_all, out, status)
+    run_block("kcci", LABELS["kcci"], fetch_kcci, prev_all, out, status, fails)
+    run_block("choke", LABELS["choke"], lambda p: fetch_pw("choke", p), prev_all, out, status, fails)
+    run_block("ports", LABELS["ports"], lambda p: fetch_pw("ports", p), prev_all, out, status, fails)
+    run_block("glp", LABELS["glp"], fetch_glp, prev_all, out, status, fails)
     if later:
         log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
         for key, name, fn in later:
-            run_block(key, name, fn, prev_all, out, status)
-    out = {k: out[k] for k in ["generated_at", "war_start", "base_period"] + [b[0] for b in KCS] +
-           ["kcci", "choke", "ports", "glp"] if k in out}   # 다시 받은 자료도 원래 순서로
+            run_block(key, name, fn, prev_all, out, status, fails)
+    out = {k: out[k] for k in ["generated_at", "war_start", "base_period"] + list(LABELS) if k in out}   # 다시 받은 자료도 원래 순서로
     out["status"] = status
+    out["failed_since"] = fails[1]
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    n_all = len(KCS) + 4
-    n_kept = len([s for s in status["kept"] if "(" not in s])
-    log(f"수집 결과: 정상 {len(status['ok'])} · 이전 값 {n_kept} · 일부 항목 이전 값 {len(status['kept']) - n_kept} · 값 없음 {len(status['failed'])}")
+    blk_kept = [x for x in status["kept"] if "(" not in x]
+    blk_failed = [x for x in status["failed"] if "(" not in x]
+    n_part = len(status["kept"]) + len(status["failed"]) - len(blk_kept) - len(blk_failed)
+    log(f"수집 결과: 정상 {len(status['ok'])} · 이전 값 {len(blk_kept)} · 일부 항목 실패 {n_part} · 값 없음 {len(blk_failed)}")
     log(f"saved {OUT}")
-    bad = n_kept + len(status["failed"])
-    if bad * 2 > n_all:
-        soft_fail(f"물류 자료 {n_all}개 중 {bad}개 못 받음 — " + ", ".join(status["kept"] + status["failed"]))
-    old = []
+    n_all, n_bad = len(LABELS), len(blk_kept) + len(blk_failed)
+    if n_bad * 2 > n_all:
+        soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(status["kept"] + status["failed"]))
     today = today_kst()
+
+    def days_since(d):
+        try:
+            return (today - datetime.date.fromisoformat(str(d)[:10])).days
+        except ValueError:
+            return None   # 날짜 모양이 틀림 — 오래된 것으로 봄
+
+    old = []
     for key, blk in out.items():
-        if not isinstance(blk, dict) or key not in STALE_ALERT:
+        if key not in STALE_ALERT or not isinstance(blk, dict):
             continue
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in blk.get("items") or [] if isinstance(x, dict)]
-        ss = [s for s in ss if s]
-        if ss and (today - datetime.date.fromisoformat(min(ss))).days > STALE_ALERT[key]:
-            old.append(f"{blk.get('label') or key}({min(ss)}부터 · 기준 {STALE_ALERT[key]}일)")
+        ss = sorted(str(x) for x in ss if x)
+        n = days_since(ss[0]) if ss else 0
+        if n is None or n > STALE_ALERT[key]:
+            old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {STALE_ALERT[key]}일)")
+    for k, d in sorted(fails[1].items()):
+        key, _, item = k.partition(":")
+        n, lim = days_since(d), STALE_ALERT.get(key, 7)
+        if n is None or n > lim:
+            old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일)")
     if old:
-        soft_fail("오래 이전 값: " + ", ".join(old))
+        soft_fail("오래된 이전 값·값 없음: " + ", ".join(old))
 
 
 if __name__ == "__main__":
