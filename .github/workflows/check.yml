@@ -36,18 +36,17 @@ jobs:
         run: |
           pip install -q requests
           python - <<'PY'
-          import html as H, io, json, re, time
+          import html as H, re, time
           import requests
 
-          UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"}
           S = requests.Session()
-          S.headers.update(UA)
+          S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
 
 
-          def get(url, **kw):
+          def req(method, url, **kw):
               t = time.time()
               try:
-                  r = S.get(url, timeout=kw.pop("timeout", 30), **kw)
+                  r = S.request(method, url, timeout=kw.pop("timeout", 40), **kw)
                   return r, time.time() - t, None
               except Exception as e:
                   return None, time.time() - t, f"{type(e).__name__}: {str(e)[:150]}"
@@ -57,155 +56,144 @@ jobs:
               return re.sub(r"\s+", " ", H.unescape(re.sub(r"<[^>]+>", " ", s or ""))).strip()
 
 
-          def cells(body, n=160):
+          def rows_of(body):
               body = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", body)
               out = []
-              for tb in re.findall(r"(?is)<table.*?</table>", body):
-                  rows = []
-                  for tr in re.findall(r"(?is)<tr.*?</tr>", tb):
-                      cs = [clean(c) for c in re.findall(r"(?is)<t[hd][^>]*>(.*?)</t[hd]>", tr)]
-                      if cs:
-                          rows.append(" | ".join(cs))
-                  out.append(rows)
+              for tr in re.findall(r"(?is)<tr.*?</tr>", body):
+                  cs = [clean(c) for c in re.findall(r"(?is)<t[hd][^>]*>(.*?)</t[hd]>", tr)]
+                  if cs:
+                      out.append(cs)
               return out
 
 
-          def show_tables(name, body, maxrows=40):
-              tbs = cells(body)
-              print(f"   표 {len(tbs)}개")
-              for i, rows in enumerate(tbs[:4]):
-                  print(f"   [표 {i}] 행 {len(rows)}")
-                  for r in rows[:maxrows]:
-                      print(f"      {r[:220]}")
-
-
-          def links(body, pat, n=20):
-              found = []
-              for m in re.finditer(r"""(?is)(href|onclick|action|src)\s*=\s*["']([^"']*)["']""", body):
-                  v = H.unescape(m.group(2))
-                  if re.search(pat, v, re.I) and v not in found:
-                      found.append(v)
-              return found[:n]
-
-
-          def page(name, url, tables=True, pat=None, maxrows=40, **kw):
-              r, sec, err = get(url, **kw)
-              if err:
-                  print(f"[{name}] 실패 {err}")
-                  return None
-              print(f"[{name}] HTTP {r.status_code} · {r.headers.get('content-type', '')[:40]} · {len(r.content):,}B · {sec:.1f}s · {r.url[:140]}")
-              body = r.text
-              if tables:
-                  show_tables(name, body, maxrows)
-              if pat:
-                  print(f"   링크({pat}):", links(body, pat))
-              return r
-
-
-          print("== ① KCCI (해진공) ==")
-          r = page("KCCI 표", "https://www.kobc.or.kr/ebz/shippinginfo/kcci/gridList.do?mId=0304000000", pat=r"excel|xls|down|timeseries|chart|list\.do", maxrows=30)
-          if r is not None:
-              b = r.text
-              for kw in ("기준일", "발표일", "Composite", "종합", "KCCI", "KUWI", "KMEI", "중동", "Middle"):
-                  i = b.find(kw)
-                  print(f"   '{kw}':", clean(b[max(0, i - 120):i + 220])[:300] if i >= 0 else "없음")
-              forms = re.findall(r"(?is)<form[^>]*>", b)[:5]
-              print("   form:", [clean(f) or f[:160] for f in forms])
-              js = re.findall(r"(?is)function\s+(\w*(?:excel|Excel|down|Down|search|Search)\w*)\s*\([^)]*\)\s*\{(.{0,300})", b)[:5]
-              for nm, body in js:
-                  print(f"   JS {nm}: {clean(body)[:280]}")
-          page("KCCI 영문", "https://www.kobc.or.kr/ebz/shippinginfoeng/kcci/gridList.do?mId=0302000000", maxrows=20)
-          page("KCCI 시계열", "https://www.kobc.or.kr/ebz/shippinginfo/timeseries/gridList.do?mId=0304000000", pat=r"excel|xls|down", maxrows=25)
-
-          print("== ② 공공데이터포털 파일 ==")
-          for ds in ("15131881", "15116806"):
-              r = page(f"data.go.kr {ds}", f"https://www.data.go.kr/data/{ds}/fileData.do", tables=False, pat=r"fileDownload|Down|download|atchFile|uddi")
-              if r is None:
-                  continue
-              b = r.text
-              cand = re.findall(r"(?is)(fn_fileDataDown|fileDetailDown|fn_fileDown|downloadFile)\s*\(([^)]*)\)", b)[:6]
-              print("   다운로드 함수:", cand)
-              ids = sorted(set(re.findall(r"FILE_\d{12,}", b)))[:5]
-              uddi = sorted(set(re.findall(r"uddi:[0-9a-f-]{36}", b)))[:5]
-              print("   atchFileId:", ids, "· uddi:", uddi)
-              tries = []
-              for fid in ids[:2]:
-                  tries.append(f"https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={fid}&fileDetailSn=1&insertDataPrcus=N")
-              for u in tries:
-                  rr, sec, err = get(u, timeout=40)
-                  if err:
-                      print("   내려받기 실패", err)
-                      continue
-                  raw = rr.content
-                  print(f"   내려받기 HTTP {rr.status_code} · {rr.headers.get('content-type', '')[:40]} · {len(raw):,}B · disp={rr.headers.get('content-disposition', '')[:90]}")
-                  for enc in ("utf-8-sig", "cp949"):
-                      try:
-                          txt = raw[:1500].decode(enc)
-                          print(f"   ({enc}) 앞부분:", txt[:600].replace("\n", " ⏎ "))
-                          break
-                      except Exception:
-                          continue
-
-          print("== ③ 공공데이터포털 검색(관세청 운송비용) ==")
-          for q in ("운송비용", "항공수입 운송비용", "해상수출입 운송비용", "컨테이너선운임지수"):
-              r, sec, err = get("https://www.data.go.kr/tcs/dss/selectDataSetList.do", params={"keyword": q})
-              if err:
-                  print(f"[{q}] 실패 {err}")
-                  continue
-              b = r.text
-              hits = []
-              for m in re.finditer(r'(?is)href="(/data/(\d+)/(fileData|openapi|standard)\.do)"[^>]*>(.*?)</a>', b):
-                  t = clean(m.group(4))
-                  if t and (m.group(2), t) not in hits:
-                      hits.append((m.group(2), m.group(3), t[:70]))
-              print(f"[{q}] HTTP {r.status_code} · {len(hits)}건")
-              for h in hits[:12]:
-                  print("    ", h)
-
-          print("== ④ 국가물류통합정보센터 ==")
-          r = page("NLIC 항공수입 운송비용", "https://www.nlic.go.kr/nlic/flightImportTrnsCt.action", pat=r"TrnsCt|trnsCt|운송비용|excel", maxrows=30, timeout=40)
-          for g in ("seaImportTrnsCt", "seaExportTrnsCt", "shipImportTrnsCt", "seaTrnsCt", "cntnrImportTrnsCt"):
-              rr, sec, err = get(f"https://www.nlic.go.kr/nlic/{g}.action", timeout=30)
-              print(f"   {g}: {'실패 ' + err if err else f'HTTP {rr.status_code} · {len(rr.content):,}B · 표 {len(cells(rr.text))}개'}")
-
-          print("== ⑤ 관세청 수출입무역통계 운임 메뉴 ==")
-          r, sec, err = get("https://tradedata.go.kr/")
-          if not err:
-              b = r.text
-              for kw in ("해상컨테이너운임", "항공운송비용", "수출입운임통계"):
-                  for m in list(re.finditer(kw, b))[:2]:
-                      print(f"   '{kw}':", b[max(0, m.start() - 300):m.start() + 120].replace("\n", " ")[:420])
-              print("   메뉴 링크:", links(b, r"ETS|ets|frght|Frght|Fare|fare|운임")[:15])
-
-          print("== ⑥ Sea-Intelligence 정시율 ==")
-          r, sec, err = get("https://www.sea-intelligence.com/press-room")
+          TS = "https://www.kobc.or.kr/ebz/shippinginfo/timeseries/gridList.do?mId=0304000000"
+          print("== ① KCCI 시계열 화면 구조 ==")
+          r, sec, err = req("GET", TS)
           if err:
               print("실패", err)
           else:
               b = r.text
+              for m in re.finditer(r"(?is)<(input|select)\b[^>]*>", b):
+                  tag = m.group(0)
+                  nm = re.search(r'name="([^"]*)"', tag)
+                  if not nm:
+                      continue
+                  val = re.search(r'value="([^"]*)"', tag)
+                  typ = re.search(r'type="([^"]*)"', tag)
+                  extra = ""
+                  if m.group(1).lower() == "select":
+                      seg = b[m.end():m.end() + 1500]
+                      opts = re.findall(r'(?is)<option[^>]*value="([^"]*)"[^>]*>(.*?)</option>', seg.split("</select>")[0])
+                      extra = " 옵션 " + str([(v, clean(t)) for v, t in opts][:12])
+                  print(f"   {m.group(1)} name={nm.group(1)} type={typ.group(1) if typ else ''} value={val.group(1) if val else ''}{extra}")
+              for fn in ("excelDownload", "fn_search", "fnSearch", "goPage", "fn_egov_link_page", "linkPage", "search"):
+                  for m in re.finditer(r"(?is)function\s+" + fn + r"\s*\(([^)]*)\)\s*\{(.{0,700})", b):
+                      body_s = re.sub(r"\s+", " ", m.group(2))[:650]
+                      print(f"   JS {fn}({m.group(1)}): {body_s}")
+              pg = re.findall(r"(?is)(?:fn_egov_link_page|linkPage|goPage)\((\d+)\)", b)
+              print("   쪽 번호:", sorted(set(int(x) for x in pg))[:20])
+              i = b.find("excelDownload")
+              print("   excelDownload 주변:", re.sub(r"\s+", " ", b[max(0, i - 200):i + 300])[:500])
+              for js in re.findall(r'src="([^"]*\.js)"', b):
+                  if "indx" in js or "timeseries" in js or "excel" in js.lower():
+                      rr, s2, e2 = req("GET", "https://www.kobc.or.kr" + js if js.startswith("/") else js)
+                      if not e2:
+                          t = rr.text
+                          for m in re.finditer(r"(?is)(excel\w*|Excel\w*)\s*[:=(].{0,300}", t):
+                              seg_s = re.sub(r"\s+", " ", m.group(0))[:300]
+                              print(f"   [{js}] {seg_s}")
+                              break
+
+          print("== ② KCCI 시계열 조건 바꿔 받기 ==")
+          tries = [
+              ("GET pageIndex=2", "GET", TS + "&pageIndex=2", None),
+              ("POST pageIndex=2", "POST", TS, {"pageIndex": "2"}),
+              ("POST 기간", "POST", TS, {"searchStartDate": "2022-11-01", "searchEndDate": "2026-10-16", "pageIndex": "1"}),
+              ("POST 기간2", "POST", TS, {"startDate": "2022-11-01", "endDate": "2026-10-16", "pageIndex": "1"}),
+              ("POST 많이", "POST", TS, {"pageIndex": "1", "recordCountPerPage": "300", "pageUnit": "300"}),
+          ]
+          for nm, mth, url, data in tries:
+              r, sec, err = req(mth, url, data=data)
+              if err:
+                  print(f"   {nm}: 실패 {err}")
+                  continue
+              rs = [x for x in rows_of(r.text) if x and re.match(r"\d{4}-\d{2}-\d{2}$", x[0])]
+              print(f"   {nm}: HTTP {r.status_code} · 날짜 행 {len(rs)} · {rs[0][0] if rs else ''} ~ {rs[-1][0] if rs else ''}")
+
+          print("== ③ 관세청 파일(열쇠 없이) ==")
+          for ds in ("15116806", "15116850", "15116807"):
+              r, sec, err = req("GET", f"https://www.data.go.kr/data/{ds}/fileData.do")
+              if err:
+                  print(f"[{ds}] 실패 {err}")
+                  continue
+              b = r.text
+              title = clean((re.search(r"(?is)<title>(.*?)</title>", b) or [None, ""])[1])
+              ids = sorted(set(re.findall(r"FILE_\d{12,}", b)))
+              nxt = re.search(r"차기 등록 예정일</strong>\s*<div class=\"value\">([^<]*)<", b)
+              mod = re.search(r"수정일</strong>\s*<div class=\"value\">([^<]*)<", b)
+              print(f"[{ds}] {title} · atchFileId {ids} · 수정일 {mod.group(1) if mod else '?'} · 차기 {nxt.group(1) if nxt else '?'}")
+              if not ids:
+                  continue
+              rr, sec, err = req("GET", f"https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={ids[0]}&fileDetailSn=1&insertDataPrcus=N")
+              if err:
+                  print("   내려받기 실패", err)
+                  continue
+              raw = rr.content
+              txt = None
+              for enc in ("utf-8-sig", "cp949"):
+                  try:
+                      txt = raw.decode(enc)
+                      break
+                  except Exception:
+                      pass
+              lines = (txt or "").strip().splitlines()
+              print(f"   HTTP {rr.status_code} · {len(raw):,}B · 행 {len(lines)}")
+              for l in lines[:2] + ["…"] + lines[-3:]:
+                  print("     ", l[:200])
+
+          print("== ④ 공공데이터포털 OpenAPI 설명(중동 포함?) ==")
+          for ds in ("15129097", "15129099", "15131881"):
+              r, sec, err = req("GET", f"https://www.data.go.kr/data/{ds}/{'fileData' if ds == '15131881' else 'openapi'}.do")
+              if err:
+                  print(f"[{ds}] 실패 {err}")
+                  continue
+              b = r.text
+              txt = clean(re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", b))
+              for kw in ("중동", "요청주소", "서비스URL", "Base URL", "End Point", "상세기능", "설명", "바로가기", "제공기관 홈페이지"):
+                  i = txt.find(kw)
+                  if i >= 0:
+                      print(f"[{ds}] '{kw}': {txt[max(0, i - 80):i + 260]}")
+              for u in sorted(set(re.findall(r"https?://(?:apis\.data\.go\.kr|api\.odcloud\.kr)/[\w/.:-]+", b)))[:5]:
+                  print(f"[{ds}] API 주소: {u}")
+
+          print("== ⑤ Sea-Intelligence 정시율 기사들 ==")
+          r, sec, err = req("GET", "https://www.sea-intelligence.com/press-room")
+          if not err:
               arts = []
-              for m in re.finditer(r'(?is)<a[^>]+href="([^"]*press-room/\d+[^"]*)"[^>]*>(.*?)</a>', b):
-                  t = clean(m.group(2))
-                  if t and (m.group(1), t) not in arts:
+              for m in re.finditer(r'(?is)<a[^>]+href="([^"]*press-room/(\d+)[^"]*)"[^>]*>(.*?)</a>', r.text):
+                  t = clean(m.group(3))
+                  if t and t != "Continue reading" and (m.group(1), t) not in arts:
                       arts.append((m.group(1), t))
-              print(f"   기사 {len(arts)}건")
-              for u, t in arts[:16]:
-                  print("    ", t[:90], "→", u[:110])
-              glp = [a for a in arts if re.search(r"reliab|GLP|liner performance", a[1], re.I)]
-              for u, t in glp[:2]:
+              glp = [a for a in arts if re.search(r"reliab", a[1], re.I)]
+              print(f"   전체 기사 {len(arts)} · 정시율 제목 {len(glp)}")
+              for u, t in glp[:14]:
+                  print("    ", t[:90], "→", u)
+              pg = re.findall(r'href="([^"]*press-room\?start=\d+)"', r.text)
+              print("   다음 쪽:", sorted(set(pg))[:5])
+              for u, t in glp[1:6]:
                   url = u if u.startswith("http") else "https://www.sea-intelligence.com" + u
-                  rr, sec, err = get(url)
+                  rr, sec, err = req("GET", url)
                   if err:
-                      print("   기사 실패", err)
                       continue
                   txt = clean(re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", rr.text))
-                  print(f"   [{t[:60]}] {len(txt):,}자")
+                  d = re.search(r'"datePublished"\s*:\s*"([^"]+)"', rr.text) or re.search(r'dateModified" content="([^"]+)"', rr.text)
+                  print(f"   [{t[:70]}] 날짜 {d.group(1) if d else '?'}")
                   k = 0
                   for s in re.split(r"(?<=[.!?])\s+", txt):
-                      if re.search(r"\d+(\.\d+)?\s*%|\d+\.\d+\s*days", s) and len(s) < 400:
-                          print("      ·", s[:300])
+                      if re.search(r"schedule reliability|average delay", s, re.I) and re.search(r"\d", s) and len(s) < 420:
+                          print("      ·", s[:330])
                           k += 1
-                          if k >= 14:
+                          if k >= 4:
                               break
           print("== 끝 ==")
           PY
