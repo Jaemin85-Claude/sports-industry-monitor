@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-16 20:18 KST",
+ "generated_at": "2026-10-17 07:06 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -851,7 +851,8 @@
   "updated": "2026-09-15",
   "next": "2026-10-19",
   "fetched": "2026-10-16",
-  "label": "관세청 해상 수입"
+  "label": "관세청 해상 수입",
+  "stale_since": "2026-10-16"
  },
  "kcs_sea_export": {
   "name": "관세청 해상 수출",
@@ -1699,7 +1700,8 @@
   "updated": "2026-09-15",
   "next": "2026-10-19",
   "fetched": "2026-10-16",
-  "label": "관세청 해상 수출"
+  "label": "관세청 해상 수출",
+  "stale_since": "2026-10-16"
  },
  "kcs_air_import": {
   "name": "관세청 항공 수입",
@@ -2454,7 +2456,8 @@
   "updated": "2026-09-15",
   "next": "2026-10-19",
   "fetched": "2026-10-16",
-  "label": "관세청 항공 수입"
+  "label": "관세청 항공 수입",
+  "stale_since": "2026-10-16"
  },
  "kcci": {
   "cols": [
@@ -5841,7 +5844,7 @@
    ]
   ],
   "latest": "2026-10-12",
-  "fetched": "2026-10-16",
+  "fetched": "2026-10-17",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8127,7 +8130,7 @@
     "last_date": "2026-10-11"
    }
   ],
-  "fetched": "2026-10-16",
+  "fetched": "2026-10-17",
   "label": "해협 통과"
  },
  "ports": {
@@ -10413,7 +10416,7 @@
     "last_date": "2026-10-09"
    }
   ],
-  "fetched": "2026-10-16",
+  "fetched": "2026-10-17",
   "label": "항만 입항"
  },
  "glp": {
@@ -10561,20 +10564,21 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-16",
+  "fetched": "2026-10-17",
   "label": "전 세계 정시율"
  },
  "status": {
   "ok": [
-   "관세청 해상 수입",
-   "관세청 해상 수출",
-   "관세청 항공 수입",
    "KCCI 부산발 운임",
    "해협 통과",
    "항만 입항",
    "전 세계 정시율"
   ],
-  "kept": [],
+  "kept": [
+   "관세청 해상 수입",
+   "관세청 해상 수출",
+   "관세청 항공 수입"
+  ],
   "failed": []
  },
  "failed_since": {}
