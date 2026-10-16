@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.10: (2026-10-16 물류 화면과 함께) 물류·운임 뉴스(news_monitor v2.14 logistics)를 통관·상표권처럼 '■ 물류·운임'으로 따로 묶고
+      '중요 뉴스'·알림의 중요 뉴스 건수에서 뺌(전쟁 중 호르무즈·홍해 기사가 ★3으로 매일 나와 브랜드 뉴스 칸을 밀어내지 않게) · 물류 화면 바로가기
 v1.9: (대표 승인 2026-10-14) '■ 브랜드 점검표 판정' — 매일 기록한 판정(history.json verdicts, history_append v1.2 · 대시보드와 같은 규칙)으로
       지금 판정(지금 검토·주의는 점수 4칸)과 지난 7일 판정 변화(바뀐 점수 포함). 알림 3줄에 '판정 변화 n건'(기록이 있을 때).
       대시보드 바로가기 링크 — 브랜드 상세(#/brand/이름)·기업 상세(#/market/co/티커)·환율·뉴스·캘린더·실적·재고·국내 화면(휴대폰 메일에서 바로 열림)
@@ -378,7 +380,7 @@ def verdict_summary(hist, today):
     return V[-1], ev, V[0]["date"], reset
 
 
-SEP_GROUPS = ("kr_peer", "kr_fb", "customs")   # 따로 묶는 뉴스(v1.2) — '중요 뉴스'에서는 제외
+SEP_GROUPS = ("kr_peer", "kr_fb", "customs", "logistics")   # 따로 묶는 뉴스(v1.2 · 물류 v1.10) — '중요 뉴스'에서는 제외
 
 
 def top_news(news, today, n=6):
@@ -543,6 +545,7 @@ def build(today, now=None):
     nvm = naver_moves(nv)
     kn, kn_n = group_news(news, today, ("kr_peer", "kr_fb"))
     cn, cn_n = group_news(news, today, ("customs",))
+    ln, ln_n = group_news(news, today, ("logistics",))
     eye = eye_moves(nv)
     ytd, ytd_p = ytd_search(nv)
     dch = dart_changes(kr, kr_old)
@@ -617,6 +620,10 @@ def build(today, now=None):
     L.append("")
     L.append(f"■ 통관·상표권 (지난 7일{f' · 총 {cn_n}건' if cn_n > len(cn) else ''})")
     L += [f"  {'★' * imp} {s} ({d[5:].replace('-', '/')})" for imp, lab, s, d in cn] or ["  해당 없음"]
+    L.append("")
+    L.append(f"■ 물류·운임 (지난 7일{f' · 총 {ln_n}건' if ln_n > len(ln) else ''})")
+    L += [f"  {'★' * imp} {s} ({d[5:].replace('-', '/')})" for imp, lab, s, d in ln] or ["  해당 없음"]
+    L.append(f"  물류 화면(운임·바닷길·정시율): {dash('more', 'logi')}")
     L.append("")
 
     L.append(f"■ 주가 변화 (지난 {span or DAYS}일)" + (" — 기록이 7일이 안 되어 가능한 기간만" if span and span < DAYS else ""))
