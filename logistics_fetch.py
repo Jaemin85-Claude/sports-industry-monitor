@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.1: (대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 1번부터 · 적출국은 홍콩, 로테르담, 두바이, 벨기에 외에 글로벌 주요
+      물류 거점 순') 적출 거점 12곳 하루 입항(hubs, IMF PortWatch) 추가 — 홍콩·로테르담·두바이(제벨알리)·앤트워프(벨기에) 다음에
+      세계 컨테이너 물동량 상위 거점 순: 상하이·싱가포르·닝보·선전·칭다오(세계 1~5위) · LA·롱비치(미국 서안) · 포트클랑(동남아) ·
+      함부르크(독일). 상하이는 양산항을, 선전은 옌톈·서커우를 더함(PortWatch는 항만별 — 같은 날 값의 합, 모두 값이 있는 날만).
+      화면은 더보기 › 물류의 '수입(한국향)' 적출 거점 목록(build_dashboard v33.5)
 v1: (대표 지시 2026-10-16 '만들어줘') 지정학 리스크(2026-02-28 미국·이스라엘의 이란 공격 이후 호르무즈 봉쇄, 홍해·수에즈 우회)에 따른
     물류비·운송기간 추이를 한국향·중동 기준으로 모아 docs/logistics.json에 저장 — 화면은 더보기 › 물류(build_dashboard v33.4).
     ① 관세청 수출입 운송비용(월간, 공공데이터포털 파일 3개 — 인증키 없이 내려받기, 공공누리 1유형): 해상 수입·수출(40ft 1개당 천원 —
@@ -46,7 +51,7 @@ T_END = float("inf")           # main()이 시작할 때 정함
 WAR_START = "2026-02-28"                       # 전쟁 시작(미국·이스라엘의 이란 공격) — '전쟁 전' 비교 기준
 BASE_FROM, BASE_TO = "2026-01-01", "2026-02-27"   # 해협·항만 '전쟁 전 평균' 기간(일별 값 평균)
 STALE_ALERT = {"kcs_sea_import": 10, "kcs_sea_export": 10, "kcs_air_import": 10,   # 이 일수 넘게 이전 값이면 실패 표시 —
-               "glp": 10, "kcci": 5, "choke": 7, "ports": 7}                        # 월간 자료는 열흘, 주간 자료는 5~7일
+               "glp": 10, "kcci": 5, "choke": 7, "ports": 7, "hubs": 7}             # 월간 자료는 열흘, 주간 자료는 5~7일
 
 # ① 관세청 수출입 운송비용 — 공공데이터포털 파일 데이터(월간)
 KCS = [  # (블록 키, 데이터 번호, 이름, 단위)
@@ -58,7 +63,7 @@ KCS_PAGE = "https://www.data.go.kr/data/{}/fileData.do"
 KCS_DOWN = "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={}&fileDetailSn=1&insertDataPrcus=N"
 
 LABELS = {**{k: n for k, _, n, _ in KCS}, "kcci": "KCCI 부산발 운임", "choke": "해협 통과", "ports": "항만 입항",
-          "glp": "전 세계 정시율"}   # 블록 키 → 이름(저장 순서)
+          "hubs": "적출 거점 입항", "glp": "전 세계 정시율"}   # 블록 키 → 이름(저장 순서)
 
 # ② KCCI — 해양진흥공사 해양정보서비스
 KCCI_CUR = "https://www.kobc.or.kr/ebz/shippinginfo/kcci/gridList.do?mId=0304000000"
@@ -75,9 +80,18 @@ PW_FROM_YEAR = 2025            # 주별 값은 2025년부터(작년 같은 때�
 CHOKE = [("chokepoint6", "호르무즈 해협"), ("chokepoint4", "바브엘만데브 해협"),
          ("chokepoint1", "수에즈 운하"), ("chokepoint7", "희망봉")]
 PORTS = [("Busan", "부산"), ("Jebel Ali", "제벨알리"), ("Khor Fakkan", "코르파칸"), ("Fujairah", "푸자이라")]
+# v1.1 적출 거점(한국으로 실어 오는 출발 항만) — 대표가 정한 4곳 먼저, 그다음 세계 컨테이너 물동량 순(중국은 1~5위 · 그 밖은 지역 대표)
+HUBS = [("Hong Kong", "홍콩"), ("Rotterdam", "로테르담"), ("Jebel Ali", "두바이"), ("Antwerp", "앤트워프"),
+        ("Shanghai", "상하이"), ("Singapore", "싱가포르"), ("Ningbo", "닝보"), ("Shenzhen", "선전"), ("Qingdao", "칭다오"),
+        ("Los Angeles-Long Beach", "LA·롱비치"), ("Port Klang", "포트클랑"), ("Hamburg", "함부르크")]
 # 항만 일별 표는 portid에만 색인이 있음 — 이름(portname)으로 찾으면 40~55초 걸리다 서버가 거절(10/16 GitHub 서버 시험),
-# portid로는 0.3~0.6초. 번호는 PortWatch 항만 목록(PortWatch_ports_database)에서 확인
-PORT_IDS = {"Busan": "port1065", "Jebel Ali": "port744", "Khor Fakkan": "port561", "Fujairah": "port362"}
+# portid로는 0.1~1초. 번호는 PortWatch 항만 목록(PortWatch_ports_database)에서 확인(10/16 GitHub 서버 시험). 둘 이상이면 같은 날 값을 더함
+PORT_IDS = {"Busan": "port1065", "Jebel Ali": "port744", "Khor Fakkan": "port561", "Fujairah": "port362",
+            "Hong Kong": "port474", "Rotterdam": "port1114", "Antwerp": "port57",
+            "Shanghai": ("port1188", "port2027"),   # 상하이 + 상하이(양산) — 양산 심수항은 PortWatch에 따로
+            "Singapore": "port1201", "Ningbo": "port824",
+            "Shenzhen": ("port1414", "port1189"),   # 옌톈 + 서커우(선전)
+            "Qingdao": "port1069", "Los Angeles-Long Beach": "port664", "Port Klang": "port960", "Hamburg": "port446"}
 
 # ④ Sea-Intelligence 보도자료
 GLP_LIST = "https://www.sea-intelligence.com/press-room"
@@ -374,8 +388,23 @@ def period_avg(rows, field, d0, d1):
     return round(sum(vs) / len(vs), 1) if vs else None
 
 
-def pw_item(layer, where, fields, label):
-    rows = pw_rows(layer, where, ["date"] + fields)
+def pw_sum(parts, fields):
+    """항만 여럿의 일별 값 → 날짜별 합(모든 항만에 그날 행이 있는 날만 · 한 곳이라도 빈 칸이면 그 칸은 빈 칸)"""
+    by = [{pw_date(a.get("date")): a for a in p} for p in parts]
+    out = []
+    for d in sorted(set(by[0]).intersection(*by[1:])):
+        a = {"date": d.isoformat()}
+        for f in fields:
+            vs = [b[d].get(f) for b in by]
+            a[f] = sum(vs) if all(isinstance(v, (int, float)) for v in vs) else None
+        out.append(a)
+    return out
+
+
+def pw_item(layer, wheres, fields, label):
+    """wheres = 질의 조건 목록 — 둘 이상(상하이 + 양산 등)이면 같은 날 값을 더함"""
+    parts = [pw_rows(layer, w, ["date"] + fields) for w in wheres]
+    rows = parts[0] if len(parts) == 1 else pw_sum(parts, fields)
     if len(rows) < 60:
         raise RuntimeError(f"{label}: 일별 값 {len(rows)}개뿐")
     last = max(pw_date(a.get("date")) for a in rows)
@@ -385,14 +414,19 @@ def pw_item(layer, where, fields, label):
             "last_date": last.isoformat()}
 
 
+def pw_ids(i):
+    p = PORT_IDS[i]
+    return list(p) if isinstance(p, (tuple, list)) else [p]
+
+
 def fetch_pw(kind, prev):
-    """해협(kind='choke') 또는 항만(kind='ports') — 항목마다 따로: 못 받은 항목은 이전 값(stale_since)"""
+    """해협(kind='choke') · 항만(kind='ports') · 적출 거점(kind='hubs') — 항목마다 따로: 못 받은 항목은 이전 값(stale_since)"""
     if kind == "choke":
         layer, fields, items = "Daily_Chokepoints_Data", ["n_total", "n_container"], CHOKE
-        where = lambda i: f"portid='{i}' AND year>={PW_FROM_YEAR}"
+        where = lambda i: [f"portid='{i}' AND year>={PW_FROM_YEAR}"]
     else:
-        layer, fields, items = "Daily_Ports_Data", ["portcalls", "portcalls_container"], PORTS
-        where = lambda i: f"portid='{PORT_IDS[i]}' AND year>={PW_FROM_YEAR}"
+        layer, fields, items = "Daily_Ports_Data", ["portcalls", "portcalls_container"], HUBS if kind == "hubs" else PORTS
+        where = lambda i: [f"portid='{p}' AND year>={PW_FROM_YEAR}" for p in pw_ids(i)]
     items0 = (prev or {}).get("items")
     old = {x.get("id"): x for x in (items0 if isinstance(items0, list) else []) if isinstance(x, dict)}
     out, bad, kept = [], [], []
@@ -621,6 +655,7 @@ def main():
     run_block("kcci", LABELS["kcci"], fetch_kcci, prev_all, out, status, fails)
     run_block("choke", LABELS["choke"], lambda p: fetch_pw("choke", p), prev_all, out, status, fails)
     run_block("ports", LABELS["ports"], lambda p: fetch_pw("ports", p), prev_all, out, status, fails)
+    run_block("hubs", LABELS["hubs"], lambda p: fetch_pw("hubs", p), prev_all, out, status, fails)
     run_block("glp", LABELS["glp"], fetch_glp, prev_all, out, status, fails)
     if later:
         log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
