@@ -29,6 +29,206 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Probe logistics data sources (temporary branch test)
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+          KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import collections, datetime as dt, json, os, re, time
+          import requests
+
+          UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"}
+          KEY = os.environ.get("KOSIS_API_KEY", "")
+
+
+          def get(url, params=None, timeout=30):
+              t = time.time()
+              try:
+                  r = requests.get(url, params=params, headers=UA, timeout=timeout)
+                  return r, time.time() - t, None
+              except Exception as e:
+                  return None, time.time() - t, f"{type(e).__name__}: {str(e)[:150]}"
+
+
+          def clean(s):
+              return re.sub(r"\s+", " ", s or "").strip()
+
+
+          def show(name, url, want=(), params=None):
+              r, sec, err = get(url, params)
+              if err:
+                  print(f"[{name}] 실패 {err} ({sec:.1f}s)")
+                  return None
+              body = r.text
+              low = body.lower()
+              flags = [k for k in ("captcha", "cf-chl", "challenge-platform", "access denied", "are you a robot", "로그인") if k in low]
+              title = clean((re.search(r"<title[^>]*>(.*?)</title>", body, re.S | re.I) or [None, ""])[1])[:80]
+              print(f"[{name}] HTTP {r.status_code} · {r.headers.get('content-type', '')[:30]} · {len(r.content):,}B · {sec:.1f}s · title={title!r}"
+                    + (f" · 차단 표식 {flags}" if flags else ""))
+              for w in want:
+                  i = body.find(w)
+                  snip = clean(body[max(0, i - 60):i + 200]) if i >= 0 else ""
+                  print(f"   '{w}': " + (f"있음 … {snip[:260]}" if i >= 0 else "없음"))
+              return r
+
+
+          # ① IMF PortWatch — 해협 통과(하루 척수) 월평균
+          PW = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services"
+          print("== IMF PortWatch 해협 ==")
+          r, sec, err = get(f"{PW}/Daily_Chokepoints_Data/FeatureServer/0/query",
+                            {"where": "portid='chokepoint6'", "outFields": "*", "orderByFields": "date DESC",
+                             "resultRecordCount": 2, "f": "json"})
+          if err:
+              print("실패", err)
+          else:
+              d = r.json()
+              feats = d.get("features") or []
+              print(f"HTTP {r.status_code} · {sec:.1f}s · 필드 {sorted((feats[0]['attributes'] if feats else {}).keys())}")
+              if "error" in d:
+                  print("  오류", d["error"])
+              for f in feats:
+                  print("  최신", {k: v for k, v in f["attributes"].items() if k in ("date", "year", "month", "day", "portname", "n_total", "n_container", "n_tanker", "capacity")})
+
+
+          def pw_month(layer, where, fields):
+              rows, off = [], 0
+              while True:
+                  r, sec, err = get(f"{PW}/{layer}/FeatureServer/0/query",
+                                    {"where": where, "outFields": ",".join(fields), "orderByFields": "date ASC",
+                                     "resultOffset": off, "resultRecordCount": 1000, "f": "json"}, timeout=40)
+                  if err:
+                      return None, err
+                  d = r.json()
+                  if "error" in d:
+                      return None, str(d["error"])[:200]
+                  fs = d.get("features") or []
+                  rows += [f["attributes"] for f in fs]
+                  if len(fs) < 1000 or off > 5000:
+                      break
+                  off += 1000
+              return rows, None
+
+
+          def ym(a):
+              if a.get("year") and a.get("month"):
+                  return f"{int(a['year'])}-{int(a['month']):02d}"
+              v = a.get("date")
+              if isinstance(v, (int, float)):
+                  return dt.datetime.utcfromtimestamp(v / 1000).strftime("%Y-%m")
+              return str(v)[:7]
+
+
+          def pw_try(layer, base, fields, since):
+              err = None
+              for cond in (f"year>={since[:4]}", f"date >= DATE '{since}'", f"date >= '{since}'"):
+                  rows, err = pw_month(layer, f"{base} AND {cond}", fields)
+                  if rows is not None:
+                      return rows, None
+              return None, err
+
+
+          for cid, nm in (("chokepoint6", "호르무즈"), ("chokepoint1", "수에즈"), ("chokepoint4", "바브엘만데브"), ("chokepoint7", "희망봉")):
+              rows, err = pw_try("Daily_Chokepoints_Data", f"portid='{cid}'",
+                                 ["date", "year", "month", "day", "n_total", "n_container"], "2025-01-01")
+              if err:
+                  print(f"  {nm}: 실패 {err}")
+                  continue
+              agg = collections.defaultdict(lambda: [0, 0, 0])
+              for a in rows:
+                  k = ym(a)
+                  agg[k][0] += a.get("n_total") or 0
+                  agg[k][1] += a.get("n_container") or 0
+                  agg[k][2] += 1
+              last = max((a.get("date") for a in rows), default=None)
+              if isinstance(last, (int, float)):
+                  last = dt.datetime.utcfromtimestamp(last / 1000).date()
+              line = " · ".join(f"{k} {v[0] / v[2]:.0f}/{v[1] / v[2]:.0f}" for k, v in sorted(agg.items()))
+              print(f"  {nm} (전체/컨테이너선 하루 평균, 마지막 {last}): {line}")
+
+          print("== IMF PortWatch 항만 ==")
+          for pn in ("Busan", "Jebel Ali", "Khor Fakkan", "Fujairah"):
+              rows, err = pw_try("Daily_Ports_Data", f"portname='{pn}'",
+                                 ["date", "year", "month", "portname", "portcalls", "portcalls_container"], "2026-01-01")
+              if err:
+                  print(f"  {pn}: 실패 {err}")
+                  continue
+              agg = collections.defaultdict(lambda: [0, 0, 0])
+              for a in rows:
+                  k = ym(a)
+                  agg[k][0] += a.get("portcalls") or 0
+                  agg[k][1] += a.get("portcalls_container") or 0
+                  agg[k][2] += 1
+              print(f"  {pn} ({len(rows)}일, 입항 전체/컨테이너 하루 평균): " + " · ".join(f"{k} {v[0] / v[2]:.1f}/{v[1] / v[2]:.1f}" for k, v in sorted(agg.items())))
+
+          # ② 해진공 KCCI · 공공데이터포털
+          print("== KCCI · 공공데이터포털 ==")
+          r = show("KOBC KCCI 표", "https://www.kobc.or.kr/ebz/shippinginfo/kcci/gridList.do?mId=0304000000", ("중동", "KCCI", "excel", "Excel"))
+          if r is not None:
+              links = sorted(set(re.findall(r"""(?:href|onclick)=["']([^"']*(?:xls|excel|Excel|download|down)[^"']*)""", r.text)))[:8]
+              print("   내려받기 단서:", links)
+              nums = re.findall(r"\d{1,2},\d{3}", r.text)[:12]
+              print("   숫자 예:", nums)
+          for ds, kind in (("15131881", "fileData"), ("15129097", "openapi"), ("15116806", "fileData"), ("15151724", "openapi")):
+              r = show(f"data.go.kr {ds}", f"https://www.data.go.kr/data/{ds}/{kind}.do", ("이용허락범위", "갱신주기", "업데이트 주기"))
+              if r is not None:
+                  apis = sorted(set(re.findall(r"https?://apis\.data\.go\.kr/[\w/.-]+", r.text)))[:6]
+                  if apis:
+                      print("   API 주소:", apis)
+                  h1 = re.findall(r"<h[23][^>]*>\s*([^<]{4,60})</h[23]>", r.text)[:3]
+                  print("   제목 후보:", [clean(x) for x in h1])
+
+          # ③ KOSIS 통계표 검색(운임·물류)
+          print("== KOSIS 통계표 검색 ==")
+          if not KEY:
+              print("  KOSIS_API_KEY 없음")
+          for kw in ("운송비용", "운임", "컨테이너 운임", "항공화물", "해상화물", "물류비", "외항화물", "체선"):
+              r, sec, err = get("https://kosis.kr/openapi/statisticsSearch.do",
+                                {"method": "getList", "apiKey": KEY, "searchNm": kw, "format": "json", "jsonVD": "Y", "resultCount": "12"})
+              if err:
+                  print(f"  {kw}: 실패 {err}")
+                  continue
+              try:
+                  data = r.json()
+              except Exception:
+                  print(f"  {kw}: JSON 아님 {r.text[:120]!r}")
+                  continue
+              if isinstance(data, dict):
+                  print(f"  {kw}: {str(data)[:140]}")
+                  continue
+              print(f"  {kw}: {len(data)}건")
+              for row in data[:12]:
+                  print(f"     {row.get('ORG_ID')} {row.get('TBL_ID')} | {clean(row.get('TBL_NM'))[:60]} | {clean(row.get('ORG_NM') or '')[:20]}")
+
+          # ④ 그 밖의 출처 접속
+          print("== 그 밖의 출처 ==")
+          show("ECOS(sample 키)", "https://ecos.bok.or.kr/api/StatisticTableList/sample/json/kr/1/5/404Y014", ("404Y014", "STAT_NAME"))
+          r, sec, err = get("https://fred.stlouisfed.org/graph/fredgraph.csv?id=DJFUELUSGULF")
+          if err:
+              print("[FRED 제트유] 실패", err)
+          else:
+              lines = [l for l in r.text.splitlines()[1:] if l and not l.endswith(",.") and not l.endswith(",")]
+              feb = [float(l.split(",")[1]) for l in lines if l.startswith("2026-02")]
+              oct25 = [float(l.split(",")[1]) for l in lines if l.startswith("2025-10")]
+              print(f"[FRED 제트유] HTTP {r.status_code} · 마지막 {lines[-3:] if lines else '없음'} · 2026-02 평균 {sum(feb) / len(feb) if feb else 0:.3f} · 2025-10 평균 {sum(oct25) / len(oct25) if oct25 else 0:.3f}")
+          show("Sea-Intelligence 보도자료", "https://www.sea-intelligence.com/press-room", ("reliability", "Reliability"))
+          show("Drewry WCI", "https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry", ("Rotterdam", "composite"))
+          show("Freightos FBX", "https://fbx.freightos.com/", ("FBX",))
+          show("SSE SCFI", "https://en.sse.net.cn/indices/scfinew.jsp", ("Persian", "Korea"))
+          show("EASA CZIB", "https://www.easa.europa.eu/en/domains/air-operations/czibs", ("CZIB-2026",))
+          show("국가물류통합정보센터", "https://www.nlic.go.kr/", ("운임",))
+          show("관세청 수출입무역통계", "https://tradedata.go.kr/", ("운송비용", "운임"))
+          for q in ("KCCI 운임", "해상운임 중동", "항공 운임 유류할증료"):
+              r, sec, err = get("https://news.google.com/rss/search", {"q": f"{q} when:14d", "hl": "ko", "gl": "KR", "ceid": "KR:ko"})
+              if err:
+                  print(f"[구글 뉴스 {q}] 실패 {err}")
+                  continue
+              titles = re.findall(r"<item>.*?<title>(.*?)</title>", r.text, re.S)
+              print(f"[구글 뉴스 {q}] {len(titles)}건 · " + " | ".join(clean(t)[:50] for t in titles[:3]))
+          print("== 끝 ==")
+          PY
       - name: Check files against CLAUDE.md
         run: |
           python - <<'PY'
