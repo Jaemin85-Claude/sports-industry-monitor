@@ -396,14 +396,19 @@ def fetch_pw(kind, prev):
     items0 = (prev or {}).get("items")
     old = {x.get("id"): x for x in (items0 if isinstance(items0, list) else []) if isinstance(x, dict)}
     out, bad, kept = [], [], []
+    down = None   # 연결이 안 된 첫 항목 — 남은 항목은 같은 서버라 기다리지 않음
     for iid, name in items:
         try:
+            if down:
+                raise NetError(f"{down}에서 연결 안 됨 — 이번 실행은 건너뜀")
             it = pw_item(layer, where(iid), fields, name)
             out.append({"id": iid, "name": name, **it})
             w = it["weeks"][-1]
             log(f"  {name}: 주 {len(it['weeks'])}개 · 마지막 주 {w[0]}({w[-1]}일) 하루 {w[1]}척(컨테이너선 {w[2]}) · 전쟁 전 {it['base'][0]}척({it['base'][1]})")
         except Exception as e:
             log(f"  {name}: 실패 — {str(e)[:150]}")
+            if isinstance(e, NetError) and not down:
+                down = name
             if iid in old:
                 o = dict(old[iid])
                 o["stale_since"] = o.get("stale_since") or (prev or {}).get("fetched") or today_kst().isoformat()

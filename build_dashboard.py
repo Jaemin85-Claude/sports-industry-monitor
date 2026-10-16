@@ -3311,7 +3311,7 @@ function lgKcsCard(){
   const pick=['유럽연합',LG_KCS==='kcs_air_import'?'미국':'미국서부','일본'].filter(c=>idx(c)>=0), R24=K.R.slice(-24);
   h+=`<div class="cb-trend lg-tr k3">${pick.map((c,k)=>{ const i=idx(c)+1, pts=R24.map(r=>[r[0],r[i]]);
     return `<div class="cb-tr"><div class="h"><b>${esc(LG_KCS_LBL[c]||c)}</b><span class="num">${lgN(K.L[i])}</span></div>${lgSpark(pts,{accent:k===0,label:(LG_KCS_LBL[c]||c)+' 최근 24달'})}<div class="ax"><span>${lgMon(R24[0][0])}</span><span>${lgMon(K.L[0])}</span></div></div>`; }).join('')}</div>`;
-  return h+`<div class="note">FOB 조건 수입신고의 실제 운임(할증료·주선 수수료 포함) 평균 — ${LG_KCS==='kcs_air_import'?'인천공항 도착 항공 수입, 특송·우편 제외':'단독 화주 40ft 컨테이너 1개(FCL)'} · 매월 15일쯤 전달 자료(다음 등록 ${esc(K.B.next||'―')}) · 지난 값은 다음 해 2월까지 고쳐질 수 있음 · 중동은 보도자료에만 있고 파일에는 없음 · 점선 = 전쟁 시작</div>`;
+  return h+`<div class="note">FOB 조건 수입신고의 실제 운임(할증료·주선 수수료 포함) 평균 — ${LG_KCS==='kcs_air_import'?'인천공항 도착 항공 수입, 특송·우편 제외':'단독 화주 40ft 컨테이너 1개(FCL)'} · 매월 중순(15~19일쯤) 전달 자료(다음 등록 ${esc(K.B.next||'―')}) · 지난 값은 다음 해 2월까지 고쳐질 수 있음 · 중동은 보도자료에만 있고 파일에는 없음 · 점선 = 전쟁 시작</div>`;
 }
 /* KCCI 부산발(수출) — 중동·유럽 항로 운임 흐름 */
 const LG_KCCI=[['KMEI','부산 → 중동'],['KNEI','부산 → 북유럽'],['KMDI','부산 → 지중해'],['KUWI','부산 → 미주 서안'],['KUEI','부산 → 미주 동안'],['KCCI','종합 지수']];
@@ -3385,7 +3385,7 @@ function lgGlpCard(){
   h+=`<div class="lg-share"><div><span>${lgMon(G.L[0])} 정시 도착</span><b class="num">${lgN(G.L[1],1)}%</b><span class="na">늦은 배 평균 ${G.L[2]!=null?lgN(G.L[2],2)+'일':'―'} 지연</span></div>
     <div class="lg-shx">전쟁 전(${lgMon(LG_PRE_M)}) <span class="nw">${G.W?lgN(G.W[1],1)+'%':'―'}</span> · <span class="nw">늦은 배 ${G.W&&G.W[2]!=null?lgN(G.W[2],2)+'일':'―'}</span><br>정시율이 내리고 지연이 늘면 도착일이 들쭉날쭉해집니다 — 재고·판매 일정에 여유를 둡니다</div></div>`;
   const fl=Math.max(0,Math.min(30,Math.floor(Math.min(...M.map(m=>m[1]))/10)*10-10));   // 막대 바닥 = 가장 낮은 값보다 조금 아래(차이가 보이게) — 숫자는 막대 위에
-  h+=`<div class="lg-bars" role="img" aria-label="최근 ${M.length}달 정시율 ${M.map(m=>`${m[0].slice(0,4)}년 ${+m[0].slice(5,7)}월 ${m[1]}%`).join(', ')}">${M.map(m=>`<div><span class="v num">${Math.round(m[1])}</span><span class="bw"><span class="b${m[0]===G.L[0]?' on':''}" style="height:${Math.max(4,Math.min(100,(m[1]-fl)/(100-fl)*100)).toFixed(1)}%"></span></span><span class="m">${+m[0].slice(5,7)}</span></div>`).join('')}</div>`;
+  h+=`<div class="lg-bars" role="img" aria-label="최근 ${M.length}달 정시율 ${M.map(m=>`${m[0].slice(0,4)}년 ${+m[0].slice(5,7)}월 ${m[1]}%`).join(', ')}">${M.map((m,j)=>`<div><span class="v num">${Math.round(m[1])}</span><span class="bw"><span class="b${m[0]===G.L[0]?' on':''}" style="height:${Math.max(4,Math.min(100,(m[1]-fl)/(100-fl)*100)).toFixed(1)}%"></span></span><span class="m">${j===0?m[0].slice(2,4)+'.'+(+m[0].slice(5,7)):+m[0].slice(5,7)}</span></div>`).join('')}</div>`;
   return h+`<div class="note">막대 아래 = 달(${lgMon(M[0][0])}~${lgMon(G.L[0])}) · 전 세계 컨테이너선이 일정대로(하루 안) 도착한 비율 · 매월 말 전달 자료를 보도자료에서 읽음 · 항로별 값은 유료 보고서라 없음</div></div>`;
 }
 function lgNewsCard(){
