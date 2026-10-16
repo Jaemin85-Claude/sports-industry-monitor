@@ -29,6 +29,71 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Probe PortWatch hub ports (temporary branch test)
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import json, time
+          import requests
+
+          S = requests.Session()
+          S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
+          BASE = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/{}/FeatureServer/0/query"
+
+
+          def q(layer, where, fields, order=None, n=50):
+              p = {"where": where, "outFields": fields, "resultRecordCount": n, "returnGeometry": "false", "f": "json"}
+              if order:
+                  p["orderByFields"] = order
+              t = time.time()
+              try:
+                  d = S.get(BASE.format(layer), params=p, timeout=(15, 60)).json()
+              except Exception as e:
+                  return None, time.time() - t, f"{type(e).__name__}: {str(e)[:100]}"
+              if "error" in d:
+                  return None, time.time() - t, json.dumps(d["error"], ensure_ascii=False)[:160]
+              return [f.get("attributes") or {} for f in d.get("features") or []], time.time() - t, None
+
+
+          print("== 항만 목록 표 필드 ==")
+          r = S.get(BASE.format("PortWatch_ports_database").replace("/query", ""), params={"f": "json"}, timeout=30).json()
+          print("  ", [f["name"] for f in r.get("fields") or []])
+
+          CANDS = ["Hong Kong", "Rotterdam", "Jebel Ali", "Antwerp", "Singapore", "Shanghai", "Ningbo", "Shenzhen", "Yantian", "Shekou",
+                   "Qingdao", "Klang", "Los Angeles", "Long Beach", "Hamburg", "Busan", "Incheon", "Tokyo", "Yokohama", "Ho Chi Minh", "Cai Mep",
+                   "Genoa", "Genova", "La Spezia", "Le Havre", "Felixstowe", "Valencia", "Bremerhaven", "Kaohsiung", "Tanjung Pelepas", "Xiamen", "Tianjin", "Guangzhou"]
+          print("== 이름으로 찾기(LIKE) ==")
+          found = {}
+          for c in CANDS:
+              rows, sec, err = q("PortWatch_ports_database", f"portname LIKE '%{c}%'", "*", n=8)
+              if err:
+                  print(f"  {c}: 실패 {err} · {sec:.1f}s")
+                  continue
+              keep = []
+              for a in rows:
+                  small = {k: v for k, v in a.items() if k in ("portid", "portname", "country", "ISO3", "fullname") or "container" in k.lower() or k.lower().startswith("vessel_count")}
+                  keep.append(small)
+              print(f"  {c}: {len(rows)}건 · {sec:.1f}s")
+              for a in keep:
+                  print("     ", json.dumps(a, ensure_ascii=False)[:300])
+              if rows:
+                  found[c] = rows[0].get("portid")
+              time.sleep(0.3)
+
+          print("== 일별 자료 확인(portid · 2025년부터) ==")
+          for c, pid in found.items():
+              rows, sec, err = q("Daily_Ports_Data", f"portid='{pid}' AND year>=2025", "date,portcalls,portcalls_container", order="date ASC", n=1000)
+              if err:
+                  print(f"  {c} {pid}: 실패 {err} · {sec:.1f}s")
+              else:
+                  last = rows[-1] if rows else {}
+                  print(f"  {c} {pid}: {len(rows)}행 · {rows[0]['date'] if rows else ''}~{last.get('date','')} · 마지막 {last} · {sec:.1f}s")
+              time.sleep(0.3)
+          print("== 끝 ==")
+          PY
       - name: Check files against CLAUDE.md
         run: |
           python - <<'PY'
