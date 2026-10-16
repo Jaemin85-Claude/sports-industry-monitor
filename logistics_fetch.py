@@ -543,7 +543,7 @@ def fetch_glp(prev):
     log(f"  정시율: {len(months)}달 · {months[0][0]}~{months[-1][0]} · 새로 읽은 기사 {len(todo)}건")
     gap = (today_kst() - datetime.date.fromisoformat(months[-1][0] + "-01")).days
     if gap > GLP_STALE_DAYS:   # 매달 말 전달 자료가 나옴 — 한 달 넘게 밀리면 기사 형식·제목이 바뀌었을 수 있음
-        raise RuntimeError(f"가장 최근 달이 {months[-1][0]} — {gap}일째 새 달 없음(형식 다름 {len(fmt)}건)")
+        raise RuntimeError(f"가장 최근 달이 {months[-1][0]} — {gap}일째 새 달을 못 읽음(정시율 기사 제목·형식 확인)")
     return {"months": months, "skip": skip[-200:], "fmt_skip": dict(list(fmt.items())[-100:])}
 
 
@@ -564,11 +564,17 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
             log(f"  {label}: 연결 안 됨 — 다른 자료를 받은 뒤 한 번 더 ({str(e)[:150]})")
             return False
         log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
+        carry = {k: v for k, v in fs_old.items() if k.startswith(key + ":")}   # 값 없는 해협·항만 항목 — 처음 실패한 날 유지
+        fs_new.update(carry)
         if prev:
             blk = dict(prev)
+            if "items" in blk and not isinstance(blk["items"], list):
+                blk["items"] = []   # 손상된 이전 값
             blk["stale_since"] = prev.get("stale_since") or prev.get("fetched") or today
             out[key] = blk
             status["kept"].append(label)
+            if carry:   # 화면 '값 없음' 줄이 이 날도 보이게
+                status["failed"].append(f"{label}({'·'.join(k.split(':', 1)[1] for k in carry)})")
         else:
             status["failed"].append(label)
             fs_new[key] = fs_old.get(key) or today
@@ -583,7 +589,7 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
     if bad:     # 해협·항만: 일부 항목은 값 없음
         status["failed"].append(f"{label}({'·'.join(bad)})")
         for nm in bad:
-            fs_new[f"{key}:{nm}"] = fs_old.get(f"{key}:{nm}") or today
+            fs_new[f"{key}:{nm}"] = fs_old.get(f"{key}:{nm}") or fs_old.get(key) or today   # 블록째 값 없던 날부터
     if not inner and not bad:
         status["ok"].append(label)
     return True
@@ -627,7 +633,7 @@ def main():
         json.dump(out, f, ensure_ascii=False, indent=1)
     blk_kept = [x for x in status["kept"] if "(" not in x]
     blk_failed = [x for x in status["failed"] if "(" not in x]
-    n_part = len(status["kept"]) + len(status["failed"]) - len(blk_kept) - len(blk_failed)
+    n_part = len({x.split("(")[0] for x in status["kept"] + status["failed"] if "(" in x} - set(blk_kept) - set(blk_failed))   # 블록 수
     log(f"수집 결과: 정상 {len(status['ok'])} · 이전 값 {len(blk_kept)} · 일부 항목 실패 {n_part} · 값 없음 {len(blk_failed)}")
     log(f"saved {OUT}")
     n_all, n_bad = len(LABELS), len(blk_kept) + len(blk_failed)
@@ -645,7 +651,8 @@ def main():
     for key, blk in out.items():
         if key not in STALE_ALERT or not isinstance(blk, dict):
             continue
-        ss = [blk.get("stale_since")] + [x.get("stale_since") for x in blk.get("items") or [] if isinstance(x, dict)]
+        its = blk.get("items")
+        ss = [blk.get("stale_since")] + [x.get("stale_since") for x in (its if isinstance(its, list) else []) if isinstance(x, dict)]
         ss = sorted(str(x) for x in ss if x)
         n = days_since(ss[0]) if ss else 0
         if n is None or n > STALE_ALERT[key]:
