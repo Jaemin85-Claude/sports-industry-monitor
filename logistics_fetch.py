@@ -5,15 +5,18 @@ v1: (대표 지시 2026-10-16 '만들어줘') 지정학 리스크(2026-02-28 미
     물류비·운송기간 추이를 한국향·중동 기준으로 모아 docs/logistics.json에 저장 — 화면은 더보기 › 물류(build_dashboard v33.4).
     ① 관세청 수출입 운송비용(월간, 공공데이터포털 파일 3개 — 인증키 없이 내려받기, 공공누리 1유형): 해상 수입·수출(40ft 1개당 천원 —
        미국 서부·동부·EU·중국·일본·베트남), 항공 수입(kg당 원 — 미국·EU·중국·일본·베트남). 수입 = FOB 조건 수입신고의 운임(할증료 포함) —
-       한국으로 들어오는 화물의 실제 운임. 중동은 보도자료에만 있고 파일에는 없음. 지난 달 값은 다음 해 2월까지 고쳐질 수 있어 매번 파일 전체로 바꿈
+       한국으로 들어오는 화물의 실제 운임. 중동은 보도자료에만 있고 파일에는 없음. 지난 달 값은 다음 해 2월까지 고쳐질 수 있어 매번 파일 전체로 바꿈.
+       공공데이터포털이 GitHub 서버에서 가끔 연결되지 않아(10/16 시험 실행) 연결 오류면 다른 자료를 다 받은 뒤 한 번 더 받음
     ② KCCI(한국해양진흥공사 컨테이너선운임지수, 매주 월 14시): 부산발 13개 항로 + 종합(항로는 40ft당 달러) — 중동·북유럽·지중해 등.
        첫 실행에 2022-11부터 시계열을 받아 두고 매일 최근 10주를 다시 받아 합침(이용허락 제한 없음)
     ③ IMF PortWatch(무료 API, 주 1회 갱신 · 약 1주 늦음): 해협 하루 통과 척수(전체·컨테이너선) — 호르무즈·바브엘만데브·수에즈·희망봉,
        항만 하루 입항 — 부산·제벨알리·코르파칸·푸자이라. 주별 평균 + 전쟁 전(2026-01-01~02-27) 평균. 배 위치 신호(AIS) 기준이라
        신호를 끈 배는 빠짐(호르무즈는 실제보다 적게 잡힘). 출처 'IMF PortWatch'
-    ④ Sea-Intelligence 전 세계 정시율(월간 보도자료 GLP): 정시 도착 비율(%)·늦은 배 평균 지연(일) — 제목·본문에서 숫자만 읽음, 새 기사만 받음
+    ④ Sea-Intelligence 전 세계 정시율(월간 보도자료 GLP): 정시 도착 비율(%)·늦은 배 평균 지연(일) — 본문의
+       'In <달> <연도>, … to <값>%' 문장에서 숫자만 읽음(제목 숫자는 안 씀 — '65%-68%' 같은 범위가 있음). 새 기사만 받고 최근 25달 보관
     못 받은 자료는 이전 값을 이어 쓰고 stale_since(마지막 정상 수집일) 표시 · 최상위 status(ok·kept·failed).
-    한 실행에서 절반 넘게 실패하거나, 한 자료라도 3일 넘게 이전 값이면 실패 표시(soft_fail.txt → 낮 점검 알림)
+    한 실행에서 절반 넘게 실패하거나, 한 자료라도 기준일(월간 자료 10일 · KCCI 5일 · PortWatch 7일) 넘게 이전 값이면
+    실패 표시(soft_fail.txt → 낮 점검 알림)
 출력: docs/logistics.json
 §29-D: 출처가 준 값만 저장(추정값·임의 값 없음)
 """
@@ -33,10 +36,11 @@ SCRIPT = "logistics_fetch"
 OUT = "docs/logistics.json"
 KST = datetime.timezone(datetime.timedelta(hours=9))
 UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"}
-TIMEOUT = 40
+TIMEOUT = (15, 40)             # (연결, 읽기) 초 — 연결이 안 되는 곳은 빨리 포기
 WAR_START = "2026-02-28"                       # 전쟁 시작(미국·이스라엘의 이란 공격) — '전쟁 전' 비교 기준
 BASE_FROM, BASE_TO = "2026-01-01", "2026-02-27"   # 해협·항만 '전쟁 전 평균' 기간(일별 값 평균)
-STALE_ALERT_DAYS = 3                           # 한 자료가 이 일수 넘게 이전 값이면 실패 표시
+STALE_ALERT = {"kcs_sea_import": 10, "kcs_sea_export": 10, "kcs_air_import": 10,   # 이 일수 넘게 이전 값이면 실패 표시 —
+               "glp": 10, "kcci": 5, "choke": 7, "ports": 7}                        # 월간 자료는 열흘, 주간 자료는 5~7일
 
 # ① 관세청 수출입 운송비용 — 공공데이터포털 파일 데이터(월간)
 KCS = [  # (블록 키, 데이터 번호, 이름, 단위)
@@ -58,7 +62,8 @@ KCCI_NAMES = {"KCCI": "종합", "KUWI": "미주 서안", "KUEI": "미주 동안"
 
 # ③ IMF PortWatch — ArcGIS FeatureServer(무료, 키 없음)
 PW = "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/{}/FeatureServer/0/query"
-PW_FROM_YEAR = 2025            # 주별 값은 2025년부터(작년 같은 때와 비교)
+PW_FROM_YEAR = 2025            # 해협 주별 값은 2025년부터(작년 같은 때와 비교) — 항만은 2026년부터(최근 주·전쟁 전만 씀, 질의가 느림)
+PORTS_FROM_YEAR = 2026
 CHOKE = [("chokepoint6", "호르무즈 해협"), ("chokepoint4", "바브엘만데브 해협"),
          ("chokepoint1", "수에즈 운하"), ("chokepoint7", "희망봉")]
 PORTS = [("Busan", "부산"), ("Jebel Ali", "제벨알리"), ("Khor Fakkan", "코르파칸"), ("Fujairah", "푸자이라")]
@@ -66,7 +71,8 @@ PORTS = [("Busan", "부산"), ("Jebel Ali", "제벨알리"), ("Khor Fakkan", "�
 # ④ Sea-Intelligence 보도자료
 GLP_LIST = "https://www.sea-intelligence.com/press-room"
 GLP_SITE = "https://www.sea-intelligence.com"
-GLP_MAX_FETCH = 16             # 한 실행에 새로 읽는 기사 수 상한
+GLP_MAX_FETCH = 30             # 한 실행에 새로 읽는 기사 수 상한
+GLP_KEEP = 25                  # 보관하는 달 수(최근 2년)
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august",
           "september", "october", "november", "december"]
 
@@ -82,8 +88,12 @@ def soft_fail(msg):
         f.write(f"{SCRIPT}: {msg}\n")
 
 
+class NetError(RuntimeError):
+    """연결 안 됨·시간 초과·5xx — 잠시 뒤 다시 해 볼 만한 오류(형식 오류와 구분)"""
+
+
 def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
-    """GET(또는 data가 있으면 POST) — 연결 오류·5xx는 5초 뒤 한 번 더. 4xx는 바로 오류"""
+    """GET(또는 data가 있으면 POST) — 연결 오류·5xx는 5초 뒤 한 번 더(NetError). 4xx는 바로 RuntimeError"""
     err = None
     for k in range(tries):
         try:
@@ -100,7 +110,7 @@ def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
             err = e
             if k + 1 < tries:
                 time.sleep(5)
-    raise RuntimeError(f"{type(err).__name__}: {str(err)[:150]}")
+    raise NetError(f"{type(err).__name__}: {str(err)[:150]}")
 
 
 def clean(s):
@@ -178,11 +188,11 @@ def parse_kcs_csv(raw):
 
 
 def fetch_kcs_one(ds, name, unit):
-    page = http(KCS_PAGE.format(ds)).text
+    page = http(KCS_PAGE.format(ds), tries=1).text   # 연결이 안 되면 바로 넘김 — 실행 끝에 한 번 더(main)
     fid, fdate, mod, nxt = kcs_page_meta(page)
     if not fid:
         raise RuntimeError("화면에서 내려받기 번호(FILE_…)를 못 찾음")
-    raw = http(KCS_DOWN.format(fid), timeout=60).content
+    raw = http(KCS_DOWN.format(fid), timeout=(15, 60)).content
     cols, rows = parse_kcs_csv(raw)
     last = rows[-1]
     gap = (today_kst() - datetime.date.fromisoformat(last[0] + "-01")).days
@@ -341,7 +351,7 @@ def period_avg(rows, field, d0, d1):
 
 def pw_item(layer, where, fields, label):
     rows = pw_rows(layer, where, ["date"] + fields)
-    if len(rows) < 100:
+    if len(rows) < 60:
         raise RuntimeError(f"{label}: 일별 값 {len(rows)}개뿐")
     last = max(pw_date(a.get("date")) for a in rows)
     if (today_kst() - last).days > 30:
@@ -357,7 +367,7 @@ def fetch_pw(kind, prev):
         where = lambda i: f"portid='{i}' AND year>={PW_FROM_YEAR}"
     else:
         layer, fields, items = "Daily_Ports_Data", ["portcalls", "portcalls_container"], PORTS
-        where = lambda i: f"portname='{i}' AND year>={PW_FROM_YEAR}"
+        where = lambda i: f"portname='{i}' AND year>={PORTS_FROM_YEAR}"
     old = {x.get("id"): x for x in (prev or {}).get("items") or []}
     out, bad, kept = [], [], []
     for iid, name in items:
@@ -398,10 +408,13 @@ def is_glp(title):
     return bool(re.search(r"global\s+schedule\s+reliability", title, re.I))
 
 
-def parse_glp(page, title):
+def parse_glp(page, title=""):
     """GLP 월간 보도자료 → (자료 달 YYYY-MM, 정시율 %, 늦은 배 평균 지연 일 또는 None). 못 읽으면 ValueError
-    달: 제목의 달 이름(연도 없으면 발행 연도, 발행 달보다 뒤면 작년) → 없으면 발행 달의 전달(보도자료는 약 4주 뒤 나옴)
-    정시율: 제목의 'n%' → 없으면 본문에서 'schedule'이 든 첫 문장의 'to n%'"""
+    기사 제목 다음 본문의 전 세계 수치 첫 문장 — 'In August 2025, global industry schedule reliability … to 65.3%' ·
+    '… in July 2026 to 56.4%' · '… taking the May 2026 figure to 64.7%' · '… dropping the August figure to 49.9%' ·
+    'the January 2025 score of 51.5%'(선사·얼라이언스 문장, 제목·'Press Room' 머리는 뺌). 달 = 'the <달> (연도) figure/score'
+    또는 'in <달> <연도>'('since March 2026' 같은 다른 달은 안 봄 · 연도가 없으면 발행일로 — 발행 달보다 뒤면 작년).
+    지연 = 그 뒤 몇 문장 안의 'average delay … to/at <일> days'. 제목의 숫자는 쓰지 않음('65%-68%' 같은 범위가 있음)"""
     pm = (re.search(r'"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})', page)
           or re.search(r'property="datePublished"\s+content="(\d{4}-\d{2}-\d{2})', page)
           or re.search(r'"dateModified"\s*:\s*"(\d{4}-\d{2}-\d{2})', page)
@@ -409,42 +422,46 @@ def parse_glp(page, title):
     if not pm:
         raise ValueError("발행일 없음")
     pub = datetime.date.fromisoformat(pm.group(1))
-    tm = re.search(r"\b(" + "|".join(MONTHS) + r")\b(?:\s+(20\d\d))?", title, re.I)
-    if tm:
-        mo = MONTHS.index(tm.group(1).lower()) + 1
-        yr = int(tm.group(2)) if tm.group(2) else (pub.year if mo <= pub.month else pub.year - 1)
-    else:
-        prev = pub.replace(day=1) - datetime.timedelta(days=1)
-        yr, mo = prev.year, prev.month
-    body = clean(re.sub(r"(?is)<(script|style|head)[^>]*>.*?</\1>", " ", page))
-    rel = None
-    m = re.search(r"(\d{1,2}(?:\.\d+)?)\s?%", title)
-    if m:
-        rel = float(m.group(1))
-    sents = re.split(r"(?<=[.!?;])\s+", body)
-    if rel is None:
-        for s in sents:
-            m = re.search(r"\bto\s+(\d{1,2}(?:\.\d+)?)\s?%", s)
-            if m and re.search(r"schedule", s, re.I):
-                rel = float(m.group(1))
-                break
-    delay = None
-    for s in sents:
-        m = re.search(r"\bto\s+(\d{1,2}\.\d+)\s+days", s)
-        if m and re.search(r"delay", s, re.I):
-            delay = float(m.group(1))
+    body = clean(re.sub(r"(?is)<(script|style|head|nav|header|footer)[^>]*>.*?</\1>", " ", page))
+    i = body.find(title[:30]) if title else -1
+    if i < 0:
+        i = max(body.lower().find("published issue"), 0)
+    sents = re.split(r"(?<=[.!?;])\s+", body[i:i + 4000])   # 기사 앞부분만(옆·아래 다른 기사 소개 제외)
+    mon = "|".join(MONTHS)
+    ym = rel = None
+    k = 0
+    for k, snt in enumerate(sents):
+        if re.search(r"press room|published issue|carrier|alliance|gemini", snt, re.I):
+            continue
+        if not re.search(r"schedule reliability|figure|score", snt, re.I):
+            continue
+        v = re.search(r"\b(?:to|of|reached|at)\s+(\d{2}(?:\.\d+)?)\s?%(?!\s?[-‑–]\s?\d)", snt)   # '65%-68%' 범위는 안 읽음
+        m = (re.search(r"\bthe\s+(" + mon + r")(?:\s+(20\d\d))?\s+(?:figure|score)\b", snt, re.I)
+             or re.search(r"\bin\s+(" + mon + r")\s+(20\d\d)\b", snt, re.I))
+        if v and m:
+            mo = MONTHS.index(m.group(1).lower()) + 1
+            yr = int(m.group(2)) if m.group(2) else (pub.year if mo <= pub.month else pub.year - 1)
+            ym, rel = f"{yr}-{mo:02d}", float(v.group(1))
             break
-    if rel is None or not 15 <= rel <= 95:
-        raise ValueError(f"정시율을 못 읽음({rel})")
+    delay = None
+    for snt in sents[k:k + 8] if ym else []:
+        d = re.search(r"\b(?:to|at)\s+(\d{1,2}\.\d+)\s+days", snt)
+        if d and re.search(r"average delay", snt, re.I) and not re.search(r"carrier|alliance|gemini", snt, re.I):
+            delay = float(d.group(1))
+            break
+    if ym is None or not 15 <= rel <= 95:
+        raise ValueError(f"전 세계 정시율 문장을 못 찾음({rel})")
+    if not (pub - datetime.timedelta(days=130)).isoformat()[:7] <= ym <= pub.isoformat()[:7]:
+        raise ValueError(f"자료 달 {ym}이 발행일 {pub}와 맞지 않음")
     if delay is not None and not 1 <= delay <= 20:
         delay = None
-    return f"{yr}-{mo:02d}", rel, delay
+    return ym, rel, delay
 
 
 def fetch_glp(prev):
-    """목록에서 'Global Schedule Reliability' 기사 중 아직 없는 것만 읽음(처음엔 둘째 쪽까지 — 지난 1년)"""
+    """목록에서 'Global Schedule Reliability' 기사 중 아직 안 읽은 것만 읽음(처음엔 둘째 쪽까지 — 지난 2년, 한 번에 GLP_MAX_FETCH건까지)"""
     old = {r[0]: r for r in (prev or {}).get("months") or [] if r and r[0]}
-    skip = list((prev or {}).get("skip") or [])   # 읽었지만 쓰지 않은 기사(형식이 다름·같은 달 중복) — 매일 다시 받지 않게
+    skip = list((prev or {}).get("skip") or [])   # 읽었지만 쓰지 않은 기사(형식이 다름·같은 달 중복·보관 기간 지남) — 매일 다시 받지 않게
     known = {r[3] for r in old.values() if len(r) > 3} | set(skip)
     arts = glp_list(http(GLP_LIST).text)
     if not arts:
@@ -454,11 +471,12 @@ def fetch_glp(prev):
             arts += glp_list(http(GLP_LIST, params={"start": 100}).text)
         except Exception as e:
             log(f"  정시율 목록 둘째 쪽 실패: {str(e)[:120]}")
-    new, tried = dict(old), 0
-    for url, title in arts:
-        if not is_glp(title) or url in known or tried >= GLP_MAX_FETCH:
-            continue
-        tried += 1
+    todo = list(dict.fromkeys((u, t) for u, t in arts if is_glp(t) and u not in known))
+    if len(todo) > GLP_MAX_FETCH:
+        log(f"  정시율: 새 기사 {len(todo)}건 중 {GLP_MAX_FETCH}건만 읽음 — 나머지는 다음 실행에서")
+        todo = todo[:GLP_MAX_FETCH]
+    new = dict(old)
+    for url, title in todo:
         try:
             page = http(url).text
         except Exception as e:
@@ -479,28 +497,27 @@ def fetch_glp(prev):
         time.sleep(1)
     if not new:
         raise RuntimeError("정시율 기사를 하나도 못 읽음")
-    months = [new[k] for k in sorted(new)]
-    log(f"  정시율: {len(months)}달 · {months[0][0]}~{months[-1][0]} · 새로 읽은 기사 {tried}건")
+    keys = sorted(new)
+    for k in keys[:-GLP_KEEP]:   # 보관 기간(최근 GLP_KEEP달)이 지난 달 — 기사 주소를 skip에 넣어 다시 받지 않게
+        if len(new[k]) > 3 and new[k][3] not in skip:
+            skip.append(new[k][3])
+    months = [new[k] for k in keys[-GLP_KEEP:]]
+    log(f"  정시율: {len(months)}달 · {months[0][0]}~{months[-1][0]} · 새로 읽은 기사 {len(todo)}건")
     return {"months": months, "skip": skip[-200:]}
 
 
 # ───────────────────────── 실행 ─────────────────────────
-def run_block(key, label, fn, prev_all, out, status):
-    """블록 하나 — 성공하면 새 값(fetched = 오늘), 실패하면 이전 값 + stale_since(마지막 정상 수집일)"""
+def run_block(key, label, fn, prev_all, out, status, defer=False):
+    """블록 하나 — 성공하면 새 값(fetched = 오늘), 실패하면 이전 값 + stale_since(마지막 정상 수집일).
+    defer=True면 연결 오류(NetError)일 때 아무것도 기록하지 않고 False — main이 다른 자료를 다 받은 뒤 한 번 더 부름"""
     prev = prev_all.get(key)
     log(f"[{label}]")
     try:
         blk = fn(prev)
-        blk["fetched"] = today_kst().isoformat()
-        blk["label"] = label
-        out[key] = blk
-        inner = blk.pop("kept", []) or []
-        bad = blk.pop("failed", []) or []
-        if inner or bad:   # 해협·항만: 일부 항목만 이전 값·값 없음
-            status["kept"].append(f"{label}({'·'.join(inner + bad)})")
-        else:
-            status["ok"].append(label)
     except Exception as e:
+        if defer and isinstance(e, NetError):
+            log(f"  {label}: 연결 안 됨 — 다른 자료를 받은 뒤 한 번 더 ({str(e)[:150]})")
+            return False
         log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else ""))
         if prev:
             blk = dict(prev)
@@ -509,6 +526,17 @@ def run_block(key, label, fn, prev_all, out, status):
             status["kept"].append(label)
         else:
             status["failed"].append(label)
+        return True
+    inner = blk.pop("kept", []) or []
+    bad = blk.pop("failed", []) or []
+    blk["fetched"] = today_kst().isoformat()
+    blk["label"] = label
+    out[key] = blk
+    if inner or bad:   # 해협·항만: 일부 항목만 이전 값·값 없음
+        status["kept"].append(f"{label}({'·'.join(inner + bad)})")
+    else:
+        status["ok"].append(label)
+    return True
 
 
 def main():
@@ -522,12 +550,21 @@ def main():
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "war_start": WAR_START,
            "base_period": [BASE_FROM, BASE_TO]}
     status = {"ok": [], "kept": [], "failed": []}
+    later = []
     for key, ds, name, unit in KCS:
-        run_block(key, name, lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit), prev_all, out, status)
+        fn = lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit)
+        if not run_block(key, name, fn, prev_all, out, status, defer=True):
+            later.append((key, name, fn))
     run_block("kcci", "KCCI 부산발 운임", fetch_kcci, prev_all, out, status)
     run_block("choke", "해협 통과", lambda p: fetch_pw("choke", p), prev_all, out, status)
     run_block("ports", "항만 입항", lambda p: fetch_pw("ports", p), prev_all, out, status)
     run_block("glp", "전 세계 정시율", fetch_glp, prev_all, out, status)
+    if later:
+        log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
+        for key, name, fn in later:
+            run_block(key, name, fn, prev_all, out, status)
+    out = {k: out[k] for k in ["generated_at", "war_start", "base_period"] + [b[0] for b in KCS] +
+           ["kcci", "choke", "ports", "glp"] if k in out}   # 다시 받은 자료도 원래 순서로
     out["status"] = status
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
@@ -541,15 +578,14 @@ def main():
     old = []
     today = today_kst()
     for key, blk in out.items():
-        if not isinstance(blk, dict):
+        if not isinstance(blk, dict) or key not in STALE_ALERT:
             continue
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in blk.get("items") or [] if isinstance(x, dict)]
-        for s in ss:
-            if s and (today - datetime.date.fromisoformat(s)).days > STALE_ALERT_DAYS:
-                old.append(f"{blk.get('label') or key}({s}부터)")
-                break
+        ss = [s for s in ss if s]
+        if ss and (today - datetime.date.fromisoformat(min(ss))).days > STALE_ALERT[key]:
+            old.append(f"{blk.get('label') or key}({min(ss)}부터 · 기준 {STALE_ALERT[key]}일)")
     if old:
-        soft_fail(f"{STALE_ALERT_DAYS}일 넘게 이전 값: " + ", ".join(old))
+        soft_fail("오래 이전 값: " + ", ".join(old))
 
 
 if __name__ == "__main__":
