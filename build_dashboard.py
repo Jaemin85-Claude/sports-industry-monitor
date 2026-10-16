@@ -4,7 +4,7 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.5: (대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 에어는 인천 · 수입 수출 시 필요한 정보·추이는 모두 · 1번부터, 적출국은 홍콩·
        로테르담·두바이·벨기에 외에 글로벌 주요 물류 거점 순') 더보기 › 물류를 수입(적출 거점 → 부산 · 항공 → 인천) · 수출(부산 → 해외) ·
        공통 위험 신호(해협 · 중동 우회 항만 · 정시율 · 뉴스) 세 묶음으로(맨 위 칩으로 바로 가기). 수입 = 적출 거점 12곳(logistics_fetch v1.1 hubs —
-       홍콩·로테르담·두바이·앤트워프 → 상하이·싱가포르·닝보·선전·칭다오·LA·롱비치·포트클랑·함부르크) 컨테이너선 하루 입항(전쟁 전·1년 전 같은 주
+       홍콩·로테르담·두바이·앤트워프 → 상하이·싱가포르·닝보·선전·칭다오·LA/롱비치·포트클랑·함부르크) 컨테이너선 하루 입항(전쟁 전·1년 전 같은 주
        대비, 눌러서 추이·한국까지 길목(유럽 = 수에즈 쪽 비율, 두바이 = 호르무즈)·관세청 그 지역 한국향 운임) + 부산 도착 + 한국향 운임(관세청 수입,
        바닷길 부산 등·항공 인천 등). 수출 = KCCI 부산발 + 관세청 해상 수출(한국발 운임, 이미 받던 자료). 항만 입항 카드는 '중동 우회 항만'
        (제벨알리·코르파칸·푸자이라, 부산은 수입 위로). 맨 위 6칸 이름 정리(유럽→인천 항공 · 부산→중동 수출)
@@ -3346,7 +3346,7 @@ function lgKcsCard(key){   // key 없음 = 수입(바닷길·항공 칩, LG_KCS)
     return `<div class="cb-tr"><div class="h"><b>${esc(LG_KCS_LBL[c]||c)}</b><span class="num">${lgN(K.L[i])}</span></div>${lgSpark(pts,{accent:j===0,label:(LG_KCS_LBL[c]||c)+' 최근 24달'})}<div class="ax"><span>${lgMon(R24[0][0])}</span><span>${lgMon(K.L[0])}</span></div></div>`; }).join('')}</div>`;
   const tail=`매월 중순(15~19일쯤) 전달 자료(다음 등록 ${esc(K.B.next||'―')}) · 지난 값은 다음 해 2월까지 고쳐질 수 있음`;
   return h+(ex?`<div class="note">수출신고에 적힌 실제 운임 평균(40ft 컨테이너 1개 · 한국 항만 → 도착지) · ${tail} · 중동은 파일에 없음(부산 → 중동은 위 KCCI) · 점선 = 전쟁 시작</div>`
-    :`<div class="note">FOB 조건 수입신고의 실제 운임(할증료·주선 수수료 포함) 평균 — ${air?'항공 수입(인천공항이 대부분), 특송·우편 제외':'바닷길 수입(부산항이 가장 많음) · 단독 화주 40ft 컨테이너 1개(FCL)'} · ${tail} · 홍콩·중동·싱가포르는 파일에 없음 · 점선 = 전쟁 시작</div>`);
+    :`<div class="note">${air?'FOB 조건 수입신고의 kg당 운송비용 평균 — 인천공항 도착 항공 수입(특송·우편 제외)':'FOB 조건 수입신고의 실제 운임(할증료·수수료 포함) 평균 — 바닷길 수입(부산 등 전국 항만) · 단독 화주 40ft 컨테이너 1개(FCL, 소량 혼재 LCL 제외)'} · ${tail} · 홍콩·중동·싱가포르는 파일에 없음 · 점선 = 전쟁 시작</div>`);
 }
 /* KCCI 부산발(수출) — 중동·유럽 항로 운임 흐름 */
 const LG_KCCI=[['KMEI','부산 → 중동'],['KNEI','부산 → 북유럽'],['KMDI','부산 → 지중해'],['KUWI','부산 → 미주 서안'],['KUEI','부산 → 미주 동안'],['KCCI','종합 지수']];
@@ -3410,13 +3410,13 @@ function lgPortCard(){   // v33.5 '중동 우회 항만' — 제벨알리(걸프
   return h+`<div class="note">제벨알리(두바이)는 걸프 안쪽 — 호르무즈가 막히자 화물이 해협 밖 코르파칸·푸자이라(아랍에미리트 동해안)로 돌아 트럭으로 들어갑니다(대기 1~2주 보도)</div></div>`;
 }
 /* v33.5 적출 거점 → 부산(logistics_fetch v1.1 hubs — 대표가 정한 홍콩·로테르담·두바이·벨기에 다음 세계 컨테이너 물동량 순).
-   n = 이름(logistics_fetch HUBS와 같게 — 값 없음 줄 찾기) · c = 나라·항만 설명 · r = 한국까지 길목(eu 수에즈·홍해 또는 희망봉 · me 호르무즈 ·
+   n = 이름(logistics_fetch HUBS와 같게 — 값 없음 줄 찾기 · '·' 쓰지 않음) · c = 나라·항만 설명 · r = 한국까지 길목(eu 수에즈·홍해 또는 희망봉 · me 호르무즈 ·
    asia·sea·us 전쟁 길목 없음) · k = 관세청 운임 지역 [바닷길, 항공]. 순서 = 화면 순서 */
 const LG_HUB={'Hong Kong':{n:'홍콩',c:'홍콩 특별행정구',r:'asia'},'Rotterdam':{n:'로테르담',c:'네덜란드',r:'eu',k:['유럽연합','유럽연합']},
   'Jebel Ali':{n:'두바이',c:'아랍에미리트 · 제벨알리항',r:'me'},'Antwerp':{n:'앤트워프',c:'벨기에',r:'eu',k:['유럽연합','유럽연합']},
   'Shanghai':{n:'상하이',c:'중국 · 양산항 포함',r:'asia',k:['중국','중국']},'Singapore':{n:'싱가포르',c:'동남아 환적 거점',r:'sea'},
   'Ningbo':{n:'닝보',c:'중국',r:'asia',k:['중국','중국']},'Shenzhen':{n:'선전',c:'중국 · 옌톈·서커우',r:'asia',k:['중국','중국']},
-  'Qingdao':{n:'칭다오',c:'중국',r:'asia',k:['중국','중국']},'Los Angeles-Long Beach':{n:'LA·롱비치',c:'미국 서부',r:'us',k:['미국서부','미국']},
+  'Qingdao':{n:'칭다오',c:'중국',r:'asia',k:['중국','중국']},'Los Angeles-Long Beach':{n:'LA/롱비치',c:'미국 서부',r:'us',k:['미국서부','미국']},
   'Port Klang':{n:'포트클랑',c:'말레이시아',r:'sea'},'Hamburg':{n:'함부르크',c:'독일',r:'eu',k:['유럽연합','유럽연합']}};
 const lgChgI=(r,upGood)=>{ if(r==null||!isFinite(r)) return '<span class="na">―</span>';   // 정수 %(좁은 줄) — 두 배 넘으면 '×2.4'
   if(r>=2) return `<span class="${upGood==null?'':upGood?'pos':'neg'}">×${r.toFixed(1)}</span>`;
@@ -3433,31 +3433,32 @@ function lgRoute(r){   // 한국까지 길목 → [줄에 짧게, 펼친 설명]
   if(r==='me'){ const hz=lgItem('choke','chokepoint6'), w=lgWk(hz), b=(hz&&hz.base)||[];
     return [w&&w[2]!=null?`호르무즈 ${lgN(w[2],1)}척`:'호르무즈',
       `걸프 안쪽 항만이라 호르무즈 해협을 지나야 나옵니다 — 호르무즈 컨테이너선 하루 ${lgU(w&&w[2],'척',1)}(전쟁 전 ${lgU(b[1],'척',1)}). 해협 밖 코르파칸·푸자이라로 돌리는 길은 아래 '중동 우회 항만'`]; }
-  return ['전쟁 길목 없음',(r==='us'?'태평양을 바로 건너옵니다':r==='sea'?'남중국해를 따라 올라옵니다':'동아시아 가까운 바다')+' — 전쟁으로 막힌 길목을 지나지 않습니다'];
+  if(r==='us'||r==='sea'||r==='asia') return ['전쟁 길목 없음',(r==='us'?'태평양을 바로 건너옵니다':r==='sea'?'남중국해를 따라 올라옵니다':'동아시아 가까운 바다')+' — 전쟁으로 막힌 길목을 지나지 않습니다'];
+  return [null,null];   // 화면에 없는 거점(수집 목록만 늘어남) — 길목을 말하지 않음
 }
-function lgHubFreight(m){   // 관세청 한국향 운임(그 지역 · 최근 달) — 홍콩·중동·싱가포르·말레이시아는 파일에 없음
+function lgHubFreight(m){   // 관세청 한국향 운임(그 지역 · 최근 달) — 홍콩·중동·싱가포르·말레이시아는 파일에 없음. 바닷길·항공 지역이 다를 수 있어(미국 서부 · 미국) 따로 표시
   if(!m.k) return m.r==='me'?'관세청 파일에 중동은 없습니다(보도자료에만) — 부산 → 중동 수출 운임은 아래 수출의 KCCI 중동'
-    :m.r==='sea'?'관세청 파일에 싱가포르·말레이시아는 없습니다(동남아는 베트남만)':'관세청 파일에 홍콩은 따로 없습니다';
+    :m.r==='sea'?'관세청 파일에 싱가포르·말레이시아는 없습니다(동남아는 베트남만)':m.r==='asia'?'관세청 파일에 홍콩은 따로 없습니다':null;
   const f=(key,c,air)=>{ const K=lgKcs(key); if(!K) return null; const i=K.cols.indexOf(c)+1; if(i<1) return null;
-    return `${air?'항공':'바닷길'} ${lgU(K.L[i],air?'원/kg':'천원/40ft')}(${lgMon(K.L[0])} · 전쟁 전 ${lgChg(lgRatio(K.L[i],K.W&&K.W[i]),false)})`; };
+    return `${esc(LG_KCS_LBL[c]||c)}발 ${air?'항공':'바닷길'} ${lgU(K.L[i],air?'원/kg':'천원/40ft')}(${lgMon(K.L[0])} · 전쟁 전 ${lgChg(lgRatio(K.L[i],K.W&&K.W[i]),false)})`; };
   const a=[f('kcs_sea_import',m.k[0],false),f('kcs_air_import',m.k[1],true)].filter(Boolean);
-  return a.length?`${esc(LG_KCS_LBL[m.k[0]]||m.k[0])} → 한국 ${a.join(' · ')}`:'관세청 자료 수집 전';
+  return a.length?a.join(' · '):'관세청 자료 수집 전';
 }
 function lgHubRow(it){
-  const m=LG_HUB[it.id]||{c:'',r:'asia'}, w=lgWk(it), b=it.base||[], y=lgYa(it,w), W=it.weeks||[], rt=lgRoute(m.r);
-  return `<details class="lh"><summary><span class="lh-a"><span class="t">${esc(it.name)}</span><span class="s">${esc(m.c)} · ${esc(rt[0])}${staleTag(it.stale_since)}</span></span>
+  const m=LG_HUB[it.id]||{c:'',r:''}, w=lgWk(it), b=it.base||[], y=lgYa(it,w), W=it.weeks||[], rt=lgRoute(m.r), fr=lgHubFreight(m);
+  return `<details class="lh"><summary><span class="lh-a"><span class="t">${esc(it.name)}</span><span class="s">${esc([m.c,rt[0]].filter(Boolean).join(' · '))}${staleTag(it.stale_since)}</span></span>
     <span class="lh-b"><b class="num">${lgU(w&&w[2],'척',1)}</b><span class="s">전쟁 전 ${lgHubChg(w&&w[2],b[1])}</span><span class="s">1년 전 ${lgHubChg(w&&w[2],y&&y[2])}</span></span>${ic('down',16,'s2 lh-ic')}</summary>
     <div class="lh-in">${lgSpark(W.filter(x=>!w||x[0]<=w[0]).map(x=>[x[0],x[2]]),{min:0,label:it.name+' 컨테이너선 주별 입항'})}
       <div class="ax"><span>${W.length?lgYmW(W[0][0]):''}</span><span>${w?lgMd(w[0])+' 주':''}</span></div>
       <p>${w?lgMd(w[0])+' 주 ':''}하루 평균 — 컨테이너선 ${lgU(w&&w[2],'척',1)} · 모든 배 ${lgU(w&&w[1],'척',1)} · 전쟁 전 컨테이너선 ${lgU(b[1],'척',1)}${y?` · 1년 전 같은 주 ${lgU(y[2],'척',1)}`:''}</p>
-      <p><b>한국까지 길목</b> ${esc(rt[1])}</p><p><b>한국향 운임</b> ${lgHubFreight(m)}</p></div></details>`;
+      ${rt[1]?`<p><b>한국까지 길목</b> ${esc(rt[1])}</p>`:''}${fr?`<p><b>한국향 운임</b> ${fr}</p>`:''}</div></details>`;
 }
 function lgHubCard(){
   const B=LOGI&&LOGI.hubs, P=LOGI&&LOGI.ports;
-  let h=`<div class="card" id="lgHubs"><h3>적출 거점 → 부산 <span class="na" style="font-weight:400">IMF PortWatch · 컨테이너선 하루 평균 입항 · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
+  let h=`<div class="card" id="lgHubs"><h3>적출 거점 → 부산 <span class="na" style="font-weight:400">IMF PortWatch · 그 항만 컨테이너선 하루 입항(한국행만 아님) · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
   const bu=lgItem('ports','Busan'), bw=lgWk(bu), bb=(bu&&bu.base)||[], by=lgYa(bu,bw);   // 도착항 부산
-  if(bu) h+=`<div class="lg-share lg-bu"><div><span>부산 도착${staleTag(bu.stale_since)}</span><b class="num">${lgU(bw&&bw[2],'척',1)}</b><span class="na">컨테이너선 하루${bw?' · '+lgMd(bw[0])+' 주':''}</span></div>
-    <div class="lh-b"><span class="s">전쟁 전 ${lgU(bb[1],'척',1)} ${lgHubChg(bw&&bw[2],bb[1])}</span><span class="s">1년 전 ${lgU(by&&by[2],'척',1)} ${lgHubChg(bw&&bw[2],by&&by[2])}</span></div>
+  if(bu) h+=`<div class="lg-share lg-bu"><div><span>부산 도착</span><b class="num">${lgU(bw&&bw[2],'척',1)}</b><span class="na">컨테이너선 하루${bw?' · '+lgMd(bw[0])+' 주':''}</span></div>
+    <div class="lh-b"><span class="s">전쟁 전 ${lgU(bb[1],'척',1)} ${lgHubChg(bw&&bw[2],bb[1])}</span><span class="s">1년 전 ${lgU(by&&by[2],'척',1)} ${lgHubChg(bw&&bw[2],by&&by[2])}</span>${staleTag(bu.stale_since||(P&&P.stale_since))}</div>
     <div class="lg-bux">바닷길 수입 컨테이너가 가장 많이 들어오는 항만 · 항공 화물은 인천공항</div></div>`;
   else if(lgMiss(P).includes('부산')) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> 부산 도착</div>`;
   if(!B||!B.items||!B.items.length) return h+'<div class="na">적출 거점 자료 수집 전 — 다음 갱신 후 표시</div></div>';
@@ -3467,7 +3468,7 @@ function lgHubCard(){
   h+=`<div class="lh-list">${ids.map(id=>hid[id]?lgHubRow(hid[id]):ms.includes(LG_HUB[id].n)?missRow(LG_HUB[id]):'').join('')}${B.items.filter(it=>!LG_HUB[it.id]).map(lgHubRow).join('')}</div>`;
   const msx=ms.filter(nm=>!ids.some(id=>LG_HUB[id].n===nm));
   if(msx.length) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> ${esc(msx.join(', '))}</div>`;
-  return h+`<div class="note">순서 = 홍콩·로테르담·두바이·벨기에, 그다음 세계 컨테이너 물동량 순 · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 넘게 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(중국 항만은 춘절 기간이 끼어 있어 1년 전 같은 주와 함께 봄) · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임</div></div>`;
+  return h+`<div class="note">순서 = 홍콩·로테르담·두바이·벨기에, 그다음 세계 컨테이너 물동량 순 · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 이상 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(중국 항만은 춘절 기간이 끼어 있어 1년 전 같은 주와 함께 봄) · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임</div></div>`;
 }
 /* 전 세계 정시율 — Sea-Intelligence GLP(월) */
 function lgGlp(){ const B=LOGI&&LOGI.glp; if(!B||!B.months||!B.months.length) return null;
@@ -3517,7 +3518,7 @@ function moreLogiHtml(){
   const sec=(id,t,sub)=>`<h2 class="lg-h2" id="${id}">${t}<span>${sub}</span></h2>`;
   h+=sf('요약',lgKpis);
   h+=`<div class="chips lg-jump">${[['lgImp','수입'],['lgExp','수출'],['lgRisk','공통 위험 신호']].map(([id,t])=>`<button type="button" class="chip" onclick="lgJump('${id}')">${t}${ic('down',16)}</button>`).join('')}</div>`;
-  h+=`<div class="cb-read"><b>읽는 법</b> — ① 수입: 적출 거점 입항이 줄면 그 항만이 막히거나 배가 빠진 것이고, 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 항만, 항공은 인천공항이 대부분). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고). ③ 공통 위험 신호: 해협 통과·중동 우회 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.</div>`;
+  h+=`<div class="cb-read"><b>읽는 법</b> — ① 수입: 적출 거점 입항이 줄면 그 항만이 막히거나 배가 빠진 것이고, 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고). ③ 공통 위험 신호: 해협 통과·중동 우회 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.</div>`;
   h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
   h+=sec('lgExp','수출','부산 → 해외')+sf('부산발 운임',lgKcciCard)+sf('한국발 운임',()=>`<div class="card">${lgKcsCard('kcs_sea_export')}</div>`);
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 우회 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
