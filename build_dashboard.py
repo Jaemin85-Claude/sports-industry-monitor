@@ -3412,9 +3412,9 @@ function lgPortCard(){   // v33.5 '중동 우회 항만' — 제벨알리(걸프
 /* v33.5 적출 거점 → 부산(logistics_fetch v1.1 hubs — 대표가 정한 홍콩·로테르담·두바이·벨기에 다음 세계 컨테이너 물동량 순).
    n = 이름(logistics_fetch HUBS와 같게 — 값 없음 줄 찾기) · c = 나라·항만 설명 · r = 한국까지 길목(eu 수에즈·홍해 또는 희망봉 · me 호르무즈 ·
    asia·sea·us 전쟁 길목 없음) · k = 관세청 운임 지역 [바닷길, 항공]. 순서 = 화면 순서 */
-const LG_HUB={'Hong Kong':{n:'홍콩',c:'홍콩',r:'asia'},'Rotterdam':{n:'로테르담',c:'네덜란드',r:'eu',k:['유럽연합','유럽연합']},
+const LG_HUB={'Hong Kong':{n:'홍콩',c:'홍콩 특별행정구',r:'asia'},'Rotterdam':{n:'로테르담',c:'네덜란드',r:'eu',k:['유럽연합','유럽연합']},
   'Jebel Ali':{n:'두바이',c:'아랍에미리트 · 제벨알리항',r:'me'},'Antwerp':{n:'앤트워프',c:'벨기에',r:'eu',k:['유럽연합','유럽연합']},
-  'Shanghai':{n:'상하이',c:'중국 · 양산항 포함',r:'asia',k:['중국','중국']},'Singapore':{n:'싱가포르',c:'싱가포르',r:'sea'},
+  'Shanghai':{n:'상하이',c:'중국 · 양산항 포함',r:'asia',k:['중국','중국']},'Singapore':{n:'싱가포르',c:'동남아 환적 거점',r:'sea'},
   'Ningbo':{n:'닝보',c:'중국',r:'asia',k:['중국','중국']},'Shenzhen':{n:'선전',c:'중국 · 옌톈·서커우',r:'asia',k:['중국','중국']},
   'Qingdao':{n:'칭다오',c:'중국',r:'asia',k:['중국','중국']},'Los Angeles-Long Beach':{n:'LA·롱비치',c:'미국 서부',r:'us',k:['미국서부','미국']},
   'Port Klang':{n:'포트클랑',c:'말레이시아',r:'sea'},'Hamburg':{n:'함부르크',c:'독일',r:'eu',k:['유럽연합','유럽연합']}};
@@ -3467,7 +3467,7 @@ function lgHubCard(){
   h+=`<div class="lh-list">${ids.map(id=>hid[id]?lgHubRow(hid[id]):ms.includes(LG_HUB[id].n)?missRow(LG_HUB[id]):'').join('')}${B.items.filter(it=>!LG_HUB[it.id]).map(lgHubRow).join('')}</div>`;
   const msx=ms.filter(nm=>!ids.some(id=>LG_HUB[id].n===nm));
   if(msx.length) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> ${esc(msx.join(', '))}</div>`;
-  return h+`<div class="note">순서 = 홍콩·로테르담·두바이·벨기에, 그다음 세계 컨테이너 물동량 순 · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 넘게 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(춘절이 끼어 중국 항만은 낮게 잡힘 → 1년 전 같은 주와 함께 봄) · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임</div></div>`;
+  return h+`<div class="note">순서 = 홍콩·로테르담·두바이·벨기에, 그다음 세계 컨테이너 물동량 순 · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 넘게 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(중국 항만은 춘절 기간이 끼어 있어 1년 전 같은 주와 함께 봄) · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임</div></div>`;
 }
 /* 전 세계 정시율 — Sea-Intelligence GLP(월) */
 function lgGlp(){ const B=LOGI&&LOGI.glp; if(!B||!B.months||!B.months.length) return null;
