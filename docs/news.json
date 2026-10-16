@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-16 09:59 KST",
+ "generated_at": "2026-10-16 10:07 KST",
  "today": "2026-10-16",
  "items": [
   {
@@ -3628,22 +3628,6 @@
    "dchk": "a"
   },
   {
-   "id": "05cda757b7e0",
-   "scope": "brand",
-   "key": "adidas",
-   "label": "아디다스",
-   "group": "sports",
-   "category": "brand",
-   "summary": "아디다스가 2분기 실적에서 호조를 기록했다.",
-   "importance": 2,
-   "title": "아디다스, 2분기 실적 ‘금메달’ - fpost.co.kr",
-   "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPdU9Ed0VuVnY2MGRkUGhveGRJVGNSZ3l1M3BKcVN3NU9nekVaQ3o0MUpCOEJ3bFpTZHFtTW1mYnZuR29LU1dwVlhaV2VXWkREWGFFSDVQeG1wWklnN2lGbkQ0LWUxREQ1bF9wMVhub1BkaFcteEJJanV4LTJ2SVdWQTJudW83clBqcUxqUDdsRzQxd1hidnQzcksxcmNHdjRRRC1pNERRZHFrcExYQjVZLQ?oc=5",
-   "source": "fpost.co.kr",
-   "pubDate": "Sat, 03 Oct 2026 21:28:47 GMT",
-   "first_seen": "2026-10-06",
-   "dchk": "a"
-  },
-  {
    "id": "54fd72a916b8",
    "scope": "brand",
    "key": "on",
@@ -3656,22 +3640,6 @@
    "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE0xUnptS0JIb3RMWHhzNGNXMmZNVFFkckNvQ0MtSUVTeVlQLXJQNzNlSlN1N2o4QzBKREVDR1FFamZnMS04NU1XQUpxQUIyQTBaUzB6US0yWFJ2czNKSjdnMVRRUFBQOVE1VXhqVXpUYm1PVUU?oc=5",
    "source": "어패럴뉴스",
    "pubDate": "Mon, 05 Oct 2026 13:35:06 GMT",
-   "first_seen": "2026-10-06",
-   "dchk": "a"
-  },
-  {
-   "id": "c887d3574152",
-   "scope": "brand",
-   "key": "columbia",
-   "label": "컬럼비아",
-   "group": "sports",
-   "category": "brand",
-   "summary": "미국 컬럼비아가 디지털 역량 강화에 나선다.",
-   "importance": 2,
-   "title": "미국 컬럼비아, 디지털 역량 강화한다 - fpost.co.kr",
-   "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPX21kckZnNi04am1Fd3F2dUxzZU9Fd2Z1cUUxQVlobFhuVE9HaUU2SFFjNXA0N2FRUmtMLUk4YUFiVkVva0JBeThnRGVkbFBzZW5XcnVTeHFyc016eXZ6TlpfdWF2ekxBeUlCNGE3ZUZFZHJLQWxMSGtQM05OTTZVN0pWbFZyQQ?oc=5",
-   "source": "fpost.co.kr",
-   "pubDate": "Sat, 03 Oct 2026 04:18:54 GMT",
    "first_seen": "2026-10-06",
    "dchk": "a"
   },
@@ -3705,7 +3673,8 @@
    "source": "fpost.co.kr",
    "pubDate": "Sat, 03 Oct 2026 06:19:32 GMT",
    "first_seen": "2026-10-06",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/newsinnews#8902"
   },
   {
    "id": "c31204ec471c",
@@ -3768,22 +3737,6 @@
    "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQYjR3dGxja0lLSjNic3RPOUxCbFhBNGVreW94STBRdVJWRXVQQURSalZrSGt4TU54SzVrN0FMV1E4VGpWODkxaFlndkUzOFNFalFhNGxXVjlrLWo5ZXBTREh2Y1VXdHMzRjZMZjNIVjlLVXdNYWZNQjQ4bWxIOUN2Ug?oc=5",
    "source": "edaily.co.kr",
    "pubDate": "Mon, 05 Oct 2026 20:50:03 GMT",
-   "first_seen": "2026-10-06",
-   "dchk": "a"
-  },
-  {
-   "id": "fed225fe946a",
-   "scope": "industry",
-   "key": "sports",
-   "label": "스포츠·아웃도어 트렌드",
-   "group": "sports",
-   "category": "brand",
-   "summary": "'2XU(투엑스유)'가 유통망 확대를 본격화하고 있다.",
-   "importance": 2,
-   "title": "‘2XU(투엑스유)’ 유통망 확대 본격화 - fpost.co.kr",
-   "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQNlFnRjA4d0x3RXF2dXNxd3dXUF9yS1RVc1RwQWY4Z0tVNlkyT3dqTmZCblJqX0pYYUZHTUF3djFCdmdJTjB1aEswZDdZZHNBTVA3bFhGQ0xJSHFuTzFLLWtMYVRJRnNPTkVoMUo1UVdkWUE0TTJnTEtqTXMzLUJvalRjTl9mYzQ5TDZCTkhOeC1EMWtUY3NLYzhEQkZ6c3RPbm9VYg?oc=5",
-   "source": "fpost.co.kr",
-   "pubDate": "Sat, 03 Oct 2026 09:07:38 GMT",
    "first_seen": "2026-10-06",
    "dchk": "a"
   },
@@ -4298,7 +4251,8 @@
    "source": "fpost.co.kr",
    "pubDate": "Sat, 03 Oct 2026 17:35:27 GMT",
    "first_seen": "2026-10-06",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/newsinnews#9002"
   },
   {
    "id": "886e27246548",
@@ -4330,7 +4284,8 @@
    "source": "fpost.co.kr",
    "pubDate": "Sat, 03 Oct 2026 17:14:59 GMT",
    "first_seen": "2026-10-06",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/newsinnews#8565"
   },
   {
    "id": "a3d4a9fb5f07",
@@ -4539,23 +4494,6 @@
    "pubDate": "Sun, 04 Oct 2026 09:02:00 GMT",
    "first_seen": "2026-10-05",
    "dchk": "a"
-  },
-  {
-   "id": "b69c9121ed9d",
-   "scope": "brand",
-   "key": "lululemon",
-   "label": "룰루레몬",
-   "group": "sports",
-   "category": "retail",
-   "summary": "룰루레몬이 부산 신세계백화점 센텀시티에 부산 첫 매장을 오픈했다.",
-   "importance": 2,
-   "title": "룰루레몬, 부산 첫 상륙…신세계百 센텀시티 오픈 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1XWnpYU05jUk1DczZmMTBSV1BiWlNhejF2QjVlc1dybm1XdFJHRzFNWDdBTjZGWDRacW8xeUdTX3B1UVhfR2podTk1SzM2UTJnODl4QjFaQkptbF8ybmw1WVk3NUlpT3BoVUFWREFGVnBsUlQ1Nlg5OUpuM1hYS1E?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Fri, 02 Oct 2026 13:08:48 GMT",
-   "first_seen": "2026-10-05",
-   "dchk": "ap",
-   "wr": "fpost.co.kr/today#5265"
   },
   {
    "id": "0ca22de25810",
@@ -5732,22 +5670,6 @@
    "dchk": "a"
   },
   {
-   "id": "d61bf827e812",
-   "scope": "brand",
-   "key": "hoka",
-   "label": "호카·어그(데커스)",
-   "group": "sports",
-   "category": "brand",
-   "summary": "신세계인터내셔날이 취급하는 어그 부츠 매출이 89% 증가했다.",
-   "importance": 2,
-   "title": "신세계인터, '어그' 부츠 매출 89% 증가 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxOaEwwalJTWHd3bGpxLXhOV2RzcFIyS2p5S3JmdndMb3I2bXRaZzB1LW96ZGEzc0VEZUxoeDJpMFp1RjQ2Q3B2SXp2Wk5pcHN3dF9FejlyYXljLTEwVXktTXFPdG9HTEFIbjRaMWlPX0M0bkpKa1JHRFEzQkRfbXFuN24yQlk?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 11:00:40 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
    "id": "126f618aaa2a",
    "scope": "brand",
    "key": "ua",
@@ -5765,70 +5687,6 @@
    "wr": "fpost.co.kr/special#1376"
   },
   {
-   "id": "bf4d24a7c706",
-   "scope": "brand",
-   "key": "ua",
-   "label": "언더아머",
-   "group": "sports",
-   "category": "brand",
-   "summary": "언더아머가 3분기 매출 16억 달러로 전년 대비 3% 증가를 기록했다.",
-   "importance": 2,
-   "title": "언더아머, 3분기 3% 증가한 16억 달러 매출 기록 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNbEFQYUdTcWtoUThOMGxSQ2hjbVVUelo0dk1sZkF6c0lLcmg0YUVCUnpxNDV5aGo2UUc5c1N1M3FWanhWdVU0WndKQm9jWUllN2lpb0ppTjQxUVd6X1NrZXJKUWNVX0hzNXpZTXRLYkJ1c3RnR2xNcU1RY1B1VHBLODNVRGU4Zw?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 22:08:22 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "443e34ca2021",
-   "scope": "brand",
-   "key": "ua",
-   "label": "언더아머",
-   "group": "sports",
-   "category": "brand",
-   "summary": "언더아머의 운동화 매출이 신장세를 보이고 있다.",
-   "importance": 2,
-   "title": "언더아머, 운동화 매출 신장세 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNM3p2NHJPVTc2dmtLMXA0Qk42YlZhRkdxYTQyWURBVTVMMGhwQWhXQmVsSWF1UUpuUTJ0SmFXTEhEMmxDWHRleXRKQzBnNm9FZDhLdWhQMlFwLWhBbFh2Q1hPTTlfMzB4a0stTlVVdjlxMVhvZkZ6bGR0U0oydkZaN1hqVy0?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 11:07:36 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "ebb7d9e8e3e6",
-   "scope": "brand",
-   "key": "mizuno",
-   "label": "미즈노",
-   "group": "sports",
-   "category": "brand",
-   "summary": "미즈노와 데상트가 상반기 최고 이익을 갱신했다.",
-   "importance": 2,
-   "title": "미즈노, 데상트 상반기 최고 이익 갱신 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOaVpCa2RjcTgzV3NQel9FWFllcmhMU2JUQlh4V0tyaVAyMm40bEVmWUZ4aG5ON29hVTh3UTh3eTRhcFFKYlVQSVlWRkRLWkJHZkZIUVlQVVNkQkRFYmpIblE2RnpPdGdRMWtoWnlEWHh2bDIzZ2ptLXVDVDhVUl9aZ3I3TnAyUQ?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 00:57:07 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "75aadecc373d",
-   "scope": "brand",
-   "key": "columbia",
-   "label": "컬럼비아",
-   "group": "sports",
-   "category": "brand",
-   "summary": "컬럼비아 스포츠웨어의 3분기 누계 매출이 19억 9700만 달러를 기록했다.",
-   "importance": 2,
-   "title": "컬럼비아, 3분기 누계 19억 9700만 달러 기록 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPMENwbTBzQW5VRjVwVjl0emZINy0xRGNWWjdYaHZiUl9LcF9hNGpLYlFZN05yYll5eF9ubFhqTmVfNlZBNFN4a0s3R19aRHExMzdBZHRxcmdlaHE2ZmFMVDBtRVQ5OS1vNXFONmtIMmFxN2FZQlZ3TFBxZUlyeHZ4RXIzWDZiOEhrc3BIbkdzbXFMMmtOWXhLNTItZGtiblJLb2hZWGxZTTRRRmc?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 07:27:14 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
    "id": "3c1966ee9662",
    "scope": "brand",
    "key": "patagonia",
@@ -5844,54 +5702,6 @@
    "first_seen": "2026-10-02",
    "dchk": "ap",
    "wr": "fpost.co.kr/newsinnews#8192"
-  },
-  {
-   "id": "4b077fc9fa70",
-   "scope": "brand",
-   "key": "patagonia",
-   "label": "파타고니아",
-   "group": "sports",
-   "category": "brand",
-   "summary": "파타고니아가 자외선 차단용 제품을 자발적으로 리콜했다.",
-   "importance": 2,
-   "title": "파타고니아, 자외선 차단용 제품 자발적 리콜 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxPV2l0X05kaklQcUF1ZldDMzhjSzlsUjVjU0tScEFKMGJXM0lmbnVwVjRvNktOUDNOMlZtak9WXzF4djZGdU1zcE5jQklKbDdoMzZvMVZjSFhFTUctaHRkOVd2cVRkcE9IcHN1MmZxb0VseFpEX2lIbDZZMWphY2lEemd5Y012UQ?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 23:45:07 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "40fe533d9662",
-   "scope": "brand",
-   "key": "burberry",
-   "label": "버버리",
-   "group": "luxury",
-   "category": "brand",
-   "summary": "버버리가 모피에 이어 가죽 사용도 중단하기로 결정했다.",
-   "importance": 2,
-   "title": "버버리, 모피 이어 가죽 사용 중단 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNM29zc09nZGRYVmgwZ3JhektKa04wQzZSNVRyMkY3WGtjNEhvSjZmMnJLS3czc3dqVDFGdGdoWG9WVjRRYmJxQVhJS3J3NW1YZGlfMVlvM3B6Q25nX0pKczVtTW1KWDJYMlYxUmJkNDgzcEVkbEFhTXlGN0xMQUx5amNDekFIQQ?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 22:32:04 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "e8cef3682537",
-   "scope": "brand",
-   "key": "prada",
-   "label": "프라다/미우미우",
-   "group": "luxury",
-   "category": "brand",
-   "summary": "프라다가 아시아 지역에서 판매가 증가하고 온라인 매출이 급등했다.",
-   "importance": 2,
-   "title": "프라다, 아시아에서 판매 증가…온라인 매출 급등 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE0zVWt0bzZzYlBLMktSNWdPTFBISjg1U1hEZ3FoTnkwekVLb3BRdzc0UnFBbHF6a0Fhdi15U0t0NkRlSFRjVDFtVFhMa1lDWXl4SGx5clhoak82b2JoaHNkWjNqSkpUUXp2bXI1bEw1MmN5bnlSQ1BCZVZuRUUyZGc?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 22:20:23 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
   },
   {
    "id": "780ac8788a78",
@@ -5974,22 +5784,6 @@
    "dchk": "a"
   },
   {
-   "id": "b60a156e5b88",
-   "scope": "brand",
-   "key": "jd",
-   "label": "JD스포츠",
-   "group": "retail",
-   "category": "retail",
-   "summary": "영국 JD스포츠가 풋어사일럼의 지분을 인수했다.",
-   "importance": 2,
-   "title": "英 JD스포츠, 풋어사일럼 지분 인수 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPbU1RbmE0SWd0cldFaHhoQ0hiOUdXdVN3aU9obTIzRkNweXJ2dXBfb0FLUWVMdXJRdzVmR2pMVHlyby1rMEtiWlRVZldpR2NtbE44X0Y2MXVPX25rVGJXdUhDTnNpX1RUUlctUXZhVlkxT0VpdE1ER3ZsTWs2NHRIN3hxYw?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 02:11:19 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
    "id": "eaa920ce4556",
    "scope": "brand",
    "key": "on",
@@ -6002,38 +5796,6 @@
    "link": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9UR0JzUF9JZEEyWTZzdmFqZjd1V3gxRWl4bTdaMUszc05MNGh3U2kySTNZNzZOdUVNbmxOOU93NVpDZ2VwNHlhQ3BGbw?oc=5",
    "source": "v.daum.net",
    "pubDate": "Tue, 29 Sep 2026 22:01:42 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "758e94d2e613",
-   "scope": "industry",
-   "key": "sports",
-   "label": "스포츠·아웃도어 트렌드",
-   "group": "sports",
-   "category": "sports",
-   "summary": "국내 골프웨어 브랜드 왁이 일본 니티 컴퍼니와 용품 라이선스 계약을 체결했다.",
-   "importance": 2,
-   "title": "'왁' 일본 니티 컴퍼니와 용품 라이선스 계약 체결 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE85R0huRXFDSWxkZWh1TkFIQzFBcWw1bnhXZUw5YjFqVjRYSldERW9pbVJlb1ZYV1VFTm0zenBwZGFCRl9hLV85TWsta245X0MwX3pCYzFYeDI2RkZ2dWhPNEZ6Y1BzZTM5ZHdVR2Z4V201WlNObXRXaUN2MFJOZHM?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 23:04:22 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "8b6d6be91ecc",
-   "scope": "industry",
-   "key": "sports",
-   "label": "스포츠·아웃도어 트렌드",
-   "group": "sports",
-   "category": "sports",
-   "summary": "골프웨어 브랜드 '스릭슨'이 국내에서 베일을 벗었다.",
-   "importance": 2,
-   "title": "골프웨어 ‘스릭슨’ 베일 벗다 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNV3RzcE1pcFNsdUNvaFRmQ0tnUmEzOS1oVmdvQUxxdXhYOG9qaXh2TmJTNnhESmFFcWpocDBUbVhIaUN1UTVJR1JIdXNHai1XRndDWENXcE90b3ROS010cmdKd0xWTjY0WlFNMjk4UV84cU9uaWpQZXpxWmRQY1FmNEdhVQ?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 05:51:46 GMT",
    "first_seen": "2026-10-02",
    "dchk": "a"
   },
@@ -6118,22 +5880,6 @@
    "dchk": "a"
   },
   {
-   "id": "869d60348c23",
-   "scope": "brand",
-   "key": "kitsune",
-   "label": "메종키츠네",
-   "group": "fashion",
-   "category": "retail",
-   "summary": "무신사가 라이브 방송을 통해 럭셔리 브랜드 판매를 확대하고 있다.",
-   "importance": 2,
-   "title": "무신사, 라방으로 럭셔리 브랜드 판매 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTE1ad1h5QWl6V0E0X1B4V1dYeXg5d3R6MjkwWlhPZ3ZpSVcxQ2FSVWpENFYxOW9MY0FlbXZHdEx4Q3RMYVNGeGFacWxucktlQ2VoWDlsTFkzOG93d2NjMDlxSWkzbHhxVEk5RzkzNjBPbVllY0tsZVFsOE5KT05wSVk?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 06:44:54 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
    "id": "4bfbc21220b6",
    "scope": "brand",
    "key": "columbia",
@@ -6146,22 +5892,6 @@
    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5EQjZkbEtocUdkdVdBc3gzcjVfeDB5bWNjVE1iUFdrbGJDWTVGMGRyNnBVbmQ0UVI2cFA0empnaGlySDNHT3l5QUNjWldjM05oc0R2alFhWEpJZkpYeU1sRHNzQ0pJOUNSbFlYWDQ5TUE?oc=5",
    "source": "kr.investing.com",
    "pubDate": "Tue, 29 Sep 2026 11:13:00 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "eb94afcc106e",
-   "scope": "brand",
-   "key": "columbia",
-   "label": "컬럼비아",
-   "group": "sports",
-   "category": "brand",
-   "summary": "컬럼비아 스포츠웨어가 글로벌 시장에서 호조를 보이고 있다.",
-   "importance": 1,
-   "title": "글로벌에서 잘나가는 ‘컬럼비아’ - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQdEs0Y3pkMUlhc2sxWDNpTFlpMzdOTTQzd3pUWEFhOVJhMldpRnRuRFBxa1g1cUVwMnh5T3BYcTktaGNnQldBVk5fb1Bmb0hya1JLV3l2MHdyVERfLWtfYmVHOVEzZ3pkWDdTc2IwVno2aWYwdkV2Ri1vSk4yODUyMHFnMFc?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 22:44:26 GMT",
    "first_seen": "2026-10-02",
    "dchk": "a"
   },
@@ -6179,7 +5909,8 @@
    "source": "패션포스트",
    "pubDate": "Wed, 30 Sep 2026 00:56:40 GMT",
    "first_seen": "2026-10-02",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/today#8622"
   },
   {
    "id": "bee2eac64a45",
@@ -6195,7 +5926,8 @@
    "source": "패션포스트",
    "pubDate": "Wed, 30 Sep 2026 21:00:26 GMT",
    "first_seen": "2026-10-02",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/newsinnews#8902"
   },
   {
    "id": "0f7ddd42ec17",
@@ -6211,23 +5943,8 @@
    "source": "패션포스트",
    "pubDate": "Wed, 30 Sep 2026 05:33:27 GMT",
    "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "dbe022c07a28",
-   "scope": "brand",
-   "key": "goldengoose",
-   "label": "골든구스",
-   "group": "luxury",
-   "category": "brand",
-   "summary": "골든구스가 서울 플래그십 오픈 1주년을 기념해 전시회를 개최했다.",
-   "importance": 1,
-   "title": "골든구스, 서울 플래그십 오픈 1주년 기념 전시 개최 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBmMl9Pc21UaFd5Qmt1TGFLejZlRFVIZHF2UFItVmQyOVlfaS1xaGNEZTZfNlpId2J2YlJtVVNDS29rbnBtOS1rTDdGSDlYcnYzXzNMN3A2YUxmQWdtODRYdERBb0ZvNnBycUozNUZxUWRfZ1N2bEFZdmJGZXFkY2c?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Wed, 30 Sep 2026 03:09:26 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
+   "dchk": "ap",
+   "wr": "fpost.co.kr/today#7266"
   },
   {
    "id": "6c9d3539f511",
@@ -6242,22 +5959,6 @@
    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTFBTTW1QdGlPOTU1X2pxSV9uQWNobWdVcmNMb1V3Y1p1eDh5T1pXNFkwTEc5YTM3dkVpT2NRejZkTUpDYWFEV0dmTGN6N3VWZmJudjY0UEgwRGhlTzRsd1NBcXc2Y2ZaUQ?oc=5",
    "source": "싱글리스트",
    "pubDate": "Tue, 29 Sep 2026 14:39:21 GMT",
-   "first_seen": "2026-10-02",
-   "dchk": "a"
-  },
-  {
-   "id": "95329d6fc530",
-   "scope": "brand",
-   "key": "fitflop",
-   "label": "핏플랍",
-   "group": "fashion",
-   "category": "brand",
-   "summary": "LF가 임원 인사를 단행해 황하주 상무를 승진시켰다.",
-   "importance": 1,
-   "title": "LF, 임원인사…황하주 상무 승진 - 패션포스트",
-   "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQUU1qQkVyRmlBRU10LVZvbmJIOEVKbFZNRlJuYkQ0ZDRyenYxMlNCeGtNakRWMkdUcVZEUWF5d3ItMngyRzQtU2VCWDdKWUxwcTRTM2U2NDVMMl8xaDcxbkVXVG5QdzdkSDBQRy01M3V4bmFLU1FnN29EVF9IQkx2SlZBMHg?oc=5",
-   "source": "패션포스트",
-   "pubDate": "Tue, 29 Sep 2026 21:20:21 GMT",
    "first_seen": "2026-10-02",
    "dchk": "a"
   }
@@ -12445,7 +12146,13 @@
   "cf6879356459",
   "2c22fae60c7b",
   "d682b5768084",
-  "35feef81a81b"
+  "35feef81a81b",
+  "c37b80188249",
+  "3657dc9fa67d",
+  "72949ec0dd4d",
+  "847faf95d001",
+  "0756b46e29c1",
+  "e9ba92207201"
  ],
  "seen_titles": {
   "휠라에이어푸마까지안타나이키아디다스아성흔든다차이나워치": "2026-10-09",
@@ -14146,7 +13853,13 @@
   "가을옷사러가자아웃도어스포츠용품7000여개상품할인하는이곳": "2026-10-16",
   "코오롱스포츠카우스전시기념캡슐컬렉션출시": "2026-10-16",
   "추억소비에리셀까지포켓몬열풍에유통가웃었다": "2026-10-16",
-  "입국전17억명에알리고25만장카드뿌렸다롯데외국인매출1조전략": "2026-10-16"
+  "입국전17억명에알리고25만장카드뿌렸다롯데외국인매출1조전략": "2026-10-16",
+  "좋아하는일을오래꾸준히견고히쌓인소지섭의시간": "2026-10-16",
+  "서울종로데이트코스핫플레이스10월11월가볼만한곳5": "2026-10-16",
+  "디올로드리재해석리모와mr007힐러스누크26fw도선봬": "2026-10-16",
+  "피스피스스튜디오투자분석20261013": "2026-10-16",
+  "마리떼프랑소와저버윤여정나경삼과함께한데님캠페인공개": "2026-10-16",
+  "3분기명품지출도마이너스선회": "2026-10-16"
  },
  "seen_since": "2026-09-25",
  "stale_titles": {
@@ -14429,34 +14142,832 @@
    "a",
    "미주조선일보",
    "chosundaily.com"
+  ],
+  "아디다스2분기실적금메달": [
+   "#2540/9113",
+   "2026-10-16",
+   "n",
+   "fpost.co.kr",
+   "fpost.co.kr"
+  ],
+  "미국컬럼비아디지털역량강화한다": [
+   "#2077/9113",
+   "2026-10-16",
+   "n",
+   "fpost.co.kr",
+   "fpost.co.kr"
+  ],
+  "2xu투엑스유유통망확대본격화": [
+   "#2995/8622",
+   "2026-10-16",
+   "n",
+   "fpost.co.kr",
+   "fpost.co.kr"
+  ],
+  "룰루레몬부산첫상륙신세계센텀시티오픈": [
+   "#5265/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   ""
+  ],
+  "버버리모피이어가죽사용중단": [
+   "#3129/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머운동화매출신장세": [
+   "#246/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "파타고니아자외선차단용제품자발적리콜": [
+   "#2466/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "왁일본니티컴퍼니와용품라이선스계약체결": [
+   "#1203/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "컬럼비아3분기누계19억9700만달러기록": [
+   "#2701/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "무신사라방으로럭셔리브랜드판매": [
+   "#6490/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "골프웨어스릭슨베일벗다": [
+   "#98/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "jd스포츠풋어사일럼지분인수": [
+   "#74/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머3분기3증가한16억달러매출기록": [
+   "#4460/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "신세계인터어그부츠매출89증가": [
+   "#6293/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "프라다아시아에서판매증가온라인매출급등": [
+   "#5270/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "미즈노데상트상반기최고이익갱신": [
+   "#3951/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "lf임원인사황하주상무승진": [
+   "#868/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "골든구스서울플래그십오픈1주년기념전시개최": [
+   "#6160/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "글로벌에서잘나가는컬럼비아": [
+   "#451/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "컬럼비아스포츠웨어컴퍼니1분기13하락": [
+   "#1252/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "vf노스페이스의활약에도4분기3감소": [
+   "#5147/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "더네이쳐홀딩스배럴인수제2의룰루레몬키운다": [
+   "#3119/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "룰루레몬1분기88의기록적성장": [
+   "#2395/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "르꼬끄e스포츠프로게임팀농심레드포스와스폰서십": [
+   "#4848/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "중국의반격나이키hm등아동제품에안정성문제제기": [
+   "#2401/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "멈추지않는룰루레몬": [
+   "#5204/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "현대대전점오픈프라다6억매출": [
+   "#1445/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머는다시살아날수있습니까": [
+   "#1276/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "혼마골프의류도나온다": [
+   "#104/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스7월누계매출1140억원달성": [
+   "#3445/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "룰루레몬슈즈사업에뛰어들다": [
+   "#2981/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "파타고니아점평균매출1억원": [
+   "#911/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "무신사테라스성수에서푸마스페셜위크팝업진행": [
+   "#5542/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "파타고니아코리아웹사이트리뉴얼": [
+   "#3418/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "룰루레몬5개년계획발표": [
+   "#255/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "디올갤러리아백화점남성부띠크오픈": [
+   "#2951/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스도3분기회복세로전환": [
+   "#1797/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "무신사부티크거래액361": [
+   "#3802/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스우리won여자프로농구단과용품후원협약": [
+   "#3616/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "브룩스2040탄소배출제로선언": [
+   "#2455/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "버켄스탁브랜드가치100억달러": [
+   "#6002/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "루이비통상해점8월에만257억원판매": [
+   "#1614/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "vf5개년재무계획발표": [
+   "#3700/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "푸마스트리트브랜드신쿠안즈와의만남": [
+   "#34/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "푸마2분기이후강력한반등예상": [
+   "#2136/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "하이버명품거래액762030세대주력": [
+   "#4853/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "명품브랜드는생산을중단합니다": [
+   "#1121/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "vf노스페이스의성장에힘입어4분기9신장": [
+   "#3131/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스빅사이즈시장공략": [
+   "#3694/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스대세배우박은빈잡았다": [
+   "#4665/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "현대판교점루이비통트렁크팝업스토어열어": [
+   "#1647/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아식스1분기매출3년만에1000억엔재진입": [
+   "#2347/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "중국에서벌써인기떨어진구찌": [
+   "#561/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "글로벌마켓에서잘나가는스케쳐스": [
+   "#997/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "리셀플랫폼아카이브1500만달러자금유치": [
+   "#4128/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머2분기상승에도연간전망치낮춰": [
+   "#3897/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "한세엠케이신세계대구점나이키키즈2호점오픈": [
+   "#3905/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "브룩스러닝건강러닝에앞장선다": [
+   "#2720/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "미국노스페이스브레인데드와협업": [
+   "#791/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "나이키는고전스케쳐스는진격": [
+   "#24094/35101",
+   "2026-10-16",
+   "n",
+   "미주조선일보",
+   "chosundaily.com"
+  ],
+  "일본노스페이스리페어숍개설": [
+   "#1786/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "lf하이엔드아웃도어티톤브로스론칭": [
+   "#2790/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "요즘잘나가는onrunning": [
+   "#3990/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아웃도어프로덕츠단독점오픈": [
+   "#1707/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "버버리1분기매출급감배당급지급중지": [
+   "#1319/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머스테파니린나츠새로운ceo로영입": [
+   "#4210/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "lvmh에이어구찌의케어링도큰폭하락": [
+   "#1228/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "언더아머비용절감조치발표": [
+   "#1178/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "파타고니아최초의중고제품오프라인매장": [
+   "#809/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "나이키서핑액션스포츠헐리매각": [
+   "#693/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "룰루레몬3분기에만22신장": [
+   "#1937/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "루이비통마이클잭슨컬렉션중단": [
+   "#128/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "리닝그룹올해5조원넘는다": [
+   "#1174/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "버버리도쿄긴자에플래그십스토어오픈": [
+   "#757/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "몽클레르cbo지노피사노티ginofisanotti임명": [
+   "#6003/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아웃도어판매율1위파타고니아": [
+   "#188/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "나이키2분기실적예상웃돌아": [
+   "#4198/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "파타고니아강원도휘닉스평창에팝업오픈": [
+   "#4204/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "글로벌명품업계23선도시앞다퉈진출": [
+   "#2067/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "지난해백화점명품매출절반2030세대": [
+   "#2164/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "반스otw바이반스라인공개": [
+   "#5347/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "세관북한생산리닝제품압류": [
+   "#2996/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "샤넬루이비통가격인상부진했던매출만회": [
+   "#1290/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아이더제니엄크로스오버두가지라인으로집중전개": [
+   "#165/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "번개장터홈화면개편중고시세도입": [
+   "#6391/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "크록스3분기매출15증가": [
+   "#1789/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "일본아식스맞춤형깔창스타트업제팬헬스케어에투자": [
+   "#2522/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "크록스올해매출목표25상향조정": [
+   "#2029/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "노스페이스와내셔널지오그래픽의동거": [
+   "#362/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "노스페이스국가고객만족도7년연속1위": [
+   "#4263/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "피클볼에진심인스케처스": [
+   "#5453/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "현대백화점판교점내년에르메스입점": [
+   "#2478/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스탁엑스5년간누적거래액3조원": [
+   "#1496/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "더딘경제성장이탈리아명품시장직격탄": [
+   "#137/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "나이키불매운동에도식지않은인기": [
+   "#2235/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "국민패딩의귀환눕시": [
+   "#533/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "면세점명품재고시내에푼다": [
+   "#1499/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "버버리조직뒤집는다": [
+   "#1473/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아디다스나이키티몰매출급감": [
+   "#2328/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "노스페이스도대리점지원에동참합니다": [
+   "#1127/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "디올명품최초성수동에플래그십연다": [
+   "#3035/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "스케쳐스에르메스특허침해소송제기": [
+   "#3803/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "롯데잠실프리미엄패딩퍼브랜드강화": [
+   "#4297/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "w컨셉나이키와연계패션콘텐츠선보여": [
+   "#5944/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "푸마게이밍풋웨어출시": [
+   "#2332/8622",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아디다스리복매각작업급물살탔다": [
+   "#1883/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "프라다제냐공동으로소재전문기업인수": [
+   "#2439/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "풋락커ntwrk에3백만달러투자": [
+   "#597/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "일본아식스8월부터회복세로반전": [
+   "#1820/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "룰루레몬1분기최고매출치갱신": [
+   "#3167/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "작년글로벌명품한국시장서돈방석앉아": [
+   "#3044/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "미국컬럼비아4분기선방": [
+   "#2094/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "아디다스2분기56억유로매출기록": [
+   "#3389/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
+  ],
+  "호카국내최대규모롯데월드몰잠실점매장오픈": [
+   "#4053/9113",
+   "2026-10-16",
+   "n",
+   "패션포스트",
+   "fpost.co.kr"
   ]
  },
  "boards": {
   "fpost.co.kr/newsinnews": [
    9113,
    "2026-10-16",
-   43,
+   162,
    9113,
    "2026-10-16"
   ],
   "chosundaily.com/hotclick": [
-   30388,
+   35101,
    "2026-10-16",
-   3,
+   5,
    30388,
    "2026-10-16"
   ],
   "fpost.co.kr/today": [
-   6409,
+   8622,
    "2026-10-16",
-   6,
+   26,
    6409,
    "2026-10-16"
   ],
   "fpost.co.kr/special": [
-   1802,
+   1811,
    "2026-10-16",
-   2,
+   10,
    1802,
    "2026-10-16"
   ]
@@ -14464,33 +14975,32 @@
  "status": {
   "queries": 109,
   "failed_queries": 0,
-  "headlines": 412,
-  "new": 42,
+  "headlines": 410,
+  "new": 6,
   "curate": "ok",
   "archive": {
    "ok": true,
-   "n": 1469,
+   "n": 1352,
    "since": "2026-08-31"
   },
   "date_check": {
-   "ai": 1014,
-   "ai_old": 18,
-   "page": 125,
-   "dated": 55,
-   "tries": 125,
-   "decoded": 125,
-   "gn": 125,
+   "ai": 471,
+   "ai_old": 5,
+   "page": 149,
+   "dated": 0,
+   "tries": 149,
+   "decoded": 149,
+   "gn": 149,
    "transient": 0,
    "blocked": false,
    "broken": false,
-   "stale": 42,
-   "stale_shown": 39,
-   "board": 39,
-   "ai_kept": 2,
-   "left_ai": 472,
-   "left_page": 144,
+   "stale": 117,
+   "stale_shown": 19,
+   "board": 117,
+   "left_ai": 0,
+   "left_page": 0,
    "nodecode_runs": 0,
-   "memory": 40
+   "memory": 154
   }
  },
  "model_compare": [
@@ -16523,14 +17033,48 @@
     }
    ],
    "imp_diff": 0
+  },
+  {
+   "date": "2026-10-16",
+   "new": 6,
+   "both": 0,
+   "primary": {
+    "model": "claude-sonnet-4-6",
+    "in": 4783,
+    "out": 4,
+    "usd": 0.0144,
+    "stop": "end_turn",
+    "n": 0,
+    "imp": [
+     0,
+     0,
+     0
+    ]
+   },
+   "shadow": {
+    "model": "claude-haiku-5-5",
+    "in": 5144,
+    "out": 314,
+    "usd": 0.0007,
+    "stop": "end_turn",
+    "n": 0,
+    "imp": [
+     0,
+     0,
+     0
+    ]
+   },
+   "only_primary": [],
+   "only_shadow": [],
+   "imp_diff": 0
   }
  ],
  "claude_usage": {
   "2026-10": {
-   "calls": 24,
-   "in": 313780,
-   "out": 42950,
-   "usd": 0.8832,
+   "calls": 29,
+   "in": 354439,
+   "out": 44334,
+   "usd": 1.0065,
    "since": "2026-10-11"
   }
  }
