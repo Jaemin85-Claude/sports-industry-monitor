@@ -78,16 +78,29 @@ jobs:
                   return None, f"{type(e).__name__}: {str(e)[:120]}"
 
 
-          # 1) 연결될 때까지 기다림(최대 5분)
+          # 0) 인천공항 화물기 — 키 등록 됐는지 먼저(apis.data.go.kr)
+          KST = datetime.timezone(datetime.timedelta(hours=9))
+          for t in ("T1", "T2"):
+              for op in ("Arrivals", "Departures"):
+                  r, err = req("GET", f"https://apis.data.go.kr/B551177/statusOfCgoFltDeOdp{t}/getCgoFlt{op}DeOdp{t}",
+                               params={"serviceKey": KEY, "numOfRows": "2", "pageNo": "1", "type": "json",
+                                       "searchDate": datetime.datetime.now(KST).strftime("%Y%m%d")})
+                  say(f"== 화물기 {t} {op} ==", err or f"HTTP {r.status_code} · {ws(r.text)[:1500]}")
+
+          # 1) 연결될 때까지 기다림(최대 5분) — https·http·www 없는 주소를 돌아가며
           ok = False
+          BASE = "https://www.data.go.kr"
+          k = 0
           while left() > 120:
-              r, err = req("GET", "https://www.data.go.kr/data/15151805/openapi.do")
-              if r is not None and r.status_code == 200:
-                  ok = True
-                  say(f"연결됨 · {time.time() - T0:.0f}초 · {len(r.text):,}자")
+              base = ("https://www.data.go.kr", "http://www.data.go.kr", "https://data.go.kr")[k % 3]
+              k += 1
+              r, err = req("GET", f"{base}/data/15151805/openapi.do", timeout=(8, 40))
+              if r is not None and r.status_code == 200 and "publicDataDetailPk" in r.text:
+                  ok, BASE = True, base
+                  say(f"연결됨 {base} · {time.time() - T0:.0f}초 · {len(r.text):,}자")
                   break
-              say(f"  연결 안 됨({time.time() - T0:.0f}초) {err or r.status_code}")
-              time.sleep(15)
+              say(f"  연결 안 됨 {base} ({time.time() - T0:.0f}초) {err or r.status_code}")
+              time.sleep(5)
           if not ok:
               say("== 연결 안 됨 — 끝 ==")
               raise SystemExit(0)
@@ -95,7 +108,7 @@ jobs:
           for ds in ("15151805", "15151809"):
               if left() < 40:
                   break
-              r, err = req("GET", f"https://www.data.go.kr/data/{ds}/openapi.do")
+              r, err = req("GET", f"{BASE}/data/{ds}/openapi.do")
               if err:
                   say(ds, "실패", err)
                   continue
@@ -109,8 +122,8 @@ jobs:
               cands = re.findall(r"(?:https?://www\.data\.go\.kr)?/cmm/cmm/fileDownload\.do\?[^\"' <>]+", page)
               ids = sorted(set(re.findall(r"FILE_\d{9,}", page)))
               say("  내려받기 주소:", cands[:5], "· FILE id:", ids[:6])
-              tried = [urljoin("https://www.data.go.kr", H.unescape(c)) for c in cands[:3]]
-              tried += [f"https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={i}&fileDetailSn=1" for i in ids[:3]]
+              tried = [urljoin(BASE, H.unescape(c)) for c in cands[:3]]
+              tried += [f"{BASE}/cmm/cmm/fileDownload.do?atchFileId={i}&fileDetailSn=1&insertDataPrcus=N" for i in ids[:3]]
               for u in tried:
                   if left() < 30:
                       break
@@ -128,10 +141,6 @@ jobs:
                   except Exception as e:
                       say("   docx 아님:", type(e).__name__, ws(r2.content[:200]))
 
-          r, err = req("GET", "https://apis.data.go.kr/B551177/statusOfCgoFltDeOdpT1/getCgoFltArrivalsDeOdpT1",
-                       params={"serviceKey": KEY, "numOfRows": "3", "pageNo": "1", "type": "json",
-                               "searchDate": datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y%m%d")})
-          say("== 화물기 T1 ==", err or f"HTTP {r.status_code} · {ws(r.text)[:300]}")
           say("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
