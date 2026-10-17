@@ -2,16 +2,23 @@
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
 v1.2: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두' + 공공데이터포털 인증키 등록) 공공데이터포털 오픈 API 3개 추가
-      (인증키 GitHub Secrets DATA_GO_KR_API_KEY · 자동승인 · 이용허락 제한 없음 · 요청 주소에 키가 들어가 오류 글에서는 가림):
+      (인증키 GitHub Secrets DATA_GO_KR_API_KEY · 자동승인 · 이용허락 제한 없음 · 요청 주소에 키가 들어가 오류 글에서는 자르기 전에 가림):
       ⑤ 관세청 국가별 입항(수입 I)·출항(수출 E) 물동량(15151805·15151809, 월간 — 매월 15일께 전달까지, 적재화물목록 기준) 최근 36달 —
-         바닷길 = 부산(부산신항+부산항+감천항) 컨테이너(TEU, 빈 컨테이너 제외)·톤, 항공 = 인천국제공항 톤·B/L 건수(특송·전자상거래 소포 포함).
-         나라 = 선적지(수입)·목적지(수출) — 대표 지정 거점국·병행수입 원산지 19곳 + 최근 12달 많은 나라 12곳(한국·기타국은 합계에만).
-         출항 화물 구분은 E = 수출, R = 환적(10/17 GitHub 서버 시험 — 포털 명세의 'R : 수출'은 틀림, T는 오류 99)
-      ⑥ 해양수산부 선박입출항(PORT-MIS 15006353, 부산 020 · 날짜 조건 = 입항일) — 부산 입항 컨테이너선 하루 척수·직전 출항지 나라·
-         체류시간(입항→출항, 96시간 넘으면 96). 매일 최근 7일을 다시 받고(늦게 들어오는 신고), 2025-10-01부터 빈 날을 실행마다 90초씩 거슬러 채움
-      apis.data.go.kr 연결이 한 번 안 되면 그 실행의 남은 오픈 API 자료는 기다리지 않고 이전 값. 인증키 오류(등록 안 됨·기한 만료 등)는
-      일시 오류가 아니라 바로 실패 표시. 한 실행 '절반 이상' 실패 기준은 기존 자료 8개로만(공공데이터포털이 끊기면 파일 3개 + API 3개가
-      함께 실패해 매번 울리지 않게) — 새 자료는 기준일(관세청 월간 10일 · 선박 5일)로만 경고
+         바닷길 = 부산(신항 '부산신항' + 북항 '부산항' + '감천항' — 관세청 항구 이름) 컨테이너(TEU, 빈 컨테이너 제외)·톤, 항공 = 인천국제공항 톤·
+         B/L 건수(특송·전자상거래 소포 포함). 인천항·평택항 등 다른 항구는 뺌. 나라 = 선적지(수입)·목적지(수출) — VOL_GROUPS 19곳(거점국 9 +
+         원산지·생산국 10) + 최근 12달 많은 나라 12곳(한국·기타국은 합계에만). 출항 화물 구분은 E = 수출, R = 환적(10/17 GitHub 서버 시험 —
+         포털 명세의 'R : 수출'은 틀림, T는 오류 99). 이상값(앞 12달 가운데값의 20배 넘고 그 달 전체의 2% 넘게 큼 — 26.09 인천공항→미국
+         항공 773만 톤 같은 출처 입력 오류)은 저장은 그대로, odd 목록·total_clean(뺀 합)으로 화면이 전체·비교에서 뺌. 항구 이름이 바뀌면
+         (앞 12달에 있던 항구가 마지막 달에 없음) 실패로 봐 이전 값 · 행 수가 totalCount보다 적어도 실패
+      ⑥ 해양수산부 선박입출항(PORT-MIS 15006353, 부산 020 · 날짜 조건 = 입항일 · 쪽당 50건) — 부산 입항 컨테이너선(배 종류 이름 '컨테이너'
+         또는 코드 41) 하루 척수·직전 출항지 나라·체류시간(입항→출항, 96시간 넘으면 96). 매일 어제까지 최근 7일을 다시 받고(늦게 들어오는
+         신고 · 읽은 마지막 날이 사흘 넘게 앞이거나 컨테이너선 0척이면 실패 → 이전 값), 2025-10-01부터(보관 400일) 빈 날을 실행마다 약 90초
+         (묶음 시간을 미리 셈 · 쪽 사이에서도 멈춤) 거슬러 채움 — 1년 전 같은 때 먼저, 연결 오류면 멈추고 다른 오류는 그 묶음만 건너뜀.
+         0척 묶음은 60일 앞도 0척이고 두 실행 연달아 같을 때만 보관 경계(no_data_before)로 확정
+      공공데이터포털이 한 기관(관세청 1220000 · 해수부 1192000)에서 연결 안 되면 그 실행의 같은 기관 자료만 건너뜀(이전 값). 인증키 오류
+      (등록 안 됨·기한 만료 등)는 일시 오류가 아니라 바로 실패 표시 · 키가 단계에 안 넘어오면 'GitHub Secrets·update.yml 확인' 알림.
+      한 실행 '절반 이상' 실패 기준은 기존 자료 8개로만(공공데이터포털이 끊기면 파일 3개 + API 3개가 함께 실패해 매번 울리지 않게 —
+      알림 글에는 API 자료를 따로 적음) — 새 자료는 기준일(관세청 월간 10일 · 선박 5일)로만 경고
 v1.1:(대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 1번부터 · 적출국은 홍콩, 로테르담, 두바이, 벨기에 외에 글로벌 주요
       물류 거점 순') 적출 거점 12곳 하루 입항(hubs, IMF PortWatch) 추가 — 홍콩·로테르담·두바이(제벨알리)·앤트워프(벨기에) 다음에
       세계 컨테이너 물동량 1~5위 상하이·싱가포르·닝보·선전·칭다오, 그 밖은 지역 대표 LA/롱비치(미국 서안)·포트클랑(동남아)·
@@ -64,8 +71,10 @@ TIMEOUT = (15, 40)             # (연결, 읽기) 초 — 연결이 안 되는 �
 RUN_LIMIT = 8 * 60             # 한 실행 최대 8분 — 넘으면 남은 요청은 바로 실패(이전 값 유지), 대시보드 갱신 작업(20분 제한)은 계속
 T_END = float("inf")           # main()이 시작할 때 정함
 PW_DOWN = ""                   # 이번 실행에서 PortWatch 연결이 안 된 첫 항목 — 남은 해협·항만·거점은 기다리지 않음(main이 비움)
-DGK_DOWN = ""                  # v1.2 이번 실행에서 apis.data.go.kr 연결이 안 된 첫 자료 — 남은 오픈 API 자료는 기다리지 않음(main이 비움)
+DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
+                               # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
 DGK_AUTH = []                  # v1.2 인증키 오류가 난 자료 — 실행 끝에 바로 실패 표시(main이 비움)
+DGK_NOKEY = False              # v1.2 인증키가 이 단계에 안 넘어옴(GitHub Secrets·update.yml env) — 따로 알림(main이 비움)
 WAR_START = "2026-02-28"                       # 전쟁 시작(미국·이스라엘의 이란 공격) — '전쟁 전' 비교 기준
 BASE_FROM, BASE_TO = "2026-01-01", "2026-02-27"   # 해협·항만 '전쟁 전 평균' 기간(일별 값 평균)
 STALE_ALERT = {"kcs_sea_import": 10, "kcs_sea_export": 10, "kcs_air_import": 10,   # 이 일수 넘게 이전 값이면 실패 표시 —
@@ -137,17 +146,22 @@ VOL_MODES = [  # (모드, 운송 구분, 한국 쪽 항구·공항 — 이 이�
     ("sea", "10", ("부산신항", "부산항", "감천항"), ("teu", "ton")),
     ("air", "40", ("인천국제공항",), ("ton", "bl")),
 ]
-VOL_FIXED = ["홍콩", "네덜란드", "아랍에미리트 연합", "벨기에", "중국", "싱가포르", "미국", "말레이시아", "독일",   # 대표 지정 거점국·적출 거점국
-             "일본", "베트남", "이탈리아", "프랑스", "영국", "스페인", "대만", "태국", "인도네시아", "인도"]          # 병행수입 원산지·생산국
+VOL_GROUPS = [  # 늘 담는 나라(관세청 표기 그대로) — 화면 묶음 순서. 바꾸면 화면도 이 목록을 따름(logistics.json groups)
+    ("거점", ["홍콩", "네덜란드", "아랍에미리트 연합", "벨기에", "중국", "싱가포르", "미국", "말레이시아", "독일"]),   # 적출 거점 카드의 나라
+    ("원산지·생산국", ["일본", "베트남", "이탈리아", "프랑스", "영국", "스페인", "대만", "태국", "인도네시아", "인도"]),   # 병행수입 원산지·생산국
+]
+VOL_FIXED = [c for _, cs in VOL_GROUPS for c in cs]
+VOL_ODD_X, VOL_ODD_SHARE = 20, 0.02   # 이상값: 앞 12달 가운데값의 20배 넘고 넘친 양이 그 달 전체 가운데값의 2% 넘음
 VOL_TOP = 12                   # 그 밖에 최근 12달 많은 나라(바닷길 = TEU, 항공 = 톤)
 VOL_SKIP = {"한국", "기타국"}   # 나라 목록에서 뺌(합계에는 들어감)
 PM_URL = "https://apis.data.go.kr/1192000/VsslEtrynd5/Info5"   # 해양수산부 선박입출항(PORT-MIS) — sde·ede = 입항일(10/17 시험)
 PM_PORT = "020"                # 부산
 PM_FROM = "2025-10-01"         # 하루 값을 이 날부터 모음(1년 전 같은 주 비교) — 빈 날은 실행마다 거슬러 채움
 PM_RECENT = 7                  # 매일 어제까지 최근 7일을 다시 받음(늦게 들어오는 신고·출항 시각)
-PM_BACK_SEC = 90               # 한 실행에서 빈 날을 거슬러 받는 시간 상한(초)
+PM_BACK_SEC = 90               # 한 실행에서 빈 날을 거슬러 받는 시간 상한(초) — 묶음 하나 걸리는 시간을 미리 셈해 넘지 않게(쪽 사이에서도 멈춤)
 PM_STAY_CAP = 96               # 체류시간이 이보다 길면 이 값으로(수리·장기 대기 배가 평균을 흔들지 않게)
 PM_MIN_DAY = 40                # 받은 묶음의 입항(모든 배)이 하루 평균 이 값의 절반보다 적으면 응답 이상으로 봄(부산은 하루 약 100척)
+PM_KEEP_DAYS = 400             # 하루 값 보관 기간(일) — 1년 전 같은 때 비교 + 여유
 
 
 def log(msg):
@@ -169,9 +183,10 @@ def time_left():
     return T_END - time.monotonic()
 
 
-def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
+def http(url, params=None, data=None, timeout=TIMEOUT, tries=2, mask=None):
     """GET(또는 data가 있으면 POST) — 연결 오류·5xx는 5초 뒤 한 번 더(NetError). 4xx는 바로 RuntimeError.
-    실행 시간(RUN_LIMIT)이 거의 다 되면 보내지 않고 NetError, 남은 시간보다 길게 기다리지 않음"""
+    실행 시간(RUN_LIMIT)이 거의 다 되면 보내지 않고 NetError, 남은 시간보다 길게 기다리지 않음.
+    mask = 오류 글에서 비밀값을 가리는 함수(v1.2 — 자르기 전에 가림: 잘린 키 조각이 남지 않게)"""
     err = None
     for k in range(tries):
         left = time_left()
@@ -187,13 +202,14 @@ def http(url, params=None, data=None, timeout=TIMEOUT, tries=2):
             if r.status_code >= 500:
                 raise requests.HTTPError(f"HTTP {r.status_code}")
             if r.status_code != 200:   # v1.2 본문 앞부분도(공공데이터포털은 403 본문에 '등록되지 않은 서비스키' 같은 사유)
-                raise RuntimeError(f"HTTP {r.status_code} {clean(r.text)[:120]}".rstrip())
+                body = clean(r.text)
+                raise RuntimeError(f"HTTP {r.status_code} {(mask(body) if mask else body)[:120]}".rstrip())
             return r
         except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
             err = e
             if k + 1 < tries and time_left() > 15:
                 time.sleep(5)
-    raise NetError(f"{type(err).__name__}: {str(err)[:150]}")
+    raise NetError(f"{type(err).__name__}: {(mask(str(err)) if mask else str(err))[:150]}")
 
 
 def clean(s):
@@ -642,20 +658,28 @@ def dgk_mask(s):
     return s
 
 
-def dgk_root(url, params, label):
-    """오픈 API 한 번 — XML 뿌리. 연결이 안 되면 NetError(이번 실행의 남은 오픈 API 자료는 건너뜀 — DGK_DOWN),
-    인증키 오류는 DGK_AUTH에 남기고 RuntimeError, 결과 코드가 '00'이 아니면 RuntimeError"""
-    global DGK_DOWN
-    if DGK_DOWN:
-        raise NetError(f"{DGK_DOWN}에서 공공데이터포털 연결 안 됨 — 이번 실행은 건너뜀")
+def dgk_org(url):
+    """오픈 API 주소의 기관 번호 — https://apis.data.go.kr/1220000/… → '1220000'(관세청) · '1192000'(해수부)"""
+    m = re.match(r"https?://[^/]+/(\d+)/", url)
+    return m.group(1) if m else url
+
+
+def dgk_root(url, params, label, empty_codes=()):
+    """오픈 API 한 번 — XML 뿌리. 연결 오류·5xx·시간 초과는 NetError(그 기관의 남은 자료는 이번 실행에서 건너뜀 — DGK_DOWN,
+    기관이 다르면 계속 물음), 인증키 오류는 DGK_AUTH에 남기고 RuntimeError(키가 없으면 DGK_NOKEY), 결과 코드가 '00'이 아니면 RuntimeError.
+    empty_codes의 결과 코드(예: '03' 자료 없음)는 오류가 아니라 None(빈 결과)"""
+    global DGK_NOKEY
+    org = dgk_org(url)
+    if org in DGK_DOWN:
+        raise NetError(f"{DGK_DOWN[org]}에서 같은 기관 서버 연결 안 됨 — 이번 실행은 건너뜀")
     key = os.environ.get(DGK_KEY_ENV, "").strip()
     if not key:
-        DGK_AUTH.append(label)
-        raise RuntimeError(f"인증키 없음 — GitHub Secrets {DGK_KEY_ENV}를 이 단계에 넘겨야 함")
+        DGK_NOKEY = True
+        raise RuntimeError(f"인증키 없음 — GitHub Secrets {DGK_KEY_ENV}를 이 단계(update.yml 물류 단계 env)에 넘겨야 함")
     try:
-        r = http(url, params={"serviceKey": key, **params}, timeout=(15, 90))
+        r = http(url, params={"serviceKey": key, **params}, timeout=(15, 90), mask=dgk_mask)
     except NetError as e:
-        DGK_DOWN = label
+        DGK_DOWN[org] = label
         raise NetError(dgk_mask(e)) from None
     except Exception as e:
         msg = dgk_mask(e)
@@ -669,7 +693,9 @@ def dgk_root(url, params, label):
         raise RuntimeError(f"XML 아님: {dgk_mask(clean(r.text))[:150]}") from None
     code = (root.findtext("header/resultCode") or root.findtext(".//returnReasonCode") or "").strip()
     if code != "00":   # 공공데이터포털 게이트웨이 오류는 HTTP 200 + OpenAPI_ServiceResponse 본문으로 오기도 함
-        msg = (root.findtext("header/resultMsg") or root.findtext(".//returnAuthMsg") or root.findtext(".//errMsg") or "").strip()
+        if code in empty_codes:
+            return None
+        msg = dgk_mask((root.findtext("header/resultMsg") or root.findtext(".//returnAuthMsg") or root.findtext(".//errMsg") or "").strip())
         if code in DGK_AUTH_CODES:
             DGK_AUTH.append(label)
             raise RuntimeError(f"인증키 오류 — 결과 코드 {code} {msg[:100]}")
@@ -693,18 +719,35 @@ def vol_month(v):
     return f"{m.group(1)}-{m.group(2)}" if m else None
 
 
+def vol_odd(ser_c, tot):
+    """나라 한 곳의 달 값 → 이상값(출처 입력 오류로 보이는 값)인 달 위치. 앞 12달(6달 이상) 가운데값의 VOL_ODD_X배를 넘고,
+    넘친 양이 그 달 전체 가운데값(앞 12달)의 VOL_ODD_SHARE를 넘을 때 — 가운데값이 0이면(새 길) 그 달 전체 가운데값의 20%를 넘을 때만.
+    (예: 26.09 인천공항→미국 항공 수출 773만 톤 · 평소 1만 톤)"""
+    out = []
+    for i in range(6, len(ser_c)):
+        prev = sorted(ser_c[max(0, i - 12):i])
+        tp = sorted(tot[max(0, i - 12):i])
+        md, tmd, v = prev[len(prev) // 2], tp[len(tp) // 2], ser_c[i]
+        if (md > 0 and v > VOL_ODD_X * md and v - md > VOL_ODD_SHARE * tmd) or (md == 0 and tmd > 0 and v > 0.2 * tmd):
+            out.append(i)
+    return out
+
+
 def vol_mode(items, inbound, ports, metrics):
     """한 운송 구분(바닷길·항공)의 행 → 달 목록 + 나라별 달 값. 한국 쪽 항구는 ports의 합,
-    TEU = FCL + LCL(빈 컨테이너 제외) · 톤 = 총중량 · bl = B/L 건수. 행이 없는 달·나라는 0(그 달 그 나라 화물 없음)"""
+    TEU = FCL + LCL(빈 컨테이너 제외) · 톤 = 총중량 · bl = B/L 건수. 행이 없는 달·나라는 0(그 달 그 나라 화물 없음).
+    이상값(vol_odd)은 저장은 그대로 두고 odd 목록에 적고, total_clean(이상값을 뺀 합)과 많은 나라 고르기에서는 뺌"""
     pk, ck = ("arvlPlcNm", "dptrPlcNm") if inbound else ("dptrPlcNm", "arvlPlcNm")
-    acc, months, bad = {}, set(), 0
+    acc, months, bad, seen_ports = {}, set(), 0, {}
     for it in items:
         ym = vol_month(it.get("yyyymm"))
         if not ym:
             bad += 1
             continue
         months.add(ym)
-        if it.get(pk) not in ports:
+        pn = (it.get(pk) or "").strip()
+        seen_ports.setdefault(pn, set()).add(ym)
+        if pn not in ports:
             continue
         v = {"teu": (num(it.get("teuFclGcnt")) or 0) + (num(it.get("teuLclGcnt")) or 0),
              "ton": num(it.get("blWght")) or 0, "bl": num(it.get("blCnt")) or 0}
@@ -716,17 +759,37 @@ def vol_mode(items, inbound, ports, metrics):
     months = sorted(months)[-VOL_MONTHS:]
     if len(months) < 13:
         raise RuntimeError(f"달 수가 너무 적음({len(months)})")
+    last = months[-1]
+    for pn in ports:   # 항구 이름이 바뀌면(관세청 표기) 부산 합계가 조용히 줄어듦 — 앞 12달에 있던 항구가 마지막 달에 없으면 실패(이전 값)
+        had = seen_ports.get(pn, set())
+        if had & set(months[-13:-1]) and last not in had:
+            raise RuntimeError(f"마지막 달 {last}에 '{pn}' 행이 없음 — 항구 이름이 바뀌었는지 확인")
+    odd_names = sorted(n for n in seen_ports if n not in ports and re.search(r"부산|감천" if "부산신항" in ports else r"인천", n)
+                       and last in seen_ports[n])
+    if odd_names:
+        log(f"    [참고] 합에 넣지 않은 비슷한 이름: {', '.join(odd_names)}")
     ser = {c: {m: [round(by.get(ym, {}).get(m, 0) / 10) for ym in months] for m in metrics} for c, by in acc.items()}
     total = {m: [round(sum(by.get(ym, {}).get(m, 0) for by in acc.values()) / 10) for ym in months] for m in metrics}   # 반올림 전 값의 합
     if not total[metrics[0]][-1]:
-        raise RuntimeError(f"마지막 달 {months[-1]}에 {'·'.join(ports)} 값이 없음")
-    lead = metrics[0]   # 많은 나라 고르는 기준(바닷길 TEU · 항공 톤) — 최근 12달 합
+        raise RuntimeError(f"마지막 달 {last}에 {'·'.join(ports)} 값이 없음")
+    odd, clean = [], {m: list(total[m]) for m in metrics}
+    for c in sorted(ser):
+        for m in metrics:
+            for i in vol_odd(ser[c][m], total[m]):
+                odd.append([c, months[i], m, ser[c][m][i]])
+                clean[m][i] -= ser[c][m][i]
+    lead = metrics[0]   # 많은 나라 고르는 기준(바닷길 TEU · 항공 톤) — 최근 12달 합(이상값 뺌)
+    oddi = {(o[0], o[1]) for o in odd if o[2] == lead}
+    s12 = lambda c: sum(v for ym, v in zip(months[-12:], ser[c][lead][-12:]) if (c, ym) not in oddi)
     keep = [c for c in VOL_FIXED if c in ser and any(ser[c][lead])]
-    rest = sorted((c for c in ser if c not in keep and c not in VOL_SKIP and any(ser[c][lead])),
-                  key=lambda c: -sum(ser[c][lead][-12:]))
+    rest = sorted((c for c in ser if c not in keep and c not in VOL_SKIP and s12(c) > 0), key=lambda c: -s12(c))
     keep += rest[:VOL_TOP]
-    return {"ports": list(ports), "metrics": list(metrics), "months": months, "total": total,
-            "items": [{"c": c, **ser[c]} for c in keep], "others": max(0, len(rest) - VOL_TOP)}
+    miss = [c for c in VOL_FIXED if not ser.get(c, {}).get(lead, [0])[-1]]
+    if miss:
+        log(f"    [참고] 마지막 달 {last}에 값이 없는 지정 나라: {', '.join(miss)}(나라 이름이 바뀌었으면 VOL_GROUPS 확인)")
+    return {"ports": list(ports), "metrics": list(metrics), "months": months, "total": total, "total_clean": clean, "odd": odd,
+            "items": [{"c": c, **ser[c]} for c in keep], "others": max(0, len(rest) - VOL_TOP),
+            "groups": [[g, [c for c in cs if c in keep]] for g, cs in VOL_GROUPS]}
 
 
 def fetch_vol(key, ds, url, carg):
@@ -745,22 +808,23 @@ def fetch_vol(key, ds, url, carg):
         items = xml_items(root)
         if not items:
             raise RuntimeError(f"{mode}: 행이 없음")
+        tc = int(num(root.findtext(".//totalCount")) or 0)
+        if tc and len(items) < tc:   # 지금은 한 번에 모두 옴 — 나눠 주기 시작하면 모자란 채로 저장하지 않게
+            raise RuntimeError(f"{mode}: 총 {tc:,}행 중 {len(items):,}행만 받음")
         m = vol_mode(items, inbound, ports, metrics)
         last = m["months"][-1]
         gap = (today - datetime.date.fromisoformat(last + "-01")).days
         if gap > 100:   # 9월 자료는 10월 15일께 — 석 달 넘게 새 달이 없으면 갱신이 멈춘 것
             raise RuntimeError(f"{mode}: 마지막 달이 {last} — {gap}일째 새 달 없음")
-        top = sorted(m["items"], key=lambda x: -x[metrics[0]][-1])[:5]
         unit = {"teu": "TEU", "ton": "톤", "bl": "건"}
-        for it in [{"c": "전체", **m["total"]}] + m["items"]:   # 출처 입력 오류로 보이는 값 — 저장은 그대로(화면이 '출처 값 확인 필요'로 표시)
-            for k in metrics:
-                prev = sorted(it[k][-13:-1])
-                md = prev[len(prev) // 2] if prev else 0
-                if md >= 50 and it[k][-1] > 20 * md:
-                    log(f"    [WARN] {it['c']} {last} {k} {it[k][-1]:,} — 앞 12달 가운데값 {md:,}의 {it[k][-1] / md:.0f}배(출처 값 확인 필요)")
+        for c, ym, k, v in m["odd"]:   # 출처 입력 오류로 보이는 값 — 저장은 그대로(화면은 '출처 값 확인 필요' · 전체·비교에서 뺌)
+            if ym == last:
+                log(f"    [WARN] {c} {last} {k} {v:,} — 출처 값 확인 필요(앞 12달보다 지나치게 큼 · 화면 전체·비교에서 뺌)")
+        top = sorted(m["items"], key=lambda x: -x[metrics[0]][-1])[:5]
         log(f"  {LABELS[key]} {mode}: 행 {len(items):,} · {len(m['months'])}달 {m['months'][0]}~{last} · {last} 합계 "
             + " · ".join(f"{m['total'][k][-1]:,}{unit[k]}" for k in metrics)
-            + f" · 나라 {len(m['items'])}곳(그 밖 {m['others']}곳) · 상위 " + ", ".join(f"{x['c']} {x[metrics[0]][-1]:,}" for x in top))
+            + f" · 나라 {len(m['items'])}곳(그 밖 {m['others']}곳) · 상위 " + ", ".join(f"{x['c']} {x[metrics[0]][-1]:,}" for x in top)
+            + (f" · 이상값 {len(m['odd'])}건" if m["odd"] else ""))
         out[mode] = m
         time.sleep(0.5)
     return out
@@ -779,12 +843,21 @@ def pm_time(it, kind, field):
     return t if t.tzinfo else t.replace(tzinfo=KST)
 
 
-def pm_items(d0, d1):
-    """부산 입항일 d0~d1(포함) 모든 배 — 50건씩 쪽을 넘겨 받음(쪽당 최대 50건). 받은 건수가 총 건수와 다르면 RuntimeError"""
-    out, page, total = [], 1, None
+class Budget(Exception):
+    """거슬러 받기 시간 상한에 닿음 — 이번 실행은 여기까지(연결 오류가 아님)"""
+
+
+def pm_items(d0, d1, deadline=None):
+    """부산 입항일 d0~d1(포함) 모든 배 — 50건씩 쪽을 넘겨 받음(쪽당 최대 50건). 받은 건수가 총 건수와 다르면 RuntimeError.
+    결과 코드 03(자료 없음)은 0척. deadline(time.monotonic 기준)을 넘으면 다음 쪽을 받지 않고 Budget"""
+    out, page, total = [], 1, 0
     while True:
+        if deadline is not None and page > 1 and time.monotonic() > deadline:
+            raise Budget(f"{d0}~{d1}: 시간 상한 — {page - 1}쪽까지만 받음")
         root = dgk_root(PM_URL, {"prtAgCd": PM_PORT, "sde": d0.strftime("%Y%m%d"), "ede": d1.strftime("%Y%m%d"),
-                                 "numOfRows": "50", "pageNo": str(page)}, LABELS["busan_calls"])
+                                 "numOfRows": "50", "pageNo": str(page)}, LABELS["busan_calls"], empty_codes=("03",))
+        if root is None:   # NODATA — 그 기간 자료 없음
+            return out, len(out)
         total = int(num(root.findtext(".//totalCount")) or 0)
         its = xml_items(root)
         out += its
@@ -795,6 +868,11 @@ def pm_items(d0, d1):
     if len(out) < total:
         raise RuntimeError(f"{d0}~{d1}: 총 {total}건 중 {len(out)}건만 받음")
     return out, total
+
+
+def pm_is_box(it):
+    """컨테이너선 — 배 종류 이름에 '컨테이너'(풀컨테이너선 등) 또는 배 종류 코드 41(풀컨테이너선 · 10/14 시험)"""
+    return "컨테이너" in (it.get("vsslKndNm") or "") or (it.get("vsslKndCd") or "").strip() == "41"
 
 
 def pm_days(items, d0, d1):
@@ -813,7 +891,7 @@ def pm_days(items, d0, d1):
         if rec is None:   # 날짜 조건(입항일) 밖 — 받은 기간 밖 날은 세지 않음
             continue
         anyship.add(arr.astimezone(KST).date().isoformat())
-        if "컨테이너" not in (it.get("vsslKndNm") or ""):
+        if not pm_is_box(it):
             continue
         k = (it.get("clsgn"), it.get("etryptYear"), it.get("etryptCo"))   # 호출부호 + 연도 + 그해 입항 횟수 = 입항 한 번
         if k in seen:
@@ -830,22 +908,32 @@ def pm_days(items, d0, d1):
 
 
 def fetch_portmis(prev):
-    """부산 입항 컨테이너선(입항일별) — 어제까지 최근 PM_RECENT일은 매번 다시, PM_FROM 이후 빈 날은 PM_BACK_SEC초 동안 거슬러 채움.
-    최근 묶음을 못 받으면 블록 실패(이전 값 유지), 거슬러 받기는 실패해도 다음 실행에서"""
+    """부산 입항 컨테이너선(입항일별) — 어제까지 최근 PM_RECENT일은 매번 다시, 빈 날은 약 PM_BACK_SEC초(묶음 하나 걸리는 시간을
+    미리 셈) 동안 거슬러 채움. 최근 묶음을 못 받거나 읽은 날·컨테이너선이 없으면 블록 실패(이전 값 유지 → 기준일 경고).
+    거슬러 받기는 연결 오류면 멈추고, 다른 오류면 그 묶음만 건너뛰고 다음 묶음으로(다음 실행에서 다시)"""
     d0 = (prev or {}).get("days")
     days = {r[0]: r[1:] for r in (d0 if isinstance(d0, list) else [])
             if isinstance(r, list) and len(r) == 5 and isinstance(r[0], str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", r[0])
             and isinstance(r[1], int) and isinstance(r[2], dict)}
-    no_before = (prev or {}).get("no_data_before") if isinstance((prev or {}).get("no_data_before"), str) else None
+    nb0, pend = (prev or {}).get("no_data_before"), (prev or {}).get("nd_pending")
+    no_before = nb0 if isinstance(nb0, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", nb0) else None
+    pend = pend if isinstance(pend, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", pend) else None
     yday = today_kst() - datetime.timedelta(days=1)
-    first = datetime.date.fromisoformat(max(PM_FROM, no_before or PM_FROM))
+    lo = max(PM_FROM, no_before or PM_FROM, (yday - datetime.timedelta(days=PM_KEEP_DAYS)).isoformat())   # 모으는 첫날(보관 기간 상한)
+    first = datetime.date.fromisoformat(lo)
     r0 = yday - datetime.timedelta(days=PM_RECENT - 1)
+    t0 = time.monotonic()
     items, total = pm_items(r0, yday)
+    per_day = (time.monotonic() - t0) / PM_RECENT   # 하루치 받는 데 걸린 시간 — 거슬러 받기 묶음 시간 어림
     if total < PM_MIN_DAY * PM_RECENT / 2:
         raise RuntimeError(f"최근 {PM_RECENT}일 입항이 {total}척뿐 — 응답 이상으로 봄")
     new = pm_days(items, r0, yday)
-    days.update(new)
     n7 = sum(v[0] for v in new.values())
+    if not new or max(new) < (yday - datetime.timedelta(days=2)).isoformat():
+        raise RuntimeError(f"최근 {PM_RECENT}일 입항 {total}척인데 읽은 마지막 날이 {max(new) if new else '없음'} — 응답 형식 확인(etryndNm·etryptDt·details)")
+    if n7 == 0:
+        raise RuntimeError(f"최근 {PM_RECENT}일 컨테이너선 0척(모든 배 {total}척) — 배 종류 이름·코드(vsslKndNm·vsslKndCd) 확인")
+    days.update(new)
     cc7 = {}
     for v in new.values():
         for c, k in v[1].items():
@@ -855,7 +943,7 @@ def fetch_portmis(prev):
         + ", ".join(f"{c} {k}" for c, k in sorted(cc7.items(), key=lambda x: -x[1])[:8])
         + (f" · 체류 평균 {sum(v[2] for v in st) / sum(v[3] for v in st):.0f}시간" if st else ""))
     # 빈 날 채우기 — 1년 전 같은 때(화면 '1년 전 같은 7일' 비교 · 앞뒤 1주)를 먼저, 그다음 최근 쪽부터 7일 묶음(연속한 빈 날만)
-    back_end, n_back = time.monotonic() + PM_BACK_SEC, 0
+    back_end, n_back, new_pend = time.monotonic() + PM_BACK_SEC, 0, None
     miss = []
     d = r0 - datetime.timedelta(days=1)
     while d >= first:
@@ -864,53 +952,69 @@ def fetch_portmis(prev):
         d -= datetime.timedelta(days=1)
     ya_hi, ya_lo = yday - datetime.timedelta(days=357), yday - datetime.timedelta(days=371)
     miss = [x for x in miss if ya_lo <= x <= ya_hi] + [x for x in miss if not ya_lo <= x <= ya_hi]
-    while miss and time.monotonic() < back_end and time_left() > 60:
+    while miss:
         e = miss[0]
         grp = [e]
         for x in miss[1:]:
             if len(grp) >= 7 or x != grp[-1] - datetime.timedelta(days=1):
                 break
             grp.append(x)
+        est = per_day * len(grp) + 2   # 이 묶음 받는 데 걸릴 시간(초) 어림
+        if time.monotonic() + est > back_end or time_left() < 60 + est:
+            break
         s = grp[-1]
         miss = miss[len(grp):]
         try:
-            its, tot = pm_items(s, e)
-        except Exception as ex:
-            log(f"  부산 입항 선박 지난 날({s}~{e}) 받기 실패 — 다음 실행에서: {str(ex)[:150]}")
-            miss = grp + miss
+            its, tot = pm_items(s, e, deadline=min(back_end, time.monotonic() + max(0.0, time_left() - 60)))
+        except Budget as ex:
+            log(f"  부산 입항 선박: {str(ex)[:120]} — 나머지는 다음 실행에서")
             break
-        if tot == 0 and e.isoformat() < min(days, default="9999"):   # 모은 날보다 앞인데 0척 — 보관 기간이 끝난 것인지 60일 앞 하루로 확인
+        except NetError as ex:
+            log(f"  부산 입항 선박 지난 날({s}~{e}) 연결 안 됨 — 다음 실행에서: {str(ex)[:150]}")
+            break
+        except Exception as ex:   # 그 묶음만 이상(XML·결과 코드·건수) — 건너뛰고 다음 묶음(뒤 묶음이 막히지 않게)
+            log(f"  부산 입항 선박 지난 날({s}~{e}) 받기 실패 — 건너뛰고 다음 실행에서 다시: {str(ex)[:150]}")
+            continue
+        got = pm_days(its, s, e)
+        older = e.isoformat() < min(days, default="9999")   # 모은 날보다 앞(보관 기간 경계 쪽)
+        if tot == 0 and older:   # 0척 — 보관 기간이 끝난 것인지 60일 앞 하루로 확인, 두 실행 연달아 같으면 경계로 확정
             chk = s - datetime.timedelta(days=60)
             try:
                 tot2 = pm_items(chk, chk)[1]
             except Exception as ex:
                 log(f"  부산 입항 선박 {s}~{e} 0척 — 확인 요청 실패, 다음 실행에서: {str(ex)[:120]}")
-                miss = grp + miss
-                break
-            if tot2 == 0:   # 더 앞도 없음 → 여기부터 자료가 없음 · 다시 묻지 않음
+                continue
+            if tot2 == 0 and pend:   # 지난 실행에서도 경계 후보 → 여기부터 자료가 없음 · 다시 묻지 않음
                 no_before = (e + datetime.timedelta(days=1)).isoformat()
-                log(f"  부산 입항 선박: {s}~{e} 자료 없음(60일 앞도 없음) — {no_before}부터만 모음")
-                miss = []
-                break
+                log(f"  부산 입항 선박: {s}~{e} 자료 없음(60일 앞도 없음 · 두 번째) — {no_before}부터만 모음")
+                miss = [x for x in miss if x > e]
+                continue
+            if tot2 == 0:   # 처음 본 경계 후보 — 한 번은 넘겨 두고 다음 실행에서 확인(한때의 빈 응답으로 앞 기록을 잃지 않게)
+                new_pend = (e + datetime.timedelta(days=1)).isoformat()
+                log(f"  부산 입항 선박: {s}~{e} 자료 없음(60일 앞도 없음) — 경계 후보 {new_pend}, 다음 실행에서 확인")
+                miss = [x for x in miss if x > e]
+                continue
             log(f"  부산 입항 선박 {s}~{e} 0척인데 60일 앞({chk})은 {tot2}척 — 응답 이상으로 봐 다음 실행에서")
             continue
-        if tot < PM_MIN_DAY * len(grp) / 2:   # 사이에 낀 빈 날·응답 이상 — 저장 안 하고 다음 실행에서 다시
+        if tot < PM_MIN_DAY * len(grp) / 2 and not (older and got and tot >= PM_MIN_DAY * len(got) / 2):
+            # 사이에 낀 빈 날·응답 이상 — 저장 안 하고 다음 실행에서 다시(경계에 걸친 묶음은 자료 있는 날만 저장)
             log(f"  부산 입항 선박 지난 날({s}~{e}) 입항이 {tot}척뿐 — 응답 이상으로 봐 저장 안 함(다음 실행에서)")
             continue
-        got = pm_days(its, s, e)
         days.update(got)
         n_back += len(got)
-    keep = sorted(k for k in days if (no_before or PM_FROM) <= k <= yday.isoformat())
+    keep_lo = max(lo, no_before or lo)
+    keep = sorted(k for k in days if keep_lo <= k <= yday.isoformat())
     if not keep:
         raise RuntimeError("모은 날이 없음")
-    first_s = (no_before or PM_FROM)
-    miss_n = sum(1 for k in range((yday - datetime.date.fromisoformat(first_s)).days + 1)
-                 if (datetime.date.fromisoformat(first_s) + datetime.timedelta(days=k)).isoformat() not in days)   # 아직 빈 날(시작일~어제)
+    f0 = datetime.date.fromisoformat(keep_lo)
+    miss_n = sum(1 for k in range((yday - f0).days + 1) if (f0 + datetime.timedelta(days=k)).isoformat() not in days)   # 아직 빈 날(시작일~어제)
     if n_back or miss_n:
         log(f"  부산 입항 선박: 이번에 지난 날 {n_back}일 채움 · 아직 빈 날 {miss_n}일 · 모은 날 {len(keep)}일({keep[0]}~{keep[-1]})")
-    out = {"days": [[k] + days[k] for k in keep], "from": first_s, "missing": miss_n, "stay_cap": PM_STAY_CAP}
+    out = {"days": [[k] + days[k] for k in keep], "from": keep_lo, "missing": miss_n, "stay_cap": PM_STAY_CAP}
     if no_before:
         out["no_data_before"] = no_before
+    if new_pend and not no_before:
+        out["nd_pending"] = new_pend
     return out
 
 
@@ -963,9 +1067,10 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
 
 
 def main():
-    global T_END, PW_DOWN, DGK_DOWN
+    global T_END, PW_DOWN, DGK_NOKEY
     T_END = time.monotonic() + RUN_LIMIT
-    PW_DOWN = DGK_DOWN = ""
+    PW_DOWN, DGK_NOKEY = "", False
+    DGK_DOWN.clear()
     DGK_AUTH.clear()
     prev_all = {}
     if os.path.exists(OUT):
@@ -1013,8 +1118,13 @@ def main():
     base = [LABELS[k] for k in LABELS if k not in DGK_BLOCKS]   # v1.2 오픈 API 자료는 빼고 기존 8개로(공공데이터포털이 끊기면 함께 실패)
     n_all, n_bad = len(base), len([x for x in blk_kept + blk_failed if x in base])
     if n_bad * 2 >= n_all:   # 8개 중 4개 이상(v1의 7개 중 '절반 넘게'와 같은 4개)
-        soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(status["kept"] + status["failed"]))
-    if DGK_AUTH:   # v1.2 인증키 오류는 기다려도 안 풀림 — 바로 알림(공공데이터포털 마이페이지에서 활용신청·기간 확인)
+        bad_all = status["kept"] + status["failed"]
+        extra = [x for x in bad_all if x.split("(")[0] not in base]   # 기준 밖(공공데이터포털 오픈 API) — 따로 적음
+        soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(x for x in bad_all if x not in extra)
+                  + (f" (기준 밖 공공데이터포털 오픈 API도 못 받음: {', '.join(extra)})" if extra else ""))
+    if DGK_NOKEY:   # v1.2 키가 이 단계에 안 넘어옴 — 저장소 설정 문제(포털 문제 아님)
+        soft_fail(f"공공데이터포털 인증키 없음 — GitHub Secrets {DGK_KEY_ENV} 등록과 update.yml 물류 단계 env 줄 확인")
+    elif DGK_AUTH:   # v1.2 인증키 오류는 기다려도 안 풀림 — 바로 알림(공공데이터포털 마이페이지에서 활용신청·기간 확인)
         soft_fail("공공데이터포털 인증키 오류(" + ", ".join(dict.fromkeys(DGK_AUTH)) + ") — 마이페이지 활용신청 상태·기간 확인")
     today = today_kst()
 
