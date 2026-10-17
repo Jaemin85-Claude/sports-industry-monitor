@@ -8,7 +8,8 @@ v33.6: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 
        (해수부 입항 신고 · 수출 선적·환적 배 포함 · 어제까지 최근 7일 하루 평균 · 지난 4주·1년 전 같은 7일 대비 · 직전 출항지 나라 · 체류시간 ·
        주별 그래프). 수출 묶음: '나라별 ← 부산항·인천공항 출발 물동량'(관세청 국가별 출항 · 수출만 · 목적지 = 화물목록상 내리는 곳(허브 나라로
        잡힐 수 있음) · 항공 B/L 설명은 방향별(수입 해외직구 · 수출 역직구)). 출처 입력 오류로 보이는 값(odd)은 logistics_fetch가 찾아 저장 —
-       화면은 그 나라·달에 '출처 값 확인 필요', 전체는 이상값을 뺀 합(total_clean)으로 몫·전년 대비. 작은 선 그래프는 빈 값을 제자리에 비워
+       화면은 그 나라·달에 '출처 값 확인 필요'(보조 값 톤·B/L도), 전체·몫은 이상값을 뺀 합(total_clean), 전년 같은 달 대비는 두 달 중 한 달이라도
+       이상값인 나라를 두 달 모두에서 뺀 yoy(같은 나라끼리 — 'OO 빼고'). 작은 선 그래프는 빈 값을 제자리에 비워
        둠(마지막 달이 비면 끝 점 없음 · 끝 점이 잘리지 않게 overflow). 화면에 안 쓰는 보조 시계열·오래된 선박 상세는 넣지 않음(첫 화면 무게).
        나라별 물동량은 색 없음(늘고 줄어도 좋고 나쁨이 아님) · 입항 척수는 늘면 파랑 · 체류시간은 늘면 주황
 v33.5:(대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 에어는 인천 · 수입 수출 시 필요한 정보·추이는 모두 · 1번부터, 적출국은 홍콩·
@@ -3510,17 +3511,17 @@ function lgHubCard(){
    나라 묶음(groups — VOL_GROUPS)·이상값(odd)·이상값을 뺀 합계(total_clean)는 logistics_fetch가 정해 저장하고 화면은 그대로 씀.
    색: 나라별 물동량은 늘고 줄어도 좋고 나쁨이 아니라 색 없음 · 입항 척수는 늘면 파랑(적출 거점 카드와 같게) · 체류시간은 늘면 주황 */
 let LG_VOL={vol_in:'sea',vol_out:'sea'};
-const LG_VOL_NM={'아랍에미리트 연합':'아랍에미리트','러시아 연방':'러시아','체코공화국':'체코','남아프리카공화국':'남아공','사우디아라비아':'사우디','네덜란드 열도':'네덜란드령 카리브'};
+const LG_VOL_NM={'아랍에미리트 연합':'아랍에미리트','러시아 연방':'러시아','체코공화국':'체코','남아프리카공화국':'남아공','사우디아라비아':'사우디','네덜란드 열도':'네덜란드령 카리브','룩셈부르그':'룩셈부르크'};
 const lgVolNm=c=>LG_VOL_NM[c]||c;
 const lgSum=a=>a.reduce((s,v)=>s+(v||0),0);
 const lgLast=a=>Array.isArray(a)&&a.length?a[a.length-1]:null;   // 보조 값(바닷길 톤 · 항공 B/L)은 마지막 달만 실음(build_dashboard가 줄임)
 const lgYaM=m=>`${+m.slice(0,4)-1}${m.slice(4)}`;   // '2026-09' → '2025-09'
 const LG_ODD=`<span class="stl" style="margin-left:4px" title="앞 12달 가운데값의 20배 넘음 — 출처 입력 오류로 보여 합계·그래프·비교에서 뺌(관세청이 고치면 사라짐)">출처 값 확인 필요</span>`;
-function lgVolRow(it,M,met,unit,dir,ODD,tL){   // ODD = 이상값 '나라|달' 모음 · tL = 이상값을 뺀 마지막 달 전체(몫의 분모)
+function lgVolRow(it,M,met,unit,dir,ODD,tL,O2){   // ODD = 이상값 '나라|달' 모음 · tL = 이상값을 뺀 마지막 달 전체(몫의 분모) · O2 = 마지막 달 보조 값(톤·B/L)이 이상값인 나라
   const raw=it[met]||[], mo=M.months, L=mo.length-1, isO=m=>ODD.has(it.c+'|'+m), s=raw.map((v,i)=>isO(mo[i])?null:v), v=raw[L], odd=isO(mo[L]);
   const yi=mo.indexOf(lgYaM(mo[L])), y=yi>=0?s[yi]:null, sh=!odd&&tL&&v!=null?v/tL*100:null, s12=lgSum(s.slice(-12)), nOdd=mo.filter(isO).length;
   const p12=s.length>=24&&!mo.slice(-24).some(isO)?lgSum(s.slice(-24,-12)):null;   // 이상값 달이 끼면 12달 비교는 안 함(달 수가 달라짐)
-  const o2=lgLast(met==='teu'?it.ton:it.bl), oth=o2==null?'':met==='teu'?` · ${lgN(o2)}톤`:` · B/L ${lgN(o2)}건`;
+  const o2=lgLast(met==='teu'?it.ton:it.bl), oth=o2==null?'':(met==='teu'?` · ${lgN(o2)}톤`:` · B/L ${lgN(o2)}건`)+(O2.has(it.c)?LG_ODD:'');
   return `<details class="lh"><summary><span class="lh-a"><span class="t">${esc(lgVolNm(it.c))}</span><span class="s">${sh!=null&&sh>=1?`${esc(dir)} 전체의 ${Math.round(sh)}%`:''}</span></span>
     <span class="lh-b"><b class="num">${lgN(v)}<small>${unit}</small></b><span class="s">${odd?LG_ODD:`전년 같은 달 ${lgChgI(lgRatio(v,y),null)}`}</span></span>${ic('down',16,'s2 lh-ic')}</summary>
     <div class="lh-in">${lgSpark(mo.map((m,i)=>[m,s[i]]),{min:0,label:lgVolNm(it.c)+' 최근 '+mo.length+'달'})}
@@ -3537,9 +3538,15 @@ function lgVolCard(key){   // key = 'vol_in'(수입 묶음 · 나라 → 부산�
   const ODD=new Set((M.odd||[]).filter(o=>Array.isArray(o)&&o[2]===met).map(o=>o[0]+'|'+o[1]));   // logistics_fetch vol_odd — 출처 입력 오류로 보이는 나라·달
   const tc=(M.total_clean&&M.total_clean[met])||M.total[met]||[], tL=tc[L], oL=I.filter(x=>ODD.has(x.c+'|'+mo[L])).map(x=>lgVolNm(x.c));
   const oN=[...ODD].filter(k=>k.endsWith('|'+mo[L])).length-oL.length;   // 목록 밖 나라의 이상값(전체에서만 뺌)
-  h+=`<div class="lg-share"><div><span>${esc(dir)} 전체 · ${lgMon(mo[L])}</span><b class="num">${lgN(tL)}<small>${unit}</small></b><span class="na">전년 같은 달 ${lgChgI(lgRatio(tL,yi>=0?tc[yi]:null),null)}</span>${oL.length||oN>0?`<span class="na">${esc([...oL,oN>0?`그 밖 ${oN}곳`:''].filter(Boolean).join('·'))} 값 뺌${LG_ODD}</span>`:''}</div>
+  // 전년 같은 달 대비 — 두 달 중 한 달이라도 이상값인 나라는 두 달 모두에서 뺀 합(logistics_fetch yoy · 같은 나라끼리). 이번 달 이상값은 아래 'OO 값 뺌' 줄이
+  // 설명하고, 전년 달에만 이상값인 나라는 'OO 빼고 비교' 줄로(전체 숫자에는 들어 있음)
+  const curO=[...ODD].filter(k=>k.endsWith('|'+mo[L])).map(k=>k.slice(0,k.lastIndexOf('|')));
+  const Y=M.yoy&&Array.isArray(M.yoy[met])?M.yoy[met]:null, yOnly=Y&&Array.isArray(Y[2])?Y[2].filter(c=>!curO.includes(c)).map(lgVolNm):[];
+  const yTxt=Y?lgChgI(lgRatio(Y[0],Y[1]),null):'<span class="na">―</span>', nm2=a=>a.length>2?`${a.slice(0,2).join('·')} 등 ${a.length}곳`:a.join('·');
+  const m2=met==='teu'?'ton':'bl', O2=new Set((M.odd||[]).filter(o=>Array.isArray(o)&&o[2]===m2&&o[1]===mo[L]).map(o=>o[0]));   // 보조 값(바닷길 톤 · 항공 B/L) 이상값
+  h+=`<div class="lg-share"><div><span>${esc(dir)} 전체 · ${lgMon(mo[L])}</span><b class="num">${lgN(tL)}<small>${unit}</small></b><span class="na">전년 같은 달 ${yTxt}</span>${yOnly.length?`<span class="na">${esc(nm2(yOnly))} 빼고 비교</span>`:''}${oL.length||oN>0?`<span class="na">${esc([...oL,oN>0?`그 밖 ${oN}곳`:''].filter(Boolean).join('·'))} 값 뺌${LG_ODD}</span>`:''}</div>
     <div class="lg-shx">${air?'항공 화물 무게(톤)':'컨테이너 물량(TEU · 빈 컨테이너 제외)'} · ${air?'인천공항':'신항+북항+감천항'}<br><span class="na">나라를 누르면 최근 ${mo.length}달 추이</span></div></div>`;
-  const row=it=>lgVolRow(it,M,met,unit,dir,ODD,tL), by=Object.fromEntries(I.map(x=>[x.c,x]));
+  const row=it=>lgVolRow(it,M,met,unit,dir,ODD,tL,O2), by=Object.fromEntries(I.map(x=>[x.c,x]));
   const G=(Array.isArray(M.groups)&&M.groups.length?M.groups:[['거점',I.map(x=>x.c)]]).map(([g,cs])=>[g,(Array.isArray(cs)?cs:[]).map(c=>by[c]).filter(Boolean)]);
   const inG=new Set(G.flatMap(g=>g[1].map(x=>x.c))), z=it=>!lgSum((it[met]||[]).slice(-12));   // 최근 12달 기록 없는 지정 나라(예: 항공 출발 벨기에 — 이웃 허브 나라로 잡힘)는 목록 밖 한 줄
   const zs=G.flatMap(g=>g[1].filter(z)), g1=G[0][1].filter(x=>!z(x)), gs=G.slice(1).map(([g,xs])=>[g,xs.filter(x=>!z(x))]).filter(g=>g[1].length), g3=I.filter(x=>!inG.has(x.c));
@@ -3548,7 +3555,7 @@ function lgVolCard(key){   // key = 'vol_in'(수입 묶음 · 나라 → 부산�
   if(gs.length||g3.length) h+=`<details class="lg-more"><summary><span>나라 더 보기</span><span class="na">${[...gs.map(([g,xs])=>`${g} ${xs.length}곳`),g3.length?`그 밖에 많은 나라 ${g3.length}곳`:''].filter(Boolean).join(' · ')}</span>${ic('down',16,'s2 lh-ic')}</summary>
     ${gs.map(([g,xs])=>`<div class="lg-grp">${esc(GL[g]||g)}</div><div class="lh-list">${xs.map(row).join('')}</div>`).join('')}${g3.length?`<div class="lg-grp">그 밖에 ${esc(dir)} 많은 나라(최근 12달)</div><div class="lh-list">${g3.map(row).join('')}</div>`:''}</details>`;
   if(zs.length) h+=`<div class="ref">최근 12달 기록 없음: ${esc(zs.map(x=>lgVolNm(x.c)).join(', '))}</div>`;
-  const blTop=air?I.filter(x=>lgLast(x.bl)!=null).sort((a,b)=>lgLast(b.bl)-lgLast(a.bl)).slice(0,2).map(x=>lgVolNm(x.c)):[];
+  const blTop=air?I.filter(x=>lgLast(x.bl)!=null&&!O2.has(x.c)).sort((a,b)=>lgLast(b.bl)-lgLast(a.bl)).slice(0,2).map(x=>lgVolNm(x.c)):[];
   const cov=air?'항공은 인천공항만(김해공항 등은 빠짐)':`바닷길은 부산항만(신항+북항+감천항 · 북항 = 관세청 항구 이름 '부산항') — 인천·평택·광양항 등은 빠짐${out?'':'(중국·베트남 화물은 인천항으로도 많이 들어옴)'}`;
   const unitNote=air?`항공 B/L 건수엔 ${out?'전자상거래 수출(역직구)':'해외직구'} 특송 소포가 섞임${blTop.length?`(${lgMon(mo[L])} 건수 많은 곳: ${esc(blTop.join('·'))})`:''}`:'TEU = 20ft 컨테이너 1개 기준(40ft = 2)';
   return h+`<div class="note">관세청 ${out?'출항':'입항'} 적재화물목록 기준 ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 점선 = 전쟁 시작${M.others?` · 목록 밖 ${M.others}개 나라는 전체에만`:''}</div>`;
@@ -3560,7 +3567,7 @@ const lgDay=(iso,k)=>new Date(Date.parse(iso+'T00:00:00Z')+k*86400000).toISOStri
 function lgPmCard(){
   const B=LOGI&&LOGI.busan_calls, D=((B&&B.days)||[]).filter(r=>Array.isArray(r)&&r.length>=5&&typeof r[0]==='string');
   const last=D.length?D[D.length-1][0]:null, stop=!!(B&&/^\d{4}-\d{2}-\d{2}$/.test(B.fetched||'')&&!B.stale_since&&last&&last<lgDay(B.fetched,-3));   // 수집은 됐는데 날이 안 늘어남(logistics_fetch가 막지만 화면에서도)
-  let h=`<div class="card" id="lgPm"><h3>부산항 입항 컨테이너선 <span class="na" style="font-weight:400">해양수산부 입항 신고 · ${stop?'':'어제까지 · '}매일</span>${stop?`<span class="stl" title="수집은 됐지만 새 날이 없음 — 응답 형식 확인">자료 멈춤(${lgMd(last)}까지)</span>`:staleTag(B&&B.stale_since)}</h3>`;
+  let h=`<div class="card" id="lgPm"><h3>부산항 입항 컨테이너선 <span class="na" style="font-weight:400">해양수산부 입항 신고 · ${stop||(B&&B.stale_since)?'':'어제까지 · '}매일</span>${stop?`<span class="stl" title="수집은 됐지만 새 날이 없음 — 응답 형식 확인">자료 멈춤(${lgMd(last)}까지)</span>`:staleTag(B&&B.stale_since)}</h3>`;
   if(D.length<5) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
   const by=Object.fromEntries(D.map(r=>[r[0],r]));
   const win=(end,n)=>{ const a=[]; for(let i=0;i<n;i++){ const r=by[lgDay(end,-i)]; if(r) a.push(r); } return a; };   // end부터 n일 거슬러(빈 날 빼고)
@@ -3635,7 +3642,7 @@ function moreLogiHtml(){
   h+=`<div class="cb-read"><b>읽는 법</b> — ① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 그 나라에서 부산항(바닷길)·인천공항(항공)으로 들어온 물량은 나라별 도착 물동량(관세청 · 월 — 인천·평택·광양항 등은 빠짐), 어제까지 부산항에 들어온 배는 부산항 입항 컨테이너선(해수부 · 매일 — 수출 선적·환적 배 포함). 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고)·나라별 출발 물동량(부산항·인천공항). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.</div>`;
   h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('나라별 도착 물동량',()=>`<div class="card" id="lgVol_vol_in">${lgVolCard('vol_in')}</div>`)
     +sf('부산항 입항 선박',lgPmCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
-  h+=sec('lgExp','수출','부산 → 해외')+sf('부산발 운임',lgKcciCard)+sf('한국발 운임',()=>`<div class="card">${lgKcsCard('kcs_sea_export')}</div>`)
+  h+=sec('lgExp','수출','부산 → 해외 · 항공 인천 → 해외')+sf('부산발 운임',lgKcciCard)+sf('한국발 운임',()=>`<div class="card">${lgKcsCard('kcs_sea_export')}</div>`)
     +sf('나라별 출발 물동량',()=>`<div class="card" id="lgVol_vol_out">${lgVolCard('vol_out')}</div>`);
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
@@ -4954,7 +4961,7 @@ def main():
                     if not isinstance(m, dict) or not isinstance(m.get("metrics"), list) or not m["metrics"]:
                         continue
                     lead = m["metrics"][0]
-                    for tk in ("total", "total_clean"):
+                    for tk in ("total", "total_clean", "yoy"):
                         if isinstance(m.get(tk), dict):
                             m[tk] = {lead: m[tk].get(lead)}
                     for it in m.get("items") or []:
