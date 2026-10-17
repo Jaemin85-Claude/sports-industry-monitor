@@ -67,15 +67,23 @@ jobs:
           TODAY = datetime.datetime.now(KST).date()
 
 
-          def get(url, params=None, timeout=(15, 40), **kw):
+          def get(url, params=None, timeout=(20, 45), tries=4, **kw):
               t = time.time()
-              try:
-                  r = S.get(url, params=params, timeout=timeout, **kw)
-                  return r, time.time() - t, None
-              except Exception as e:
-                  return None, time.time() - t, f"{type(e).__name__}: {e}"
+              err = None
+              for k in range(tries):
+                  try:
+                      r = S.get(url, params=params, timeout=timeout, **kw)
+                      return r, time.time() - t, None
+                  except Exception as e:
+                      err = f"{type(e).__name__}: {e}"
+                      say(f"    (연결 실패 {k + 1}/{tries} — {err[:80]})")
+                      time.sleep(12)
+              return None, time.time() - t, err
 
 
+          say("== 연결 확인: 선박입출항 1건 ==")
+          r, sec, err = get("https://apis.data.go.kr/1192000/VsslEtrynd5/Info5", {"serviceKey": KEY, "prtAgCd": "020", "sde": "20261015", "ede": "20261016", "numOfRows": "1", "pageNo": "1"})
+          say("  ", err or f"HTTP {r.status_code} · {sec:.1f}s · {ws(r.text)[:160]}")
           for ds in ("15151805", "15151809", "15168220"):
               say(f"== {ds} catalog openapi.json 본문 ==")
               r, sec, err = get(f"https://www.data.go.kr/catalog/{ds}/openapi.json")
