@@ -29,42 +29,6 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Probe data.go.kr APIs (temporary branch test)
-        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
-        env:
-          PYTHONUNBUFFERED: "1"
-          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
-        run: |
-          pip install -q requests
-          python - <<'PY'
-          import base64, gzip, json, os, time
-          import logistics_fetch as L
-
-          L.T_END = time.monotonic() + 7 * 60
-          L.PM_FROM = "2025-10-01"
-          L.PM_BACK_SEC = 150
-          out = {}
-          for key, ds, url, carg in L.VOL:
-              t = time.time()
-              try:
-                  out[key] = L.fetch_vol(key, ds, url, carg)
-                  print(f"{key} OK {time.time() - t:.1f}s", flush=True)
-              except Exception as e:
-                  print(f"{key} 실패 {L.dgk_mask(e)[:300]}", flush=True)
-          t = time.time()
-          try:
-              out["busan_calls"] = L.fetch_portmis(None)
-              print(f"busan_calls OK {time.time() - t:.1f}s · 날 {len(out['busan_calls']['days'])} · 빈 날 {out['busan_calls']['missing']}", flush=True)
-          except Exception as e:
-              print(f"busan_calls 실패 {L.dgk_mask(e)[:300]}", flush=True)
-          print("DGK_DOWN", repr(L.DGK_DOWN), "DGK_AUTH", L.DGK_AUTH)
-          raw = json.dumps(out, ensure_ascii=False).encode()
-          b = base64.b64encode(gzip.compress(raw, 9)).decode()
-          print(f"JSON {len(raw):,}B → gzip+base64 {len(b):,}자")
-          for i in range(0, len(b), 6000):
-              print(f"B64[{i // 6000:03d}] {b[i:i + 6000]}")
-          print("== 끝 ==")
-          PY
       - name: Check files against CLAUDE.md
         run: |
           python - <<'PY'

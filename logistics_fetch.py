@@ -752,6 +752,12 @@ def fetch_vol(key, ds, url, carg):
             raise RuntimeError(f"{mode}: 마지막 달이 {last} — {gap}일째 새 달 없음")
         top = sorted(m["items"], key=lambda x: -x[metrics[0]][-1])[:5]
         unit = {"teu": "TEU", "ton": "톤", "bl": "건"}
+        for it in [{"c": "전체", **m["total"]}] + m["items"]:   # 출처 입력 오류로 보이는 값 — 저장은 그대로(화면이 '출처 값 확인 필요'로 표시)
+            for k in metrics:
+                prev = sorted(it[k][-13:-1])
+                md = prev[len(prev) // 2] if prev else 0
+                if md >= 50 and it[k][-1] > 20 * md:
+                    log(f"    [WARN] {it['c']} {last} {k} {it[k][-1]:,} — 앞 12달 가운데값 {md:,}의 {it[k][-1] / md:.0f}배(출처 값 확인 필요)")
         log(f"  {LABELS[key]} {mode}: 행 {len(items):,} · {len(m['months'])}달 {m['months'][0]}~{last} · {last} 합계 "
             + " · ".join(f"{m['total'][k][-1]:,}{unit[k]}" for k in metrics)
             + f" · 나라 {len(m['items'])}곳(그 밖 {m['others']}곳) · 상위 " + ", ".join(f"{x['c']} {x[metrics[0]][-1]:,}" for x in top))
@@ -848,7 +854,7 @@ def fetch_portmis(prev):
     log(f"  부산 입항 선박: 최근 {PM_RECENT}일({r0}~{yday}) 모든 배 {total}척 · 컨테이너선 {n7}척(하루 {n7 / PM_RECENT:.0f}) · 직전 출항지 "
         + ", ".join(f"{c} {k}" for c, k in sorted(cc7.items(), key=lambda x: -x[1])[:8])
         + (f" · 체류 평균 {sum(v[2] for v in st) / sum(v[3] for v in st):.0f}시간" if st else ""))
-    # 빈 날 채우기 — 최근 쪽부터 7일 묶음(연속한 빈 날만)
+    # 빈 날 채우기 — 1년 전 같은 때(화면 '1년 전 같은 7일' 비교 · 앞뒤 1주)를 먼저, 그다음 최근 쪽부터 7일 묶음(연속한 빈 날만)
     back_end, n_back = time.monotonic() + PM_BACK_SEC, 0
     miss = []
     d = r0 - datetime.timedelta(days=1)
@@ -856,6 +862,8 @@ def fetch_portmis(prev):
         if d.isoformat() not in days:
             miss.append(d)
         d -= datetime.timedelta(days=1)
+    ya_hi, ya_lo = yday - datetime.timedelta(days=357), yday - datetime.timedelta(days=371)
+    miss = [x for x in miss if ya_lo <= x <= ya_hi] + [x for x in miss if not ya_lo <= x <= ya_hi]
     while miss and time.monotonic() < back_end and time_left() > 60:
         e = miss[0]
         grp = [e]
@@ -871,11 +879,21 @@ def fetch_portmis(prev):
             log(f"  부산 입항 선박 지난 날({s}~{e}) 받기 실패 — 다음 실행에서: {str(ex)[:150]}")
             miss = grp + miss
             break
-        if tot == 0 and e.isoformat() < min(days, default="9999"):   # 모은 날보다 앞 — 여기부터 자료가 없음(보관 기간) · 다시 묻지 않음
-            no_before = (e + datetime.timedelta(days=1)).isoformat()
-            log(f"  부산 입항 선박: {s}~{e} 자료 없음 — {no_before}부터만 모음")
-            miss = []
-            break
+        if tot == 0 and e.isoformat() < min(days, default="9999"):   # 모은 날보다 앞인데 0척 — 보관 기간이 끝난 것인지 60일 앞 하루로 확인
+            chk = s - datetime.timedelta(days=60)
+            try:
+                tot2 = pm_items(chk, chk)[1]
+            except Exception as ex:
+                log(f"  부산 입항 선박 {s}~{e} 0척 — 확인 요청 실패, 다음 실행에서: {str(ex)[:120]}")
+                miss = grp + miss
+                break
+            if tot2 == 0:   # 더 앞도 없음 → 여기부터 자료가 없음 · 다시 묻지 않음
+                no_before = (e + datetime.timedelta(days=1)).isoformat()
+                log(f"  부산 입항 선박: {s}~{e} 자료 없음(60일 앞도 없음) — {no_before}부터만 모음")
+                miss = []
+                break
+            log(f"  부산 입항 선박 {s}~{e} 0척인데 60일 앞({chk})은 {tot2}척 — 응답 이상으로 봐 다음 실행에서")
+            continue
         if tot < PM_MIN_DAY * len(grp) / 2:   # 사이에 낀 빈 날·응답 이상 — 저장 안 하고 다음 실행에서 다시
             log(f"  부산 입항 선박 지난 날({s}~{e}) 입항이 {tot}척뿐 — 응답 이상으로 봐 저장 안 함(다음 실행에서)")
             continue
