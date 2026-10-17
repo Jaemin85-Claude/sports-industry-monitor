@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v33.5: (대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 에어는 인천 · 수입 수출 시 필요한 정보·추이는 모두 · 1번부터, 적출국은 홍콩·
+v33.6: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두' + 공공데이터포털 인증키) 더보기 › 물류에 logistics_fetch v1.2
+       새 자료 3개 — 수입 묶음: '나라별 → 부산항(바닷길 TEU)·인천공항(항공 톤) 도착 물동량'(관세청 국가별 입항, 칩으로 바꿈 · 제목도 칩 따라 ·
+       인천·평택·광양항 등은 빠짐을 적음 · 적출 거점 나라 먼저 + 원산지·생산국·그 밖 많은 나라는 '나라 더 보기' — 묶음은 logistics_fetch가 저장한
+       groups(VOL_GROUPS) · 최근 12달 기록 없는 지정 나라는 목록 밖 한 줄 · 전년 같은 달 대비 · 눌러서 최근 36달 추이) + '부산항 입항 컨테이너선'
+       (해수부 입항 신고 · 수출 선적·환적 배 포함 · 어제까지 최근 7일 하루 평균 · 지난 4주·1년 전 같은 7일 대비 · 직전 출항지 나라 · 체류시간 ·
+       주별 그래프). 수출 묶음: '나라별 ← 부산항·인천공항 출발 물동량'(관세청 국가별 출항 · 수출만 · 목적지 = 화물목록상 내리는 곳(허브 나라로
+       잡힐 수 있음) · 항공 B/L 설명은 방향별(수입 해외직구 · 수출 역직구)). 출처 입력 오류로 보이는 값(odd)은 logistics_fetch가 찾아 저장 —
+       화면은 그 나라·달에 '출처 값 확인 필요'(보조 값 톤·B/L도), 전체·몫은 이상값을 뺀 합(total_clean), 전년 같은 달 대비는 두 달 중 한 달이라도
+       이상값인 나라를 두 달 모두에서 뺀 yoy(같은 나라끼리 — 'OO 빼고'). 작은 선 그래프는 빈 값을 제자리에 비워
+       둠(마지막 달이 비면 끝 점 없음 · 끝 점이 잘리지 않게 overflow). 화면에 안 쓰는 보조 시계열·오래된 선박 상세는 넣지 않음(첫 화면 무게).
+       나라별 물동량은 색 없음(늘고 줄어도 좋고 나쁨이 아님) · 입항 척수는 늘면 파랑 · 체류시간은 늘면 주황
+v33.5:(대표 지시 2026-10-16 '부산발이 아니라 적출국별 부산향 · 에어는 인천 · 수입 수출 시 필요한 정보·추이는 모두 · 1번부터, 적출국은 홍콩·
        로테르담·두바이·벨기에 외에 글로벌 주요 물류 거점 순') 더보기 › 물류를 수입(적출 거점 → 부산 · 항공 → 인천) · 수출(부산 → 해외) ·
        공통 위험 신호(해협 · 중동 항만 · 정시율 · 뉴스) 세 묶음으로(맨 위 칩으로 바로 가기). 수입 = 적출 거점 12곳(logistics_fetch v1.1 hubs —
        대표 지정 홍콩·로테르담·두바이·앤트워프 → 세계 1~5위 상하이·싱가포르·닝보·선전·칭다오 → 지역 대표 LA/롱비치·포트클랑·함부르크)
@@ -688,6 +699,7 @@ a.nmore{text-decoration:none}
 .lg-share{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;background:var(--barbg);border-radius:10px;padding:8px 10px;margin-bottom:8px}
 .lg-share>div:first-child{display:flex;flex-direction:column;min-width:0}
 .lg-share>div:first-child span{font-size:var(--fs-2xs);color:var(--sub)}
+.lg-share>div:first-child .stl{color:var(--bad)}   /* v33.6 위 줄(회색)보다 우선 — '출처 값 확인 필요' 꼬리표는 주황 */
 .lg-share b{font-size:var(--fs-xl);line-height:1.2}
 .lg-shx{font-size:var(--fs-xs);min-width:0;word-break:keep-all;overflow-wrap:anywhere}
 .lg-bars{display:flex;align-items:flex-end;gap:4px;margin:8px 0 2px}
@@ -713,6 +725,7 @@ a.nmore{text-decoration:none}
 .lh-a .s,.lh-b .s{font-size:var(--fs-2xs);color:var(--sub);word-break:keep-all;overflow-wrap:anywhere}
 .lh-b{display:flex;flex-direction:column;align-items:flex-end;text-align:right;flex:none}
 .lh-b b{font-size:15px}
+.lh-b b small,.lg-share b small{font-size:var(--fs-xs);font-weight:400;margin-left:1px}   /* v33.6 단위(TEU·톤·척/일) 13px */
 .lh-b .s{white-space:nowrap}
 .lg-bu .lg-bux{grid-column:1/-1;font-size:var(--fs-xs);color:var(--sub);word-break:keep-all;overflow-wrap:break-word}
 .lh-ic{flex:none;color:var(--tx2);transition:transform .15s}
@@ -721,6 +734,25 @@ a.nmore{text-decoration:none}
 .lh-in svg{display:block;width:100%;height:40px}
 .lh-in .ax{display:flex;justify-content:space-between;gap:0 4px;font-size:var(--fs-2xs);color:var(--sub)}
 .lh-in p{margin:6px 0 0;font-size:var(--fs-xs);line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+/* v33.6 나라별 물동량 '나라 더 보기' · 부산항 입항 선박(직전 출항지 막대·주별 그래프) */
+.lg-more{border-top:1px solid var(--line)}
+.lg-more>summary{display:flex;align-items:center;gap:8px;min-height:48px;cursor:pointer;list-style:none;font-weight:600}
+.lg-more>summary::-webkit-details-marker{display:none}
+.lg-more>summary:focus-visible{outline-offset:-2px}
+.lg-more>summary>span:first-child{white-space:nowrap}
+.lg-more>summary .na{flex:1 1 auto;min-width:0;font-weight:400;font-size:var(--fs-2xs);word-break:keep-all;overflow-wrap:anywhere}
+.lg-more[open]>summary .lh-ic{transform:rotate(180deg)}
+.lg-grp{margin:10px 0 2px;font-size:var(--fs-2xs);color:var(--sub);word-break:keep-all;overflow-wrap:anywhere}
+.lg-more .lh:first-child{border-top:none}
+.lg-hb{display:grid;grid-template-columns:minmax(4.5em,auto) minmax(0,1fr) auto;align-items:center;gap:6px 8px;margin:4px 0 8px;font-size:var(--fs-xs)}
+.lg-hb>div{display:contents}   /* 한 격자 — 모든 줄의 막대 길이가 같은 기준(숫자 자리 수와 무관) */
+.lg-hb .t{word-break:keep-all;overflow-wrap:anywhere}
+.lg-hb .bw{display:block;height:8px;background:var(--barbg);border-radius:4px;overflow:hidden;min-width:24px}
+.lg-hb .b{display:block;height:100%;background:var(--accent);border-radius:4px}
+.lg-hb .num{white-space:nowrap;text-align:right}
+.lg-pmtr{margin-top:4px}
+.lg-pmtr svg{display:block;width:100%;height:40px}
+.lg-pmtr .ax{display:flex;justify-content:space-between;gap:0 4px;font-size:var(--fs-2xs);color:var(--sub)}
 /* ── v33 A안 새 화면 부품(탭별 머리·오늘 결정 카드·브랜드 탭·브랜드 상세·더보기 메뉴) ── */
 /* 줄·카드 단추(브라우저 기본 가운데 정렬 대신 왼쪽) */
 .dc-hd,.dc-row,.dc-more,.dc-ev,.dc-peer,.dc-xmore,.hd-pill,.hd-back,.br-row,.br-rest-row,.br-link,.bd-nx,.bd-link,.bd-hq,.mi,.warnbar{text-align:left}
@@ -3311,15 +3343,17 @@ const lgChg=(r,upGood)=>r==null||!isFinite(r)?'<span class="na">―</span>':`<sp
 const lgN=(v,d=0)=>v==null?'―':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:d});
 const lgU=(v,u,d=0,pre='')=>v==null?'―':pre+lgN(v,d)+u;   // 값이 있을 때만 단위·기호('$―'·'―척' 안 나오게)
 function lgSpark(pts,o={}){   // pts=[[날짜·달, 값]] → 작은 선 그래프(전쟁 시작 세로 점선 · 마지막 점). o.accent = 파랑 선
-  const P=pts.filter(p=>p[1]!=null); if(P.length<2) return '';
-  const W=200,H=o.h||36,pd=3, vs=P.map(p=>p[1]), lo=Math.min(...vs,o.min??Infinity), hi=Math.max(...vs), rg=(hi-lo)||1, n=P.length-1;
+  // v33.6 빈 값(null — 이상값으로 뺀 달 등)은 건너뛰되 x는 원래 자리(뒤 점이 앞으로 당겨지지 않게) · 마지막 값이 비면 끝 점 없음
+  const P=pts.map((p,i)=>[p[0],p[1],i]).filter(p=>p[1]!=null); if(P.length<2) return '';
+  const W=200,H=o.h||36,pd=3, vs=P.map(p=>p[1]), lo=Math.min(...vs,o.min??Infinity), hi=Math.max(...vs), rg=(hi-lo)||1, n=pts.length-1, e=P[P.length-1];
   const x=i=>pd+(W-2*pd)*i/n, y=v=>pd+(H-2*pd)*(1-(v-lo)/rg);
-  const d=P.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ');
-  const wi=P.findIndex(p=>p[0].length===7?p[0]>LG_WAR.slice(0,7):p[0]>=LG_WAR);   // 전쟁 시작 이후 첫 점(달 자료는 3월부터, 주 자료는 2/28 이후 첫 주)
-  const war=wi>0?`<line x1="${x(wi-0.5).toFixed(1)}" x2="${x(wi-0.5).toFixed(1)}" y1="0" y2="${H}" stroke="var(--sub)" stroke-width="1" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`:'';
+  const d=P.map((p,j)=>(j?'L':'M')+x(p[2]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ');
+  const wi=pts.findIndex(p=>p[0].length===7?p[0]>LG_WAR.slice(0,7):p[0]>=LG_WAR);   // 전쟁 시작 이후 첫 자리(달 자료는 3월부터, 주 자료는 2/28 이후 첫 주)
+  const war=wi>0&&P[0][2]<wi&&e[2]>=wi?`<line x1="${x(wi-0.5).toFixed(1)}" x2="${x(wi-0.5).toFixed(1)}" y1="0" y2="${H}" stroke="var(--sub)" stroke-width="1" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>`:'';
   const col=o.accent?'var(--accent)':'var(--tx)';
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(o.label||'추이')}"><path d="${d} L${x(n).toFixed(1)} ${H-pd} L${x(0)} ${H-pd} Z" fill="var(--barbg)" stroke="none"/>${war}
-    <path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" vector-effect="non-scaling-stroke"/><circle cx="${x(n).toFixed(1)}" cy="${y(P[n][1]).toFixed(1)}" r="3" fill="${col}"/></svg>`;
+  // 끝 점 — 화면 픽셀 기준 둥근 점(넓은 화면에서 타원이 되지 않게) · overflow: 좁은 그래프에서 오른쪽 끝 점이 잘리지 않게
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" overflow="visible" role="img" aria-label="${esc(o.label||'추이')}"><path d="${d} L${x(e[2]).toFixed(1)} ${H-pd} L${x(P[0][2]).toFixed(1)} ${H-pd} Z" fill="var(--barbg)" stroke="none"/>${war}
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>${e[2]===n?`<path d="M${x(n).toFixed(1)} ${y(e[1]).toFixed(1)}h0" stroke="${col}" stroke-width="6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
 }
 /* 관세청 한국향 운임: 출발지 순서 = 트렉시 소싱(유럽·미국·일본) 먼저 */
 const LG_KCS_LBL={'유럽연합':'유럽(EU)','미국서부':'미국 서부','미국동부':'미국 동부','미국':'미국','일본':'일본','중국':'중국','베트남':'베트남'};
@@ -3470,7 +3504,92 @@ function lgHubCard(){
   h+=`<div class="lh-list">${ids.map(id=>hid[id]?lgHubRow(hid[id]):ms.includes(LG_HUB[id].n)?missRow(LG_HUB[id]):'').join('')}${B.items.filter(it=>!LG_HUB[it.id]).map(lgHubRow).join('')}</div>`;
   const msx=ms.filter(nm=>!ids.some(id=>LG_HUB[id].n===nm));
   if(msx.length) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> ${esc(msx.join(', '))}</div>`;
-  return h+`<div class="note">순서 = 대표 지정 홍콩·로테르담·두바이·벨기에 → 세계 물동량 1~5위 상하이·싱가포르·닝보·선전·칭다오 → 지역 대표 LA/롱비치(미국 서부)·포트클랑(말레이시아)·함부르크(독일) · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 이상 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(춘절이 끼어 있어 중국·홍콩 항만은 조금 낮게 잡힘) · 연휴·태풍 주간은 1년 전 같은 주와 비교 · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임</div></div>`;
+  return h+`<div class="note">순서 = 대표 지정 홍콩·로테르담·두바이·벨기에 → 세계 물동량 1~5위 상하이·싱가포르·닝보·선전·칭다오 → 지역 대표 LA/롱비치(미국 서부)·포트클랑(말레이시아)·함부르크(독일) · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 이상 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(춘절이 끼어 있어 중국·홍콩 항만은 조금 낮게 잡힘) · 연휴·태풍 주간은 1년 전 같은 주와 비교 · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임(그래프 점선 = 전쟁 시작)</div></div>`;
+}
+/* v33.6 나라별 물동량(logistics_fetch v1.2 — 관세청 국가별 입항·출항 물동량, 공공데이터포털 오픈 API · 월) · 부산항 입항 컨테이너선
+   (해양수산부 선박입출항 PORT-MIS · 매일) — 대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두'.
+   나라 묶음(groups — VOL_GROUPS)·이상값(odd)·이상값을 뺀 합계(total_clean)는 logistics_fetch가 정해 저장하고 화면은 그대로 씀.
+   색: 나라별 물동량은 늘고 줄어도 좋고 나쁨이 아니라 색 없음 · 입항 척수는 늘면 파랑(적출 거점 카드와 같게) · 체류시간은 늘면 주황 */
+let LG_VOL={vol_in:'sea',vol_out:'sea'};
+const LG_VOL_NM={'아랍에미리트 연합':'아랍에미리트','러시아 연방':'러시아','체코공화국':'체코','남아프리카공화국':'남아공','사우디아라비아':'사우디','네덜란드 열도':'네덜란드령 카리브','룩셈부르그':'룩셈부르크'};
+const lgVolNm=c=>LG_VOL_NM[c]||c;
+const lgSum=a=>a.reduce((s,v)=>s+(v||0),0);
+const lgLast=a=>Array.isArray(a)&&a.length?a[a.length-1]:null;   // 보조 값(바닷길 톤 · 항공 B/L)은 마지막 달만 실음(build_dashboard가 줄임)
+const lgYaM=m=>`${+m.slice(0,4)-1}${m.slice(4)}`;   // '2026-09' → '2025-09'
+const LG_ODD=`<span class="stl" style="margin-left:4px" title="앞 12달 가운데값의 20배 넘음 — 출처 입력 오류로 보여 합계·그래프·비교에서 뺌(관세청이 고치면 사라짐)">출처 값 확인 필요</span>`;
+function lgVolRow(it,M,met,unit,dir,ODD,tL,O2){   // ODD = 이상값 '나라|달' 모음 · tL = 이상값을 뺀 마지막 달 전체(몫의 분모) · O2 = 마지막 달 보조 값(톤·B/L)이 이상값인 나라
+  const raw=it[met]||[], mo=M.months, L=mo.length-1, isO=m=>ODD.has(it.c+'|'+m), s=raw.map((v,i)=>isO(mo[i])?null:v), v=raw[L], odd=isO(mo[L]);
+  const yi=mo.indexOf(lgYaM(mo[L])), y=yi>=0?s[yi]:null, sh=!odd&&tL&&v!=null?v/tL*100:null, s12=lgSum(s.slice(-12)), nOdd=mo.filter(isO).length;
+  const p12=s.length>=24&&!mo.slice(-24).some(isO)?lgSum(s.slice(-24,-12)):null;   // 이상값 달이 끼면 12달 비교는 안 함(달 수가 달라짐)
+  const o2=lgLast(met==='teu'?it.ton:it.bl), oth=o2==null?'':(met==='teu'?` · ${lgN(o2)}톤`:` · B/L ${lgN(o2)}건`)+(O2.has(it.c)?LG_ODD:'');
+  return `<details class="lh"><summary><span class="lh-a"><span class="t">${esc(lgVolNm(it.c))}</span><span class="s">${sh!=null&&sh>=1?`${esc(dir)} 전체의 ${Math.round(sh)}%`:''}</span></span>
+    <span class="lh-b"><b class="num">${lgN(v)}<small>${unit}</small></b><span class="s">${odd?LG_ODD:`전년 같은 달 ${lgChgI(lgRatio(v,y),null)}`}</span></span>${ic('down',16,'s2 lh-ic')}</summary>
+    <div class="lh-in">${lgSpark(mo.map((m,i)=>[m,s[i]]),{min:0,label:lgVolNm(it.c)+' 최근 '+mo.length+'달'})}
+      <div class="ax"><span>${lgMon(mo[0])}</span><span>${lgMon(mo[L])}</span></div>
+      <p>${lgMon(mo[L])} ${lgN(v)}${unit}${oth} · 전년 같은 달 ${lgU(y,unit)} · 최근 12달 ${lgN(s12)}${unit}${p12?`(그 전 12달 대비 ${lgChgI(lgRatio(s12,p12),null)})`:''}${nOdd?` · 이상값 ${nOdd}달은 그래프·합계에서 뺌`:''}</p></div></details>`;
+}
+function lgVolCard(key){   // key = 'vol_in'(수입 묶음 · 나라 → 부산항·인천공항) · 'vol_out'(수출 묶음 · 부산항·인천공항 → 나라) — 칩: 바닷길(부산항 TEU) · 항공(인천공항 톤)
+  const out=key==='vol_out', mode=LG_VOL[key]||'sea', B=LOGI&&LOGI[key], M=B&&B[mode], air=mode==='air';
+  const met=air?'ton':'teu', unit=air?'톤':'TEU', pt=air?'인천공항':'부산항', dir=`${pt} ${out?'출발':'도착'}`;
+  let h=`<h3>${out?`나라별 ← ${pt} 출발 물동량`:`나라별 → ${pt} 도착 물동량`} <span class="na" style="font-weight:400">관세청 · ${out?'출항':'입항'} 적재화물목록 · 월</span>${staleTag(B&&B.stale_since)}</h3>
+    <div class="chips" style="margin-bottom:8px">${[['sea','바닷길 · 부산항'],['air','항공 · 인천공항']].map(([c,l])=>`<button type="button" class="chip${mode===c?' on':''}" aria-pressed="${mode===c}" onclick="LG_VOL['${key}']='${c}';document.getElementById('lgVol_${key}').innerHTML=lgVolCard('${key}')">${l}</button>`).join('')}</div>`;
+  if(!M||!M.months||M.months.length<2||!M.items||!M.total) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div>';
+  const mo=M.months, L=mo.length-1, I=M.items, yi=mo.indexOf(lgYaM(mo[L]));
+  const ODD=new Set((M.odd||[]).filter(o=>Array.isArray(o)&&o[2]===met).map(o=>o[0]+'|'+o[1]));   // logistics_fetch vol_odd — 출처 입력 오류로 보이는 나라·달
+  const tc=(M.total_clean&&M.total_clean[met])||M.total[met]||[], tL=tc[L], oL=I.filter(x=>ODD.has(x.c+'|'+mo[L])).map(x=>lgVolNm(x.c));
+  const oN=[...ODD].filter(k=>k.endsWith('|'+mo[L])).length-oL.length;   // 목록 밖 나라의 이상값(전체에서만 뺌)
+  // 전년 같은 달 대비 — 두 달 중 한 달이라도 이상값인 나라는 두 달 모두에서 뺀 합(logistics_fetch yoy · 같은 나라끼리). 이번 달 이상값은 아래 'OO 값 뺌' 줄이
+  // 설명하고, 전년 달에만 이상값인 나라는 'OO 빼고 비교' 줄로(전체 숫자에는 들어 있음)
+  const curO=[...ODD].filter(k=>k.endsWith('|'+mo[L])).map(k=>k.slice(0,k.lastIndexOf('|')));
+  const Y=M.yoy&&Array.isArray(M.yoy[met])?M.yoy[met]:null, yOnly=Y&&Array.isArray(Y[2])?Y[2].filter(c=>!curO.includes(c)).map(lgVolNm):[];
+  const yTxt=Y?lgChgI(lgRatio(Y[0],Y[1]),null):'<span class="na">―</span>', nm2=a=>a.length>2?`${a.slice(0,2).join('·')} 등 ${a.length}곳`:a.join('·');
+  const m2=met==='teu'?'ton':'bl', O2=new Set((M.odd||[]).filter(o=>Array.isArray(o)&&o[2]===m2&&o[1]===mo[L]).map(o=>o[0]));   // 보조 값(바닷길 톤 · 항공 B/L) 이상값
+  h+=`<div class="lg-share"><div><span>${esc(dir)} 전체 · ${lgMon(mo[L])}</span><b class="num">${lgN(tL)}<small>${unit}</small></b><span class="na">전년 같은 달 ${yTxt}</span>${yOnly.length?`<span class="na">${esc(nm2(yOnly))} 빼고 비교</span>`:''}${oL.length||oN>0?`<span class="na">${esc([...oL,oN>0?`그 밖 ${oN}곳`:''].filter(Boolean).join('·'))} 값 뺌${LG_ODD}</span>`:''}</div>
+    <div class="lg-shx">${air?'항공 화물 무게(톤)':'컨테이너 물량(TEU · 빈 컨테이너 제외)'} · ${air?'인천공항':'신항+북항+감천항'}<br><span class="na">나라를 누르면 최근 ${mo.length}달 추이</span></div></div>`;
+  const row=it=>lgVolRow(it,M,met,unit,dir,ODD,tL,O2), by=Object.fromEntries(I.map(x=>[x.c,x]));
+  const G=(Array.isArray(M.groups)&&M.groups.length?M.groups:[['거점',I.map(x=>x.c)]]).map(([g,cs])=>[g,(Array.isArray(cs)?cs:[]).map(c=>by[c]).filter(Boolean)]);
+  const inG=new Set(G.flatMap(g=>g[1].map(x=>x.c))), z=it=>!lgSum((it[met]||[]).slice(-12));   // 최근 12달 기록 없는 지정 나라(예: 항공 출발 벨기에 — 이웃 허브 나라로 잡힘)는 목록 밖 한 줄
+  const zs=G.flatMap(g=>g[1].filter(z)), g1=G[0][1].filter(x=>!z(x)), gs=G.slice(1).map(([g,xs])=>[g,xs.filter(x=>!z(x))]).filter(g=>g[1].length), g3=I.filter(x=>!inG.has(x.c));
+  const GL={'원산지·생산국':out?'브랜드 원산지·생산국으로 가는 화물':'브랜드 원산지·생산국'};
+  h+=`<div class="lh-list">${g1.map(row).join('')}</div>`;
+  if(gs.length||g3.length) h+=`<details class="lg-more"><summary><span>나라 더 보기</span><span class="na">${[...gs.map(([g,xs])=>`${g} ${xs.length}곳`),g3.length?`그 밖에 많은 나라 ${g3.length}곳`:''].filter(Boolean).join(' · ')}</span>${ic('down',16,'s2 lh-ic')}</summary>
+    ${gs.map(([g,xs])=>`<div class="lg-grp">${esc(GL[g]||g)}</div><div class="lh-list">${xs.map(row).join('')}</div>`).join('')}${g3.length?`<div class="lg-grp">그 밖에 ${esc(dir)} 많은 나라(최근 12달)</div><div class="lh-list">${g3.map(row).join('')}</div>`:''}</details>`;
+  if(zs.length) h+=`<div class="ref">최근 12달 기록 없음: ${esc(zs.map(x=>lgVolNm(x.c)).join(', '))}</div>`;
+  const blTop=air?I.filter(x=>lgLast(x.bl)!=null&&!O2.has(x.c)).sort((a,b)=>lgLast(b.bl)-lgLast(a.bl)).slice(0,2).map(x=>lgVolNm(x.c)):[];
+  const cov=air?'항공은 인천공항만(김해공항 등은 빠짐)':`바닷길은 부산항만(신항+북항+감천항 · 북항 = 관세청 항구 이름 '부산항') — 인천·평택·광양항 등은 빠짐${out?'':'(중국·베트남 화물은 인천항으로도 많이 들어옴)'}`;
+  const unitNote=air?`항공 B/L 건수엔 ${out?'전자상거래 수출(역직구)':'해외직구'} 특송 소포가 섞임${blTop.length?`(${lgMon(mo[L])} 건수 많은 곳: ${esc(blTop.join('·'))})`:''}`:'TEU = 20ft 컨테이너 1개 기준(40ft = 2)';
+  return h+`<div class="note">관세청 ${out?'출항':'입항'} 적재화물목록 기준 ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 점선 = 전쟁 시작${M.others?` · 목록 밖 ${M.others}개 나라는 전체에만`:''}</div>`;
+}
+/* 부산항 입항 컨테이너선 — 직전 출항지 나라(부산 오기 바로 전 항구) 묶음 */
+const LG_PM_GRP=[['중국',['CN']],['일본',['JP']],['대만·홍콩',['TW','HK','MO']],['동남아',['VN','TH','MY','SG','ID','PH','KH','MM','BN','TL']],
+  ['러시아',['RU']],['북미',['US','CA','MX']],['국내 항만',['KR']]];
+const lgDay=(iso,k)=>new Date(Date.parse(iso+'T00:00:00Z')+k*86400000).toISOString().slice(0,10);
+function lgPmCard(){
+  const B=LOGI&&LOGI.busan_calls, D=((B&&B.days)||[]).filter(r=>Array.isArray(r)&&r.length>=5&&typeof r[0]==='string');
+  const last=D.length?D[D.length-1][0]:null, stop=!!(B&&/^\d{4}-\d{2}-\d{2}$/.test(B.fetched||'')&&!B.stale_since&&last&&last<lgDay(B.fetched,-3));   // 수집은 됐는데 날이 안 늘어남(logistics_fetch가 막지만 화면에서도)
+  let h=`<div class="card" id="lgPm"><h3>부산항 입항 컨테이너선 <span class="na" style="font-weight:400">해양수산부 입항 신고 · ${stop||(B&&B.stale_since)?'':'어제까지 · '}매일</span>${stop?`<span class="stl" title="수집은 됐지만 새 날이 없음 — 응답 형식 확인">자료 멈춤(${lgMd(last)}까지)</span>`:staleTag(B&&B.stale_since)}</h3>`;
+  if(D.length<5) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
+  const by=Object.fromEntries(D.map(r=>[r[0],r]));
+  const win=(end,n)=>{ const a=[]; for(let i=0;i<n;i++){ const r=by[lgDay(end,-i)]; if(r) a.push(r); } return a; };   // end부터 n일 거슬러(빈 날 빼고)
+  const avg=a=>a.length?lgSum(a.map(r=>r[1]))/a.length:null, stay=a=>{ const n=lgSum(a.map(r=>r[4])); return n?lgSum(a.map(r=>r[3]))/n:null; };
+  const w0=win(last,7), w4=win(lgDay(last,-7),28), wy=win(lgDay(last,-364),7);
+  const a0=avg(w0), a4=w4.length>=14?avg(w4):null, ay=wy.length>=5?avg(wy):null;
+  const sEnd=lgDay(last,-4), s0=stay(win(sEnd,7)), s4w=win(lgDay(sEnd,-7),28), s4=s4w.length>=14?stay(s4w):null;   // 체류는 출항 신고가 다 들어온 4일 전까지
+  h+=`<div class="lg-share"><div><span>최근 7일 · ${lgMd(lgDay(last,-6))}~${lgMd(last)}</span><b class="num">${lgN(a0)}<small>척/일</small></b><span class="na">컨테이너선 하루 평균</span></div>
+    <div class="lg-shx">지난 4주 ${lgU(a4,'척')} ${a4!=null?lgChgI(lgRatio(a0,a4),true):''} · 1년 전 같은 7일 ${ay!=null?lgU(ay,'척')+' '+lgChgI(lgRatio(a0,ay),true):'<span class="na">모으는 중</span>'}<br>
+    체류(입항→출항) 평균 ${lgU(s0,'시간')}${s4!=null?` · 지난 4주 ${lgU(s4,'시간')} ${lgChgI(lgRatio(s0,s4),false)}`:''} <span class="na">(${lgMd(lgDay(sEnd,-6))}~${lgMd(sEnd)} 입항)</span></div></div>`;
+  const cc={}; w0.forEach(r=>Object.entries(r[2]||{}).forEach(([c,k])=>{ cc[c]=(cc[c]||0)+(+k||0); }));
+  const known=new Set(LG_PM_GRP.flatMap(g=>g[1])), grp=LG_PM_GRP.map(([nm,cs])=>[nm,lgSum(cs.map(c=>cc[c]))]);
+  grp.push(['그 밖',lgSum(Object.entries(cc).filter(([c])=>!known.has(c)).map(([,k])=>k))]);   // 유럽·중동·인도·남미 등
+  const mx=Math.max(1,...grp.map(g=>g[1]));
+  h+=`<div class="lg-grp">직전 출항지 나라 · 최근 7일 합(${lgN(lgSum(grp.map(g=>g[1])))}척)</div><div class="lg-hb">${grp.filter(g=>g[1]>0).map(([nm,k])=>
+    `<div><span class="t">${esc(nm)}</span><span class="bw"><span class="b" style="width:${(k/mx*100).toFixed(1)}%"></span></span><span class="num">${lgN(k)}척</span></div>`).join('')}</div>`;
+  const wk={}; D.forEach(r=>{ const m=lgDay(r[0],-((new Date(Date.parse(r[0]+'T00:00:00Z')).getUTCDay()+6)%7)); (wk[m]=wk[m]||[]).push(r[1]); });
+  let m0=Object.keys(wk).sort().pop(); if(m0&&wk[m0].length<5) m0=lgDay(m0,-7);   // 이번 주가 덜 찼으면 한 주 앞부터
+  const W=[]; for(let m=m0;m&&wk[m]&&wk[m].length>=5;m=lgDay(m,-7)) W.unshift([m,lgSum(wk[m])/wk[m].length]);   // 월요일 시작 주(5일 이상 찬 주) — 가장 최근 주부터 빈틈없이 이어진 데까지(지난 자료를 채우는 중엔 1년 전 비교용 날이 떨어져 있음)
+  if(W.length>=2) h+=`<div class="lg-pmtr">${lgSpark(W,{min:0,accent:true,label:'부산 컨테이너선 주별 하루 평균'})}<div class="ax"><span>${lgYmW(W[0][0])}</span><span>${lgMd(W[W.length-1][0])} 주</span></div></div>`;
+  const warIn=W.length>=2&&W[0][0]<LG_WAR&&W[W.length-1][0]>=LG_WAR;   // lgSpark가 전쟁 시작 점선을 그릴 때만 설명
+  return h+`<div class="note">해양수산부 PORT-MIS 입항 신고(공공데이터포털) — 부산항 전체(북항·신항·감천 등)에 들어온 컨테이너선 · 수출 선적·환적 배 포함(수입 화물만 센 값 아님) · 위 적출 거점 카드의 '부산 입항'(IMF PortWatch · 배 위치 신호 · 주 단위)과 세는 방식이 달라 값이 다름 — 두 값은 서로 견주지 말고 각 카드의 추이로 봄 · 직전 출항지 = 부산에 오기 바로 전 항구의 나라(유럽·미주 배도 중국·일본을 들르면 그 나라로 잡힘 · 그 밖 = 유럽·중동·인도·남미 등) · 체류 = 입항→출항 시각(${lgN((B&&B.stay_cap)||96)}시간 넘으면 그 값) · 매일 최근 7일을 다시 받음 · 그래프 = 주별 하루 평균${warIn?', 점선 = 전쟁 시작':''}${B&&B.missing?` · 지난 자료 채우는 중(빈 날 ${lgN(B.missing)}일)`:''}</div></div>`;
 }
 /* 전 세계 정시율 — Sea-Intelligence GLP(월) */
 function lgGlp(){ const B=LOGI&&LOGI.glp; if(!B||!B.months||!B.months.length) return null;
@@ -3514,18 +3633,20 @@ function lgJump(id){   // v33.5 맨 위 칩 → 그 묶음 제목으로(고정 �
   cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0; phSync(); e.scrollIntoView({behavior:smoothB(),block:'start'});
 }
 function moreLogiHtml(){
-  let h=moreHead('물류','수입(적출 거점 → 부산 · 항공 → 인천) · 수출(부산발) · 공통 위험 신호 · 갱신 <span class="nw">'+esc((LOGI&&LOGI.generated_at)||'―')+'</span>');
+  let h=moreHead('물류','수입(적출 거점·나라별 → 부산 · 항공 → 인천) · 수출(부산발·나라별) · 공통 위험 신호 · 갱신 <span class="nw">'+esc((LOGI&&LOGI.generated_at)||'―')+'</span>');
   if(!LOGI) return h+'<div class="card"><div class="na">물류 자료 수집 전 — update-dashboard 실행 후 표시</div></div>';
   const sf=(nm,fn)=>{ try{ return fn(); }catch(e){ console.error('[물류 · '+nm+'] 그리기 실패:',e); return `<div class="card"><div class="na">${esc(nm)} — 그리기 실패</div></div>`; } };
   const sec=(id,t,sub)=>`<h2 class="lg-h2" id="${id}">${t}<span>${sub}</span></h2>`;
   h+=sf('요약',lgKpis);
   h+=`<div class="chips lg-jump">${[['lgImp','수입'],['lgExp','수출'],['lgRisk','공통 위험 신호']].map(([id,t])=>`<button type="button" class="chip" onclick="lgJump('${id}')">${t}${ic('down',16)}</button>`).join('')}</div>`;
-  h+=`<div class="cb-read"><b>읽는 법</b> — ① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.</div>`;
-  h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
-  h+=sec('lgExp','수출','부산 → 해외')+sf('부산발 운임',lgKcciCard)+sf('한국발 운임',()=>`<div class="card">${lgKcsCard('kcs_sea_export')}</div>`);
+  h+=`<div class="cb-read"><b>읽는 법</b> — ① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 그 나라에서 부산항(바닷길)·인천공항(항공)으로 들어온 물량은 나라별 도착 물동량(관세청 · 월 — 인천·평택·광양항 등은 빠짐), 어제까지 부산항에 들어온 배는 부산항 입항 컨테이너선(해수부 · 매일 — 수출 선적·환적 배 포함). 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고)·나라별 출발 물동량(부산항·인천공항). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.</div>`;
+  h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('나라별 도착 물동량',()=>`<div class="card" id="lgVol_vol_in">${lgVolCard('vol_in')}</div>`)
+    +sf('부산항 입항 선박',lgPmCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
+  h+=sec('lgExp','수출','부산 → 해외 · 항공 인천 → 해외')+sf('부산발 운임',lgKcciCard)+sf('한국발 운임',()=>`<div class="card">${lgKcsCard('kcs_sea_export')}</div>`)
+    +sf('나라별 출발 물동량',()=>`<div class="card" id="lgVol_vol_out">${lgVolCard('vol_out')}</div>`);
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
-  h+=`<div class="note">출처: 관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음${bad.length?` · <span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}`:''}</div>`;
+  h+=`<div class="note">출처: 관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음${bad.length?` · <span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}`:''}</div>`;
   return h;
 }
 /* ── 검색 관심도 vs 실적(v32.8) — 국내 패션·아이웨어: 같은 해 네이버 검색 증감 vs 매출 증감, 올해 검색 추이 ── */
@@ -3578,7 +3699,7 @@ function moreMenuHtml(){   // v33 S2: 머리 '더보기' + 메뉴 줄 5개(선 �
     ${row('fb','shirt','패션 브랜드','국내 패션 브랜드 비교 · 아이웨어 비교 · 검색 vs 실적',sv('패션 브랜드',()=>{ const a=cmpData(CMP.fb), b=cmpData(CMP.ey), L=a.concat(b).map(x=>x.end).filter(Boolean).sort().pop();
       return a.length||b.length?`패션 <b>${a.length}</b> · 아이웨어 <b>${b.length}</b>${L?'<br>FY'+L.slice(2,4):''}`:'수집 전'; }))}
     ${row('fx','fx','환율','엔·유로·달러 1% 칸 알림 · 1년 추이',sv('환율',()=>{ const la=fxAlertsAll()[0]; return la?`<b>${mdTxt(la.date)} 알림</b><br>${FX_SH[la.c]} ${fxLine(la.line)} ${la.dir==='dn'?'↓':'↑'}`:'알림 없음'; }))}
-    ${row('logi','ship','물류','수입(적출 거점 → 부산 · 항공 → 인천) · 수출 · 위험 신호',sv('물류',()=>{ const K=lgKcs('kcs_sea_import'); if(!K) return LOGI?'자료 확인':'수집 전'; const i=K.cols.indexOf('유럽연합')+1, v=i>0?K.L[i]:null;
+    ${row('logi','ship','물류','수입(적출 거점·나라별 → 부산 · 항공 → 인천) · 수출 · 위험 신호',sv('물류',()=>{ const K=lgKcs('kcs_sea_import'); if(!K) return LOGI?'자료 확인':'수집 전'; const i=K.cols.indexOf('유럽연합')+1, v=i>0?K.L[i]:null;
       return v!=null?`<b>유럽발 ${lgN(v)}천원</b><br>40ft · ${lgMon(K.L[0])}`:'자료 확인'; }))}
     ${row('cb','globe','해외직구','나라별·상품군별 직구 금액 (분기)',sv('해외직구',()=>{ const CB=KR&&KR.cross_border; return CB&&CB.last?`<b>${cbPrdS(CB.last)}</b><br>최근 자료`:'수집 전'; }))}
     ${row('status','pulse','수집 상태','자료별 마지막 갱신 · 지연 여부'+sv('Claude 사용액',claudeMonthTxt,''),sv('수집 상태',()=>{ const st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0);
@@ -4834,6 +4955,26 @@ def main():
             if isinstance(logi.get("glp"), dict):
                 logi["glp"].pop("skip", None)   # 정시율 기사 건너뜀 기억 — 화면에 안 씀
                 logi["glp"].pop("fmt_skip", None)
+            for vk in ("vol_in", "vol_out"):   # v33.6 나라별 물동량 — 화면은 앞 지표(바닷길 TEU · 항공 톤) 시계열 + 보조 지표(톤 · B/L) 마지막 달만 씀
+                for md in ("sea", "air"):
+                    m = (logi.get(vk) or {}).get(md) if isinstance(logi.get(vk), dict) else None
+                    if not isinstance(m, dict) or not isinstance(m.get("metrics"), list) or not m["metrics"]:
+                        continue
+                    lead = m["metrics"][0]
+                    for tk in ("total", "total_clean", "yoy"):
+                        if isinstance(m.get(tk), dict):
+                            m[tk] = {lead: m[tk].get(lead)}
+                    for it in m.get("items") or []:
+                        for k in m["metrics"][1:]:
+                            if isinstance(it, dict) and isinstance(it.get(k), list):
+                                it[k] = it[k][-1:]
+            bc = logi.get("busan_calls")   # v33.6 부산항 입항 — 직전 출항지·체류는 최근 40일만 씀(그 앞은 하루 척수만)
+            if isinstance(bc, dict) and isinstance(bc.get("days"), list) and bc["days"] and isinstance(bc["days"][-1], list):
+                try:
+                    cut = (datetime.date.fromisoformat(str(bc["days"][-1][0])) - datetime.timedelta(days=40)).isoformat()
+                    bc["days"] = [[r[0], r[1], {}, 0, 0] if isinstance(r, list) and len(r) >= 5 and str(r[0]) < cut else r for r in bc["days"]]
+                except ValueError:
+                    pass
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None
