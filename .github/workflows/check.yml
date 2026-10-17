@@ -37,10 +37,12 @@ jobs:
         run: |
           pip install -q requests
           python - <<'PY'
-          import datetime, html as H, json, os, re, time
-          from urllib.parse import quote, quote_plus
+          import datetime, html as H, io, json, os, re, time, zipfile
+          from urllib.parse import quote, quote_plus, urljoin
           import requests
 
+          T0 = time.time()
+          BUDGET = 7 * 60   # 작업 10분 제한 안에서
           KEY = os.environ.get("DATA_GO_KR_API_KEY", "").strip()
           FORMS = sorted({f for f in (KEY, quote(KEY, safe=""), quote_plus(KEY), quote(KEY)) if f}, key=len, reverse=True)
 
@@ -61,51 +63,73 @@ jobs:
               return re.sub(r"\s+", " ", str(x or ""))
 
 
+          def left():
+              return BUDGET - (time.time() - T0)
+
+
           S = requests.Session()
           S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
 
 
-          def req(method, url, tries=4, timeout=(20, 45), **kw):
-              t = time.time()
-              err = None
-              for k in range(tries):
-                  try:
-                      r = S.request(method, url, timeout=timeout, **kw)
-                      return r, time.time() - t, None
-                  except Exception as e:
-                      err = f"{type(e).__name__}: {e}"
-                      say(f"    (연결 실패 {k + 1}/{tries} — {err[:80]})")
-                      time.sleep(12)
-              return None, time.time() - t, err
+          def req(method, url, timeout=(10, 40), **kw):
+              try:
+                  return S.request(method, url, timeout=timeout, **kw), None
+              except Exception as e:
+                  return None, f"{type(e).__name__}: {str(e)[:120]}"
 
 
-          PAGES = {}
-          for ds in ("15151805", "15168220", "15168252", "15006353"):
-              say(f"== {ds} 화면 ==")
-              r, sec, err = req("GET", f"https://www.data.go.kr/data/{ds}/openapi.do")
+          # 1) 연결될 때까지 기다림(최대 5분)
+          ok = False
+          while left() > 120:
+              r, err = req("GET", "https://www.data.go.kr/data/15151805/openapi.do")
+              if r is not None and r.status_code == 200:
+                  ok = True
+                  say(f"연결됨 · {time.time() - T0:.0f}초 · {len(r.text):,}자")
+                  break
+              say(f"  연결 안 됨({time.time() - T0:.0f}초) {err or r.status_code}")
+              time.sleep(15)
+          if not ok:
+              say("== 연결 안 됨 — 끝 ==")
+              raise SystemExit(0)
+
+          for ds in ("15151805", "15151809"):
+              if left() < 40:
+                  break
+              r, err = req("GET", f"https://www.data.go.kr/data/{ds}/openapi.do")
               if err:
-                  say("  실패", err[:200])
+                  say(ds, "실패", err)
                   continue
               page = r.text
-              PAGES[ds] = page
-              m = re.search(r"심의유형</strong>\s*<div class=\"value\">(.*?)</div>", page, re.S)
-              say("  심의유형:", ws(H.unescape(re.sub("<[^>]+>", " ", m.group(1)))) if m else "?")
-              if ds != "15151805":
-                  continue
-              say("  script src:", re.findall(r'<script[^>]+src="([^"]+)"', page)[:30])
-              for m in list(re.finditer(r"(?i)swagger|openapi\.json|oas/docs|\.json[\"']", page))[:14]:
-                  say("  [ctx] …", ws(page[max(0, m.start() - 300):m.start() + 500]))
-              for m in list(re.finditer("활용가이드", page))[:3]:
-                  say("  [가이드] …", ws(page[max(0, m.start() - 500):m.start() + 300]))
+              say(f"== {ds} 화면 {len(page):,}자 ==")
+              for m in list(re.finditer(r"(?i)swagger|docx|atchfileid|filedown|FILE_\d{6,}", page))[:16]:
+                  say("  [ctx] …", ws(page[max(0, m.start() - 250):m.start() + 350]))
+              # 활용가이드 문서 내려받기 시도
+              cands = re.findall(r"(?:https?://www\.data\.go\.kr)?/cmm/cmm/fileDownload\.do\?[^\"' <>]+", page)
+              ids = sorted(set(re.findall(r"FILE_\d{9,}", page)))
+              say("  내려받기 주소:", cands[:5], "· FILE id:", ids[:6])
+              tried = [urljoin("https://www.data.go.kr", H.unescape(c)) for c in cands[:3]]
+              tried += [f"https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={i}&fileDetailSn=1" for i in ids[:3]]
+              for u in tried:
+                  if left() < 30:
+                      break
+                  r2, err = req("GET", u, timeout=(10, 60))
+                  if err or r2.status_code != 200:
+                      say("   문서 실패", u[:120], err or r2.status_code)
+                      continue
+                  say(f"   문서 {u[:120]} · {r2.headers.get('content-type', '')[:50]} · {len(r2.content):,}B · {r2.headers.get('content-disposition', '')[:120]}")
+                  try:
+                      z = zipfile.ZipFile(io.BytesIO(r2.content))
+                      xml = z.read("word/document.xml").decode("utf-8", "ignore")
+                      txt = ws(H.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"</w:p>", "\n", xml))))
+                      say("   문서 글:", txt[:7000])
+                      break
+                  except Exception as e:
+                      say("   docx 아님:", type(e).__name__, ws(r2.content[:200]))
 
-          # 명세를 불러오는 흔한 경로 시도
-          pk = re.search(r'id="publicDataDetailPk"\s+value="([^"]+)"', PAGES.get("15151805", ""))
-          pk = pk.group(1) if pk else ""
-          for u, data in (("https://www.data.go.kr/tcs/dss/selectApiDetailFunction.do", {"publicDataDetailPk": pk}),
-                          ("https://www.data.go.kr/tcs/dss/selectSwaggerJson.do", {"publicDataDetailPk": pk}),
-                          ("https://www.data.go.kr/catalog/15151805/swagger.json", None)):
-              r, sec, err = req("POST" if data else "GET", u, data=data, tries=2)
-              say(f"== 시도 {u} ==", err or f"HTTP {r.status_code} · {r.headers.get('content-type', '')[:40]} · {len(r.text):,}자 · {ws(r.text)[:600]}")
+          r, err = req("GET", "https://apis.data.go.kr/B551177/statusOfCgoFltDeOdpT1/getCgoFltArrivalsDeOdpT1",
+                       params={"serviceKey": KEY, "numOfRows": "3", "pageNo": "1", "type": "json",
+                               "searchDate": datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y%m%d")})
+          say("== 화물기 T1 ==", err or f"HTTP {r.status_code} · {ws(r.text)[:300]}")
           say("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
