@@ -61,14 +61,8 @@ jobs:
               return re.sub(r"\s+", " ", str(x or ""))
 
 
-          def text(h):
-              return ws(H.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"(?is)<(script|style).*?</\1>", " ", h))))
-
-
           S = requests.Session()
           S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
-          KST = datetime.timezone(datetime.timedelta(hours=9))
-          TODAY = datetime.datetime.now(KST).date()
 
 
           def req(method, url, tries=4, timeout=(20, 45), **kw):
@@ -85,41 +79,33 @@ jobs:
               return None, time.time() - t, err
 
 
-          for ds in ("15151805", "15151809", "15168220"):
-              say(f"== {ds} 상세기능 ==")
+          PAGES = {}
+          for ds in ("15151805", "15168220", "15168252", "15006353"):
+              say(f"== {ds} 화면 ==")
               r, sec, err = req("GET", f"https://www.data.go.kr/data/{ds}/openapi.do")
               if err:
                   say("  실패", err[:200])
                   continue
               page = r.text
-              pk = re.search(r'id="publicDataDetailPk"\s+value="([^"]+)"', page)
-              pk = pk.group(1) if pk else ""
-              sel = re.search(r'(?is)<select[^>]*id="open_api_detail_select"[^>]*>(.*?)</select>', page)
-              opts = re.findall(r'(?is)<option[^>]*value="([^"]*)"[^>]*>(.*?)</option>', sel.group(1)) if sel else []
-              say(f"  publicDataDetailPk={pk} · 기능 {len(opts)}개:", [(v, ws(H.unescape(re.sub('<[^>]+>', '', t)))) for v, t in opts])
-              # 첨부 문서(활용가이드) 링크
-              say("  문서 링크:", sorted(set(re.findall(r"fn_fileDataDown\([^)]*\)|fileDownload\.do\?[^\"' <>]+|atchFileId=[A-Z_0-9]+", page)))[:6])
-              for v, t in opts[:4]:
-                  r2, sec, err = req("POST", "https://www.data.go.kr/tcs/dss/selectApiDetailFunction.do",
-                                     data={"oprtinSeqNo": v, "publicDataDetailPk": pk},
-                                     headers={"X-Requested-With": "XMLHttpRequest", "Referer": f"https://www.data.go.kr/data/{ds}/openapi.do"})
-                  if err:
-                      say("   기능 실패", err[:200])
-                      continue
-                  body = r2.text
-                  say(f"  -- 기능 {v} {ws(H.unescape(re.sub('<[^>]+>', '', t)))} · HTTP {r2.status_code} · {len(body):,}자")
-                  urls = sorted(set(re.findall(r"https?://[A-Za-z0-9.\-]+\.(?:go|or)\.kr/[A-Za-z0-9_/\-.]+", body)))
-                  say("     주소:", urls[:8])
-                  for kw in ("swagger", "spec", "json"):
-                      for m in list(re.finditer(kw, body))[:2]:
-                          say(f"     [{kw}] …", ws(body[max(0, m.start() - 120):m.start() + 260]))
-                  say("     텍스트:", text(body)[:3800])
-                  time.sleep(0.5)
+              PAGES[ds] = page
+              m = re.search(r"심의유형</strong>\s*<div class=\"value\">(.*?)</div>", page, re.S)
+              say("  심의유형:", ws(H.unescape(re.sub("<[^>]+>", " ", m.group(1)))) if m else "?")
+              if ds != "15151805":
+                  continue
+              say("  script src:", re.findall(r'<script[^>]+src="([^"]+)"', page)[:30])
+              for m in list(re.finditer(r"(?i)swagger|openapi\.json|oas/docs|\.json[\"']", page))[:14]:
+                  say("  [ctx] …", ws(page[max(0, m.start() - 300):m.start() + 500]))
+              for m in list(re.finditer("활용가이드", page))[:3]:
+                  say("  [가이드] …", ws(page[max(0, m.start() - 500):m.start() + 300]))
 
-          say("== 화물기 T1 도착 다시 ==")
-          r, sec, err = req("GET", "https://apis.data.go.kr/B551177/statusOfCgoFltDeOdpT1/getCgoFltArrivalsDeOdpT1",
-                            params={"serviceKey": KEY, "numOfRows": "5", "pageNo": "1", "type": "json", "searchDate": TODAY.strftime("%Y%m%d")})
-          say("  ", err or f"HTTP {r.status_code} · {ws(r.text)[:300]}")
+          # 명세를 불러오는 흔한 경로 시도
+          pk = re.search(r'id="publicDataDetailPk"\s+value="([^"]+)"', PAGES.get("15151805", ""))
+          pk = pk.group(1) if pk else ""
+          for u, data in (("https://www.data.go.kr/tcs/dss/selectApiDetailFunction.do", {"publicDataDetailPk": pk}),
+                          ("https://www.data.go.kr/tcs/dss/selectSwaggerJson.do", {"publicDataDetailPk": pk}),
+                          ("https://www.data.go.kr/catalog/15151805/swagger.json", None)):
+              r, sec, err = req("POST" if data else "GET", u, data=data, tries=2)
+              say(f"== 시도 {u} ==", err or f"HTTP {r.status_code} · {r.headers.get('content-type', '')[:40]} · {len(r.text):,}자 · {ws(r.text)[:600]}")
           say("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
