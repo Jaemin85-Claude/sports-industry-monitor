@@ -61,18 +61,22 @@ jobs:
               return re.sub(r"\s+", " ", str(x or ""))
 
 
+          def text(h):
+              return ws(H.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"(?is)<(script|style).*?</\1>", " ", h))))
+
+
           S = requests.Session()
           S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
           KST = datetime.timezone(datetime.timedelta(hours=9))
           TODAY = datetime.datetime.now(KST).date()
 
 
-          def get(url, params=None, timeout=(20, 45), tries=4, **kw):
+          def req(method, url, tries=4, timeout=(20, 45), **kw):
               t = time.time()
               err = None
               for k in range(tries):
                   try:
-                      r = S.get(url, params=params, timeout=timeout, **kw)
+                      r = S.request(method, url, timeout=timeout, **kw)
                       return r, time.time() - t, None
                   except Exception as e:
                       err = f"{type(e).__name__}: {e}"
@@ -81,37 +85,41 @@ jobs:
               return None, time.time() - t, err
 
 
-          say("== 연결 확인: 선박입출항 1건 ==")
-          r, sec, err = get("https://apis.data.go.kr/1192000/VsslEtrynd5/Info5", {"serviceKey": KEY, "prtAgCd": "020", "sde": "20261015", "ede": "20261016", "numOfRows": "1", "pageNo": "1"})
-          say("  ", err or f"HTTP {r.status_code} · {sec:.1f}s · {ws(r.text)[:160]}")
           for ds in ("15151805", "15151809", "15168220"):
-              say(f"== {ds} catalog openapi.json 본문 ==")
-              r, sec, err = get(f"https://www.data.go.kr/catalog/{ds}/openapi.json")
-              say("  ", err or ws(r.text)[:1900])
-              say(f"== {ds} openapi.do 화면 ==")
-              r, sec, err = get(f"https://www.data.go.kr/data/{ds}/openapi.do")
+              say(f"== {ds} 상세기능 ==")
+              r, sec, err = req("GET", f"https://www.data.go.kr/data/{ds}/openapi.do")
               if err:
                   say("  실패", err[:200])
                   continue
-              t = r.text
-              say(f"  HTTP {r.status_code} · {len(t):,}자")
-              say("  apis 주소:", sorted(set(re.findall(r"https?://apis\.data\.go\.kr/[A-Za-z0-9_/\-.]+", t)))[:12])
-              say("  기타 api 주소:", sorted(set(re.findall(r"https?://[a-z0-9.\-]*(?:api|odcloud)[a-z0-9.\-]*\.[a-z.]+/[A-Za-z0-9_/\-.]*", t)))[:12])
-              for kw in ("swagger", "oprtinSeqNo", "publicDataDetailPk", "selectApi", "End Point", "endpoint", "요청주소", "서비스URL", "데이터포맷", "심의유형", "자동승인", "이용허락범위", "트래픽"):
-                  idx = [m.start() for m in re.finditer(re.escape(kw), t)][:3]
-                  for i in idx:
-                      say(f"   [{kw}] …", ws(H.unescape(t[max(0, i - 150):i + 350])))
-              txt = ws(H.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"(?is)<script.*?</script>", " ", t))))
-              for kw in ("상세기능", "요청변수", "출력결과", "참고문서", "심의유형"):
-                  i = txt.find(kw)
-                  if i >= 0:
-                      say(f"   텍스트[{kw}]:", txt[i:i + 900])
-              time.sleep(0.4)
+              page = r.text
+              pk = re.search(r'id="publicDataDetailPk"\s+value="([^"]+)"', page)
+              pk = pk.group(1) if pk else ""
+              sel = re.search(r'(?is)<select[^>]*id="open_api_detail_select"[^>]*>(.*?)</select>', page)
+              opts = re.findall(r'(?is)<option[^>]*value="([^"]*)"[^>]*>(.*?)</option>', sel.group(1)) if sel else []
+              say(f"  publicDataDetailPk={pk} · 기능 {len(opts)}개:", [(v, ws(H.unescape(re.sub('<[^>]+>', '', t)))) for v, t in opts])
+              # 첨부 문서(활용가이드) 링크
+              say("  문서 링크:", sorted(set(re.findall(r"fn_fileDataDown\([^)]*\)|fileDownload\.do\?[^\"' <>]+|atchFileId=[A-Z_0-9]+", page)))[:6])
+              for v, t in opts[:4]:
+                  r2, sec, err = req("POST", "https://www.data.go.kr/tcs/dss/selectApiDetailFunction.do",
+                                     data={"oprtinSeqNo": v, "publicDataDetailPk": pk},
+                                     headers={"X-Requested-With": "XMLHttpRequest", "Referer": f"https://www.data.go.kr/data/{ds}/openapi.do"})
+                  if err:
+                      say("   기능 실패", err[:200])
+                      continue
+                  body = r2.text
+                  say(f"  -- 기능 {v} {ws(H.unescape(re.sub('<[^>]+>', '', t)))} · HTTP {r2.status_code} · {len(body):,}자")
+                  urls = sorted(set(re.findall(r"https?://[A-Za-z0-9.\-]+\.(?:go|or)\.kr/[A-Za-z0-9_/\-.]+", body)))
+                  say("     주소:", urls[:8])
+                  for kw in ("swagger", "spec", "json"):
+                      for m in list(re.finditer(kw, body))[:2]:
+                          say(f"     [{kw}] …", ws(body[max(0, m.start() - 120):m.start() + 260]))
+                  say("     텍스트:", text(body)[:3800])
+                  time.sleep(0.5)
 
           say("== 화물기 T1 도착 다시 ==")
-          r, sec, err = get("https://apis.data.go.kr/B551177/statusOfCgoFltDeOdpT1/getCgoFltArrivalsDeOdpT1",
-                            {"serviceKey": KEY, "numOfRows": "5", "pageNo": "1", "type": "json", "searchDate": TODAY.strftime("%Y%m%d")})
-          say("  ", err or f"HTTP {r.status_code} · {ws(r.text)[:400]}")
+          r, sec, err = req("GET", "https://apis.data.go.kr/B551177/statusOfCgoFltDeOdpT1/getCgoFltArrivalsDeOdpT1",
+                            params={"serviceKey": KEY, "numOfRows": "5", "pageNo": "1", "type": "json", "searchDate": TODAY.strftime("%Y%m%d")})
+          say("  ", err or f"HTTP {r.status_code} · {ws(r.text)[:300]}")
           say("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
