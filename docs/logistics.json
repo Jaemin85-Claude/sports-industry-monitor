@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-17 10:19 KST",
+ "generated_at": "2026-10-18 06:27 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -850,7 +850,7 @@
   "file_date": "2026-08-31",
   "updated": "2026-09-15",
   "next": "2026-10-19",
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "관세청 해상 수입"
  },
  "kcs_sea_export": {
@@ -1698,7 +1698,7 @@
   "file_date": "2026-08-31",
   "updated": "2026-09-15",
   "next": "2026-10-19",
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "관세청 해상 수출"
  },
  "kcs_air_import": {
@@ -2453,7 +2453,7 @@
   "file_date": "2026-08-31",
   "updated": "2026-09-15",
   "next": "2026-10-19",
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "관세청 항공 수입"
  },
  "kcci": {
@@ -5841,7 +5841,7 @@
    ]
   ],
   "latest": "2026-10-12",
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8127,7 +8127,7 @@
     "last_date": "2026-10-11"
    }
   ],
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "해협 통과"
  },
  "ports": {
@@ -10413,7 +10413,7 @@
     "last_date": "2026-10-09"
    }
   ],
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "항만 입항"
  },
  "hubs": {
@@ -17251,7 +17251,7 @@
     "last_date": "2026-10-09"
    }
   ],
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17399,7 +17399,7 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-17",
+  "fetched": "2026-10-18",
   "label": "전 세계 정시율"
  },
  "status": {
