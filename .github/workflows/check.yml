@@ -39,17 +39,15 @@ jobs:
           python - <<'PY'
           import datetime, json, os, re, time
           import xml.etree.ElementTree as ET
-          from collections import Counter, defaultdict
+          from collections import Counter
           from urllib.parse import quote, quote_plus
           import requests
 
           T0 = time.time()
-          BUDGET = 8 * 60   # 작업 10분 제한 안에서
+          BUDGET = 8 * 60
           KEY = os.environ.get("DATA_GO_KR_API_KEY", "").strip()
           FORMS = sorted({f for f in (KEY, quote(KEY, safe=""), quote_plus(KEY), quote(KEY)) if f}, key=len, reverse=True)
           KST = datetime.timezone(datetime.timedelta(hours=9))
-          IN_URL = "https://apis.data.go.kr/1220000/cntyperetprgtqtyacrs/getCntyPerEtprGtqtyAcrs"
-          OUT_URL = "https://apis.data.go.kr/1220000/cntyperportgtqtyacrs/getCntyPerPortGtqtyAcrs"
           PM_URL = "https://apis.data.go.kr/1192000/VsslEtrynd5/Info5"
 
 
@@ -86,143 +84,100 @@ jobs:
                   return None, f"{type(e).__name__}: {str(e)[:100]}", time.time() - t
 
 
-          def xml_items(text):
+          def parse(text):
               root = ET.fromstring(text)
-              code = (root.findtext(".//resultCode") or "").strip()
-              msg = (root.findtext(".//resultMsg") or "").strip()
+              h = root.find("header")
+              head = {c.tag: (c.text or "").strip() for c in h} if h is not None else {}
               total = (root.findtext(".//totalCount") or "").strip()
-              its = [{c.tag: (c.text or "").strip() for c in it} for it in root.iter("item")]
-              return code, msg, total, its
-
-
-          def n(v):
-              try:
-                  return float(str(v).replace(",", ""))
-              except ValueError:
-                  return None
-
-
-          # 0) apis.data.go.kr 연결될 때까지(최대 4분) — 선박입출항 1건으로
-          ok = False
-          while left() > 250:
-              today = datetime.datetime.now(KST).strftime("%Y%m%d")
-              r, err, sec = get(PM_URL, {"prtAgCd": "020", "sde": today, "ede": today, "numOfRows": "1", "pageNo": "1"}, timeout=(8, 30))
-              if r is not None:
-                  ok = True
-                  say(f"연결됨 · {time.time() - T0:.0f}초 · 선박입출항 HTTP {r.status_code} · {ws(r.text)[:160]}")
-                  break
-              say(f"  연결 안 됨({time.time() - T0:.0f}초) {err}")
-              time.sleep(10)
-          if not ok:
-              say("== 연결 안 됨 — 끝 ==")
-              raise SystemExit(0)
-
-
-          def show_kcs(label, url, params, inbound=True):
-              r, err, sec = get(url, params)
-              if err:
-                  say(f"== {label} 실패 {err}")
-                  return None
-              say(f"== {label} · HTTP {r.status_code} · {len(r.content):,}B · {sec:.1f}s · {r.headers.get('content-type', '')[:40]}")
-              try:
-                  code, msg, total, its = xml_items(r.text)
-              except Exception as e:
-                  say("   XML 아님:", type(e).__name__, ws(r.text)[:400])
-                  return None
-              say(f"   resultCode={code} msg={msg} totalCount={total} items={len(its)}")
-              if not its:
-                  say("   본문:", ws(r.text)[:400])
-                  return its
-              say("   키:", sorted(its[0].keys()))
-              say("   예:", json.dumps(its[:2], ensure_ascii=False))
-              port_k, cnty_k = ("arvlPlcNm", "dptrPlcNm") if inbound else ("dptrPlcNm", "arvlPlcNm")
-              mons = Counter(it.get("yyyymm") for it in its)
-              say("   달:", sorted(mons.items()))
-              ports = Counter(it.get(port_k) for it in its)
-              say(f"   항구/공항({len(ports)}):", ports.most_common(40))
-              odd = [it for it in its if re.search(r"계|합|전체|total|기타", (it.get(cnty_k) or "") + (it.get(port_k) or ""), re.I)]
-              say(f"   합계·기타 같은 행 {len(odd)}:", json.dumps(odd[:6], ensure_ascii=False))
-              last = max(mons)
-              for pk in [p for p, _ in ports.most_common() if re.search(r"부산|인천", p or "")][:6]:
-                  rows = [it for it in its if it.get(port_k) == pk and it.get("yyyymm") == last]
-                  tot_teu = sum(n(it.get("teuGcnt")) or 0 for it in rows)
-                  tot_w = sum(n(it.get("blWght")) or 0 for it in rows)
-                  tot_bl = sum(n(it.get("blCnt")) or 0 for it in rows)
-                  top = sorted(rows, key=lambda it: -(n(it.get("teuGcnt")) or 0))[:14]
-                  topw = sorted(rows, key=lambda it: -(n(it.get("blWght")) or 0))[:10]
-                  say(f"   [{pk} {last}] 나라 {len(rows)} · TEU {tot_teu:,.0f} · 중량 {tot_w:,.0f} · BL {tot_bl:,.0f}")
-                  say("     TEU 상위:", [(it.get(cnty_k), it.get("teuGcnt"), it.get("blWght"), it.get("blCnt")) for it in top])
-                  say("     중량 상위:", [(it.get(cnty_k), it.get("blWght"), it.get("blCnt")) for it in topw])
-              want = ["홍콩", "네덜란드", "벨기에", "아랍에미리트", "아랍에미리트 연합", "아랍 에미리트 연합", "중국", "싱가포르", "독일", "미국",
-                      "말레이시아", "이탈리아", "프랑스", "영국", "일본", "베트남", "스페인", "스위스", "대만", "태국"]
-              allc = Counter(it.get(cnty_k) for it in its)
-              say("   나라 이름(일부 찾기):", {w: allc.get(w) for w in want})
-              say("   나라 이름 전체:", sorted(allc)[:400])
-              return its
+              items = []
+              for it in root.iter("item"):
+                  d = {c.tag: (c.text or "").strip() for c in it if c.tag != "details"}
+                  d["details"] = [{c.tag: (c.text or "").strip() for c in dt} for dt in it.iter("detail")]
+                  items.append(d)
+              return head, total, items
 
 
           now = datetime.datetime.now(KST)
-          ym = lambda d: d.strftime("%Y%m")
-          m1 = (now.replace(day=1) - datetime.timedelta(days=1))          # 지난달
-          m2 = (m1.replace(day=1) - datetime.timedelta(days=1))          # 지지난달
-          say("조회 달:", ym(m2), "~", ym(m1))
+          D = (now - datetime.timedelta(days=3)).strftime("%Y%m%d")
+          say("기준일", D)
 
-          # 1) 국가별 입항 — 해상 수입 · 항공 수입 · 해상 환적
-          show_kcs("입항 해상 수입(I·10)", IN_URL, {"strtYymm": ym(m2), "endYymm": ym(m1), "cargTpcd": "I", "seaFlghTpcd": "10"})
-          if left() > 60:
-              show_kcs("입항 항공 수입(I·40)", IN_URL, {"strtYymm": ym(m1), "endYymm": ym(m1), "cargTpcd": "I", "seaFlghTpcd": "40"})
-          if left() > 60:
-              r, err, sec = get(IN_URL, {"strtYymm": ym(m1), "endYymm": ym(m1), "cargTpcd": "T", "seaFlghTpcd": "10"})
-              say("== 입항 해상 환적(T·10)", err or f"HTTP {r.status_code} · {len(r.content):,}B · {ws(r.text)[:200]}")
-          # 데이터가 어디까지 있나: 이번 달
-          if left() > 60:
-              r, err, sec = get(IN_URL, {"strtYymm": ym(now), "endYymm": ym(now), "cargTpcd": "I", "seaFlghTpcd": "10"})
-              say("== 입항 이번 달", err or f"HTTP {r.status_code} · {len(r.content):,}B · {ws(r.text)[:300]}")
-          # 오래된 달(추이용): 2년 범위 한 번에
-          if left() > 90:
-              r, err, sec = get(IN_URL, {"strtYymm": "202401", "endYymm": ym(m1), "cargTpcd": "I", "seaFlghTpcd": "10"})
-              if err:
-                  say("== 입항 2024-01~ 한 번에 실패", err)
-              else:
-                  try:
-                      code, msg, total, its = xml_items(r.text)
-                      say(f"== 입항 2024-01~{ym(m1)} 한 번에 · {len(r.content):,}B · {sec:.1f}s · code={code} total={total} items={len(its)} · 달 {len(set(it.get('yyyymm') for it in its))}개")
-                  except Exception as e:
-                      say("== 입항 2년 XML 아님", ws(r.text)[:300])
+          # 1) 한 페이지 최대 건수
+          r, err, sec = get(PM_URL, {"prtAgCd": "020", "sde": D, "ede": D, "numOfRows": "100", "pageNo": "1"})
+          if err:
+              say("연결 실패", err)
+              raise SystemExit(0)
+          head, total, items = parse(r.text)
+          say(f"== numOfRows=100 → items {len(items)} · totalCount {total} · {head} · {sec:.1f}s · {len(r.content):,}B")
+          if items:
+              say("  item 키:", sorted(k for k in items[0] if k != "details"))
+              say("  detail 키:", sorted({k for it in items for d in it["details"] for k in d}))
+              say("  예:", json.dumps(items[0], ensure_ascii=False)[:1500])
 
-          # 2) 국가별 출항 — 화물 구분 코드 비교(E·R·T·없음)
-          for cg in ("E", "R", "T", None):
-              if left() < 50:
-                  break
-              p = {"strtYymm": ym(m1), "endYymm": ym(m1), "seaFlghTpcd": "10"}
-              if cg:
-                  p["cargTpcd"] = cg
-              r, err, sec = get(OUT_URL, p)
-              if err:
-                  say(f"== 출항 해상 {cg} 실패 {err}")
-                  continue
-              try:
-                  code, msg, total, its = xml_items(r.text)
-              except Exception:
-                  say(f"== 출항 해상 {cg} XML 아님 {ws(r.text)[:300]}")
-                  continue
-              bus = [it for it in its if re.search("부산", it.get("dptrPlcNm") or "")]
-              teu = sum(n(it.get("teuGcnt")) or 0 for it in bus)
-              say(f"== 출항 해상 cargTpcd={cg} · code={code} {msg} · total={total} · items={len(its)} · 부산 행 {len(bus)} · 부산 TEU {teu:,.0f}")
-              if cg == "R" and its:
-                  say("   키:", sorted(its[0].keys()), "· 예:", json.dumps(its[:2], ensure_ascii=False))
-                  say("   출항지:", Counter(it.get("dptrPlcNm") for it in its).most_common(20))
-                  top = sorted([it for it in its if it.get("dptrPlcNm") == "부산신항"], key=lambda it: -(n(it.get("teuGcnt")) or 0))[:12]
-                  say("   부산신항 목적국 TEU 상위:", [(it.get("arvlPlcNm"), it.get("teuGcnt"), it.get("blWght")) for it in top])
 
-          # 3) 인천공항 화물기 T1·T2 — 키 등록 확인 + 응답 모양
-          for t in ("T1", "T2"):
-              for op in ("Arrivals", "Departures"):
-                  if left() < 20:
+          def all_pages(params, cap=40):
+              out, page = [], 1
+              while page <= cap and left() > 30:
+                  r, err, sec = get(PM_URL, {**params, "numOfRows": "50", "pageNo": str(page)})
+                  if err:
+                      say("   페이지 실패", page, err)
                       break
-                  r, err, sec = get(f"https://apis.data.go.kr/B551177/statusOfCgoFltDeOdp{t}/getCgoFlt{op}DeOdp{t}",
-                                    {"numOfRows": "3", "pageNo": "1", "type": "json", "searchDate": now.strftime("%Y%m%d")}, timeout=(8, 30))
-                  say(f"== 화물기 {t} {op} ==", err or f"HTTP {r.status_code} · {ws(r.text)[:2500]}")
+                  head, total, its = parse(r.text)
+                  out += its
+                  if not its or len(out) >= int(total or 0):
+                      break
+                  page += 1
+              return out, int(total or 0), page
+
+
+          def dates_of(its):
+              arr, dep, req = Counter(), Counter(), Counter()
+              for it in its:
+                  for d in it["details"]:
+                      req[(d.get("reqstSeNm"), d.get("etryndNm"))] += 1
+                      if d.get("etryndNm") == "입항" and d.get("etryptDt"):
+                          arr[d["etryptDt"][:10]] += 1
+                      if d.get("etryndNm") == "출항" and d.get("tkoffDt"):
+                          dep[d["tkoffDt"][:10]] += 1
+              return arr, dep, req
+
+
+          # 2) 날짜 조건 의미: deGb 없음 / 1 / 2 / 3
+          for gb in (None, "1", "2", "3", "I", "O"):
+              if left() < 60:
+                  break
+              p = {"prtAgCd": "020", "sde": D, "ede": D}
+              if gb is not None:
+                  p["deGb"] = gb
+              its, total, pages = all_pages(p)
+              arr, dep, req = dates_of(its)
+              cont = [it for it in its if "컨테이너" in (it.get("vsslKndNm") or "")]
+              keys = Counter((it.get("clsgn"), it.get("etryptYear"), it.get("etryptCo")) for it in its)
+              say(f"== deGb={gb} · total {total} · 받음 {len(its)} ({pages}쪽) · 컨테이너선 {len(cont)} · 같은 입항 키 중복 {sum(v - 1 for v in keys.values())}")
+              say("   입항일:", sorted(arr.items())[:12], "· 출항일:", sorted(dep.items())[:12])
+              say("   신고 구분:", req.most_common(8))
+              if gb is None:
+                  say("   배 종류:", Counter(it.get("vsslKndNm") for it in its).most_common(15))
+                  say("   직전 출항국(컨테이너):", Counter((it.get("prvsDpmprtNatPrtCd") or "")[:2] for it in cont).most_common(25))
+                  say("   입항 목적:", Counter(it.get("etryptPurpsNm") for it in its).most_common(8))
+                  say("   계류 장소(컨테이너 입항):", Counter((d.get("laidupFcltyNm") or "")[:12] for it in cont for d in it["details"] if d.get("etryndNm") == "입항").most_common(12))
+                  stays = []
+                  for it in cont:
+                      a = [d.get("etryptDt") for d in it["details"] if d.get("etryndNm") == "입항" and d.get("etryptDt")]
+                      b = [d.get("tkoffDt") for d in it["details"] if d.get("etryndNm") == "출항" and d.get("tkoffDt")]
+                      if a and b:
+                          try:
+                              h = (datetime.datetime.fromisoformat(max(b)) - datetime.datetime.fromisoformat(min(a))).total_seconds() / 3600
+                              stays.append(round(h, 1))
+                          except ValueError:
+                              pass
+                  say("   체류시간(시간):", sorted(stays))
+                  say("   예 2건:", json.dumps(cont[:2], ensure_ascii=False)[:2500])
+
+          # 3) 인천공항 화물기 재확인
+          for t in ("T1", "T2"):
+              r, err, sec = get(f"https://apis.data.go.kr/B551177/statusOfCgoFltDeOdp{t}/getCgoFltArrivalsDeOdp{t}",
+                                {"numOfRows": "3", "pageNo": "1", "type": "json", "searchDate": now.strftime("%Y%m%d")}, timeout=(8, 30))
+              say(f"== 화물기 {t} 도착 ==", err or f"HTTP {r.status_code} · {ws(r.text)[:2500]}")
           say("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
