@@ -37,148 +37,33 @@ jobs:
         run: |
           pip install -q requests
           python - <<'PY'
-          import datetime, json, os, re, time
-          import xml.etree.ElementTree as ET
-          from collections import Counter
-          from urllib.parse import quote, quote_plus
-          import requests
+          import base64, gzip, json, os, time
+          import logistics_fetch as L
 
-          T0 = time.time()
-          BUDGET = 8 * 60
-          KEY = os.environ.get("DATA_GO_KR_API_KEY", "").strip()
-          FORMS = sorted({f for f in (KEY, quote(KEY, safe=""), quote_plus(KEY), quote(KEY)) if f}, key=len, reverse=True)
-          KST = datetime.timezone(datetime.timedelta(hours=9))
-          PM_URL = "https://apis.data.go.kr/1192000/VsslEtrynd5/Info5"
-
-
-          def safe(s):
-              s = str(s)
-              s = re.sub(r"(?i)(service_?key=)[^&\s'\"<>]+", r"\1***", s)
-              for f in FORMS:
-                  s = s.replace(f, "***")
-              return s
-
-
-          def say(*a):
-              print(safe(" ".join(str(x) for x in a)), flush=True)
-
-
-          def ws(x):
-              return re.sub(r"\s+", " ", str(x or ""))
-
-
-          def left():
-              return BUDGET - (time.time() - T0)
-
-
-          S = requests.Session()
-          S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
-
-
-          def get(url, params, timeout=(8, 60)):
+          L.T_END = time.monotonic() + 7 * 60
+          L.PM_FROM = "2025-10-01"
+          L.PM_BACK_SEC = 150
+          out = {}
+          for key, ds, url, carg in L.VOL:
               t = time.time()
               try:
-                  r = S.get(url, params={"serviceKey": KEY, **params}, timeout=timeout)
-                  return r, None, time.time() - t
+                  out[key] = L.fetch_vol(key, ds, url, carg)
+                  print(f"{key} OK {time.time() - t:.1f}s", flush=True)
               except Exception as e:
-                  return None, f"{type(e).__name__}: {str(e)[:100]}", time.time() - t
-
-
-          def parse(text):
-              root = ET.fromstring(text)
-              h = root.find("header")
-              head = {c.tag: (c.text or "").strip() for c in h} if h is not None else {}
-              total = (root.findtext(".//totalCount") or "").strip()
-              items = []
-              for it in root.iter("item"):
-                  d = {c.tag: (c.text or "").strip() for c in it if c.tag != "details"}
-                  d["details"] = [{c.tag: (c.text or "").strip() for c in dt} for dt in it.iter("detail")]
-                  items.append(d)
-              return head, total, items
-
-
-          now = datetime.datetime.now(KST)
-          D = (now - datetime.timedelta(days=3)).strftime("%Y%m%d")
-          say("기준일", D)
-
-          # 1) 한 페이지 최대 건수
-          r, err, sec = get(PM_URL, {"prtAgCd": "020", "sde": D, "ede": D, "numOfRows": "100", "pageNo": "1"})
-          if err:
-              say("연결 실패", err)
-              raise SystemExit(0)
-          head, total, items = parse(r.text)
-          say(f"== numOfRows=100 → items {len(items)} · totalCount {total} · {head} · {sec:.1f}s · {len(r.content):,}B")
-          if items:
-              say("  item 키:", sorted(k for k in items[0] if k != "details"))
-              say("  detail 키:", sorted({k for it in items for d in it["details"] for k in d}))
-              say("  예:", json.dumps(items[0], ensure_ascii=False)[:1500])
-
-
-          def all_pages(params, cap=40):
-              out, page = [], 1
-              while page <= cap and left() > 30:
-                  r, err, sec = get(PM_URL, {**params, "numOfRows": "50", "pageNo": str(page)})
-                  if err:
-                      say("   페이지 실패", page, err)
-                      break
-                  head, total, its = parse(r.text)
-                  out += its
-                  if not its or len(out) >= int(total or 0):
-                      break
-                  page += 1
-              return out, int(total or 0), page
-
-
-          def dates_of(its):
-              arr, dep, req = Counter(), Counter(), Counter()
-              for it in its:
-                  for d in it["details"]:
-                      req[(d.get("reqstSeNm"), d.get("etryndNm"))] += 1
-                      if d.get("etryndNm") == "입항" and d.get("etryptDt"):
-                          arr[d["etryptDt"][:10]] += 1
-                      if d.get("etryndNm") == "출항" and d.get("tkoffDt"):
-                          dep[d["tkoffDt"][:10]] += 1
-              return arr, dep, req
-
-
-          # 2) 날짜 조건 의미: deGb 없음 / 1 / 2 / 3
-          for gb in (None, "1", "2", "3", "I", "O"):
-              if left() < 60:
-                  break
-              p = {"prtAgCd": "020", "sde": D, "ede": D}
-              if gb is not None:
-                  p["deGb"] = gb
-              its, total, pages = all_pages(p)
-              arr, dep, req = dates_of(its)
-              cont = [it for it in its if "컨테이너" in (it.get("vsslKndNm") or "")]
-              keys = Counter((it.get("clsgn"), it.get("etryptYear"), it.get("etryptCo")) for it in its)
-              say(f"== deGb={gb} · total {total} · 받음 {len(its)} ({pages}쪽) · 컨테이너선 {len(cont)} · 같은 입항 키 중복 {sum(v - 1 for v in keys.values())}")
-              say("   입항일:", sorted(arr.items())[:12], "· 출항일:", sorted(dep.items())[:12])
-              say("   신고 구분:", req.most_common(8))
-              if gb is None:
-                  say("   배 종류:", Counter(it.get("vsslKndNm") for it in its).most_common(15))
-                  say("   직전 출항국(컨테이너):", Counter((it.get("prvsDpmprtNatPrtCd") or "")[:2] for it in cont).most_common(25))
-                  say("   입항 목적:", Counter(it.get("etryptPurpsNm") for it in its).most_common(8))
-                  say("   계류 장소(컨테이너 입항):", Counter((d.get("laidupFcltyNm") or "")[:12] for it in cont for d in it["details"] if d.get("etryndNm") == "입항").most_common(12))
-                  stays = []
-                  for it in cont:
-                      a = [d.get("etryptDt") for d in it["details"] if d.get("etryndNm") == "입항" and d.get("etryptDt")]
-                      b = [d.get("tkoffDt") for d in it["details"] if d.get("etryndNm") == "출항" and d.get("tkoffDt")]
-                      if a and b:
-                          try:
-                              h = (datetime.datetime.fromisoformat(max(b)) - datetime.datetime.fromisoformat(min(a))).total_seconds() / 3600
-                              stays.append(round(h, 1))
-                          except ValueError:
-                              pass
-                  say("   체류시간(시간):", sorted(stays))
-                  say("   예 2건:", json.dumps(cont[:2], ensure_ascii=False)[:2500])
-
-          # 3) 인천공항 화물기 재확인
-          for t in ("T1", "T2"):
-              r, err, sec = get(f"https://apis.data.go.kr/B551177/statusOfCgoFltDeOdp{t}/getCgoFltArrivalsDeOdp{t}",
-                                {"numOfRows": "3", "pageNo": "1", "type": "json", "searchDate": now.strftime("%Y%m%d")}, timeout=(8, 30))
-              say(f"== 화물기 {t} 도착 ==", err or f"HTTP {r.status_code} · {ws(r.text)[:2500]}")
-          say("== 끝 ==")
+                  print(f"{key} 실패 {L.dgk_mask(e)[:300]}", flush=True)
+          t = time.time()
+          try:
+              out["busan_calls"] = L.fetch_portmis(None)
+              print(f"busan_calls OK {time.time() - t:.1f}s · 날 {len(out['busan_calls']['days'])} · 빈 날 {out['busan_calls']['missing']}", flush=True)
+          except Exception as e:
+              print(f"busan_calls 실패 {L.dgk_mask(e)[:300]}", flush=True)
+          print("DGK_DOWN", repr(L.DGK_DOWN), "DGK_AUTH", L.DGK_AUTH)
+          raw = json.dumps(out, ensure_ascii=False).encode()
+          b = base64.b64encode(gzip.compress(raw, 9)).decode()
+          print(f"JSON {len(raw):,}B → gzip+base64 {len(b):,}자")
+          for i in range(0, len(b), 6000):
+              print(f"B64[{i // 6000:03d}] {b[i:i + 6000]}")
+          print("== 끝 ==")
           PY
       - name: Check files against CLAUDE.md
         run: |
