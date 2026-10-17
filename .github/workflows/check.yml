@@ -101,8 +101,10 @@ jobs:
                   continue
               page = r.text
               say(f"== {ds} 화면 {len(page):,}자 ==")
-              for m in list(re.finditer(r"(?i)swagger|docx|atchfileid|filedown|FILE_\d{6,}", page))[:16]:
-                  say("  [ctx] …", ws(page[max(0, m.start() - 250):m.start() + 350]))
+              if ds == "15151805":
+                  say("  script src:", re.findall(r'<script[^>]+src="([^"]+)"', page)[:40])
+              for m in list(re.finditer(r"(?i)api-swagger|swaggerui|swagger_?url|docx|atchfileid|filedown|FILE_\d{6,}|활용가이드", page))[:20]:
+                  say("  [ctx] …", ws(page[max(0, m.start() - 300):m.start() + 400]))
               # 활용가이드 문서 내려받기 시도
               cands = re.findall(r"(?:https?://www\.data\.go\.kr)?/cmm/cmm/fileDownload\.do\?[^\"' <>]+", page)
               ids = sorted(set(re.findall(r"FILE_\d{9,}", page)))
@@ -121,7 +123,7 @@ jobs:
                       z = zipfile.ZipFile(io.BytesIO(r2.content))
                       xml = z.read("word/document.xml").decode("utf-8", "ignore")
                       txt = ws(H.unescape(re.sub(r"<[^>]+>", " ", re.sub(r"</w:p>", "\n", xml))))
-                      say("   문서 글:", txt[:7000])
+                      say("   문서 글:", txt[:12000])
                       break
                   except Exception as e:
                       say("   docx 아님:", type(e).__name__, ws(r2.content[:200]))
