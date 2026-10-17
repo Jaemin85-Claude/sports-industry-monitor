@@ -29,6 +29,230 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+      - name: Probe data.go.kr APIs (temporary branch test)
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+          PYTHONUNBUFFERED: "1"
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+        run: |
+          pip install -q requests
+          python - <<'PY'
+          import collections, datetime, html as H, json, os, re, time
+          from urllib.parse import quote, quote_plus
+          import xml.etree.ElementTree as ET
+          import requests
+
+          KEY = os.environ.get("DATA_GO_KR_API_KEY", "").strip()
+          FORMS = sorted({f for f in (KEY, quote(KEY, safe=""), quote_plus(KEY), quote(KEY)) if f}, key=len, reverse=True)
+
+
+          def safe(s):
+              s = str(s)
+              s = re.sub(r"(?i)(service_?key=)[^&\s'\"<>]+", r"\1***", s)
+              for f in FORMS:
+                  s = s.replace(f, "***")
+              return s
+
+
+          def ws(x):
+              return re.sub(r"\s+", " ", str(x or ""))
+
+
+          def say(*a):
+              print(safe(" ".join(str(x) for x in a)), flush=True)
+
+
+          say("키: 길이", len(KEY), "· % 포함(Encoding 꼴)", "%" in KEY, "· + / = 포함(Decoding 꼴)", any(c in KEY for c in "+/="))
+          S = requests.Session()
+          S.headers.update({"User-Agent": "Mozilla/5.0 (sports-industry-monitor data-source probe)"})
+          KST = datetime.timezone(datetime.timedelta(hours=9))
+          TODAY = datetime.datetime.now(KST).date()
+
+
+          def get(url, params=None, timeout=(15, 40)):
+              t = time.time()
+              try:
+                  r = S.get(url, params=params, timeout=timeout)
+                  return r, time.time() - t, None
+              except Exception as e:
+                  return None, time.time() - t, f"{type(e).__name__}: {e}"
+
+
+          def call(tag, url, params, show=900):
+              p = dict(params)
+              p["serviceKey"] = KEY
+              r, sec, err = get(url, p, timeout=(15, 60))
+              if err:
+                  say(f"  [{tag}] 연결 실패 {err[:300]}")
+                  return None
+              say(f"  [{tag}] HTTP {r.status_code} · {r.headers.get('content-type', '')[:45]} · {len(r.content):,}B · {sec:.1f}s")
+              say("    앞부분:", r.text[:show].replace("\n", " "))
+              return r
+
+
+          # ── 1) 명세(openapi.json) ──
+          DS = [("15151805", "관세청 국가별 입항물동량"), ("15151809", "관세청 국가별 출항물동량"),
+                ("15006353", "해수부 선박운항정보(선박입출항)"), ("15168220", "인천공항 화물기 T1"), ("15168252", "인천공항 화물기 T2")]
+          SPEC = {}
+          for ds, nm in DS:
+              say(f"== 명세 {ds} {nm} ==")
+              r, sec, err = get(f"https://www.data.go.kr/catalog/{ds}/openapi.json")
+              if err:
+                  say("  명세 실패", err[:200])
+                  continue
+              say(f"  HTTP {r.status_code} · {r.headers.get('content-type', '')[:40]} · {len(r.content):,}B · {sec:.1f}s")
+              try:
+                  sp = r.json()
+              except Exception:
+                  say("  JSON 아님:", re.sub(r"\s+", " ", r.text[:400]))
+                  continue
+              SPEC[ds] = sp
+              servers = [s.get("url") for s in sp.get("servers") or []] or [str(sp.get("host", "")) + str(sp.get("basePath", ""))]
+              say("  servers:", servers, "· 제목:", (sp.get("info") or {}).get("title"))
+              for path, ops in (sp.get("paths") or {}).items():
+                  for method, op in ops.items():
+                      if not isinstance(op, dict):
+                          continue
+                      say(f"  {method.upper()} {path} — {str(op.get('summary', ''))[:90]}")
+                      for prm in op.get("parameters") or []:
+                          if "$ref" in prm:
+                              say("     ref", prm["$ref"])
+                              continue
+                          sch = prm.get("schema") or {}
+                          say(f"     · {prm.get('name')} ({prm.get('in')}{', 필수' if prm.get('required') else ''}) {sch.get('type', prm.get('type', ''))}"
+                              f" 기본={str(sch.get('default', prm.get('default', '')))[:30]} 예={str(prm.get('example', sch.get('example', '')))[:30]}"
+                              f" — {ws(prm.get('description'))[:160]}")
+                      resp = (op.get("responses") or {}).get("200") or {}
+                      say("     응답 200:", json.dumps(resp, ensure_ascii=False)[:500])
+              comps = (sp.get("components") or {}).get("schemas") or sp.get("definitions") or {}
+              for cn, cs in list(comps.items())[:8]:
+                  props = cs.get("properties") or {}
+                  say(f"     schema {cn}: " + ", ".join(f"{k}({ws((v or {}).get('description'))[:24]})" for k, v in list(props.items())[:45]))
+              time.sleep(0.3)
+
+
+          # ── 2) 관세청 물동량: 명세의 주소·변수로 시험 호출(이름으로 값 짐작) ──
+          def guess(name):
+              n = name.lower()
+              if n in ("servicekey",):
+                  return None
+              if n == "numofrows":
+                  return "20"
+              if n == "pageno":
+                  return "1"
+              if n in ("type", "_type", "datatype", "resulttype", "returntype"):
+                  return "json"
+              is_s = any(k in n for k in ("strt", "start", "bgn", "from", "fr"))
+              is_e = any(k in n for k in ("end", "to", "ed"))
+              if "yymm" in n or n.endswith("ym") or "yrmn" in n or "mm" in n:
+                  return "202606" if is_s else "202608"
+              if "year" in n or "yy" in n:
+                  return "2026"
+              if "dt" in n or "date" in n or n.endswith("de"):
+                  return "20260601" if is_s else "20260831"
+              return None
+
+
+          for ds in ("15151805", "15151809"):
+              sp = SPEC.get(ds)
+              say(f"== 시험 호출 {ds} ==")
+              if not sp:
+                  say("  명세 없음 — 화면에서 주소 찾기")
+                  r, sec, err = get(f"https://www.data.go.kr/data/{ds}/openapi.do")
+                  if r is not None:
+                      urls = sorted(set(re.findall(r"https?://apis\.data\.go\.kr/[A-Za-z0-9_/\-.]+", r.text)))
+                      say("  화면 주소:", urls[:10])
+                      txt = re.sub(r"\s+", " ", H.unescape(re.sub(r"<[^>]+>", " ", r.text)))
+                      i = txt.find("요청변수")
+                      say("  요청변수 부근:", txt[i:i + 1500] if i >= 0 else "(없음)")
+                  continue
+              servers = [s.get("url") for s in sp.get("servers") or []] or ["https://" + str(sp.get("host", "")) + str(sp.get("basePath", ""))]
+              base = (servers[0] or "").rstrip("/")
+              if base.startswith("//"):
+                  base = "https:" + base
+              for path, ops in (sp.get("paths") or {}).items():
+                  op = ops.get("get") or {}
+                  prm = {}
+                  for p in op.get("parameters") or []:
+                      nm = p.get("name") or ""
+                      v = guess(nm)
+                      if v is not None:
+                          prm[nm] = v
+                  say(f"  {path} 보낼 값: {prm}")
+                  call(f"{ds} {path}", base + path, prm, show=1500)
+                  time.sleep(0.5)
+
+
+          # ── 3) 해수부 선박입출항(부산, 지난 7일) ──
+          say("== 시험 호출 15006353 선박입출항(부산) ==")
+          URL = "https://apis.data.go.kr/1192000/VsslEtrynd5/Info5"
+          sde, ede = (TODAY - datetime.timedelta(days=7)).strftime("%Y%m%d"), (TODAY - datetime.timedelta(days=1)).strftime("%Y%m%d")
+          rows, total = [], None
+          for page in (1, 2, 3):
+              r = call(f"부산 {sde}~{ede} p{page}", URL, {"prtAgCd": "020", "sde": sde, "ede": ede, "numOfRows": "100", "pageNo": str(page)}, show=300 if page > 1 else 1200)
+              if r is None or r.status_code != 200:
+                  break
+              try:
+                  root = ET.fromstring(r.content)
+              except ET.ParseError as e:
+                  say("   XML 아님", e)
+                  break
+              total = root.findtext(".//totalCount")
+              its = root.findall(".//items/item")
+              for it in its:
+                  parent = {n.tag: (n.text or "").strip() for n in it if n.tag != "details"}
+                  dets = [{n.tag: (n.text or "").strip() for n in d} for d in it.findall("./details/detail")]
+                  rows.append((parent, dets))
+              if len(its) < 100:
+                  break
+              time.sleep(0.4)
+          say(f"  totalCount={total} · 받은 배 {len(rows)}척")
+          if rows:
+              kinds = collections.Counter(p.get("vsslKndNm") for p, _ in rows)
+              say("  배 종류:", kinds.most_common(10))
+              cont = [(p, d) for p, d in rows if "컨테이너" in (p.get("vsslKndNm") or "")]
+              say("  컨테이너선", len(cont), "척 · 첫 출발 나라:", collections.Counter((p.get("frstDpmprtNatPrtCd") or "")[:2] for p, _ in cont).most_common(15))
+              say("    직전 항 나라:", collections.Counter((p.get("prvsDpmprtNatPrtCd") or "")[:2] for p, _ in cont).most_common(15))
+              say("    첫 출발 항(상위):", collections.Counter(f"{p.get('frstDpmprtNatPrtCd')} {p.get('frstDpmprtPrtNm')}" for p, _ in cont).most_common(15))
+              for p, d in cont[:3]:
+                  say("   예:", {k: p.get(k) for k in ("vsslNm", "vsslNltyCd", "frstDpmprtNatPrtCd", "prvsDpmprtNatPrtCd", "nxlnptNatPrtCd", "dstnNatPrtCd", "etryptPurpsNm")},
+                      "| 상세:", [{k: x.get(k) for k in ("reqstSeNm", "etryndNm", "etryptDt", "tkoffDt", "laidupFcltyNm", "ldadngTon", "landngFrghtTon", "dstnEtryptDt")} for x in d][:3])
+              berth = collections.Counter(("정박지" if "정박지" in (x.get("laidupFcltyNm") or "") else "부두") for _, d in cont for x in d if x.get("etryndNm") == "입항")
+              say("    입항 계류 장소(정박지/부두):", berth)
+
+
+          # ── 4) 인천공항 화물기(T1·T2, 오늘 도착·출발) ──
+          day = TODAY.strftime("%Y%m%d")
+          for t in ("T1", "T2"):
+              for kind, opn in (("도착", f"getCgoFltArrivalsDeOdp{t}"), ("출발", f"getCgoFltDeparturesDeOdp{t}")):
+                  say(f"== 시험 호출 화물기 {t} {kind} {day} ==")
+                  url = f"https://apis.data.go.kr/B551177/statusOfCgoFltDeOdp{t}/{opn}"
+                  r = call(f"{t} {kind}", url, {"numOfRows": "100", "pageNo": "1", "type": "json", "searchDate": day}, show=700)
+                  if r is None or r.status_code != 200:
+                      continue
+                  try:
+                      d = r.json()
+                  except Exception:
+                      continue
+                  body = (d.get("response") or {}).get("body") or d.get("body") or {}
+                  items = body.get("items")
+                  if isinstance(items, dict):
+                      items = items.get("item")
+                  if isinstance(items, dict):
+                      items = [items]
+                  items = items or []
+                  say(f"  totalCount={body.get('totalCount')} · {len(items)}편 · 필드: {sorted(items[0].keys()) if items else []}")
+                  if items:
+                      ap = [k for k in items[0] if k.lower() in ("airportcode", "airport")]
+                      rm = [k for k in items[0] if k.lower() in ("remark", "remarks", "status")]
+                      if ap:
+                          say("   공항:", collections.Counter(x.get(ap[0]) for x in items).most_common(12))
+                      if rm:
+                          say("   상태:", collections.Counter(x.get(rm[0]) for x in items).most_common(8))
+                      say("   예:", json.dumps(items[0], ensure_ascii=False)[:500])
+                  time.sleep(0.4)
+          say("== 끝 ==")
+          PY
       - name: Check files against CLAUDE.md
         run: |
           python - <<'PY'
