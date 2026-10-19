@@ -3,7 +3,8 @@
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
 v11.3: (대표 지시 2026-10-19 '2순위 새 종목 추가') 미국 공시 대상에 랄프로렌(RL · 8-K 실적 발표)·제냐(ZGN · 톰브라운 모회사,
        외국 기업이라 6-K 실적 발표 — 온홀딩·아머스포츠와 같은 방식). 몽클레르(MONC.MI)·버버리(BRBY.L)는 EDGAR 미대상이고 IR 사이트가
-       자동 접속을 막아(몽클레르 403 · 버버리 빈 화면, 10/19 브랜치 시험) 발언 없이 야후 재고만
+       자동 접속을 막아(몽클레르 403 · 버버리 빈 화면, 10/19 브랜치 시험) 발언 없이 야후 재고만. 제냐만 기간 이름(H1, Q2 아님)·증감 기준
+       (공시 그대로, 유기 성장 아님)을 프롬프트에 덧붙임(다른 종목 프롬프트·캐시 그대로) · 시험 모드 로그에 지역·채널 이름
 v11.2: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언마다 병행수입 매입 관점 신호 sig — more(할인·처분 물량 늘어남)·
        less(할인 줄임·공급 통제·재고 빠듯)·neutral. sig가 없는 발언만 짧게 1회 분류(문서 재추출 없음, 1곳 약 $0.003), 실패하면 다음 실행에서 다시
 v11.1: (대표 지시 2026-10-10) 본사 발언 다듬기 — 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로 바로잡음(딕스 '재고 평가절하'가
@@ -63,8 +64,8 @@ NON_US = {"ADS.DE": "EDGAR 미대상(독일 상장)",
           "2020.HK": "EDGAR 미대상(홍콩 상장)",
           "2331.HK": "EDGAR 미대상(홍콩 상장)",
           "JD.L": "EDGAR 미대상(영국 상장)",
-          "MONC.MI": "EDGAR 미대상(이탈리아 상장) — IR 사이트가 자동 접속을 막아 발언 없음",   # v11.3
-          "BRBY.L": "EDGAR 미대상(영국 상장) — IR 사이트가 자동 접속을 막아 발언 없음"}
+          "MONC.MI": "EDGAR 미대상(이탈리아 상장) — IR 사이트가 자동 접속을 막아 지역·채널·발언 없음",   # v11.3
+          "BRBY.L": "EDGAR 미대상(영국 상장) — IR 사이트가 자동 접속을 막아 지역·채널·발언 없음"}
 
 SEG_PATH = "docs/segments.json"
 SCRIPT = "extract_segments"
@@ -562,6 +563,14 @@ def claude_extract(ticker, name, doc_text):
      "yoy_pct": number|null, "segment_profit": number|null,
      "inventory": number|null, "proforma_comp_pct": number|null}
   ],"""
+    # v11.3 제냐(ZGN)는 반기 보고(2분기 단독 없음)·유기 성장률을 앞세움 — 기간 이름과 증감 기준을 고정(다른 종목 프롬프트는 그대로)
+    zgn_note = ""
+    if ticker == "ZGN":
+        zgn_note = """
+For this company: a half-year report must have period like 'H1 FY26 ended 2026-06-30' (never 'Q2'),
+an annual report 'FY25 ended 2025-12-31'. When both reported and organic growth are given,
+yoy_pct is the REPORTED growth (not organic).
+"""
     prompt = f"""You are a financial data extractor. The following is text from the latest
 SEC earnings-related filing of {name} ({ticker}).
 
@@ -571,7 +580,7 @@ MILLIONS of the reporting currency. yoy_pct = year-over-year growth in percent
 for the most recent quarter (or fiscal year if only annual data is present).
 prev_revenue = the PRIOR-YEAR comparative figure for the same period, ONLY if
 it is explicitly stated in a comparative table or the text; otherwise null.
-
+{zgn_note}
 Respond with ONLY a JSON object, no markdown fences, no commentary:
 {{
   "period": "string describing the reported period, e.g. 'Q1 FY26 ended 2026-08-31'",
@@ -936,6 +945,8 @@ def main():
             entry, st = process_ticker(t, prev, cik_map)
             ex = entry.get("extract") or {}
             print(f"[{t}] {st} · {entry.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])} · 채널 {len(ex.get('channels') or [])}")
+            for k in ("regions", "channels"):   # v11.3 이름·증감 — 새 종목 지역 이름 확인(화면 지역 매칭)
+                print(f"    {k}: " + " · ".join(f"{r.get('name')} {r.get('yoy_pct')}" for r in (ex.get(k) or []))[:600])
             for n in classify_notes(ex.get("mgmt_notes") or [], t):
                 print(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return

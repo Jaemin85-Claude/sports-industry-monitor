@@ -3,7 +3,8 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.8: (대표 지시 2026-10-19 '2순위 새 종목 추가') 본사 4곳(몽클레르 MONC.MI·제냐 ZGN·버버리 BRBY.L·랄프로렌 RL, fetch_data v4.16) 로고·
        나라·뉴스 연결, 감시 브랜드 5개(naver_trend v1.9) 원산지 통화 CHK_CUR — 몽클레르·스톤아일랜드 유로, 버버리 파운드, 폴로 랄프로렌 달러,
-       톰브라운 달러(뉴욕 브랜드 — 본사 제냐 재무는 유로라 표시). 판정 규칙은 그대로
+       톰브라운 달러(뉴욕 브랜드 — 본사 제냐 재무는 유로라 표시). 판정 규칙은 그대로. 랄프로렌 'Asia' 지역을 한국 지역으로(KOREA_PAT),
+       제냐 반기(H1) 추출은 지역·채널 카드에 '최근 공시 기간(누적)', 기간 이름 'FY26 상반기'(perKo) · 톰브라운 통화 설명에 '달러'
 v33.7: (대표 지시 2026-10-19 '바로 추가 7개' + '써코니도') 네이버 감시 브랜드 8개 추가(naver_trend v1.8)에 맞춰 원산지 통화 CHK_CUR — 아식스·
        오니츠카타이거·미즈노 엔, 살로몬 유로(프랑스), 아크테릭스·룰루레몬 달러(캐나다 브랜드 — 캐나다 달러는 받지 않아 본사 실적 통화인
        미국 달러로 대신, 노르다처럼 표시), 온러닝 스위스 프랑(fetch_data v4.15부터 1년 평균 대비), 써코니 달러. 판정 규칙은 그대로.
@@ -1233,7 +1234,7 @@ function dioOf(inv, rev, gp, cogs){
 /* ── 한국 시장 신호 (v27) ── */
 /* 한국이 속한 지역 찾기: 지역명에 Korea 명시 > 나이키 APLA > 아시아태평양 > Rest of World > International */
 const KOREA_PAT=[[/korea/i,true],[/asia pacific & latin america|\bapla\b/i,false],
-  [/asia[\s\/-]*pacific|\bapac\b|\bapma\b/i,false],[/rest of world/i,false],[/international/i,false]];
+  [/asia[\s\/-]*pacific|\bapac\b|\bapma\b/i,false],[/^asia\b(?![\s\/-]*pacific)/i,false],[/rest of world/i,false],[/international/i,false]];   // v33.8 'Asia…'(태평양 빼고) = 랄프로렌 'Asia'
 function koreaRegion(t){
   const s=(SEGS.items||{})[t]; const ex=s&&s.extract;
   if(!ex||!ex.regions) return null;
@@ -1670,6 +1671,7 @@ function noteClean(t){
 }
 /* 기간 'Q1 FY27'·'Q1 FY2027' → 'FY27 1분기', 'Q2 2026' → ''26년 2분기' */
 const perKo=p=>{ p=String(p||'').trim(); let m=p.match(/^Q([1-4])\s+FY\s?(\d{2}|\d{4})$/i); if(m) return `FY${m[2].slice(-2)} ${m[1]}분기`;
+  m=p.match(/^(?:H([12])|([12])H)\s+(FY\s?)?(\d{2}|\d{4})$/i); if(m){ const h=(m[1]||m[2])==='1'?'상반기':'하반기'; return m[3]?`FY${m[4].slice(-2)} ${h}`:`'${m[4].slice(-2)}년 ${h}`; }   // v33.8 제냐 반기 실적
   m=p.match(/^Q([1-4])\s+(\d{4})$/); return m?`'${m[2].slice(2)}년 ${m[1]}분기`:p; };
 const smoothB=()=>{ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'; }catch(e){ return 'smooth'; } };
 // v33 성장률·이익률 = + 파랑(pos) / − 짙은 주황(neg), 부호 항상. 보이는 자리에서 0이면 색·부호 없음(옛 '+0.0%' 초록), 음수는 '−'(U+2212)
@@ -2348,7 +2350,7 @@ function renderDetail(t){
   let segEntry=(SEGS.items||{})[t];
   if(!segEntry && isKR(t)) segEntry={error:"공시 추출 미대상 — 한국 상장(DART), 향후 확장"};
   const segTag=(segEntry&&/^IR/.test(segEntry.source||''))?'IR 추출':'공시 추출';
-  const segPer=(s&&s.extract&&/누적|^FY|^\d+M /.test(s.extract.period||''))?'최근 공시 기간(누적)':'최근 분기';
+  const segPer=(s&&s.extract&&/누적|^FY|^\d+M |^H[12]\b|half|six months|nine months/i.test(s.extract.period||''))?'최근 공시 기간(누적)':'최근 분기';   // v33.8 제냐 H1(반기)
   h+=`<div class="card"><h3>지역 분해 — ${segPer}, 당기 vs 전년 <span class="tag">${segTag}</span></h3>`;
   if(s&&s.extract.regions&&s.extract.regions.length){
     const regsAll=s.extract.regions.filter(r=>r.revenue!=null);
@@ -3730,7 +3732,7 @@ const CHK_RULE=__CHK_RULE__;   // v33.2 판정 규칙 판 — 기록(history.jso
 const CHK_SIG=__CHK_SIG__;   // v33.2 비교 기준(감시 브랜드·본사 연결·원산지 통화표, 파이썬 chk_sig) — 같은 기록끼리만 비교(화면에는 같은 것만 들어옴)
 const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신',
   '아크테릭스':'캐나다 — 미국 달러로 대신','룰루레몬':'캐나다 — 미국 달러로 대신',   // v33.7
-  '톰브라운':'미국 브랜드 — 본사 제냐 재무는 유로'};   // v33.8
+  '톰브라운':'뉴욕 브랜드 — 달러(본사 제냐 재무는 유로)'};   // v33.8
 const CHK_SALE={EUR:['FR','IT'],GBP:['GB'],USD:['US'],JPY:['JP']};   // 통화 지역의 해외 세일(캘린더와 같은 일정, saleEvents의 나라 코드 cc)
 const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
 const sgn=v=>(v>0?'+':(v<0?'−':''))+Math.abs(v);

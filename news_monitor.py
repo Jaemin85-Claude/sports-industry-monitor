@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
-v2.15: (대표 지시 2026-10-19 '2순위 새 종목 추가') 명품·패션 브랜드 뉴스 2곳 — 톰브라운(thombrowne)·랄프로렌(ralphlauren).
+v2.15: (대표 지시 2026-10-19 '2순위 새 종목 추가') 명품·패션 브랜드 뉴스 2곳 — 톰브라운(thombrowne · 본사 제냐 실적 뉴스 포함)·랄프로렌(ralphlauren).
        몽클레르 검색에 '몽클레어'(국내 표기가 더 많음). 브랜드 점검표 브랜드 상세 '최근 뉴스'·기업 상세 뉴스와 같은 키
 v2.14: (대표 지시 2026-10-16 '만들어줘' — 물류비·운송기간 추이) 산업 '물류·운임'(logistics) 검색어 5개 + 선별 기준 — 해상·항공 운임(KCCI·SCFI·
       관세청 운송비용), 호르무즈·홍해·수에즈·희망봉 우회와 중동 하늘길, 선사 할증료, 항만 적체·정시율처럼 한국 수입 원가·운송기간에 걸리는
@@ -140,6 +140,7 @@ BRANDS = {
     "ecco":       ["에코(ECCO)", "fashion", '"ECCO" 신발 OR "ECCO shoes" OR 에코슈즈'],
     "danton":     ["단톤", "fashion", '"Danton" OR 단톤'],
     "shakawear":  ["샤카웨어", "fashion", '"Shaka Wear" OR 샤카웨어'],
+    "ralphlauren":["랄프로렌", "fashion", '"Ralph Lauren" OR 랄프로렌'],   # v2.15 폴로 랄프로렌(RL)
     # ── 명품 (luxury) ──
     "moncler":    ["몽클레르", "luxury", '"Moncler" OR 몽클레르 OR 몽클레어'],   # v2.15 '몽클레어' 표기가 더 많음
     "burberry":   ["버버리", "luxury", '"Burberry" OR 버버리'],
@@ -154,8 +155,7 @@ BRANDS = {
     "stoneisland":["스톤아일랜드", "luxury", '"Stone Island" OR 스톤아일랜드'],
     "margiela":   ["메종마르지엘라", "luxury", '"Maison Margiela" OR 마르지엘라'],
     "viviennewestwood": ["비비안웨스트우드", "luxury", '"Vivienne Westwood" OR 비비안웨스트우드'],
-    "thombrowne": ["톰브라운", "luxury", '"Thom Browne" OR 톰브라운'],   # v2.15 본사 제냐(ZGN)
-    "ralphlauren":["랄프로렌", "fashion", '"Ralph Lauren" OR 랄프로렌'],   # v2.15 폴로 랄프로렌(RL)
+    "thombrowne": ["톰브라운(제냐)", "luxury", '"Thom Browne" OR "Ermenegildo Zegna" OR 톰브라운'],   # v2.15 본사 제냐(ZGN) 실적 뉴스도(새코니(울버린)처럼)
     # ── 유통·그외 (retail) ──
     "dks":        ["딕스+풋락커", "retail", '"Dick\'s Sporting Goods" OR "Foot Locker" OR 풋락커'],
     "jd":         ["JD스포츠", "retail", '"JD Sports" OR JD스포츠'],
