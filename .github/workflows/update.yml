@@ -35,11 +35,13 @@ jobs:
           echo "naver_trend: 네이버 검색 관심도 수집 실패(이전 값 유지)" >> soft_fail.txt
       - name: Logistics data
         # v2026-10-16 물류(logistics_fetch v1): 관세청 운송비용·KCCI·IMF PortWatch·정시율 → docs/logistics.json (더보기 › 물류)
+        # v2026-10-17 logistics_fetch v1.2: 공공데이터포털 오픈 API(관세청 국가별 입·출항 물동량 · 해수부 선박입출항) — 인증키 DATA_GO_KR_API_KEY
         id: logi
         continue-on-error: true   # 물류 수집이 멈춰도 대시보드 갱신은 계속
         timeout-minutes: 12       # 스크립트가 8분에 스스로 멈춤 — 그래도 안 끝나면 여기서 끊음(작업 전체 20분 제한 보호)
         env:
           PYTHONUNBUFFERED: "1"
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
         run: python logistics_fetch.py
       - name: Note logistics failure
         if: steps.logi.outcome == 'failure'
