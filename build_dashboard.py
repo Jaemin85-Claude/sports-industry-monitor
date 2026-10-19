@@ -4,7 +4,8 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.8: (대표 지시 2026-10-19 '2순위 새 종목 추가') 본사 4곳(몽클레르 MONC.MI·제냐 ZGN·버버리 BRBY.L·랄프로렌 RL, fetch_data v4.16) 로고·
        나라·뉴스 연결, 감시 브랜드 5개(naver_trend v1.9) 원산지 통화 CHK_CUR — 몽클레르·스톤아일랜드 유로, 버버리 파운드, 폴로 랄프로렌 달러,
        톰브라운 달러(뉴욕 브랜드 — 본사 제냐 재무는 유로라 표시). 판정 규칙은 그대로. 랄프로렌 'Asia' 지역을 한국 지역으로(KOREA_PAT),
-       제냐 반기(H1) 추출은 지역·채널 카드에 '최근 공시 기간(누적)', 기간 이름 'FY26 상반기'(perKo) · 톰브라운 통화 설명에 '달러'
+       제냐 반기(H1) 추출은 지역·채널 카드에 '최근 공시 기간(누적)', 기간 이름 'FY26 상반기'(perKo) · 톰브라운 통화 설명에 '달러' ·
+       브랜드 상세 최근 뉴스는 한글 검색어를 띄어쓰기 없이도 맞춤(chkNewsList — '톰 브라운'·'스톤 아일랜드' 기사)
 v33.7: (대표 지시 2026-10-19 '바로 추가 7개' + '써코니도') 네이버 감시 브랜드 8개 추가(naver_trend v1.8)에 맞춰 원산지 통화 CHK_CUR — 아식스·
        오니츠카타이거·미즈노 엔, 살로몬 유로(프랑스), 아크테릭스·룰루레몬 달러(캐나다 브랜드 — 캐나다 달러는 받지 않아 본사 실적 통화인
        미국 달러로 대신, 노르다처럼 표시), 온러닝 스위스 프랑(fetch_data v4.15부터 1년 평균 대비), 써코니 달러. 판정 규칙은 그대로.
@@ -3779,8 +3780,10 @@ function chkSaleEv(cur){   // v33 S2: 통화 지역의 다음 해외 세일 사�
 function chkNewsList(b,n){
   const key=b&&b.news; if(!key||!NEWS||!NEWS.items) return [];
   const kw=((b.keywords&&b.keywords.length)?b.keywords:[b.name]).map(k=>String(k).toLowerCase()).filter(Boolean);
+  // v33.8 한글 검색어는 띄어쓰기를 빼고도 맞춤('톰 브라운'·'스톤 아일랜드'·'랄프 로렌' 기사) — 영문은 그대로(낱말이 붙어 엉뚱하게 맞지 않게)
+  const nsp=s=>s.replace(/\s+/g,''), hit=t=>{ const T=t.toLowerCase(), N=nsp(T); return kw.some(k=>T.indexOf(k)>=0||(/[가-힣]/.test(k)&&N.indexOf(nsp(k))>=0)); };
   return newsDedupe(NEWS.items.filter(it=>it.scope==='brand'&&it.key===key&&(it.importance||1)>=2
-      &&kw.some(k=>((it.title||'')+' '+(it.summary||'')).toLowerCase().indexOf(k)>=0))
+      &&hit((it.title||'')+' '+(it.summary||'')))
     .sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0)),n||3);
 }
 function chkModel(){
