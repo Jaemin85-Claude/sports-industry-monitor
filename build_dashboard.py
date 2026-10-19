@@ -2,7 +2,8 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.9: (대표 지시 2026-10-19 '텍스트가 너무 많다 — 표 해석을 돕는 글 일부 제외 · 물류·기업 상세 둘 다') 표·그래프를 읽는 데 돕는 긴 설명을
-       '읽는 법'으로 접음(누르면 펼침, why()) — 물류: 맨 위 읽는 법 상자·카드 설명 11개·부산 입항 설명·출처(수집 실패 표시는 그대로 보임),
+       '읽는 법'으로 접음(누르면 펼침, why()) — 물류: 맨 위 읽는 법 상자·카드 설명 11개·부산 입항 설명·출처 자세히(출처 한 줄·수집 실패 표시·
+       '지난 자료 채우는 중'·'목록 밖 n개 나라'는 그대로 보임),
        '전쟁 길목 없음' 반복 줄 삭제(길목 있는 거점만 표시 · 펼친 줄의 '한국까지 길목'은 그대로), 머리 줄은 '갱신'만. 기업 상세: 지역 막대 범례·
        본사 발언 설명·한국 시장 신호 설명은 접고 '기준' 줄은 그대로, 국내 법인 비교·재무 기준 줄은 짧게. 숫자·판정·출처 한 줄은 그대로
 v33.8: (대표 지시 2026-10-19 '2순위 새 종목 추가') 본사 4곳(몽클레르 MONC.MI·제냐 ZGN·버버리 BRBY.L·랄프로렌 RL, fetch_data v4.16) 로고·
@@ -3531,7 +3532,7 @@ function lgHubCard(){
   h+=`<div class="lh-list">${ids.map(id=>hid[id]?lgHubRow(hid[id]):ms.includes(LG_HUB[id].n)?missRow(LG_HUB[id]):'').join('')}${B.items.filter(it=>!LG_HUB[it.id]).map(lgHubRow).join('')}</div>`;
   const msx=ms.filter(nm=>!ids.some(id=>LG_HUB[id].n===nm));
   if(msx.length) h+=`<div class="ref"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span> ${esc(msx.join(', '))}</div>`;
-  return h+why(`·로테르담·두바이·벨기에 → 세계 물동량 1~5위 상하이·싱가포르·닝보·선전·칭다오 → 지역 대표 LA/롱비치(미국 서부)·포트클랑(말레이시아)·함부르크(독일) · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 이상 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(춘절이 끼어 있어 중국·홍콩 항만은 조금 낮게 잡힘) · 연휴·태풍 주간은 1년 전 같은 주와 비교 · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임(그래프 점선 = 전쟁 시작)`)+`</div>`;   // v33.9 접음
+  return h+why(`순서 = 대표 지정 홍콩·로테르담·두바이·벨기에 → 세계 물동량 1~5위 상하이·싱가포르·닝보·선전·칭다오 → 지역 대표 LA/롱비치(미국 서부)·포트클랑(말레이시아)·함부르크(독일) · 배 위치 신호(AIS)로 센 입항 척수의 주별 하루 평균(4일 이상 찬 마지막 주) — 항만이 막히거나 배가 빠졌는지 보는 용도(물동량·대기 시간은 아님) · 약 1주 늦게 매주 갱신 · 전쟁 전 = 1/1~2/27 평균(춘절이 끼어 있어 중국·홍콩 항만은 조금 낮게 잡힘) · 연휴·태풍 주간은 1년 전 같은 주와 비교 · 상하이 = 상하이+양산, 선전 = 옌톈+서커우 · 줄을 누르면 추이·길목·관세청 운임(그래프 점선 = 전쟁 시작)`)+`</div>`;   // v33.9 접음
 }
 /* v33.6 나라별 물동량(logistics_fetch v1.2 — 관세청 국가별 입항·출항 물동량, 공공데이터포털 오픈 API · 월) · 부산항 입항 컨테이너선
    (해양수산부 선박입출항 PORT-MIS · 매일) — 대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두'.
@@ -3585,7 +3586,7 @@ function lgVolCard(key){   // key = 'vol_in'(수입 묶음 · 나라 → 부산�
   const blTop=air?I.filter(x=>lgLast(x.bl)!=null&&!O2.has(x.c)).sort((a,b)=>lgLast(b.bl)-lgLast(a.bl)).slice(0,2).map(x=>lgVolNm(x.c)):[];
   const cov=air?'항공은 인천공항만(김해공항 등은 빠짐)':`바닷길은 부산항만(신항+북항+감천항 · 북항 = 관세청 항구 이름 '부산항') — 인천·평택·광양항 등은 빠짐${out?'':'(중국·베트남 화물은 인천항으로도 많이 들어옴)'}`;
   const unitNote=air?`항공 B/L 건수엔 ${out?'전자상거래 수출(역직구)':'해외직구'} 특송 소포가 섞임${blTop.length?`(${lgMon(mo[L])} 건수 많은 곳: ${esc(blTop.join('·'))})`:''}`:'TEU = 20ft 컨테이너 1개 기준(40ft = 2)';
-  return h+why(` ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 점선 = 전쟁 시작${M.others?` · 목록 밖 ${M.others}개 나라는 전체에만`:''}`);   // v33.9 접음
+  return h+(M.others?`<div class="na">목록 밖 ${M.others}개 나라는 전체에만</div>`:'')+why(`관세청 ${out?'출항':'입항'} 적재화물목록 기준 ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 점선 = 전쟁 시작`);   // v33.9 접음 · '목록 밖 n개 나라'는 위에 따로(접지 않음)
 }
 /* 부산항 입항 컨테이너선 — 직전 출항지 나라(부산 오기 바로 전 항구) 묶음 */
 const LG_PM_GRP=[['중국',['CN']],['일본',['JP']],['대만·홍콩',['TW','HK','MO']],['동남아',['VN','TH','MY','SG','ID','PH','KH','MM','BN','TL']],
@@ -3616,7 +3617,7 @@ function lgPmCard(){
   const W=[]; for(let m=m0;m&&wk[m]&&wk[m].length>=5;m=lgDay(m,-7)) W.unshift([m,lgSum(wk[m])/wk[m].length]);   // 월요일 시작 주(5일 이상 찬 주) — 가장 최근 주부터 빈틈없이 이어진 데까지(지난 자료를 채우는 중엔 1년 전 비교용 날이 떨어져 있음)
   if(W.length>=2) h+=`<div class="lg-pmtr">${lgSpark(W,{min:0,accent:true,label:'부산 컨테이너선 주별 하루 평균'})}<div class="ax"><span>${lgYmW(W[0][0])}</span><span>${lgMd(W[W.length-1][0])} 주</span></div></div>`;
   const warIn=W.length>=2&&W[0][0]<LG_WAR&&W[W.length-1][0]>=LG_WAR;   // lgSpark가 전쟁 시작 점선을 그릴 때만 설명
-  return h+why(`(공공데이터포털) — 부산항 전체(북항·신항·감천 등)에 들어온 컨테이너선 · 수출 선적·환적 배 포함(수입 화물만 센 값 아님) · 위 적출 거점 카드의 '부산 입항'(IMF PortWatch · 배 위치 신호 · 주 단위)과 세는 방식이 달라 값이 다름 — 두 값은 서로 견주지 말고 각 카드의 추이로 봄 · 직전 출항지 = 부산에 오기 바로 전 항구의 나라(유럽·미주 배도 중국·일본을 들르면 그 나라로 잡힘 · 그 밖 = 유럽·중동·인도·남미 등) · 체류 = 입항→출항 시각(${lgN((B&&B.stay_cap)||96)}시간 넘으면 그 값) · 매일 최근 7일을 다시 받음 · 그래프 = 주별 하루 평균${warIn?', 점선 = 전쟁 시작':''}${B&&B.missing?` · 지난 자료 채우는 중(빈 날 ${lgN(B.missing)}일)`:''}`)+`</div>`;   // v33.9 접음
+  return h+(B&&B.missing?`<div class="na">지난 자료 채우는 중(빈 날 ${lgN(B.missing)}일)</div>`:'')+why(`해양수산부 PORT-MIS 입항 신고(공공데이터포털) — 부산항 전체(북항·신항·감천 등)에 들어온 컨테이너선 · 수출 선적·환적 배 포함(수입 화물만 센 값 아님) · 위 적출 거점 카드의 '부산 입항'(IMF PortWatch · 배 위치 신호 · 주 단위)과 세는 방식이 달라 값이 다름 — 두 값은 서로 견주지 말고 각 카드의 추이로 봄 · 직전 출항지 = 부산에 오기 바로 전 항구의 나라(유럽·미주 배도 중국·일본을 들르면 그 나라로 잡힘 · 그 밖 = 유럽·중동·인도·남미 등) · 체류 = 입항→출항 시각(${lgN((B&&B.stay_cap)||96)}시간 넘으면 그 값) · 매일 최근 7일을 다시 받음 · 그래프 = 주별 하루 평균${warIn?', 점선 = 전쟁 시작':''}`)+`</div>`;   // v33.9 접음 · '지난 자료 채우는 중'은 위에 따로(접지 않음)
 }
 /* 전 세계 정시율 — Sea-Intelligence GLP(월) */
 function lgGlp(){ const B=LOGI&&LOGI.glp; if(!B||!B.months||!B.months.length) return null;
@@ -3630,7 +3631,7 @@ function lgGlpCard(){
     <div class="lg-shx">전쟁 전(${lgMon(LG_PRE_M)}) <span class="nw">${G.W?lgN(G.W[1],1)+'%':'―'}</span> · <span class="nw">늦은 배 ${G.W&&G.W[2]!=null?lgN(G.W[2],2)+'일':'―'}</span><br>정시율이 내리고 지연이 늘면 도착일이 들쭉날쭉해집니다 — 재고·판매 일정에 여유를 둡니다</div></div>`;
   const fl=Math.max(0,Math.min(30,Math.floor(Math.min(...M.map(m=>m[1]))/10)*10-10));   // 막대 바닥 = 가장 낮은 값보다 조금 아래(차이가 보이게) — 숫자는 막대 위에
   h+=`<div class="lg-bars" role="img" aria-label="최근 ${M.length}달 정시율 ${M.map(m=>`${m[0].slice(0,4)}년 ${+m[0].slice(5,7)}월 ${m[1]}%`).join(', ')}">${M.map(m=>`<div><span class="v num">${Math.round(m[1])}</span><span class="bw"><span class="b${m[0]===G.L[0]?' on':''}" style="height:${Math.max(4,Math.min(100,(m[1]-fl)/(100-fl)*100)).toFixed(1)}%"></span></span><span class="m">${+m[0].slice(5,7)}</span></div>`).join('')}</div>`;
-  return h+why(`${lgMon(M[0][0])}~${lgMon(G.L[0])}) · 전 세계 컨테이너선이 일정대로(하루 안) 도착한 비율 · 매월 말 전달 자료를 보도자료에서 읽음 · 항로별 값은 유료 보고서라 없음`)+`</div>`;   // v33.9 접음
+  return h+why(`막대 아래 = 달(${lgMon(M[0][0])}~${lgMon(G.L[0])}) · 전 세계 컨테이너선이 일정대로(하루 안) 도착한 비율 · 매월 말 전달 자료를 보도자료에서 읽음 · 항로별 값은 유료 보고서라 없음`)+`</div>`;   // v33.9 접음
 }
 function lgNewsCard(){
   const L=((NEWS&&NEWS.items)||[]).filter(it=>it.scope==='industry'&&it.key==='logistics').sort((a,b)=>(b.first_seen||'').localeCompare(a.first_seen||'')||(b.importance||0)-(a.importance||0));
@@ -3674,7 +3675,8 @@ function moreLogiHtml(){
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
   if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}</div>`;   // v33.9 실패 표시는 접지 않음
-  h+=why('관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음','출처');
+  h+=`<div class="note">출처: 관세청 · 해양수산부 · 한국해양진흥공사 KCCI · IMF PortWatch · Sea-Intelligence</div>`;   // v33.9 출처 한 줄은 보이게
+  h+=why('관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음','출처 자세히');
   return h;
 }
 /* ── 검색 관심도 vs 실적(v32.8) — 국내 패션·아이웨어: 같은 해 네이버 검색 증감 vs 매출 증감, 올해 검색 추이 ── */
