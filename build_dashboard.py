@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.8: (대표 지시 2026-10-19 '2순위 새 종목 추가') 본사 4곳(몽클레르 MONC.MI·제냐 ZGN·버버리 BRBY.L·랄프로렌 RL, fetch_data v4.16) 로고·
+       나라·뉴스 연결, 감시 브랜드 5개(naver_trend v1.9) 원산지 통화 CHK_CUR — 몽클레르·스톤아일랜드 유로, 버버리 파운드, 폴로 랄프로렌 달러,
+       톰브라운 달러(뉴욕 브랜드 — 본사 제냐 재무는 유로라 표시). 판정 규칙은 그대로
 v33.7: (대표 지시 2026-10-19 '바로 추가 7개' + '써코니도') 네이버 감시 브랜드 8개 추가(naver_trend v1.8)에 맞춰 원산지 통화 CHK_CUR — 아식스·
        오니츠카타이거·미즈노 엔, 살로몬 유로(프랑스), 아크테릭스·룰루레몬 달러(캐나다 브랜드 — 캐나다 달러는 받지 않아 본사 실적 통화인
        미국 달러로 대신, 노르다처럼 표시), 온러닝 스위스 프랑(fetch_data v4.15부터 1년 평균 대비), 써코니 달러. 판정 규칙은 그대로.
@@ -1197,7 +1200,8 @@ const DOMAINS = {
   "krd:kream":"kream.co.kr", "krd:trenbe":"trenbe.com", "krd:balaan":"balaan.co.kr", "krd:mustit":"mustit.co.kr",
   "krd:rexmond":"okmall.com", "krd:hana_int":"hahamall.net", "krd:bbluein":"bblue.co.kr",
   "EL.PA":"essilorluxottica.com", "SFL.MI":"safilogroup.com", "krd:iicombined":"gentlemonster.com", "krd:luxottica_kr":"luxottica.com", "krd:kering_ey_kr":"keringeyewear.com",
-  "krd:fivespace":"adererror.com", "krd:andar":"andar.co.kr", "krd:matinkim":"matinkim.com", "krd:piecepeace":"mardimercredi.com"
+  "krd:fivespace":"adererror.com", "krd:andar":"andar.co.kr", "krd:matinkim":"matinkim.com", "krd:piecepeace":"mardimercredi.com",
+  "MONC.MI":"moncler.com", "ZGN":"zegna.com", "BRBY.L":"burberry.com", "RL":"ralphlauren.com"   // v33.8
 };
 /* ── 브랜드 본사 나라(v33: 국기 대신 이름 — 상세 머리 '미국 · NKE') ── */
 const FLAGS = {
@@ -1208,7 +1212,8 @@ const FLAGS = {
   "COLM":"미국", "DOCS.L":"영국", "EL.PA":"프랑스", "SFL.MI":"이탈리아", "DKS":"미국", "JD.L":"영국", "ASO":"미국",
   "FRAS.L":"영국", "ZAL.DE":"독일", "SBFG3.SA":"브라질", "4240.SR":"사우디",
   "456A.T":"일본", "0933.HK":"홍콩", "VULC3.SA":"브라질", "LUXE":"독일", "2670.T":"일본", "6110.HK":"중국",
-  "TJX":"미국", "ROST":"미국", "BURL":"미국", "CPNG":"한국"
+  "TJX":"미국", "ROST":"미국", "BURL":"미국", "CPNG":"한국",
+  "MONC.MI":"이탈리아", "ZGN":"이탈리아", "BRBY.L":"영국", "RL":"미국"   // v33.8
 };
 const GROUPS = (DATA.group_order && DATA.group_order.length) ? DATA.group_order
   : ["글로벌 브랜드","글로벌 유통","국내 브랜드","국내 패션대기업","국내 OEM","국내 유통"];
@@ -1216,6 +1221,7 @@ const isKR = t => /\.K[SQ]$/.test(t);
 const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","4240.SR":"cenomi","NKE":"nike","ADS.DE":"adidas","ONON":"on","DECK":"hoka","AS":"amer","LULU":"lululemon","7936.T":"asics",
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
   "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","456A.T":"humanmade","0933.HK":"clarks","DKS":"dks","JD.L":"jd","ASO":"academy",
+  "MONC.MI":"moncler","ZGN":"thombrowne","BRBY.L":"burberry","RL":"ralphlauren",   // v33.8
   "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente","krd:skechers_kr":"skechers",
   "krd:nb_eland":"newbalance"};
 /* 재고일수 = 재고 ÷ 매출원가 × 365 (연간 원가 기준, 재고는 최근 잔액) */
@@ -3723,7 +3729,8 @@ const CHK_CUR=__CHK_CUR__;   // 원산지(본사) 통화 — 파이썬 CHK_CUR(�
 const CHK_RULE=__CHK_RULE__;   // v33.2 판정 규칙 판 — 기록(history.json verdicts)의 rule이 같을 때만 '어제와 달라진 판정'을 비교
 const CHK_SIG=__CHK_SIG__;   // v33.2 비교 기준(감시 브랜드·본사 연결·원산지 통화표, 파이썬 chk_sig) — 같은 기록끼리만 비교(화면에는 같은 것만 들어옴)
 const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신',
-  '아크테릭스':'캐나다 — 미국 달러로 대신','룰루레몬':'캐나다 — 미국 달러로 대신'};   // v33.7
+  '아크테릭스':'캐나다 — 미국 달러로 대신','룰루레몬':'캐나다 — 미국 달러로 대신',   // v33.7
+  '톰브라운':'미국 브랜드 — 본사 제냐 재무는 유로'};   // v33.8
 const CHK_SALE={EUR:['FR','IT'],GBP:['GB'],USD:['US'],JPY:['JP']};   // 통화 지역의 해외 세일(캘린더와 같은 일정, saleEvents의 나라 코드 cc)
 const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
 const sgn=v=>(v>0?'+':(v<0?'−':''))+Math.abs(v);
@@ -4531,6 +4538,8 @@ CHK_CUR = {   # 원산지(본사) 통화 — 네이버 감시 브랜드(global)�
     # v33.7 추가 8개(naver_trend v1.8 ADD_BRANDS)
     "아식스": "JPY", "오니츠카타이거": "JPY", "미즈노": "JPY", "살로몬": "EUR", "아크테릭스": "USD", "룰루레몬": "USD", "온러닝": "CHF",
     "써코니": "USD",
+    # v33.8 2순위 새 종목 5개(naver_trend v1.9) — 톰브라운은 뉴욕 브랜드라 달러(본사 제냐 재무는 유로, CHK_CUR_NOTE)
+    "몽클레르": "EUR", "스톤아일랜드": "EUR", "톰브라운": "USD", "버버리": "GBP", "폴로 랄프로렌": "USD",
 }
 CHK_LV = {2: "지금 검토", 1: "관망", 0: "주의"}
 VERDICT_EMBED = 60   # 화면에 넣는 판정 기록 수(history.json에는 history_append가 최대 400일)
