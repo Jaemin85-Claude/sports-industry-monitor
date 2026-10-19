@@ -119,6 +119,101 @@ jobs:
           PY
       - name: Install packages
         run: pip install -r requirements.txt pypdf pyyaml
+      - name: Probe tier-2 brands (temporary branch test)
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+          PYTHONUNBUFFERED: "1"
+          NCP_APIGW_API_KEY_ID: ${{ secrets.NCP_APIGW_API_KEY_ID }}
+          NCP_APIGW_API_KEY: ${{ secrets.NCP_APIGW_API_KEY }}
+        run: |
+          python - <<'PY'
+          import datetime, json, os, re, time
+          import requests
+          URL = "https://naverapihub.apigw.ntruss.com/search-trend/v1/search"
+          H = {"X-NCP-APIGW-API-KEY-ID": os.environ["NCP_APIGW_API_KEY_ID"], "X-NCP-APIGW-API-KEY": os.environ["NCP_APIGW_API_KEY"], "Content-Type": "application/json"}
+          ANCHOR = ("나이키", ["나이키", "nike"])
+          # 같은 브랜드의 검색어 후보를 따로따로(어느 표기가 큰지) + 묶음 전체
+          C = [
+           ("몽클레어", ["몽클레어"]), ("몽클레르", ["몽클레르"]), ("moncler", ["moncler"]), ("몽클 묶음", ["몽클레어", "몽클레르", "moncler", "몽클레어 패딩"]),
+           ("스톤아일랜드", ["스톤아일랜드"]), ("스톤 아일랜드", ["스톤 아일랜드"]), ("stone island", ["stone island"]), ("스톤 묶음", ["스톤아일랜드", "스톤 아일랜드", "stone island"]),
+           ("톰브라운", ["톰브라운"]), ("톰 브라운", ["톰 브라운"]), ("thom browne", ["thom browne"]), ("톰브 묶음", ["톰브라운", "톰 브라운", "thom browne", "톰브라운 가디건"]),
+           ("버버리", ["버버리"]), ("burberry", ["burberry"]), ("버버리 트렌치", ["버버리 트렌치코트", "버버리 트렌치"]), ("버버리 묶음", ["버버리", "burberry", "버버리 트렌치코트"]),
+           ("폴로 랄프로렌", ["폴로 랄프로렌", "폴로랄프로렌"]), ("랄프로렌", ["랄프로렌", "랄프 로렌"]), ("ralph lauren", ["ralph lauren", "polo ralph lauren"]), ("폴로", ["폴로"]),
+           ("랄프 묶음", ["폴로 랄프로렌", "폴로랄프로렌", "랄프로렌", "랄프 로렌", "ralph lauren", "polo ralph lauren"]),
+          ]
+          start, end = datetime.date(2023, 10, 1), datetime.date(2026, 9, 30)
+          def call(groups):
+              body = {"startDate": start.isoformat(), "endDate": end.isoformat(), "timeUnit": "month",
+                      "keywordGroups": [{"groupName": g, "keywords": kw[:20]} for g, kw in groups]}
+              for a in range(3):
+                  r = requests.post(URL, headers=H, json=body, timeout=30)
+                  if r.status_code >= 500 and a < 2:
+                      time.sleep(3); continue
+                  if r.status_code != 200:
+                      print("HTTP", r.status_code, r.text[:200]); return {}
+                  return {x["title"]: {d["period"][:7]: float(d["ratio"]) for d in x.get("data", [])} for x in r.json().get("results", [])}
+              return {}
+          months = []
+          d = start
+          while d <= end:
+              months.append(d.strftime("%Y-%m")); d = (d.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+          mean = lambda xs: sum(xs) / len(xs) if xs else None
+          print("== 네이버 검색 규모(나이키 최근 12달 = 100) · 최근 3달 전년 대비 · 최근 12달 전년 대비 ==")
+          for i in range(0, len(C), 4):
+              batch = C[i:i + 4]
+              res = call([ANCHOR] + list(batch))
+              a = [res.get(ANCHOR[0], {}).get(m, 0.0) for m in months]
+              an12 = mean(a[-12:])
+              for nm, kw in batch:
+                  s = [res.get(nm, {}).get(m, 0.0) for m in months]
+                  sc = mean(s[-12:]) / an12 * 100 if an12 else None
+                  y3 = (mean(s[-3:]) / mean(s[-15:-12]) - 1) * 100 if mean(s[-15:-12]) else None
+                  y12 = (sum(s[-12:]) / sum(s[-24:-12]) - 1) * 100 if sum(s[-24:-12]) else None
+                  f = lambda v: "―" if v is None else round(v, 1)
+                  print(f"  {nm:<14} 규모 {f(sc)} · 3달 {f(y3)}% · 12달 {f(y12)}% · 최근6달 {[round(v / an12 * 100, 1) if an12 else None for v in s[-6:]]}")
+              time.sleep(0.3)
+          PY
+      - name: Probe tier-2 HQ financials + IR pages (temporary branch test)
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python - <<'PY'
+          import json, re, requests
+          import fetch_data as fd
+          for t, n in (("MONC.MI", "몽클레르"), ("ZGN", "제냐(톰브라운)"), ("BRBY.L", "버버리"), ("RL", "랄프로렌")):
+              print(f"== {t} {n} ==")
+              try:
+                  d = fd.fetch_one(t, n, "글로벌 브랜드")
+                  print("  ITEM " + json.dumps({k: d.get(k) for k in ("currency", "fin_currency", "fy", "latest_q_yoy", "q_end", "q_prev_end", "inventory", "inv_yoy", "inv_date", "inv_prev_date", "q_inv", "q_inv_date", "q_inv_prev_date", "q_inv_yoy", "q_inv_rev_yoy", "price", "off_high_pct", "earn_date", "error")}, ensure_ascii=False, default=str)[:1500])
+              except Exception as e:
+                  print("  예외", type(e).__name__, str(e)[:300])
+          UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36"}
+          for u in ("https://www.monclergroup.com/en/investors", "https://www.monclergroup.com/en/investors/results-centre",
+                    "https://www.monclergroup.com/en/media/press-releases", "https://www.burberryplc.com/investors",
+                    "https://www.burberryplc.com/investors/results-reports", "https://www.burberryplc.com/news/corporate"):
+              try:
+                  r = requests.get(u, headers=UA, timeout=30)
+                  html = r.text
+                  pdf = sorted(set(re.findall(r'href="([^"]+\.pdf[^"]*)"', html, re.I)))
+                  res = [h for h in sorted(set(re.findall(r'href="([^"]+)"', html))) if re.search(r'result|quarter|half|interim|trading|revenue|first|nine|press', h, re.I)]
+                  print(f"== {u} HTTP {r.status_code} · {len(html):,}자 · PDF {len(pdf)} · 결과 링크 {len(res)}")
+                  for h in pdf[:12]: print("   pdf", h[:180])
+                  for h in res[:25]: print("   link", h[:180])
+              except Exception as e:
+                  print(f"== {u} 오류 {type(e).__name__}: {str(e)[:200]}")
+          H = {"User-Agent": "sports-industry-monitor research nightsit7@gmail.com"}
+          for t in ("RL", "ZGN"):
+              try:
+                  cm = requests.get("https://www.sec.gov/files/company_tickers.json", headers=H, timeout=30).json()
+                  cik = next((v["cik_str"] for v in cm.values() if v["ticker"] == t), None)
+                  sub = requests.get(f"https://data.sec.gov/submissions/CIK{int(cik):010d}.json", headers=H, timeout=30).json()
+                  r = sub["filings"]["recent"]
+                  rows = [f"{r['form'][i]} {r['filingDate'][i]}" for i in range(min(25, len(r['form']))) if r['form'][i] in ("8-K", "6-K", "10-Q", "10-K", "20-F")]
+                  print(f"== EDGAR {t} cik {cik} · {sub.get('name')} · 최근: {', '.join(rows[:14])}")
+              except Exception as e:
+                  print(f"== EDGAR {t} 오류 {type(e).__name__}: {str(e)[:200]}")
+          PY
       - name: Check workflow YAML and script imports
         run: |
           python - <<'PY'
