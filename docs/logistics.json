@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-19 19:00 KST",
+ "generated_at": "2026-10-20 07:56 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -5887,7 +5887,7 @@
    ]
   ],
   "latest": "2026-10-19",
-  "fetched": "2026-10-19",
+  "fetched": "2026-10-20",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8173,7 +8173,7 @@
     "last_date": "2026-10-11"
    }
   ],
-  "fetched": "2026-10-19",
+  "fetched": "2026-10-20",
   "label": "해협 통과"
  },
  "ports": {
@@ -10459,7 +10459,7 @@
     "last_date": "2026-10-09"
    }
   ],
-  "fetched": "2026-10-19",
+  "fetched": "2026-10-20",
   "label": "항만 입항"
  },
  "hubs": {
@@ -17297,7 +17297,7 @@
     "last_date": "2026-10-09"
    }
   ],
-  "fetched": "2026-10-19",
+  "fetched": "2026-10-20",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17445,7 +17445,7 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-19",
+  "fetched": "2026-10-20",
   "label": "전 세계 정시율"
  },
  "vol_in": {
