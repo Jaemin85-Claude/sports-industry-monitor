@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.10: (대표 지시 2026-10-19 '네이버 400 재시도') 요청이 400(Bad Request)이면 5xx처럼 잠시 뒤(3초·6초) 두 번 더 시도 — 10/19 07:14 실행에서
+       한 묶음(아크테릭스·룰루레몬·온러닝·써코니)만 400으로 실패하고 같은 요청이 앞뒤 실행에서는 정상(일시 오류). 끝내 실패하면 오류 글에
+       네이버 응답 앞부분을 붙여 원인을 로그로 볼 수 있게(키는 머리글에만 있어 응답·주소에 없음). 재시도를 다 쓰고도 400인 요청이
+       2번이면 그 실행은 400을 다시 시도하지 않음(계속되는 400이면 실행 시간이 늘지 않게 — 늘어나는 대기 최대 18초)
 v1.9: (대표 지시 2026-10-19 '2순위 새 종목 추가') 감시 브랜드 5개 — 몽클레르·스톤아일랜드(몽클레르 MONC.MI)·톰브라운(제냐 ZGN)·
       버버리(BRBY.L)·폴로 랄프로렌(RL). 검색어는 10/19 브랜치 시험으로 고름 — 몽클레르는 '몽클레어' 표기가 '몽클레르'보다 7배 커서 둘 다,
       '폴로' 단독은 자동차·폴로셔츠와 섞여 뺌. 네이버는 띄어쓰기를 같은 검색어로 셈. v1.8 ADD_BRANDS 뒤에 이어 붙임(월간 합계 제외 그대로)
@@ -157,7 +161,12 @@ def date_range():
     return start, end
 
 
+N400_GIVEUP = 2   # v1.10 400 재시도를 다 쓰고도 실패한 요청이 이만큼이면 이번 실행은 400을 다시 시도하지 않음(계속되는 400 — 실행 시간 보호)
+_n400 = 0
+
+
 def call(start, end, groups, unit="week"):
+    global _n400
     body = {"startDate": start.isoformat(), "endDate": end.isoformat(), "timeUnit": unit,
             "keywordGroups": [{"groupName": g, "keywords": kw} for g, kw in groups]}
     headers = {"X-NCP-APIGW-API-KEY-ID": KEY_ID, "X-NCP-APIGW-API-KEY": KEY,
@@ -169,10 +178,15 @@ def call(start, end, groups, unit="week"):
                            "GitHub Secrets NCP_APIGW_API_KEY_ID·NCP_APIGW_API_KEY와 API HUB 이용 신청 확인")
         if r.status_code == 429:
             raise FatalAPI(f"호출 한도 초과 429: {r.text[:200]}")
-        if r.status_code >= 500 and attempt < 2:
+        if (r.status_code >= 500 or (r.status_code == 400 and _n400 < N400_GIVEUP)) and attempt < 2:   # v1.10 400도 일시 오류일 때가 있어 다시
+            if r.status_code == 400:
+                print(f"  [재시도] 네이버 400 — {r.text[:160]}", flush=True)
             time.sleep(3 * (attempt + 1))
             continue
-        r.raise_for_status()
+        if r.status_code == 400:
+            _n400 += 1
+        if r.status_code >= 400:   # v1.10 응답 앞부분을 오류 글에(원인 확인용)
+            raise requests.HTTPError(f"{r.status_code} {r.reason}: {r.text[:200]}", response=r)
         return {res["title"]: {d["period"]: float(d["ratio"]) for d in res.get("data", [])}
                 for res in r.json().get("results", [])}
     return {}
