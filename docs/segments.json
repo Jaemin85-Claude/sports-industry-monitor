@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-19 03:56 KST",
+ "generated_at": "2026-10-19 16:11 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -35,6 +35,14 @@
   },
   "JD.L": {
    "error": "EDGAR 미대상(영국 상장)",
+   "extract": null
+  },
+  "MONC.MI": {
+   "error": "EDGAR 미대상(이탈리아 상장) — IR 사이트가 자동 접속을 막아 지역·채널·발언 없음",
+   "extract": null
+  },
+  "BRBY.L": {
+   "error": "EDGAR 미대상(영국 상장) — IR 사이트가 자동 접속을 막아 지역·채널·발언 없음",
    "extract": null
   },
   "NKE": {
@@ -737,14 +745,180 @@
     "schema_v": 3
    },
    "error": null
+  },
+  "RL": {
+   "accession": "0001628280-26-053896",
+   "source": "8-K 2026-08-06 rl-20260627ex991xpressrele.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1037038/000162828026053896/rl-20260627ex991xpressrele.htm",
+   "extract": {
+    "period": "Q1 FY27 ended 2026-06-27",
+    "prev_period": "Q1 FY26 ended 2025-06-28",
+    "currency": "USD",
+    "regions": [
+     {
+      "name": "North America",
+      "revenue": 740.3,
+      "prev_revenue": 656.2,
+      "yoy_pct": 12.8
+     },
+     {
+      "name": "Europe",
+      "revenue": 594.4,
+      "prev_revenue": 554.5,
+      "yoy_pct": 7.2
+     },
+     {
+      "name": "Asia",
+      "revenue": 589.3,
+      "prev_revenue": 474.0,
+      "yoy_pct": 24.3
+     },
+     {
+      "name": "Other non-reportable segments",
+      "revenue": 35.8,
+      "prev_revenue": 34.4,
+      "yoy_pct": 3.9
+     }
+    ],
+    "channels": [
+     {
+      "name": "Retail",
+      "revenue": 1369.3,
+      "prev_revenue": 1201.2,
+      "yoy_pct": null
+     },
+     {
+      "name": "Wholesale",
+      "revenue": 554.7,
+      "prev_revenue": 483.5,
+      "yoy_pct": null
+     },
+     {
+      "name": "Licensing",
+      "revenue": 35.8,
+      "prev_revenue": 34.4,
+      "yoy_pct": null
+     }
+    ],
+    "mgmt_notes": [
+     {
+      "topic": "discount",
+      "quote": "Increased Average Unit Retail (\"AUR\") by 15% across our direct-to-consumer network in the first quarter, above expectations, reflecting our continued elevation and strong full-price selling trends, with lower than planned promotions",
+      "ko": "DTC 네트워크 AUR 15% 상승, 예상보다 낮은 프로모션으로 정가 판매 강세 반영",
+      "sig": "less"
+     },
+     {
+      "topic": "discount",
+      "quote": "Gross margin expansion was driven by AUR growth as well as favorable channel and geographic mix shifts, more than offsetting incremental pressure from tariffs and other product costs.",
+      "ko": "AUR 성장과 채널·지역 믹스 개선으로 총이익률 확대, 관세 압력을 상쇄",
+      "sig": "less"
+     },
+     {
+      "topic": "inventory",
+      "quote": "Maintained Healthy Balance Sheet Positioning with $1.9 Billion in Cash and Short-Term Investments and Inventories Well-Positioned to Global Demand",
+      "ko": "재고가 글로벌 수요에 맞게 적정 수준으로 관리되고 있다고 강조",
+      "sig": "less"
+     }
+    ],
+    "notes": "채널별 YoY 성장률은 문서에 명시되지 않아 null 처리; 리테일·홀세일 채널 매출은 지역별 합산 수치로 제공됨",
+    "schema_v": 3,
+    "extracted_at": "2026-10-19 16:12"
+   },
+   "error": null
+  },
+  "ZGN": {
+   "accession": "0001877787-26-000036",
+   "source": "6-K 2026-09-03 zgn-20260630.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1877787/000187778726000036/zgn-20260630.htm",
+   "extract": {
+    "period": "H1 FY26 ended 2026-06-30",
+    "prev_period": "H1 FY25 ended 2025-06-30",
+    "currency": "EUR",
+    "regions": [
+     {
+      "name": "EMEA",
+      "revenue": 329.978,
+      "prev_revenue": 328.908,
+      "yoy_pct": 0.3
+     },
+     {
+      "name": "Americas",
+      "revenue": 302.348,
+      "prev_revenue": 262.714,
+      "yoy_pct": 15.1
+     },
+     {
+      "name": "Greater China Region",
+      "revenue": 236.106,
+      "prev_revenue": 223.101,
+      "yoy_pct": 5.8
+     },
+     {
+      "name": "Rest of APAC",
+      "revenue": 117.55,
+      "prev_revenue": 111.508,
+      "yoy_pct": 5.4
+     },
+     {
+      "name": "Other",
+      "revenue": 1.308,
+      "prev_revenue": 1.459,
+      "yoy_pct": -10.3
+     }
+    ],
+    "channels": [
+     {
+      "name": "DTC",
+      "revenue": 782.78,
+      "prev_revenue": 698.035,
+      "yoy_pct": 12.1
+     },
+     {
+      "name": "Wholesale branded",
+      "revenue": 131.716,
+      "prev_revenue": 154.243,
+      "yoy_pct": -14.6
+     },
+     {
+      "name": "Textile",
+      "revenue": 67.012,
+      "prev_revenue": 67.061,
+      "yoy_pct": -0.1
+     },
+     {
+      "name": "Other",
+      "revenue": 5.782,
+      "prev_revenue": 8.351,
+      "yoy_pct": -30.8
+     }
+    ],
+    "mgmt_notes": [
+     {
+      "topic": "discount",
+      "quote": "an improved gross profit margin driven by a higher proportion of DTC sales, which have higher gross profit margins compared to wholesale, and reduced markdown sales in line with the brand's strategy, and (iii) lower costs for prototype and sample products following the elevated design and development activities undertaken under the new design leadership in the prior period;",
+      "ko": "TOM FORD FASHION, DTC 비중 확대 및 브랜드 전략에 따른 마크다운 축소로 매출총이익률 개선",
+      "sig": "less"
+     },
+     {
+      "topic": "channel",
+      "quote": "a decrease in TOM FORD FASHION wholesale revenues of €1,830 thousand or -3.5% (-2.8% Organic), primarily reflecting our strategic decision to strengthen direct control over distribution, as well as fewer deliveries to the Middle East due to the impact of the ongoing conflict in the region.",
+      "ko": "TOM FORD FASHION 도매 매출 감소, 유통 직접 통제 강화 전략 및 중동 분쟁 영향",
+      "sig": "less"
+     }
+    ],
+    "notes": "매출은 유로화(€천) 기준으로 보고되었으며, 지역별·채널별 수치는 Note 5에 명시적으로 기재된 값을 사용함.",
+    "schema_v": 3,
+    "extracted_at": "2026-10-19 16:13"
+   },
+   "error": null
   }
  },
  "claude_usage": {
   "2026-10": {
-   "calls": 8,
-   "in": 2223,
-   "out": 58,
-   "usd": 0.0075,
+   "calls": 12,
+   "in": 63495,
+   "out": 1619,
+   "usd": 0.2147,
    "since": "2026-10-10"
   }
  }
