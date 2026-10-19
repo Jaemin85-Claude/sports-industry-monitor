@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.7: (대표 지시 2026-10-19 '바로 추가 7개' + '써코니도') 네이버 감시 브랜드 8개 추가(naver_trend v1.8)에 맞춰 원산지 통화 CHK_CUR — 아식스·
+       오니츠카타이거·미즈노 엔, 살로몬 유로(프랑스), 아크테릭스·룰루레몬 달러(캐나다 브랜드 — 캐나다 달러는 받지 않아 본사 실적 통화인
+       미국 달러로 대신, 노르다처럼 표시), 온러닝 스위스 프랑(fetch_data v4.15부터 1년 평균 대비), 써코니 달러. 판정 규칙은 그대로.
+       '판매 vs 검색' 설명에 네이버 선 범위(추가 8개는 월간 합계에서 뺌)를 적음
 v33.6: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두' + 공공데이터포털 인증키) 더보기 › 물류에 logistics_fetch v1.2
        새 자료 3개 — 수입 묶음: '나라별 → 부산항(바닷길 TEU)·인천공항(항공 톤) 도착 물동량'(관세청 국가별 입항, 칩으로 바꿈 · 제목도 칩 따라 ·
        인천·평택·광양항 등은 빠짐을 적음 · 적출 거점 나라 먼저 + 원산지·생산국·그 밖 많은 나라는 '나라 더 보기' — 묶음은 logistics_fetch가 저장한
@@ -2807,7 +2811,7 @@ function crossChartHtml(){
     <div class="xc-legend">${legend}</div>
     <div class="xc-wrap"><svg class="xc-svg" id="xcSvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="온라인 신발·의복 거래액과 네이버 브랜드 검색량의 전년 대비 증감">${g}${ln}<line id="xcGuide" x1="0" x2="0" y1="${T}" y2="${T+ih}" stroke="var(--sub)" stroke-width=".8" stroke-dasharray="3 3" visibility="hidden"/><rect id="xcHit" x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent"/></svg><div class="xc-tip" id="xcTip" hidden></div></div>
     <div class="note" style="margin-top:6px;line-height:1.6">최근: ${summ}</div>
-    <div class="note" style="margin-top:4px">KOSIS 온라인쇼핑 거래액은 1~2개월 늦게 나오고 네이버는 지난달까지 나옵니다. 검색선이 판매선보다 먼저 움직이면 선행 신호로 볼 수 있습니다. 네이버 선은 아래 브랜드 검색어 전체의 검색량 합계라 큰 브랜드 비중이 크며, 시장 전체가 아닌 방향 참고용입니다.</div></div>`;
+    <div class="note" style="margin-top:4px">KOSIS 온라인쇼핑 거래액은 1~2개월 늦게 나오고 네이버는 지난달까지 나옵니다. 검색선이 판매선보다 먼저 움직이면 선행 신호로 볼 수 있습니다. 네이버 선은 아래 수입·해외 브랜드 검색어의 검색량 합계(2026-10-19에 추가한 8개는 추이가 끊기지 않게 뺌)라 큰 브랜드 비중이 크며, 시장 전체가 아닌 방향 참고용입니다.</div></div>`;
 }
 function xcToggle(id){
   const {ser}=crossData();
@@ -3718,7 +3722,8 @@ function moreFashionHtml(){   // 패션 브랜드: 국내 패션 브랜드 비�
 const CHK_CUR=__CHK_CUR__;   // 원산지(본사) 통화 — 파이썬 CHK_CUR(이 파일 아래, 판정 기록과 같은 표)에서 넣음
 const CHK_RULE=__CHK_RULE__;   // v33.2 판정 규칙 판 — 기록(history.json verdicts)의 rule이 같을 때만 '어제와 달라진 판정'을 비교
 const CHK_SIG=__CHK_SIG__;   // v33.2 비교 기준(감시 브랜드·본사 연결·원산지 통화표, 파이썬 chk_sig) — 같은 기록끼리만 비교(화면에는 같은 것만 들어옴)
-const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신'};
+const CHK_CUR_NOTE={'가니':'덴마크 크로네(유로 고정)','에코(ECCO)':'덴마크 크로네(유로 고정)','노르다':'캐나다 — 미국 달러로 대신',
+  '아크테릭스':'캐나다 — 미국 달러로 대신','룰루레몬':'캐나다 — 미국 달러로 대신'};   // v33.7
 const CHK_SALE={EUR:['FR','IT'],GBP:['GB'],USD:['US'],JPY:['JP']};   // 통화 지역의 해외 세일(캘린더와 같은 일정, saleEvents의 나라 코드 cc)
 const CHK_LV={2:{t:'지금 검토'},1:{t:'관망'},0:{t:'주의'}};   // v33 배지 모양은 VB·vbadge(아래)
 const sgn=v=>(v>0?'+':(v<0?'−':''))+Math.abs(v);
@@ -4523,6 +4528,9 @@ CHK_CUR = {   # 원산지(본사) 통화 — 네이버 감시 브랜드(global)�
     "락포트": "USD", "피레넥스": "EUR", "클락스": "GBP", "브룩스": "USD", "파라부트": "EUR", "와일드동키": "EUR", "휴먼메이드": "JPY",
     "CEP": "EUR", "노르다": "USD", "비비안웨스트우드": "GBP", "에코(ECCO)": "EUR", "단톤": "EUR", "어그": "USD", "샤카웨어": "USD",
     "스케쳐스": "USD",
+    # v33.7 추가 8개(naver_trend v1.8 ADD_BRANDS)
+    "아식스": "JPY", "오니츠카타이거": "JPY", "미즈노": "JPY", "살로몬": "EUR", "아크테릭스": "USD", "룰루레몬": "USD", "온러닝": "CHF",
+    "써코니": "USD",
 }
 CHK_LV = {2: "지금 검토", 1: "관망", 0: "주의"}
 VERDICT_EMBED = 60   # 화면에 넣는 판정 기록 수(history.json에는 history_append가 최대 400일)

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.11: (2026-10-19 감시 브랜드 8개 추가와 함께) '■ 환율'에 스위스 프랑 — 온러닝 판정의 환율 점수(fetch_data v4.15 1년 평균 대비)를
+      메일에서도 확인할 수 있게. 1% 칸 알림은 그대로 엔·유로·달러만
 v1.10: (2026-10-16 물류 화면과 함께) 물류·운임 뉴스(news_monitor v2.14 logistics)를 통관·상표권처럼 '■ 물류·운임'으로 따로 묶고
       '중요 뉴스'·알림의 중요 뉴스 건수에서 뺌(전쟁 중 호르무즈·홍해 기사가 ★3으로 매일 나와 브랜드 뉴스 칸을 밀어내지 않게) · 물류 화면 바로가기
 v1.9: (대표 승인 2026-10-14) '■ 브랜드 점검표 판정' — 매일 기록한 판정(history.json verdicts, history_append v1.2 · 대시보드와 같은 규칙)으로
@@ -116,7 +118,7 @@ def price_moves(data, hist, today):
 def fx_moves(data, old):
     cur, prv = (data or {}).get("fx") or {}, (old or {}).get("fx") or {}
     rows = []
-    for code in ["USD", "EUR", "GBP", "JPY", "BRL"]:
+    for code in ["USD", "EUR", "GBP", "JPY", "CHF", "BRL"]:   # v1.11 스위스 프랑(온러닝 원산지 통화) 추가
         c = cur.get(code)
         if not c:
             continue
