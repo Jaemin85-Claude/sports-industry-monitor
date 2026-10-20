@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.10: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털·통계청이 일부 GitHub 서버에서만 막히는 문제 — 수집 상태 줄에
+       '공공데이터포털 연결 안 됨(GitHub 서버 n대 모두 막힘 · 날짜부터)'(logistics.json dgk_conn · logistics_fetch v1.3)·'통계청 연결 안 됨(…)'
+       (kosis.json conn · kosis_fetch v5.2) — 연결 시험은 통과했는데 못 받았으면 '연결 오류(GitHub 서버 n대에서 시도)'. 물류 화면 '이번 수집
+       일부 실패' 줄 끝에도 같은 사유. 화면 구성·판정 규칙은 그대로
 v33.9: (대표 지시 2026-10-19 '텍스트가 너무 많다 — 표 해석을 돕는 글 일부 제외 · 물류·기업 상세 둘 다') 표·그래프를 읽는 데 돕는 긴 설명을
        '읽는 법'으로 접음(누르면 펼침, why()) — 물류: 맨 위 읽는 법 상자·카드 설명 11개·부산 입항 설명·출처 자세히(출처 한 줄·수집 실패 표시·
        '지난 자료 채우는 중'·'목록 밖 n개 나라'는 그대로 보임),
@@ -3674,7 +3678,12 @@ function moreLogiHtml(){
     +sf('나라별 출발 물동량',()=>`<div class="card" id="lgVol_vol_out">${lgVolCard('vol_out')}</div>`);
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
-  if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}</div>`;   // v33.9 실패 표시는 접지 않음
+  // v33.10 공공데이터포털 연결 차단(logistics_fetch v1.3) — 실패 줄 끝에 사유(수집 상태 _conn_note와 같은 규칙)
+  const dc=(LOGI.dgk_conn&&typeof LOGI.dgk_conn==='object'&&!Array.isArray(LOGI.dgk_conn))?LOGI.dgk_conn:{};
+  const dtr=Array.isArray(dc.tries)?dc.tries.filter(t=>t&&typeof t==='object'&&!Array.isArray(t)):[], dn=dtr.length, dall=dn>0&&dtr.every(t=>t.blocked===true);
+  const dIn=[dall?(dn>1?'GitHub 서버 '+dn+'대 모두 막힘':'GitHub 서버에서 막힘'):(dn?'GitHub 서버 '+dn+'대에서 시도':''),typeof dc.since==='string'&&dc.since?esc(dc.since)+'부터':''].filter(Boolean).join(' · ');
+  const dcTxt=(Array.isArray(dc.keys)&&dc.keys.length)?` — 공공데이터포털 연결 ${dall?'안 됨':'오류'}${dIn?'('+dIn+')':''}`:'';
+  if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}${dcTxt}</div>`;   // v33.9 실패 표시는 접지 않음
   h+=`<div class="note">출처: 관세청 · 해양수산부 · 한국해양진흥공사 KCCI · IMF PortWatch · Sea-Intelligence</div>`;   // v33.9 출처 한 줄은 보이게
   h+=why('관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음','출처 자세히');
   return h;
@@ -4761,6 +4770,22 @@ def _ts_iso(v):
     return f"{m.group(1)}T{m.group(2) or '00'}:{m.group(3) or '00'}:00+09:00"
 
 
+def _conn_note(c, name):
+    """v33.10 일부 GitHub 서버에서만 막히는 연결(logistics_fetch v1.3 dgk_conn · kosis_fetch v5.2 conn) — 이번 실행에서 못 받았을 때만 한 줄.
+    모든 차례가 연결 시험에서 막혔으면 '연결 안 됨(GitHub 서버 n대 모두 막힘)', 아니면 '연결 오류(GitHub 서버 n대에서 시도)'(5xx·시간 초과 등)"""
+    if not isinstance(c, dict) or not isinstance(c.get("keys"), list) or not c["keys"]:
+        return []
+    tr = c.get("tries")
+    tr = [t for t in tr if isinstance(t, dict)] if isinstance(tr, list) else []
+    nt = len(tr)
+    blocked = bool(tr) and all(t.get("blocked") is True for t in tr)
+    how = ((f"GitHub 서버 {nt}대 모두 막힘" if nt > 1 else "GitHub 서버에서 막힘") if blocked else
+           (f"GitHub 서버 {nt}대에서 시도" if nt else ""))
+    since = c.get("since") if isinstance(c.get("since"), str) else ""
+    inner = " · ".join(x for x in (how, f"{since}부터" if since else "") if x)
+    return [f"{name} 연결 {'안 됨' if blocked else '오류'}" + (f"({inner})" if inner else "")]
+
+
 def _partial(fn, d):
     """v32.12 부분 실패 요약 — (못 받은 곳 수(이전 값 + 값 없음), 화면에 보일 짧은 설명 목록). 필드가 없으면 (0, [])
     수는 각 수집 스크립트가 남긴 실패 목록으로 셈: data.json fetch_status(fetch_data v4.12) · naver_trend.json status(v1.7) ·
@@ -4808,6 +4833,7 @@ def _partial(fn, d):
             notes.append(f"지표 {len(kept)}개 이전 값" + (" (해외직구 포함)" if "cross_border" in kept else ""))
         if bad:
             notes.append(f"지표 {len(bad)}개 값 없음" + (" (해외직구 포함)" if "cross_border" in bad else ""))
+        notes += _conn_note(d.get("conn"), "통계청")   # v33.10 kosis_fetch v5.2
     elif fn in ("segments.json", "segments_ir.json"):
         # 수 = 이번 실행에서 실패한 종목(failed). kept_reason은 설명만 — 새 공시에 분해가 없어 이전 실적을 지킨 경우·
         # 지난 실패 사유가 이월된 경우는 실패로 세지 않음
@@ -4872,6 +4898,7 @@ def _partial(fn, d):
             notes.append("이전 값 " + ", ".join(kept))
         if bad:
             notes.append("값 없음 " + ", ".join(bad))
+        notes += _conn_note(d.get("dgk_conn"), "공공데이터포털")   # v33.10 logistics_fetch v1.3
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes

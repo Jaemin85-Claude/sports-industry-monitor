@@ -6,6 +6,11 @@ on:
     # 매일 04:17 KST = 전일 19:17 UTC (뉴스 03:17 뒤)
     - cron: "17 19 * * *"
   workflow_dispatch:   # 수동 실행 버튼 (테스트용)
+    inputs:
+      test_block:
+        description: "시험용(브랜치에서만) — 공공데이터포털이 막힌 서버로 가정할 차례(예: 1 · 1,2 · 1,2,3). 비우면 보통 실행"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -14,6 +19,9 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      retry_keys: ${{ steps.logi.outputs.retry_keys }}   # v2026-10-20 연결 오류로 못 받은 공공데이터포털 자료 → 아래 dgk-retry가 새 서버에서
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -42,6 +50,9 @@ jobs:
         env:
           PYTHONUNBUFFERED: "1"
           DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+          LOGI_ATTEMPT: "1"          # v2026-10-20 logistics_fetch v1.3: 1차(다시 받기 2번이 뒤에 있음 — 그 자료의 경고는 마지막 차례에서 셈)
+          LOGI_ATTEMPTS: "3"
+          LOGI_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python logistics_fetch.py
       - name: Note logistics failure
         if: steps.logi.outcome == 'failure'
@@ -62,6 +73,112 @@ jobs:
       - name: Check partial failures
         # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
         # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
+
+  dgk-retry-1:
+    # v2026-10-20 (대표 지시 '보완안 1') 공공데이터포털(국가정보자원관리원)이 일부 GitHub 서버(IP)에서만 연결이 안 됨 — 같은 서버에서
+    # 다시 해도 소용없어, 앞 작업이 연결 오류로 못 받은 공공데이터포털 자료만 새 서버에서 다시 받고 화면을 다시 만듦(2/3)
+    needs: run
+    if: ${{ !cancelled() && needs.run.outputs.retry_keys != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      retry_keys: ${{ steps.logi.outputs.retry_keys }}
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Logistics data (retry 2/3)
+        id: logi
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          PYTHONUNBUFFERED: "1"
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+          LOGI_ATTEMPT: "2"
+          LOGI_ATTEMPTS: "3"
+          LOGI_RETRY_KEYS: ${{ needs.run.outputs.retry_keys }}
+          LOGI_PREV_TRIES: ${{ needs.run.outputs.conn_tries }}
+          LOGI_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
+        run: python logistics_fetch.py
+      - name: Note logistics failure
+        if: steps.logi.outcome == 'failure'
+        run: |
+          echo "logistics_fetch: 물류 자료 다시 받기(2/3) 실패(이전 값 유지)" >> soft_fail.txt
+      - name: Build dashboard
+        run: python build_dashboard.py
+      - name: Commit dashboard
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/
+          git commit -m "update logistics retry 2 $(date -u +%F)" || echo "no changes"
+          git pull --rebase origin main
+          git push
+      - name: Check partial failures
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
+
+  dgk-retry-2:
+    # v2026-10-20 (대표 지시 '보완안 1') 공공데이터포털(국가정보자원관리원)이 일부 GitHub 서버(IP)에서만 연결이 안 됨 — 같은 서버에서
+    # 다시 해도 소용없어, 앞 작업이 연결 오류로 못 받은 공공데이터포털 자료만 새 서버에서 다시 받고 화면을 다시 만듦(3/3)
+    needs: dgk-retry-1
+    if: ${{ !cancelled() && needs.dgk-retry-1.outputs.retry_keys != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      retry_keys: ${{ steps.logi.outputs.retry_keys }}
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Logistics data (retry 3/3)
+        id: logi
+        continue-on-error: true
+        timeout-minutes: 10
+        env:
+          PYTHONUNBUFFERED: "1"
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
+          LOGI_ATTEMPT: "3"
+          LOGI_ATTEMPTS: "3"
+          LOGI_RETRY_KEYS: ${{ needs.dgk-retry-1.outputs.retry_keys }}
+          LOGI_PREV_TRIES: ${{ needs.dgk-retry-1.outputs.conn_tries }}
+          LOGI_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
+        run: python logistics_fetch.py
+      - name: Note logistics failure
+        if: steps.logi.outcome == 'failure'
+        run: |
+          echo "logistics_fetch: 물류 자료 다시 받기(3/3) 실패(이전 값 유지)" >> soft_fail.txt
+      - name: Build dashboard
+        run: python build_dashboard.py
+      - name: Commit dashboard
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/
+          git commit -m "update logistics retry 3 $(date -u +%F)" || echo "no changes"
+          git pull --rebase origin main
+          git push
+      - name: Check partial failures
         run: |
           if [ -s soft_fail.txt ]; then
             while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt

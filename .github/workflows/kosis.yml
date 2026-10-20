@@ -6,6 +6,11 @@ on:
     # 매월 5일 02:47 KST = 매월 4일 17:47 UTC (월간 통계 발표 이후)
     - cron: "47 17 4 * *"
   workflow_dispatch:   # 수동 실행 버튼
+    inputs:
+      test_block:
+        description: "시험용(브랜치에서만) — 통계청이 막힌 서버로 가정할 차례(예: 1 · 1,2 · 1,2,3). 비우면 보통 실행"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -14,6 +19,9 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      retry: ${{ steps.kosis.outputs.retry }}   # v2026-10-20 통계청 연결 안 됨 → 아래 kosis-retry가 새 서버에서
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -21,9 +29,13 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - name: Fetch KOSIS indicators
+        id: kosis
         env:
           KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }}
           PYTHONUNBUFFERED: "1"
+          KOSIS_ATTEMPT: "1"         # v2026-10-20 kosis_fetch v5.2: 1차(다시 받기 2번이 뒤에 있음)
+          KOSIS_ATTEMPTS: "3"
+          KOSIS_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python kosis_fetch.py
       - name: Commit kosis data
         run: |
@@ -36,6 +48,92 @@ jobs:
       - name: Check partial failures
         # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
         # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
+
+  kosis-retry-1:
+    # v2026-10-20 (대표 지시 '보완안 3') kosis.kr(국가정보자원관리원)이 일부 GitHub 서버(IP)에서만 연결이 안 될 때 — 새 서버에서 다시 받기(2/3)
+    needs: run
+    if: ${{ !cancelled() && needs.run.outputs.retry == '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      retry: ${{ steps.kosis.outputs.retry }}
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Fetch KOSIS indicators (retry 2/3)
+        id: kosis
+        env:
+          KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }}
+          PYTHONUNBUFFERED: "1"
+          KOSIS_ATTEMPT: "2"
+          KOSIS_ATTEMPTS: "3"
+          KOSIS_PREV_TRIES: ${{ needs.run.outputs.conn_tries }}
+          KOSIS_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
+        run: python kosis_fetch.py
+      - name: Commit kosis data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/kosis.json
+          git commit -m "update kosis retry 2 $(date -u +%F)" || echo "no changes"
+          git pull --rebase origin main
+          git push
+      - name: Check partial failures
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
+
+  kosis-retry-2:
+    # v2026-10-20 (대표 지시 '보완안 3') kosis.kr(국가정보자원관리원)이 일부 GitHub 서버(IP)에서만 연결이 안 될 때 — 새 서버에서 다시 받기(3/3)
+    needs: kosis-retry-1
+    if: ${{ !cancelled() && needs.kosis-retry-1.outputs.retry == '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      retry: ${{ steps.kosis.outputs.retry }}
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Fetch KOSIS indicators (retry 3/3)
+        id: kosis
+        env:
+          KOSIS_API_KEY: ${{ secrets.KOSIS_API_KEY }}
+          PYTHONUNBUFFERED: "1"
+          KOSIS_ATTEMPT: "3"
+          KOSIS_ATTEMPTS: "3"
+          KOSIS_PREV_TRIES: ${{ needs.kosis-retry-1.outputs.conn_tries }}
+          KOSIS_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
+        run: python kosis_fetch.py
+      - name: Commit kosis data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/kosis.json
+          git commit -m "update kosis retry 3 $(date -u +%F)" || echo "no changes"
+          git pull --rebase origin main
+          git push
+      - name: Check partial failures
         run: |
           if [ -s soft_fail.txt ]; then
             while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
