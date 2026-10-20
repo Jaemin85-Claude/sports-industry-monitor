@@ -186,3 +186,43 @@ jobs:
           print(f"index.html {len(h):,}자 · 스크립트 {j - i - 8:,}자")
           PY
           node --check /tmp/page.js && echo "화면 스크립트 문법 통과"
+
+  probe:   # 임시: data.go.kr 연결 시험(브랜치 전용 — 확인 후 되돌림)
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        n: [1, 2, 3, 4, 5, 6]
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Probe data.go.kr from this runner
+        run: |
+          pip -q install requests
+          python - <<'PY2'
+          import json, time, requests
+          try:
+              d = requests.get("https://ipinfo.io/json", timeout=10).json()
+              ip = d.get("ip", "?").split(".")
+              print("runner", ".".join(ip[:2]) + ".x.x", d.get("region"), d.get("org"))
+          except Exception as e:
+              print("runner ipinfo 실패", type(e).__name__)
+          UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor)"}
+          urls = ["https://www.data.go.kr/data/15116806/fileData.do",
+                  "https://apis.data.go.kr/1220000/cntyperetprgtqtyacrs/getCntyPerEtprGtqtyAcrs?pageNo=1&numOfRows=1",
+                  "https://apis.data.go.kr/1192000/VsslEtrynd5/Info5?prtAgCd=020&pageNo=1&numOfRows=1",
+                  "https://www.mof.go.kr/", "https://www.kobc.or.kr/"]
+          for rnd in range(3):
+              for u in urls:
+                  t = time.time()
+                  try:
+                      r = requests.get(u, headers=UA, timeout=(15, 30))
+                      res = f"{r.status_code} {len(r.content)}B"
+                  except Exception as e:
+                      res = type(e).__name__
+                  print(f"round{rnd+1} {u.split('/')[2]}{u.split('/')[3][:12] and '/'+u.split('/')[3][:12]} -> {res} {time.time()-t:.1f}s", flush=True)
+              time.sleep(20)
+          PY2
