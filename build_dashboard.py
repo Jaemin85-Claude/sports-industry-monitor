@@ -2,8 +2,9 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.10: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털·통계청이 일부 GitHub 서버에서만 막히는 문제 — 수집 상태 줄에
-       '공공데이터포털 연결 안 됨(GitHub 서버 n대 모두 · 날짜부터)'(logistics.json dgk_conn · logistics_fetch v1.3)·'통계청 연결 안 됨(…)'
-       (kosis.json conn · kosis_fetch v5.2), 물류 화면 '이번 수집 일부 실패' 줄 끝에도 같은 사유. 화면 구성·판정 규칙은 그대로
+       '공공데이터포털 연결 안 됨(GitHub 서버 n대 모두 막힘 · 날짜부터)'(logistics.json dgk_conn · logistics_fetch v1.3)·'통계청 연결 안 됨(…)'
+       (kosis.json conn · kosis_fetch v5.2) — 연결 시험은 통과했는데 못 받았으면 '연결 오류(GitHub 서버 n대에서 시도)'. 물류 화면 '이번 수집
+       일부 실패' 줄 끝에도 같은 사유. 화면 구성·판정 규칙은 그대로
 v33.9: (대표 지시 2026-10-19 '텍스트가 너무 많다 — 표 해석을 돕는 글 일부 제외 · 물류·기업 상세 둘 다') 표·그래프를 읽는 데 돕는 긴 설명을
        '읽는 법'으로 접음(누르면 펼침, why()) — 물류: 맨 위 읽는 법 상자·카드 설명 11개·부산 입항 설명·출처 자세히(출처 한 줄·수집 실패 표시·
        '지난 자료 채우는 중'·'목록 밖 n개 나라'는 그대로 보임),
@@ -3677,8 +3678,11 @@ function moreLogiHtml(){
     +sf('나라별 출발 물동량',()=>`<div class="card" id="lgVol_vol_out">${lgVolCard('vol_out')}</div>`);
   h+=sec('lgRisk','공통 위험 신호','바닷길 · 정시율 · 뉴스')+sf('해협 통과',lgChokeCard)+sf('중동 항만',lgPortCard)+sf('정시율',lgGlpCard)+sf('물류 뉴스',lgNewsCard);
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
-  const dc=LOGI.dgk_conn||{}, dn=(dc.tries||[]).length;   // v33.10 공공데이터포털 연결 차단(logistics_fetch v1.3) — 실패 줄 끝에 사유
-  const dcTxt=(dc.keys&&dc.keys.length)?` — 공공데이터포털 연결 안 됨(${dn>1?'GitHub 서버 '+dn+'대 모두 막힘':'GitHub 서버에서 막힘'}${dc.since?' · '+esc(dc.since)+'부터':''})`:'';
+  // v33.10 공공데이터포털 연결 차단(logistics_fetch v1.3) — 실패 줄 끝에 사유(수집 상태 _conn_note와 같은 규칙)
+  const dc=(LOGI.dgk_conn&&typeof LOGI.dgk_conn==='object'&&!Array.isArray(LOGI.dgk_conn))?LOGI.dgk_conn:{};
+  const dtr=Array.isArray(dc.tries)?dc.tries.filter(t=>t&&typeof t==='object'&&!Array.isArray(t)):[], dn=dtr.length, dall=dn>0&&dtr.every(t=>t.blocked);
+  const dIn=[dall?(dn>1?'GitHub 서버 '+dn+'대 모두 막힘':'GitHub 서버에서 막힘'):(dn?'GitHub 서버 '+dn+'대에서 시도':''),typeof dc.since==='string'&&dc.since?esc(dc.since)+'부터':''].filter(Boolean).join(' · ');
+  const dcTxt=(Array.isArray(dc.keys)&&dc.keys.length)?` — 공공데이터포털 연결 ${dall?'안 됨':'오류'}${dIn?'('+dIn+')':''}`:'';
   if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}${dcTxt}</div>`;   // v33.9 실패 표시는 접지 않음
   h+=`<div class="note">출처: 관세청 · 해양수산부 · 한국해양진흥공사 KCCI · IMF PortWatch · Sea-Intelligence</div>`;   // v33.9 출처 한 줄은 보이게
   h+=why('관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음','출처 자세히');
@@ -4767,12 +4771,19 @@ def _ts_iso(v):
 
 
 def _conn_note(c, name):
-    """v33.10 일부 GitHub 서버에서만 막히는 연결(logistics_fetch v1.3 dgk_conn · kosis_fetch v5.2 conn) — 이번 실행에서 못 받았을 때만 한 줄"""
-    if not isinstance(c, dict) or not c.get("keys"):
+    """v33.10 일부 GitHub 서버에서만 막히는 연결(logistics_fetch v1.3 dgk_conn · kosis_fetch v5.2 conn) — 이번 실행에서 못 받았을 때만 한 줄.
+    모든 차례가 연결 시험에서 막혔으면 '연결 안 됨(GitHub 서버 n대 모두 막힘)', 아니면 '연결 오류(GitHub 서버 n대에서 시도)'(5xx·시간 초과 등)"""
+    if not isinstance(c, dict) or not isinstance(c.get("keys"), list) or not c["keys"]:
         return []
-    nt = len([t for t in c.get("tries") or [] if isinstance(t, dict)])
+    tr = c.get("tries")
+    tr = [t for t in tr if isinstance(t, dict)] if isinstance(tr, list) else []
+    nt = len(tr)
+    blocked = bool(tr) and all(t.get("blocked") for t in tr)
+    how = ((f"GitHub 서버 {nt}대 모두 막힘" if nt > 1 else "GitHub 서버에서 막힘") if blocked else
+           (f"GitHub 서버 {nt}대에서 시도" if nt else ""))
     since = c.get("since") if isinstance(c.get("since"), str) else ""
-    return [f"{name} 연결 안 됨(GitHub 서버 " + (f"{nt}대 모두 막힘" if nt > 1 else "에서 막힘") + (f" · {since}부터" if since else "") + ")"]
+    inner = " · ".join(x for x in (how, f"{since}부터" if since else "") if x)
+    return [f"{name} 연결 {'안 됨' if blocked else '오류'}" + (f"({inner})" if inner else "")]
 
 
 def _partial(fn, d):

@@ -21,6 +21,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       retry: ${{ steps.kosis.outputs.retry }}   # v2026-10-20 통계청 연결 안 됨 → 아래 kosis-retry가 새 서버에서
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -62,10 +63,11 @@ jobs:
     timeout-minutes: 20
     outputs:
       retry: ${{ steps.kosis.outputs.retry }}
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref_name }}   # 앞 작업이 커밋한 최신 main
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -77,6 +79,7 @@ jobs:
           PYTHONUNBUFFERED: "1"
           KOSIS_ATTEMPT: "2"
           KOSIS_ATTEMPTS: "3"
+          KOSIS_PREV_TRIES: ${{ needs.run.outputs.conn_tries }}
           KOSIS_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python kosis_fetch.py
       - name: Commit kosis data
@@ -103,10 +106,11 @@ jobs:
     timeout-minutes: 20
     outputs:
       retry: ${{ steps.kosis.outputs.retry }}
+      conn_tries: ${{ steps.kosis.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref_name }}   # 앞 작업이 커밋한 최신 main
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -118,6 +122,7 @@ jobs:
           PYTHONUNBUFFERED: "1"
           KOSIS_ATTEMPT: "3"
           KOSIS_ATTEMPTS: "3"
+          KOSIS_PREV_TRIES: ${{ needs.kosis-retry-1.outputs.conn_tries }}
           KOSIS_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python kosis_fetch.py
       - name: Commit kosis data

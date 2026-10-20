@@ -21,6 +21,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}   # v2026-10-20 연결 오류로 못 받은 공공데이터포털 자료 → 아래 dgk-retry가 새 서버에서
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -88,10 +89,11 @@ jobs:
     timeout-minutes: 15
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref_name }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -106,6 +108,7 @@ jobs:
           LOGI_ATTEMPT: "2"
           LOGI_ATTEMPTS: "3"
           LOGI_RETRY_KEYS: ${{ needs.run.outputs.retry_keys }}
+          LOGI_PREV_TRIES: ${{ needs.run.outputs.conn_tries }}
           LOGI_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python logistics_fetch.py
       - name: Note logistics failure
@@ -139,10 +142,11 @@ jobs:
     timeout-minutes: 15
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}
+      conn_tries: ${{ steps.logi.outputs.conn_tries }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.ref_name }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
+          ref: ${{ github.ref }}   # 앞 작업이 커밋한 최신 main(기본값은 실행을 시작한 때의 커밋이라 커밋이 부딪힘)
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
@@ -157,6 +161,7 @@ jobs:
           LOGI_ATTEMPT: "3"
           LOGI_ATTEMPTS: "3"
           LOGI_RETRY_KEYS: ${{ needs.dgk-retry-1.outputs.retry_keys }}
+          LOGI_PREV_TRIES: ${{ needs.dgk-retry-1.outputs.conn_tries }}
           LOGI_TEST_BLOCK: ${{ github.ref_name != 'main' && inputs.test_block || '' }}
         run: python logistics_fetch.py
       - name: Note logistics failure
