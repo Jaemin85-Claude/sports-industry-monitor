@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.3: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털(www.data.go.kr·apis.data.go.kr — 국가정보자원관리원 27.101.x)이 일부 GitHub
+      서버(IP)에서만 연결이 안 됨(10/20 시험: 서버 7대 중 2대 — 미국 워싱턴주·멕시코, 해수부 홈페이지도 같이 막힘 · 같은 실행 안에서 다시 해도
+      IP가 같아 소용없음) → ① 시작할 때 두 주소에 연결만 먼저 시험(6초 × 2번)해 막힌 서버면 그 주소의 자료는 기다리지 않고 바로 이전 값
+      (2~3분 허비하던 것을) ② 연결 오류로 못 받은 공공데이터포털 자료(관세청 운송비용 3 · 물동량 2 · 부산 입항 선박)는 update.yml이 새 서버에서
+      그 자료만 다시 받음(LOGI_ATTEMPT 2·3 — 최대 2번 더, GITHUB_OUTPUT retry_keys로 넘김 · 다른 자료는 1차 값 그대로) ③ 다시 받을 차례가
+      남아 있으면 그 자료의 기준일 경고·'절반 이상' 셈은 마지막 차례로 미룸(연결 차단으로 못 받은 관세청 파일은 '절반 이상' 셈에서 늘 뺌 — 연결
+      알림이 따로 있음) ④ 마지막 차례까지 막히면 dgk_conn.since(서버를 다 바꿔도 막힌 첫날)를 남기고, 이틀째(since 다음 날)부터 실패 표시
+      '공공데이터포털 연결 안 됨 n일째 — 서버 n대 모두 막힘' · 받으면 since를 지움 ⑤ 실행마다 GitHub 서버 IP 앞 두 자리·지역(ipinfo.io)을 로그와
+      dgk_conn.tries에 남김(공공데이터포털 문의용) · LOGI_TEST_BLOCK(브랜치 수동 실행 test_block — 막힌 서버로 가정할 차례, main에서는 무시)은 시험용
 v1.2: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두' + 공공데이터포털 인증키 등록) 공공데이터포털 오픈 API 3개 추가
       (인증키 GitHub Secrets DATA_GO_KR_API_KEY · 자동승인 · 이용허락 제한 없음 · 요청 주소에 키가 들어가 오류 글에서는 자르기 전에 가림):
       ⑤ 관세청 국가별 입항(수입 I)·출항(수출 E) 물동량(15151805·15151809, 월간 — 매월 15일께 전달까지, 적재화물목록 기준) 최근 36달 —
@@ -60,9 +69,10 @@ import io
 import json
 import os
 import re
+import socket
 import time
 import xml.etree.ElementTree as ET
-from urllib.parse import quote, quote_plus
+from urllib.parse import quote, quote_plus, urlsplit
 
 import requests
 
@@ -97,6 +107,11 @@ LABELS = {**{k: n for k, _, n, _ in KCS}, "kcci": "KCCI 부산발 운임", "chok
           "hubs": "적출 거점 입항", "glp": "전 세계 정시율",
           "vol_in": "관세청 국가별 수입 물동량", "vol_out": "관세청 국가별 수출 물동량", "busan_calls": "부산 입항 선박"}   # 블록 키 → 이름(저장 순서)
 DGK_BLOCKS = ("vol_in", "vol_out", "busan_calls")   # v1.2 공공데이터포털 오픈 API 자료 — 한 실행 '절반 이상' 실패 기준에서 뺌(기준일로만 경고)
+DGK_ALL = tuple(k for k, *_ in KCS) + DGK_BLOCKS    # v1.3 공공데이터포털 자료 전부(파일 3 + API 3) — 연결 오류면 새 서버에서 다시 받는 대상
+DGK_HOSTS = ("www.data.go.kr", "apis.data.go.kr")   # v1.3 시작할 때 연결만 시험하는 주소(파일 · 오픈 API)
+DGK_BLOCKED = {}               # v1.3 이번 서버에서 연결 시험에 실패한 주소 → 사유(그 주소의 자료는 기다리지 않고 바로 NetError · main이 비움)
+NETFAIL = []                   # v1.3 이번 실행에서 연결 오류(NetError)로 못 받은 공공데이터포털 자료 키 — 새 서버에서 다시 받을 대상(main이 비움)
+RUNNER = ""                    # v1.3 이 GitHub 서버의 IP 앞 두 자리·지역(ipinfo.io) — 로그·dgk_conn.tries
 
 # ② KCCI — 해양진흥공사 해양정보서비스
 KCCI_CUR = "https://www.kobc.or.kr/ebz/shippinginfo/kcci/gridList.do?mId=0304000000"
@@ -184,6 +199,46 @@ class NetError(RuntimeError):
 
 def time_left():
     return T_END - time.monotonic()
+
+
+def tcp_ok(host, port=443, timeout=6, tries=2):
+    """v1.3 연결만 시험(요청은 안 보냄) — 막힌 서버는 응답이 없어 시간 초과. 프록시를 거치는 환경이면 시험하지 않고 True"""
+    if any(os.environ.get(k) for k in ("HTTPS_PROXY", "https_proxy")):
+        return True
+    for k in range(tries):
+        try:
+            socket.create_connection((host, port), timeout=timeout).close()
+            return True
+        except OSError:
+            if k + 1 < tries:
+                time.sleep(2)
+    return False
+
+
+def runner_where():
+    """v1.3 이 GitHub 서버의 공인 IP 앞 두 자리·지역·망(ipinfo.io) — '4.154.x.x · Washington · AS8075 Microsoft Corporation'. 못 읽으면 ''"""
+    try:
+        d = requests.get("https://ipinfo.io/json", headers=UA, timeout=5).json()
+        ip = str(d.get("ip") or "").split(".")
+        head = ".".join(ip[:2]) + ".x.x" if len(ip) == 4 else "?"
+        return " · ".join(x for x in (head, str(d.get("region") or ""), str(d.get("org") or "")) if x)
+    except Exception:
+        return ""
+
+
+def dgk_precheck(attempt):
+    """v1.3 공공데이터포털 두 주소에 연결만 먼저 시험 — 막히면 DGK_BLOCKED(그 주소의 자료는 바로 이전 값). LOGI_TEST_BLOCK에
+    이번 차례가 있으면 막힌 서버로 가정(시험용 — main 브랜치 실행에서는 무시)"""
+    test = {x.strip() for x in os.environ.get("LOGI_TEST_BLOCK", "").split(",") if x.strip()}
+    if test and os.environ.get("GITHUB_REF_NAME") == "main":
+        log("  [WARN] LOGI_TEST_BLOCK은 main 실행에서 무시(시험은 브랜치에서)")
+        test = set()
+    for h in DGK_HOSTS:
+        if str(attempt) in test:
+            DGK_BLOCKED[h] = f"공공데이터포털({h}) 연결 안 됨 — 시험(LOGI_TEST_BLOCK): 막힌 서버로 가정"
+        elif not tcp_ok(h):
+            DGK_BLOCKED[h] = f"공공데이터포털({h}) 연결 안 됨 — 이 GitHub 서버({RUNNER or 'IP 확인 못 함'})에서 막힘"
+        log(f"  연결 시험 {h}: {'막힘' if h in DGK_BLOCKED else '정상'}")
 
 
 def http(url, params=None, data=None, timeout=TIMEOUT, tries=2, mask=None):
@@ -290,6 +345,8 @@ def parse_kcs_csv(raw):
 
 
 def fetch_kcs_one(ds, name, unit):
+    if urlsplit(KCS_PAGE).hostname in DGK_BLOCKED:   # v1.3 이 서버에서 연결 시험 실패 — 기다리지 않음(새 서버에서 다시 받기)
+        raise NetError(DGK_BLOCKED[urlsplit(KCS_PAGE).hostname])
     page = http(KCS_PAGE.format(ds), tries=1).text   # 연결이 안 되면 바로 넘김 — 실행 끝에 한 번 더(main)
     fid, fdate, mod, nxt = kcs_page_meta(page)
     if not fid:
@@ -673,6 +730,8 @@ def dgk_root(url, params, label, empty_codes=()):
     empty_codes의 결과 코드(예: '03' 자료 없음)는 오류가 아니라 None(빈 결과)"""
     global DGK_NOKEY
     org = dgk_org(url)
+    if urlsplit(url).hostname in DGK_BLOCKED:   # v1.3 이 서버에서 연결 시험 실패 — 기다리지 않음(새 서버에서 다시 받기)
+        raise NetError(DGK_BLOCKED[urlsplit(url).hostname])
     if org in DGK_DOWN:
         raise NetError(f"{DGK_DOWN[org]}에서 같은 기관 서버 연결 안 됨 — 이번 실행은 건너뜀")
     key = os.environ.get(DGK_KEY_ENV, "").strip()
@@ -1059,6 +1118,8 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
             log(f"  {label}: 연결 안 됨 — 다른 자료를 받은 뒤 한 번 더 ({str(e)[:150]})")
             return False
         log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
+        if key in DGK_ALL and isinstance(e, NetError) and key not in NETFAIL:
+            NETFAIL.append(key)   # v1.3 새 서버에서 다시 받을 대상
         carry = {k: v for k, v in fs_old.items() if k.startswith(key + ":")}   # 값 없는 해협·항만 항목 — 처음 실패한 날 유지
         fs_new.update(carry)
         if prev:
@@ -1090,12 +1151,36 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
     return True
 
 
+def env_int(name, default):
+    try:
+        return max(1, int(os.environ.get(name, "") or default))
+    except ValueError:
+        return default
+
+
 def main():
-    global T_END, PW_DOWN, DGK_NOKEY
+    global T_END, PW_DOWN, DGK_NOKEY, RUNNER
     T_END = time.monotonic() + RUN_LIMIT
     PW_DOWN, DGK_NOKEY = "", False
     DGK_DOWN.clear()
     DGK_AUTH.clear()
+    DGK_BLOCKED.clear()
+    NETFAIL.clear()
+    # v1.3 몇 번째 차례인지(update.yml: 1차 작업 1/3 → 새 서버 다시 받기 2/3·3/3). 환경 변수가 없으면 1/1(혼자 실행 — 경고를 바로 셈)
+    attempt, attempts = env_int("LOGI_ATTEMPT", 1), env_int("LOGI_ATTEMPTS", 1)
+    attempts = max(attempts, attempt)
+    final = attempt >= attempts
+    retry_keys = None
+    if attempt > 1:   # 다시 받기 — 앞 차례가 연결 오류로 못 받은 공공데이터포털 자료만
+        want = {x.strip() for x in os.environ.get("LOGI_RETRY_KEYS", "").split(",") if x.strip()}
+        retry_keys = [k for k in LABELS if k in want and k in DGK_ALL]
+        if not retry_keys:
+            log(f"[다시 받기 {attempt}/{attempts}] 다시 받을 자료 없음(LOGI_RETRY_KEYS 비어 있음) — 끝")
+            return
+    RUNNER = runner_where()
+    log(f"GitHub 서버: {RUNNER or 'IP 확인 못 함'} · 차례 {attempt}/{attempts}"
+        + (f" · 다시 받기: {', '.join(LABELS[k] for k in retry_keys)}" if retry_keys else ""))
+    dgk_precheck(attempt)
     prev_all = {}
     if os.path.exists(OUT):
         try:
@@ -1106,51 +1191,112 @@ def main():
     if not isinstance(prev_all, dict):
         log(f"[WARN] 이전 {OUT} 형식이 다름 — 이전 값 없이 받음")
         prev_all = {}
+    run_id = os.environ.get("GITHUB_RUN_ID", "")
+    pc = prev_all.get("dgk_conn") if isinstance(prev_all.get("dgk_conn"), dict) else {}
+    if retry_keys and run_id and pc.get("run") != run_id:
+        log("  [WARN] 1차 작업 결과가 아직 main에 없음(커밋 실패?) — 지금 main 파일 위에 다시 받은 자료만 바꿈")
     fs0 = prev_all.get("failed_since")
-    fails = ({k: v for k, v in fs0.items() if isinstance(v, str)} if isinstance(fs0, dict) else {}, {})
+    fs_old = {k: v for k, v in fs0.items() if isinstance(v, str)} if isinstance(fs0, dict) else {}
+    fails = (fs_old, {})
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "war_start": WAR_START,
            "base_period": [BASE_FROM, BASE_TO]}
     status = {"ok": [], "kept": [], "failed": []}
-    later = []
+    fns = {}
     for key, ds, name, unit in KCS:
-        fn = lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit)
-        if not run_block(key, name, fn, prev_all, out, status, fails, defer=True):
-            later.append((key, name, fn))
-    run_block("kcci", LABELS["kcci"], fetch_kcci, prev_all, out, status, fails)
-    run_block("choke", LABELS["choke"], lambda p: fetch_pw("choke", p), prev_all, out, status, fails)
-    run_block("ports", LABELS["ports"], lambda p: fetch_pw("ports", p), prev_all, out, status, fails)
-    run_block("hubs", LABELS["hubs"], lambda p: fetch_pw("hubs", p), prev_all, out, status, fails)
-    run_block("glp", LABELS["glp"], fetch_glp, prev_all, out, status, fails)
+        fns[key] = (name, lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit))
     for key, ds, url, carg in VOL:   # v1.2 공공데이터포털 오픈 API
-        run_block(key, LABELS[key], lambda p, key=key, ds=ds, url=url, carg=carg: fetch_vol(key, ds, url, carg),
-                  prev_all, out, status, fails)
-    run_block("busan_calls", LABELS["busan_calls"], fetch_portmis, prev_all, out, status, fails)
-    if later:
-        log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
-        for key, name, fn in later:
-            run_block(key, name, fn, prev_all, out, status, fails)
+        fns[key] = (LABELS[key], lambda p, key=key, ds=ds, url=url, carg=carg: fetch_vol(key, ds, url, carg))
+    fns["busan_calls"] = (LABELS["busan_calls"], fetch_portmis)
+    if retry_keys:
+        # 다시 받기 — 다른 자료·상태·'값 없음' 날짜는 1차 작업이 저장한 그대로 두고, 다시 받는 자료만 바꿈
+        rl = {LABELS[k] for k in retry_keys}
+        for k in LABELS:
+            if k not in retry_keys and isinstance(prev_all.get(k), dict):
+                out[k] = prev_all[k]
+        pst = prev_all.get("status") if isinstance(prev_all.get("status"), dict) else {}
+        for g in status:
+            status[g] = [x for x in (pst.get(g) or []) if isinstance(x, str) and x.split("(")[0] not in rl]
+        fails[1].update({k: v for k, v in fs_old.items() if k.partition(":")[0] not in retry_keys})
+        log(f"[다시 받기 {attempt}/{attempts}] 새 서버에서 공공데이터포털 자료 {len(retry_keys)}개")
+        for key in retry_keys:
+            run_block(key, fns[key][0], fns[key][1], prev_all, out, status, fails)
+    else:
+        later = []
+        kcs_up = urlsplit(KCS_PAGE).hostname not in DGK_BLOCKED   # v1.3 연결 시험에서 막힌 서버면 실행 끝에 한 번 더 받지 않음(같은 IP)
+        for key, ds, name, unit in KCS:
+            if not run_block(key, name, fns[key][1], prev_all, out, status, fails, defer=kcs_up):
+                later.append(key)
+        run_block("kcci", LABELS["kcci"], fetch_kcci, prev_all, out, status, fails)
+        run_block("choke", LABELS["choke"], lambda p: fetch_pw("choke", p), prev_all, out, status, fails)
+        run_block("ports", LABELS["ports"], lambda p: fetch_pw("ports", p), prev_all, out, status, fails)
+        run_block("hubs", LABELS["hubs"], lambda p: fetch_pw("hubs", p), prev_all, out, status, fails)
+        run_block("glp", LABELS["glp"], fetch_glp, prev_all, out, status, fails)
+        for key, *_ in VOL:
+            run_block(key, *fns[key], prev_all, out, status, fails)
+        run_block("busan_calls", *fns["busan_calls"], prev_all, out, status, fails)
+        if later:
+            log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
+            for key in later:
+                run_block(key, *fns[key], prev_all, out, status, fails)
     out = {k: out[k] for k in ["generated_at", "war_start", "base_period"] + list(LABELS) if k in out}   # 다시 받은 자료도 원래 순서로
     out["status"] = status
     out["failed_since"] = fails[1]
+    # v1.3 공공데이터포털 연결 기록 — tries = 이번 워크플로우 실행의 차례별 서버(같은 실행이면 이어 붙임) · since = 서버를 다 바꿔도 막힌 첫날
+    today = today_kst()
+    net = [k for k in LABELS if k in NETFAIL]
+    ptries = pc.get("tries") if attempt > 1 and run_id and pc.get("run") == run_id and isinstance(pc.get("tries"), list) else []
+    tries = [t for t in ptries if isinstance(t, dict)][-4:] + [
+        {"n": attempt, "where": RUNNER, "ok": not net, "at": datetime.datetime.now(KST).strftime("%m-%d %H:%M")}]
+    since = pc.get("since") if isinstance(pc.get("since"), str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", pc["since"]) else None
+    if not net:
+        since = None                       # 이번 차례에 받음 — 연결 문제 풀림
+    elif final:
+        since = since or today.isoformat()   # 마지막 차례까지 막힘 — 처음 막힌 날(이미 있으면 그대로)
+    conn = {"run": run_id, "tries": tries}
+    if since:
+        conn["since"] = since
+    if net:
+        conn["keys"] = net
+    out["dgk_conn"] = conn
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    blk_kept = [x for x in status["kept"] if "(" not in x]
-    blk_failed = [x for x in status["failed"] if "(" not in x]
-    n_part = len({x.split("(")[0] for x in status["kept"] + status["failed"] if "(" in x} - set(blk_kept) - set(blk_failed))   # 블록 수
-    log(f"수집 결과: 정상 {len(status['ok'])} · 이전 값 {len(blk_kept)} · 일부 항목 실패 {n_part} · 값 없음 {len(blk_failed)}")
+    retry = bool(net) and not final
+    if retry and os.environ.get("GITHUB_OUTPUT"):   # update.yml 다음 작업(새 서버)이 이 자료만 다시 받음
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+            f.write(f"retry_keys={','.join(net)}\n")
+    mine = (lambda x: x.split("(")[0] in {LABELS[k] for k in retry_keys}) if retry_keys else (lambda x: True)
+    blk_kept = [x for x in status["kept"] if "(" not in x and mine(x)]
+    blk_failed = [x for x in status["failed"] if "(" not in x and mine(x)]
+    n_part = len({x.split("(")[0] for x in status["kept"] + status["failed"] if "(" in x and mine(x)} - set(blk_kept) - set(blk_failed))   # 블록 수
+    n_ok = len([x for x in status["ok"] if mine(x)])
+    log(f"수집 결과{f'(다시 받기 {attempt}/{attempts})' if retry_keys else ''}: 정상 {n_ok} · 이전 값 {len(blk_kept)} · 일부 항목 실패 {n_part} · 값 없음 {len(blk_failed)}")
     log(f"saved {OUT}")
-    base = [LABELS[k] for k in LABELS if k not in DGK_BLOCKS]   # v1.2 오픈 API 자료는 빼고 기존 8개로(공공데이터포털이 끊기면 함께 실패)
-    n_all, n_bad = len(base), len([x for x in blk_kept + blk_failed if x in base])
-    if n_bad * 2 >= n_all:   # 8개 중 4개 이상(v1의 7개 중 '절반 넘게'와 같은 4개)
-        bad_all = status["kept"] + status["failed"]
-        extra = [x for x in bad_all if x.split("(")[0] not in base]   # 기준 밖(공공데이터포털 오픈 API) — 따로 적음
-        soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(x for x in bad_all if x not in extra)
-                  + (f" (기준 밖 공공데이터포털 오픈 API도 못 받음: {', '.join(extra)})" if extra else ""))
+    if net:
+        log(f"공공데이터포털 연결 오류로 못 받음: {', '.join(LABELS[k] for k in net)} — "
+            + (f"새 서버에서 다시 받기({attempt + 1}/{attempts})" if retry else
+               (f"서버 {len(tries)}대 모두 막힘" if len(tries) > 1 else "이 서버에서 막힘") + f" · {since}부터"))
+    defer = set(net) if retry else set()   # 다음 차례가 다시 받을 자료 — 이번 차례에서는 경고를 셈하지 않음
+    if not retry_keys:
+        # 한 실행 '절반 이상' — 기존 8개(오픈 API 3개 빼고). v1.3 연결 차단으로 못 받은 관세청 파일은 늘 뺌(연결 알림이 따로 · 분모는 8 그대로)
+        base = [LABELS[k] for k in LABELS if k not in DGK_BLOCKS]
+        skip = {LABELS[k] for k in net}
+        n_all, n_bad = len(base), len([x for x in blk_kept + blk_failed if x in base and x not in skip])
+        if n_bad * 2 >= n_all:   # 8개 중 4개 이상(v1의 7개 중 '절반 넘게'와 같은 4개)
+            bad_all = status["kept"] + status["failed"]
+            extra = [x for x in bad_all if x.split("(")[0] not in base or x in skip]   # 기준 밖 — 따로 적음
+            soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(x for x in bad_all if x not in extra)
+                      + (f" (기준 밖 공공데이터포털도 못 받음: {', '.join(extra)})" if extra else ""))
     if DGK_NOKEY:   # v1.2 키가 이 단계에 안 넘어옴 — 저장소 설정 문제(포털 문제 아님)
         soft_fail(f"공공데이터포털 인증키 없음 — GitHub Secrets {DGK_KEY_ENV} 등록과 update.yml 물류 단계 env 줄 확인")
     elif DGK_AUTH:   # v1.2 인증키 오류는 기다려도 안 풀림 — 바로 알림(공공데이터포털 마이페이지에서 활용신청·기간 확인)
         soft_fail("공공데이터포털 인증키 오류(" + ", ".join(dict.fromkeys(DGK_AUTH)) + ") — 마이페이지 활용신청 상태·기간 확인")
-    today = today_kst()
+    if net and final and since:   # v1.3 서버를 다 바꿔도 막힌 날이 이틀째 — 하루는 운이 나쁠 수 있어 기다림
+        nd = (today - datetime.date.fromisoformat(since)).days
+        if nd >= 1:
+            wh = "; ".join(t.get("where") or "IP 확인 못 함" for t in tries)
+            soft_fail(f"공공데이터포털 연결 안 됨 {nd + 1}일째({since}부터) — 오늘 GitHub 서버 "
+                      + (f"{len(tries)}대 모두 막힘" if len(tries) > 1 else "에서 막힘") + f"({wh}) · "
+                      f"이전 값 유지: {', '.join(LABELS[k] for k in net)}")
 
     def days_since(d):
         try:
@@ -1158,9 +1304,12 @@ def main():
         except ValueError:
             return None   # 날짜 모양이 틀림 — 오래된 것으로 봄
 
+    def judged(key):   # 이번 차례가 기준일 경고를 셈하는 자료 — 다시 받기는 자기 자료만, 다음 차례로 넘긴 자료는 빼고
+        return (not retry_keys or key in retry_keys) and key not in defer
+
     old = []
     for key, blk in out.items():
-        if key not in STALE_ALERT or not isinstance(blk, dict):
+        if key not in STALE_ALERT or not isinstance(blk, dict) or not judged(key):
             continue
         its = blk.get("items")
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in (its if isinstance(its, list) else []) if isinstance(x, dict)]
@@ -1170,6 +1319,8 @@ def main():
             old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {STALE_ALERT[key]}일)")
     for k, d in sorted(fails[1].items()):
         key, _, item = k.partition(":")
+        if not judged(key):
+            continue
         n, lim = days_since(d), STALE_ALERT.get(key, 7)
         if n is None or n > lim:
             old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일)")

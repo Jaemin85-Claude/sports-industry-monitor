@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 5: KOSIS 국내 수요 지표 (v4)
+v5.2: (대표 지시 2026-10-20 '보완안 3') kosis.kr(국가정보자원관리원 27.101.x)도 공공데이터포털처럼 일부 GitHub 서버(IP)에서만 연결이 안 될 수
+      있어(10/20 시험: 서버 7대 중 2대에서 같은 대역 정부 사이트가 막힘) — 시작할 때 kosis.kr에 연결만 먼저 시험(6초 × 2번 · 막히면 60초 ×
+      재시도로 작업 20분 제한을 넘기던 것을 바로 멈춤)하고, 막혔거나 연결 오류로 못 받은 지표가 있으면 kosis.yml이 새 서버에서 다시 받음
+      (KOSIS_ATTEMPT 2·3 — 최대 2번 더, GITHUB_OUTPUT retry=1 · 다시 받을 차례가 남으면 '절반 넘게' 실패 표시는 마지막 차례로 미룸).
+      마지막 차례까지 막히면 모든 지표를 이전 값(stale_since)으로 두고 바로 실패 표시(월 1회 수집이라 다음 날을 기다리지 않음 — 수동으로 다시 실행).
+      kosis.json conn = 이번 실행의 차례별 서버(IP 앞 두 자리·지역)·since(서버를 다 바꿔도 막힌 날) — 수집 상태 '통계청 연결 안 됨'.
+      KOSIS_TEST_BLOCK(브랜치 수동 실행 test_block — 막힌 서버로 가정할 차례, main에서는 무시)은 시험용
 v5.1: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 못 받은 시계열·해외직구는 이전 kosis.json 값을 이어 쓰고 stale_since
     (마지막 정상 수집일) 표시, 최상위 failed 목록(수집 상태 '일부 실패')에 기록. 하나도 못 받으면 갱신 시각을 옮기지 않음.
     절반 넘게 못 받으면 '실패 표시'(soft_fail.txt → 워크플로우 마지막 단계 빨간 X → 낮 점검 알림)
@@ -27,6 +34,8 @@ v2: 2단계 조회 — ① 1개월 표본으로 분류 코드(C1/C2) 발견 → 
 
 import os
 import json
+import re
+import socket
 import time
 import datetime
 import requests
@@ -41,6 +50,8 @@ RETRY = 2
 OUT_PATH = "docs/kosis.json"
 SCRIPT = "kosis_fetch"
 SEARCH_URL = "https://kosis.kr/openapi/statisticsSearch.do"
+KOSIS_HOST = "kosis.kr"       # v5.2 시작할 때 연결만 시험하는 주소
+NET_ERR = 0                    # v5.2 이번 실행에서 연결 오류·시간 초과로 끝난 요청 수 — 못 받은 지표가 있으면 새 서버에서 다시 받음(main이 비움)
 
 # ── 해외직구(v5) ─────────────────────────────────────
 CB_KEYWORD = "해외직접구매"
@@ -135,6 +146,9 @@ def api(tbl, itm, obj_codes, months, prd_se="M"):
             if attempt < RETRY:
                 log(f"    재시도 {attempt + 1}/{RETRY} ({str(e)[:80]})")
                 time.sleep(2)
+    if isinstance(last, (requests.ConnectionError, requests.Timeout)):
+        global NET_ERR
+        NET_ERR += 1   # v5.2 연결 문제로 끝남 — 새 서버에서 다시 받을 만함
     raise RuntimeError(str(last)[:160])
 
 
@@ -227,6 +241,9 @@ def cb_search():
                 out.append(tid)
         return out
     except Exception as e:
+        if isinstance(e, (requests.ConnectionError, requests.Timeout)):
+            global NET_ERR
+            NET_ERR += 1   # v5.2
         log(f"  검색 API 실패: {str(e)[:120]}")
         return []
 
@@ -354,10 +371,119 @@ def yoy_q(ser):
     return out
 
 
+def env_int(name, default):
+    try:
+        return max(1, int(os.environ.get(name, "") or default))
+    except ValueError:
+        return default
+
+
+def tcp_ok(host, port=443, timeout=6, tries=2):
+    """v5.2 연결만 시험(요청은 안 보냄) — 막힌 서버는 응답이 없어 시간 초과. 프록시를 거치는 환경이면 시험하지 않고 True"""
+    if any(os.environ.get(k) for k in ("HTTPS_PROXY", "https_proxy")):
+        return True
+    for k in range(tries):
+        try:
+            socket.create_connection((host, port), timeout=timeout).close()
+            return True
+        except OSError:
+            if k + 1 < tries:
+                time.sleep(2)
+    return False
+
+
+def runner_where():
+    """v5.2 이 GitHub 서버의 공인 IP 앞 두 자리·지역·망(ipinfo.io) — '4.154.x.x · Washington · AS8075 Microsoft Corporation'. 못 읽으면 ''"""
+    try:
+        d = requests.get("https://ipinfo.io/json", headers=UA, timeout=5).json()
+        ip = str(d.get("ip") or "").split(".")
+        head = ".".join(ip[:2]) + ".x.x" if len(ip) == 4 else "?"
+        return " · ".join(x for x in (head, str(d.get("region") or ""), str(d.get("org") or "")) if x)
+    except Exception:
+        return ""
+
+
+def conn_blocked(attempt):
+    """v5.2 kosis.kr 연결 시험 — 막혔으면 True. KOSIS_TEST_BLOCK에 이번 차례가 있으면 막힌 서버로 가정(시험용 — main 실행에서는 무시)"""
+    test = {x.strip() for x in os.environ.get("KOSIS_TEST_BLOCK", "").split(",") if x.strip()}
+    if test and os.environ.get("GITHUB_REF_NAME") == "main":
+        log("  [WARN] KOSIS_TEST_BLOCK은 main 실행에서 무시(시험은 브랜치에서)")
+        test = set()
+    if str(attempt) in test:
+        log(f"  연결 시험 {KOSIS_HOST}: 막힘 — 시험(KOSIS_TEST_BLOCK): 막힌 서버로 가정")
+        return True
+    ok = tcp_ok(KOSIS_HOST)
+    log(f"  연결 시험 {KOSIS_HOST}: {'정상' if ok else '막힘'}")
+    return not ok
+
+
+def conn_update(pconn, ok, attempt, final, where):
+    """v5.2 kosis.json conn — tries = 이번 워크플로우 실행의 차례별 서버(같은 실행이면 이어 붙임) · since = 서버를 다 바꿔도 막힌 날"""
+    run_id = os.environ.get("GITHUB_RUN_ID", "")
+    pc = pconn if isinstance(pconn, dict) else {}
+    ptries = pc.get("tries") if attempt > 1 and run_id and pc.get("run") == run_id and isinstance(pc.get("tries"), list) else []
+    tries = [t for t in ptries if isinstance(t, dict)][-4:] + [
+        {"n": attempt, "where": where, "ok": ok, "at": datetime.datetime.now(KST).strftime("%m-%d %H:%M")}]
+    since = pc.get("since") if isinstance(pc.get("since"), str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", pc["since"]) else None
+    if ok:
+        since = None
+    elif final:
+        since = since or datetime.datetime.now(KST).date().isoformat()
+    c = {"run": run_id, "tries": tries}
+    if since:
+        c["since"] = since
+    if not ok:
+        c["keys"] = ["kosis"]
+    return c
+
+
+def gh_retry():
+    """v5.2 kosis.yml 다음 작업(새 서버)이 다시 받게 — GITHUB_OUTPUT retry=1"""
+    if os.environ.get("GITHUB_OUTPUT"):
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+            f.write("retry=1\n")
+
+
+def save(out):
+    os.makedirs("docs", exist_ok=True)
+    with open(OUT_PATH, "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+
+
 def main():
+    global NET_ERR
     if not API_KEY:
         log("[ERROR] KOSIS_API_KEY 미설정")
         raise SystemExit(1)
+    NET_ERR = 0
+    # v5.2 몇 번째 차례인지(kosis.yml: 1차 작업 1/3 → 새 서버 다시 받기 2/3·3/3). 환경 변수가 없으면 1/1(혼자 실행)
+    attempt, attempts = env_int("KOSIS_ATTEMPT", 1), env_int("KOSIS_ATTEMPTS", 1)
+    attempts = max(attempts, attempt)
+    final = attempt >= attempts
+    where = runner_where()
+    log(f"GitHub 서버: {where or 'IP 확인 못 함'} · 차례 {attempt}/{attempts}")
+    if conn_blocked(attempt):
+        prev = load_prev()
+        out = dict(prev)   # 받은 것 없음 — 값·갱신 시각은 그대로
+        out["conn"] = conn_update(prev.get("conn"), False, attempt, final, where)
+        if not final:
+            gh_retry()
+            log(f"통계청(kosis.kr) 연결 안 됨 — 새 서버에서 다시 받기({attempt + 1}/{attempts}) · 지표는 그대로")
+        else:   # 마지막 차례까지 막힘 — 모든 지표를 이전 값으로(v5.1 '하나도 못 받음'과 같게) + 바로 실패 표시
+            pdate = str(prev.get("generated_at") or "")[:10] or None
+            out["series"] = {k: dict(v, stale_since=v.get("stale_since") or pdate)
+                             for k, v in (prev.get("series") or {}).items() if isinstance(v, dict)}
+            pcb = prev.get("cross_border")
+            if isinstance(pcb, dict) and pcb.get("series"):
+                out["cross_border"] = dict(pcb, stale_since=pcb.get("stale_since") or pdate)
+            out["failed"] = [k for k, *_ in SERIES] + ["cross_border"]
+            tries = out["conn"]["tries"]
+            log(f"수집 결과: 정상 0 · 이전 값 {len(out['series']) + (1 if out.get('cross_border') else 0)} — 통계청 연결 안 됨")
+            soft_fail("통계청(kosis.kr) 연결 안 됨 — GitHub 서버 " + (f"{len(tries)}대 모두 막힘(" if len(tries) > 1 else "에서 막힘(")
+                      + "; ".join(t.get("where") or "IP 확인 못 함" for t in tries) + ") · 이전 값 유지 · kosis.yml 수동 실행으로 다시")
+        save(out)
+        log(f"saved {OUT_PATH} (연결 기록만)" if not final else f"saved {OUT_PATH}")
+        return
 
     disc_cache = {}
     out = {"generated_at":
@@ -450,12 +576,16 @@ def main():
             f" — 못 받음: {', '.join(failed)}")
     if len(failed) == total and prev.get("generated_at"):
         out["generated_at"] = prev["generated_at"]   # 새로 받은 게 없음 → 갱신 시각을 옮기지 않아 '지연'이 뜨게
-    if len(failed) * 2 > total:
-        soft_fail(f"KOSIS {total}개 중 {len(failed)}개 못 받음(이전 값 {len(kept)}개)")
+    ok = not (NET_ERR and failed)   # v5.2 연결 오류로 못 받은 지표가 있으면 연결 문제(다른 서버에서 다시)
+    out["conn"] = conn_update(prev.get("conn"), ok, attempt, final, where)
+    if not ok and not final:
+        gh_retry()
+        log(f"연결 오류 {NET_ERR}건으로 {len(failed)}개 못 받음 — 새 서버에서 다시 받기({attempt + 1}/{attempts})")
+    elif len(failed) * 2 > total:
+        soft_fail(f"KOSIS {total}개 중 {len(failed)}개 못 받음(이전 값 {len(kept)}개)"
+                  + (f" — 연결 오류 {NET_ERR}건 · GitHub 서버 {len(out['conn']['tries'])}대" if not ok else ""))
 
-    os.makedirs("docs", exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(out, f, ensure_ascii=False, indent=1)
+    save(out)
     log(f"saved {OUT_PATH} ({len(out['series'])}개 시계열"
         f"{' · 해외직구 ' + str(len(out['cross_border']['series'])) + '개' if out.get('cross_border') else ''})")
 
