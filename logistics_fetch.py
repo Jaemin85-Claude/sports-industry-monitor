@@ -8,9 +8,10 @@ v1.3: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포�
       그 자료만 다시 받음(LOGI_ATTEMPT 2·3 — 최대 2번 더, GITHUB_OUTPUT retry_keys·conn_tries로 넘김 · 다른 자료는 1차 값 그대로) ③ 다시 받을
       차례가 남아 있으면 그 자료의 기준일 경고와 '절반 이상' 셈은 다시 받기가 끝난 차례가 합친 상태로 셈(이 서버가 연결 시험에서 막혀 못 받은
       관세청 파일은 '절반 이상'에서 뺌 — 연결 알림이 따로 · 5xx·요청 중 오류는 셈) ④ 마지막 차례까지 못 받으면 dgk_conn.since(서버를 다 바꿔도
-      못 받은 첫날)를 남기고, 이틀째(since 다음 날)부터 실패 표시 '공공데이터포털 연결 안 됨 n일째 — GitHub 서버 n대 모두 막힘'(모든 차례가 연결
-      시험에서 막혔을 때 · 아니면 '연결 오류·서버 오류(5xx)·시간 초과 — 포털 쪽 문제일 수 있음') · 받으면 since를 지움 · 12:23 점검이 로그의
-      [WARN]·'실패' 줄로 알리므로 다시 받기가 남았거나 막힌 첫날에는 연결 오류 줄을 그 낱말 없이 씀(NET_QUIET) ⑤ 실행마다 GitHub 서버 IP 앞 두 자리·
+      못 받은 첫날)를 남기고, 이틀째(since 다음 날)부터 실패 표시 '공공데이터포털 연결 안 됨 n일째 — GitHub 서버 n대 모두 막힘'(모든 차례에서
+      못 받은 자료의 주소가 연결 시험에서 막혔을 때 · 아니면 '공공데이터포털 연결 오류 n일째 — 연결 오류·서버 오류(5xx)·시간 초과 … 포털 쪽 문제일
+      수 있음') · 받으면 since를 지움 · 12:23 점검이 로그의 [WARN]·'실패' 줄로 알리므로 다시 받기가 남았거나 막힌 첫날에는 연결 오류 줄을 그 낱말·
+      오류 원문(…Error) 없이 갈래만 씀(NET_QUIET · net_why) ⑤ 실행마다 GitHub 서버 IP 앞 두 자리·
       지역(ipinfo.io · 안 되면 api.ipify.org)을 로그와 dgk_conn.tries에 남김(공공데이터포털 문의용) · LOGI_TEST_BLOCK(브랜치 수동 실행 test_block —
       막힌 서버로 가정할 차례, main에서는 무시)은 시험용 · 인증키가 없으면 연결 시험보다 먼저 알림(서버 막힘으로 잘못 알리지 않게)
 v1.2: (대표 지시 2026-10-17 '적출국별 부산향 · 에어는 인천 · 수입 수출 정보·추이 모두' + 공공데이터포털 인증키 등록) 공공데이터포털 오픈 API 3개 추가
@@ -226,12 +227,16 @@ def runner_where():
     try:
         d = requests.get("https://ipinfo.io/json", headers=UA, timeout=5).json()
         d = d if isinstance(d, dict) else {}
-        if not d.get("ip"):   # 호출 한도 등 — IP만이라도
-            d = {"ip": requests.get("https://api.ipify.org", headers=UA, timeout=5).text.strip()}
     except Exception:
         pass
+    if not re.fullmatch(r"\d+(\.\d+){3}", str(d.get("ip") or "")):   # 호출 한도·오류 — IP만이라도
+        try:
+            r = requests.get("https://api.ipify.org", headers=UA, timeout=5)
+            d = {"ip": r.text.strip()} if r.status_code == 200 else {}
+        except Exception:
+            d = {}
     ip = str(d.get("ip") or "").split(".")
-    if len(ip) != 4:
+    if len(ip) != 4 or not all(x.isdigit() for x in ip):
         return ""
     return " · ".join(x for x in (".".join(ip[:2]) + ".x.x", str(d.get("region") or ""), str(d.get("org") or "")) if x)
 
@@ -1112,6 +1117,14 @@ def fetch_portmis(prev):
 
 
 # ───────────────────────── 실행 ─────────────────────────
+def net_why(e):
+    """v1.3 연결 오류(NetError)의 갈래 — 다시 받을 줄에는 오류 원문(…Error·HTTPSConnectionPool) 대신 이것만 씀"""
+    m = str(e)
+    return ("연결 시험에서 막힘" if m in DGK_BLOCKED.values() else "서버 응답 오류(5xx)" if "HTTP 5" in m else
+            "이번 실행 시간을 다 씀" if "시간 초과 —" in m else "같은 기관 서버가 앞에서 안 됨" if "같은 기관" in m else
+            "요청 중 연결 끊김·시간 초과")
+
+
 def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
     """블록 하나 — 성공하면 새 값(fetched = 오늘), 실패하면 이전 값 + stale_since(마지막 정상 수집일).
     이전 값도 없으면(값 없음) fails[1][key]에 처음 실패한 날을 남김(해협·항만은 항목별 'key:이름') — 기준일이 지나면 경고.
@@ -1125,11 +1138,11 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False):
         blk = fn(prev)
     except Exception as e:
         if defer and isinstance(e, NetError):
-            log(f"  {label}: 연결 안 됨 — 다른 자료를 받은 뒤 한 번 더 ({str(e)[:150]})")
+            log(f"  {label}: {net_why(e)} — 다른 자료를 받은 뒤 한 번 더")   # v1.3 오류 원문(…Error)은 12:23 점검이 오류로 읽어 갈래만
             return False
         dgk_net = key in DGK_ALL and isinstance(e, NetError)
-        if dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패' 낱말 없이
-            log(f"  {label}: 공공데이터포털 연결 안 됨 — {NET_QUIET} · {'이전 값 유지' if prev else '값 없음'} ({str(e)[:150]})")
+        if dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패'·오류 원문(…Error) 없이 갈래만
+            log(f"  {label}: 공공데이터포털 {net_why(e)} — {NET_QUIET} · {'이전 값 유지' if prev else '값 없음'}")
         else:
             log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
         if dgk_net and key not in NETFAIL:
@@ -1271,8 +1284,9 @@ def main():
         if not isinstance(ptries, list):
             ptries = pc.get("tries") if run_id and pc.get("run") == run_id and isinstance(pc.get("tries"), list) else []
     tries = [t for t in ptries if isinstance(t, dict)][-4:] + [
-        {"n": attempt, "where": RUNNER, "ok": not net, "blocked": bool(DGK_BLOCKED),
-         "at": datetime.datetime.now(KST).strftime("%m-%d %H:%M")}]   # blocked = 연결 시험에서 막힌 서버(아니면 요청 중 오류·5xx·시간)
+        {"n": attempt, "where": RUNNER, "ok": not net,
+         "blocked": bool(net) and all((urlsplit(KCS_PAGE).hostname if k not in DGK_BLOCKS else "apis.data.go.kr") in DGK_BLOCKED for k in net),
+         "at": datetime.datetime.now(KST).strftime("%m-%d %H:%M")}]   # blocked = 못 받은 자료의 주소가 모두 연결 시험에서 막힘(아니면 요청 중 오류·5xx·시간)
     since = since0
     if not net:
         since = None                       # 이번 차례에 받음 — 연결 문제 풀림
@@ -1297,9 +1311,10 @@ def main():
     n_ok = len([x for x in status["ok"] if mine(x)])
     log(f"수집 결과{f'(다시 받기 {attempt}/{attempts})' if retry_keys else ''}: 정상 {n_ok} · 이전 값 {len(blk_kept)} · 일부 항목 실패 {n_part} · 값 없음 {len(blk_failed)}")
     log(f"saved {OUT}")
-    allb = all(t.get("blocked") for t in tries)
-    why_net = ((f"GitHub 서버 {len(tries)}대 모두 막힘" if len(tries) > 1 else "GitHub 서버에서 막힘") if allb else
-               f"연결 오류·서버 오류(5xx)·시간 초과 — 포털 쪽 문제일 수 있음(GitHub 서버 {len(tries)}대에서 시도)")
+    allb = all(t.get("blocked") is True for t in tries)
+    wh = "; ".join(t.get("where") or "IP 확인 못 함" for t in tries)
+    why_net = ((f"GitHub 서버 {len(tries)}대 모두 막힘" if len(tries) > 1 else "GitHub 서버에서 막힘") + f"({wh})" if allb else
+               f"연결 오류·서버 오류(5xx)·시간 초과(GitHub 서버 {len(tries)}대에서 시도: {wh}) — 포털 쪽 문제일 수 있음")
     if net:
         log(f"공공데이터포털 연결 오류로 못 받음: {', '.join(LABELS[k] for k in net)} — "
             + (f"새 서버에서 다시 받기({attempt + 1}/{attempts})" if retry else f"{why_net} · {since}부터"))
@@ -1322,9 +1337,8 @@ def main():
         soft_fail("공공데이터포털 인증키 오류(" + ", ".join(dict.fromkeys(DGK_AUTH)) + ") — 마이페이지 활용신청 상태·기간 확인")
     if net and final and since:   # v1.3 서버를 다 바꿔도 막힌 날이 이틀째 — 하루는 운이 나쁠 수 있어 기다림
         nd = (today - datetime.date.fromisoformat(since)).days
-        if nd >= 1:
-            wh = "; ".join(t.get("where") or "IP 확인 못 함" for t in tries)
-            soft_fail(f"공공데이터포털 연결 안 됨 {nd + 1}일째({since}부터) — 오늘 {why_net}({wh}) · "
+        if nd >= 1:   # 머리말은 화면(수집 상태)과 같게 — 모두 막힘이면 '연결 안 됨', 아니면 '연결 오류'
+            soft_fail(f"공공데이터포털 연결 {'안 됨' if allb else '오류'} {nd + 1}일째({since}부터) — 오늘 {why_net} · "
                       f"이전 값 유지: {', '.join(LABELS[k] for k in net)}")
 
     def days_since(d):

@@ -6,7 +6,9 @@ v5.2: (대표 지시 2026-10-20 '보완안 3') kosis.kr(국가정보자원관리
       재시도로 작업 20분 제한을 넘기던 것을 바로 멈춤)하고, 막혔거나 연결 오류로 못 받은 지표가 있으면 kosis.yml이 새 서버에서 다시 받음
       (KOSIS_ATTEMPT 2·3 — 최대 2번 더, GITHUB_OUTPUT retry=1 · 다시 받을 차례가 남으면 '절반 넘게' 실패 표시는 마지막 차례로 미룸).
       마지막 차례까지 막히면 모든 지표를 이전 값(stale_since)으로 두고 바로 실패 표시(월 1회 수집이라 다음 날을 기다리지 않음 — 수동으로 다시 실행).
-      kosis.json conn = 이번 실행의 차례별 서버(IP 앞 두 자리·지역)·since(서버를 다 바꿔도 막힌 날) — 수집 상태 '통계청 연결 안 됨'.
+      kosis.json conn = 이번 실행의 차례별 서버(IP 앞 두 자리·지역 · blocked = 연결 시험에서 막힘 · reached = 받음)·since(마지막 차례까지 연결
+      문제로 못 받은 날)·got(이 실행이 실제로 받아 저장함 — 뒤 차례가 못 받거나 막혀도 앞 차례가 오늘 받은 값은 그대로 두고 실패로 세지 않음,
+      커밋이 안 된 차례의 작업 출력은 믿지 않음) — 수집 상태 '통계청 연결 안 됨'(모두 막힘)·'통계청 연결 오류'. 다시 받을 연결 오류 줄은 [WARN]·'실패' 없이.
       KOSIS_TEST_BLOCK(브랜치 수동 실행 test_block — 막힌 서버로 가정할 차례, main에서는 무시)은 시험용
 v5.1: (대표 지시 2026-10-09) 조용히 깨지는 것 막기 — 못 받은 시계열·해외직구는 이전 kosis.json 값을 이어 쓰고 stale_since
     (마지막 정상 수집일) 표시, 최상위 failed 목록(수집 상태 '일부 실패')에 기록. 하나도 못 받으면 갱신 시각을 옮기지 않음.
@@ -398,12 +400,16 @@ def runner_where():
     try:
         d = requests.get("https://ipinfo.io/json", headers=UA, timeout=5).json()
         d = d if isinstance(d, dict) else {}
-        if not d.get("ip"):   # 호출 한도 등 — IP만이라도
-            d = {"ip": requests.get("https://api.ipify.org", headers=UA, timeout=5).text.strip()}
     except Exception:
         pass
+    if not re.fullmatch(r"\d+(\.\d+){3}", str(d.get("ip") or "")):   # 호출 한도·오류 — IP만이라도
+        try:
+            r = requests.get("https://api.ipify.org", headers=UA, timeout=5)
+            d = {"ip": r.text.strip()} if r.status_code == 200 else {}
+        except Exception:
+            d = {}
     ip = str(d.get("ip") or "").split(".")
-    if len(ip) != 4:
+    if len(ip) != 4 or not all(x.isdigit() for x in ip):
         return ""
     return " · ".join(x for x in (".".join(ip[:2]) + ".x.x", str(d.get("region") or ""), str(d.get("org") or "")) if x)
 
@@ -466,7 +472,7 @@ def gh_retry(conn):
 def tries_txt(tries):
     """실패 표시 글 — 'GitHub 서버 3대 모두 막힘(4.154.x.x · …; …)' / 연결 시험은 통과했으면 '연결 오류'"""
     wh = "; ".join(t.get("where") or "IP 확인 못 함" for t in tries)
-    if all(t.get("blocked") for t in tries):
+    if tries and all(t.get("blocked") is True for t in tries):
         return ("GitHub 서버 " + (f"{len(tries)}대 모두 막힘" if len(tries) > 1 else "에서 막힘")).replace("서버 에서", "서버에서") + f"({wh})"
     return f"연결 오류·시간 초과(GitHub 서버 {len(tries)}대에서 시도: {wh})"
 
@@ -495,12 +501,15 @@ def main():
         out["conn"] = conn_update(prev.get("conn"), False, attempt, final, where, True, False)
         pc = prev.get("conn") if isinstance(prev.get("conn"), dict) else {}
         run_id = os.environ.get("GITHUB_RUN_ID", "")
-        got = bool(run_id) and pc.get("run") == run_id and any(t.get("reached") for t in prev_tries(pc, attempt))
+        # 같은 실행의 앞 차례가 실제로 받아 저장했는지 — 파일에 남은 표시(conn.got)로만 봄(커밋이 안 된 차례의 작업 출력은 믿지 않음)
+        got = bool(run_id) and pc.get("got") == run_id
+        if got:
+            out["conn"]["got"] = run_id
         if not final:
             gh_retry(out["conn"])
             log(f"통계청(kosis.kr) 연결 안 됨 — 새 서버에서 다시 받기({attempt + 1}/{attempts}) · 지표는 그대로")
         elif got:   # 앞 차례(같은 실행)가 이미 받아 저장함 — 그 결과를 그대로 두고, 못 받은 지표 수로만 판단
-            pf = [k for k in prev.get("failed") or [] if isinstance(k, str)]
+            pf = [k for k in prev.get("failed") if isinstance(k, str)] if isinstance(prev.get("failed"), list) else []
             total = len(SERIES) + 1
             log(f"통계청(kosis.kr) 연결 안 됨 — 앞 차례가 받은 결과 그대로(못 받음 {len(pf)}개)")
             if len(pf) * 2 > total:
@@ -515,7 +524,8 @@ def main():
             out["failed"] = [k for k, *_ in SERIES] + ["cross_border"]
             n_kept = len(out["series"]) + (1 if out.get("cross_border") else 0)
             log(f"수집 결과: 정상 0 · 이전 값 {n_kept} — 통계청 연결 안 됨")
-            soft_fail(f"통계청(kosis.kr) 연결 안 됨 — {tries_txt(out['conn']['tries'])} · "
+            allb = all(t.get("blocked") is True for t in out["conn"]["tries"])
+            soft_fail(f"통계청(kosis.kr) 연결 {'안 됨' if allb else '오류'} — {tries_txt(out['conn']['tries'])} · "
                       + ("이전 값 유지" if n_kept else "값 없음") + " · kosis.yml 수동 실행으로 다시")
         save(out)
         log(f"saved {OUT_PATH} (연결 기록만)" if not final else f"saved {OUT_PATH}")
@@ -580,7 +590,10 @@ def main():
             log(f"  ✔ {len(ser)}개월, 최근 {last} = {ser[last]}"
                 f"{'' if y is None else f' (YoY {y:+.1f}%)'}")
         except Exception as e:
-            log(f"  [WARN] {key} 실패: {str(e)[:160]}")
+            if NET_ERR > n0 and not final:   # 새 서버에서 다시 받을 연결 오류 — 12:23 점검이 [WARN]·'실패' 줄로 알리므로 그 낱말 없이
+                log(f"  {key}: 통계청 연결 오류 — 새 서버에서 다시 받기 예정")
+            else:
+                log(f"  [WARN] {key} 실패: {str(e)[:160]}")
         if key not in out["series"] and NET_ERR > n0:
             net_failed.append(key)
 
@@ -590,7 +603,7 @@ def main():
         if cb:
             out["cross_border"] = cb
     except Exception as e:
-        log(f"  [WARN] 해외직구 실패: {str(e)[:160]}")
+        log(f"  [WARN] 해외직구 실패: {str(e)[:160]}" if NET_ERR == n0 or final else "  해외직구: 통계청 연결 오류 — 새 서버에서 다시 받기 예정")
     if not out.get("cross_border") and NET_ERR > n0:
         net_failed.append("cross_border")
 
@@ -598,14 +611,31 @@ def main():
     prev = load_prev()
     pdate = str(prev.get("generated_at") or "")[:10] or None
     psers = prev.get("series") or {}
+    n_new = len(out["series"]) + (1 if out.get("cross_border") else 0)   # 이번 차례가 새로 받은 것
+    # v5.2 같은 실행의 앞 차례가 오늘 받아 저장한 값(파일 conn.got = 이 실행)은 이번 차례가 못 받아도 그대로 둠 — 실패·이전 값으로 바꾸지 않음
+    pc = prev.get("conn") if isinstance(prev.get("conn"), dict) else {}
+    run_id = os.environ.get("GITHUB_RUN_ID", "")
+    same = attempt > 1 and bool(run_id) and pc.get("got") == run_id
+    pfail = {k for k in prev.get("failed") or [] if isinstance(k, str)} if isinstance(prev.get("failed"), list) else set()
+    fresh = lambda v: isinstance(v, dict) and not v.get("stale_since")
     failed, kept = [], []
     for key, *_ in SERIES:
         if key in out["series"]:
+            continue
+        if same and key not in pfail and fresh(psers.get(key)) and (psers.get(key) or {}).get("values"):
+            out["series"][key] = psers[key]
+            if key in net_failed:
+                net_failed.remove(key)
             continue
         failed.append(key)
         if (psers.get(key) or {}).get("values"):
             out["series"][key] = dict(psers[key], stale_since=psers[key].get("stale_since") or pdate)
             kept.append(key)
+    pcb0 = prev.get("cross_border")
+    if not out.get("cross_border") and same and "cross_border" not in pfail and fresh(pcb0) and pcb0.get("series"):
+        out["cross_border"] = pcb0
+        if "cross_border" in net_failed:
+            net_failed.remove("cross_border")
     if not out.get("cross_border"):
         failed.append("cross_border")
         pcb = prev.get("cross_border")
@@ -617,10 +647,12 @@ def main():
         out["failed"] = failed   # 수집 상태 화면 '일부 실패 n곳(이전 값)' — dart_fetch와 같은 필드
         log(f"수집 결과: 정상 {total - len(failed)} · 이전 값 {len(kept)} · 값 없음 {len(failed) - len(kept)}"
             f" — 못 받음: {', '.join(failed)}")
-    if len(failed) == total and prev.get("generated_at"):
-        out["generated_at"] = prev["generated_at"]   # 새로 받은 게 없음 → 갱신 시각을 옮기지 않아 '지연'이 뜨게
+    if n_new == 0 and prev.get("generated_at"):
+        out["generated_at"] = prev["generated_at"]   # 이번 차례가 새로 받은 게 없음 → 갱신 시각을 옮기지 않음('지연'이 뜨게 · 같은 실행의 앞 차례 값이면 그 시각)
     ok = not net_failed   # v5.2 연결 오류로 못 받은 지표가 있으면 다른 서버에서 다시
-    out["conn"] = conn_update(prev.get("conn"), ok, attempt, final, where, False, len(failed) < total)
+    out["conn"] = conn_update(prev.get("conn"), ok, attempt, final, where, False, n_new > 0)
+    if run_id and (n_new > 0 or same):
+        out["conn"]["got"] = run_id   # 이 실행이 실제로 받아 저장함 — 뒤 차례가 막혀도 이 값을 그대로 둠
     if not ok and not final:
         gh_retry(out["conn"])
         log(f"연결 오류로 {len(net_failed)}개 못 받음({', '.join(net_failed)}) — 새 서버에서 다시 받기({attempt + 1}/{attempts})")

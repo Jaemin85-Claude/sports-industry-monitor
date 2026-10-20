@@ -3680,7 +3680,7 @@ function moreLogiHtml(){
   const st=LOGI.status||{}, bad=(st.kept||[]).concat(st.failed||[]);
   // v33.10 공공데이터포털 연결 차단(logistics_fetch v1.3) — 실패 줄 끝에 사유(수집 상태 _conn_note와 같은 규칙)
   const dc=(LOGI.dgk_conn&&typeof LOGI.dgk_conn==='object'&&!Array.isArray(LOGI.dgk_conn))?LOGI.dgk_conn:{};
-  const dtr=Array.isArray(dc.tries)?dc.tries.filter(t=>t&&typeof t==='object'&&!Array.isArray(t)):[], dn=dtr.length, dall=dn>0&&dtr.every(t=>t.blocked);
+  const dtr=Array.isArray(dc.tries)?dc.tries.filter(t=>t&&typeof t==='object'&&!Array.isArray(t)):[], dn=dtr.length, dall=dn>0&&dtr.every(t=>t.blocked===true);
   const dIn=[dall?(dn>1?'GitHub 서버 '+dn+'대 모두 막힘':'GitHub 서버에서 막힘'):(dn?'GitHub 서버 '+dn+'대에서 시도':''),typeof dc.since==='string'&&dc.since?esc(dc.since)+'부터':''].filter(Boolean).join(' · ');
   const dcTxt=(Array.isArray(dc.keys)&&dc.keys.length)?` — 공공데이터포털 연결 ${dall?'안 됨':'오류'}${dIn?'('+dIn+')':''}`:'';
   if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이번 수집 일부 실패</span> ${esc(bad.join(', '))}${dcTxt}</div>`;   // v33.9 실패 표시는 접지 않음
@@ -4778,7 +4778,7 @@ def _conn_note(c, name):
     tr = c.get("tries")
     tr = [t for t in tr if isinstance(t, dict)] if isinstance(tr, list) else []
     nt = len(tr)
-    blocked = bool(tr) and all(t.get("blocked") for t in tr)
+    blocked = bool(tr) and all(t.get("blocked") is True for t in tr)
     how = ((f"GitHub 서버 {nt}대 모두 막힘" if nt > 1 else "GitHub 서버에서 막힘") if blocked else
            (f"GitHub 서버 {nt}대에서 시도" if nt else ""))
     since = c.get("since") if isinstance(c.get("since"), str) else ""
