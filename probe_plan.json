@@ -1,0 +1,18 @@
+[
+ {"host": "kr.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product", "pdp"], "check": 3, "want": 1},
+ {"host": "us.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product", "pdp"], "check": 3, "want": 1},
+ {"host": "eu.puma.com", "pats": ["/de/de/pd/speedcat-og", "/de/de/pd/palermo-sneakers", "/de/de/pd/suede-xl"], "prefer": ["de", "product"], "check": 3, "want": 1},
+ {"host": "uk.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
+ {"host": "jp.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
+ {"host": "mx.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
+ {"urls": ["https://salomon.co.kr/products.json?limit=5"], "check": 1},
+ {"host": "salomon.co.kr", "pats": ["xt-6", "acs-pro", "speedcross-6"], "check": 4, "want": 2},
+ {"host": "www.salomon.com", "pats": ["en-us/product/xt-6-gore-tex", "en-us/product/acs-pro", "de-de/product/acs-pro", "en-gb/product/xt-6-gore-tex", "ja-jp/product/xt-6", "es-mx/product/xt-6"], "prefer": ["product"], "check": 6, "want": 1},
+ {"host": "www.drmartens.co.kr", "pats": ["1460", "1461", "jadon"], "check": 3, "want": 1},
+ {"host": "www.drmartens.com", "pats": ["/us/en/1461", "/uk/en_gb/1461", "/us/en/jadon", "/uk/en_gb/jadon", "/de/de_de/1460", "/mx/"], "prefer": ["product"], "check": 6, "want": 1},
+ {"host": "www.on.com", "pats": ["ko-kr/products/cloud-6", "en-us/products/cloud-6", "ko-kr/products/cloudmonster-2", "en-us/products/cloudmonster-2", "de-de/products/cloud-6", "ja-jp/products/cloud-6"], "prefer": ["product"], "check": 6, "want": 1, "max_maps": 60},
+ {"host": "www.underarmour.com", "pats": ["3024590", "3024591"], "prefer": ["product", "en-us"], "check": 2, "want": 1},
+ {"host": "www.onitsukatiger.com", "pats": ["kr/ko-kr/product/mexico-66", "us/en-us/product/mexico-66", "jp/ja-jp/product/mexico-66", "gb/en-gb/product/mexico-66"], "prefer": ["product", "pdp"], "check": 4, "want": 1},
+ {"host": "kr.burberry.com", "pats": ["p80592411", "trench"], "check": 2, "want": 1},
+ {"host": "us.burberry.com", "pats": ["p80592411"], "check": 1, "want": 1}
+]
