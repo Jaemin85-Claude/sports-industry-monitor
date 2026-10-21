@@ -1,0 +1,482 @@
+[
+ {
+  "id": "nike-us",
+  "brand": "Nike",
+  "country": "US",
+  "url": "https://www.nike.com/t/air-force-1-07-mens-shoes-jBrhbr/CW2288-111",
+  "parse": "jsonld",
+  "json_path": "@type=ProductGroup → hasVariant[sku startswith 'CW2288-111'].offers.price | priceCurrency"
+ },
+ {
+  "id": "nike-kr",
+  "brand": "Nike",
+  "country": "KR",
+  "url": "https://www.nike.com/kr/t/%EB%82%98%EC%9D%B4%ED%82%A4-%EC%97%90%EC%96%B4-%ED%8F%AC%EC%8A%A4-1-07-%EB%82%A8%EC%84%B1-%EC%8B%A0%EB%B0%9C-qdjlTENZ/CW2288-111",
+  "parse": "jsonld",
+  "json_path": "@type=ProductGroup → hasVariant[sku startswith 'CW2288-111'].offers.price | priceCurrency"
+ },
+ {
+  "id": "nike-mx",
+  "brand": "Nike",
+  "country": "MX",
+  "url": "https://www.nike.com/mx/t/CW2288-111/CW2288-111",
+  "parse": "jsonld",
+  "json_path": "@type=ProductGroup → hasVariant[].offers.price | priceCurrency (MXN)"
+ },
+ {
+  "id": "adidas-us",
+  "brand": "adidas",
+  "country": "US",
+  "url": "https://www.adidas.com/us/samba-og-shoes/B75806.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "adidas-kr",
+  "brand": "adidas",
+  "country": "KR",
+  "url": "https://www.adidas.co.kr/%EC%82%BC%EB%B0%94-og/B75806.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price (KRW)"
+ },
+ {
+  "id": "adidas-mx",
+  "brand": "adidas",
+  "country": "MX",
+  "url": "https://www.adidas.mx/tenis-samba-og/B75806.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "nb-us",
+  "brand": "New Balance",
+  "country": "US",
+  "url": "https://www.newbalance.com/pd/530/MR530SG.html",
+  "parse": "jsonld",
+  "json_path": "@type=ProductGroup → hasVariant[0].offers.price | priceCurrency"
+ },
+ {
+  "id": "nb-kr",
+  "brand": "New Balance",
+  "country": "KR",
+  "url": "https://www.nbkorea.com/product/productDetail.action?styleCode=NBPDGS115W&colCode=10",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price; fallback og/meta or price node"
+ },
+ {
+  "id": "asics-us",
+  "brand": "ASICS",
+  "country": "US",
+  "url": "https://www.asics.com/us/en-us/gel-kayano-31/p/ANA_1011B867-001.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency; fallback .price .sales .value[content]"
+ },
+ {
+  "id": "asics-kr",
+  "brand": "ASICS",
+  "country": "KR",
+  "url": "https://www.asics.co.kr/p/AKR_112619363-113",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price; fallback meta itemprop=price"
+ },
+ {
+  "id": "onitsuka-kr",
+  "brand": "Onitsuka Tiger",
+  "country": "KR",
+  "url": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183a201.127",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "onitsuka-jp",
+  "brand": "Onitsuka Tiger",
+  "country": "JP",
+  "url": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66/1183a201.127",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency (JPY)"
+ },
+ {
+  "id": "on-us",
+  "brand": "On",
+  "country": "US",
+  "url": "https://www.on.com/en-us/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": "meta[property=product:price:amount] | product:price:currency; also JSON-LD offers"
+ },
+ {
+  "id": "on-kr",
+  "brand": "On",
+  "country": "KR",
+  "url": "https://www.on.com/ko-kr/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": "meta product:price:amount | product:price:currency"
+ },
+ {
+  "id": "on-de",
+  "brand": "On",
+  "country": "DE",
+  "url": "https://www.on.com/de-de/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": "meta product:price:amount | product:price:currency (EUR)"
+ },
+ {
+  "id": "salomon-us",
+  "brand": "Salomon",
+  "country": "US",
+  "url": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency; fallback __NEXT_DATA__"
+ },
+ {
+  "id": "salomon-kr",
+  "brand": "Salomon",
+  "country": "KR",
+  "url": "https://salomon.co.kr/products/l47450600.json",
+  "parse": "json",
+  "json_path": "product.variants[].price, product.variants[].compare_at_price, product.variants[].sku"
+ },
+ {
+  "id": "drm-uk",
+  "brand": "Dr. Martens",
+  "country": "UK",
+  "url": "https://www.drmartens.com/uk/en_gb/1460-smooth-leather-lace-up-boots-black/p/11822006",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency (GBP)"
+ },
+ {
+  "id": "drm-kr",
+  "brand": "Dr. Martens",
+  "country": "KR",
+  "url": "https://www.drmartens.co.kr/products/1460-2.json",
+  "parse": "json",
+  "json_path": "product.variants[].price, compare_at_price, sku (expect 11822006…)"
+ },
+ {
+  "id": "crocs-us",
+  "brand": "Crocs",
+  "country": "US",
+  "url": "https://www.crocs.com/p/classic-clog/10001.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "crocs-kr",
+  "brand": "Crocs",
+  "country": "KR",
+  "url": "https://www.crocs.co.kr/p/classic-clog/10001.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price + strike-through list price node"
+ },
+ {
+  "id": "puma-us",
+  "brand": "Puma",
+  "country": "US",
+  "url": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price; __NEXT_DATA__ props.urqlState → product.variations[].price (list) vs salePrice"
+ },
+ {
+  "id": "puma-kr",
+  "brand": "Puma",
+  "country": "KR",
+  "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html?dwvar_398846_color=02",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "ua-kr",
+  "brand": "Under Armour",
+  "country": "KR",
+  "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%8B%A0%EB%B0%9C/ua_%EC%B0%A8%EC%A7%80%EB%93%9C_%EC%96%B4%EC%84%9C%ED%8A%B8_9/3024591.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price + list price node"
+ },
+ {
+  "id": "clarks-kr",
+  "brand": "Clarks",
+  "country": "KR",
+  "url": "https://clarkskorea.co.kr/product/mens-wallabee-boots-vcy-26165078/899/",
+  "parse": "html-meta",
+  "json_path": "meta[property=product:price:amount] (정가) | meta[property=product:sale_price:amount] (판매가)"
+ },
+ {
+  "id": "ecco-kr",
+  "brand": "ECCO",
+  "country": "KR",
+  "url": "https://kr.ecco.com/product/biom-c-m/091504/01543",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "burberry-us",
+  "brand": "Burberry",
+  "country": "US",
+  "url": "https://us.burberry.com/waterloo-heritage-trench-coat-p80592411",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency; fallback embedded state"
+ },
+ {
+  "id": "burberry-kr",
+  "brand": "Burberry",
+  "country": "KR",
+  "url": "https://kr.burberry.com/waterloo-heritage-trench-coat-p80592411",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "moncler-kr",
+  "brand": "Moncler",
+  "country": "KR",
+  "url": "https://www.moncler.com/ko-kr/men/outerwear/short-down-jackets/moncler-maya-hooded-short-down-jacket-black-J20911A5360068950999.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "lulu-kr",
+  "brand": "lululemon",
+  "country": "KR",
+  "url": "https://www.lululemon.co.kr/ko-kr/p/%EB%A3%B0%EB%A3%A8%EB%A0%88%EB%AA%AC-align%E2%84%A2-%ED%95%98%EC%9D%B4%EB%9D%BC%EC%9D%B4%EC%A6%88-%ED%8C%AC%EC%B8%A0-25%22/prod2020012.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price or AggregateOffer highPrice"
+ },
+ {
+  "id": "arcteryx-kr",
+  "brand": "Arc'teryx",
+  "country": "KR",
+  "url": "https://arcteryx.co.kr/products/view/685132",
+  "parse": "jsonld",
+  "json_path": "JSON-LD if present; else RSC payload options[].values[].sell_price + list price node"
+ },
+ {
+  "id": "rl-kr",
+  "brand": "Polo Ralph Lauren",
+  "country": "KR",
+  "url": "https://www.ralphlauren.co.kr/custom-slim-fit-stretch-mesh-polo-shirt-619876.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "ugg-us",
+  "brand": "UGG",
+  "country": "US",
+  "url": "https://www.ugg.com/women-boots/classic-mini-ii-boot/1016222.html",
+  "parse": "jsonld",
+  "json_path": "@type=Product → offers.price | priceCurrency"
+ },
+ {
+  "id": "skechers-kr",
+  "brand": "Skechers",
+  "country": "KR",
+  "url": "https://www.skecherskorea.co.kr/sub_product/view.php?idx=5115",
+  "parse": "html-meta",
+  "json_path": "og/meta price or price node (Go Walk 7 정가 119000)"
+ },
+ {
+  "id": "ml-search-mx",
+  "brand": "(MercadoLibre)",
+  "country": "MX",
+  "url": "https://api.mercadolibre.com/sites/MLM/search?q=nike%20air%20force%201",
+  "parse": "json",
+  "json_path": "results[].price, official_store_id (expect HTTP 403)"
+ },
+ {
+  "id": "fx-mxn",
+  "brand": "(FX)",
+  "country": "MX",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/MXNKRW=X?range=5d&interval=1d",
+  "parse": "json",
+  "json_path": "chart.result[0].meta.regularMarketPrice"
+ },
+ {
+  "id": "nike-feed-us",
+  "brand": "Nike",
+  "country": "US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "parse": "json",
+  "json_path": "objects[0].productInfo[0].merchPrice.fullPrice"
+ },
+ {
+  "id": "nike-feed-kr",
+  "brand": "Nike",
+  "country": "KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "parse": "json",
+  "json_path": "objects[0].productInfo[0].merchPrice.fullPrice"
+ },
+ {
+  "id": "nike-feed-de",
+  "brand": "Nike",
+  "country": "DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "parse": "json",
+  "json_path": "objects[0].productInfo[0].merchPrice.fullPrice"
+ },
+ {
+  "id": "on-jp",
+  "brand": "On",
+  "country": "JP",
+  "url": "https://www.on.com/ja-jp/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": null
+ },
+ {
+  "id": "on-gb",
+  "brand": "On",
+  "country": "GB",
+  "url": "https://www.on.com/en-gb/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": null
+ },
+ {
+  "id": "on-mx",
+  "brand": "On",
+  "country": "MX",
+  "url": "https://www.on.com/es-mx/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+  "parse": "html-meta",
+  "json_path": null
+ },
+ {
+  "id": "salomon-de",
+  "brand": "Salomon",
+  "country": "DE",
+  "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "salomon-jp",
+  "brand": "Salomon",
+  "country": "JP",
+  "url": "https://salomon.jp/products/l47450600",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "salomon-kr-page",
+  "brand": "Salomon",
+  "country": "KR",
+  "url": "https://salomon.co.kr/products/l47450600",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "drm-us",
+  "brand": "Dr. Martens",
+  "country": "US",
+  "url": "https://www.drmartens.com/us/en/1460-smooth-leather-lace-up-boots-black/p/11822006",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "drm-jp",
+  "brand": "Dr. Martens",
+  "country": "JP",
+  "url": "https://jp.drmartens.com/products/11822006",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "drm-kr-page",
+  "brand": "Dr. Martens",
+  "country": "KR",
+  "url": "https://www.drmartens.co.kr/products/1460-2",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "onitsuka-us",
+  "brand": "Onitsuka Tiger",
+  "country": "US",
+  "url": "https://www.onitsukatiger.com/us/en-us/product/mexico-66/1183a201.127",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "onitsuka-gb",
+  "brand": "Onitsuka Tiger",
+  "country": "GB",
+  "url": "https://www.onitsukatiger.com/gb/en-gb/product/mexico-66/1183a201.127",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "puma-de",
+  "brand": "Puma",
+  "country": "DE",
+  "url": "https://eu.puma.com/de/de/pd/speedcat-og-sneakers/398846.html",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "ua-us",
+  "brand": "Under Armour",
+  "country": "US",
+  "url": "https://www.underarmour.com/en-us/p/running/mens_ua_charged_assert_9_running_shoes/3024590.html",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "ecco-us",
+  "brand": "ECCO",
+  "country": "US",
+  "url": "https://us.ecco.com/product/biom-c-m/091504/01543",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "ecco-de",
+  "brand": "ECCO",
+  "country": "DE",
+  "url": "https://de.ecco.com/product/biom-c-m/091504/01543",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "burberry-uk",
+  "brand": "Burberry",
+  "country": "GB",
+  "url": "https://uk.burberry.com/waterloo-heritage-trench-coat-p80592411",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "crocs-jp",
+  "brand": "Crocs",
+  "country": "JP",
+  "url": "https://www.crocs.co.jp/p/classic-clog/10001.html",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "skechers-us",
+  "brand": "Skechers",
+  "country": "US",
+  "url": "https://www.skechers.com/",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "asics-jp",
+  "brand": "ASICS",
+  "country": "JP",
+  "url": "https://www.asics.com/jp/ja-jp/gel-kayano-14/p/1201A019-100.html",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "ugg-gb",
+  "brand": "UGG",
+  "country": "GB",
+  "url": "https://www.ugg.com/uk/women-boots/classic-mini-ii-boot/1016222.html",
+  "parse": "jsonld",
+  "json_path": null
+ },
+ {
+  "id": "fx-clp",
+  "brand": "(FX)",
+  "country": "CL",
+  "url": "https://query1.finance.yahoo.com/v8/finance/chart/CLPKRW=X?range=5d&interval=1d",
+  "parse": "json",
+  "json_path": "chart.result[0].meta.regularMarketPrice"
+ }
+]
