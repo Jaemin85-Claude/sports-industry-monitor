@@ -58,6 +58,18 @@ jobs:
         if: steps.logi.outcome == 'failure'
         run: |
           echo "logistics_fetch: 물류 자료 수집 실패(이전 값 유지)" >> soft_fail.txt
+      - name: Overseas list prices
+        # v2026-10-21 해외 정가(price_fetch v1): 브랜드 대표 상품 나라별 정가(할인 전) → docs/prices.json (브랜드 상세 하단) · 매일 돌며 7일마다 받음
+        id: price
+        continue-on-error: true   # 해외 정가가 멈춰도 대시보드 갱신은 계속
+        timeout-minutes: 8        # 스크립트가 6분에 스스로 멈춤
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python price_fetch.py
+      - name: Note price failure
+        if: steps.price.outcome == 'failure'
+        run: |
+          echo "price_fetch: 해외 정가 수집 실패(이전 값 유지)" >> soft_fail.txt
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard

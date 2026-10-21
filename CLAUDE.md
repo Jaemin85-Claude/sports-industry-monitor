@@ -14,7 +14,7 @@
 
 | 워크플로우 파일 | 이름 | 실행하는 코드 | 만드는 파일 | 자동 실행(KST) |
 |---|---|---|---|---|
-| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → logistics_fetch.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·logistics·history·index.html) | 매일 04:17 |
+| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → logistics_fetch.py → price_fetch.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·logistics·prices·history·index.html) | 매일 04:17 |
 | `news.yml` | update-news | news_monitor.py | `docs/news.json`, `docs/news_archive.json` | 매일 03:17 |
 | `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 01:47 |
 | `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 02:47 |
@@ -55,6 +55,7 @@
 | naver_trend.py | `Phase 8: 네이버 데이터랩` | 최상위 |
 | weekly_digest.py | `Phase 9: 주간 요약` | 최상위 |
 | logistics_fetch.py | `Phase 10: 물류` | 최상위 |
+| price_fetch.py | `Phase 11: 해외 정가` | 최상위 |
 | worldmap.json | JSON 최상위 키에 `viewBox`, `europe` | `docs/` |
 | *.yml | 첫 `name:` 줄 = 위 운영 구조표의 이름 | `.github/workflows/` |
 
@@ -186,6 +187,16 @@
   첫날에는 연결 오류 줄을 그 낱말·오류 원문(…Error) 없이 갈래만 쓴다(이틀째부터는 [WARN] + 빨간 X). 수집 상태·물류 화면 실패 줄에 '공공데이터포털 연결 안 됨(GitHub 서버 n대
   모두 막힘)' 또는 '연결 오류(GitHub 서버 n대에서 시도)'. KOSIS(kosis_fetch v5.2 · '보완안 3')도 같은 방식(kosis.yml kosis-retry-1·2 · 연결 오류로
   못 받은 지표만 따짐) — 월 1회라 서버 3대 모두 막히면 바로 실패 표시(kosis.yml 수동 실행으로 다시), 앞 차례가 받은 값은 그대로 둠
+- 브랜드 상세 하단 '해외 정가 비교'(2026-10-21 대표 지시 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 수기 없음 · 풀프라이스 · 나이키 포함):
+  price_fetch v1 → `docs/prices.json`(update-dashboard 안에서 매일 돌며 7일마다 받음 · PRICE_FORCE=1이면 바로). 대표 상품 = 글로벌 품번이 같은 상품 —
+  나이키 3(에어포스 1 '07 CW2288-111 · 덩크 로우 레트로 DD1391-100 · 에어맥스 90 CN8490-100 — 나이키 상품 정보 api.nike.com product_feed의 정가 fullPrice ·
+  한국·미국·영국·독일·일본·멕시코, 브라질은 나이키 직영 아님) · 푸마 스피드캣 OG 398846 · 온러닝 클라우드몬스터 · 살로몬 XT-6 고어텍스 L47450600 ·
+  닥터마틴 1461·제이든(1460은 한국 몰 품번이 달라 뺌). 정가 = 할인 전 가격: JSON-LD 정가 명세(ListPrice·StrikethroughPrice) → 없으면 그 상품 색상·사이즈별
+  최고가, 한국 쇼피파이형 몰(살로몬·닥터마틴)은 상품 .json의 compare_at_price·price(변형 품번이 글로벌 품번과 같아야), 살로몬 해외는 basePrice.
+  할인 가드: 저장된 정가보다 낮게 보이면 120일 동안 정가를 지킴. 화면 = 한국 정가 ÷ (현지 정가 × 그날 환율) − 1(비쌈 파랑 = 병행수입 여지 · 쌈 짙은 주황) ·
+  미국은 판매세 별도, 그 밖은 부가세 포함 · 관세·운임 안 넣은 단순 비교. 멕시코 페소는 fetch_data v4.17 FX(MXN). 봇 차단은 우회하지 않음(우리 봇 이름 ·
+  robots.txt 확인 · 주소당 1번) — 접속 시험(10/21)에서 막힌 아디다스·뉴발란스·아식스·크록스 한국·에코·몽클레르·룰루레몬·랄프로렌·어그·스케쳐스 한국은 넣지 않음.
+  못 받으면 이전 값(stale_since) · 한 실행 절반 넘게 실패하거나 한 값이 21일 넘게 이전 값이면 실패 표시. 상품을 바꾸면 PRODUCTS(id·brand = 감시 브랜드 이름)만.
 - 재무 기준 표기(2026-10): 국내 비교 화면(더보기 › 유통사 비교·패션 브랜드)은 **별도** 재무제표로 통일, 연결이 있는 법인은 기업 상세에
   '연결 기준 요약'(또는 연결감사보고서 링크)만 둔다. 회계기준(K-IFRS/K-GAAP)은 dart_fetch가 감사보고서 감사의견 문구로 판별해
   저장하고, 비교 표에 배지로 표시. 상장사는 DART 사업보고서 연결 우선(지정 예외는 별도). 외화 금액은 통화 코드 + ≈원화 환산.

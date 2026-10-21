@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.14: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 브랜드 상세 하단 · 나이키 포함) 브랜드 상세 맨 아래
+       '해외 정가 비교' — docs/prices.json(price_fetch v1 · 주 1회)의 대표 상품 정가(할인 전)를 그날 환율(data.json fx)로 원화 환산해
+       '한국이 n% 비쌈/쌈'(한국 정가 ÷ 현지 정가 원화 − 1 · 비쌈 파랑 = 병행수입 여지 / 쌈 짙은 주황). 맨 위 한 줄 = 그 브랜드 상품·나라 평균,
+       상품마다 나라별 표(현지 정가·원화·한국은) · 설명은 '읽는 법'으로 접음 · 이전 값 꼬리표 · 수집 상태에 '해외 정가' 줄
 v33.13: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr) 기업 상세에 컨버스 뉴스 연결(news_monitor v2.16 converse)
 v33.12: (대표 승인 2026-10-21) 물류 화면 주석·클래스 이름 정리 — 출발지·거점 설명을 '주요 출발지·주요 거점'으로(화면 같음)
 v33.11: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr · dart_fetch v3.9) 로고 연결(converse.co.kr)
@@ -957,6 +961,17 @@ div.bd-nx{cursor:default}
 .bd-link .t{color:var(--accent)}
 .bd-none{margin:0;padding:12px 0;font-size:14px;color:var(--sub)}
 .bd-hq{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.bd-pr-sum{margin:0;font-size:15px;line-height:1.5}
+.bd-pr{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-pr-hd{display:flex;flex-direction:column;gap:2px}.bd-pr-hd .t{font-size:15px;font-weight:700}.bd-pr-hd .s{font-size:13px;color:var(--sub)}.bd-pr-hd .s b{color:var(--tx);font-weight:600}
+.bd-pr-tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.bd-pr-tbl th{font-size:13px;font-weight:600;color:var(--sub);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
+.bd-pr-tbl td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--line2);vertical-align:top}
+.bd-pr-tbl th:first-child,.bd-pr-tbl td:first-child{text-align:left;white-space:nowrap}
+.bd-pr-tbl td .tg{margin-left:4px}
+.bd-pr-tbl td:last-child{white-space:nowrap}
+.bd-pr-sale{font-size:13px;color:var(--sub);font-weight:400}
+.bd-pr-src{margin:0;font-size:13px;color:var(--sub)}
 /* 더보기 메뉴(머리 '더보기' + 줄 5개 + 화면 테마) */
 .mmenu{margin:0 0 10px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
 .mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:60px;padding:8px 12px 8px 14px;border-top:1px solid var(--line)}
@@ -1192,6 +1207,7 @@ const HIST = __HIST__;
 const KRD = __KRD__;
 const STATUS = __STATUS__;
 const LOGI = __LOGI__;   // v33.4 물류(docs/logistics.json · logistics_fetch v1) — 없으면 null
+const PRICES = __PRICES__;   // v33.14 해외 정가(docs/prices.json · price_fetch v1) — 없으면 null
 const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
 
 /* ── 브랜드 로고 도메인 ── */
@@ -4133,8 +4149,45 @@ function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음)
     +`<span class="s">본사 자료가 없어 검색·환율만 참고${k?` · 검색 강함 ${k}곳`:''}</span></span>${ic('down',20,'s2')}</summary>`
     +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
+/* ── v33.14 해외 정가 비교(브랜드 상세 하단) — docs/prices.json(price_fetch v1)의 대표 상품 정가(할인 전)를 오늘 환율로 원화 환산.
+   한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈(+) 파랑 = 병행수입 여지 · 쌈(−) 짙은 주황 · 환율이 없는 통화는 그 나라 줄을 '환율 없음' ── */
+const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코',BR:'브라질'}, PR_ORD=['US','GB','DE','JP','MX','BR'];
+const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$',BRL:'R$'};
+const prLocal=(p,cur)=>(PR_SYM[cur]||cur+' ')+(p>=1000||cur==='JPY'?Math.round(p).toLocaleString('ko-KR'):(+p).toFixed(p%1?2:0));
+const prGapTxt=g=>Math.abs(g)<0.5?'거의 같음':`${Math.abs(Math.round(g))}% ${g>0?'비쌈':'쌈'}`;
+function prRows(it){   // 한 상품의 나라별 줄 — [{cc, o, krw, gap}]
+  const kr=(it.m||{}).KR; if(!kr||!kr.p) return {kr:null,rows:[]};
+  const rows=PR_ORD.filter(cc=>(it.m||{})[cc]&&it.m[cc].p).map(cc=>{ const o=it.m[cc], krw=krwOf(o.p,o.cur);
+    return {cc,o,krw,gap:krw?(kr.p/krw-1)*100:null}; });
+  return {kr,rows};
+}
+function prSecHtml(bname){
+  const its=((PRICES&&PRICES.items)||[]).filter(it=>it.brand===bname);
+  if(!its.length) return '';
+  const all=[]; its.forEach(it=>prRows(it).rows.forEach(r=>{ if(r.gap!=null) all.push(r.gap); }));
+  const avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
+  let h=`<section class="bd-sec" aria-labelledby="bdPrH"><h2 id="bdPrH">해외 정가 비교</h2>`;
+  h+=avg==null?`<p class="bd-none">한국 정가 자료 없음</p>`
+    :`<p class="bd-pr-sum">한국 정가가 해외보다 평균 <b class="${Math.abs(avg)<0.5?'':avg>0?'pos':'neg'}">${prGapTxt(avg)}</b> <span class="na">(상품 ${its.length}개 · ${all.length}개 비교)</span></p>`;
+  its.forEach(it=>{
+    const {kr,rows}=prRows(it);
+    h+=`<div class="bd-pr"><div class="bd-pr-hd"><span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}</span></div>`;
+    if(kr&&rows.length){
+      h+=`<div class="tblwrap"><table class="bd-pr-tbl"><tr><th>나라</th><th>현지 정가</th><th>원화</th><th>한국은</th></tr>`
+        +rows.map(r=>`<tr><td>${PR_CC[r.cc]}${r.o.sale?'<div class="bd-pr-sale" title="지금 할인 중인 색상·사이즈가 있음 — 정가는 할인 전 가격">할인 중</div>':''}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}</td>`
+          +`<td>${r.krw?wonR(r.krw)+'원':'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':`<b class="${Math.abs(r.gap)<0.5?'':r.gap>0?'pos':'neg'}">${prGapTxt(r.gap)}</b>`}</td></tr>`).join('')
+        +`</table></div>`;
+    } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
+    h+=`</div>`;
+  });
+  const fd=PRICES.fetched?`${+PRICES.fetched.slice(5,7)}/${+PRICES.fetched.slice(8,10)}`:'';
+  h+=`<p class="bd-pr-src">브랜드 공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''} · 오늘 환율</p>`;
+  h+=why('한국은 = 한국 정가 ÷ (현지 정가 × 오늘 환율) − 1. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). 할인 중이면 할인 전 정가를 그대로 둡니다. 미국 가격은 판매세 별도(주마다 0~10%), 유럽·영국·일본·멕시코·한국 가격은 부가세 포함. 비쌈(파랑) = 해외에서 들여올 여지, 쌈(주황) = 한국이 더 쌈. 관세·운임은 넣지 않은 단순 비교. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
+  return h+`</section>`;
+}
+
 /* ── v33 A안 S2: 브랜드 상세(A3) — 판정·한 문장 이유·타일 2칸 → 판단 근거 4장(판정 안 함 2장) → 다음 일정 → 최근 뉴스 → 본사 기업 상세 ── */
-function brDetailHtml(d){
+function brDetailHtml(d,bname){
   const T=d.tiles, judged=d.lv!=null;
   const ptB=e=>`<span class="bd-pt${e.tone?' '+e.tone:''}">${e.score!==''?`<b>${esc(e.score)}</b>`:''}${esc(e.word)}</span>`;
   const SIGT={more:'할인 물량↑',less:'할인·공급↓',neutral:'중립'};
@@ -4158,12 +4211,13 @@ function brDetailHtml(d){
     :`<p class="bd-none">최근 14일 중요(★2 이상) 뉴스 없음</p>`;
   if(d.newsAll) h+=`<button type="button" class="bd-link" data-go="news:k:${esc(d.newsAll.key)}"><span class="tt"><span class="t">${esc(d.newsAll.label)} 뉴스 모두 보기</span><span class="s">시장 › 뉴스</span></span>${ic('right',20,'s2 chev')}</button>`;
   h+=`</div></section>`;
+  h+=prSecHtml(bname);   // v33.14 해외 정가 비교(자료 있는 브랜드만)
   if(d.hqLink) h+=`<button type="button" class="bd-hq" data-go="${esc(d.hqLink.go)}"><span class="tt"><span class="t">${esc(d.hqLink.title)}</span><span class="s">${esc(d.hqLink.sub)}</span></span>${ic('right',20,'s2 chev')}</button>`;
   return h+`</div>`;
 }
 function renderBrandDetail(name){   // #/brand/<이름> — 판정 9곳·판정 안 함 21곳 모두 같은 틀
   const r=chkFind(name);
-  paint('brDetBody',()=>r?brDetailHtml(chkDetail(r)):`<p class="br-empty">점검표에 없는 브랜드</p>`,'브랜드 상세');
+  paint('brDetBody',()=>r?brDetailHtml(chkDetail(r),r.b.name):`<p class="br-empty">점검표에 없는 브랜드</p>`,'브랜드 상세');
 }
 function buildMore(){   // 메뉴 · 하위 화면(유통사 비교·패션 브랜드·환율·물류·해외직구·수집 상태). 그리다 실패하면 머리 + 안내만(옛 화면이 남지 않게)
   const el=document.getElementById('moreBody'); if(!el) return;
@@ -4762,6 +4816,7 @@ STATUS_SOURCES = [
     ("kosis.json", "국내 소매 지표", "update-kosis", "매월 5일", 40),
     ("naver_trend.json", "네이버 검색 관심도", "update-dashboard", "매일 04:17", 2),
     ("logistics.json", "물류 운임·바닷길", "update-dashboard", "매일 04:17", 2),   # v33.4 logistics_fetch v1
+    ("prices.json", "해외 정가", "update-dashboard", "주 1회(매일 확인)", 2),   # v33.14 price_fetch v1 — 매일 돌며 7일마다 받음(generated_at은 매일)
 ]
 
 
@@ -4902,6 +4957,14 @@ def _partial(fn, d):
         if bad:
             notes.append("값 없음 " + ", ".join(bad))
         notes += _conn_note(d.get("dgk_conn"), "공공데이터포털")   # v33.10 logistics_fetch v1.3
+    elif fn == "prices.json":   # v33.14 price_fetch v1 — 이전 값(stale_since)인 상품·나라
+        kept = [f"{it.get('brand', '')} {it.get('name', '')} {cc}" for it in d.get("items") or [] if isinstance(it, dict)
+                for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since")]
+        n = len(kept)
+        if kept:
+            notes.append(f"이전 값 {n}건: " + ", ".join(kept[:4]) + (" 외" if n > 4 else ""))
+        if d.get("fetched"):
+            notes.append(f"마지막으로 받은 날 {d['fetched']}")
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes
@@ -5047,6 +5110,18 @@ def main():
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None
+    prices = None   # v33.14 해외 정가(price_fetch v1) — 화면에 안 쓰는 주소·사유는 뺌
+    if os.path.exists("docs/prices.json"):
+        try:
+            with open("docs/prices.json", encoding="utf-8") as f:
+                prices = json.load(f)
+            for it in prices.get("items") or []:
+                for o in (it.get("m") or {}).values():
+                    for k in ("url", "why", "obs_date"):
+                        o.pop(k, None)
+        except Exception as e:
+            print(f"[WARN] prices.json 읽기 실패: {str(e)[:100]}")
+            prices = None
     news = None
     if os.path.exists("docs/news.json"):
         try:
@@ -5077,6 +5152,7 @@ def main():
             .replace("__STATUS__", js(collect_status()))
             .replace("__WMAP__", js(wmap))
             .replace("__LOGI__", js(logi))
+            .replace("__PRICES__", js(prices))
             .replace("__CHK_CUR__", js(CHK_CUR))
             .replace("__CHK_RULE__", str(CHK_RULE))
             .replace("__CHK_SIG__", json.dumps(sig)))

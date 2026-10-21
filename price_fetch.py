@@ -37,9 +37,9 @@ NIKE_FEED = ("https://api.nike.com/product_feed/threads/v3/?filter=marketplace({
 # 대표 상품 — brand는 브랜드 점검표(네이버 감시 브랜드) 이름과 같게. urls 없는 나라는 그 브랜드 공식몰에서 받지 못하는 곳(시험 2026-10-21)
 DM = "https://www.drmartens.com"
 PRODUCTS = [
-    {"id": "nike-af1", "brand": "나이키", "name": "에어포스 1 '07", "code": "CW2288-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX", "BR"]},
-    {"id": "nike-dunk", "brand": "나이키", "name": "덩크 로우 레트로", "code": "DD1391-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX", "BR"]},
-    {"id": "nike-am90", "brand": "나이키", "name": "에어맥스 90", "code": "CN8490-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX", "BR"]},
+    {"id": "nike-af1", "brand": "나이키", "name": "에어포스 1 '07", "code": "CW2288-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
+    {"id": "nike-dunk", "brand": "나이키", "name": "덩크 로우 레트로", "code": "DD1391-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
+    {"id": "nike-am90", "brand": "나이키", "name": "에어맥스 90", "code": "CN8490-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # 브라질은 나이키 직영이 아님(시험 2026-10-21 · 결과 없음)
     {"id": "puma-speedcat", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
         "US": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
@@ -63,10 +63,7 @@ PRODUCTS = [
         "KR": "https://www.drmartens.co.kr/products/boots-jadon-black-15265001.json",
         "US": f"{DM}/us/en/jadon-smooth-leather-platform-boots-black/p/15265001",
         "GB": f"{DM}/uk/en_gb/jadon-smooth-leather-platform-boots-black/p/15265001"}},
-    {"id": "drm-1460", "brand": "닥터마틴", "name": "1460 스무스", "code": "10072004", "src": "page", "hint": "1460", "urls": {
-        "KR": "https://www.drmartens.co.kr/products/1460-2.json",
-        "US": f"{DM}/us/en/1460-smooth-leather-lace-up-boots-black/p/10072004",
-        "GB": f"{DM}/uk/en_gb/1460-smooth-leather-lace-up-boots-black/p/10072004"}},
+    # 닥터마틴 1460은 한국 몰 품번(10072004)이 해외(11822006)와 달라 넣지 않음(같은 상품인지 확인 안 됨)
 ]
 
 
@@ -158,11 +155,17 @@ def _ld_nodes(html):
     return out
 
 
-def page_price(html, hint, cur):
-    """상품 페이지 → 정가. 상품 이름에 hint가 든 JSON-LD 상품만 봄(추천 상품 섞임 방지)"""
+def _is_ours(n, hint, code):
+    """JSON-LD 상품이 찾는 상품인지 — 이름·품번에 hint(영문 모델명)가 있거나, 품번·주소에 글로벌 품번이 있으면(일본어 이름 등)"""
+    head = (str(n.get("name", "")) + " " + str(n.get("sku", ""))).lower()
+    ids = " ".join(str(n.get(k, "")) for k in ("sku", "productID", "mpn", "url", "@id")).lower()
+    return hint in head or (code and code.lower() in ids)
+
+
+def page_price(html, hint, cur, code=""):
+    """상품 페이지 → 정가. 찾는 상품(_is_ours)인 JSON-LD 상품만 봄(추천 상품 섞임 방지)"""
     offers, lists = [], []
-    prods = [n for n in _ld_nodes(html) if str(n.get("@type", "")).lower() in ("product", "productgroup")
-             and hint in (str(n.get("name", "")) + " " + str(n.get("sku", ""))).lower()]
+    prods = [n for n in _ld_nodes(html) if str(n.get("@type", "")).lower() in ("product", "productgroup") and _is_ours(n, hint, code)]
     for p in prods:
         st = [p.get("offers"), p.get("hasVariant")]
         while st:
@@ -218,7 +221,7 @@ def fetch_one(prod, cc):
     loc = urllib.parse.urlsplit(url).path.split("/")[1]
     if prod["id"].startswith("on-") and loc not in urllib.parse.urlsplit(r.url).path:   # 온: 그 나라 몰이 없으면 다른 나라로 넘김
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
-    return page_price(r.text, prod["hint"], cur), url
+    return page_price(r.text, prod["hint"], cur, prod["code"]), url
 
 
 def cfg_hash():
