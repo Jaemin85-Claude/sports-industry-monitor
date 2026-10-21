@@ -14,7 +14,8 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     주 1회(7일) — 매일 update-dashboard 안에서 돌되 7일이 안 지났고 상품 목록이 같으면 건너뜀(update.yml 수동 실행 입력 price_force=1 → PRICE_FORCE=1이면 바로).
     절반 넘게 실패했거나 시간 초과로 다 못 받은 날은 '받은 날'(fetched)을 옮기지 않아 다음 날 다시 받음.
     봇 차단은 우회하지 않음: 우리 봇 이름(UA)을 밝히고 robots.txt(RFC 9309 — 우리 이름 그룹 우선·* 와일드카드·가장 긴 규칙)를 먼저 확인,
-    robots.txt가 서버 오류·연결 안 됨이면 그 사이트는 이번 실행 건너뜀, 403/429를 받으면 그 사이트에 더 요청하지 않음, 주소당 1번만 요청
+    robots.txt가 서버 오류·연결 안 됨이면 그 사이트는 이번 실행 건너뜀(예외: robots.txt를 두지 않는 API 주소는 같은 회사 대표 사이트의
+    robots.txt를 따름 — ROBOTS_ALT), 403/429를 받으면 그 사이트에 더 요청하지 않음, 주소당 1번만 요청
     (접속 시험 2026-10-21: 아디다스·뉴발란스·아식스·크록스 한국·에코·몽클레르·룰루레몬·랄프로렌·어그·스케쳐스 한국은 403/429라 넣지 않음).
     못 받으면 이전 값(stale_since = 마지막으로 받은 날) · 전에 받던 값이 '팔지 않음'으로 바뀌어도 실패로 셈 · 이전 값도 없으면 failed(값 없음, 처음 실패한 날).
     한 실행에서 절반 넘게 실패하거나, 한 값이 21일 넘게 이전 값·값 없음이면 실패 표시(soft_fail.txt).
@@ -91,6 +92,9 @@ class Skip(Exception):
 
 
 _ROB, _LAST, _BLOCKED = {}, [0.0], set()
+# robots.txt를 두지 않는 API 주소 → 같은 회사 대표 사이트 robots.txt를 따름(그 사이트 robots.txt도 못 받으면 건너뜀)
+# api.nike.com: 상품 정보 경로 밖 모든 주소(/, robots.txt, 없는 주소)에 Akamai가 '503 DNS failure' — 2026-10-21 브랜치 시험에서 확인
+ROBOTS_ALT = {"api.nike.com": "https://www.nike.com"}
 
 
 def _robots_rules(txt):
@@ -113,18 +117,28 @@ def _robots_rules(txt):
     return [r for gg in mine for r in gg["rules"]]
 
 
+def _robots_get(base):
+    """규칙 목록, 또는 못 받은 이유(글) — 4xx면 규칙 없음, 429·5xx·연결 안 됨이면 이유(RFC 9309: 그 사이트 전체를 막힌 것으로)"""
+    try:
+        r = requests.get(base + "/robots.txt", headers=HDR, timeout=20)
+        if r.status_code == 429 or r.status_code >= 500:
+            return f"robots.txt HTTP {r.status_code}"
+        return _robots_rules(r.text) if r.status_code == 200 else []
+    except requests.RequestException as e:
+        return f"robots.txt 못 받음({type(e).__name__})"
+
+
 def robots_ok(url):
-    """(허용?, 이유) — robots.txt가 4xx면 규칙 없음, 429·5xx·연결 안 됨이면 그 사이트 전체를 막힌 것으로(RFC 9309)"""
+    """(허용?, 이유) — 사이트별 robots.txt는 실행마다 1번만 받음"""
     p = urllib.parse.urlsplit(url); base = f"{p.scheme}://{p.netloc}"
     if base not in _ROB:
-        try:
-            r = requests.get(base + "/robots.txt", headers=HDR, timeout=20)
-            if r.status_code == 429 or r.status_code >= 500:
-                _ROB[base] = f"robots.txt HTTP {r.status_code}"
-            else:
-                _ROB[base] = _robots_rules(r.text) if r.status_code == 200 else []
-        except requests.RequestException as e:
-            _ROB[base] = f"robots.txt 못 받음({type(e).__name__})"
+        _ROB[base] = _robots_get(base)
+        alt = ROBOTS_ALT.get(p.netloc)
+        if isinstance(_ROB[base], str) and alt:
+            got = _robots_get(alt)
+            if not isinstance(got, str):
+                log(f"  {p.netloc}: {_ROB[base]} — robots.txt를 두지 않는 API 주소라 {urllib.parse.urlsplit(alt).netloc} robots.txt를 따름")
+                _ROB[base] = got
     rules = _ROB[base]
     if isinstance(rules, str):
         return False, f"{rules} — 이 사이트 건너뜀"
