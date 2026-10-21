@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.11: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr · dart_fetch v3.9) 로고 연결(converse.co.kr)
 v33.10: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털·통계청이 일부 GitHub 서버에서만 막히는 문제 — 수집 상태 줄에
        '공공데이터포털 연결 안 됨(GitHub 서버 n대 모두 막힘 · 날짜부터)'(logistics.json dgk_conn · logistics_fetch v1.3)·'통계청 연결 안 됨(…)'
        (kosis.json conn · kosis_fetch v5.2) — 연결 시험은 통과했는데 못 받았으면 '연결 오류(GitHub 서버 n대에서 시도)'. 물류 화면 '이번 수집
@@ -1213,7 +1214,7 @@ const DOMAINS = {
   "111770.KS":"youngone.co.kr", "241590.KS":"hsenterprise.co.kr", "105630.KS":"hansae.com",
   "009970.KS":"youngonecorporation.com",
   "023530.KS":"lotteshopping.com", "004170.KS":"shinsegae.com", "069960.KS":"ehyundai.com",
-  "krd:nike_kr":"nike.com", "krd:adidas_kr":"adidas.co.kr", "krd:asics_kr":"asics.com", "krd:puma_kr":"puma.com",
+  "krd:nike_kr":"nike.com", "krd:converse_kr":"converse.co.kr", "krd:adidas_kr":"adidas.co.kr", "krd:asics_kr":"asics.com", "krd:puma_kr":"puma.com",
   "krd:descente_kr":"descentekorea.co.kr", "krd:skechers_kr":"skechers.com", "krd:arena_kr":"arena.co.kr", "krd:nb_eland":"newbalance.co.kr", "krd:abcmart_kr":"abcmart.co.kr",
   "krd:shoemarker":"shoemarker.co.kr", "krd:musinsa":"musinsa.com", "krd:k2_kr":"k2group.co.kr",
   "krd:blackyak":"blackyak.com", "krd:nepa":"nepa.co.kr", "krd:shinsung":"shinsungtongsang.com",
