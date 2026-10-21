@@ -1,12 +1,11 @@
 name: probe-prices
 
-# 임시 시험(병합하지 않음) — 작업 브랜치에 이 파일·probe_detail.py·probe_plan.json을 올리면 1회 실행
+# 임시 시험(병합하지 않음) — 작업 브랜치에서 price_fetch.py를 1회 돌려 로그로 확인(저장·커밋 안 함)
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
     paths:
-      - probe_detail.py
-      - probe_plan.json
+      - price_fetch.py
       - .github/workflows/probe-prices.yml
 
 permissions:
@@ -15,14 +14,18 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: pip install requests
-      - name: GitHub 서버
-        run: curl -s --max-time 8 https://ipinfo.io/json | python -c "import sys,json; d=json.load(sys.stdin); print('GitHub 서버:', '.'.join(d.get('ip','?').split('.')[:2])+'.x.x', d.get('region'), d.get('country'), d.get('org'))" || true
-      - name: Probe
-        run: python probe_detail.py probe_plan.json
+      - run: pip install -r requirements.txt
+      - name: Price fetch (force)
+        env:
+          PRICE_FORCE: "1"
+          PYTHONUNBUFFERED: "1"
+        run: python price_fetch.py && python -c "import json; d=json.load(open('docs/prices.json')); [print(it['id'], {cc:(o.get('p'), o.get('cur'), o.get('sale')) for cc,o in it['m'].items()}) for it in d['items']]"
+      - name: Soft fail lines
+        if: always()
+        run: cat soft_fail.txt 2>/dev/null || echo "실패 표시 없음"
