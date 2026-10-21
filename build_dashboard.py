@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
-v33.14: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 브랜드 상세 하단 · 나이키 포함) 브랜드 상세 맨 아래
-       '해외 정가 비교' — docs/prices.json(price_fetch v1 · 주 1회)의 대표 상품 정가(할인 전)를 그날 환율(data.json fx)로 원화 환산해
-       '한국이 n% 비쌈/쌈'(한국 정가 ÷ 현지 정가 원화 − 1 · 비쌈 파랑 = 병행수입 여지 / 쌈 짙은 주황). 맨 위 한 줄 = 그 브랜드 상품·나라 평균,
-       상품마다 나라별 표(현지 정가·원화·한국은) · 설명은 '읽는 법'으로 접음 · 이전 값 꼬리표 · 수집 상태에 '해외 정가' 줄
+v33.14: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 브랜드 상세 하단 · 나이키 포함) 브랜드 상세 하단
+       (본사 바로가기 위) '해외 정가 비교' — docs/prices.json(price_fetch v1 · 주 1회)의 대표 상품 정가(할인 전)를 그날 환율(data.json fx)로 원화 환산해
+       '한국이 n% 비쌈/쌈'(한국 정가 ÷ 현지 정가 원화 − 1 · 비쌈 파랑 / 쌈 짙은 주황). 맨 위 한 줄 = 그 브랜드 상품·나라 단순 평균,
+       상품마다 나라별 표(현지 정가·원화·한국은) · 설명은 '읽는 법'으로 접음 · 이전 값 꼬리표(환율이 이전 값이면 원화 칸에도) ·
+       그리다 오류가 나도 이 칸만 빠짐 · 수집 상태에 '해외 정가' 줄(이전 값·값 없음 나라 이름)
 v33.13: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr) 기업 상세에 컨버스 뉴스 연결(news_monitor v2.16 converse)
 v33.12: (대표 승인 2026-10-21) 물류 화면 주석·클래스 이름 정리 — 출발지·거점 설명을 '주요 출발지·주요 거점'으로(화면 같음)
 v33.11: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr · dart_fetch v3.9) 로고 연결(converse.co.kr)
@@ -968,7 +969,7 @@ div.bd-nx{cursor:default}
 .bd-pr-tbl th{font-size:13px;font-weight:600;color:var(--sub);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
 .bd-pr-tbl td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--line2);vertical-align:top}
 .bd-pr-tbl th:first-child,.bd-pr-tbl td:first-child{text-align:left;white-space:nowrap}
-.bd-pr-tbl td .tg{margin-left:4px}
+.bd-pr .tg{margin-left:4px}
 .bd-pr-tbl td:last-child{white-space:nowrap}
 .bd-pr-sale{font-size:13px;color:var(--sub);font-weight:400}
 .bd-pr-src{margin:0;font-size:13px;color:var(--sub)}
@@ -4150,9 +4151,10 @@ function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음)
     +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
 /* ── v33.14 해외 정가 비교(브랜드 상세 하단) — docs/prices.json(price_fetch v1)의 대표 상품 정가(할인 전)를 오늘 환율로 원화 환산.
-   한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈(+) 파랑 = 병행수입 여지 · 쌈(−) 짙은 주황 · 환율이 없는 통화는 그 나라 줄을 '환율 없음' ── */
-const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코',BR:'브라질'}, PR_ORD=['US','GB','DE','JP','MX','BR'];
-const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$',BRL:'R$'};
+   한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈(+) 파랑 · 쌈(−) 짙은 주황 · 환율이 없는 통화는 그 나라 줄을 '환율 없음'
+   나라는 price_fetch MK와 같게(나라를 늘리면 PR_ORD·PR_CC·PR_SYM도) ── */
+const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코'}, PR_ORD=['US','GB','DE','JP','MX'];
+const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$'};
 const prLocal=(p,cur)=>(PR_SYM[cur]||cur+' ')+(p>=1000||cur==='JPY'?Math.round(p).toLocaleString('ko-KR'):(+p).toFixed(p%1?2:0));
 const prGapTxt=g=>Math.abs(g)<0.5?'거의 같음':`${Math.abs(Math.round(g))}% ${g>0?'비쌈':'쌈'}`;
 function prRows(it){   // 한 상품의 나라별 줄 — [{cc, o, krw, gap}]
@@ -4167,22 +4169,23 @@ function prSecHtml(bname){
   const all=[]; its.forEach(it=>prRows(it).rows.forEach(r=>{ if(r.gap!=null) all.push(r.gap); }));
   const avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
   let h=`<section class="bd-sec" aria-labelledby="bdPrH"><h2 id="bdPrH">해외 정가 비교</h2>`;
-  h+=avg==null?`<p class="bd-none">한국 정가 자료 없음</p>`
-    :`<p class="bd-pr-sum">한국 정가가 해외보다 평균 <b class="${Math.abs(avg)<0.5?'':avg>0?'pos':'neg'}">${prGapTxt(avg)}</b> <span class="na">(상품 ${its.length}개 · ${all.length}개 비교)</span></p>`;
+  const near=avg!=null&&Math.abs(avg)<0.5;
+  h+=avg==null?`<p class="bd-none">${its.some(it=>prRows(it).kr)?'비교할 해외 정가·환율 없음':'한국 정가 자료 없음'}</p>`
+    :`<p class="bd-pr-sum">한국 정가가 해외${near?'와':'보다'} 평균 <b class="${near?'':avg>0?'pos':'neg'}">${prGapTxt(avg)}</b> <span class="na">(상품 ${its.length}개 · ${all.length}개 비교)</span></p>`;
   its.forEach(it=>{
     const {kr,rows}=prRows(it);
     h+=`<div class="bd-pr"><div class="bd-pr-hd"><span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}</span></div>`;
     if(kr&&rows.length){
       h+=`<div class="tblwrap"><table class="bd-pr-tbl"><tr><th>나라</th><th>현지 정가</th><th>원화</th><th>한국은</th></tr>`
         +rows.map(r=>`<tr><td>${PR_CC[r.cc]}${r.o.sale?'<div class="bd-pr-sale" title="지금 할인 중인 색상·사이즈가 있음 — 정가는 할인 전 가격">할인 중</div>':''}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}</td>`
-          +`<td>${r.krw?wonR(r.krw)+'원':'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':`<b class="${Math.abs(r.gap)<0.5?'':r.gap>0?'pos':'neg'}">${prGapTxt(r.gap)}</b>`}</td></tr>`).join('')
+          +`<td>${r.krw?wonR(r.krw)+'원'+staleA(((DATA.fx||{})[r.o.cur]||{}).stale_since):'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':`<b class="${Math.abs(r.gap)<0.5?'':r.gap>0?'pos':'neg'}">${prGapTxt(r.gap)}</b>`}</td></tr>`).join('')
         +`</table></div>`;
     } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
     h+=`</div>`;
   });
-  const fd=PRICES.fetched?`${+PRICES.fetched.slice(5,7)}/${+PRICES.fetched.slice(8,10)}`:'';
+  const fs=String(PRICES.fetched||''), fd=/^\d{4}-\d{2}-\d{2}/.test(fs)?`${+fs.slice(5,7)}/${+fs.slice(8,10)}`:'';
   h+=`<p class="bd-pr-src">브랜드 공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''} · 오늘 환율</p>`;
-  h+=why('한국은 = 한국 정가 ÷ (현지 정가 × 오늘 환율) − 1. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). 할인 중이면 할인 전 정가를 그대로 둡니다. 미국 가격은 판매세 별도(주마다 0~10%), 유럽·영국·일본·멕시코·한국 가격은 부가세 포함. 비쌈(파랑) = 해외에서 들여올 여지, 쌈(주황) = 한국이 더 쌈. 관세·운임은 넣지 않은 단순 비교. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
+  h+=why('한국은 = 한국 정가 ÷ (현지 정가 × 오늘 환율) − 1. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 중\' = 지금 할인 중인 색상·사이즈가 있음(표는 할인 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함. 맨 위 평균 = 상품·나라별 차이의 단순 평균. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
   return h+`</section>`;
 }
 
@@ -4211,7 +4214,7 @@ function brDetailHtml(d,bname){
     :`<p class="bd-none">최근 14일 중요(★2 이상) 뉴스 없음</p>`;
   if(d.newsAll) h+=`<button type="button" class="bd-link" data-go="news:k:${esc(d.newsAll.key)}"><span class="tt"><span class="t">${esc(d.newsAll.label)} 뉴스 모두 보기</span><span class="s">시장 › 뉴스</span></span>${ic('right',20,'s2 chev')}</button>`;
   h+=`</div></section>`;
-  h+=prSecHtml(bname);   // v33.14 해외 정가 비교(자료 있는 브랜드만)
+  h+=(()=>{ try{ return prSecHtml(bname); }catch(e){ console.error('[해외 정가] 그리기 실패:',e); return ''; } })();   // v33.14 해외 정가 비교(자료 있는 브랜드만 · 오류면 이 칸만 빠짐)
   if(d.hqLink) h+=`<button type="button" class="bd-hq" data-go="${esc(d.hqLink.go)}"><span class="tt"><span class="t">${esc(d.hqLink.title)}</span><span class="s">${esc(d.hqLink.sub)}</span></span>${ic('right',20,'s2 chev')}</button>`;
   return h+`</div>`;
 }
@@ -4957,12 +4960,16 @@ def _partial(fn, d):
         if bad:
             notes.append("값 없음 " + ", ".join(bad))
         notes += _conn_note(d.get("dgk_conn"), "공공데이터포털")   # v33.10 logistics_fetch v1.3
-    elif fn == "prices.json":   # v33.14 price_fetch v1 — 이전 값(stale_since)인 상품·나라
-        kept = [f"{it.get('brand', '')} {it.get('name', '')} {cc}" for it in d.get("items") or [] if isinstance(it, dict)
+    elif fn == "prices.json":   # v33.14 price_fetch v1 — 이전 값(stale_since)·값 없음(failed)인 상품·나라
+        ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코"}
+        kept = [f"{it.get('brand', '')} {it.get('name', '')} {ccn.get(cc, cc)}" for it in d.get("items") or [] if isinstance(it, dict)
                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since")]
-        n = len(kept)
+        bad = [f"{f.get('brand', '')} {f.get('name', '')} {ccn.get(f.get('cc'), f.get('cc'))}" for f in d.get("failed") or [] if isinstance(f, dict)]
+        n = len(kept) + len(bad)
         if kept:
-            notes.append(f"이전 값 {n}건: " + ", ".join(kept[:4]) + (" 외" if n > 4 else ""))
+            notes.append("이전 값 " + ", ".join(kept[:4]) + (f" 외 {len(kept) - 4}건" if len(kept) > 4 else ""))
+        if bad:
+            notes.append("값 없음 " + ", ".join(bad[:4]) + (f" 외 {len(bad) - 4}건" if len(bad) > 4 else ""))
         if d.get("fetched"):
             notes.append(f"마지막으로 받은 날 {d['fetched']}")
     else:
@@ -5110,14 +5117,15 @@ def main():
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None
-    prices = None   # v33.14 해외 정가(price_fetch v1) — 화면에 안 쓰는 주소·사유는 뺌
+    prices = None   # v33.14 해외 정가(price_fetch v1) — 화면에 안 쓰는 주소·사유·이번 관측값·값 없음 목록은 뺌
     if os.path.exists("docs/prices.json"):
         try:
             with open("docs/prices.json", encoding="utf-8") as f:
                 prices = json.load(f)
+            prices.pop("failed", None)
             for it in prices.get("items") or []:
                 for o in (it.get("m") or {}).values():
-                    for k in ("url", "why", "obs_date"):
+                    for k in ("url", "why", "obs", "obs_date", "cand", "cand_date"):
                         o.pop(k, None)
         except Exception as e:
             print(f"[WARN] prices.json 읽기 실패: {str(e)[:100]}")
