@@ -1,18 +1,304 @@
 [
- {"host": "kr.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product", "pdp"], "check": 3, "want": 1},
- {"host": "us.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product", "pdp"], "check": 3, "want": 1},
- {"host": "eu.puma.com", "pats": ["/de/de/pd/speedcat-og", "/de/de/pd/palermo-sneakers", "/de/de/pd/suede-xl"], "prefer": ["de", "product"], "check": 3, "want": 1},
- {"host": "uk.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
- {"host": "jp.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
- {"host": "mx.puma.com", "pats": ["398846", "396463", "395205"], "prefer": ["product"], "check": 3, "want": 1},
- {"urls": ["https://salomon.co.kr/products.json?limit=5"], "check": 1},
- {"host": "salomon.co.kr", "pats": ["xt-6", "acs-pro", "speedcross-6"], "check": 4, "want": 2},
- {"host": "www.salomon.com", "pats": ["en-us/product/xt-6-gore-tex", "en-us/product/acs-pro", "de-de/product/acs-pro", "en-gb/product/xt-6-gore-tex", "ja-jp/product/xt-6", "es-mx/product/xt-6"], "prefer": ["product"], "check": 6, "want": 1},
- {"host": "www.drmartens.co.kr", "pats": ["1460", "1461", "jadon"], "check": 3, "want": 1},
- {"host": "www.drmartens.com", "pats": ["/us/en/1461", "/uk/en_gb/1461", "/us/en/jadon", "/uk/en_gb/jadon", "/de/de_de/1460", "/mx/"], "prefer": ["product"], "check": 6, "want": 1},
- {"host": "www.on.com", "pats": ["ko-kr/products/cloud-6", "en-us/products/cloud-6", "ko-kr/products/cloudmonster-2", "en-us/products/cloudmonster-2", "de-de/products/cloud-6", "ja-jp/products/cloud-6"], "prefer": ["product"], "check": 6, "want": 1, "max_maps": 60},
- {"host": "www.underarmour.com", "pats": ["3024590", "3024591"], "prefer": ["product", "en-us"], "check": 2, "want": 1},
- {"host": "www.onitsukatiger.com", "pats": ["kr/ko-kr/product/mexico-66", "us/en-us/product/mexico-66", "jp/ja-jp/product/mexico-66", "gb/en-gb/product/mexico-66"], "prefer": ["product", "pdp"], "check": 4, "want": 1},
- {"host": "kr.burberry.com", "pats": ["p80592411", "trench"], "check": 2, "want": 1},
- {"host": "us.burberry.com", "pats": ["p80592411"], "check": 1, "want": 1}
+ {
+  "id": "nike-CW2288-111-KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-CW2288-111-US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-CW2288-111-GB",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-CW2288-111-DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-CW2288-111-JP",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-CW2288-111-MX",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-GB",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-JP",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DD1391-100-MX",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-GB",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-JP",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-DZ5485-612-MX",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DZ5485-612)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-GB",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-JP",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-CN8490-100-MX",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-KR",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-US",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-GB",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-DE",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-JP",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "nike-FQ8080-133-MX",
+  "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FQ8080-133)",
+  "json": true
+ },
+ {
+  "id": "puma-us-palermo",
+  "url": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
+  "near": [
+   "396463"
+  ]
+ },
+ {
+  "id": "puma-kr-palermo",
+  "url": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
+  "near": [
+   "396463"
+  ]
+ },
+ {
+  "id": "puma-uk-speedcat",
+  "url": "https://uk.puma.com/uk/en/pd/speedcat-og-sneakers-unisex/398846"
+ },
+ {
+  "id": "puma-de-speedcat",
+  "url": "https://eu.puma.com/de/de/pd/speedcat-og-sneakers/398846.html"
+ },
+ {
+  "id": "puma-de-palermo",
+  "url": "https://eu.puma.com/de/de/pd/palermo-sneakers/396463.html"
+ },
+ {
+  "id": "puma-mx-palermo",
+  "url": "https://mx.puma.com/mx/es/pd/tenis-palermo/396463.html"
+ },
+ {
+  "id": "on-us",
+  "url": "https://www.on.com/en-us/products/cloudmonster-61/mens/all-white-shoes-61.98434"
+ },
+ {
+  "id": "on-de",
+  "url": "https://www.on.com/de-de/products/cloudmonster-61/mens/all-white-shoes-61.98434"
+ },
+ {
+  "id": "salomon-us",
+  "url": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333"
+ },
+ {
+  "id": "salomon-gb",
+  "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333"
+ },
+ {
+  "id": "salomon-jp",
+  "url": "https://www.salomon.com/ja-jp/product/xt-6-gore-tex-lg9333"
+ },
+ {
+  "id": "salomon-kr-json",
+  "url": "https://salomon.co.kr/products/l47450600.json",
+  "json": true
+ },
+ {
+  "id": "drm-uk-1460",
+  "url": "https://www.drmartens.com/uk/en_gb/1460-smooth-leather-lace-up-boots-black/p/11822006"
+ },
+ {
+  "id": "drm-de-1460",
+  "url": "https://www.drmartens.com/de/de_de/1460-smooth-leather-lace-up-boots-black/p/11822006"
+ },
+ {
+  "id": "drm-us-1461",
+  "url": "https://www.drmartens.com/us/en/1461-smooth-leather-oxford-shoes-black/p/11838002"
+ },
+ {
+  "id": "drm-uk-jadon",
+  "url": "https://www.drmartens.com/uk/en_gb/jadon-boot-smooth-leather-platforms-black/p/15265001"
+ },
+ {
+  "id": "drm-kr-1460-json",
+  "url": "https://www.drmartens.co.kr/products/1460-2.json",
+  "json": true
+ },
+ {
+  "id": "drm-kr-list1",
+  "url": "https://www.drmartens.co.kr/products.json?limit=250&page=1",
+  "json": true,
+  "codes": [
+   "11822006",
+   "11838002",
+   "15265001"
+  ]
+ },
+ {
+  "id": "drm-kr-list2",
+  "url": "https://www.drmartens.co.kr/products.json?limit=250&page=2",
+  "json": true,
+  "codes": [
+   "11822006",
+   "11838002",
+   "15265001"
+  ]
+ },
+ {
+  "id": "drm-kr-list3",
+  "url": "https://www.drmartens.co.kr/products.json?limit=250&page=3",
+  "json": true,
+  "codes": [
+   "11822006",
+   "11838002",
+   "15265001"
+  ]
+ },
+ {
+  "id": "drm-kr-list4",
+  "url": "https://www.drmartens.co.kr/products.json?limit=250&page=4",
+  "json": true,
+  "codes": [
+   "11822006",
+   "11838002",
+   "15265001"
+  ]
+ },
+ {
+  "id": "salomon-kr-list1",
+  "url": "https://salomon.co.kr/products.json?limit=250&page=1",
+  "json": true,
+  "codes": [
+   "l47450600",
+   "l47179800",
+   "l41737900",
+   "xt-6",
+   "acs-pro"
+  ]
+ },
+ {
+  "id": "salomon-kr-list2",
+  "url": "https://salomon.co.kr/products.json?limit=250&page=2",
+  "json": true,
+  "codes": [
+   "l47450600",
+   "l47179800",
+   "l41737900",
+   "xt-6",
+   "acs-pro"
+  ]
+ },
+ {
+  "id": "salomon-kr-list3",
+  "url": "https://salomon.co.kr/products.json?limit=250&page=3",
+  "json": true,
+  "codes": [
+   "l47450600",
+   "l47179800",
+   "l41737900",
+   "xt-6",
+   "acs-pro"
+  ]
+ }
 ]
