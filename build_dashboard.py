@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.13: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr) 기업 상세에 컨버스 뉴스 연결(news_monitor v2.16 converse)
 v33.12: (대표 승인 2026-10-21) 물류 화면 주석·클래스 이름 정리 — 출발지·거점 설명을 '주요 출발지·주요 거점'으로(화면 같음)
 v33.11: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr · dart_fetch v3.9) 로고 연결(converse.co.kr)
 v33.10: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털·통계청이 일부 GitHub 서버에서만 막히는 문제 — 수집 상태 줄에
@@ -1244,7 +1245,7 @@ const NEWS_KEY = {"FRAS.L":"frasers","ZAL.DE":"zalando","SBFG3.SA":"sbf","4240.S
   "BIRK":"birkenstock","CROX":"crocs","VFC":"vf","UAA":"ua","8022.T":"mizuno","7906.T":"yonex","8111.T":"goldwin",
   "2020.HK":"anta","2331.HK":"lining","PUM.DE":"puma","WWW":"saucony","COLM":"columbia","DOCS.L":"drmartens","456A.T":"humanmade","0933.HK":"clarks","DKS":"dks","JD.L":"jd","ASO":"academy",
   "MONC.MI":"moncler","ZGN":"thombrowne","BRBY.L":"burberry","RL":"ralphlauren",   // v33.8
-  "krd:nike_kr":"nike","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente","krd:skechers_kr":"skechers",
+  "krd:nike_kr":"nike","krd:converse_kr":"converse","krd:adidas_kr":"adidas","krd:asics_kr":"asics","krd:puma_kr":"puma","krd:descente_kr":"descente","krd:skechers_kr":"skechers",
   "krd:nb_eland":"newbalance"};
 /* 재고일수 = 재고 ÷ 매출원가 × 365 (연간 원가 기준, 재고는 최근 잔액) */
 function dioOf(inv, rev, gp, cogs){

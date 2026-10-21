@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.16: (대표 지시 2026-10-21) 컨버스 뉴스(converse) 추가 — 컨버스코리아(krd:converse_kr) 기업 상세 뉴스와 같은 키. 영어 'converse'는 일반 낱말이라
+       "Converse shoes"·"Converse sneakers"·"Chuck Taylor" 구절로만 찾고 한글은 컨버스
 v2.15: (대표 지시 2026-10-19 '2순위 새 종목 추가') 명품·패션 브랜드 뉴스 2곳 — 톰브라운(thombrowne · 본사 제냐 실적 뉴스 포함)·랄프로렌(ralphlauren).
        몽클레르 검색에 '몽클레어'(국내 표기가 더 많음). 브랜드 점검표 브랜드 상세 '최근 뉴스'·기업 상세 뉴스와 같은 키
 v2.14: (대표 지시 2026-10-16 '만들어줘' — 물류비·운송기간 추이) 산업 '물류·운임'(logistics) 검색어 5개 + 선별 기준 — 해상·항공 운임(KCCI·SCFI·
@@ -97,6 +99,7 @@ UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor news bot)"}
 BRANDS = {
     # ── 스포츠·아웃도어 (sports) ──
     "nike":       ["나이키", "sports", '"Nike" OR 나이키 브랜드'],
+    "converse":   ["컨버스", "sports", '"Converse shoes" OR "Converse sneakers" OR "Chuck Taylor" OR 컨버스'],   # v2.16 나이키 자회사
     "adidas":     ["아디다스", "sports", '"adidas" OR 아디다스'],
     "on":         ["온홀딩", "sports", '"On Running" OR "On Holding" OR 온러닝'],
     "hoka":       ["호카·어그(데커스)", "sports", '"HOKA" OR "Deckers" OR 호카 OR "UGG" OR 어그부츠'],
