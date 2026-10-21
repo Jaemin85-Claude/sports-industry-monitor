@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.12: (대표 승인 2026-10-21) 물류 화면 주석·클래스 이름 정리 — 출발지·거점 설명을 '주요 출발지·주요 거점'으로(화면 같음)
 v33.11: (대표 지시 2026-10-21) 컨버스코리아(krd:converse_kr · dart_fetch v3.9) 로고 연결(converse.co.kr)
 v33.10: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털·통계청이 일부 GitHub 서버에서만 막히는 문제 — 수집 상태 줄에
        '공공데이터포털 연결 안 됨(GitHub 서버 n대 모두 막힘 · 날짜부터)'(logistics.json dgk_conn · logistics_fetch v1.3)·'통계청 연결 안 됨(…)'
@@ -711,7 +712,7 @@ a.nmore{text-decoration:none}
 .kpi .v small{font-size:var(--fs-xs);font-weight:400;margin-left:1px}
 .lg-tbl td,.lg-tbl th{white-space:nowrap}
 .lg-tbl td:first-child,.lg-tbl th:first-child{text-align:left}
-.lg-tbl tr.lg-me td:first-child{font-weight:700}
+.lg-tbl tr.lg-key td:first-child{font-weight:700}
 .lg-tr{margin-top:8px}
 .cb-trend.lg-tr.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
 .lg-sub{font-size:var(--fs-2xs);color:var(--sub);margin-top:1px;word-break:keep-all;overflow-wrap:anywhere}
@@ -3387,7 +3388,7 @@ function lgSpark(pts,o={}){   // pts=[[날짜·달, 값]] → 작은 선 그래�
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" overflow="visible" role="img" aria-label="${esc(o.label||'추이')}"><path d="${d} L${x(e[2]).toFixed(1)} ${H-pd} L${x(P[0][2]).toFixed(1)} ${H-pd} Z" fill="var(--barbg)" stroke="none"/>${war}
     <path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" vector-effect="non-scaling-stroke"/>${e[2]===n?`<path d="M${x(n).toFixed(1)} ${y(e[1]).toFixed(1)}h0" stroke="${col}" stroke-width="6" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
 }
-/* 관세청 한국향 운임: 출발지 순서 = 트렉시 소싱(유럽·미국·일본) 먼저 */
+/* 관세청 한국향 운임: 출발지 순서 = 패션 수입 주요 출발지(유럽·미국·일본) 먼저 */
 const LG_KCS_LBL={'유럽연합':'유럽(EU)','미국서부':'미국 서부','미국동부':'미국 동부','미국':'미국','일본':'일본','중국':'중국','베트남':'베트남'};
 const LG_KCS_ORD=['유럽연합','미국서부','미국동부','미국','일본','중국','베트남'];
 function lgKcs(key){   // → {cols, rows, L(최근 달), P(전달), W(전쟁 전 달), Y(1년 전 달), B(블록)} 또는 null
@@ -3405,9 +3406,9 @@ function lgKcsCard(key){   // key 없음 = 수입(바닷길·항공 칩, LG_KCS)
   const idx=c=>K.cols.indexOf(c), cols=LG_KCS_ORD.filter(c=>idx(c)>=0);
   h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>${ex?'도착지':'출발지'}</th><th>${lgMon(K.L[0])}<br><span class="na">${unit}</span></th><th>전월</th><th>전쟁 전<br><span class="na">${lgMon(LG_PRE_M)}</span></th><th>1년 전</th></tr>`;
   cols.forEach(c=>{ const i=idx(c)+1, v=K.L[i];
-    h+=`<tr${!ex&&(c==='유럽연합'||c==='미국서부'||c==='미국'||c==='일본')?' class="lg-me"':''}><td>${esc(LG_KCS_LBL[c]||c)}</td><td class="num">${lgN(v)}</td><td>${lgChg(lgRatio(v,K.P[i]),false)}</td><td>${lgChg(lgRatio(v,K.W&&K.W[i]),false)}</td><td>${lgChg(lgRatio(v,K.Y&&K.Y[i]),false)}</td></tr>`; });
+    h+=`<tr${!ex&&(c==='유럽연합'||c==='미국서부'||c==='미국'||c==='일본')?' class="lg-key"':''}><td>${esc(LG_KCS_LBL[c]||c)}</td><td class="num">${lgN(v)}</td><td>${lgChg(lgRatio(v,K.P[i]),false)}</td><td>${lgChg(lgRatio(v,K.W&&K.W[i]),false)}</td><td>${lgChg(lgRatio(v,K.Y&&K.Y[i]),false)}</td></tr>`; });
   h+=`</table></div>`;
-  // 추이(최근 24달): 수입 = 유럽·미국(서부)·일본(트렉시 소싱) · 수출 = 미국 서부·유럽·중국
+  // 추이(최근 24달): 수입 = 유럽·미국(서부)·일본(주요 출발지) · 수출 = 미국 서부·유럽·중국
   const pick=(ex?['미국서부','유럽연합','중국']:['유럽연합',air?'미국':'미국서부','일본']).filter(c=>idx(c)>=0), R24=K.R.slice(-24);
   h+=`<div class="cb-trend lg-tr k3">${pick.map((c,j)=>{ const i=idx(c)+1, pts=R24.map(r=>[r[0],r[i]]);
     return `<div class="cb-tr"><div class="h"><b>${esc(LG_KCS_LBL[c]||c)}</b><span class="num">${lgN(K.L[i])}</span></div>${lgSpark(pts,{accent:j===0,label:(LG_KCS_LBL[c]||c)+' 최근 24달'})}<div class="ax"><span>${lgMon(R24[0][0])}</span><span>${lgMon(K.L[0])}</span></div></div>`; }).join('')}</div>`;
@@ -3477,7 +3478,7 @@ function lgPortCard(){   // v33.5 '중동 항만' — 걸프 안 제벨알리(�
   h+=ms.map(nm=>`<div class="fplain"><span>${esc(nm)}</span><span class="na"><span class="stl" style="margin-left:0" title="이번 수집 실패 — 이전 값 없음">값 없음</span></span></div>`).join('');
   return h+why('제벨알리(두바이)는 걸프 안쪽 — 호르무즈가 막히자 화물이 해협 밖 코르파칸·푸자이라(아랍에미리트 동해안)로 돌아 트럭으로 들어갑니다(대기 1~2주 보도)')+`</div>`;   // v33.9 접음
 }
-/* v33.5 적출 거점 → 부산(logistics_fetch v1.1 hubs — 대표가 정한 홍콩·로테르담·두바이·벨기에 → 세계 1~5위 → 지역 대표).
+/* v33.5 적출 거점 → 부산(logistics_fetch v1.1 hubs — 주요 거점 홍콩·로테르담·두바이·벨기에 → 세계 1~5위 → 지역 대표).
    n = 이름(logistics_fetch HUBS와 같게 — 값 없음 줄 찾기 · '·' 쓰지 않음) · c = 나라·항만 설명 · r = 한국까지 길목(eu 수에즈·홍해 또는 희망봉 · me 호르무즈 ·
    asia·sea·us 전쟁 길목 없음) · k = 관세청 운임 지역 [바닷길, 항공]. 순서 = 화면 순서 */
 const LG_HUB={'Hong Kong':{n:'홍콩',c:'홍콩 특별행정구',r:'asia'},'Rotterdam':{n:'로테르담',c:'네덜란드',r:'eu',k:['유럽연합','유럽연합']},
