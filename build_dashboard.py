@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.19: (대표 지시 2026-10-22 '해외 정가 탭 국가 있는 표에 헤더는 고정') 더보기 › 해외 정가 표 — 세로로 넘겨도 나라 머리 줄이 위에 붙어 있게
+  (표 상자 높이를 화면 안으로 · 표 안에서 넘김 · 왼쪽 위 모서리 칸은 가로·세로 모두 고정 · 화면 높이는 phSync가 --ch·--phh로)
 v33.18: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품 5개 이상' — price_fetch v1.3으로 상품 13 → 56개) 브랜드 상세 '해외 정가 비교'는
   상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침 · 머리 줄에 품번·한국 정가·해외 대비 평균) — 브랜드마다 5~7개라 화면이 길어지지 않게 ·
   접힌 칸도 수집 실패 표시는 머리 줄에('이전 값 n곳'·'값 없음 n곳' — 화면 규칙 '수집 실패 표시는 접지 않음') · 펼친 칸은 기억(PR_OPEN — 뒤로 와도 같은 칸)
@@ -1005,11 +1007,12 @@ div.bd-nx{cursor:default}
 /* v33.16 더보기 › 해외 정가 — 상품 × 나라 한 표(첫 열 고정 · 표만 가로 넘김) */
 .pm-ctl{display:flex;flex-direction:column;gap:6px;margin:10px 0}
 .pm-cap{margin:0 0 6px;font-size:13px;color:var(--sub);word-break:keep-all;overflow-wrap:break-word}
-#prMx .tblwrap{margin:0 0 8px;border:1px solid var(--line);border-radius:12px}
+#prMx .tblwrap{margin:0 0 8px;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:max(320px,calc(var(--ch,80vh) - var(--phh,0px) - 16px))}   /* v33.19 표 상자 높이를 화면 안으로 — 세로로 넘겨도 나라 머리 줄이 보이게(표 안에서 넘김) */
 #prMx .tblwrap:focus-visible{outline-offset:-2px}
 .pm-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;font-variant-numeric:tabular-nums}
 .pm-tbl th,.pm-tbl td{padding:8px 6px;border-bottom:1px solid var(--line2);text-align:right;vertical-align:top;white-space:nowrap;min-width:68px}
-.pm-tbl thead th{font-size:13px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--line);vertical-align:bottom}
+.pm-tbl thead th{font-size:13px;font-weight:600;color:var(--sub);border-bottom:1px solid var(--line);vertical-align:bottom;position:sticky;top:0;z-index:2;background:var(--bg)}   /* v33.19 나라 머리 줄 고정 */
+.pm-tbl thead th:first-child{z-index:3}   /* 왼쪽 위 모서리 칸 = 가로·세로 모두 고정 */
 .pm-tbl th:first-child{position:sticky;left:0;z-index:1;background:var(--bg);text-align:left;white-space:normal;word-break:keep-all;overflow-wrap:break-word;min-width:112px;max-width:144px;box-shadow:inset -1px 0 0 var(--line)}
 .pm-tbl tr[data-brand]:focus-visible>th{box-shadow:inset 2px 0 0 var(--accent),inset 0 2px 0 var(--accent),inset 0 -1px 0 var(--accent),inset -1px 0 0 var(--line);border-bottom-color:var(--accent)}   /* v33.17 줄 초점 테두리(tr outline)가 고정 열 밑에 가려지지 않게 고정 칸에도 그림 */
 .pm-tbl tbody:last-child tr:last-child th,.pm-tbl tbody:last-child tr:last-child td{border-bottom:0}
@@ -4604,6 +4607,7 @@ function phSync(){
   if(PH_RAF){ cancelAnimationFrame(PH_RAF); PH_RAF=0; } const c=scrollBox(); if(!c) return; let h=0;
   document.querySelectorAll('.pane.on .phead,.pane.on .mk-chips').forEach(e=>{ h=Math.max(h,e.offsetHeight); });
   const v=h?(h+8)+'px':''; if(c.style.scrollPaddingTop!==v) c.style.scrollPaddingTop=v;
+  c.style.setProperty('--ch',c.clientHeight+'px'); c.style.setProperty('--phh',h+'px');   // v33.19 화면 높이·고정 머리 높이 — 해외 정가 표 상자 높이(머리 줄 고정)
 }
 function phSoon(){ if(!PH_RAF) PH_RAF=requestAnimationFrame(phSync); }
 try{ const ro=new ResizeObserver(phSoon); ['tdHead','brHead'].forEach(id=>{ const e=document.getElementById(id); if(e) ro.observe(e); }); }catch(e){}
