@@ -1,38 +1,81 @@
 [
  {
-  "t": "sitemap",
-  "host": "saucony.co.kr",
-  "pats": [
-   "남성-엔돌핀-프로-5",
-   "공용-엔돌핀-프로-5",
-   "남성-허리케인-26",
-   "남성-트라이엄프-24",
-   "남성-옴니"
-  ],
-  "want": 4,
-  "max_maps": 10
- },
- {
   "t": "grep",
   "urls": [
-   "https://www.saucony.com/en/endorphin-pro-5/60803M.html",
-   "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html",
-   "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60803M.html",
-   "https://www.saucony.com/en/hurricane-26/61249M.html",
-   "https://www.saucony.com/UK/en_GB/hurricane-26/61249M.html",
-   "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html",
-   "https://www.saucony.com/en/triumph-24/61229M.html",
-   "https://www.saucony.com/UK/en_GB/triumph-24/61229M.html",
-   "https://www.saucony.com/DE/de_DE/triumph-24/61229M.html",
-   "https://www.saucony.com/en/omni-st-23/60844M.html",
-   "https://www.saucony.com/UK/en_GB/omni-st-23/60844M.html",
-   "https://www.saucony.com/DE/de_DE/omni-st-23/60844M.html"
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%98%B4%EB%8B%88-st-23-triple-black/289/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/535/"
   ],
   "rx": [
-   "data-stock-number=\"([^\"]+)\"",
-   "itemprop=\"price\"[^>]*>\\s*([0-9][0-9.,]*)",
-   "class=\"price-standard[^\"]*\"[^>]*>\\s*([^<]{2,20})"
+   "(S[0-9]{4,6}-[0-9]{1,4})",
+   "\"price\"\\s*:\\s*\"?([0-9]{4,7})"
   ],
-  "max": 6
+  "max": 4
+ },
+ {
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "saucony-triumph24",
+    "brand": "써코니",
+    "name": "saucony-triumph24",
+    "code": "S100997",
+    "src": "page",
+    "hint": "트라이엄프 24",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
+     "US": "https://www.saucony.com/en/triumph-24/61229M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/triumph-24/61229M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/triumph-24/61229M.html"
+    }
+   },
+   {
+    "id": "saucony-endpro5",
+    "brand": "써코니",
+    "name": "saucony-endpro5",
+    "code": "S21064",
+    "src": "page",
+    "hint": "엔돌핀 프로 5",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
+     "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60803M.html"
+    }
+   },
+   {
+    "id": "saucony-omni23",
+    "brand": "써코니",
+    "name": "saucony-omni23",
+    "code": "S21072",
+    "src": "page",
+    "hint": "옴니 ST 23",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%98%B4%EB%8B%88-st-23-triple-black/289/",
+     "US": "https://www.saucony.com/en/omni-st-23/60844M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/omni-st-23/60844M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/omni-st-23/60844M.html"
+    }
+   },
+   {
+    "id": "saucony-hurricane26",
+    "brand": "써코니",
+    "name": "saucony-hurricane26",
+    "code": "S101098",
+    "src": "page",
+    "hint": "허리케인 26",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/535/",
+     "US": "https://www.saucony.com/en/hurricane-26/61249M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/hurricane-26/61249M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html"
+    }
+   }
+  ]
  }
 ]
