@@ -1,0 +1,51 @@
+name: probe-prices
+
+# 임시 시험(병합하지 않음) — 푸마 멕시코 상품 페이지에서 정가(할인 전) 표기 위치 찾기(저장·커밋 안 함)
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths:
+      - .github/workflows/probe-prices.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Puma page probe
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python - <<'PY'
+          import re, json, price_fetch as pf
+          prod = next(p for p in pf.PRODUCTS if p["id"] == "puma-speedcat")
+          for cc in ("MX", "US", "KR"):
+              url = prod["urls"][cc]
+              try:
+                  r = pf.get(url)
+              except Exception as e:
+                  print(f"== {cc} 못 받음: {e}"); continue
+              h = r.text
+              print(f"== {cc} {r.status_code} len {len(h)}")
+              for n in pf._ld_nodes(h):
+                  if pf._types(n) & {"product", "productgroup"}:
+                      offs = json.dumps(n.get("offers"), ensure_ascii=False)[:300]
+                      print("  LD", n.get("@type"), str(n.get("name"))[:40], n.get("productGroupID") or n.get("sku"), "offers:", offs)
+                      vs = n.get("hasVariant") or []
+                      print("  variants", len(vs), [ (v.get("sku"), (v.get("offers") or {}).get("price") if isinstance(v.get("offers"), dict) else None, json.dumps((v.get("offers") or {}).get("priceSpecification"), ensure_ascii=False)[:120] if isinstance(v.get("offers"), dict) else None) for v in vs[:4]])
+              flat = h.replace('\\"', '"')
+              seen = 0
+              for pat in (r"2,?199", r"1,?539", r'"list[A-Za-z]*"\s*:', r'"(?:original|regular|standard|strike)[A-Za-z]*"\s*:', r"precio (?:regular|original|anterior)", r"line-through|strikethrough|price-strike|was-price"):
+                  for m in list(re.finditer(pat, flat, re.I))[:4]:
+                      s = flat[max(0, m.start() - 140): m.end() + 140].replace("\n", " ")
+                      print(f"  [{pat}] …{s}…"); seen += 1
+              print("  snippets", seen)
+          PY
