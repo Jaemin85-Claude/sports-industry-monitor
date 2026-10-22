@@ -3,261 +3,251 @@
   "t": "fetch",
   "prods": [
    {
-    "id": "hunter-wshort",
-    "brand": "헌터",
-    "name": "hunter-wshort",
-    "code": "WFS1000RMA",
-    "src": "page",
-    "hint": "wfs1000rmablk",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507742896066BK01"
-    }
-   },
-   {
-    "id": "hunter-playtall",
-    "brand": "헌터",
-    "name": "hunter-playtall",
-    "code": "WFT2007RMA",
-    "src": "page",
-    "hint": "wft2007rmablk",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508641433091BK01"
-    }
-   },
-   {
-    "id": "hunter-chelsea",
-    "brand": "헌터",
-    "name": "hunter-chelsea",
-    "code": "WFS2078RMA",
-    "src": "page",
-    "hint": "wfs2078rmablk",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01"
-    }
-   },
-   {
-    "id": "hunter-playshort",
-    "brand": "헌터",
-    "name": "hunter-playshort",
-    "code": "WFS2020RMA",
-    "src": "page",
-    "hint": "wfs2020rmablk",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01"
-    }
-   },
-   {
-    "id": "hunter-gloss-short",
-    "brand": "헌터",
-    "name": "hunter-gloss-short",
-    "code": "WFS1000RGL",
-    "src": "page",
-    "hint": "wfs1000rglblk",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01"
-    }
-   },
-   {
-    "id": "dd-santamaria",
-    "brand": "드래곤디퓨전",
-    "name": "dd-santamaria",
-    "code": "8700",
-    "src": "page",
-    "hint": "santa maria",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX"
-    }
-   },
-   {
-    "id": "dd-triplejump",
-    "brand": "드래곤디퓨전",
-    "name": "dd-triplejump",
-    "code": "8811",
-    "src": "page",
-    "hint": "triple jump",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26029BKX"
-    }
-   },
-   {
-    "id": "dd-rosanna",
-    "brand": "드래곤디퓨전",
-    "name": "dd-rosanna",
-    "code": "8943",
-    "src": "page",
-    "hint": "rosanna",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26024BKX"
-    }
-   },
-   {
-    "id": "dd-juventus",
-    "brand": "드래곤디퓨전",
-    "name": "dd-juventus",
-    "code": "juventus",
-    "src": "page",
-    "hint": "유벤투스",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023DBR"
-    }
-   },
-   {
-    "id": "dd-ars",
-    "brand": "드래곤디퓨전",
-    "name": "dd-ars",
-    "code": "ars",
-    "src": "page",
-    "hint": "아르스",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR"
-    }
-   },
-   {
-    "id": "salomon-xt4oggtx",
-    "brand": "살로몬",
-    "name": "x",
-    "code": "L49210800",
-    "alt": [
-     "LI8806"
-    ],
-    "src": "page",
-    "hint": "xt-4",
-    "urls": {
-     "KR": "https://salomon.co.kr/products/l49210800.json",
-     "US": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
-     "GB": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
-     "DE": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806"
-    }
-   },
-   {
-    "id": "puma-396463",
+    "id": "puma-403902",
     "brand": "푸마",
-    "name": "p",
-    "code": "396463",
+    "name": "403902",
+    "code": "403902",
+    "src": "page",
+    "hint": "speedcat",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%ED%94%84%EB%A6%AC%EB%AF%B8%EC%97%84-%3Cbr%3Espeedcat-premium/403902.html"
+    }
+   },
+   {
+    "id": "puma-401560",
+    "brand": "푸마",
+    "name": "401560",
+    "code": "401560",
+    "src": "page",
+    "hint": "inhale",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%9D%B8%ED%97%A4%EC%9D%BC-%3Cbr%3Einhale/401560.html"
+    }
+   },
+   {
+    "id": "puma-397251",
+    "brand": "푸마",
+    "name": "397251",
+    "code": "397251",
     "src": "page",
     "hint": "palermo",
     "urls": {
-     "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html"
+     "KR": "https://kr.puma.com/kr/ko/pd/palermo-hairy/397251.html"
+    }
+   },
+   {
+    "id": "puma-395770",
+    "brand": "푸마",
+    "name": "395770",
+    "code": "395770",
+    "src": "page",
+    "hint": "ca pro",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/ca-pro-sport-club-48/395770.html"
+    }
+   },
+   {
+    "id": "puma-396497",
+    "brand": "푸마",
+    "name": "396497",
+    "code": "396497",
+    "src": "page",
+    "hint": "slipstream",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/slipstream-lo-neverworn-iii/396497.html"
+    }
+   },
+   {
+    "id": "puma-397568",
+    "brand": "푸마",
+    "name": "397568",
+    "code": "397568",
+    "src": "page",
+    "hint": "court",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/court-classic-vulc-fs-sl/397568.html"
     }
    }
   ]
  },
  {
-  "t": "detail",
-  "urls": [
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR"
-  ],
-  "near": [
-   "정가",
-   "listPrice",
-   "salePrice",
-   "originPrice",
-   "normalPrice"
-  ]
- },
- {
-  "t": "shopify",
-  "host": "dragondiffusion.com",
-  "pats": [
-   "rosanna",
-   "juventus",
-   "ars-",
-   "fellini",
-   "nantucket",
-   "santa-maria-black",
-   "triple-jump"
-  ],
-  "pages": 3
- },
- {
-  "t": "grep",
-  "urls": [
-   "https://saucony.co.kr/category/%EA%B0%80%EC%9D%B4%EB%93%9C/112/",
-   "https://saucony.co.kr/category/%ED%82%A8%EB%B0%94%EB%9D%BC/110/",
-   "https://saucony.co.kr/category/%EC%97%94%EB%8F%8C%ED%95%80-%EC%8B%9C%EB%A6%AC%EC%A6%88/207/",
-   "https://saucony.co.kr/category/%EC%9E%AC%EC%A6%88-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90/238/",
-   "https://saucony.co.kr/category/%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84/113/"
-  ],
-  "rx": [
-   "(/product/[^\\\"'<>\\s]+?/\\d+/)"
-  ],
-  "max": 12
- },
- {
-  "t": "grep",
-  "urls": [
-   "https://www.saucony.com/en/kinvara-16/60309M.html",
-   "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
-   "https://www.saucony.com/en/jazz-original/61185U.html",
-   "https://www.saucony.com/en/shadow-6000/51880U.html",
-   "https://www.saucony.com/en/guide-18/"
-  ],
-  "rx": [
-   "data-stock-number=\"([^\"]+)\"",
-   "href=\"(/en/guide-18/[0-9]+[MWU]\\.html)\"",
-   "href=\"(/en/triumph-23/[0-9]+[MWU]\\.html)\""
-  ],
-  "max": 10
- },
- {
-  "t": "sitemap",
-  "host": "www.saucony.com",
-  "pats": [
-   "/en/triumph-23/",
-   "/en/guide-18/6",
-   "/en/guide-18/5",
-   "/en/hurricane-25/",
-   "/uk/en_gb/kinvara-16/",
-   "/de/de_de/kinvara-16/"
-  ],
-  "want": 2,
-  "max_maps": 12,
-  "prefer": [
-   "product",
-   "/en"
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "hunter-playshort",
+    "brand": "헌터",
+    "name": "x",
+    "code": "WFS2020RMA",
+    "src": "page",
+    "hint": "wfs2020rmablk",
+    "urls": {
+     "US": "https://hunterboots.com/products/womens-play-short-rain-boots-in-black-wfs2020rma-hbl01.json",
+     "GB": "https://hunterboots.co.uk/products/womens-play-short-wellington-boots-wfs2020rma-blk.json",
+     "JP": "https://hunterboots.co.jp/products/wfs2020rma-blk.json"
+    }
+   },
+   {
+    "id": "dd-santamaria",
+    "brand": "드래곤디퓨전",
+    "name": "x",
+    "code": "8700",
+    "alt": [
+     "W2BAS26026BKX"
+    ],
+    "src": "page",
+    "hint": "santa maria",
+    "urls": {
+     "US": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag"
+    }
+   },
+   {
+    "id": "dd-triplejump",
+    "brand": "드래곤디퓨전",
+    "name": "x",
+    "code": "8811",
+    "alt": [
+     "W2BAS26029BKX"
+    ],
+    "src": "page",
+    "hint": "triple jump",
+    "urls": {
+     "US": "https://dragondiffusion.com/products/triple-jump-small-black-woven-leather-bag-handmade"
+    }
+   },
+   {
+    "id": "dd-rosanna",
+    "brand": "드래곤디퓨전",
+    "name": "x",
+    "code": "8943",
+    "alt": [
+     "W2BAS26024BKX"
+    ],
+    "src": "page",
+    "hint": "rosanna",
+    "urls": {
+     "US": "https://dragondiffusion.com/products/rosanna-black-woven-leather-bag-handmade"
+    }
+   },
+   {
+    "id": "dd-ars",
+    "brand": "드래곤디퓨전",
+    "name": "x",
+    "code": "8848",
+    "alt": [
+     "W2BAS26027DBR"
+    ],
+    "src": "page",
+    "hint": "ars",
+    "urls": {
+     "US": "https://dragondiffusion.com/products/ars-tote-dark-brown-woven-leather-bag"
+    }
+   }
   ]
  },
  {
   "t": "sitemap",
-  "host": "kr.puma.com",
+  "host": "saucony.co.kr",
   "pats": [
-   "speedcat",
-   "suede",
-   "palermo",
-   "h-street",
-   "ca-pro",
-   "rs-x",
-   "smash",
-   "caven",
-   "court",
-   "rebound",
-   "slipstream",
-   "inhale",
-   "ballet",
-   "avanti",
-   "club"
+   "킨바라-16",
+   "엔돌핀-스피드-5",
+   "재즈-오리지널",
+   "쉐도우-6000",
+   "가이드-18",
+   "트라이엄프-23",
+   "허리케인",
+   "라이드-19"
   ],
-  "want": 4,
-  "max_maps": 40,
+  "want": 3,
+  "max_maps": 5
+ },
+ {
+  "t": "sitemap",
+  "host": "us.puma.com",
+  "pats": [
+   "/403902",
+   "/401560",
+   "/397251",
+   "/395770",
+   "/396497",
+   "/397568"
+  ],
+  "want": 1,
+  "max_maps": 30,
   "prefer": [
    "product",
    "pdp"
   ]
  },
  {
-  "t": "snip",
-  "urls": [
-   "https://hunterboots.co.kr/robots.txt",
-   "https://hunterboots.co.kr/"
+  "t": "sitemap",
+  "host": "uk.puma.com",
+  "pats": [
+   "/403902",
+   "/401560",
+   "/397251",
+   "/395770",
+   "/396497",
+   "/397568"
   ],
-  "keys": [
-   "[Ss]itemap",
-   "shopify",
-   "cafe24",
-   "kolonmall",
-   "/product"
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "jp.puma.com",
+  "pats": [
+   "/403902",
+   "/401560",
+   "/397251",
+   "/395770",
+   "/396497",
+   "/397568"
   ],
-  "n": 3
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "mx.puma.com",
+  "pats": [
+   "/403902",
+   "/401560",
+   "/397251",
+   "/395770",
+   "/396497",
+   "/397568"
+  ],
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "eu.puma.com",
+  "pats": [
+   "/de/de/&&/403902",
+   "/de/de/&&/401560",
+   "/de/de/&&/397251",
+   "/de/de/&&/395770",
+   "/de/de/&&/396497",
+   "/de/de/&&/397568"
+  ],
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "/de/",
+   "product"
+  ]
  }
 ]
