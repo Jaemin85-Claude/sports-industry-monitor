@@ -1,45 +1,7 @@
 [
  {
-  "t": "grep",
-  "urls": [
-   "https://www.saucony.com/en/triumph-23/",
-   "https://www.saucony.com/en/guide-19/",
-   "https://www.saucony.com/en/mens-running-shoes/"
-  ],
-  "rx": [
-   "((?:triumph-23|guide-19|triumph|guide)[a-z0-9-]*/[0-9]{4,6}[MWU][^\"\\'\\s<>]{0,40})",
-   "data-pid=\"([^\"]+)\"",
-   "data-itemid=\"([^\"]+)\""
-  ],
-  "max": 30
- },
- {
   "t": "fetch",
   "prods": [
-   {
-    "id": "saucony-endspeed5",
-    "brand": "써코니",
-    "name": "saucony-endspeed5",
-    "code": "S21007",
-    "src": "page",
-    "hint": "엔돌핀 스피드 5",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/"
-    }
-   },
-   {
-    "id": "saucony-triumph23",
-    "brand": "써코니",
-    "name": "saucony-triumph23",
-    "code": "S21023",
-    "src": "page",
-    "hint": "트라이엄프 23",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-23-whitecloud/161/"
-    }
-   },
    {
     "id": "saucony-guide19",
     "brand": "써코니",
@@ -49,20 +11,32 @@
     "hint": "가이드 19",
     "code_in_page": true,
     "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/"
-    }
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/",
+     "US": "https://www.saucony.com/en/guide-19/60838M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/guide-19/60838M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/guide-19/60838M.html"
+    },
+    "alt": [
+     "S101408"
+    ]
    },
    {
-    "id": "saucony-hurricane25",
+    "id": "saucony-kinvara16",
     "brand": "써코니",
-    "name": "saucony-hurricane25",
-    "code": "S21026",
+    "name": "saucony-kinvara16",
+    "code": "S21020",
     "src": "page",
-    "hint": "허리케인 25",
+    "hint": "킨바라 16",
     "code_in_page": true,
     "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-25-triple-black/130/"
-    }
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
+     "US": "https://www.saucony.com/en/kinvara-16/60309M.html",
+     "GB": "https://www.saucony.com/UK/en_GB/kinvara-16/60309M.html",
+     "DE": "https://www.saucony.com/DE/de_DE/kinvara-16/60309M.html"
+    },
+    "alt": [
+     "S101468"
+    ]
    }
   ]
  },
@@ -70,11 +44,38 @@
   "t": "sitemap",
   "host": "saucony.co.kr",
   "pats": [
-   "섀도우",
-   "쉐도우",
-   "shadow",
-   "재즈"
+   "트라이엄프-24",
+   "허리케인-26",
+   "엔돌핀-프로",
+   "프로그리드",
+   "옴니",
+   "엔돌핀-엘리트",
+   "재즈-81",
+   "그리드"
   ],
-  "want": 4
+  "want": 3
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%9E%AC%EC%A6%88-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90-45-black/525/"
+  ],
+  "rx": [
+   "(S[0-9]{4,6}-[0-9]{1,4})",
+   "\"name\"\\s*:\\s*\"([^\"]{4,60})\"",
+   "\"price\"\\s*:\\s*\"?([0-9]{4,7})"
+  ],
+  "max": 6
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://www.saucony.com/en/mens-running-shoes/",
+   "https://www.saucony.com/en/mens-sneakers/"
+  ],
+  "rx": [
+   "((?:endorphin-pro|endorphin-elite|hurricane|progrid|omni|jazz|shadow|grid)[a-z0-9-]*/[0-9]{4,6}[MU])\\.html"
+  ],
+  "max": 30
  }
 ]
