@@ -354,6 +354,13 @@ def page_price(html, hint, cur, codes=()):
         lp, sp = num(m.group(1)), num(m.group(2))
         if lp and sp and sp <= lp <= sp * 3 and any(abs(sp - o) < 0.01 for o in offers):
             lists.append(lp)
+    # SFCC형 몰(푸마 한국 등): 가격인하 중이면 JSON-LD에는 판매가만 — 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로.
+    # 페이지에 하나뿐일 때만(추천 상품 칸 섞임 방지) · 판매가보다 높고 3배 안일 때만
+    stk = re.findall(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*>\s*([^<]+?)\s*</span>', html)
+    if len(stk) == 1 and offers:
+        lp = _money(stk[0])
+        if lp and max(offers) <= lp <= max(offers) * 3:
+            lists.append(lp)
     # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     base_code, base_name = set(), set()
     for m in re.finditer(r'"name":"([^"]{0,80})","newModelCodes":\[([^\]]*)\],"price":\{"basePrice":([0-9.]+),"currency":"([A-Z]{3})"', flat):

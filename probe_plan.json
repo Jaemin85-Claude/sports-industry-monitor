@@ -3,68 +3,149 @@
   "t": "fetch",
   "prods": [
    {
-    "id": "drm-1460cr",
-    "brand": "닥터마틴",
-    "name": "1460cr",
-    "code": "11822600",
+    "id": "brooks-ghost18w",
+    "brand": "브룩스",
+    "name": "ghost18w",
+    "code": "1204821B",
+    "cc_code": {
+     "JP": "BRW4822"
+    },
     "src": "page",
-    "hint": "1460",
+    "hint": "고스트 18",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.drmartens.co.kr/products/boots-1460-cherry-red-11822600.json",
-     "US": "https://www.drmartens.com/us/en/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600",
-     "GB": "https://www.drmartens.com/uk/en_gb/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600"
+     "KR": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
+     "JP": "https://brooksrunning.co.jp/products/brw4822-blk.json"
     }
    },
    {
-    "id": "drm-2976",
-    "brand": "닥터마틴",
-    "name": "2976",
-    "code": "22227001",
+    "id": "brooks-glycgts23",
+    "brand": "브룩스",
+    "name": "glycgts23",
+    "code": "1105031D",
+    "cc_code": {
+     "JP": "BRM5033"
+    },
     "src": "page",
-    "hint": "2976",
+    "hint": "글리세린 gts 23",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.drmartens.co.kr/products/boots-2976ys-black-smooth.json",
-     "US": "https://www.drmartens.com/us/en/2976-smooth-leather-chelsea-boots-black/p/22227001",
-     "GB": "https://www.drmartens.com/uk/en_gb/2976-smooth-leather-chelsea-boots-black/p/22227001"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
+     "JP": "https://brooksrunning.co.jp/products/brm5033-blk-w.json"
     }
    },
    {
-    "id": "drm-1460bex",
-    "brand": "닥터마틴",
-    "name": "1460bex",
-    "code": "25345001",
+    "id": "brooks-glycmax2",
+    "brand": "브룩스",
+    "name": "glycmax2",
+    "code": "1104791D",
+    "cc_code": {
+     "JP": "BRM4793"
+    },
     "src": "page",
-    "hint": "bex",
+    "hint": "글리세린 맥스 2",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.drmartens.co.kr/products/boots-1460-bex-black-smooth.json",
-     "US": "https://www.drmartens.com/us/en/1460-bex-smooth-leather-lace-up-boots-black/p/25345001",
-     "GB": "https://www.drmartens.com/uk/en_gb/1460-bex-smooth-leather-lace-up-boots-black/p/25345001"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
+     "JP": "https://brooksrunning.co.jp/products/brm4793-b-b.json"
     }
    },
    {
-    "id": "drm-2976quad",
-    "brand": "닥터마틴",
-    "name": "2976quad",
-    "code": "24687001",
+    "id": "brooks-ghostamp",
+    "brand": "브룩스",
+    "name": "ghostamp",
+    "code": "1104971D",
+    "cc_code": {
+     "JP": "BRM4973"
+    },
     "src": "page",
-    "hint": "2976",
+    "hint": "고스트 amp",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.drmartens.co.kr/products/boots-2976-quad-black-polished-smooth.json",
-     "US": "https://www.drmartens.com/us/en/2976-womens-polished-smooth-leather-platform-chelsea-boots-black/p/24687001",
-     "GB": "https://www.drmartens.com/uk/en_gb/2976-womens-polished-smooth-leather-platform-chelsea-boots-black/p/24687001"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
+     "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"
+    }
+   }
+  ]
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/"
+  ],
+  "rx": [
+   "(1[12]0\\d{4}[A-Z][0-9]{0,3})",
+   "\"name\"\\s*:\\s*\"([^\"]{4,60})\""
+  ],
+  "max": 8
+ },
+ {
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "puma-396463",
+    "brand": "푸마",
+    "name": "396463",
+    "code": "396463",
+    "src": "page",
+    "hint": "palermo",
+    "urls": {
+     "US": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
+     "GB": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
+     "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
+     "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html"
     }
    },
    {
-    "id": "drm-1460mono",
-    "brand": "닥터마틴",
-    "name": "1460mono",
-    "code": "14353001",
+    "id": "puma-397330",
+    "brand": "푸마",
+    "name": "397330",
+    "code": "397330",
     "src": "page",
-    "hint": "mono",
+    "hint": "mostro",
     "urls": {
-     "KR": "https://www.drmartens.co.kr/products/1460-mofalse.json",
-     "US": "https://www.drmartens.com/us/en/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
-     "GB": "https://www.drmartens.com/uk/en_gb/1460-mono-smooth-leather-lace-up-boots-black/p/14353001"
+     "US": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
+     "GB": "https://uk.puma.com/uk/en/pd/mostro-og-sneakers-unisex/397330",
+     "DE": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%A2%E3%82%B9%E3%83%88%E3%83%AD-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/397330",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html",
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html"
+    }
+   },
+   {
+    "id": "puma-399781",
+    "brand": "푸마",
+    "name": "399781",
+    "code": "399781",
+    "src": "page",
+    "hint": "suede",
+    "urls": {
+     "US": "https://us.puma.com/us/en/pd/suede-classic-sneakers/399781",
+     "GB": "https://uk.puma.com/uk/en/pd/suede-classic-sneakers-unisex/399781",
+     "DE": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%89-%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/399781",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html",
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html"
+    }
+   },
+   {
+    "id": "puma-396464",
+    "brand": "푸마",
+    "name": "396464",
+    "code": "396464",
+    "src": "page",
+    "hint": "palermo",
+    "urls": {
+     "US": "https://us.puma.com/us/en/pd/palermo-leather-sneakers/396464",
+     "GB": "https://uk.puma.com/uk/en/pd/palermo-leather-sneakers-unisex/396464",
+     "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396464",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-palermo-cuero/396464.html",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%83%AC%E3%82%B6%E3%83%BC-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396464",
+     "KR": "https://kr.puma.com/kr/ko/pd/palermo-lth/396464.html"
     }
    }
   ]
@@ -73,81 +154,63 @@
   "t": "fetch",
   "prods": [
    {
-    "id": "hunter-gloss",
-    "brand": "헌터",
-    "name": "gloss",
-    "code": "WFT1000RGL",
+    "id": "ua-1361518",
+    "brand": "언더아머",
+    "name": "1361518",
+    "code": "1361518",
     "src": "page",
-    "hint": "wft1000rgl",
+    "hint": "heatgear",
     "urls": {
-     "US": "https://hunterboots.com/products/womens-original-tall-gloss-rain-boots-in-black-wft1000rgl-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-original-tall-gloss-wellington-boots-wft1000rgl-blk.json",
-     "JP": "https://hunterboots.co.jp/products/wft1000rgl-blk.json",
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508619617098BK01"
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361518.html",
+     "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_short_sleeve/1361518.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens/1361518.html",
+     "DE": "https://www.underarmour.de/de-de/p/heatgear/1361518.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/heatgear/1361518.html"
     }
    },
    {
-    "id": "hunter-wshort",
-    "brand": "헌터",
-    "name": "wshort",
-    "code": "WFS1000RMA",
+    "id": "ua-1361524",
+    "brand": "언더아머",
+    "name": "1361524",
+    "code": "1361524",
     "src": "page",
-    "hint": "wfs1000rma",
+    "hint": "heatgear",
     "urls": {
-     "US": "https://hunterboots.com/products/womens-original-short-rain-boots-in-black-wfs1000rma-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-original-short-boot-wfs1000rma-blk.json",
-     "JP": "https://hunterboots.co.jp/products/wfs1000rma-blk.json"
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361524.html",
+     "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_long_sleeve/1361524.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens-compression-long-sleeve/1361524.html",
+     "DE": "https://www.underarmour.de/de-de/p/heatgear/1361524.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear/1361524.html"
     }
    },
    {
-    "id": "hunter-mtall",
-    "brand": "헌터",
-    "name": "mtall",
-    "code": "MFT9000RMA",
+    "id": "ua-1328495",
+    "brand": "언더아머",
+    "name": "1328495",
+    "code": "1328495",
     "src": "page",
-    "hint": "mft9000rma",
+    "hint": "ua tech",
     "urls": {
-     "US": "https://hunterboots.com/products/mens-original-tall-rain-boots-in-black-mft9000rma-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/mens-original-tall-wellington-boots-mft9000rma-blk.json",
-     "JP": "https://hunterboots.co.jp/products/mft9000rma-blk.json"
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
+     "US": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
+     "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech/1328495.html"
     }
    },
    {
-    "id": "hunter-mshort",
-    "brand": "헌터",
-    "name": "mshort",
-    "code": "MFS9000RMA",
+    "id": "ua-1326799",
+    "brand": "언더아머",
+    "name": "1326799",
+    "code": "1326799",
     "src": "page",
-    "hint": "mfs9000rma",
+    "hint": "left chest",
     "urls": {
-     "US": "https://hunterboots.com/products/mens-original-short-rain-boots-in-black-mfs9000rma-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/mens-original-short-wellington-boots-mfs9000rma-blk.json",
-     "JP": "https://hunterboots.co.jp/products/mfs9000rma-blk.json"
-    }
-   },
-   {
-    "id": "hunter-playtall",
-    "brand": "헌터",
-    "name": "playtall",
-    "code": "WFT2007RMA",
-    "src": "page",
-    "hint": "wft2007rma",
-    "urls": {
-     "US": "https://hunterboots.com/products/womens-play-tall-rain-boots-in-black-wft2007rma-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-play-tall-wellington-boots-wft2007rma-blk.json",
-     "JP": "https://hunterboots.co.jp/products/wft2007rma-blk.json"
-    }
-   },
-   {
-    "id": "hunter-chelsea",
-    "brand": "헌터",
-    "name": "chelsea",
-    "code": "WFS2078RMA",
-    "src": "page",
-    "hint": "wfs2078rma",
-    "urls": {
-     "US": "https://hunterboots.com/products/womens-original-chelsea-boots-in-black-wfs2078rma-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-original-chelsea-boots-wfs2078rma-blk.json"
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
+     "US": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
+     "DE": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html"
     }
    }
   ]
@@ -155,168 +218,86 @@
  {
   "t": "snip",
   "urls": [
-   "https://www.kolonmall.com/HUNTER",
-   "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01"
+   "https://saucony.co.kr/category/%EA%B0%80%EC%9D%B4%EB%93%9C/112/"
   ],
   "keys": [
-   "api",
-   "K17605",
-   "graphql",
-   "__NEXT_DATA__",
-   "productCode",
-   "WFT1000"
+   "/product/",
+   "S2[01]\\d{3}"
   ],
-  "n": 3
+  "n": 4
  },
  {
   "t": "sitemap",
-  "host": "www.kolonmall.com",
+  "host": "www.saucony.com",
   "pats": [
-   "hunter/product",
-   "dragon_diffusion/product",
-   "/product/k"
-  ],
-  "want": 5,
-  "max_maps": 45,
-  "prefer": [
-   "product",
-   "goods",
-   "item"
-  ]
- },
- {
-  "t": "detail",
-  "urls": [
-   "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
-   "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
-   "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html"
-  ],
-  "near": [
-   "396463_",
-   "397330_",
-   "price-standard",
-   "strike"
-  ]
- },
- {
-  "t": "sitemap",
-  "host": "kr.puma.com",
-  "pats": [
-   "/396464",
-   "/401603",
-   "/403692",
-   "/401287",
-   "/406758",
-   "/395205",
-   "/309707",
-   "/310475",
-   "/397647"
+   "/en/guide-18/",
+   "/en/triumph-23/",
+   "/en/kinvara-16/",
+   "/en/endorphin-speed-5/",
+   "/en/jazz-original/",
+   "/en/shadow-6000/",
+   "/en/peregrine-15/",
+   "/en/endorphin-pro-4/",
+   "/en/hurricane-25/",
+   "/en/ride-19/"
   ],
   "want": 2,
-  "max_maps": 40,
+  "max_maps": 30,
   "prefer": [
    "product",
-   "pdp"
+   "/en"
   ]
  },
  {
-  "t": "grep",
+  "t": "snip",
   "urls": [
-   "https://www.salomon.com/en-us/product/xt-4-og-li3335",
-   "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333"
+   "https://salomon.co.kr/products/l49210800.json",
+   "https://salomon.co.kr/products/l45418800.json"
   ],
-  "rx": [
-   "/en-us/product/([a-z0-9-]+-l[a-z]\\d{3,})"
+  "keys": [
+   "L[GI]\\d{4}",
+   "\"title\"",
+   "\"tags\""
   ],
-  "max": 40
+  "n": 2
  },
  {
   "t": "sitemap",
-  "host": "www.underarmour.co.kr",
-  "pats": [
-   "/1379757",
-   "/1328495",
-   "/1326799",
-   "/1361586",
-   "/1361521",
-   "/1357092"
+  "host": "www.salomon.com",
+  "start": [
+   "https://www.salomon.com/sitemap.xml",
+   "https://www.salomon.com/en-us/sitemap.xml"
   ],
-  "want": 1,
-  "max_maps": 40,
-  "prefer": [
-   "product"
-  ]
- },
- {
-  "t": "sitemap",
-  "host": "www.underarmour.com",
   "pats": [
-   "/en-us/&&/1361518",
-   "/en-us/&&/1361524",
-   "/en-us/&&/3026520",
-   "/en-us/&&/1379757",
-   "/en-us/&&/1328495",
-   "/en-us/&&/1326799"
+   "en-us/product/xt-4-og-gore-tex",
+   "en-us/product/xt-6-shadow",
+   "en-us/product/xt-6-protective",
+   "en-us/product/xt-6-stormshade",
+   "en-us/product/acs-"
   ],
-  "want": 1,
-  "max_maps": 30,
+  "want": 2,
+  "max_maps": 25,
   "prefer": [
    "product",
    "en-us"
   ]
  },
  {
-  "t": "sitemap",
-  "host": "www.underarmour.co.uk",
-  "pats": [
-   "/en-gb/&&/1361518",
-   "/en-gb/&&/1361524",
-   "/en-gb/&&/3026520",
-   "/en-gb/&&/1379757",
-   "/en-gb/&&/1328495",
-   "/en-gb/&&/1326799"
+  "t": "snip",
+  "urls": [
+   "https://www.kolonmall.com/robots.txt"
   ],
-  "want": 1,
-  "max_maps": 30,
-  "prefer": [
-   "product",
-   "en-gb"
-  ]
+  "keys": [
+   "[Ss]itemap"
+  ],
+  "n": 8
  },
  {
-  "t": "sitemap",
-  "host": "www.underarmour.de",
-  "pats": [
-   "/de-de/&&/1361518",
-   "/de-de/&&/1361524",
-   "/de-de/&&/3026520",
-   "/de-de/&&/1379757",
-   "/de-de/&&/1328495",
-   "/de-de/&&/1326799"
-  ],
-  "want": 1,
-  "max_maps": 30,
-  "prefer": [
-   "product",
-   "de-de"
-  ]
- },
- {
-  "t": "sitemap",
-  "host": "www.underarmour.com.mx",
-  "pats": [
-   "/es-mx/&&/1361518",
-   "/es-mx/&&/1361524",
-   "/es-mx/&&/3026520",
-   "/es-mx/&&/1379757",
-   "/es-mx/&&/1328495",
-   "/es-mx/&&/1326799"
-  ],
-  "want": 1,
-  "max_maps": 30,
-  "prefer": [
-   "product",
-   "es-mx"
+  "t": "page",
+  "urls": [
+   "https://www.hunterboots.co.kr/",
+   "https://hunterboots.co.kr/",
+   "https://www.hunterkorea.co.kr/"
   ]
  }
 ]
