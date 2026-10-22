@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-22 09:06 KST",
+ "generated_at": "2026-10-22 09:25 KST",
  "fetched": "2026-10-22",
  "attempt": "2026-10-22",
  "cfg": "60fcc07ee1ba",
@@ -243,13 +243,13 @@
      "sale": false
     },
     "MX": {
-     "p": 1539.3,
+     "p": 2199.0,
      "cur": "MXN",
      "seen": "2026-10-22",
      "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html",
-     "obs": 1539.3,
+     "obs": 2199.0,
      "obs_date": "2026-10-22",
-     "sale": false
+     "sale": true
     }
    }
   },
