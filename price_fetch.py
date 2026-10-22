@@ -4,8 +4,11 @@ sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 
 v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 223개 —
     나라별로 같은 품번을 GitHub 서버에서 확인한 것만 · 그 나라 몰에 없거나 품번·사양이 다르거나 할인가가 정가로 보이면 그 나라는 뺌, 이유는 상품 줄 주석).
     ① SFCC형 몰(푸마 한국 등)이 가격인하 중이면 JSON-LD에 판매가만 있어, 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로 —
-    페이지에 하나뿐일 때만(추천 상품 칸 섞임 방지) · 판매가보다 높고 5배 안(푸마 한국 팔레르모 10/22 119,000 → 35,700원 · 70% 할인)
+    취소선 곁 판매가 칸 값이 이 상품 판매가와 같을 때만(추천 상품 칸 섞임 방지 · 검토 반영) · 판매가보다 높고 5배 안(푸마 한국 팔레르모 10/22 119,000 → 35,700원 · 70% 할인)
     ② 한 실행 최대 6 → 11분(값 1개 약 2초 · update.yml 해외 정가 단계 8 → 13분 · 작업 25 → 32분) ③ 온러닝·살로몬 나라별 주소 도우미 _on·_sal.
+    ④ 브랜치 시험(10/22 · 216/223 · 385초): 살로몬 해외가 9번째 요청 뒤 403(우회 안 함) → 같은 사이트 요청 간격 HOST_GAP(살로몬 해외 8초) ·
+    몇 값만 못 받은 날(사이트가 중간에 막음·연결 끊김 — 써코니 한국 1건)도 다음 날 그 값만 한 번 더(알림 없이) · 같은 사이트가 연달아 2번
+    응답 없으면(연결 오류·시간 초과) 그 실행에서 건너뜀(한 사이트가 11분을 다 쓰지 않게).
 v1.2: (대표 지시 2026-10-22 '추가 가능 5곳 넣어주세요') 드래곤디퓨전·헌터·언더아머·써코니·브룩스 대표 상품 추가(접속 시험 10/22 —
     나라별 같은 상품 주소·가격 칸을 GitHub 서버에서 확인). ① 상품 페이지에 JSON-LD가 없고 schema.org 마이크로데이터(itemprop)만 있는
     SFCC형 몰(써코니 해외) — 이 상품 품번(data-stock-number)이 있을 때만, 판매가(itemprop price · 가능하면 priceincents)와
@@ -33,7 +36,8 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     비슷하면(10% 안) 반영(cand).
     주 1회(7일) — 매일 update-dashboard 안에서 돌되 7일이 안 지났고 상품 목록이 같으면 건너뜀(update.yml 수동 실행 입력 price_force=1 → PRICE_FORCE=1이면 바로).
     절반 넘게 실패했거나, 한 브랜드 값을 하나도 못 받았거나, 시간 초과로 다 못 받은 날은 '받은 날'(fetched)을 옮기지 않고 다음 날
-    그때 못 받은 값만 다시 받음(tried · 다시 받기도 못 받으면 실패 표시 · 다음 주 받을 날이면 전체를 다시).
+    그때 못 받은 값만 다시 받음(tried · 다시 받기도 못 받으면 실패 표시 · 다음 주 받을 날이면 전체를 다시). 전체 받기는 잘 끝났는데
+    몇 값만 못 받은 날도 다음 날 그 값만 한 번 더(v1.3 · 또 못 받아도 알림 없이 다음 주에 — 21일 기준은 그대로).
     상품의 품번을 바꾸면 그 상품의 이전 값·값 없음 기록은 쓰지 않음(id가 같아도 다른 상품).
     봇 차단은 우회하지 않음: 우리 봇 이름(UA)을 밝히고 robots.txt(RFC 9309 — 우리 이름 그룹 우선·* 와일드카드·가장 긴 규칙)를 먼저 확인,
     robots.txt가 서버 오류·연결 안 됨이면 그 사이트는 이번 실행 건너뜀(예외: robots.txt를 두지 않는 API 주소는 같은 회사 대표 사이트의
@@ -58,6 +62,7 @@ SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 �
 STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
 TIME_LIMIT = 11 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 223개(1개 약 2초)라 6 → 11분
 GAP = 1.5           # 초 — 요청 사이 쉬는 시간
+HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
 
 # 나라 → (나이키 상품 정보 marketplace·language, 통화)
@@ -190,7 +195,7 @@ PRODUCTS = [
     {"id": "hunter-chelsea", "brand": "헌터", "name": "오리지널 첼시(여성)", "code": "WFS2078RMA", "src": "page", "hint": "wfs2078rmablk", "urls": {
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01",
         "US": "https://hunterboots.com/products/womens-original-chelsea-boots-in-black-wfs2078rma-hbl01.json",
-        "GB": "https://hunterboots.co.uk/products/womens-original-chelsea-boots-wfs2078rma-blk.json"}},
+        "GB": "https://hunterboots.co.uk/products/womens-original-chelsea-boots-wfs2078rma-blk.json"}},   # 일본 몰에서 같은 품번(WFS2078RMA)을 못 찾음(시험 10/22)
     {"id": "hunter-playshort", "brand": "헌터", "name": "플레이 숏(여성)", "code": "WFS2020RMA", "src": "page", "hint": "wfs2020rmablk", "urls": {
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01",
         "US": "https://hunterboots.com/products/womens-play-short-rain-boots-in-black-wfs2020rma-hbl01.json",
@@ -217,7 +222,7 @@ PRODUCTS = [
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
         "US": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
-        "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html"}},
+        "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html"}},   # 멕시코 몰은 정가 없이 할인가(539.4페소)만 보여 뺌(시험 10/22)
     {"id": "ua-leftchest", "brand": "언더아머", "name": "레프트 체스트 로고 반팔", "code": "1326799", "src": "page", "hint": "left chest", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
         "US": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
@@ -290,7 +295,7 @@ class Skip(Exception):
     """이 나라에서는 팔지 않음·주소 없음(실패로 세지 않음)"""
 
 
-_ROB, _LAST, _BLOCKED = {}, [0.0], set()
+_ROB, _LAST, _BLOCKED, _HLAST, _DOWN = {}, [0.0], set(), {}, {}
 # robots.txt를 두지 않는 API 주소 → 같은 회사 대표 사이트 robots.txt를 따름(그 사이트 robots.txt도 못 받으면 건너뜀)
 # api.nike.com: 상품 정보 경로 밖 모든 주소(/, robots.txt, 없는 주소)에 Akamai가 '503 DNS failure' — 2026-10-21 브랜치 시험에서 확인
 ROBOTS_ALT = {"api.nike.com": "https://www.nike.com"}
@@ -362,13 +367,20 @@ def get(url, hops=5):
         pre = "넘겨진 주소: " if moved else ""
         if host in _BLOCKED:
             raise RuntimeError(pre + "이번 실행에서 이 사이트가 막음 — 더 요청 안 함")
+        if _DOWN.get(host, 0) >= 2:
+            raise RuntimeError(pre + "이번 실행에서 이 사이트가 연달아 응답 없음 — 더 요청 안 함")
         ok, why = robots_ok(url)
         if not ok:
             raise RuntimeError(pre + why)
-        w = GAP - (time.time() - _LAST[0])
+        w = max(GAP - (time.time() - _LAST[0]), HOST_GAP.get(host, 0) - (time.time() - _HLAST.get(host, 0.0)))
         if w > 0: time.sleep(w)
-        _LAST[0] = time.time()
-        r = _S.get(url, headers=HDR, timeout=25, allow_redirects=False)
+        _LAST[0] = _HLAST[host] = time.time()
+        try:
+            r = _S.get(url, headers=HDR, timeout=25, allow_redirects=False)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            _DOWN[host] = _DOWN.get(host, 0) + 1   # v1.3 같은 사이트가 연달아 2번 응답 없으면 이번 실행에서 건너뜀(한 사이트가 시간 제한을 다 쓰지 않게)
+            raise
+        _DOWN.pop(host, None)
         loc = (getattr(r, "headers", None) or {}).get("Location") if 300 <= r.status_code < 400 else None
         if loc:
             try:
@@ -513,12 +525,18 @@ def page_price(html, hint, cur, codes=()):
         if lp and sp and sp <= lp <= sp * 3 and any(abs(sp - o) < 0.01 for o in offers):
             lists.append(lp)
     # SFCC형 몰(푸마 한국 등): 가격인하 중이면 JSON-LD에는 판매가만 — 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로.
-    # 페이지에 하나뿐일 때만(추천 상품 칸 섞임 방지) · 판매가보다 높고 5배 안일 때만(70% 할인까지 — 푸마 한국 팔레르모 10/22 119,000 → 35,700원)
-    stk = re.findall(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*>\s*([^<]+?)\s*</span>', html)
-    if len(stk) == 1 and offers:
-        lp = _money(stk[0])
-        if lp and max(offers) <= lp <= max(offers) * 5:
-            lists.append(lp)
+    # 이 상품 것만: 취소선 바로 곁 판매가 칸(sales — 푸마 한국은 취소선 바로 앞, SFCC 기본은 바로 뒤)의 값이 이 상품 판매가(JSON-LD)와 같을 때만
+    # (추천 상품 칸의 할인 가격을 가져오지 않게) · 그런 정가가 한 가지일 때만 · 판매가보다 높고 5배 안(70% 할인까지 — 푸마 한국 팔레르모 10/22 119,000 → 35,700원)
+    lps = set()
+    for m in re.finditer(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*>\s*([^<]+?)\s*</span>', html):
+        back = html[max(0, m.start() - 600):m.start()]; k = back.rfind('class="sales')
+        seg = back[k:] if k >= 0 else html[m.end():m.end() + 600]
+        sm = re.search(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*>\s*([^<]+?)\s*</span>', seg, re.S)
+        lp, sv = _money(m.group(1)), _money(sm.group(1)) if sm else None
+        if lp and sv and any(abs(sv - o) < 0.01 for o in offers) and sv <= lp <= sv * 5:
+            lps.add(lp)
+    if len(lps) == 1:
+        lists.append(lps.pop())
     # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     base_code, base_name = set(), set()
     for m in re.finditer(r'"name":"([^"]{0,80})","newModelCodes":\[([^\]]*)\],"price":\{"basePrice":([0-9.]+),"currency":"([A-Z]{3})"', flat):
@@ -607,7 +625,7 @@ def main():
     keys = {f"{p['id']} {cc}" for p in PRODUCTS for cc in (p["cc"] if p["src"] == "nike" else p["urls"])}
     failed = {k: f for f in old.get("failed", []) if isinstance(f, dict) and (k := f"{f.get('id')} {f.get('cc')}") in keys
               and f.get("code", codes.get(f.get("id"))) == codes.get(f.get("id"))}   # 값 없음(이전 값도 없음) — 처음 실패한 날
-    ok_run = None
+    ok_run, again = None, False
     if not mode:
         log(f"해외 정가: 주 1회 — 마지막 {att}, 다음 {datetime.date.fromisoformat(att) + datetime.timedelta(days=DAYS)} (건너뜀)")
         items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("id") in codes]
@@ -689,17 +707,25 @@ def main():
         log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
             + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
             + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else ""))
+        # v1.3 전체 받기는 잘 끝났는데 몇 값만 못 받은 날(사이트가 중간에 막음·연결 끊김) → 다음 날 그 값만 한 번 더(조용한 다시 받기 —
+        # 또 못 받아도 알림 없이 다음 주에 · 21일 기준은 그대로). 전체 받기가 잘 끝났으면 받은 날(fetched) = 받으러 간 날(attempt)
+        quiet = mode == "retry" and last == att
         if mode == "full":
             if half:
                 soft_fail(f"해외 정가 절반 넘게 못 받음({n_fail}/{n_try}) — 이전 값 유지, 내일 다시")
             elif whole:   # 첫날은 알림 없이 다음 날 다시(한 번 끊긴 것일 수 있음)
                 log(f"해외 정가: {', '.join(whole)} 값을 하나도 못 받음 — 내일 다시")
-        elif half or whole:
+            elif n_fail:
+                log(f"해외 정가: {n_fail}건 못 받음 — 내일 그 값만 한 번 더")
+        elif (half or whole) and not quiet:
             soft_fail(f"해외 정가 다시 받기도 못 받음({n_fail}/{n_try}" + (f" · {', '.join(whole)} 전부" if whole else "")
                       + ") — 이전 값 유지, 내일 다시")
+        elif quiet and n_fail:
+            log(f"해외 정가: 다시 받기에서도 {n_fail}건 못 받음 — 다음 주 받을 때 다시")
         if n_cut:
             log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
-        ok_run = not (half or whole or n_cut)
+        ok_run = not (half or whole or n_cut) and not quiet
+        again = (not ok_run and not quiet) or (mode == "full" and n_fail > 0)
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and _days(o["stale_since"]) > STALE_ALERT]
@@ -712,7 +738,7 @@ def main():
            "cfg": cfg if mode else old.get("cfg"),
            "status": "ok" if not stale else "kept", "items": items, "failed": list(failed.values()),
            "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"}
-    if ok_run is False:
+    if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)

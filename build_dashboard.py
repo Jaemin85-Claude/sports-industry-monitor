@@ -2,7 +2,8 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.18: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품 5개 이상' — price_fetch v1.3으로 상품 13 → 56개) 브랜드 상세 '해외 정가 비교'는
-  상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침 · 머리 줄에 품번·한국 정가·해외 대비 평균) — 브랜드마다 5~7개라 화면이 길어지지 않게
+  상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침 · 머리 줄에 품번·한국 정가·해외 대비 평균) — 브랜드마다 5~7개라 화면이 길어지지 않게 ·
+  접힌 칸도 수집 실패 표시는 머리 줄에('이전 값 n곳'·'값 없음 n곳' — 화면 규칙 '수집 실패 표시는 접지 않음') · 펼친 칸은 기억(PR_OPEN — 뒤로 와도 같은 칸)
 v33.17: 더보기 › 해외 정가 검토 반영 — 고른 브랜드를 화면 기록에 저장(prb · 뉴스 필터 nf와 같은 방식: 칩을 누르면 지금 기록에, 떠날 때도 저장 →
   뒤로·앞으로 어느 기록으로 돌아와도 그때 고른 브랜드 · 메뉴 줄·브랜드 상세 바로가기는 prb '' = 전체) · 브랜드를 바꾸면 표 가로 위치는 처음으로
   (열 구성이 달라 한국 열이 고정 열 밑에 숨던 것) · 한국 정가가 없어 비교 못 하면 요약 '한국 정가 자료 없음'(브랜드 상세와 같게) ·
@@ -987,6 +988,7 @@ div.bd-nx{cursor:default}
 .bd-pr-hd{display:flex;flex-direction:column;gap:2px}.bd-pr-hd .t{font-size:15px;font-weight:700}.bd-pr-hd .s{font-size:13px;color:var(--sub)}.bd-pr-hd .s b{color:var(--tx);font-weight:600}
 .bd-pr-hd .s b.pos{color:var(--pos)}.bd-pr-hd .s b.neg{color:var(--neg)}
 /* v33.18 상품이 셋 이상인 브랜드는 상품 칸을 접음(첫 상품만 펼침) */
+.bd-prd{display:block}.bd-prd>:not(summary){margin-top:6px}   /* details 안은 flex gap이 안 먹음 — 칸 사이 6px은 margin으로 */
 .bd-prd>summary{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;list-style:none}
 .bd-prd>summary::-webkit-details-marker{display:none}
 .bd-prd>summary .bd-pr-hd{flex:1;min-width:0}
@@ -4262,6 +4264,10 @@ function prFxHtml(curs){   // v33.15 적용 환율 줄(대표 지시 10/22) — 
   return `<p class="bd-pr-src bd-pr-fx">적용 환율${as1?`(${mdOf(as1)} 종가)`:''} ${esc(curs.map(one).join(' · '))}</p>`;
 }
 const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 중\' = 지금 할인 중인 색상·사이즈가 있음(표는 할인 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함.';
+// v33.18 브랜드 상세 해외 정가 — 펼친 상품 칸(브랜드 → 상품 id 모음). 뒤로 와서 다시 그려도 같은 칸이 열려 있어 되살린 스크롤 위치가 맞음
+const PR_OPEN={};
+document.addEventListener('toggle',e=>{ const d=e.target; if(!d||!d.classList||!d.classList.contains('bd-prd')) return;
+  PR_OPEN[d.dataset.br]=new Set([...document.querySelectorAll('.bd-prd[open]')].filter(x=>x.dataset.br===d.dataset.br).map(x=>x.dataset.pid)); },true);   // toggle은 올라오지 않아 잡는 단계에서
 function prSecHtml(bname){
   const its=((PRICES&&PRICES.items)||[]).filter(it=>it.brand===bname);
   if(!its.length) return '';
@@ -4273,17 +4279,20 @@ function prSecHtml(bname){
     :`<p class="bd-pr-sum">한국 정가가 해외${near?'와':'보다'} 평균 ${prGapB(avg)} <span class="na">(상품 ${nIt}개 · ${all.length}개 비교)</span></p>`;
   const fold=its.length>2;   // v33.18 상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침) — 머리 줄에 한국 정가·해외 대비 평균
   its.forEach((it,ix)=>{
-    const {kr,rows}=prRows(it), ga=prAvg(rows.filter(r=>r.gap!=null).map(r=>r.gap));
-    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · 평균 ${prGapB(ga)}`:''}</span>`;
-    h+=fold?`<details class="bd-pr bd-prd"${ix?'':' open'}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
+    const {kr,rows}=prRows(it), ga=prAvg(rows.filter(r=>r.gap!=null).map(r=>r.gap)), miss=prMiss(it.id);
+    // 접힌 칸도 수집 실패 표시는 머리 줄에(화면 규칙 '수집 실패 표시는 접지 않음') — 해외 이전 값 n곳 · 값 없음 n곳
+    const nSt=fold?rows.filter(r=>r.o.stale_since).length:0, missN=miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]);
+    const bad=fold?(nSt?' '+tagA(`이전 값 ${nSt}곳`,'해외 정가 일부가 이전 수집분 — 펼치면 나라별 날짜'):'')+(miss.length?' '+tagA(`값 없음 ${miss.length}곳`,`수집 실패: ${missN.join('·')}`):''):'';
+    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
+    const op=PR_OPEN[bname];
+    h+=fold?`<details class="bd-pr bd-prd" data-br="${esc(bname)}" data-pid="${esc(it.id)}"${(op?op.has(it.id):!ix)?' open':''}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
       h+=`<div class="tblwrap"><table class="bd-pr-tbl"><tr><th>나라</th><th>현지 정가</th><th>원화</th><th>한국은</th></tr>`
         +rows.map(r=>`<tr><td>${PR_CC[r.cc]}${r.o.sale?'<div class="bd-pr-sale" title="지금 할인 중인 색상·사이즈가 있음 — 정가는 할인 전 가격">할인 중</div>':''}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}</td>`
           +`<td>${r.krw?wonR(r.krw)+'원'+prFxA(r.o.cur):'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':prGapB(r.gap)}</td></tr>`).join('')
         +`</table></div>`;
     } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
-    const miss=prMiss(it.id);
-    if(miss.length) h+=`<p class="bd-pr-src">값 없음: ${miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]).join('·')}(수집 실패)</p>`;
+    if(miss.length) h+=`<p class="bd-pr-src">값 없음: ${missN.join('·')}(수집 실패)</p>`;
     h+=fold?`</details>`:`</div>`;
   });
   const fd=prFetchedMd();
