@@ -1,0 +1,426 @@
+{
+ "generated_at": "2026-10-22 09:06 KST",
+ "fetched": "2026-10-22",
+ "attempt": "2026-10-22",
+ "cfg": "60fcc07ee1ba",
+ "status": "ok",
+ "items": [
+  {
+   "id": "nike-af1",
+   "brand": "나이키",
+   "name": "에어포스 1 '07",
+   "code": "CW2288-111",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 149000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 115.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 109.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 109.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 119.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 119.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 16500.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 16500.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 2599.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
+     "obs": 2599.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "nike-dunk",
+   "brand": "나이키",
+   "name": "덩크 로우 레트로",
+   "code": "DD1391-100",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 139000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 120.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 120.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 109.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 109.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 119.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 119.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 15400.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 15400.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 2599.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
+     "obs": 2599.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "nike-am90",
+   "brand": "나이키",
+   "name": "에어맥스 90",
+   "code": "CN8490-100",
+   "m": {
+    "KR": {
+     "p": 159000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 159000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 135.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 135.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 134.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 134.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 149.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 149.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 16500.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 16500.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 2999.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
+     "obs": 2999.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-speedcat",
+   "brand": "푸마",
+   "name": "스피드캣 OG",
+   "code": "398846",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
+     "obs": 149000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 100.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
+     "obs": 100.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 90.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://uk.puma.com/uk/en/pd/speedcat-og-sneakers-unisex/398846",
+     "obs": 90.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 109.95,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://eu.puma.com/de/de/pd/speedcat-og-sneakers/398846",
+     "obs": 109.95,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 15400.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/398846",
+     "obs": 15400.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 1539.3,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html",
+     "obs": 1539.3,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudmonster",
+   "brand": "온러닝",
+   "name": "클라우드몬스터",
+   "code": "61.98434",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 160.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 180.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 23100.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "obs": 23100.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "salomon-xt6",
+   "brand": "살로몬",
+   "name": "XT-6 고어텍스",
+   "code": "L47450600",
+   "m": {
+    "KR": {
+     "p": 295000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://salomon.co.kr/products/l47450600",
+     "obs": 295000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 200.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
+     "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 185.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333",
+     "obs": 185.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 200.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
+     "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-1461",
+   "brand": "닥터마틴",
+   "name": "1461 스무스",
+   "code": "11838002",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/boots-1461-black-smooth",
+     "obs": 229000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/1461-smooth-leather-oxford-shoes-black/p/11838002",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 145.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/1461-smooth-leather-oxford-shoes-black/p/11838002",
+     "obs": 145.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-jadon",
+   "brand": "닥터마틴",
+   "name": "제이든",
+   "code": "15265001",
+   "m": {
+    "KR": {
+     "p": 309000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/boots-jadon-black-15265001",
+     "obs": 309000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 210.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/jadon-smooth-leather-platform-boots-black/p/15265001",
+     "obs": 210.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 200.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/jadon-smooth-leather-platform-boots-black/p/15265001",
+     "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  }
+ ],
+ "failed": [],
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
+}
