@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.1: (2026-10-22 main 첫 수집에서 푸마 멕시코가 전 색상 30% 세일이라 할인가 1,539.3페소가 정가로 저장됨 — JSON-LD에 정가 표기 없음)
+    SFCC형 몰 화면 데이터의 "c_listPrice"(정가)·"c_salePrice"(판매가)를 정가 명세로 읽음 — 판매가가 이 상품 JSON-LD 가격과 같을 때만
+    (추천 상품 섞임 방지 · 정가는 판매가의 1~3배일 때만). 푸마 멕시코 확인(2026-10-22 브랜치 진단: c_listPrice 2199 · c_salePrice 1539.3).
 v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 — 미주·유럽·중남미 vs 한국 RRP' · 수기 없음 · 할인 전 풀프라이스 ·
     환율로 한국이 몇 % 싸거나 비싼지 · 브랜드 상세 하단 · 나이키 포함) 브랜드 공식몰의 같은 상품(글로벌 품번)을 나라별로 받아
     docs/prices.json에 저장 — 원화 환산·차이(%)는 화면(build_dashboard)이 그날 환율(data.json fx)로 계산.
@@ -279,8 +282,13 @@ def page_price(html, hint, cur, codes=()):
                     v = num(ps.get("price"))
                     if v: lists.append(v)
             if x.get("offers"): st.append(x.get("offers"))
-    # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     flat = html.replace('\\"', '"')
+    # SFCC형 몰(푸마 멕시코): 화면 데이터의 c_listPrice(정가)·c_salePrice(판매가) — 판매가가 이 상품 가격과 같을 때만(추천 상품 섞임 방지)
+    for m in re.finditer(r'"c_listPrice":([0-9.]+),"c_salePrice":([0-9.]+)', flat):
+        lp, sp = num(m.group(1)), num(m.group(2))
+        if lp and sp and sp <= lp <= sp * 3 and any(abs(sp - o) < 0.01 for o in offers):
+            lists.append(lp)
+    # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     base_code, base_name = set(), set()
     for m in re.finditer(r'"name":"([^"]{0,80})","newModelCodes":\[([^\]]*)\],"price":\{"basePrice":([0-9.]+),"currency":"([A-Z]{3})"', flat):
         v = num(m.group(3))
