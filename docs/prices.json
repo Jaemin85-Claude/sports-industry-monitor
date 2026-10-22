@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-22 09:25 KST",
+ "generated_at": "2026-10-22 11:53 KST",
  "fetched": "2026-10-22",
  "attempt": "2026-10-22",
- "cfg": "60fcc07ee1ba",
+ "cfg": "00970fb54bc5",
  "status": "ok",
  "items": [
   {
@@ -418,6 +418,202 @@
      "obs_date": "2026-10-22",
      "sale": false
     }
+   }
+  },
+  {
+   "id": "dd-santacroce",
+   "brand": "드래곤디퓨전",
+   "name": "산타크로체 빅 백",
+   "code": "8892",
+   "m": {
+    "KR": {
+     "p": 785000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",
+     "obs": 785000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 586.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade",
+     "obs": 586.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "hunter-origtall",
+   "brand": "헌터",
+   "name": "오리지널 톨(여성·무광)",
+   "code": "WFT1000RMA",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 190.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.com/products/womens-original-tall-rain-boots-in-black-wft1000rma-hbl01",
+     "obs": 190.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 125.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.uk/products/womens-original-tall-wellington-boots-wft1000rma-blk",
+     "obs": 125.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 26950.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.jp/products/wft1000rma-blk",
+     "obs": 26950.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "ua-tech2",
+   "brand": "언더아머",
+   "name": "UA 테크 2.0 반팔",
+   "code": "1326413",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
+     "obs": 39000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 28.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com/en-us/p/ua_tech_2.0_mens_short_sleeve/1326413.html",
+     "obs": 28.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 27.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-tech-2.0-mens-short-sleeve/1326413.html",
+     "obs": 27.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 30.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.de/de-de/p/ua-tech-2.0/1326413.html",
+     "obs": 30.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 499.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html",
+     "obs": 499.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "saucony-ride19",
+   "brand": "써코니",
+   "name": "라이드 19(남성)",
+   "code": "S21055",
+   "m": {
+    "KR": {
+     "p": 179000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",
+     "obs": 179000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 145.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/ride-19/60823M.html",
+     "obs": 145.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 140.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/ride-19/60823M.html",
+     "obs": 140.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 160.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "brooks-ghost18",
+   "brand": "브룩스",
+   "name": "고스트 18(남성)",
+   "code": "1104931D",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",
+     "obs": 169000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 19800.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.jp/products/brm4933-b-b",
+     "obs": 19800.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   },
+   "cc_code": {
+    "JP": "BRM4933"
    }
   }
  ],
