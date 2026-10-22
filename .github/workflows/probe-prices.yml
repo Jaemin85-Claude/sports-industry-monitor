@@ -1,6 +1,6 @@
 name: probe-prices
 
-# 임시 시험(병합하지 않음) — 5개 브랜드 나라별 같은 상품 주소·품번·가격 위치 찾기(저장·커밋 안 함)
+# 임시 시험(병합하지 않음) — 5개 브랜드 나라별 같은 상품 주소·품번·가격 위치 찾기(저장·커밋 안 함) · 2회차
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
