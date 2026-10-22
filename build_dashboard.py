@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.15: (대표 지시 2026-10-22 '브랜드 점검표에도 브랜드 검색') 브랜드 탭 머리 아래 검색창 — 브랜드 이름·네이버 검색어(영문 등)·
+       본사 이름·티커에서 찾음(띄어쓰기·가운뎃점 무시 · 판정 구분 없이 판정 목록 + 판정 안 함 전체에서 · 판정 안 함 결과는 펼쳐 보임).
+       결과가 하나면 Enter로 상세 · Esc로 지움 · 판정 필터 단추·오늘 '점검표 전체 보기'를 누르면 검색어를 지움(메모리만, 기록 없음)
 v33.14: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 브랜드 상세 하단 · 나이키 포함) 브랜드 상세 하단
        (본사 바로가기 위) '해외 정가 비교' — docs/prices.json(price_fetch v1 · 주 1회)의 대표 상품 정가(할인 전)를 그날 환율(data.json fx)로 원화 환산해
        '한국이 n% 비쌈/쌈'(한국 정가 ÷ 현지 정가 원화 − 1 · 비쌈 파랑 / 쌈 짙은 주황). 맨 위 한 줄 = 그 브랜드 상품·나라 단순 평균,
@@ -1032,6 +1035,8 @@ div.bd-nx{cursor:default}
 <div class="pane" id="p-brand">
   <div id="brandList">
     <div class="phead" id="brHead"></div>
+    <input class="search" id="brSearch" type="search" enterkeyhint="search" autocomplete="off" maxlength="40" aria-label="브랜드 검색" placeholder="브랜드 검색 (예: 나이키, adidas, 본사 이름)">
+    <div class="sr" id="brSrchLive" aria-live="polite"></div>
     <div id="brandBody"></div>
   </div>
   <div id="brandDetail" style="display:none">
@@ -4105,7 +4110,14 @@ function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머�
   document.querySelectorAll('#brHead [data-filter]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.filter===f?'true':'false'));
   paint('brandBody',brandBodyHtml,'브랜드 점검표');
 }
-function brFilter(f){ if(!own(BR_NOTE,f)) return; brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 목록 맨 위로
+function brFilter(f){ if(!own(BR_NOTE,f)) return; brClearQ(); brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 검색어 지우고 목록 맨 위로
+/* v33.15 브랜드 검색 — 이름·네이버 검색어(영문 등)·본사 이름·티커. 띄어쓰기·가운뎃점·하이픈 무시(new balance = newbalance) */
+let BR_Q='';
+const brNorm=v=>String(v||'').toLowerCase().replace(/[\s·\-_.()'’]/g,'');
+const brHit=(r,q)=>[r.b.name,...(Array.isArray(r.b.keywords)?r.b.keywords:[]),r.x&&r.x.ticker,chkHq(r)].some(v=>v&&brNorm(v).includes(q));   // 본사는 괄호 뺀 이름(데커스(HOKA) → 데커스: hoka로 어그가 걸리지 않게)
+function brLive(){ setText('brSrchLive',brNorm(BR_Q)?`검색 결과 ${document.querySelectorAll('#brandBody [data-brand]').length}곳`:''); }
+function brSearch(v){ BR_Q=v; paint('brandBody',brandBodyHtml,'브랜드 점검표'); brLive(); }
+function brClearQ(){ if(!BR_Q) return; BR_Q=''; const i=document.getElementById('brSearch'); if(i) i.value=''; setText('brSrchLive',''); }
 function brInfo(){   // (i) 판정 기준 — 펼침만 바꿈(다시 그리지 않음). 목록을 내린 채 열면 패널이 머리 위(화면 밖)에 펼쳐지므로 머리 바로 아래로 올림
   BR_INFO=!BR_INFO; const p=document.getElementById('brInfo'), b=document.getElementById('brInfoBtn'), hd=document.getElementById('brHead');
   if(p) p.hidden=!BR_INFO; if(b) b.setAttribute('aria-expanded',BR_INFO?'true':'false');
@@ -4121,6 +4133,15 @@ function brandBodyHtml(){
     <p><b>판정</b> 수요가 약하지 않고 매입 조건 +2 이상이면 지금 검토. 수요가 약하고 매입 조건 +1 이하이거나, 매입 조건이 −1 이하면 주의. 나머지는 관망</p>
     <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
   if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
+  const q=brNorm(BR_Q);
+  if(q){   // v33.15 검색 중 — 판정 필터와 상관없이 전체에서, 판정 안 함 결과는 펼쳐서
+    const hm=M.main.filter(r=>brHit(r,q)), hr=M.rest.filter(r=>brHit(r,q)), n=hm.length+hr.length;
+    h+=`<p class="br-fnote">‘${esc(BR_Q.trim())}’ 검색 ${n}곳 — 판정 구분 없이 전체에서 찾음</p>`;
+    if(!n) return h+`<p class="br-empty">맞는 브랜드 없음 — 점검표 브랜드 ${M.main.length+M.rest.length}곳의 이름·영문·본사 이름에서 찾습니다</p>`;
+    if(hm.length) h+=`<section class="br-list" aria-label="검색 결과 — 판정">${hm.map(brRowHtml).join('')}</section>`;
+    if(hr.length) h+=brRestHtml({...M,rest:hr},true);
+    return h;
+  }
   h+=`<p class="br-fnote">${BR_NOTE[BR_FILTER]}</p>`;
   if(!M.main.length) h+=`<p class="br-empty">판정할 브랜드 없음 — 본사 재고·발언 자료 수집 전${BR_FILTER==='all'&&M.rest.length?` · 아래 판정 안 함 ${M.rest.length}곳은 검색·환율만`:''}</p>`;
   else h+=rows.length?`<section class="br-list" aria-label="판정 목록">${rows.map(brRowHtml).join('')}</section>`:`<p class="br-empty">이 판정에 해당하는 브랜드가 없습니다</p>`;
@@ -4138,7 +4159,7 @@ function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄
     <span class="br-why">${nb(esc(chkWhy(r).short))}</span>
     <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
 }
-function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로)
+function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로) · srch = 검색 결과(펼침, 접힘 기억 안 바꿈)
   const k=M.rest.filter(r=>r.dem.pt>0).length, byCur={};
   M.rest.forEach(r=>{ if(r.cur) (byCur[r.cur]=byCur[r.cur]||[]).push(r); });
   const curs=Object.keys(byCur).sort((a,c)=>byCur[c].length-byCur[a].length);
@@ -4147,7 +4168,7 @@ function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음)
   const rows=M.rest.map(r=>{ const d=r.dem, sub=(CHK_CUR_NOTE[r.b.name]||(r.cur?`${chkCurKo(r)} 원산지`:'원산지 통화 미지정'))+(r.b.low?' · 검색량 적음':'');
     return `<button type="button" class="br-rest-row" data-brand="${esc(r.b.name)}"><span class="tt"><span class="t">${esc(r.b.name)}${chgTag(r.b.name)}</span><span class="s">${esc(sub)}</span></span>`
       +`<span class="y">검색 <b class="${d.pt>0?'sc-p':d.pt<0?'sc-n':'sc-tx'}">${r.b.yoy!=null?pctU(r.b.yoy):'―'}</b></span></button>`; }).join('');
-  return `<details id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
+  return `<details${srch?' class="br-rest" open':` id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"`}><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
     +`<span class="s">본사 자료가 없어 검색·환율만 참고${k?` · 검색 강함 ${k}곳`:''}</span></span>${ic('down',20,'s2')}</summary>`
     +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
@@ -4565,7 +4586,7 @@ function paint(id,fn,name,keep){
 function goKey(k){
   k=String(k||'');
   if(k==='today'||k==='brand'||k==='more') return go({tab:k});
-  if(k==='brand-all'){ if(BR_FILTER!=='all') brSetFilter('all'); return go({tab:'brand'}); }   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
+  if(k==='brand-all'){ const had=!!BR_Q; brClearQ(); if(BR_FILTER!=='all'||had) brSetFilter('all'); return go({tab:'brand'}); }   // v33.15 검색어도 지움   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
   if(k.startsWith('brand:')) return openBrand(k.slice(6));
   if(k.startsWith('co:')) return goDetail(k.slice(3));
   if(k.startsWith('more:')) return goMore(k.slice(5));
@@ -4578,6 +4599,12 @@ document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip
 { const b=document.getElementById('coBack'); if(b) b.onclick=()=>goBack({tab:'market',chip:'co'}); }
 { const b=document.getElementById('brBack'); if(b) b.onclick=()=>goBack({tab:'brand'}); }
 { const b=document.getElementById('coSearch'); if(b) b.addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();}); }
+{ const i=document.getElementById('brSearch');   // v33.15 브랜드 검색 — 결과가 하나면 Enter로 상세, Esc로 지움
+  if(i){ i.addEventListener('input',()=>brSearch(i.value));
+    i.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){ const b=document.querySelectorAll('#brandBody [data-brand]'); e.preventDefault(); i.blur(); if(b.length===1) b[0].click(); }
+      else if(e.key==='Escape'&&i.value){ e.preventDefault(); i.value=''; brSearch(''); }
+    }); } }
 { const b=document.getElementById('newsSearch'); if(b){   // v33.1 지난 뉴스 검색 — 누르면 보관 파일을 미리 받기 시작, 입력은 0.2초 모아서(한글 조합 중인지 함께)
   b.addEventListener('focus',nsLoad);
   b.addEventListener('input',e=>{ NS_COMP=!!e.isComposing; clearTimeout(NS_T); NS_T=setTimeout(()=>{ NS_T=0; nsSet(b.value,NS_COMP); },200); });
