@@ -1,0 +1,314 @@
+[
+ {
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "nike-blazer77",
+    "brand": "나이키",
+    "name": "blazer77",
+    "code": "BQ6806-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-am97",
+    "brand": "나이키",
+    "name": "am97",
+    "code": "921826-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-af1blk",
+    "brand": "나이키",
+    "name": "af1blk",
+    "code": "CW2288-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-cortez",
+    "brand": "나이키",
+    "name": "cortez",
+    "code": "DM4044-108",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-aj1low",
+    "brand": "나이키",
+    "name": "aj1low",
+    "code": "553558-161",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-killshot",
+    "brand": "나이키",
+    "name": "killshot",
+    "code": "432997-111",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   }
+  ]
+ },
+ {
+  "t": "shopify",
+  "host": "salomon.co.kr",
+  "pats": [
+   "xt-6",
+   "acs",
+   "speedcross",
+   "whisper",
+   "xa-pro",
+   "xa pro",
+   "odyssey",
+   "xt-4",
+   "xt-slate",
+   "pulsar"
+  ],
+  "pages": 4
+ },
+ {
+  "t": "shopify",
+  "host": "www.drmartens.co.kr",
+  "pats": [
+   "1460",
+   "2976",
+   "adrian",
+   "quad",
+   "sinclair",
+   "8053",
+   "bex",
+   "1461",
+   "jadon"
+  ],
+  "pages": 4
+ },
+ {
+  "t": "shopify",
+  "host": "hunterboots.com",
+  "pats": [
+   "wft1000",
+   "wfs1000",
+   "mft9000",
+   "mfs9000",
+   "wft2007",
+   "wfs2007",
+   "wfs2078",
+   "wfd",
+   "play",
+   "chelsea"
+  ],
+  "pages": 3
+ },
+ {
+  "t": "shopify",
+  "host": "hunterboots.co.uk",
+  "pats": [
+   "wft1000",
+   "wfs1000",
+   "mft9000",
+   "mfs9000",
+   "wft2007",
+   "wfs2007",
+   "wfs2078",
+   "play",
+   "chelsea"
+  ],
+  "pages": 3
+ },
+ {
+  "t": "shopify",
+  "host": "hunterboots.co.jp",
+  "pats": [
+   "wft1000",
+   "wfs1000",
+   "mft9000",
+   "mfs9000",
+   "wft2007",
+   "wfs2007",
+   "wfs2078",
+   "play",
+   "chelsea"
+  ],
+  "pages": 3
+ },
+ {
+  "t": "shopify",
+  "host": "brooksrunning.co.jp",
+  "pats": [
+   "ghost",
+   "glycerin",
+   "adrenaline",
+   "hyperion",
+   "launch",
+   "brm",
+   "brw"
+  ],
+  "pages": 3
+ },
+ {
+  "t": "shopify",
+  "host": "dragondiffusion.com",
+  "pats": [
+   "santa",
+   "pompom",
+   "double",
+   "grace",
+   "bamboo",
+   "city",
+   "ella",
+   "mini"
+  ],
+  "pages": 2
+ },
+ {
+  "t": "sitemap",
+  "host": "kr.puma.com",
+  "pats": [
+   "palermo",
+   "suede-xl",
+   "suede-classic",
+   "mostro",
+   "speedcat",
+   "ca-pro",
+   "velocity-nitro",
+   "deviate-nitro",
+   "rs-x"
+  ],
+  "want": 3,
+  "max_maps": 25,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "www.underarmour.co.kr",
+  "pats": [
+   "1379757",
+   "rival",
+   "charged",
+   "hovr",
+   "heatgear",
+   "1361518",
+   "1361524",
+   "tech",
+   "unstoppable",
+   "curry"
+  ],
+  "want": 3,
+  "max_maps": 20,
+  "prefer": [
+   "product"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "www.on.com",
+  "pats": [
+   "ko-kr/products/cloud-6",
+   "ko-kr/products/cloudsurfer",
+   "ko-kr/products/cloud-x-4",
+   "ko-kr/products/cloudtilt",
+   "ko-kr/products/cloudrunner-2",
+   "ko-kr/products/cloudnova",
+   "ko-kr/products/cloudswift",
+   "ko-kr/products/cloudmonster-2"
+  ],
+  "want": 3,
+  "max_maps": 25,
+  "prefer": [
+   "ko-kr",
+   "ko"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "saucony.co.kr",
+  "pats": [
+   "가이드",
+   "트라이엄프",
+   "엔돌핀",
+   "킨바라",
+   "재즈",
+   "쉐도우",
+   "페레그린",
+   "라이드"
+  ],
+  "want": 3,
+  "max_maps": 15
+ },
+ {
+  "t": "sitemap",
+  "host": "brooksrunning.co.kr",
+  "pats": [
+   "고스트",
+   "글리세린",
+   "아드레날린",
+   "하이페리온",
+   "런치",
+   "고스트-맥스"
+  ],
+  "want": 3,
+  "max_maps": 15
+ },
+ {
+  "t": "sitemap",
+  "host": "www.kolonmall.com",
+  "pats": [
+   "dragon_diffusion",
+   "/brands/hunter/"
+  ],
+  "want": 12,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "brand"
+  ]
+ }
+]
