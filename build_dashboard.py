@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.15: (대표 지시 2026-10-22 '적용 환율은 기재') 해외 정가 비교 출처 줄 아래 '적용 환율(10/21 종가) 달러 1,323.61원 · 100엔 835.20원' —
+       그 브랜드 표에 쓴 통화만, 기준일이 다르면 통화마다 날짜, 이전 값이면 '(m/d 값 — 그 뒤 수집 실패)'.
+       (대표 지시 2026-10-22 '브랜드 점검표에도 브랜드 검색') 브랜드 탭 머리 아래 검색창 — 브랜드 이름·네이버 검색어(영문 등)·
+       본사 이름·티커에서 찾음(띄어쓰기·가운뎃점 무시 · 판정 구분 없이 판정 목록 + 판정 안 함 전체에서 · 판정 안 함 결과는 펼쳐 보임).
+       결과가 하나면 Enter로 상세 · Esc로 지움 · 판정 필터 단추·오늘 '점검표 전체 보기'를 누르면 검색어를 지움(메모리만, 기록 없음) ·
+       맞는 정도 순(이름·검색어와 같음 → 앞부분 → 안에 → 본사·별칭) · 네이버 검색어·티커는 낱말 첫머리부터 · 본사 영문 이름(BR_HQ_EN)·검색 별칭(BR_ALIAS) ·
+       한글 조합 중 0곳이면 화면 그대로 · 검색 중엔 판정 단추를 눌리지 않은 모양으로
 v33.14: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가 — 미주·유럽·중남미 vs 한국 RRP' · 브랜드 상세 하단 · 나이키 포함) 브랜드 상세 하단
        (본사 바로가기 위) '해외 정가 비교' — docs/prices.json(price_fetch v1 · 주 1회)의 대표 상품 정가(할인 전)를 그날 환율(data.json fx)로 원화 환산해
        '한국이 n% 비쌈/쌈'(한국 정가 ÷ 현지 정가 원화 − 1 · 비쌈 파랑 / 쌈 짙은 주황). 맨 위 한 줄 = 그 브랜드 상품·나라 단순 평균,
@@ -1032,6 +1039,8 @@ div.bd-nx{cursor:default}
 <div class="pane" id="p-brand">
   <div id="brandList">
     <div class="phead" id="brHead"></div>
+    <input class="search" id="brSearch" type="search" enterkeyhint="search" autocomplete="off" maxlength="40" aria-label="브랜드 검색" placeholder="브랜드 검색 (예: 나이키, adidas, 본사 이름)">
+    <div class="sr" id="brSrchLive" aria-live="polite"></div>
     <div id="brandBody"></div>
   </div>
   <div id="brandDetail" style="display:none">
@@ -4097,7 +4106,7 @@ function buildBrand(){
   const M=chkModel(), cnt=lv=>M.main.filter(r=>r.lv===lv).length, gd=String(DATA.generated_at||'').slice(0,10);
   paint('brHead',()=>`<div class="hd-row"><div class="hd-tt"><h1>브랜드 점검표</h1><span class="hd-sub">본사 자료가 있는 ${M.main.length}곳${gd?` · ${mdTxt(gd)} 기준`:''}</span></div>
     <button type="button" class="icbtn" id="brInfoBtn" aria-label="판정 기준 보기" aria-expanded="${BR_INFO}" aria-controls="brInfo" onclick="brInfo()">${ic('info',22)}</button></div>
-    <div class="seg4" role="group" aria-label="판정으로 거르기">${BR_F.map(([f,l,lv])=>`<button type="button" data-filter="${f}" aria-pressed="${BR_FILTER===f}" onclick="brFilter('${f}')">${l} <span class="tn">${lv==null?M.main.length:cnt(lv)}</span></button>`).join('')}</div>`,'브랜드 점검표 머리');
+    <div class="seg4" role="group" aria-label="판정으로 거르기">${BR_F.map(([f,l,lv])=>`<button type="button" data-filter="${f}" aria-pressed="${!brNorm(BR_Q)&&BR_FILTER===f}" onclick="brFilter('${f}')">${l} <span class="tn">${lv==null?M.main.length:cnt(lv)}</span></button>`).join('')}</div>`,'브랜드 점검표 머리');
   paint('brandBody',brandBodyHtml,'브랜드 점검표');
 }
 function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머리의 단추는 그대로 두고 눌림 표시만). 스크롤은 부르는 쪽에서
@@ -4105,7 +4114,24 @@ function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머�
   document.querySelectorAll('#brHead [data-filter]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.filter===f?'true':'false'));
   paint('brandBody',brandBodyHtml,'브랜드 점검표');
 }
-function brFilter(f){ if(!own(BR_NOTE,f)) return; brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 목록 맨 위로
+function brFilter(f){ if(!own(BR_NOTE,f)) return; brClearQ(); brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 검색어 지우고 목록 맨 위로
+/* v33.15 브랜드 검색 — 이름·네이버 검색어(영문 등)·본사 이름·티커. 띄어쓰기·가운뎃점·하이픈 무시(new balance = newbalance) */
+let BR_Q='';
+const brNorm=v=>String(v||'').normalize('NFKD').replace(/\p{M}/gu,'').normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');   // 띄어쓰기·기호·악센트 무시(한글은 그대로)
+// 본사 영문 이름(브랜드 영문 검색어와 다른 곳만) · 검색 전용 별칭(네이버 검색어는 그대로 둠 — 키는 네이버 감시 브랜드 이름과 같게)
+const BR_HQ_EN={DECK:'deckers brands',AS:'amer sports',ONON:'on holding',WWW:'wolverine world wide',ZGN:'ermenegildo zegna group','0933.HK':'viva goods','MONC.MI':'moncler','7936.T':'asics'};
+const BR_ALIAS={'언더아머':['under armor','언더아마'],'닥터마틴':['doc martens','dr martens','닥마','닥터마틴스'],'톰브라운':['tom browne'],'살로몬':['solomon','살로먼'],'스케쳐스':['sketchers'],'비비안웨스트우드':['vivian westwood'],'뉴발란스':['nb'],'온러닝':['on cloud']};
+const brWords=v=>String(v||'').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+const brKw=(k,q)=>{ const w=brWords(k); return w.some((_,i)=>brNorm(w.slice(i).join('')).startsWith(q)); };   // 네이버 검색어·티커는 낱말 첫머리부터('아'로 'cep 종아리'가 걸리지 않게)
+const brHit=(r,q)=>[r.b.name,chkHq(r),r.x&&BR_HQ_EN[r.x.ticker],...(BR_ALIAS[r.b.name]||[])].some(v=>v&&brNorm(v).includes(q))   // 이름·본사는 어디든(본사는 괄호 뺀 이름 — hoka로 어그가 걸리지 않게)
+  ||[r.x&&r.x.ticker,...(Array.isArray(r.b.keywords)?r.b.keywords:[])].some(k=>k&&brKw(k,q));
+const brRank=(r,q)=>{ const w=[r.b.name,...(Array.isArray(r.b.keywords)?r.b.keywords:[]),r.x&&r.x.ticker].filter(Boolean).flatMap(v=>[v,...brWords(v)]).map(brNorm).filter(Boolean);
+  return w.includes(q)?0:w.some(x=>x.startsWith(q))?1:w.some(x=>x.includes(q))?2:3; };   // 정확히 같음 → 앞부분 → 안에 → 본사·별칭만
+function brPress(){ const q=!!brNorm(BR_Q); document.querySelectorAll('#brHead [data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(!q&&b.dataset.filter===BR_FILTER))); }   // 검색 중엔 판정 단추를 눌리지 않은 모양으로
+function brLive(){ setText('brSrchLive',brNorm(BR_Q)?`검색 결과 ${document.querySelectorAll('#brandBody [data-brand]').length}곳`:''); }
+function brNoHit(v){ const q=brNorm(v); if(!q) return false; const M=chkModel(); return !M.main.concat(M.rest).some(r=>brHit(r,q)); }
+function brSearch(v){ BR_Q=v; brPress(); paint('brandBody',brandBodyHtml,'브랜드 점검표'); brLive(); }
+function brClearQ(){ if(!BR_Q) return; BR_Q=''; const i=document.getElementById('brSearch'); if(i) i.value=''; setText('brSrchLive',''); brPress(); }
 function brInfo(){   // (i) 판정 기준 — 펼침만 바꿈(다시 그리지 않음). 목록을 내린 채 열면 패널이 머리 위(화면 밖)에 펼쳐지므로 머리 바로 아래로 올림
   BR_INFO=!BR_INFO; const p=document.getElementById('brInfo'), b=document.getElementById('brInfoBtn'), hd=document.getElementById('brHead');
   if(p) p.hidden=!BR_INFO; if(b) b.setAttribute('aria-expanded',BR_INFO?'true':'false');
@@ -4121,6 +4147,15 @@ function brandBodyHtml(){
     <p><b>판정</b> 수요가 약하지 않고 매입 조건 +2 이상이면 지금 검토. 수요가 약하고 매입 조건 +1 이하이거나, 매입 조건이 −1 이하면 주의. 나머지는 관망</p>
     <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
   if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
+  const q=brNorm(BR_Q);
+  if(q){   // v33.15 검색 중 — 판정 필터와 상관없이 전체에서, 판정 안 함 결과는 펼쳐서
+    const by=(a,c)=>brRank(a,q)-brRank(c,q), hm=M.main.filter(r=>brHit(r,q)).sort(by), hr=M.rest.filter(r=>brHit(r,q)).sort(by), n=hm.length+hr.length;   // 맞는 정도 순(같으면 원래 순서)
+    h+=`<p class="br-fnote">‘${esc(BR_Q.trim())}’ ${n?n+'곳':'없음'} · 판정 전체에서</p>`;
+    if(!n) return h+`<p class="br-empty">맞는 브랜드가 없습니다 — 영문·본사 이름으로도 찾아 보세요</p>`;
+    if(hm.length) h+=`<section class="br-list" aria-label="검색 결과 — 판정">${hm.map(brRowHtml).join('')}</section>`;
+    if(hr.length) h+=brRestHtml({...M,rest:hr},true);
+    return h;
+  }
   h+=`<p class="br-fnote">${BR_NOTE[BR_FILTER]}</p>`;
   if(!M.main.length) h+=`<p class="br-empty">판정할 브랜드 없음 — 본사 재고·발언 자료 수집 전${BR_FILTER==='all'&&M.rest.length?` · 아래 판정 안 함 ${M.rest.length}곳은 검색·환율만`:''}</p>`;
   else h+=rows.length?`<section class="br-list" aria-label="판정 목록">${rows.map(brRowHtml).join('')}</section>`:`<p class="br-empty">이 판정에 해당하는 브랜드가 없습니다</p>`;
@@ -4138,7 +4173,7 @@ function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄
     <span class="br-why">${nb(esc(chkWhy(r).short))}</span>
     <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
 }
-function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로)
+function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로) · srch = 검색 결과(펼침, 접힘 기억 안 바꿈)
   const k=M.rest.filter(r=>r.dem.pt>0).length, byCur={};
   M.rest.forEach(r=>{ if(r.cur) (byCur[r.cur]=byCur[r.cur]||[]).push(r); });
   const curs=Object.keys(byCur).sort((a,c)=>byCur[c].length-byCur[a].length);
@@ -4147,7 +4182,7 @@ function brRestHtml(M){   // 판정 안 함(본사 재고·발언 자료 없음)
   const rows=M.rest.map(r=>{ const d=r.dem, sub=(CHK_CUR_NOTE[r.b.name]||(r.cur?`${chkCurKo(r)} 원산지`:'원산지 통화 미지정'))+(r.b.low?' · 검색량 적음':'');
     return `<button type="button" class="br-rest-row" data-brand="${esc(r.b.name)}"><span class="tt"><span class="t">${esc(r.b.name)}${chgTag(r.b.name)}</span><span class="s">${esc(sub)}</span></span>`
       +`<span class="y">검색 <b class="${d.pt>0?'sc-p':d.pt<0?'sc-n':'sc-tx'}">${r.b.yoy!=null?pctU(r.b.yoy):'―'}</b></span></button>`; }).join('');
-  return `<details id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
+  return `<details${srch?' class="br-rest" open':` id="brRest" class="br-rest"${BR_REST?' open':''} ontoggle="BR_REST=this.open"`}><summary><span class="tt"><span class="t">판정 안 함 ${M.rest.length}곳</span>`
     +`<span class="s">본사 자료가 없어 검색·환율만 참고${k?` · 검색 강함 ${k}곳`:''}</span></span>${ic('down',20,'s2')}</summary>`
     +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
@@ -4188,10 +4223,14 @@ function prSecHtml(bname){
     h+=`</div>`;
   });
   const fs=String(PRICES.fetched||''), fd=/^\d{4}-\d{2}-\d{2}/.test(fs)?`${+fs.slice(5,7)}/${+fs.slice(8,10)}`:'';
-  const fxOld=[...new Set(its.flatMap(it=>prRows(it).rows.filter(r=>r.krw).map(r=>r.o.cur)))].map(c=>[c,((DATA.fx||{})[c]||{}).stale_since]).filter(x=>x[1]);
-  const fxTxt=fxOld.length?'환율 '+fxOld.map(([c,d])=>`${((DATA.fx||{})[c]||{}).name||c} ${mdOf(d)}`).join('·')+' 값(그 뒤 수집 실패)':'오늘 환율';
-  h+=`<p class="bd-pr-src">브랜드 공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''} · ${esc(fxTxt)}</p>`;
-  h+=why('한국은 = 한국 정가 ÷ (현지 정가 × 오늘 환율) − 1. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 중\' = 지금 할인 중인 색상·사이즈가 있음(표는 할인 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함. 맨 위 평균 = 상품·나라별 차이의 단순 평균. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
+  // v33.15 적용 환율 기재(대표 지시 10/22) — 이 브랜드 표에 쓴 통화만, 나라 순서대로 · 엔은 100엔 · 기준일이 같으면 한 번만 · 이전 값이면 그 날짜
+  const fxUsed=[...new Set(its.flatMap(it=>prRows(it).rows.filter(r=>r.krw).map(r=>r.o.cur)))], FXD=DATA.fx||{};
+  const fxAs=fxUsed.map(c=>(FXD[c]||{}).asof).filter(Boolean), as1=fxAs.length===fxUsed.length&&fxAs.every(a=>a===fxAs[0])?fxAs[0]:'';
+  const fxOne=c=>{ const f=FXD[c]||{}, jp=c==='JPY', v=(+f.rate)*(jp?100:1);
+    return `${jp?'100엔':(f.name||c)} ${v.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원${f.stale_since?`(${mdOf(f.stale_since)} 값 — 그 뒤 수집 실패)`:(!as1&&f.asof?`(${mdOf(f.asof)})`:'')}`; };
+  h+=`<p class="bd-pr-src">브랜드 공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''}</p>`;
+  if(fxUsed.length) h+=`<p class="bd-pr-src bd-pr-fx">적용 환율${as1?`(${mdOf(as1)} 종가)`:''} ${esc(fxUsed.map(fxOne).join(' · '))}</p>`;
+  h+=why('한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 중\' = 지금 할인 중인 색상·사이즈가 있음(표는 할인 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함. 맨 위 평균 = 상품·나라별 차이의 단순 평균. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
   return h+`</section>`;
 }
 
@@ -4565,7 +4604,7 @@ function paint(id,fn,name,keep){
 function goKey(k){
   k=String(k||'');
   if(k==='today'||k==='brand'||k==='more') return go({tab:k});
-  if(k==='brand-all'){ if(BR_FILTER!=='all') brSetFilter('all'); return go({tab:'brand'}); }   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
+  if(k==='brand-all'){ const had=!!BR_Q; brClearQ(); if(BR_FILTER!=='all'||had) brSetFilter('all'); return go({tab:'brand'}); }   // v33.15 검색어도 지움   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
   if(k.startsWith('brand:')) return openBrand(k.slice(6));
   if(k.startsWith('co:')) return goDetail(k.slice(3));
   if(k.startsWith('more:')) return goMore(k.slice(5));
@@ -4578,6 +4617,15 @@ document.querySelectorAll('#mkChips .mk-chip').forEach(b=>{ b.onclick=()=>mkChip
 { const b=document.getElementById('coBack'); if(b) b.onclick=()=>goBack({tab:'market',chip:'co'}); }
 { const b=document.getElementById('brBack'); if(b) b.onclick=()=>goBack({tab:'brand'}); }
 { const b=document.getElementById('coSearch'); if(b) b.addEventListener('input',e=>{coQuery=e.target.value.trim().toLowerCase();buildCo();}); }
+{ const i=document.getElementById('brSearch');   // v33.15 브랜드 검색 — 결과가 하나면 Enter로 상세, Esc로 지움
+  if(i){ i.addEventListener('input',e=>{   // 한글 조합 중('낭'·'나잌')에 0곳이면 지금 화면 그대로 — 조합이 끝나면 다시 찾음(뉴스 검색과 같은 방식)
+      if(e.isComposing&&brNoHit(i.value)&&(!brNorm(BR_Q)||document.querySelector('#brandBody [data-brand]'))) return;
+      brSearch(i.value); });
+    i.addEventListener('compositionend',()=>brSearch(i.value));
+    i.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){ const b=document.querySelectorAll('#brandBody [data-brand]'); e.preventDefault(); i.blur(); if(brNorm(i.value)&&b.length===1) b[0].click(); }   // 검색어가 있을 때만 하나뿐인 결과로
+      else if(e.key==='Escape'&&i.value){ e.preventDefault(); i.value=''; brSearch(''); }
+    }); } }
 { const b=document.getElementById('newsSearch'); if(b){   // v33.1 지난 뉴스 검색 — 누르면 보관 파일을 미리 받기 시작, 입력은 0.2초 모아서(한글 조합 중인지 함께)
   b.addEventListener('focus',nsLoad);
   b.addEventListener('input',e=>{ NS_COMP=!!e.isComposing; clearTimeout(NS_T); NS_T=setTimeout(()=>{ NS_T=0; nsSet(b.value,NS_COMP); },200); });
