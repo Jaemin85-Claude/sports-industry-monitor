@@ -7,6 +7,7 @@ v1.2: (대표 지시 2026-10-22 '추가 가능 5곳 넣어주세요') 드래곤�
     '원래 가격'(price-standard — 판매가가 이 상품 가격과 같을 때만)을 읽음 · 독일식 소수점(190,00)도 ② 쇼피파이 변형 품번이 바코드인 몰
     (헌터 미국·영국)은 상품 주소(handle)에 품번이 있으면 그 상품 ③ 그 나라 수입사 품번이 따로 있으면 cc_code(브룩스 일본 BRM4933)
     ④ 이름으로 찾는 상품 중 code_in_page면 페이지에 품번이 있어야 함(써코니·브룩스 한국 — 품번이 JSON-LD 밖 상품 정보 칸에만 있음).
+    브랜치 시험(10/22): 56/56 받음 — 써코니 독일은 할인 중(€160 → €128)인데 '128,00 &#8364;'의 HTML 기호 숫자가 섞여 원래 가격을 못 읽음 → 기호를 먼저 풂.
 v1.1: (2026-10-22 main 첫 수집에서 푸마 멕시코가 전 색상 30% 세일이라 할인가 1,539.3페소가 정가로 저장됨 — JSON-LD에 정가 표기 없음)
     SFCC형 몰 화면 데이터의 "c_listPrice"(정가)·"c_salePrice"(판매가)를 정가 명세로 읽음 — 판매가가 이 상품 JSON-LD 가격과 같을 때만
     (추천 상품 섞임 방지 · 정가는 판매가의 1~3배일 때만). 푸마 멕시코 확인(2026-10-22 브랜치 진단: c_listPrice 2199 · c_salePrice 1539.3).
@@ -35,6 +36,7 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM + (새 통화면) fetch_data FX를 함께 고친다.
 """
 import datetime, hashlib, json, os, re, time, urllib.parse
+from html import unescape
 import requests
 
 SCRIPT = "price_fetch"
@@ -239,8 +241,8 @@ def num(v):
 
 
 def _money(s):
-    """화면 글자 가격 → 숫자: '$1,234.56' · '1.234,56 €' · '190,00' · '1.234 €'(독일식 천 단위)"""
-    t = re.sub(r"[^0-9.,]", "", str(s))
+    """화면 글자 가격 → 숫자: '$1,234.56' · '1.234,56 €' · '190,00' · '1.234 €'(독일식 천 단위) — '&#8364;'(€) 같은 HTML 기호는 먼저 풂(숫자가 섞이지 않게)"""
+    t = re.sub(r"[^0-9.,]", "", unescape(str(s)))
     if re.fullmatch(r"\d{1,3}(\.\d{3})*,\d{1,2}", t):
         t = t.replace(".", "").replace(",", ".")
     elif re.fullmatch(r"\d{1,3}(\.\d{3})+", t):
@@ -503,7 +505,7 @@ def main():
                 if extra.get("cur_price") and extra["cur_price"] < (full if held else o["p"]) * 0.995:
                     o["sale"] = True   # 지금 할인 중인 색상·사이즈가 있음(정가는 그대로)
                 if extra.get("by") == "이름":
-                    n_name += 1; note += " · 품번이 없어 이름으로 찾음"
+                    n_name += 1; note += " · 이름으로 찾음(페이지에 품번 있음)" if prod.get("code_in_page") else " · 품번이 없어 이름으로 찾음"
                 m[cc] = o
                 log(f"  {key}: {note}" + (" · 할인 중 있음" if o.get("sale") else ""))
             items.append({"id": prod["id"], "brand": prod["brand"], "name": prod["name"], "code": prod["code"], "m": m})
