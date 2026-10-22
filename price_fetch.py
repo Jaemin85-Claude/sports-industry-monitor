@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.2: (대표 지시 2026-10-22 '추가 가능 5곳 넣어주세요') 드래곤디퓨전·헌터·언더아머·써코니·브룩스 대표 상품 추가(접속 시험 10/22 —
+    나라별 같은 상품 주소·가격 칸을 GitHub 서버에서 확인). ① 상품 페이지에 JSON-LD가 없고 schema.org 마이크로데이터(itemprop)만 있는
+    SFCC형 몰(써코니 해외) — 이 상품 품번(data-stock-number)이 있을 때만, 판매가(itemprop price · 가능하면 priceincents)와
+    '원래 가격'(price-standard — 판매가가 이 상품 가격과 같을 때만)을 읽음 · 독일식 소수점(190,00)도 ② 쇼피파이 변형 품번이 바코드인 몰
+    (헌터 미국·영국)은 상품 주소(handle)에 품번이 있으면 그 상품 ③ 그 나라 수입사 품번이 따로 있으면 cc_code(브룩스 일본 BRM4933)
+    ④ 이름으로 찾는 상품 중 code_in_page면 페이지에 품번이 있어야 함(써코니·브룩스 한국 — 품번이 JSON-LD 밖 상품 정보 칸에만 있음).
 v1.1: (2026-10-22 main 첫 수집에서 푸마 멕시코가 전 색상 30% 세일이라 할인가 1,539.3페소가 정가로 저장됨 — JSON-LD에 정가 표기 없음)
     SFCC형 몰 화면 데이터의 "c_listPrice"(정가)·"c_salePrice"(판매가)를 정가 명세로 읽음 — 판매가가 이 상품 JSON-LD 가격과 같을 때만
     (추천 상품 섞임 방지 · 정가는 판매가의 1~3배일 때만). 푸마 멕시코 확인(2026-10-22 브랜치 진단: c_listPrice 2199 · c_salePrice 1539.3).
@@ -80,6 +86,29 @@ PRODUCTS = [
         "US": f"{DM}/us/en/jadon-smooth-leather-platform-boots-black/p/15265001",
         "GB": f"{DM}/uk/en_gb/jadon-smooth-leather-platform-boots-black/p/15265001"}},
     # 닥터마틴 1460은 한국 몰 품번(10072004)이 해외(11822006)와 달라 넣지 않음(같은 상품인지 확인 안 됨)
+    # v1.2 — 접속 시험 2026-10-22: 해외 몰 주소는 GitHub 서버에서 확인(나라별 같은 품번)
+    {"id": "dd-santacroce", "brand": "드래곤디퓨전", "name": "산타크로체 빅 백", "code": "8892", "alt": ["W2BAS26025DBR"], "src": "page", "hint": "santa croce", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",   # 코오롱몰(공식 수입) 자체 품번
+        "US": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade"}},   # 글로벌 몰 1곳 — 접속한 나라 통화(미국 서버 → 달러), 달러가 아니면 실패
+    {"id": "hunter-origtall", "brand": "헌터", "name": "오리지널 톨(여성·무광)", "code": "WFT1000RMA", "src": "page", "hint": "wft1000rmablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01",   # 코오롱몰 — 품번은 상품 이름 끝(WFT1000RMABLK)에만
+        "US": "https://hunterboots.com/products/womens-original-tall-rain-boots-in-black-wft1000rma-hbl01.json",
+        "GB": "https://hunterboots.co.uk/products/womens-original-tall-wellington-boots-wft1000rma-blk.json",
+        "JP": "https://hunterboots.co.jp/products/wft1000rma-blk.json"}},
+    {"id": "ua-tech2", "brand": "언더아머", "name": "UA 테크 2.0 반팔", "code": "1326413", "src": "page", "hint": "ua tech", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
+        "US": "https://www.underarmour.com/en-us/p/ua_tech_2.0_mens_short_sleeve/1326413.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-2.0-mens-short-sleeve/1326413.html",
+        "DE": "https://www.underarmour.de/de-de/p/ua-tech-2.0/1326413.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html"}},   # 일본은 수입사(DOME) 품번·사양이 달라 뺌
+    {"id": "saucony-ride19", "brand": "써코니", "name": "라이드 19(남성)", "code": "S21055", "src": "page", "hint": "라이드 19", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",   # 품번은 상품 정보 칸 '모델 S21055-172'
+        "US": "https://www.saucony.com/en/ride-19/60823M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/ride-19/60823M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html"}},   # 해마다 새 모델(라이드 20 등)이 나오면 품번·주소를 바꿈
+    {"id": "brooks-ghost18", "brand": "브룩스", "name": "고스트 18(남성)", "code": "1104931D", "cc_code": {"JP": "BRM4933"}, "src": "page", "hint": "고스트 18", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",   # 품번은 prd_model 칸(1104931D020)
+        "JP": "https://brooksrunning.co.jp/products/brm4933-b-b.json"}},   # 일본 수입사 품번 BRM4933 = 고스트 18 남성 보통 폭 · 미국·유럽 몰은 403(넣지 않음)
 ]
 
 
@@ -209,6 +238,38 @@ def num(v):
         return None
 
 
+def _money(s):
+    """화면 글자 가격 → 숫자: '$1,234.56' · '1.234,56 €' · '190,00' · '1.234 €'(독일식 천 단위)"""
+    t = re.sub(r"[^0-9.,]", "", str(s))
+    if re.fullmatch(r"\d{1,3}(\.\d{3})*,\d{1,2}", t):
+        t = t.replace(".", "").replace(",", ".")
+    elif re.fullmatch(r"\d{1,3}(\.\d{3})+", t):
+        t = t.replace(".", "")
+    return num(t)
+
+
+def _micro(html, cur, codes):
+    """schema.org 마이크로데이터(itemprop) 가격 — JSON-LD가 없는 SFCC형 몰(써코니 해외). 이 상품 품번(data-stock-number)이 있을 때만.
+    판매가 = itemprop price(같이 있는 priceincents ÷ 100 우선 — 190,00 같은 독일식 표기 오해 방지), 정가 = 판매가 바로 뒤 '원래 가격'(price-standard)"""
+    stock = " ".join(re.findall(r'data-stock-number="([^"]+)"', html)).lower()
+    if not codes or not any(c in stock for c in codes):
+        return [], [], False
+    offers, end = [], 0
+    for m in re.finditer(r'itemprop="priceCurrency"[^>]*>\s*([A-Z]{3})\s*<.{0,300}?itemprop="price"[^>]*>\s*([0-9][0-9.,]*)\s*<'
+                         r'(?:.{0,200}?itemprop="priceincents"[^>]*>\s*([0-9]+)\s*<)?', html, re.S):
+        c, p, cents = m.groups()
+        v = (int(cents) / 100 if cents else None) or _money(p)
+        if c == cur and v:
+            offers.append(v); end = m.end()
+    lists = []
+    for m in re.finditer(r'class="price-sales[^"]*"[^>]*>\s*([^<]*?)\s*<(?:(?!class="price-sales).){0,300}?class="price-standard[^"]*"[^>]*>\s*([^<]*?)\s*<',
+                         html[:end], re.S):   # 이 상품 가격 칸(마이크로데이터) 앞만 · 바로 다음 판매가 칸 전까지 — 추천 상품 칸의 원래 가격과 짝짓지 않게
+        sv, lv = _money(m.group(1)), _money(m.group(2))
+        if sv and lv and sv <= lv <= sv * 3 and any(abs(sv - o) < 0.01 for o in offers):
+            lists.append(lv)
+    return offers, lists, True
+
+
 def nike_price(code, cc):
     m, l, cur = MK[cc]
     d = _json(get(NIKE_FEED.format(m=m, l=l, s=code)))
@@ -299,18 +360,24 @@ def page_price(html, hint, cur, codes=()):
     if len(base) > 1:
         raise RuntimeError(f"여러 상품 기본가가 섞임({', '.join(f'{x:g}' for x in sorted(base))})")
     lists.extend(base)
-    if not prods and not lists:
+    micro = False
+    if not prods and not lists:   # JSON-LD가 없으면 마이크로데이터(써코니 해외 — 품번이 페이지 상품 칸에 있을 때만)
+        mo, ml, micro = _micro(html, cur, codes)
+        offers += mo; lists += ml
+    if not prods and not lists and not micro:
         raise RuntimeError("상품 가격 데이터(JSON-LD) 없음")
     if not offers and not lists:
         raise RuntimeError(f"{cur} 가격 없음")
     full = max(lists) if lists else max(offers)
     if offers and max(offers) > full: full = max(offers)   # 정가 명세보다 높은 판매가는 없으므로 높은 쪽
-    return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code else "이름" if prods or base_name else ""}
+    return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code or micro else "이름" if prods or base_name else ""}
 
 
 def shopify_price(url, code):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
+    if not vs and code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", ""):
+        vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰(헌터 미국·영국) — 상품 주소(handle)에 품번
     if not vs:
         raise RuntimeError("품번이 다른 상품(대응표 확인)")
     full = max(max(num(v.get("price")) or 0, num(v.get("compare_at_price")) or 0) for v in vs)
@@ -321,18 +388,21 @@ def shopify_price(url, code):
 
 def fetch_one(prod, cc):
     cur = MK[cc][2]
+    code = (prod.get("cc_code") or {}).get(cc, prod["code"])   # 그 나라 수입사 품번이 따로 있으면(브룩스 일본)
     if prod["src"] == "nike":
         return nike_price(prod["code"], cc), NIKE_FEED.format(m=MK[cc][0], l=MK[cc][1], s=prod["code"])
     url = prod["urls"].get(cc)
     if not url:
         raise Skip("주소 없음")
     if url.endswith(".json"):
-        return shopify_price(url, prod["code"]), url[:-5]
+        return shopify_price(url, code), url[:-5]
     r = get(url)
     loc = urllib.parse.urlsplit(url).path.split("/")[1]
     if prod["id"].startswith("on-") and loc not in urllib.parse.urlsplit(r.url).path:   # 온: 그 나라 몰이 없으면 다른 나라로 넘김
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
-    return page_price(r.text, prod["hint"], cur, [prod["code"]] + prod.get("alt", [])), url
+    if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
+        raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
+    return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
 
 
 def cfg_hash():
