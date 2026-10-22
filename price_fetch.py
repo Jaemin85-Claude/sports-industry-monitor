@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 223개 —
+v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 227개 —
     나라별로 같은 품번을 GitHub 서버에서 확인한 것만 · 그 나라 몰에 없거나 품번·사양이 다르거나 할인가가 정가로 보이면 그 나라는 뺌, 이유는 상품 줄 주석).
     ① SFCC형 몰(푸마 한국 등)이 가격인하 중이면 JSON-LD에 판매가만 있어, 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로 —
     취소선 곁 판매가 칸 값이 이 상품 판매가와 같을 때만(추천 상품 칸 섞임 방지 · 검토 반영) · 판매가보다 높고 5배 안(푸마 한국 팔레르모 10/22 119,000 → 35,700원 · 70% 할인)
     ② 한 실행 최대 6 → 11분(값 1개 약 2초 · update.yml 해외 정가 단계 8 → 13분 · 작업 25 → 32분) ③ 온러닝·살로몬 나라별 주소 도우미 _on·_sal.
     ④ 브랜치 시험(10/22 · 216/223 · 385초): 살로몬 해외가 9번째 요청 뒤 403(우회 안 함) → 같은 사이트 요청 간격 HOST_GAP(살로몬 해외 8초) ·
     몇 값만 못 받은 날(사이트가 중간에 막음·연결 끊김 — 써코니 한국 1건)도 다음 날 그 값만 한 번 더(알림 없이) · 같은 사이트가 연달아 2번
-    응답 없으면(연결 오류·시간 초과) 그 실행에서 건너뜀(한 사이트가 11분을 다 쓰지 않게).
+    응답 없으면(연결 오류·시간 초과) 그 실행에서 건너뜀(한 사이트가 11분을 다 쓰지 않게) · 푸마 인헤일 → 디비에이트 나이트로 엘리트 4
+    (인헤일은 미국 몰이 전 색상 할인가 73.99달러뿐 — 할인가가 정가로 보이면 그 나라는 뺀다는 기준 · 다른 나라 몰에는 없음).
 v1.2: (대표 지시 2026-10-22 '추가 가능 5곳 넣어주세요') 드래곤디퓨전·헌터·언더아머·써코니·브룩스 대표 상품 추가(접속 시험 10/22 —
     나라별 같은 상품 주소·가격 칸을 GitHub 서버에서 확인). ① 상품 페이지에 JSON-LD가 없고 schema.org 마이크로데이터(itemprop)만 있는
     SFCC형 몰(써코니 해외) — 이 상품 품번(data-stock-number)이 있을 때만, 판매가(itemprop price · 가능하면 priceincents)와
@@ -60,7 +61,7 @@ HDR = {"User-Agent": UA, "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
 DAYS = 7            # 주 1회
 SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 할인으로 보고 정가를 지킴
 STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
-TIME_LIMIT = 11 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 223개(1개 약 2초)라 6 → 11분
+TIME_LIMIT = 11 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분
 GAP = 1.5           # 초 — 요청 사이 쉬는 시간
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
@@ -116,9 +117,13 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%89-%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/399781",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html"}},
-    {"id": "puma-inhale", "brand": "푸마", "name": "인헤일", "code": "401560", "src": "page", "hint": "inhale", "urls": {
-        "KR": "https://kr.puma.com/kr/ko/pd/%EC%9D%B8%ED%97%A4%EC%9D%BC-%3Cbr%3Einhale/401560.html",
-        "US": "https://us.puma.com/us/en/pd/inhale-sneakers/401560"}},   # 영국·독일·일본·멕시코 몰 사이트맵에 없음(시험 10/22)
+    {"id": "puma-dne4", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 4(남성)", "code": "312127", "src": "page", "hint": "deviate nitro elite 4", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
+        "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-mens-road-running-shoes/312127",
+        "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-4-running-shoes-men/312127",
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127",
+        "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A1%E3%83%B3%E3%82%BA-%E3%83%87%E3%82%A3%E3%83%B4%E3%82%A3%E3%82%A8%E3%82%A4%E3%83%88-%E3%83%8B%E3%83%88%E3%83%AD-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88-4-%E3%83%A9%E3%83%B3%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA/312127",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html"}},   # 인헤일(401560) 대신 — 미국 몰은 전 색상 할인가(73.99달러)뿐이라 뺌(검토 반영 10/22)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
         cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
         for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},
