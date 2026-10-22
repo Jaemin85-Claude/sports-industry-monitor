@@ -1,15 +1,79 @@
 [
  {
-  "t": "grep",
-  "urls": [
-   "https://kr.puma.com/kr/ko/home",
-   "https://kr.puma.com/kr/ko"
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "puma-dne4",
+    "brand": "푸마",
+    "name": "dne4",
+    "code": "312127",
+    "src": "page",
+    "hint": "deviate nitro elite 4",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html"
+    }
+   },
+   {
+    "id": "puma-decon",
+    "brand": "푸마",
+    "name": "decon",
+    "code": "410473",
+    "src": "page",
+    "hint": "speedcat decon",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%EB%8D%B0%EC%BD%98-sd-%3Cbr%3Espeedcat-decon-sd/410473.html"
+    }
+   }
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "us.puma.com",
+  "pats": [
+   "/312127",
+   "/410473"
   ],
-  "rx": [
-   "href=\"(/kr/ko/pd/[^\"]+/[0-9]{6}\\.html)",
-   "href=\"(https://kr\\.puma\\.com/kr/ko/pd/[^\"]+/[0-9]{6}\\.html)",
-   "href=\"(/kr/ko/[a-z0-9-]+(?:/[a-z0-9-]+)?)\""
+  "want": 1,
+  "max_maps": 30
+ },
+ {
+  "t": "sitemap",
+  "host": "uk.puma.com",
+  "pats": [
+   "/312127",
+   "/410473"
   ],
-  "max": 80
+  "want": 1,
+  "max_maps": 20
+ },
+ {
+  "t": "sitemap",
+  "host": "eu.puma.com",
+  "pats": [
+   "/de/de/&&/312127",
+   "/de/de/&&/410473"
+  ],
+  "want": 1,
+  "max_maps": 30
+ },
+ {
+  "t": "sitemap",
+  "host": "jp.puma.com",
+  "pats": [
+   "/312127",
+   "/410473"
+  ],
+  "want": 1,
+  "max_maps": 20
+ },
+ {
+  "t": "sitemap",
+  "host": "mx.puma.com",
+  "pats": [
+   "/312127",
+   "/410473"
+  ],
+  "want": 1,
+  "max_maps": 10
  }
 ]
