@@ -1,0 +1,40 @@
+[
+ {
+  "t": "page",
+  "urls": [
+   "https://www.adidas.co.kr/",
+   "https://www.adidas.com/us",
+   "https://www.nbkorea.com/",
+   "https://www.newbalance.com/",
+   "https://www.asics.co.kr/",
+   "https://www.asics.com/us/en-us/",
+   "https://www.lululemon.co.kr/ko-kr/",
+   "https://shop.lululemon.com/",
+   "https://www.skecherskorea.co.kr/",
+   "https://www.skechers.com/",
+   "https://www.crocs.co.kr/",
+   "https://www.crocs.com/",
+   "https://www.hoka.com/en/us/",
+   "https://www.hoka.co.kr/",
+   "https://www.onitsukatiger.com/kr/ko-kr/",
+   "https://www.onitsukatiger.com/us/en-us/",
+   "https://www.mizuno.co.kr/",
+   "https://mizunousa.com/",
+   "https://jpn.mizuno.com/",
+   "https://arcteryx.com/kr/ko/",
+   "https://arcteryx.com/us/en/",
+   "https://www.keenfootwear.com/",
+   "https://www.keenkorea.co.kr/",
+   "https://www.oofos.com/",
+   "https://oofos.co.kr/",
+   "https://nordarun.com/",
+   "https://www.cepcompression.com/",
+   "https://www.cep-sports.com/",
+   "https://www.oakley.com/en-us",
+   "https://www.oakley.com/ko-kr",
+   "https://andar.co.kr/",
+   "https://andar.us/"
+  ],
+  "rx": "(?!x)x"
+ }
+]
