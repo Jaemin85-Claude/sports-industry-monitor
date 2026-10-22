@@ -1,0 +1,1343 @@
+[
+ {
+  "brand": "뉴발란스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.nbkorea.com/",
+    "op": "official licensee E-Land World (New Balance Korea official online store)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.newbalance.com/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.newbalance.co.uk/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.newbalance.de/de/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://shop.newbalance.jp/",
+    "op": "brand-run (New Balance Japan)",
+    "conf": "high"
+   }
+  ],
+  "product": {
+   "name": "Made in USA 990v6 (Grey/White)",
+   "code": "M990GL6",
+   "urls": {
+    "KR": "https://m.nbkorea.com/product/productDetail.action?styleCode=NBPZGS105G&colCode=15",
+    "US": "https://www.newbalance.com/pd/made-in-usa-990v6/M990V6-43094-PMG-NA.html",
+    "GB": "https://www.newbalance.co.uk/pd/made-in-usa-990v6/M990GL6-D-125.html",
+    "DE": "https://www.newbalance.de/en/pd/made-in-usa-990v6/M990V6-45188.html",
+    "JP": "https://shop.newbalance.jp/shop/g/gM990GL6"
+   }
+  },
+  "notes": "There is no confirmed official New Balance online store for Mexico. New Balance has 21 stores there and mentions e-commerce, but searches did not confirm a newbalance.mx or newbalance.com.mx domain, so MX is left out. The KR store is run by E-Land under licence. Korea uses its own internal style code (NBPZGS105G), but the page title shows M990GL6. One nbkorea page calls this the final 990v6 collection, so the 990v6 may be discontinued in Korea soon. The US and DE links open a 990v6 page that covers several colours; pick the M990GL6 colour on it. The GB link is specific to M990GL6. Full prices seen in search results: KR 289,000 KRW, US $199.99, GB £210, DE €250, JP ¥39,600 (shown on sale at ¥31,680). Repo notes say New Balance was blocked in the 10/21 access test, so fetching may still fail."
+ },
+ {
+  "brand": "우포스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.lfmall.co.kr/",
+    "op": "official importer LF Corp (LFmall, LF's own mall)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.oofos.com/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.oofos.co.uk/",
+    "op": "OOFOS UK official site (brand or its UK partner)",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://oofos.jp/",
+    "op": "official Japan distributor site (company name not confirmed)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "OOriginal Recovery Sandal - Black",
+   "code": "1000-BLK",
+   "urls": {
+    "US": "https://www.oofos.com/products/mens-original-sandal-black",
+    "GB": "https://www.oofos.co.uk/products/mens-ooriginal-sandal-black",
+    "JP": "https://oofos.jp/products/original-black"
+   }
+  },
+  "notes": "Global style code is 1000-BLK, the unisex OOriginal in Black, sized in men's sizes. LF officially imports OOFOS into Korea and has sold it since 2026. Korean sales are on LFmall, LF's own mall, marked '공식수입' (official import). The OOFOS search page there is https://www.lfmall.co.kr/app/search/result/Oofos. KR price seen: 69,000 KRW. No LFmall product page for this item came up in search, so KR is missing from the product URLs. US full price is $59.95. oofos.jp runs two shop systems: Shopify pages at oofos.jp/products/ and older pages at www.oofos.jp/shopdetail/. No official OOFOS store was found for DE (only retailers such as sportsshoes) or MX."
+ },
+ {
+  "brand": "아디다스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.adidas.co.kr/",
+    "op": "brand-run (adidas Korea)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.adidas.com/us",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.adidas.co.uk/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.adidas.de/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.adidas.jp/",
+    "op": "brand-run (adidas Japan; also shop.adidas.jp)",
+    "conf": "high"
+   },
+   {
+    "cc": "MX",
+    "url": "https://www.adidas.mx/",
+    "op": "brand-run",
+    "conf": "high"
+   }
+  ],
+  "product": {
+   "name": "Samba OG (Black)",
+   "code": "IE6520",
+   "urls": {
+    "KR": "https://www.adidas.co.kr/%EC%82%BC%EB%B0%94-og/IE6520.html",
+    "US": "https://www.adidas.com/us/samba-og-shoes/IE6520.html",
+    "GB": "https://www.adidas.co.uk/samba-og-shoes/IE6520.html",
+    "DE": "https://www.adidas.de/en/samba-og-shoes/IE6520.html",
+    "JP": "https://www.adidas.jp/%E3%82%B5%E3%83%B3%E3%83%90-og-samba-og/IE6520.html",
+    "MX": "https://www.adidas.mx/tenis-samba-og/IE6520.html"
+   }
+  },
+  "notes": "IE6520 (Samba OG, Black) was the only Samba code found on all 6 official stores, including KR and MX. Its exact colour name is unconfirmed and it may be a seasonal colourway. The UK store showed it on sale at £66.50, down from a full price of £95. The iconic white Samba OG B75806 was found at US (https://www.adidas.com/us/samba-og-shoes/B75806.html), GB (https://www.adidas.co.uk/samba-og-shoes/B75806.html, £95) and JP (on the family page shop.adidas.jp/family/FA0239/, ¥15,400). It was also seen on adidas.de, but only on a Confirmed-app page (€120). It was not found on adidas.co.kr or adidas.mx. KR Samba OG full price is 139,000-149,000 KRW. The DE link is the English-language version of adidas.de. Repo notes say adidas was blocked in the 10/21 access test, so fetching may still fail."
+ },
+ {
+  "brand": "호카",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.hoka.com/en/us/",
+    "op": "brand-run (Deckers)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.hoka.com/en/gb/",
+    "op": "brand-run (Deckers)",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.hoka.com/de/de/",
+    "op": "brand-run (Deckers)",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.hoka.com/jp/",
+    "op": "brand-run (Deckers Japan)",
+    "conf": "high"
+   },
+   {
+    "cc": "MX",
+    "url": "https://hoka.mx/",
+    "op": "official Mexico site, probably run by a distributor (name not confirmed; possibly Promarcas)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Bondi 9 (Men's)",
+   "code": "1162011",
+   "urls": {
+    "US": "https://www.hoka.com/en/us/mens-everyday-running-shoes/bondi-9/1162011.html",
+    "GB": "https://www.hoka.com/en/gb/men-road/bondi-9/1162011.html",
+    "JP": "https://www.hoka.com/jp/bondi-9/1162011.html",
+    "MX": "https://hoka.mx/products/bondi-14"
+   }
+  },
+  "notes": "No official HOKA online store was found for KR, so KR is left out. Korea's distributor is changing: Deckers named E-Land the new distributor (reported Aug 2026). The previous distributor Joeyworks is challenging the termination in arbitration (ICDR). No start date is set, and Korean sales now go through third-party malls such as Musinsa and Kolon Mall (1162011-BBLC at 229,000 KRW). Clifton was not used because it changes code every year (Clifton 10 1162030 has been replaced by Clifton 11). Bondi 9 (1162011) is still current. Full prices seen: US $175, GB £160, DE €180 (one listing shows €160), JP ¥24,200, MX 4,399 MXN. hoka.mx calls itself 'HOKA México Sitio Oficial' and runs on Shopify. A 'Promarcas_Group' collection there hints at the operator, but this is unconfirmed. Its product link uses the handle bondi-14, which contains no style code. For DE, only the model page https://www.hoka.com/de/de/bondi-9/ was found, not the 1162011 product page."
+ },
+ {
+  "brand": "드래곤디퓨전",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.kolonmall.com/Brand/DRAGON_DIFFUSION",
+    "op": "Kolon Industries FnC (Kolon Mall, official import)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://dragondiffusion.com/",
+    "op": "brand-run (single global store, currency by location)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://dragondiffusion.com/",
+    "op": "brand-run (single global store, currency by location)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://dragondiffusion.com/",
+    "op": "brand-run (single global store, currency by location)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Santa Croce Big - Dark Brown",
+   "code": "8892 (DK BROWN)",
+   "urls": {
+    "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",
+    "US": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade"
+   }
+  },
+  "notes": "Dragon Diffusion runs one global Shopify store, dragondiffusion.com, with no country paths. The currency changes with the visitor's location (USD and EUR prices seen), so US, GB and DE share the same address, and the price fetched depends on the server's location. The global product link is listed under US only. Global price for Santa Croce Big seen at about $585-616 or €511. It is made to order (8-10 weeks). Global style code 8892 covers all colours of Santa Croce Big; retailers write Dark Brown as 8892 DK BROWN. Kolon Mall (Kolon Industries FnC, items marked '공식수입' official import) uses its own codes, such as W2BAS26025DBR for Dark Brown. KR products must therefore be matched by model name plus colour. KR full price seen: 785,000 KRW. No official store or authorised online seller was found for JP or MX."
+ },
+ {
+  "brand": "메종키츠네",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ssfshop.com/",
+    "op": "공식 유통사 몰: 삼성물산 패션부문 SSF샵",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://maisonkitsune.com/jp/",
+    "op": "브랜드 직영 (Maison Kitsuné Japan)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://maisonkitsune.com/",
+    "op": "브랜드 직영 (나라 경로 미확인)",
+    "conf": "low"
+   },
+   {
+    "cc": "GB",
+    "url": "https://maisonkitsune.com/",
+    "op": "브랜드 직영 (나라 경로 미확인)",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://maisonkitsune.com/",
+    "op": "브랜드 직영 (나라 경로 미확인, EU 공통일 수 있음)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Fox Head Patch Regular Tee-Shirt (폭스헤드 패치 레귤러 티셔츠)",
+   "code": "LM00104KJ0008",
+   "urls": {}
+  },
+  "notes": "한국은 삼성물산 패션부문이 전개하고 SSF샵에서 판다(2026년 6~7월 기사에 SSF샵 메종키츠네 행사·래플). 본사 몰 maisonkitsune.com은 일본 전용 경로 /jp/가 확인됨(미쓰이 쇼핑파크 매장 안내). 미국·영국·독일 경로는 검색에서 확인하지 못해 루트 주소만 적음(신뢰도 낮음). /jp/와 같은 방식이면 /us/ 꼴일 가능성이 있으나 확인 필요. 멕시코 공식 온라인몰은 찾지 못함. 대표 상품은 폭스헤드 패치 레귤러 티셔츠 LM00104KJ0008(색상 H170 다크 그레이 멜란지, KREAM에 한국 발매가 139,500원으로 표기). 비슷한 클래식 티 AM00103KJ0008도 있음. 공식 상품 페이지 주소는 검색 결과에서 찾지 못함."
+ },
+ {
+  "brand": "킨",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.lfmall.co.kr/",
+    "op": "공식 유통사 몰: LF (LF몰)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.keenfootwear.com/",
+    "op": "브랜드 직영",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.keenfootwear.co.uk/",
+    "op": "브랜드 직영",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.keenfootwear.de/",
+    "op": "브랜드 직영",
+    "conf": "high"
+   }
+  ],
+  "product": {
+   "name": "Men's Newport H2 Sandal - Triple Black",
+   "code": "1022258",
+   "urls": {
+    "GB": "https://www.keenfootwear.co.uk/products/mens-newport-h2-triple-black"
+   }
+  },
+  "notes": "한국은 LF가 2021년부터 공식 수입·유통한다(신라면세점 표기 '수입·유통 LF', 2024년 기사에 LF몰 판매). 영국은 keenfootwear.co.uk, 독일은 keenfootwear.de로 상품 페이지가 /products/… 꼴(쇼피파이형)이며, 독일 영어판은 /en/. 일본은 KEEN Japan의 공식 온라인 스토어가 있으나(하입비스트 재팬 2025-04) 주소를 확인하지 못해 뺐다. 멕시코 공식몰은 찾지 못함. 대표 상품은 뉴포트 H2 남성 트리플 블랙 1022258(영국 공식 £110, 1,239개 리뷰). 같은 품번이 뉴질랜드 공식몰에도 있음. 다른 대표 색상은 1001907(블랙)이다. 미국·한국 상품 페이지 주소는 검색에서 찾지 못함."
+ },
+ {
+  "brand": "가니",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ssfshop.com/",
+    "op": "공식 유통사 몰: 삼성물산 패션부문 SSF샵 (비이커)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.ganni.com/en-us/",
+    "op": "브랜드 직영 (경로는 fr-fr에서 추정)",
+    "conf": "low"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.ganni.com/en-gb/",
+    "op": "브랜드 직영 (경로는 fr-fr에서 추정)",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.ganni.com/de-de/",
+    "op": "브랜드 직영 (경로는 fr-fr에서 추정)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "GANNI Bou Bag - Black (099)",
+   "code": "A5241",
+   "urls": {}
+  },
+  "notes": "한국은 삼성물산 패션부문 비이커가 전개하고 SSF샵·백화점 단독 매장에서 판다(2022~2023년 기사). GANNI.com은 한국을 포함한 35개국으로 직접 배송한다(2025년 PR Times). 한국 나라 경로는 확인하지 못함. ganni.com은 나라 경로를 쓴다(fr-fr 확인). 그래서 en-us·en-gb·de-de는 같은 방식을 가정한 추정이며 확인이 필요하다. 일본은 2025년 시부야 파르코 직영점이 있으나 일본 온라인몰 주소는 확인하지 못해 뺐다. 멕시코는 찾지 못함. 대표 상품은 부 백(Bou Bag) 블랙 A5241(색상 099) — BUYMA 기준가 ¥72,000. 공식 상품 페이지 주소는 검색에서 찾지 못함."
+ },
+ {
+  "brand": "언더아머",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.underarmour.co.kr/",
+    "op": "브랜드 직영 (언더아머코리아)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.underarmour.com/en-us/",
+    "op": "브랜드 직영",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.underarmour.co.uk/en-gb/",
+    "op": "브랜드 직영",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.underarmour.de/de-de/",
+    "op": "브랜드 직영",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.underarmour.co.jp/",
+    "op": "공식 유통사: DOME (주)도움",
+    "conf": "medium"
+   },
+   {
+    "cc": "MX",
+    "url": "https://www.underarmour.com.mx/es-mx/",
+    "op": "브랜드 직영",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Men's UA Tech 2.0 Short Sleeve",
+   "code": "1326413",
+   "urls": {
+    "US": "https://www.underarmour.com/en-us/p/shirts_and_tops/ua_tech_2.0/1326413.html"
+   }
+  },
+  "notes": "한국은 언더아머코리아가 직접 운영한다(효성갤럭시아 유통에서 직영으로 전환, 2024년 Korea Times). 공식 사이트 underarmour.co.kr은 면세 매장 안내(ktriptips)에서 확인했고, 나라 경로(/ko-kr/ 등)는 확인하지 못함. 일본은 DOME(이토추 70%·UA 30%)이 독점 유통사(2025-12 기준)이며 일본 품번이 다를 수 있다. 예: UA 테크 2.0 반팔이 일본에서는 1358553. 미국 경로 /en-us/는 상품 주소로 확인했다. 영국 /en-gb/, 독일 /de-de/, 멕시코 /es-mx/는 같은 방식을 가정한 것으로 검색에서는 확인하지 못함. 대표 상품은 UA 테크 2.0 반팔 1326413(미국 정가 $25, 독일 권장가 €30 eBay 표기). 한국 KREAM에도 같은 품번(1326413-001·-002)이 있음. 미국 외 상품 페이지는 찾지 못함."
+ },
+ {
+  "brand": "헌터",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.kolonmall.com/Brands/HUNTER",
+    "op": "코오롱인더스트리 FnC부문 (코오롱몰 HUNTER 브랜드관, 공식 수입 여부 미확인)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://hunterboots.com/",
+    "op": "브랜드 직영",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.hunterboots.co.uk/",
+    "op": "브랜드 직영 (제3자 표기로만 확인)",
+    "conf": "low"
+   },
+   {
+    "cc": "JP",
+    "url": "https://hunterboots.co.jp/",
+    "op": "브랜드 일본 공식 (Hunter Japan, 도메인은 제3자 안내로만 확인)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Women's Original Tall Rain Boots (matte) — 여성 오리지날 톨 레인부츠",
+   "code": "WFT1000RMA",
+   "urls": {}
+  },
+  "notes": "한국은 코오롱인더스트리 FnC부문이 코오롱몰 HUNTER 브랜드관에서 판다. 공식 수입사인지는 검색으로 확인하지 못함(예전에는 LF 독점). 미국 hunterboots.com은 쇼피파이형(/products/…)으로, 상품 주소가 확인된다. 영국 hunterboots.co.uk는 가격 비교 사이트의 표기만 있고, 일본 hunterboots.co.jp는 미쓰이 쇼핑파크 안내에서만 봤다(다른 안내는 hunterboots.jp). 둘 다 신뢰도 낮음. 일본 공식 온라인 스토어 자체는 존재한다(fashionsnap 2026-05, 오리지널 톨 70주년 ¥26,950). 독일·멕시코 공식몰은 확인하지 못함. 대표 상품은 여성 오리지널 톨 무광 WFT1000RMA(블랙 BLK / HBL). 코오롱몰도 WFT1000RMA를 색상별로 판다(헌터그린 HGR·캐스트 화이트 CAS·올리브리프 OVL·블랙 BLK). 다만 어느 상품 주소가 어느 색인지 대응을 확인하지 못해 빼둠. 미국 공식 페이지는 같은 계열의 다른 품번만 찾음: 글로스 WFT1000RGL https://hunterboots.com/collections/womens-originals/products/womens-original-tall-gloss-rain-boots-in-medium-gray-w-t1000rgl-mgr01, 백 어드저스터블 WFT1001RMA https://hunterboots.com/products/womens-original-back-adjustable-tall-rain-boots-in-blue-wft1001rma-hbu77(코오롱몰에도 WFT1001RMAHGR이 있음)."
+ },
+ {
+  "brand": "크록스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.crocs.co.kr/",
+    "op": "brand-run (크록스코리아 / Crocs Korea subsidiary; Salesforce site Sites-crocs_kr-Site)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.crocs.com/",
+    "op": "brand-run (Crocs Inc.)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.crocs.co.uk/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.crocs.de/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.crocs.co.jp/",
+    "op": "brand-run (Crocs Japan)",
+    "conf": "high"
+   },
+   {
+    "cc": "MX",
+    "url": "https://crocs.com.mx/",
+    "op": "official Crocs Mexico store (Shopify); operating company not confirmed — possibly authorised distributor",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Classic Clog",
+   "code": "10001",
+   "urls": {
+    "KR": "https://www.crocs.co.kr/p/classic-clog/10001.html",
+    "US": "https://www.crocs.com/p/classic-clog/10001.html",
+    "GB": "https://www.crocs.co.uk/p/classic-clog/10001.html?cgid=the-classic-clog&cid=4OX",
+    "DE": "https://www.crocs.de/p/classic-clog/10001.html",
+    "JP": "https://www.crocs.co.jp/p/crocs-classic/10001.html",
+    "MX": "https://crocs.com.mx/products/10001-100-sandalia-unisex-adult-calzado-crocs-white-100-m2w4"
+   }
+  },
+  "notes": "Representative product: Classic Clog, global style 10001. The colour suffix follows the code, e.g. 10001-100 White, 10001-001 Black, 10001-410 Navy. The same 10001 page exists on the KR/US/GB/DE/JP brand stores. Snippet prices: US $49.99; UK £49.99 list (£34.99 sale at the time); DE Katalogpreis €54.99; JP list about ¥7,700; MX $1,299 MXN; KR page shows a ₩39,900–69,900 range, which varies by colour and discount, so read the per-colour list price (not the range minimum). MX is a Shopify store with one product URL per colour (the URL given is 10001-100 White). Its operator could not be confirmed (footer/aviso legal not seen), so treat it as medium. Caution from this repo's CLAUDE.md: crocs.co.kr was blocked in the 2026-10-21 bot access test (크록스 한국 excluded in price_fetch), so KR may need another route (e.g. the brand's official 11st store run by 크록스코리아) or stay excluded under the no-bypass rule."
+ },
+ {
+  "brand": "핏플랍",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ssfshop.com/fitflop/main?brandShopNo=BDMA07B12&brndShopId=FT",
+    "op": "official distributor: Samsung C&T Fashion Group (SSF Shop brand shop)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.fitflop.com/us/en/",
+    "op": "brand-run (FitFlop Ltd)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.fitflop.com/uk/en/",
+    "op": "brand-run (FitFlop Ltd)",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.fitflop.com/eu/de/",
+    "op": "brand-run (FitFlop EU store, German locale)",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.fitflop.jp/",
+    "op": "official distributor: Doshisha Co., Ltd. (株式会社ドウシシャ)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "iQushion Ergonomic (Rubber) Flip-Flops",
+   "code": "E54",
+   "urls": {
+    "US": "https://www.fitflop.com/us/en/shop/iqushion-ergonomic-flip-flops-p-E54",
+    "DE": "https://www.fitflop.com/eu/en/shop/iqushion-ergonomic-toe-posts-p-E54",
+    "JP": "https://www.fitflop.jp/products/iqushion-ergonomic-flip-flops-e54"
+   }
+  },
+  "notes": "KR: Samsung C&T Fashion (삼성물산 패션부문) has been FitFlop's exclusive Korean operator since Sep 2025, so SSF Shop's FitFlop brand shop is the official distributor's own mall. SSF lists products with global codes (e.g. Q74-001 Allegro ballerina, L39-001, FV6-592, E54-090). JP: official distributor Doshisha (株式会社ドウシシャ) since 2015 runs www.fitflop.jp (Shopify) plus an outlet at shop.fitflop.jp. DE is served by the EU store fitflop.com/eu/de/ (EUR). No official Mexico store was found. Representative product: iQushion Ergonomic Flip-Flops E54 (colour suffix e.g. E54-090 All Black, E54-010 Gold, E54-011 Silver). The EU product URL I saw is the EU-English page (eu/en); the eu/de equivalent was not seen. KR: E54-090 appeared on SSF but marked sold out, and no SSF product URL was found. GB: no E54 page seen. JP price ¥7,150 on fitflop.jp. Caveat: E54 is a low-price item, so other candidates may be better for KR stock (e.g. Lulu toe-posts, Allegro Q74 ballerina). Web-search budget ran out before these could be checked."
+ },
+ {
+  "brand": "락포트",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.rockport.com/",
+    "op": "brand-run (Rockport Company)",
+    "conf": "high"
+   }
+  ],
+  "product": {
+   "name": "",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "INCOMPLETE: the shared web-search budget (200 per turn) ran out while researching this brand. A follow-up search is needed. Confirmed: US brand store rockport.com (Shopify: /collections/..., free shipping over $85, typical styles $120–150). KR: no official Korean Rockport mall was found. Results showed only 11st marketplace sellers (e.g. 식스애비뉴 listing 'Classic Venetian Loafer M76440'), which are not official. GB/DE/JP/MX were not checked. No product page on an official store was confirmed. A candidate to check later is the Classic Venetian loafer (M76440), but its code was seen only on a third-party listing."
+ },
+ {
+  "brand": "피레넥스",
+  "stores": [
+   {
+    "cc": "DE",
+    "url": "https://pyrenex.com/en/",
+    "op": "brand-run (Pyrenex SAS, single global Shopify store, EUR)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://pyrenex.com/en/",
+    "op": "brand-run (same global store; USD prices seen on some pages)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "INCOMPLETE: the shared web-search budget ran out. Confirmed: brand store pyrenex.com/en/ (Shopify; collections down-jackets, mens-apparel, etc.). It shows EUR prices (e.g. Spoutnic hooded jacket €570, Orite €200, Sienna €390), and some pages show USD (Gravity 2 parka $690). It appears to be one global store that changes currency by market, so separate GB/US/JP storefronts were not confirmed. It is listed under DE as the EU/EUR storefront. KR: no brand-run or distributor mall was found. KREAM has a 'Pyrenex 공식 브랜드샵' brand-store (marketplace, so excluded per the rules), and CJ ENM 브랜드웍스 코리아 holds only the bedding licence. No style code or product URL was confirmed. Candidate iconic jackets are Spoutnic (men), Mythic and Authentic, but their codes were not checked."
+ },
+ {
+  "brand": "클락스",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.clarks.com/en-us/",
+    "op": "brand-run (C. & J. Clark)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.clarks.com/en-gb/",
+    "op": "brand-run (C. & J. Clark)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.clarks.com/de-de/",
+    "op": "brand-run (C. & J. Clark)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Men's Wallabee Boot Beeswax (Clarks Originals)",
+   "code": "26155513",
+   "urls": {
+    "US": "https://www.clarks.com/en-us/wallabee-boot/26155513-p"
+   }
+  },
+  "notes": "INCOMPLETE: the shared web-search budget ran out. Confirmed from search: US store clarks.com/en-us/. Clarks uses global 8-digit article numbers in URLs ('/<slug>/<article>-p'), and the same article numbers should apply across clarks.com locales. Representative product: Wallabee. Codes seen on the US store: Men's Wallabee Boot Beeswax 26155513 (product URL below), Men's Wallabee Boot Maple Suede 26155516, Men's Wallabee Boot Black Suede 26155517, Women's Wallabee Beeswax 26155544. US list about $140 (shoe) and $150 (boot). The GB (en-gb) and DE (de-de) store URLs come from general knowledge of Clarks' clarks.com locale scheme, not from search results. No GB/DE product URL was seen. KR/JP/MX official stores were not checked. KREAM shows only resale prices (Wallabee Beeswax ₩180,000 resale)."
+ },
+ {
+  "brand": "브룩스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://brooksrunning.co.kr/",
+    "op": "official distributor ((주)런컬렉션, per mall footer)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.brooksrunning.com/en_us/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.brooksrunning.com/en_gb/",
+    "op": "brand-run (Brooks EMEA site)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.brooksrunning.com/de_de/",
+    "op": "brand-run (Brooks EMEA site)",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://brooksrunning.co.jp/",
+    "op": "official Japan distributor store (likely Achilles Corp, unverified)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Brooks Ghost 18 (men's)",
+   "code": "110493 (Men's Ghost 18; yearly generation code)",
+   "urls": {
+    "US": "https://www.brooksrunning.com/en_us/mens/shoes/road-running-shoes/ghost-18/110493.html"
+   }
+  },
+  "notes": "KR official mall brooksrunning.co.kr: the footer in the search snippet names (주)런컬렉션 (Seoul Mapo-gu, customer centre 1533-2639). It lists Glycerin 23 at 199,000원 and Glycerin GTS 23 at 209,000원. Korea uses the global style code format (Musinsa listing 1104192E020 = Glycerin 21 wide black), so codes should match across stores. Caveat: Ghost style codes change with each yearly generation (Ghost 16 = 110418, Ghost 17 = 110442, Ghost 18 = 110493, men's), so the code must be updated yearly. One US page titled Ghost 17 sits at the ghost-18/110493 URL; its snippet says Ghost 18 at $150. The EMEA site (Sites-BrooksRunningEMEA-Site) uses locale paths such as /de_de/, /en_de/, /en_nl/ and /en_lu/. The en_gb path follows that pattern but no en_gb page appeared in results. No Mexican official online store was found (El Palacio de Hierro is a third-party seller), so MX is omitted. The JP store brooksrunning.co.jp is cited by Japanese press (dime.jp: brooksrunning.co.jp/collections/ghost-amp). Achilles Corp news PDFs suggest it is the Japan distributor, but this is unverified. The web search budget ran out before Ghost 18 product pages for KR/GB/DE/JP could be found, so only the US product URL is given."
+ },
+ {
+  "brand": "파라부트",
+  "stores": [],
+  "product": {
+   "name": "Paraboot Michael (black)",
+   "code": "715604",
+   "urls": {}
+  },
+  "notes": "Search found no official Paraboot store page in any country. Every result for the iconic Michael (Norwegian-welt moc-toe derby, launched 1945) came from third parties. Kith (pb715604, Black Silk, $650), END (Michael 715603) and Lyst (style 715604) are not official stores. The brand site is believed to be paraboot.com, but search did not confirm it or its country/locale coverage. KR/JP official mall and distributor are also unconfirmed. The search budget ran out before this could be checked further. Candidate product code: Michael 715604 (black) / 715603. Needs a follow-up search before adding."
+ },
+ {
+  "brand": "와일드동키",
+  "stores": [],
+  "product": {
+   "name": "",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Search for the official Wild Donkey online store returned nothing relevant: Playmobil toys, animal pages, and one aggregator (beyondstyle.us/brand/WILD-DONKEY) that names no brand-owned store. No official KR/US/GB/DE/JP/MX store or representative style code could be confirmed. The search budget ran out, so this needs a follow-up search, e.g. the Italian brand domain and the Korean distributor mall."
+ },
+ {
+  "brand": "휴먼메이드",
+  "stores": [
+   {
+    "cc": "JP",
+    "url": "https://humanmade.jp/",
+    "op": "brand-run (HUMAN MADE Inc.)",
+    "conf": "high"
+   }
+  ],
+  "product": {
+   "name": "",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Official online store humanmade.jp is confirmed by a Human Made campaign notice ('HUMAN MADE ONLINE STORE') and by the Sapporo store page linking to https://humanmade.jp/en. Corporate site: humanmade.co.jp; dealer list at humanmade.jp/pages/dealers. Brand-run physical stores exist in Japan, Seoul and Hong Kong (e.g. the Human Made x Pokémon capsule on 2025-10-11 sold in Japan/Seoul/HK stores plus online). No separate Korean, US, GB, DE or MX official online store was found. Most items are seasonal or limited drops, so no long-selling global style code was identified. Price comparison would likely be JP vs Korea retail only, and no KR online mall was confirmed. The search budget ran out before product pages could be checked."
+ },
+ {
+  "brand": "CEP",
+  "stores": [],
+  "product": {
+   "name": "",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "CEP is the sports compression brand of medi GmbH (Germany; founded 2007 by Dr Michael Weihermüller and the medi team; now also sells running shoes). Search did not return the official store (believed to be cep-sports.com), so its country/locale paths are unconfirmed. Only third-party retailers appeared: Bicycles Quilicot (CA) and Namshi (Gulf). No KR distributor mall and no long-selling style code were confirmed. The search budget ran out, so this needs a follow-up search (cep-sports.com locales; candidate product: The Run Compression Socks / Calf Sleeves 4.0)."
+ },
+ {
+  "brand": "노르다",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://nordarun.com/",
+    "op": "brand-run (norda, Montreal) — 하나의 글로벌 몰이며 통화는 접속 나라에 맞춰 바뀌는 것으로 추정",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "norda 001 (trail running shoe) — 품번 미확인",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "검색 한도 소진(이번 턴 WebSearch 200회 모두 사용)으로 이번 실행에서는 아무것도 검색으로 확인하지 못함. 아래 항목은 기존 지식에 근거한 미확인 값. 한국 공식 유통사·몰, 일본·유럽 전용 몰은 확인하지 못해 뺐음. 대표 상품은 norda 001(남녀)이 유력하나 글로벌 품번과 나라별 상품 주소는 확인하지 못함. 노르다는 캐나다 브랜드이며, 레포에서는 원산지 통화를 미국 달러로 대신 씀."
+ },
+ {
+  "brand": "비비안웨스트우드",
+  "stores": [
+   {
+    "cc": "GB",
+    "url": "https://www.viviennewestwood.com/en-gb/",
+    "op": "brand-run (Vivienne Westwood Ltd)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.viviennewestwood.com/en-us/",
+    "op": "brand-run (Vivienne Westwood Ltd)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.viviennewestwood.com/de-de/",
+    "op": "brand-run (Vivienne Westwood Ltd) — 경로 미확인",
+    "conf": "low"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.viviennewestwood-tokyo.com/",
+    "op": "Vivienne Westwood Japan (official Japan online store)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Mayfair Bas Relief Pendant (후보 — 품번 미확인)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "검색 한도 소진으로 미확인(기존 지식). 영국 본사 직영 글로벌 몰은 나라별 언어 경로(/en-gb/, /en-us/ 등)를 씀. 독일 경로는 정확하지 않음. 일본은 Vivienne Westwood Japan 몰이 따로 있는 것으로 앎. 한국 공식몰·유통사는 확인하지 못해 뺐음. 대표 상품 후보: Mayfair Bas Relief 펜던트·Orb 진주 목걸이(액세서리라 나라 간 품번이 같을 가능성 높음). 품번·상품 주소는 확인하지 못함."
+ },
+ {
+  "brand": "에코",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ecco.co.kr/",
+    "op": "ECCO Korea (brand subsidiary)",
+    "conf": "low"
+   },
+   {
+    "cc": "US",
+    "url": "https://us.ecco.com/",
+    "op": "brand-run (ECCO USA)",
+    "conf": "low"
+   },
+   {
+    "cc": "GB",
+    "url": "https://uk.ecco.com/",
+    "op": "brand-run (ECCO UK)",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://de.ecco.com/",
+    "op": "brand-run (ECCO Germany)",
+    "conf": "low"
+   },
+   {
+    "cc": "JP",
+    "url": "https://jp.ecco.com/",
+    "op": "brand-run (ECCO Japan)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "ECCO Soft 7 sneaker (후보 — 품번 미확인)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "검색 한도 소진으로 미확인(기존 지식). 중요: 레포 price_fetch.py 설명(v1, 2026-10-21 접속 시험)에 따르면 에코는 403/429로 막혔음. 봇 차단 우회 금지 규칙 때문에 지금 방식으로는 정가 연동 대상이 아님. 나라별 하위 도메인(us./uk./de./jp.ecco.com)은 사이트 개편으로 바뀌었을 수 있음. 멕시코 공식몰은 확인하지 못함. 대표 상품 후보: ECCO Soft 7 스니커·BIOM 2.0. 품번·상품 주소는 확인하지 못함."
+ },
+ {
+  "brand": "단톤",
+  "stores": [
+   {
+    "cc": "JP",
+    "url": "https://www.bshop-inc.com/",
+    "op": "official distributor (Bshop Inc.)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "DANTON inner down crew neck jacket (후보 — 품번 미확인)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "검색 한도 소진으로 미확인(기존 지식). 프랑스 워크웨어 브랜드로 최대 시장은 일본이며, 일본 수입·유통사 Bshop이 온라인에서 팝니다. 한국·미국·영국·독일·멕시코의 공식 온라인몰은 확인하지 못함. 대표 상품 후보: 이너 다운 크루넥 재킷·라운드 칼라 코듀로이 재킷. 품번은 일본 Bshop 품번 체계라 나라 간에 같은 품번일지 불확실. 나라 간 정가 비교 대상으로는 적합하지 않을 가능성이 높음."
+ },
+ {
+  "brand": "어그",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.ugg.com/",
+    "op": "brand-run (Deckers Brands)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.ugg.com/uk/",
+    "op": "brand-run (Deckers Brands)",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.ugg.com/de/",
+    "op": "brand-run (Deckers Brands)",
+    "conf": "low"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.ugg.com/jp/",
+    "op": "brand-run (Deckers Japan)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Women's Classic Mini II Boot (Chestnut CHE)",
+   "code": "1016222",
+   "urls": {}
+  },
+  "notes": "검색 한도 소진으로 미확인(기존 지식). 중요: 레포 price_fetch.py 설명(v1, 2026-10-21 접속 시험)에 따르면 어그는 403/429로 막혔음. 봇 차단 우회 금지 규칙 때문에 지금 방식으로는 정가 연동 대상이 아님. 본사 데커스 직영몰은 ugg.com 아래 나라 경로를 씀(영국 /uk/, 독일 /de/, 일본 /jp/ — 경로 미확인). 한국·멕시코 공식몰은 확인하지 못해 뺐음. 대표 상품 클래식 미니 II(여성)의 글로벌 품번은 1016222(체스트넛 CHE)로 앎. 대안은 타스만 5950(남)·5955(여), 클래식 울트라 미니 1116109. 상품 주소는 검색 결과로 확인하지 못해 넣지 않음."
+ },
+ {
+  "brand": "샤카웨어",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.shakawear.com/",
+    "op": "brand-run (Shaka Wear, Los Angeles)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Max Heavyweight Short Sleeve Tee (7.5oz)",
+   "code": "SHMHSS",
+   "urls": {}
+  },
+  "notes": "Not verified: the web search budget was used up before this task ran and WebFetch could not resolve the brand domains (DNS ENOTFOUND). Entries come from prior knowledge only. Only the US brand-run site is known. I could not confirm an official KR, JP or EU online store; in Korea the brand is mostly sold through multi-brand malls, which are excluded. No product URLs were seen, so none are given. Weak candidate for MSRP comparison (likely US only)."
+ },
+ {
+  "brand": "스케쳐스",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.skechers.com/",
+    "op": "brand-run (Skechers USA)",
+    "conf": "high"
+   },
+   {
+    "cc": "KR",
+    "url": "https://www.skechers.co.kr/",
+    "op": "brand-run (Skechers Korea subsidiary)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.skechers.co.uk/",
+    "op": "brand-run (Skechers UK)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.skechers.de/",
+    "op": "brand-run (Skechers Europe)",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.skechers.jp/",
+    "op": "brand-run (Skechers Japan)",
+    "conf": "medium"
+   },
+   {
+    "cc": "MX",
+    "url": "https://www.skechers.com.mx/",
+    "op": "brand-run (Skechers Mexico)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Uno - Stand on Air",
+   "code": "73690 (women) / 52458 (men)",
+   "urls": {}
+  },
+  "notes": "Not verified (search budget used up, fetch failed); from prior knowledge. The repo notes say Skechers Korea was blocked in the 10/21 access test, so the KR price may not be readable automatically. Korean Skechers listings often use local style codes (SP0..., SL0...) instead of global ones, so global-code matching needs checking. No product URLs were seen, so none are given."
+ },
+ {
+  "brand": "아식스",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.asics.com/us/en-us/",
+    "op": "brand-run (ASICS America)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.asics.com/gb/en-gb/",
+    "op": "brand-run (ASICS Europe)",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.asics.com/de/de-de/",
+    "op": "brand-run (ASICS Europe)",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.asics.com/jp/ja-jp/",
+    "op": "brand-run (ASICS Japan)",
+    "conf": "high"
+   },
+   {
+    "cc": "MX",
+    "url": "https://www.asics.com/mx/es-mx/",
+    "op": "brand-run (ASICS Mexico)",
+    "conf": "medium"
+   },
+   {
+    "cc": "KR",
+    "url": "https://www.asics.co.kr/",
+    "op": "brand-run (ASICS Korea)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "GEL-KAYANO 14 (SportStyle)",
+   "code": "1201A019",
+   "urls": {}
+  },
+  "notes": "Not verified (search budget used up, fetch failed); from prior knowledge. All six countries are likely on the same asics.com platform with the global SKU format (e.g. 1201A019-xxx), which suits style-code matching. The repo notes say ASICS was blocked in the 10/21 access test, so the robots.txt/403 rules may stop automated reads. KR may have moved from asics.co.kr to asics.com/kr/ko-kr/; check this. No product URLs were seen, so none are given."
+ },
+ {
+  "brand": "오니츠카타이거",
+  "stores": [
+   {
+    "cc": "JP",
+    "url": "https://www.onitsukatiger.com/jp/ja-jp/",
+    "op": "brand-run (ASICS / Onitsuka Tiger Japan)",
+    "conf": "high"
+   },
+   {
+    "cc": "KR",
+    "url": "https://www.onitsukatiger.com/kr/ko-kr/",
+    "op": "brand-run (ASICS Korea)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.onitsukatiger.com/us/en-us/",
+    "op": "brand-run (ASICS America)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.onitsukatiger.com/gb/en-gb/",
+    "op": "brand-run (ASICS Europe)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.onitsukatiger.com/de/de-de/",
+    "op": "brand-run (ASICS Europe)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "MEXICO 66",
+   "code": "1183A201",
+   "urls": {}
+  },
+  "notes": "Not verified (search budget used up, fetch failed); from prior knowledge. The brand runs one global site, onitsukatiger.com, with country/locale paths and global SKUs (MEXICO 66 = 1183A201, colour suffix e.g. .100; the yellow/black colourway is 1183C102.751). I know of no official Mexico online store. No product URLs were seen, so none are given."
+ },
+ {
+  "brand": "미즈노",
+  "stores": [
+   {
+    "cc": "JP",
+    "url": "https://jpn.mizuno.com/",
+    "op": "brand-run (Mizuno Corporation)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://mizunousa.com/",
+    "op": "brand-run (Mizuno USA)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://emea.mizuno.com/gb/en-gb/",
+    "op": "brand-run (Mizuno Europe)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://emea.mizuno.com/de/de-de/",
+    "op": "brand-run (Mizuno Europe)",
+    "conf": "medium"
+   },
+   {
+    "cc": "KR",
+    "url": "https://www.mizuno.co.kr/",
+    "op": "brand-run (Mizuno Korea) - unverified",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Wave Rider 28 (men's)",
+   "code": "J1GC2403",
+   "urls": {}
+  },
+  "notes": "Not verified (search budget used up, fetch failed); from prior knowledge. The Korean official mall URL is uncertain (Mizuno Korea subsidiary; the domain may differ), so check it before use. Running models change code each year (Wave Rider 28 men's = J1GC2403), so a sportstyle long-seller may be a steadier choice. I know of no official Mexico online store. No product URLs were seen, so none are given."
+ },
+ {
+  "brand": "아크테릭스",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://arcteryx.co.kr/",
+    "op": "official Korean store (Amer Sports Korea, unverified)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://arcteryx.com/us/en/",
+    "op": "brand-run (Amer Sports)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://arcteryx.com/gb/en/",
+    "op": "brand-run (Amer Sports)",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://arcteryx.com/de/de/",
+    "op": "brand-run (Amer Sports)",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://arcteryx.jp/",
+    "op": "Amer Sports Japan (official)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Beta LT Jacket Men's (candidate, unverified)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "I could not check anything in this run. The shared web search limit was used up before my first query, and WebFetch could not resolve the brand domains. Every entry below comes from prior knowledge and is unverified. MX: I don't know of an official online store, so it is left out. I give no product URLs because I saw none. The candidate product is Beta LT Jacket Men's. Arc'teryx moved to new SKU codes (X0000…) in 2023–24. The legacy model no. 26844 is unconfirmed. Check the style code on a KR product page before coding."
+ },
+ {
+  "brand": "룰루레몬",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.lululemon.co.kr/ko-kr/",
+    "op": "brand-run (lululemon athletica Korea)",
+    "conf": "high"
+   },
+   {
+    "cc": "US",
+    "url": "https://shop.lululemon.com/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.lululemon.co.uk/en-gb/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.lululemon.de/de-de/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.lululemon.co.jp/ja-jp/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "MX",
+    "url": "https://www.lululemon.com.mx/",
+    "op": "Grupo Axo (franchise partner, unverified)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Align High-Rise Pant 25\" (candidate, unverified)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Unverified: the search limit was used up and fetch got a DNS failure. The project's own 10/21 access test already found lululemon blocking bots (see CLAUDE.md), so price_fetch may not be able to use it anyway. MX: lululemon runs in Mexico through a franchise with Grupo Axo, and I am not sure the online store exists. No product URLs. Candidate product: Align High-Rise Pant 25\". Its style no. (LW5…) is not confirmed."
+ },
+ {
+  "brand": "써코니",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.saucony.co.kr/",
+    "op": "official Korean distributor (name unverified)",
+    "conf": "low"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.saucony.com/",
+    "op": "brand-run (Wolverine World Wide)",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.saucony.com/UK/en_GB/",
+    "op": "brand-run (Wolverine EU)",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.saucony.com/DE/de_DE/",
+    "op": "brand-run (Wolverine EU)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Jazz Original (men's) — candidate, unverified",
+   "code": "S2044",
+   "urls": {}
+  },
+  "notes": "Unverified: the search limit was used up and fetch got a DNS failure. I don't know the Korean distributor's name or whether saucony.co.kr is its mall. Check this before use. Not listed: JP (I don't know the Japanese distributor's store URL) and MX (I know of no official store). The GB and DE locale paths are from memory. No product URLs. Candidate product: Jazz Original men's, base style S2044 with a colour suffix (S2044-xxx). Women's is S1044. Style S2044 is medium confidence."
+ },
+ {
+  "brand": "몽클레르",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.moncler.com/ko-kr/",
+    "op": "brand-run (Moncler Korea)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.moncler.com/en-us/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.moncler.com/en-gb/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.moncler.com/de-de/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.moncler.com/ja-jp/",
+    "op": "brand-run (Moncler Japan)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Maya short down jacket, men's (candidate, unverified)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Unverified: the search limit was used up and fetch got a DNS failure. The project's 10/21 access test already found moncler.com blocking bots (see CLAUDE.md). MX: I don't know of a moncler.com Mexico locale, so it is left out. No product URLs. Candidate product: Maya short down jacket (men's). Moncler codes use a 1A…-68950 style form. Its exact code is not confirmed."
+ },
+ {
+  "brand": "스톤아일랜드",
+  "stores": [
+   {
+    "cc": "US",
+    "url": "https://www.stoneisland.com/en-us/",
+    "op": "brand-run (Moncler group)",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.stoneisland.com/en-gb/",
+    "op": "brand-run (Moncler group)",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.stoneisland.com/de-de/",
+    "op": "brand-run (Moncler group)",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.stoneisland.com/ja-jp/",
+    "op": "brand-run (Moncler group)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Cotton fleece crewneck sweatshirt, 63051 family (candidate, code changes by season)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Unverified: the search limit was used up and fetch got a DNS failure. KR: I can't confirm whether stoneisland.com ships to Korea or who distributes there (Moncler group direct vs. a former importer), so it is left out. MX: left out. No product URLs. Candidate product: garment-dyed cotton fleece crewneck sweatshirt (63051 family). Stone Island style codes carry a season prefix (e.g. 8115 63051), so there is no single code that stays the same across seasons. That makes the brand a poor fit for matching by style code."
+ },
+ {
+  "brand": "톰브라운",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ssfshop.com/",
+    "op": "official distributor (Samsung C&T / SSF Shop) - unverified",
+    "conf": "low"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.thombrowne.com/us/",
+    "op": "brand-run",
+    "conf": "low"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.thombrowne.com/gb/",
+    "op": "brand-run",
+    "conf": "low"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.thombrowne.com/de/",
+    "op": "brand-run",
+    "conf": "low"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.thombrowne.com/jp/",
+    "op": "brand-run (Thom Browne Japan)",
+    "conf": "low"
+   }
+  ],
+  "product": {
+   "name": "Classic V-Neck Cardigan 4-Bar Fine Merino (navy)",
+   "code": "MKC002A-00014 (unverified)",
+   "urls": {}
+  },
+  "notes": "Not verified: the shared web search budget for this turn ran out (limit 200) before any search ran, so every entry comes from prior knowledge and has low confidence. No product page URLs are given because none were seen in search results. Korea: the brand has been distributed by Samsung C&T (SSF Shop). Check whether thombrowne.com now has a /kr/ store before using it. Representative product (style code unverified): Classic V-Neck Cardigan with 4-Bar Stripe in Fine Merino Wool, which I recall as MKC002A-00014. No Mexico online store is known. Rerun the search in a follow-up to confirm the locale paths and product URLs."
+ },
+ {
+  "brand": "버버리",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://kr.burberry.com/",
+    "op": "brand-run (Burberry Korea)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://us.burberry.com/",
+    "op": "brand-run",
+    "conf": "medium"
+   },
+   {
+    "cc": "GB",
+    "url": "https://uk.burberry.com/",
+    "op": "brand-run",
+    "conf": "medium"
+   },
+   {
+    "cc": "DE",
+    "url": "https://de.burberry.com/",
+    "op": "brand-run",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://jp.burberry.com/",
+    "op": "brand-run (Burberry Japan)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "The Kensington Heritage Trench Coat (Honey)",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Not verified: the web search budget ran out, so all entries are from prior knowledge. The country subdomains (kr/us/uk/de/jp.burberry.com) are Burberry's long-standing pattern, but the site may have moved to a single www.burberry.com locale path. No product URLs are given because none were seen in search results. Representative product: the Kensington Heritage Trench Coat (Burberry uses numeric item codes per colour and length, which were not confirmed). Mexico has no confirmed brand-run online store and is left out. Burberry's IR site is noted in the repo as blocking automated access, so check robots.txt on the store domains too."
+ },
+ {
+  "brand": "폴로 랄프로렌",
+  "stores": [
+   {
+    "cc": "KR",
+    "url": "https://www.ralphlauren.co.kr/",
+    "op": "brand-run (Ralph Lauren Korea)",
+    "conf": "medium"
+   },
+   {
+    "cc": "US",
+    "url": "https://www.ralphlauren.com/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "GB",
+    "url": "https://www.ralphlauren.co.uk/",
+    "op": "brand-run",
+    "conf": "high"
+   },
+   {
+    "cc": "DE",
+    "url": "https://www.ralphlauren.de/",
+    "op": "brand-run",
+    "conf": "medium"
+   },
+   {
+    "cc": "JP",
+    "url": "https://www.ralphlauren.co.jp/",
+    "op": "brand-run (Ralph Lauren Japan)",
+    "conf": "medium"
+   }
+  ],
+  "product": {
+   "name": "Custom Slim Fit Mesh Polo Shirt",
+   "code": "",
+   "urls": {}
+  },
+  "notes": "Not verified: the web search budget ran out, so all entries are from prior knowledge. The repo's CLAUDE.md already records Ralph Lauren as blocked in the 2026-10-21 price_fetch access test, so it was left out of prices.json. It probably cannot be added without bypassing bot blocking, which the project forbids. Representative product: the Custom Slim Fit Mesh Polo (code unverified; the RL style code is a 9-digit number such as 710xxxxxx). No product URLs are given. A Mexico store (ralphlauren.com.mx) is not confirmed and is left out."
+ }
+]

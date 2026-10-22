@@ -1,0 +1,26 @@
+name: probe-prices
+
+# 임시 시험(병합하지 않음) — 감시 브랜드 38곳 공식몰 나라별 접속·robots·정가 표기 확인(저장·커밋 안 함)
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths:
+      - .github/workflows/probe-prices.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Store probe
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python probe_msrp.py probe_stores.json
