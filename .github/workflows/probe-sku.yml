@@ -1,0 +1,28 @@
+name: probe-sku
+
+# 임시 시험(병합하지 않음) — 작업 브랜치에 이 파일·probe_sku.py·probe_plan.json을 올리면 1회 실행
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths:
+      - probe_sku.py
+      - probe_plan.json
+      - .github/workflows/probe-sku.yml
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: GitHub 서버
+        run: curl -s --max-time 8 https://ipinfo.io/json | python -c "import sys,json; d=json.load(sys.stdin); print('GitHub 서버:', '.'.join(d.get('ip','?').split('.')[:2])+'.x.x', d.get('region'), d.get('country'), d.get('org'))" || true
+      - name: Probe
+        run: python probe_sku.py probe_plan.json
