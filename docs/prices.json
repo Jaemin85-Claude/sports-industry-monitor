@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-22 17:16 KST",
+ "generated_at": "2026-10-22 20:56 KST",
  "fetched": "2026-10-22",
  "attempt": "2026-10-22",
- "cfg": "00970fb54bc5",
+ "cfg": "339fce9d91a0",
  "status": "ok",
  "items": [
   {
@@ -192,6 +192,254 @@
    }
   },
   {
+   "id": "nike-blazer77",
+   "brand": "나이키",
+   "name": "블레이저 미드 '77 빈티지",
+   "code": "BQ6806-100",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 129000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 105.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 105.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 89.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 89.99,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 99.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 99.99,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 15730.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 15730.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 2499.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
+     "obs": 2499.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "nike-cortez",
+   "brand": "나이키",
+   "name": "코르테즈",
+   "code": "DM4044-108",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 119000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 95.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 95.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 89.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 89.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 99.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 99.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 13860.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 13860.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 2199.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
+     "obs": 2199.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "nike-aj1low",
+   "brand": "나이키",
+   "name": "에어 조던 1 로우",
+   "code": "553558-161",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 149000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 115.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 119.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 119.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 129.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 129.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 16500.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 16500.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 2999.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
+     "obs": 2999.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "nike-vomero5",
+   "brand": "나이키",
+   "name": "줌 보메로 5",
+   "code": "BV1358-003",
+   "m": {
+    "KR": {
+     "p": 199000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 199000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 144.99,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 144.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 159.99,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 159.99,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 23760.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 23760.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 3699.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
+     "obs": 3699.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "puma-speedcat",
    "brand": "푸마",
    "name": "스피드캣 OG",
@@ -249,7 +497,246 @@
      "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html",
      "obs": 2199.0,
      "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-palermo",
+   "brand": "푸마",
+   "name": "팔레르모",
+   "code": "396463",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
+     "obs": 119000.0,
+     "obs_date": "2026-10-22",
      "sale": true
+    },
+    "US": {
+     "p": 90.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
+     "obs": 90.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 75.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
+     "obs": 75.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 89.95,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
+     "obs": 89.95,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 14850.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
+     "obs": 14850.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "puma-mostro",
+   "brand": "푸마",
+   "name": "모스트로 OG",
+   "code": "397330",
+   "m": {
+    "KR": {
+     "p": 179000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
+     "obs": 179000.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "US": {
+     "p": 120.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
+     "obs": 120.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 115.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://uk.puma.com/uk/en/pd/mostro-og-sneakers-unisex/397330",
+     "obs": 115.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 129.95,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
+     "obs": 129.95,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 15400.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%A2%E3%82%B9%E3%83%88%E3%83%AD-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/397330",
+     "obs": 15400.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 2499.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html",
+     "obs": 2499.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "puma-suede",
+   "brand": "푸마",
+   "name": "스웨이드 클래식",
+   "code": "399781",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html",
+     "obs": 119000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 90.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://us.puma.com/us/en/pd/suede-classic-sneakers/399781",
+     "obs": 90.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 75.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://uk.puma.com/uk/en/pd/suede-classic-sneakers-unisex/399781",
+     "obs": 75.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 89.95,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
+     "obs": 89.95,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 11550.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%89-%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/399781",
+     "obs": 11550.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 1999.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html",
+     "obs": 1999.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-dne4",
+   "brand": "푸마",
+   "name": "디비에이트 나이트로 엘리트 4(남성)",
+   "code": "312127",
+   "m": {
+    "KR": {
+     "p": 289000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
+     "obs": 289000.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "US": {
+     "p": 250.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-mens-road-running-shoes/312127",
+     "obs": 250.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 210.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-4-running-shoes-men/312127",
+     "obs": 210.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 249.95,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127",
+     "obs": 249.95,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "JP": {
+     "p": 29700.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%83%A1%E3%83%B3%E3%82%BA-%E3%83%87%E3%82%A3%E3%83%B4%E3%82%A3%E3%82%A8%E3%82%A4%E3%83%88-%E3%83%8B%E3%83%88%E3%83%AD-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88-4-%E3%83%A9%E3%83%B3%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA/312127",
+     "obs": 29700.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 4999.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html",
+     "obs": 4999.0,
+     "obs_date": "2026-10-22",
+     "sale": false
     }
    }
   },
@@ -307,6 +794,271 @@
    }
   },
   {
+   "id": "on-cloud6",
+   "brand": "온러닝",
+   "name": "클라우드 6",
+   "code": "3MF10071200",
+   "m": {
+    "KR": {
+     "p": 199000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "obs": 199000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 140.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "obs": 140.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 160.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 19800.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "obs": 19800.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudsurfer2",
+   "brand": "온러닝",
+   "name": "클라우드서퍼 2",
+   "code": "3MF10121043",
+   "m": {
+    "KR": {
+     "p": 199000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "obs": 199000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 150.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "obs": 150.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 170.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 20900.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "obs": 20900.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudtilt",
+   "brand": "온러닝",
+   "name": "클라우드틸트",
+   "code": "3ME10101430",
+   "m": {
+    "KR": {
+     "p": 219000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "obs": 219000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 150.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "obs": 150.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 170.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 23100.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "obs": 23100.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-roger",
+   "brand": "온러닝",
+   "name": "더 로저 어드밴티지",
+   "code": "3MF30641200",
+   "m": {
+    "KR": {
+     "p": 199000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "obs": 199000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 140.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "obs": 140.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 160.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 20900.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "obs": 20900.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudnova2",
+   "brand": "온러닝",
+   "name": "클라우드노바 2",
+   "code": "3ME30210108",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ko-kr/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-us/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 150.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/en-gb/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "obs": 150.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 170.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/de-de/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 22000.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://www.on.com/ja-jp/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "obs": 22000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "salomon-xt6",
    "brand": "살로몬",
    "name": "XT-6 고어텍스",
@@ -345,6 +1097,128 @@
      "seen": "2026-10-22",
      "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "salomon-xt6base",
+   "brand": "살로몬",
+   "name": "XT-6",
+   "code": "L41086600",
+   "m": {
+    "KR": {
+     "p": 280000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://salomon.co.kr/products/l41086600",
+     "obs": 280000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 185.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-us/product/xt-6-lg4239",
+     "obs": 185.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 165.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
+     "obs": 165.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 180.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/de-de/product/xt-6-lg4239",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "salomon-xt4og",
+   "brand": "살로몬",
+   "name": "XT-4 OG",
+   "code": "L47132900",
+   "m": {
+    "KR": {
+     "p": 290000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://salomon.co.kr/products/l47132900",
+     "obs": 290000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 200.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
+     "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 175.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
+     "obs": 175.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 190.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.salomon.com/de-de/product/xt-4-og-li3335",
+     "obs": 190.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "salomon-xt6expanse",
+   "brand": "살로몬",
+   "name": "XT-6 익스팬스",
+   "code": "L41741300",
+   "m": {
+    "KR": {
+     "p": 240000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://salomon.co.kr/products/l41741300",
+     "obs": 240000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "salomon-xt4oggtx",
+   "brand": "살로몬",
+   "name": "XT-4 OG 고어텍스",
+   "code": "L49210800",
+   "m": {
+    "KR": {
+     "p": 320000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://salomon.co.kr/products/l49210800",
+     "obs": 320000.0,
      "obs_date": "2026-10-22",
      "sale": false
     }
@@ -421,6 +1295,146 @@
    }
   },
   {
+   "id": "drm-1460cr",
+   "brand": "닥터마틴",
+   "name": "1460 스무스 체리레드",
+   "code": "11822600",
+   "m": {
+    "KR": {
+     "p": 279000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/boots-1460-cherry-red-11822600",
+     "obs": 279000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-2976",
+   "brand": "닥터마틴",
+   "name": "2976 첼시",
+   "code": "22227001",
+   "m": {
+    "KR": {
+     "p": 279000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/boots-2976ys-black-smooth",
+     "obs": 279000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/2976-smooth-leather-chelsea-boots-black/p/22227001",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/2976-smooth-leather-chelsea-boots-black/p/22227001",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-1460bex",
+   "brand": "닥터마틴",
+   "name": "1460 벡스",
+   "code": "25345001",
+   "m": {
+    "KR": {
+     "p": 289000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/boots-1460-bex-black-smooth",
+     "obs": 289000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/1460-bex-smooth-leather-lace-up-boots-black/p/25345001",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 190.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/1460-bex-smooth-leather-lace-up-boots-black/p/25345001",
+     "obs": 190.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-1460mono",
+   "brand": "닥터마틴",
+   "name": "1460 모노",
+   "code": "14353001",
+   "m": {
+    "KR": {
+     "p": 279000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.co.kr/products/1460-mofalse",
+     "obs": 279000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/us/en/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.drmartens.com/uk/en_gb/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "dd-santacroce",
    "brand": "드래곤디퓨전",
    "name": "산타크로체 빅 백",
@@ -436,11 +1450,115 @@
      "sale": false
     },
     "US": {
-     "p": 586.0,
+     "p": 585.0,
      "cur": "USD",
      "seen": "2026-10-22",
      "url": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 586.0,
+     "obs": 585.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "dd-santamaria",
+   "brand": "드래곤디퓨전",
+   "name": "산타마리아 백",
+   "code": "8700",
+   "m": {
+    "KR": {
+     "p": 745000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX",
+     "obs": 745000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 536.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag",
+     "obs": 536.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "dd-triplejump",
+   "brand": "드래곤디퓨전",
+   "name": "트리플 점프 스몰 백",
+   "code": "8811",
+   "m": {
+    "KR": {
+     "p": 560000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26029BKX",
+     "obs": 560000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 431.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://dragondiffusion.com/products/triple-jump-small-black-woven-leather-bag-handmade",
+     "obs": 431.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "dd-rosanna",
+   "brand": "드래곤디퓨전",
+   "name": "로잔나 백",
+   "code": "8943",
+   "m": {
+    "KR": {
+     "p": 530000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26024BKX",
+     "obs": 530000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 431.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://dragondiffusion.com/products/rosanna-black-woven-leather-bag-handmade",
+     "obs": 431.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "dd-ars",
+   "brand": "드래곤디퓨전",
+   "name": "아르스 토트백",
+   "code": "8848",
+   "m": {
+    "KR": {
+     "p": 745000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR",
+     "obs": 745000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 556.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://dragondiffusion.com/products/ars-tote-dark-brown-woven-leather-bag",
+     "obs": 556.0,
      "obs_date": "2026-10-22",
      "sale": false
     }
@@ -485,6 +1603,164 @@
      "seen": "2026-10-22",
      "url": "https://hunterboots.co.jp/products/wft1000rma-blk",
      "obs": 26950.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "hunter-origshort",
+   "brand": "헌터",
+   "name": "오리지널 숏(여성·무광)",
+   "code": "WFS1000RMA",
+   "m": {
+    "KR": {
+     "p": 195000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507742896066BK01",
+     "obs": 195000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 165.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.com/products/womens-original-short-rain-boots-in-black-wfs1000rma-hbl01",
+     "obs": 165.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 110.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.uk/products/womens-original-short-boot-wfs1000rma-blk",
+     "obs": 110.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 25300.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.jp/products/wfs1000rma-blk",
+     "obs": 25300.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "hunter-playtall",
+   "brand": "헌터",
+   "name": "플레이 톨(여성)",
+   "code": "WFT2007RMA",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508641433091BK01",
+     "obs": 169000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 140.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.com/products/womens-play-tall-rain-boots-in-black-wft2007rma-hbl01",
+     "obs": 140.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 105.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.uk/products/womens-play-tall-wellington-boots-wft2007rma-blk",
+     "obs": 105.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 17600.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.jp/products/wft2007rma-blk",
+     "obs": 17600.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "hunter-chelsea",
+   "brand": "헌터",
+   "name": "오리지널 첼시(여성)",
+   "code": "WFS2078RMA",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01",
+     "obs": 189000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 155.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.com/products/womens-original-chelsea-boots-in-black-wfs2078rma-hbl01",
+     "obs": 155.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 90.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.uk/products/womens-original-chelsea-boots-wfs2078rma-blk",
+     "obs": 90.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "hunter-playshort",
+   "brand": "헌터",
+   "name": "플레이 숏(여성)",
+   "code": "WFS2020RMA",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01",
+     "obs": 149000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 125.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.com/products/womens-play-short-rain-boots-in-black-wfs2020rma-hbl01",
+     "obs": 125.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 90.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://hunterboots.co.uk/products/womens-play-short-wellington-boots-wfs2020rma-blk",
+     "obs": 90.0,
      "obs_date": "2026-10-22",
      "sale": false
     }
@@ -544,6 +1820,209 @@
    }
   },
   {
+   "id": "ua-hg-ss",
+   "brand": "언더아머",
+   "name": "히트기어 컴프레션 반팔",
+   "code": "1361518",
+   "m": {
+    "KR": {
+     "p": 45000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361518.html",
+     "obs": 45000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 35.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_short_sleeve/1361518.html",
+     "obs": 35.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 32.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens/1361518.html",
+     "obs": 32.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 35.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.de/de-de/p/heatgear/1361518.html",
+     "obs": 35.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 699.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com.mx/es-mx/p/tops/heatgear/1361518.html",
+     "obs": 699.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "ua-hg-ls",
+   "brand": "언더아머",
+   "name": "히트기어 컴프레션 긴팔",
+   "code": "1361524",
+   "m": {
+    "KR": {
+     "p": 49000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361524.html",
+     "obs": 49000.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "US": {
+     "p": 40.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_long_sleeve/1361524.html",
+     "obs": 40.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 36.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens-compression-long-sleeve/1361524.html",
+     "obs": 36.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 40.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.de/de-de/p/heatgear/1361524.html",
+     "obs": 40.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "MX": {
+     "p": 899.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear/1361524.html",
+     "obs": 899.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "ua-tech-hz",
+   "brand": "언더아머",
+   "name": "UA 테크 ½ 집",
+   "code": "1328495",
+   "m": {
+    "KR": {
+     "p": 55000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
+     "obs": 55000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 50.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
+     "obs": 50.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 40.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
+     "obs": 40.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 45.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html",
+     "obs": 45.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "ua-leftchest",
+   "brand": "언더아머",
+   "name": "레프트 체스트 로고 반팔",
+   "code": "1326799",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
+     "obs": 39000.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "US": {
+     "p": 28.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
+     "obs": 28.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 25.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
+     "obs": 25.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 28.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
+     "obs": 28.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "MX": {
+     "p": 499.0,
+     "cur": "MXN",
+     "seen": "2026-10-22",
+     "url": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html",
+     "obs": 499.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "saucony-ride19",
    "brand": "써코니",
    "name": "라이드 19(남성)",
@@ -588,6 +2067,243 @@
    }
   },
   {
+   "id": "saucony-endspeed5",
+   "brand": "써코니",
+   "name": "엔돌핀 스피드 5(남성)",
+   "code": "S21007",
+   "m": {
+    "US": {
+     "p": 175.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
+     "obs": 175.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "GB": {
+     "p": 180.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",
+     "obs": 180.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 200.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html",
+     "obs": 200.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "saucony-endpro5",
+   "brand": "써코니",
+   "name": "엔돌핀 프로 5(남성)",
+   "code": "S21064",
+   "m": {
+    "KR": {
+     "p": 299000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
+     "obs": 299000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 240.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/endorphin-pro-5/60803M.html",
+     "obs": 240.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 250.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html",
+     "obs": 250.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    },
+    "DE": {
+     "p": 270.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60803M.html",
+     "obs": 270.0,
+     "obs_date": "2026-10-22",
+     "sale": true
+    }
+   }
+  },
+  {
+   "id": "saucony-triumph24",
+   "brand": "써코니",
+   "name": "트라이엄프 24(남성)",
+   "code": "S100997",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/triumph-24/61229M.html",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/triumph-24/61229M.html",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 190.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/triumph-24/61229M.html",
+     "obs": 190.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "saucony-guide19",
+   "brand": "써코니",
+   "name": "가이드 19(남성)",
+   "code": "S21058",
+   "m": {
+    "KR": {
+     "p": 179000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/",
+     "obs": 179000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 150.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/guide-19/60838M.html",
+     "obs": 150.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 140.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/guide-19/60838M.html",
+     "obs": 140.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 160.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/guide-19/60838M.html",
+     "obs": 160.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "saucony-hurricane26",
+   "brand": "써코니",
+   "name": "허리케인 26(남성)",
+   "code": "S101098",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/535/",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/hurricane-26/61249M.html",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/UK/en_GB/hurricane-26/61249M.html",
+     "obs": 170.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "DE": {
+     "p": 190.0,
+     "cur": "EUR",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html",
+     "obs": 190.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "saucony-kinvara16",
+   "brand": "써코니",
+   "name": "킨바라 16(남성)",
+   "code": "S21020",
+   "m": {
+    "KR": {
+     "p": 159000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
+     "obs": 159000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "US": {
+     "p": 130.0,
+     "cur": "USD",
+     "seen": "2026-10-22",
+     "url": "https://www.saucony.com/en/kinvara-16/60309M.html",
+     "obs": 130.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "brooks-ghost18",
    "brand": "브룩스",
    "name": "고스트 18(남성)",
@@ -615,8 +2331,189 @@
    "cc_code": {
     "JP": "BRM4933"
    }
+  },
+  {
+   "id": "brooks-ghost18w",
+   "brand": "브룩스",
+   "name": "고스트 18(여성)",
+   "code": "1204821B",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
+     "obs": 169000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 19800.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.jp/products/brw4822-blk",
+     "obs": 19800.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   },
+   "cc_code": {
+    "JP": "BRW4822"
+   }
+  },
+  {
+   "id": "brooks-glycgts23",
+   "brand": "브룩스",
+   "name": "글리세린 GTS 23(남성)",
+   "code": "1105031D",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
+     "obs": 209000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 26400.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.jp/products/brm5033-blk-w",
+     "obs": 26400.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   },
+   "cc_code": {
+    "JP": "BRM5033"
+   }
+  },
+  {
+   "id": "brooks-glycmax2",
+   "brand": "브룩스",
+   "name": "글리세린 맥스 2(남성)",
+   "code": "1104791D",
+   "m": {
+    "KR": {
+     "p": 249000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
+     "obs": 249000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 29700.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.jp/products/brm4793-b-b",
+     "obs": 29700.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   },
+   "cc_code": {
+    "JP": "BRM4793"
+   }
+  },
+  {
+   "id": "brooks-ghostamp",
+   "brand": "브룩스",
+   "name": "고스트 AMP(남성)",
+   "code": "1104971D",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
+     "obs": 189000.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    },
+    "JP": {
+     "p": 19800.0,
+     "cur": "JPY",
+     "seen": "2026-10-22",
+     "url": "https://brooksrunning.co.jp/products/brm4973-blu",
+     "obs": 19800.0,
+     "obs_date": "2026-10-22",
+     "sale": false
+    }
+   },
+   "cc_code": {
+    "JP": "BRM4973"
+   }
   }
  ],
- "failed": [],
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
+ "failed": [
+  {
+   "id": "salomon-xt6expanse",
+   "cc": "US",
+   "since": "2026-10-22",
+   "code": "L41741300",
+   "brand": "살로몬",
+   "name": "XT-6 익스팬스",
+   "why": "HTTP 403(접속 차단 — 우회하지 않음)"
+  },
+  {
+   "id": "salomon-xt6expanse",
+   "cc": "GB",
+   "since": "2026-10-22",
+   "code": "L41741300",
+   "brand": "살로몬",
+   "name": "XT-6 익스팬스",
+   "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+  },
+  {
+   "id": "salomon-xt6expanse",
+   "cc": "DE",
+   "since": "2026-10-22",
+   "code": "L41741300",
+   "brand": "살로몬",
+   "name": "XT-6 익스팬스",
+   "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+  },
+  {
+   "id": "salomon-xt4oggtx",
+   "cc": "US",
+   "since": "2026-10-22",
+   "code": "L49210800",
+   "brand": "살로몬",
+   "name": "XT-4 OG 고어텍스",
+   "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+  },
+  {
+   "id": "salomon-xt4oggtx",
+   "cc": "GB",
+   "since": "2026-10-22",
+   "code": "L49210800",
+   "brand": "살로몬",
+   "name": "XT-4 OG 고어텍스",
+   "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+  },
+  {
+   "id": "salomon-xt4oggtx",
+   "cc": "DE",
+   "since": "2026-10-22",
+   "code": "L49210800",
+   "brand": "살로몬",
+   "name": "XT-4 OG 고어텍스",
+   "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+  },
+  {
+   "id": "saucony-endspeed5",
+   "cc": "KR",
+   "since": "2026-10-22",
+   "code": "S21007",
+   "brand": "써코니",
+   "name": "엔돌핀 스피드 5(남성)",
+   "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+  }
+ ],
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
+ "tried": "2026-10-22"
 }
