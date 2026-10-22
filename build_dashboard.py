@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.18: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품 5개 이상' — price_fetch v1.3으로 상품 13 → 56개) 브랜드 상세 '해외 정가 비교'는
+  상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침 · 머리 줄에 품번·한국 정가·해외 대비 평균) — 브랜드마다 5~7개라 화면이 길어지지 않게
 v33.17: 더보기 › 해외 정가 검토 반영 — 고른 브랜드를 화면 기록에 저장(prb · 뉴스 필터 nf와 같은 방식: 칩을 누르면 지금 기록에, 떠날 때도 저장 →
   뒤로·앞으로 어느 기록으로 돌아와도 그때 고른 브랜드 · 메뉴 줄·브랜드 상세 바로가기는 prb '' = 전체) · 브랜드를 바꾸면 표 가로 위치는 처음으로
   (열 구성이 달라 한국 열이 고정 열 밑에 숨던 것) · 한국 정가가 없어 비교 못 하면 요약 '한국 정가 자료 없음'(브랜드 상세와 같게) ·
@@ -983,6 +985,13 @@ div.bd-nx{cursor:default}
 .bd-pr-sum{margin:0;font-size:15px;line-height:1.5}
 .bd-pr{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
 .bd-pr-hd{display:flex;flex-direction:column;gap:2px}.bd-pr-hd .t{font-size:15px;font-weight:700}.bd-pr-hd .s{font-size:13px;color:var(--sub)}.bd-pr-hd .s b{color:var(--tx);font-weight:600}
+.bd-pr-hd .s b.pos{color:var(--pos)}.bd-pr-hd .s b.neg{color:var(--neg)}
+/* v33.18 상품이 셋 이상인 브랜드는 상품 칸을 접음(첫 상품만 펼침) */
+.bd-prd>summary{display:flex;align-items:center;gap:8px;min-height:44px;cursor:pointer;list-style:none}
+.bd-prd>summary::-webkit-details-marker{display:none}
+.bd-prd>summary .bd-pr-hd{flex:1;min-width:0}
+.bd-prd>summary .chev{flex:none;transition:transform .15s}.bd-prd[open]>summary .chev{transform:rotate(180deg)}
+.bd-prd>summary:focus-visible{outline-offset:4px;border-radius:8px}
 .bd-pr-tbl{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
 .bd-pr-tbl th{font-size:13px;font-weight:600;color:var(--sub);text-align:right;padding:6px 4px;border-bottom:1px solid var(--line);white-space:nowrap}
 .bd-pr-tbl td{text-align:right;padding:8px 4px;border-bottom:1px solid var(--line2);vertical-align:top}
@@ -4262,9 +4271,11 @@ function prSecHtml(bname){
   const near=avg!=null&&Math.abs(avg)<0.5;
   h+=avg==null?`<p class="bd-none">${its.some(it=>prRows(it).kr)?'비교할 해외 정가·환율 없음':'한국 정가 자료 없음'}</p>`
     :`<p class="bd-pr-sum">한국 정가가 해외${near?'와':'보다'} 평균 ${prGapB(avg)} <span class="na">(상품 ${nIt}개 · ${all.length}개 비교)</span></p>`;
-  its.forEach(it=>{
-    const {kr,rows}=prRows(it);
-    h+=`<div class="bd-pr"><div class="bd-pr-hd"><span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}</span></div>`;
+  const fold=its.length>2;   // v33.18 상품이 셋 이상이면 상품 칸을 접음(첫 상품만 펼침) — 머리 줄에 한국 정가·해외 대비 평균
+  its.forEach((it,ix)=>{
+    const {kr,rows}=prRows(it), ga=prAvg(rows.filter(r=>r.gap!=null).map(r=>r.gap));
+    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · 평균 ${prGapB(ga)}`:''}</span>`;
+    h+=fold?`<details class="bd-pr bd-prd"${ix?'':' open'}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
       h+=`<div class="tblwrap"><table class="bd-pr-tbl"><tr><th>나라</th><th>현지 정가</th><th>원화</th><th>한국은</th></tr>`
         +rows.map(r=>`<tr><td>${PR_CC[r.cc]}${r.o.sale?'<div class="bd-pr-sale" title="지금 할인 중인 색상·사이즈가 있음 — 정가는 할인 전 가격">할인 중</div>':''}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}</td>`
@@ -4273,7 +4284,7 @@ function prSecHtml(bname){
     } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
     const miss=prMiss(it.id);
     if(miss.length) h+=`<p class="bd-pr-src">값 없음: ${miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]).join('·')}(수집 실패)</p>`;
-    h+=`</div>`;
+    h+=fold?`</details>`:`</div>`;
   });
   const fd=prFetchedMd();
   h+=`<p class="bd-pr-src">브랜드 공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''}</p>`;
