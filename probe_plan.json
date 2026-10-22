@@ -10,70 +10,23 @@
     "src": "page",
     "hint": "deviate nitro elite 4",
     "urls": {
-     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html"
-    }
-   },
-   {
-    "id": "puma-decon",
-    "brand": "푸마",
-    "name": "decon",
-    "code": "410473",
-    "src": "page",
-    "hint": "speedcat decon",
-    "urls": {
-     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%EB%8D%B0%EC%BD%98-sd-%3Cbr%3Espeedcat-decon-sd/410473.html"
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-mens-road-running-shoes/312127",
+     "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-4-running-shoes-men/312127",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A1%E3%83%B3%E3%82%BA-%E3%83%87%E3%82%A3%E3%83%B4%E3%82%A3%E3%82%A8%E3%82%A4%E3%83%88-%E3%83%8B%E3%83%88%E3%83%AD-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88-4-%E3%83%A9%E3%83%B3%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA/312127",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html",
+     "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127"
     }
    }
   ]
  },
  {
   "t": "sitemap",
-  "host": "us.puma.com",
-  "pats": [
-   "/312127",
-   "/410473"
-  ],
-  "want": 1,
-  "max_maps": 30
- },
- {
-  "t": "sitemap",
-  "host": "uk.puma.com",
-  "pats": [
-   "/312127",
-   "/410473"
-  ],
-  "want": 1,
-  "max_maps": 20
- },
- {
-  "t": "sitemap",
   "host": "eu.puma.com",
   "pats": [
-   "/de/de/&&/312127",
-   "/de/de/&&/410473"
+   "312127"
   ],
-  "want": 1,
-  "max_maps": 30
- },
- {
-  "t": "sitemap",
-  "host": "jp.puma.com",
-  "pats": [
-   "/312127",
-   "/410473"
-  ],
-  "want": 1,
-  "max_maps": 20
- },
- {
-  "t": "sitemap",
-  "host": "mx.puma.com",
-  "pats": [
-   "/312127",
-   "/410473"
-  ],
-  "want": 1,
-  "max_maps": 10
+  "want": 2,
+  "max_maps": 40
  }
 ]
