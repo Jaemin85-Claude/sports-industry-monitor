@@ -3,10 +3,10 @@
   "t": "fetch",
   "prods": [
    {
-    "id": "nike-blazer77",
+    "id": "nike-vomero5",
     "brand": "나이키",
-    "name": "blazer77",
-    "code": "BQ6806-100",
+    "name": "v5",
+    "code": "BV1358-003",
     "src": "nike",
     "cc": [
      "KR",
@@ -18,209 +18,293 @@
     ]
    },
    {
-    "id": "nike-am97",
-    "brand": "나이키",
-    "name": "am97",
-    "code": "921826-101",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nike-af1blk",
-    "brand": "나이키",
-    "name": "af1blk",
-    "code": "CW2288-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nike-cortez",
-    "brand": "나이키",
-    "name": "cortez",
-    "code": "DM4044-108",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nike-aj1low",
-    "brand": "나이키",
-    "name": "aj1low",
-    "code": "553558-161",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nike-killshot",
-    "brand": "나이키",
-    "name": "killshot",
-    "code": "432997-111",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "puma-kr",
+    "brand": "푸마",
+    "name": "kr",
+    "code": "396463",
+    "src": "page",
+    "hint": "palermo",
+    "urls": {}
    }
   ]
  },
  {
-  "t": "shopify",
-  "host": "salomon.co.kr",
-  "pats": [
-   "xt-6",
-   "acs",
-   "speedcross",
-   "whisper",
-   "xa-pro",
-   "xa pro",
-   "odyssey",
-   "xt-4",
-   "xt-slate",
-   "pulsar"
-  ],
-  "pages": 4
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "puma-396463",
+    "brand": "푸마",
+    "name": "396463",
+    "code": "396463",
+    "src": "page",
+    "hint": "palermo",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html"
+    }
+   },
+   {
+    "id": "puma-396464",
+    "brand": "푸마",
+    "name": "396464",
+    "code": "396464",
+    "src": "page",
+    "hint": "palermo",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%EB%A0%88%EB%8D%94%3Cbr%3Epalermo-lth/396464.html"
+    }
+   },
+   {
+    "id": "puma-399781",
+    "brand": "푸마",
+    "name": "399781",
+    "code": "399781",
+    "src": "page",
+    "hint": "suede",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html"
+    }
+   },
+   {
+    "id": "puma-397330",
+    "brand": "푸마",
+    "name": "397330",
+    "code": "397330",
+    "src": "page",
+    "hint": "mostro",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html"
+    }
+   },
+   {
+    "id": "puma-401603",
+    "brand": "푸마",
+    "name": "401603",
+    "code": "401603",
+    "src": "page",
+    "hint": "speedcat",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%EB%A0%88%EB%8D%94%3Cbr%3Espeedcat-lth/401603.html"
+    }
+   },
+   {
+    "id": "puma-309707",
+    "brand": "푸마",
+    "name": "309707",
+    "code": "309707",
+    "src": "page",
+    "hint": "deviate",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-3-%3Cbr%3Edeviate-nitro-3/309707.html"
+    }
+   }
+  ]
  },
  {
-  "t": "shopify",
-  "host": "www.drmartens.co.kr",
-  "pats": [
-   "1460",
-   "2976",
-   "adrian",
-   "quad",
-   "sinclair",
-   "8053",
-   "bex",
-   "1461",
-   "jadon"
-  ],
-  "pages": 4
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "on-cloud6",
+    "brand": "온러닝",
+    "name": "cloud6",
+    "code": "3MF10071200",
+    "src": "page",
+    "hint": "cloud 6",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "US": "https://www.on.com/en-us/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "GB": "https://www.on.com/en-gb/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "DE": "https://www.on.com/de-de/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
+     "JP": "https://www.on.com/ja-jp/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200"
+    }
+   },
+   {
+    "id": "on-cloudsurfer2",
+    "brand": "온러닝",
+    "name": "cloudsurfer2",
+    "code": "3MF10121043",
+    "src": "page",
+    "hint": "cloudsurfer",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "US": "https://www.on.com/en-us/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "GB": "https://www.on.com/en-gb/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "DE": "https://www.on.com/de-de/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
+     "JP": "https://www.on.com/ja-jp/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043"
+    }
+   },
+   {
+    "id": "on-cloudtilt",
+    "brand": "온러닝",
+    "name": "cloudtilt",
+    "code": "3ME10101430",
+    "src": "page",
+    "hint": "cloudtilt",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "US": "https://www.on.com/en-us/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "GB": "https://www.on.com/en-gb/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "DE": "https://www.on.com/de-de/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
+     "JP": "https://www.on.com/ja-jp/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430"
+    }
+   },
+   {
+    "id": "on-roger",
+    "brand": "온러닝",
+    "name": "roger",
+    "code": "3MF30641200",
+    "src": "page",
+    "hint": "roger",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "US": "https://www.on.com/en-us/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "GB": "https://www.on.com/en-gb/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "DE": "https://www.on.com/de-de/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
+     "JP": "https://www.on.com/ja-jp/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200"
+    }
+   },
+   {
+    "id": "on-cloudnova2",
+    "brand": "온러닝",
+    "name": "cloudnova2",
+    "code": "3ME30210108",
+    "src": "page",
+    "hint": "cloudnova",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "US": "https://www.on.com/en-us/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "GB": "https://www.on.com/en-gb/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "DE": "https://www.on.com/de-de/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
+     "JP": "https://www.on.com/ja-jp/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108"
+    }
+   }
+  ]
  },
  {
-  "t": "shopify",
-  "host": "hunterboots.com",
-  "pats": [
-   "wft1000",
-   "wfs1000",
-   "mft9000",
-   "mfs9000",
-   "wft2007",
-   "wfs2007",
-   "wfs2078",
-   "wfd",
-   "play",
-   "chelsea"
-  ],
-  "pages": 3
- },
- {
-  "t": "shopify",
-  "host": "hunterboots.co.uk",
-  "pats": [
-   "wft1000",
-   "wfs1000",
-   "mft9000",
-   "mfs9000",
-   "wft2007",
-   "wfs2007",
-   "wfs2078",
-   "play",
-   "chelsea"
-  ],
-  "pages": 3
- },
- {
-  "t": "shopify",
-  "host": "hunterboots.co.jp",
-  "pats": [
-   "wft1000",
-   "wfs1000",
-   "mft9000",
-   "mfs9000",
-   "wft2007",
-   "wfs2007",
-   "wfs2078",
-   "play",
-   "chelsea"
-  ],
-  "pages": 3
- },
- {
-  "t": "shopify",
-  "host": "brooksrunning.co.jp",
-  "pats": [
-   "ghost",
-   "glycerin",
-   "adrenaline",
-   "hyperion",
-   "launch",
-   "brm",
-   "brw"
-  ],
-  "pages": 3
- },
- {
-  "t": "shopify",
-  "host": "dragondiffusion.com",
-  "pats": [
-   "santa",
-   "pompom",
-   "double",
-   "grace",
-   "bamboo",
-   "city",
-   "ella",
-   "mini"
-  ],
-  "pages": 2
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "salomon-xt6",
+    "brand": "살로몬",
+    "name": "xt6",
+    "code": "L41086600",
+    "alt": [
+     "LG4239"
+    ],
+    "src": "page",
+    "hint": "xt-6",
+    "urls": {
+     "KR": "https://salomon.co.kr/products/l41086600.json",
+     "US": "https://www.salomon.com/en-us/product/xt-6-lg4239",
+     "GB": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
+     "DE": "https://www.salomon.com/de-de/product/xt-6-lg4239"
+    }
+   },
+   {
+    "id": "salomon-xt4og",
+    "brand": "살로몬",
+    "name": "xt4og",
+    "code": "L47132900",
+    "alt": [
+     "LI3335"
+    ],
+    "src": "page",
+    "hint": "xt-4",
+    "urls": {
+     "KR": "https://salomon.co.kr/products/l47132900.json",
+     "US": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
+     "GB": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
+     "DE": "https://www.salomon.com/de-de/product/xt-4-og-li3335"
+    }
+   },
+   {
+    "id": "salomon-xt6expanse",
+    "brand": "살로몬",
+    "name": "xt6expanse",
+    "code": "L41741300",
+    "alt": [
+     "LG9334"
+    ],
+    "src": "page",
+    "hint": "xt-6",
+    "urls": {
+     "KR": "https://salomon.co.kr/products/l41741300.json",
+     "US": "https://www.salomon.com/en-us/product/xt-6-expanse-lg9334",
+     "GB": "https://www.salomon.com/en-gb/product/xt-6-expanse-lg9334",
+     "DE": "https://www.salomon.com/de-de/product/xt-6-expanse-lg9334"
+    }
+   }
+  ]
  },
  {
   "t": "sitemap",
-  "host": "kr.puma.com",
+  "host": "www.salomon.com",
   "pats": [
-   "palermo",
-   "suede-xl",
-   "suede-classic",
-   "mostro",
-   "speedcat",
-   "ca-pro",
-   "velocity-nitro",
-   "deviate-nitro",
-   "rs-x"
+   "en-us/product/xt-6-lg",
+   "en-us/product/xt-4-og",
+   "en-us/product/xt-6-expanse",
+   "en-us/product/xt-6-gore-tex",
+   "en-us/product/xt-6-shadow",
+   "en-us/product/acs"
   ],
   "want": 3,
   "max_maps": 25,
+  "prefer": [
+   "product",
+   "en-us"
+  ]
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://www.kolonmall.com/DRAGON_DIFFUSION",
+   "https://www.kolonmall.com/HUNTER"
+  ],
+  "rx": [
+   "/Product/([A-Za-z0-9]{6,})",
+   "([WM][FS][TS]\\d{4}[A-Z]{3,6})",
+   "(W2BA[A-Z0-9]{6,12})"
+  ],
+  "max": 80
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://saucony.co.kr/category/%EA%B0%80%EC%9D%B4%EB%93%9C/112/",
+   "https://saucony.co.kr/category/%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84/113/",
+   "https://saucony.co.kr/category/%ED%82%A8%EB%B0%94%EB%9D%BC/110/",
+   "https://saucony.co.kr/category/%EC%9E%AC%EC%A6%88-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90/238/",
+   "https://saucony.co.kr/category/%EC%97%94%EB%8F%8C%ED%95%80-%EC%8B%9C%EB%A6%AC%EC%A6%88/207/",
+   "https://saucony.co.kr/category/%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0/158/"
+  ],
+  "rx": [
+   "href=\"(/product/[^\"]+/\\d+/)"
+  ],
+  "max": 30
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://brooksrunning.co.kr/"
+  ],
+  "rx": [
+   "href=\"(/category/[^\"]+/\\d+/)",
+   "href=\"(/product/[^\"]+/\\d+/)"
+  ],
+  "max": 80
+ },
+ {
+  "t": "sitemap",
+  "host": "us.puma.com",
+  "pats": [
+   "396463",
+   "396464",
+   "399781",
+   "397330",
+   "401603",
+   "309707"
+  ],
+  "want": 1,
+  "max_maps": 30,
   "prefer": [
    "product",
    "pdp"
@@ -228,87 +312,74 @@
  },
  {
   "t": "sitemap",
-  "host": "www.underarmour.co.kr",
+  "host": "uk.puma.com",
   "pats": [
-   "1379757",
-   "rival",
-   "charged",
-   "hovr",
-   "heatgear",
-   "1361518",
-   "1361524",
-   "tech",
-   "unstoppable",
-   "curry"
+   "396463",
+   "396464",
+   "399781",
+   "397330",
+   "401603",
+   "309707"
   ],
-  "want": 3,
-  "max_maps": 20,
-  "prefer": [
-   "product"
-  ]
- },
- {
-  "t": "sitemap",
-  "host": "www.on.com",
-  "pats": [
-   "ko-kr/products/cloud-6",
-   "ko-kr/products/cloudsurfer",
-   "ko-kr/products/cloud-x-4",
-   "ko-kr/products/cloudtilt",
-   "ko-kr/products/cloudrunner-2",
-   "ko-kr/products/cloudnova",
-   "ko-kr/products/cloudswift",
-   "ko-kr/products/cloudmonster-2"
-  ],
-  "want": 3,
-  "max_maps": 25,
-  "prefer": [
-   "ko-kr",
-   "ko"
-  ]
- },
- {
-  "t": "sitemap",
-  "host": "saucony.co.kr",
-  "pats": [
-   "가이드",
-   "트라이엄프",
-   "엔돌핀",
-   "킨바라",
-   "재즈",
-   "쉐도우",
-   "페레그린",
-   "라이드"
-  ],
-  "want": 3,
-  "max_maps": 15
- },
- {
-  "t": "sitemap",
-  "host": "brooksrunning.co.kr",
-  "pats": [
-   "고스트",
-   "글리세린",
-   "아드레날린",
-   "하이페리온",
-   "런치",
-   "고스트-맥스"
-  ],
-  "want": 3,
-  "max_maps": 15
- },
- {
-  "t": "sitemap",
-  "host": "www.kolonmall.com",
-  "pats": [
-   "dragon_diffusion",
-   "/brands/hunter/"
-  ],
-  "want": 12,
+  "want": 1,
   "max_maps": 30,
   "prefer": [
    "product",
-   "brand"
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "jp.puma.com",
+  "pats": [
+   "396463",
+   "396464",
+   "399781",
+   "397330",
+   "401603",
+   "309707"
+  ],
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "mx.puma.com",
+  "pats": [
+   "396463",
+   "396464",
+   "399781",
+   "397330",
+   "401603",
+   "309707"
+  ],
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "product",
+   "pdp"
+  ]
+ },
+ {
+  "t": "sitemap",
+  "host": "eu.puma.com",
+  "pats": [
+   "/de/de/&&396463",
+   "/de/de/&&396464",
+   "/de/de/&&399781",
+   "/de/de/&&397330",
+   "/de/de/&&401603",
+   "/de/de/&&309707"
+  ],
+  "want": 1,
+  "max_maps": 30,
+  "prefer": [
+   "/de/",
+   "product"
   ]
  }
 ]

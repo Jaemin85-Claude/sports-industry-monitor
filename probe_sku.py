@@ -31,8 +31,8 @@ def sitemap_find(j):
             queue = kids + queue; continue
         for u in locs:
             ul = urllib.parse.unquote(u).lower()
-            for p in pats:
-                if p in ul and len(found[p]) < want and u not in found[p]: found[p].append(u)
+            for p in pats:   # 'a&&b' = 둘 다 들어 있어야
+                if all(q in ul for q in p.split("&&")) and len(found[p]) < want and u not in found[p]: found[p].append(u)
         if all(len(v) >= want for v in found.values()): break
     out("SITEMAP", host=host, read=seen, found=found)
 def shopify_list(j):
@@ -68,9 +68,21 @@ def page(j):   # 상품 페이지 원문에서 품번·가격 단서 보기(이�
         except Exception as e: out("PAGEERR", url=u[:120], err=str(e)[:120]); continue
         t = r.text; codes = sorted(set(re.findall(j.get("rx", r"[A-Z0-9]{2,}[0-9][A-Z0-9.\-]{2,}"), t)))[:25]
         out("PAGE", url=u[:120], final=r.url[:120], codes=codes, title=(re.search(r"<title>(.*?)</title>", t, re.S) or [None, ""])[1].strip()[:80])
+def grep(j):   # 페이지 원문에서 정규식 찾기(상품 목록 페이지의 상품 링크·품번)
+    for u in j["urls"]:
+        if left() < 30: return
+        try: r = pf.get(u)
+        except Exception as e: out("GREPERR", url=u[:120], err=str(e)[:120]); continue
+        t = r.text; hits = []
+        for rx in j["rx"]:
+            for m in re.finditer(rx, t):
+                g = m.group(1) if m.groups() else m.group(0)
+                if g not in hits: hits.append(g)
+                if len(hits) >= j.get("max", 60): break
+        out("GREP", url=urllib.parse.unquote(u)[:120], n=len(t), hits=[urllib.parse.unquote(h)[:140] for h in hits])
 if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
-        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page}[j["t"]](j)
+        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page, "grep": grep}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
