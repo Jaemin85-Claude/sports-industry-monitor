@@ -80,9 +80,35 @@ def grep(j):   # 페이지 원문에서 정규식 찾기(상품 목록 페이지
                 if g not in hits: hits.append(g)
                 if len(hits) >= j.get("max", 60): break
         out("GREP", url=urllib.parse.unquote(u)[:120], n=len(t), hits=[urllib.parse.unquote(h)[:140] for h in hits])
+KEYS = ["regularPrice", "listPrice", "originalPrice", "basePrice", "compare_at_price", "compareAtPrice", "strikethrough", "fullPrice", "salePrice", "c_listPrice", "c_salePrice", "ListPrice", "StrikethroughPrice", "priceSpecification"]
+def detail(j):   # 정가 칸 위치 보기: JSON-LD 가격·정가 명세, 정가 낱말 주변
+    for u in j["urls"]:
+        if left() < 30: return
+        try: r = pf.get(u)
+        except Exception as e: out("DETERR", url=u[:120], err=str(e)[:120]); continue
+        t = r.text; ld = []
+        for m in re.finditer(r'<script[^>]+application/ld\+json[^>]*>(.*?)</script>', t, re.S | re.I):
+            sx = m.group(1)
+            for k in ("price", "priceSpecification", "priceType", "sku", "mpn"):
+                for mm in list(re.finditer(rf'"{k}"\s*:', sx))[:3]: ld.append(sx[mm.start():mm.start()+130])
+        kv = {}
+        for k in KEYS + j.get("near", []):
+            occ = [mm.start() for mm in re.finditer(re.escape(k), t)]
+            if occ: kv[k] = [len(occ)] + [t[max(0, i-50):i+100] for i in occ[:2]]
+        out("DETAIL", url=urllib.parse.unquote(u)[:110], ld=ld[:8], keys=kv)
+def snip(j):   # 키워드 주변 글자(페이지 구조 파악용)
+    for u in j["urls"]:
+        if left() < 30: return
+        try: r = pf.get(u)
+        except Exception as e: out("SNIPERR", url=u[:120], err=str(e)[:120]); continue
+        t = r.text; res = {}
+        for k in j["keys"]:
+            occ = [mm.start() for mm in re.finditer(k, t)]
+            res[k] = [len(occ)] + [t[max(0, i-80):i+160] for i in occ[:j.get("n", 3)]]
+        out("SNIP", url=urllib.parse.unquote(u)[:110], n=len(t), res=res)
 if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
-        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page, "grep": grep}[j["t"]](j)
+        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page, "grep": grep, "detail": detail, "snip": snip}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
