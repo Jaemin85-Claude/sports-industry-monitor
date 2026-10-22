@@ -3,301 +3,261 @@
   "t": "fetch",
   "prods": [
    {
-    "id": "brooks-ghost18w",
-    "brand": "브룩스",
-    "name": "ghost18w",
-    "code": "1204821B",
-    "cc_code": {
-     "JP": "BRW4822"
-    },
+    "id": "hunter-wshort",
+    "brand": "헌터",
+    "name": "hunter-wshort",
+    "code": "WFS1000RMA",
     "src": "page",
-    "hint": "고스트 18",
-    "code_in_page": true,
+    "hint": "wfs1000rmablk",
     "urls": {
-     "KR": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
-     "JP": "https://brooksrunning.co.jp/products/brw4822-blk.json"
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507742896066BK01"
     }
    },
    {
-    "id": "brooks-glycgts23",
-    "brand": "브룩스",
-    "name": "glycgts23",
-    "code": "1105031D",
-    "cc_code": {
-     "JP": "BRM5033"
-    },
+    "id": "hunter-playtall",
+    "brand": "헌터",
+    "name": "hunter-playtall",
+    "code": "WFT2007RMA",
     "src": "page",
-    "hint": "글리세린 gts 23",
-    "code_in_page": true,
+    "hint": "wft2007rmablk",
     "urls": {
-     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
-     "JP": "https://brooksrunning.co.jp/products/brm5033-blk-w.json"
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508641433091BK01"
     }
    },
    {
-    "id": "brooks-glycmax2",
-    "brand": "브룩스",
-    "name": "glycmax2",
-    "code": "1104791D",
-    "cc_code": {
-     "JP": "BRM4793"
-    },
+    "id": "hunter-chelsea",
+    "brand": "헌터",
+    "name": "hunter-chelsea",
+    "code": "WFS2078RMA",
     "src": "page",
-    "hint": "글리세린 맥스 2",
-    "code_in_page": true,
+    "hint": "wfs2078rmablk",
     "urls": {
-     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
-     "JP": "https://brooksrunning.co.jp/products/brm4793-b-b.json"
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01"
     }
    },
    {
-    "id": "brooks-ghostamp",
-    "brand": "브룩스",
-    "name": "ghostamp",
-    "code": "1104971D",
-    "cc_code": {
-     "JP": "BRM4973"
-    },
+    "id": "hunter-playshort",
+    "brand": "헌터",
+    "name": "hunter-playshort",
+    "code": "WFS2020RMA",
     "src": "page",
-    "hint": "고스트 amp",
-    "code_in_page": true,
+    "hint": "wfs2020rmablk",
     "urls": {
-     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
-     "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01"
     }
-   }
-  ]
- },
- {
-  "t": "grep",
-  "urls": [
-   "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
-   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
-   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
-   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/"
-  ],
-  "rx": [
-   "(1[12]0\\d{4}[A-Z][0-9]{0,3})",
-   "\"name\"\\s*:\\s*\"([^\"]{4,60})\""
-  ],
-  "max": 8
- },
- {
-  "t": "fetch",
-  "prods": [
+   },
+   {
+    "id": "hunter-gloss-short",
+    "brand": "헌터",
+    "name": "hunter-gloss-short",
+    "code": "WFS1000RGL",
+    "src": "page",
+    "hint": "wfs1000rglblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01"
+    }
+   },
+   {
+    "id": "dd-santamaria",
+    "brand": "드래곤디퓨전",
+    "name": "dd-santamaria",
+    "code": "8700",
+    "src": "page",
+    "hint": "santa maria",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX"
+    }
+   },
+   {
+    "id": "dd-triplejump",
+    "brand": "드래곤디퓨전",
+    "name": "dd-triplejump",
+    "code": "8811",
+    "src": "page",
+    "hint": "triple jump",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26029BKX"
+    }
+   },
+   {
+    "id": "dd-rosanna",
+    "brand": "드래곤디퓨전",
+    "name": "dd-rosanna",
+    "code": "8943",
+    "src": "page",
+    "hint": "rosanna",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26024BKX"
+    }
+   },
+   {
+    "id": "dd-juventus",
+    "brand": "드래곤디퓨전",
+    "name": "dd-juventus",
+    "code": "juventus",
+    "src": "page",
+    "hint": "유벤투스",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023DBR"
+    }
+   },
+   {
+    "id": "dd-ars",
+    "brand": "드래곤디퓨전",
+    "name": "dd-ars",
+    "code": "ars",
+    "src": "page",
+    "hint": "아르스",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR"
+    }
+   },
+   {
+    "id": "salomon-xt4oggtx",
+    "brand": "살로몬",
+    "name": "x",
+    "code": "L49210800",
+    "alt": [
+     "LI8806"
+    ],
+    "src": "page",
+    "hint": "xt-4",
+    "urls": {
+     "KR": "https://salomon.co.kr/products/l49210800.json",
+     "US": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
+     "GB": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
+     "DE": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806"
+    }
+   },
    {
     "id": "puma-396463",
     "brand": "푸마",
-    "name": "396463",
+    "name": "p",
     "code": "396463",
     "src": "page",
     "hint": "palermo",
     "urls": {
-     "US": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
-     "GB": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
-     "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
-     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
      "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html"
     }
-   },
-   {
-    "id": "puma-397330",
-    "brand": "푸마",
-    "name": "397330",
-    "code": "397330",
-    "src": "page",
-    "hint": "mostro",
-    "urls": {
-     "US": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
-     "GB": "https://uk.puma.com/uk/en/pd/mostro-og-sneakers-unisex/397330",
-     "DE": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
-     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%A2%E3%82%B9%E3%83%88%E3%83%AD-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/397330",
-     "MX": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html",
-     "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html"
-    }
-   },
-   {
-    "id": "puma-399781",
-    "brand": "푸마",
-    "name": "399781",
-    "code": "399781",
-    "src": "page",
-    "hint": "suede",
-    "urls": {
-     "US": "https://us.puma.com/us/en/pd/suede-classic-sneakers/399781",
-     "GB": "https://uk.puma.com/uk/en/pd/suede-classic-sneakers-unisex/399781",
-     "DE": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
-     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%89-%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/399781",
-     "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html",
-     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html"
-    }
-   },
-   {
-    "id": "puma-396464",
-    "brand": "푸마",
-    "name": "396464",
-    "code": "396464",
-    "src": "page",
-    "hint": "palermo",
-    "urls": {
-     "US": "https://us.puma.com/us/en/pd/palermo-leather-sneakers/396464",
-     "GB": "https://uk.puma.com/uk/en/pd/palermo-leather-sneakers-unisex/396464",
-     "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396464",
-     "MX": "https://mx.puma.com/mx/es/pd/tenis-palermo-cuero/396464.html",
-     "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%83%AC%E3%82%B6%E3%83%BC-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396464",
-     "KR": "https://kr.puma.com/kr/ko/pd/palermo-lth/396464.html"
-    }
    }
   ]
  },
  {
-  "t": "fetch",
-  "prods": [
-   {
-    "id": "ua-1361518",
-    "brand": "언더아머",
-    "name": "1361518",
-    "code": "1361518",
-    "src": "page",
-    "hint": "heatgear",
-    "urls": {
-     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361518.html",
-     "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_short_sleeve/1361518.html",
-     "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens/1361518.html",
-     "DE": "https://www.underarmour.de/de-de/p/heatgear/1361518.html",
-     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/heatgear/1361518.html"
-    }
-   },
-   {
-    "id": "ua-1361524",
-    "brand": "언더아머",
-    "name": "1361524",
-    "code": "1361524",
-    "src": "page",
-    "hint": "heatgear",
-    "urls": {
-     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361524.html",
-     "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_long_sleeve/1361524.html",
-     "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens-compression-long-sleeve/1361524.html",
-     "DE": "https://www.underarmour.de/de-de/p/heatgear/1361524.html",
-     "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear/1361524.html"
-    }
-   },
-   {
-    "id": "ua-1328495",
-    "brand": "언더아머",
-    "name": "1328495",
-    "code": "1328495",
-    "src": "page",
-    "hint": "ua tech",
-    "urls": {
-     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
-     "US": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
-     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
-     "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html",
-     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech/1328495.html"
-    }
-   },
-   {
-    "id": "ua-1326799",
-    "brand": "언더아머",
-    "name": "1326799",
-    "code": "1326799",
-    "src": "page",
-    "hint": "left chest",
-    "urls": {
-     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
-     "US": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
-     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
-     "DE": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
-     "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html"
-    }
-   }
-  ]
- },
- {
-  "t": "snip",
+  "t": "detail",
   "urls": [
-   "https://saucony.co.kr/category/%EA%B0%80%EC%9D%B4%EB%93%9C/112/"
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX",
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR"
   ],
-  "keys": [
-   "/product/",
-   "S2[01]\\d{3}"
+  "near": [
+   "정가",
+   "listPrice",
+   "salePrice",
+   "originPrice",
+   "normalPrice"
+  ]
+ },
+ {
+  "t": "shopify",
+  "host": "dragondiffusion.com",
+  "pats": [
+   "rosanna",
+   "juventus",
+   "ars-",
+   "fellini",
+   "nantucket",
+   "santa-maria-black",
+   "triple-jump"
   ],
-  "n": 4
+  "pages": 3
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://saucony.co.kr/category/%EA%B0%80%EC%9D%B4%EB%93%9C/112/",
+   "https://saucony.co.kr/category/%ED%82%A8%EB%B0%94%EB%9D%BC/110/",
+   "https://saucony.co.kr/category/%EC%97%94%EB%8F%8C%ED%95%80-%EC%8B%9C%EB%A6%AC%EC%A6%88/207/",
+   "https://saucony.co.kr/category/%EC%9E%AC%EC%A6%88-%EC%98%A4%EB%A6%AC%EC%A7%80%EB%84%90/238/",
+   "https://saucony.co.kr/category/%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84/113/"
+  ],
+  "rx": [
+   "(/product/[^\\\"'<>\\s]+?/\\d+/)"
+  ],
+  "max": 12
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://www.saucony.com/en/kinvara-16/60309M.html",
+   "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
+   "https://www.saucony.com/en/jazz-original/61185U.html",
+   "https://www.saucony.com/en/shadow-6000/51880U.html",
+   "https://www.saucony.com/en/guide-18/"
+  ],
+  "rx": [
+   "data-stock-number=\"([^\"]+)\"",
+   "href=\"(/en/guide-18/[0-9]+[MWU]\\.html)\"",
+   "href=\"(/en/triumph-23/[0-9]+[MWU]\\.html)\""
+  ],
+  "max": 10
  },
  {
   "t": "sitemap",
   "host": "www.saucony.com",
   "pats": [
-   "/en/guide-18/",
    "/en/triumph-23/",
-   "/en/kinvara-16/",
-   "/en/endorphin-speed-5/",
-   "/en/jazz-original/",
-   "/en/shadow-6000/",
-   "/en/peregrine-15/",
-   "/en/endorphin-pro-4/",
+   "/en/guide-18/6",
+   "/en/guide-18/5",
    "/en/hurricane-25/",
-   "/en/ride-19/"
+   "/uk/en_gb/kinvara-16/",
+   "/de/de_de/kinvara-16/"
   ],
   "want": 2,
-  "max_maps": 30,
+  "max_maps": 12,
   "prefer": [
    "product",
    "/en"
   ]
  },
  {
-  "t": "snip",
-  "urls": [
-   "https://salomon.co.kr/products/l49210800.json",
-   "https://salomon.co.kr/products/l45418800.json"
-  ],
-  "keys": [
-   "L[GI]\\d{4}",
-   "\"title\"",
-   "\"tags\""
-  ],
-  "n": 2
- },
- {
   "t": "sitemap",
-  "host": "www.salomon.com",
-  "start": [
-   "https://www.salomon.com/sitemap.xml",
-   "https://www.salomon.com/en-us/sitemap.xml"
-  ],
+  "host": "kr.puma.com",
   "pats": [
-   "en-us/product/xt-4-og-gore-tex",
-   "en-us/product/xt-6-shadow",
-   "en-us/product/xt-6-protective",
-   "en-us/product/xt-6-stormshade",
-   "en-us/product/acs-"
+   "speedcat",
+   "suede",
+   "palermo",
+   "h-street",
+   "ca-pro",
+   "rs-x",
+   "smash",
+   "caven",
+   "court",
+   "rebound",
+   "slipstream",
+   "inhale",
+   "ballet",
+   "avanti",
+   "club"
   ],
-  "want": 2,
-  "max_maps": 25,
+  "want": 4,
+  "max_maps": 40,
   "prefer": [
    "product",
-   "en-us"
+   "pdp"
   ]
  },
  {
   "t": "snip",
   "urls": [
-   "https://www.kolonmall.com/robots.txt"
+   "https://hunterboots.co.kr/robots.txt",
+   "https://hunterboots.co.kr/"
   ],
   "keys": [
-   "[Ss]itemap"
+   "[Ss]itemap",
+   "shopify",
+   "cafe24",
+   "kolonmall",
+   "/product"
   ],
-  "n": 8
- },
- {
-  "t": "page",
-  "urls": [
-   "https://www.hunterboots.co.kr/",
-   "https://hunterboots.co.kr/",
-   "https://www.hunterkorea.co.kr/"
-  ]
+  "n": 3
  }
 ]
