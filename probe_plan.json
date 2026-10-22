@@ -1,18 +1,15 @@
 [
  {
-  "t": "snip",
+  "t": "grep",
   "urls": [
-   "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
-   "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
-   "https://kr.puma.com/kr/ko/pd/%EC%9D%B8%ED%97%A4%EC%9D%BC-%3Cbr%3Einhale/401560.html",
-   "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html"
+   "https://kr.puma.com/kr/ko/home",
+   "https://kr.puma.com/kr/ko"
   ],
-  "keys": [
-   "strike-through",
-   "class=\"sales"
+  "rx": [
+   "href=\"(/kr/ko/pd/[^\"]+/[0-9]{6}\\.html)",
+   "href=\"(https://kr\\.puma\\.com/kr/ko/pd/[^\"]+/[0-9]{6}\\.html)",
+   "href=\"(/kr/ko/[a-z0-9-]+(?:/[a-z0-9-]+)?)\""
   ],
-  "n": 4,
-  "b": 300,
-  "a": 700
+  "max": 80
  }
 ]
