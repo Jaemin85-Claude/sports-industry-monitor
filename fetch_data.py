@@ -8,7 +8,8 @@ v4.19: (대표 지시 2026-10-23 '1,2 진행') 야후가 새 분기를 늦게 �
       재고 = 분기 끝 7일 안 재무상태표 값(InventoryNet·…FinishedGoodsNetOfReserves(나이키)·…FinishedGoods·RetailRelated…) vs 1년 전 — 짝이 없으면
       그 칸은 야후 값(로그에 회사가 쓴 재고 태그). 같은 기간이 여러 공시에 있으면 가장 늦게 낸 값(다음 해 비교 칸·정정).
       q_src='SEC'·q_src_form(10-Q / 10-K 연간−9개월) · 재고는 q_src_inv·q_src_inv_form — 화면 기업 상세 출처 줄. 못 받으면 야후 값(로그 '건너뜀' —
-      이 실행의 남은 종목은 SEC 요청 안 함)인데, 어제 data.json에 SEC로 채운 더 새 분기가 있으면 그 칸을 이어 씀(판정이 하루씩 흔들리지 않게)
+      이 실행의 남은 종목은 SEC 요청 안 함 · 시간 상한은 SEC 요청에 쓴 시간만)인데, 어제 data.json에 SEC로 채운 더 새 분기가 있으면 그 칸을 이어 씀
+      (판정이 하루씩 흔들리지 않게 · 뜻밖의 오류가 난 날도 · 재고는 야후 매출 분기보다 옛것이 아니고 끝난 지 200일 안일 때만)
 v4.18: (대표 지시 2026-10-23 '써코니로 맞추고') 울버린(WWW) 이름 '울버린(새코니)' → '울버린(써코니)' — 브랜드 점검표·해외 정가·네이버 감시 브랜드와 같은 표기
 v4.17: (대표 지시 2026-10-21 '국가별 대표상품 소비자가 — 미주·유럽·중남미 vs 한국') 멕시코 페소(MXN) 추가 — 해외 정가 비교(price_fetch v1)의
       멕시코 정가를 원화로 바꾸려고(값만 저장 · 1% 칸 알림 없음 · 원화 직접 쌍 이력이 짧으면 달러 경유)
@@ -237,7 +238,7 @@ SEC_REV = ("Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax",
 SEC_INV = ("InventoryNet", "InventoryFinishedGoodsNetOfReserves", "InventoryFinishedGoods",   # 앞 순서 먼저(전체 재고 태그 우선) — 나이키는
            "RetailRelatedInventoryMerchandise")                                     # 2011년 뒤 FinishedGoodsNetOfReserves(10/23 브랜치 확인)
 SEC_FORMS = ("10-Q", "10-K", "10-Q/A", "10-K/A")
-_SEC = {"cik": None, "t0": None, "down": None}
+_SEC = {"cik": None, "t0": None, "down": None}   # t0 = SEC 요청에 쓴 초
 
 
 def _sec_get(url):
@@ -245,16 +246,17 @@ def _sec_get(url):
     오류 글은 갈래만(영문 오류 원문 없이 — SEC가 안 돼도 야후 값 그대로라 12:23 점검이 매일 알리지 않게)"""
     if _SEC["down"]:
         raise RuntimeError(f"앞에서 SEC 접속 안 됨({_SEC['down']})")
-    if _SEC["t0"] is None:
-        _SEC["t0"] = time.time()
-    if time.time() - _SEC["t0"] > SEC_BUDGET:
+    if (_SEC["t0"] or 0) > SEC_BUDGET:   # t0 = 이 실행에서 SEC 요청에 쓴 초(야후 수집 시간은 빼고)
         raise RuntimeError(f"SEC 시간 상한 {SEC_BUDGET}초")
     time.sleep(0.3)   # SEC 초당 10회 제한 아래로
+    t1 = time.time()
     try:
         r = requests.get(url, headers=SEC_UA, timeout=30)
     except requests.RequestException as e:
+        _SEC["t0"] = (_SEC["t0"] or 0) + time.time() - t1
         _SEC["down"] = "시간 초과" if isinstance(e, requests.Timeout) else "연결 안 됨"
         raise RuntimeError(f"SEC {_SEC['down']}") from None
+    _SEC["t0"] = (_SEC["t0"] or 0) + time.time() - t1
     if r.status_code != 200:
         if r.status_code in (403, 429) or r.status_code >= 500:
             _SEC["down"] = f"HTTP {r.status_code}"
@@ -414,19 +416,33 @@ def _sec_try(item, ticker, today):
             True, False)
 
 
+SEC_CARRY_DAYS = 200   # 이어 쓰는 SEC 재고 분기 끝이 이 일수보다 오래되면 그만(야후가 분기 재고 짝을 오래 못 줄 때 옛 값이 계속 남지 않게)
+
+
+def sec_carry(item, prev, today, rev=False, inv=False):
+    """어제 data.json에 SEC로 채운 더 새 분기를 오늘 항목에 이어 씀 → 이어 쓴 칸 글 목록. 매출은 오늘 야후 분기보다 45일 넘게 새로울 때,
+    재고는 오늘 야후 재고 분기보다 새롭고 · 오늘 야후 매출 분기보다 45일 넘게 옛것이 아니고 · 끝난 지 SEC_CARRY_DAYS일 안일 때"""
+    keep = []
+    if not isinstance(prev, dict):
+        return keep
+    if not rev and prev.get("q_src") == "SEC" and _sec_newer(prev.get("q_end"), item.get("q_end")):
+        item.update({k: prev.get(k) for k in SEC_KEYS_REV})
+        keep.append(f"매출 {prev.get('q_end')}")
+    pd = _day(prev.get("q_inv_date")) if prev.get("q_inv_date") else None
+    if (not inv and prev.get("q_src_inv") and pd and (today - pd).days <= SEC_CARRY_DAYS
+            and _sec_newer(prev.get("q_inv_date"), item.get("q_inv_date"))
+            and not _sec_newer(item.get("q_end"), prev.get("q_inv_date"))):
+        item.update({k: prev.get(k) for k in SEC_KEYS_INV})
+        keep.append(f"재고 {prev.get('q_inv_date')}")
+    return keep
+
+
 def sec_fill(item, ticker, today, prev=None):
     """v4.19 야후가 늦은 분기는 SEC 공시로 채움(_sec_try) → 로그 글(할 일 없으면 None).
     오늘 SEC로 못 채웠는데(접속 안 됨·시간 상한·통화 칸 비어 옴·야후가 손익만 먼저 올림 등) 어제 data.json에 SEC로 채운 더 새 분기가
     있으면 그 칸을 이어 씀 — 하루씩 옛 야후 분기로 돌아가 판정이 흔들리지 않게(야후가 같은 분기를 올리면 자연히 야후 값)"""
     txt, rev, inv = _sec_try(item, ticker, today)
-    keep = []
-    if isinstance(prev, dict):
-        if not rev and prev.get("q_src") == "SEC" and _sec_newer(prev.get("q_end"), item.get("q_end")):
-            item.update({k: prev.get(k) for k in SEC_KEYS_REV})
-            keep.append(f"매출 {prev.get('q_end')}")
-        if not inv and prev.get("q_src_inv") and _sec_newer(prev.get("q_inv_date"), item.get("q_inv_date")):
-            item.update({k: prev.get(k) for k in SEC_KEYS_INV})
-            keep.append(f"재고 {prev.get('q_inv_date')}")
+    keep = sec_carry(item, prev, today, rev, inv)
     if keep:
         txt = (f"{txt.replace(' · 야후 값 그대로', '').replace(' — 야후 값 그대로', '')} · " if txt else "") + f"어제 SEC로 채운 분기 이어 씀({' · '.join(keep)})"
     return txt
@@ -883,10 +899,17 @@ def main():
         snap = dict(item)
         try:
             sec_txt = sec_fill(item, ticker, today, prev)   # v4.19 야후가 늦은 분기는 SEC 공시로(어제 채운 분기 이어 쓰기 포함)
-        except Exception as e:   # 뜻밖의 자료 모양·코드 문제 — 야후 값으로 되돌리고 알림(종목 수집은 계속)
+        except Exception as e:   # 뜻밖의 자료 모양·코드 문제 — 야후 값으로 되돌리고 알림(종목 수집은 계속) · 어제 SEC 분기는 이어 씀
             item.clear()
             item.update(snap)
-            sec_txt = f"[WARN] SEC 분기 보충 중 뜻밖의 오류 — {type(e).__name__}: {str(e)[:120]} · 야후 값 그대로"
+            try:
+                kept_sec = sec_carry(item, prev, today)
+            except Exception:
+                item.clear()
+                item.update(snap)
+                kept_sec = []
+            sec_txt = (f"[WARN] SEC 분기 보충 중 뜻밖의 오류 — {type(e).__name__}: {str(e)[:120]} · "
+                       + (f"어제 SEC로 채운 분기 이어 씀({' · '.join(kept_sec)})" if kept_sec else "야후 값 그대로"))
         if sec_txt:
             print(f"  ↳ {sec_txt}", flush=True)
         q_txt = ""
