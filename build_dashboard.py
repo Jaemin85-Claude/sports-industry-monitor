@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.20: (대표 지시 2026-10-23 '링크 한 줄만 넣어주세요') 더보기 › 물류 맨 위(수입·수출 바로가기 칩 아래)에 대표 전용 비공개 페이지
+  '우리 운임 vs 시장'(관세사 수입신고 자료 · claude.ai 비공개 페이지) 링크 한 줄 — 공개 저장소라 내용·숫자는 넣지 않고 주소만(LG_OURS_URL ·
+  대표 계정에서만 열림).
 v33.19: (대표 지시 2026-10-22 '해외 정가 탭 국가 있는 표에 헤더는 고정') 더보기 › 해외 정가 표 — 세로로 넘겨도 나라 머리 줄이 위에 붙어 있게
   (표 상자 높이를 화면 안으로 · 표 안에서 넘김 · 왼쪽 위 모서리 칸은 가로·세로 모두 고정 · 화면 높이는 phSync가 --ch·--phh로)
 v33.18: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품 5개 이상' — price_fetch v1.3으로 상품 13 → 56개) 브랜드 상세 '해외 정가 비교'는
@@ -3741,6 +3744,7 @@ function lgJump(id){   // v33.5 맨 위 칩 → 그 묶음 제목으로(고정 �
   const e=document.getElementById(id); if(!e) return;
   cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0; phSync(); e.scrollIntoView({behavior:smoothB(),block:'start'});
 }
+const LG_OURS_URL='https://claude.ai/artifact/2ehAvGB9SJwEVFv3BfZQWg';   // v33.20 대표 전용 비공개 페이지 '우리 운임 vs 시장' — 주소만(내용은 대표 계정에서만 열림)
 function moreLogiHtml(){
   let h=moreHead('물류','갱신 <span class="nw">'+esc((LOGI&&LOGI.generated_at)||'―')+'</span>');   // v33.9 머리 줄은 갱신 시각만
   if(!LOGI) return h+'<div class="card"><div class="na">물류 자료 수집 전 — update-dashboard 실행 후 표시</div></div>';
@@ -3748,6 +3752,7 @@ function moreLogiHtml(){
   const sec=(id,t,sub)=>`<h2 class="lg-h2" id="${id}">${t}<span>${sub}</span></h2>`;
   h+=sf('요약',lgKpis);
   h+=`<div class="chips lg-jump">${[['lgImp','수입'],['lgExp','수출'],['lgRisk','공통 위험 신호']].map(([id,t])=>`<button type="button" class="chip" onclick="lgJump('${id}')">${t}${ic('down',16)}</button>`).join('')}</div>`;
+  h+=`<a class="nmore" href="${LG_OURS_URL}" target="_blank" rel="noopener noreferrer">우리 운임 vs 시장 — 대표 전용 페이지 ${ic('right',16)}</a>`;   // v33.20 링크 한 줄
   h+=why(`① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 그 나라에서 부산항(바닷길)·인천공항(항공)으로 들어온 물량은 나라별 도착 물동량(관세청 · 월 — 인천·평택·광양항 등은 빠짐), 어제까지 부산항에 들어온 배는 부산항 입항 컨테이너선(해수부 · 매일 — 수출 선적·환적 배 포함). 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고)·나라별 출발 물동량(부산항·인천공항). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.`,'이 화면 읽는 법');   // v33.9 접음
   h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('나라별 도착 물동량',()=>`<div class="card" id="lgVol_vol_in">${lgVolCard('vol_in')}</div>`)
     +sf('부산항 입항 선박',lgPmCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
