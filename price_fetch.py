@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.4: (대표 지시 2026-10-22 '스포츠 브랜드는 모두 추가하고 싶습니다' — 봇 차단은 우회하지 않고 되는 곳만) 아크테릭스 6 · 킨(KEEN) 6 · 우포스 7 추가
+    (상품 56 → 75개 · 값 227 → 299개 · 나라별 같은 품번을 GitHub 서버에서 확인 — 브랜치 시험 10/23 72/72).
+    ① 아크테릭스 한국(아머스포츠코리아 공식몰): 시즌 상품 페이지마다 한국 품번(Model(KR) — PRODUCTS cc_code KR, 시즌이 바뀌면 주소와 함께 바꿈) ·
+       JSON-LD는 판매가뿐이라 화면 데이터의 정가 retail_price — 같은 { } 묶음에 이 상품 품번이 있고 판매가(sell·last)가 JSON-LD 가격과 같을 때만, 판매가의 5배 안.
+       미국·영국·독일(arcteryx.com)·일본(쇼피파이 페이지)은 JSON-LD 품번(X0000…) · 맨티스 26 일본은 옛 모델이라 뺌.
+    ② 킨·우포스 한국(수입사 LF 공식몰 — 고도몰, JSON-LD 없음): 상품 정보 칸 품번(ARTICLE · Article No.)이 이 상품 품번과 같을 때만
+       주문 칸 숨은 값 정가(set_goods_fixedPrice)·판매가(set_goods_price) 중 높은 값(godo_price · 같은 칸 값이 여러 가지면 실패).
+       우포스 콜라보 상품은 같은 Article No.라 상품 번호(goodsNo)로 고름 · 우포스는 영국·독일·일본·멕시코에 공식 온라인몰이 없어 한국·미국만.
+    ③ 쇼피파이 변형 품번이 바코드인 몰(킨 미국·독일·일본)은 상품 태그에 품번이 있으면 그 상품(헌터처럼 상품 주소에 품번이 없음).
+    ④ 한 실행 최대 11 → 13분(update.yml 해외 정가 단계 13 → 15분 · 작업 32 → 34분).
+    ⑤ 넣지 못한 브랜드(접속 시험·조사 10/21~23): 아디다스·뉴발란스·아식스·오니츠카타이거·룰루레몬·오클리(봇 차단 403/429) ·
+       크록스·스케쳐스(한국 몰 차단) · 호카(한국 공식 온라인몰 없음) · 미즈노(한국 공식몰에 현재 모델 없음) · 노르다·CEP(한국 공식몰 없음) ·
+       안다르(한국몰 상품 페이지에 자체 품번이 없어 일본 공식몰 상품과 같은지 확인 불가).
 v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 227개 —
     나라별로 같은 품번을 GitHub 서버에서 확인한 것만 · 그 나라 몰에 없거나 품번·사양이 다르거나 할인가가 정가로 보이면 그 나라는 뺌, 이유는 상품 줄 주석).
     ① SFCC형 몰(푸마 한국 등)이 가격인하 중이면 JSON-LD에 판매가만 있어, 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로 —
@@ -61,7 +74,7 @@ HDR = {"User-Agent": UA, "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
 DAYS = 7            # 주 1회
 SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 할인으로 보고 정가를 지킴
 STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
-TIME_LIMIT = 11 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분
+TIME_LIMIT = 13 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분 · v1.4 값 299개라 13분
 GAP = 1.5           # 초 — 요청 사이 쉬는 시간
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
@@ -80,6 +93,27 @@ def _on(slug):   # 온러닝 — 나라별 몰 주소(상품 주소 꼴이 같�
 
 def _sal(kr, slug):   # 살로몬 — 한국 쇼피파이 상품(.json, 색상 품번) + 해외 모델 페이지(미국·영국·독일, 모델 기본가)
     return {"KR": f"https://salomon.co.kr/products/{kr}.json", **{cc: f"https://www.salomon.com/{loc}/product/{slug}" for cc, loc in (("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"))}}
+
+
+def _arc(kr, slug, jp=None, g="mens/"):   # 아크테릭스 — 한국 시즌 상품 페이지(시즌마다 번호·한국 품번이 바뀜) + 미국·영국·독일(같은 주소 꼴) + 일본 쇼피파이 페이지
+    u = {"KR": f"https://arcteryx.co.kr/products/view/{kr}", **{cc: f"https://arcteryx.com/{loc}/en/shop/{g}{slug}" for cc, loc in (("US", "us"), ("GB", "gb"), ("DE", "de"))}}
+    if jp:
+        u["JP"] = f"https://arcteryx.jp/products/{jp}"
+    return u
+
+
+def _keen(kr, h, jp=True, gb=None, de=True):   # 킨 — 한국 LF 공식몰(고도몰 상품 번호) + 미국·영국·독일·일본 쇼피파이 상품 .json(같은 상품 주소 꼴)
+    u = {"KR": f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={kr}", "US": f"https://www.keenfootwear.com/products/{h}.json",
+         "GB": f"https://www.keenfootwear.co.uk/products/{gb or h}.json"}
+    if de:
+        u["DE"] = f"https://www.keenfootwear.de/en/products/{h}.json"
+    if jp:
+        u["JP"] = f"https://www.keenfootwear.jp/products/{jp if isinstance(jp, str) else h}.json"
+    return u
+
+
+def _oofos(kr, h):   # 우포스 — 한국 LF 공식몰(고도몰) + 미국 쇼피파이 .json(영국·독일·일본·멕시코는 공식 온라인몰 없음 — 소매점 판매)
+    return {"KR": f"https://www.oofos.co.kr/goods/goods_view.php?goodsNo={kr}", "US": f"https://www.oofos.com/products/{h}.json"}
 
 
 PRODUCTS = [
@@ -282,6 +316,47 @@ PRODUCTS = [
     {"id": "brooks-ghostamp", "brand": "브룩스", "name": "고스트 AMP(남성)", "code": "1104971D", "cc_code": {"JP": "BRM4973"}, "src": "page", "hint": "고스트 amp", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
         "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"}},
+    # v1.4 아크테릭스 — 한국은 시즌 상품 페이지마다 한국 품번(cc_code KR, 페이지 Model(KR))이 따로 · JSON-LD 판매가 + 화면 데이터 정가(retail_price)
+    {"id": "arc-atomhoody", "brand": "아크테릭스", "name": "아톰 후디(남성)", "code": "X000009556", "cc_code": {"KR": "AJQSM09556"}, "src": "page", "hint": "atom hoody",
+     "urls": _arc("686241", "atom-hoody-9556", "atom-hoody-m")},
+    {"id": "arc-atomjacket", "brand": "아크테릭스", "name": "아톰 재킷(남성)", "code": "X000009561", "cc_code": {"KR": "AJPFM09561"}, "src": "page", "hint": "atom jacket",
+     "urls": _arc("685690", "atom-jacket-9561", "atom-jacket-m")},   # 한국은 2025 가을·겨울 페이지(2026 페이지 없음 · 10/23)
+    {"id": "arc-gammapant", "brand": "아크테릭스", "name": "감마 팬츠(남성)", "code": "X000010481", "cc_code": {"KR": "APQSM10481"}, "src": "page", "hint": "gamma pant",
+     "urls": _arc("686323", "gamma-pant-0481", "gamma-pant-m")},
+    {"id": "arc-squamish", "brand": "아크테릭스", "name": "스쿼미시 후디(남성)", "code": "X000010276", "cc_code": {"KR": "AJQSM10276"}, "src": "page", "hint": "squamish hoody",
+     "urls": _arc("686259", "squamish-hoody-0276", "squamish-hoody-m")},
+    {"id": "arc-cerium", "brand": "아크테릭스", "name": "세륨 후디(남성)", "code": "X000010521", "cc_code": {"KR": "AJQFM10521"}, "src": "page", "hint": "cerium hoody",
+     "urls": _arc("686764", "cerium-hoody-0521", "cerium-hoody-m")},
+    {"id": "arc-mantis26", "brand": "아크테릭스", "name": "맨티스 26 백팩", "code": "X000010643", "cc_code": {"KR": "ABQSU10643"}, "src": "page", "hint": "mantis 26",
+     "urls": _arc("686432", "mantis-26-backpack-0643", g="")},   # 일본 몰 mantis-26-backpack은 옛 모델(X000009825)이라 뺌 · 맨티스 2 웨이스트 팩은 한국 페이지에 가격 데이터가 없어 넣지 않음(10/23)
+    # v1.4 킨 — 품번 = 색상까지 정해진 7자리 · 한국 고도몰은 상품 정보 칸 ARTICLE, 미국·독일·일본 쇼피파이는 변형 품번이 바코드라 상품 태그, 영국은 변형 품번(1022258-10)
+    {"id": "keen-newporth2", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 트리플 블랙)", "code": "1022258", "src": "page", "hint": "newport h2",
+     "urls": _keen("1000000673", "mens-newport-h2-triple-black")},
+    {"id": "keen-newporth2b", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 블랙)", "code": "1001907", "src": "page", "hint": "newport h2",
+     "urls": _keen("1000000679", "mens-newport-h2-black")},
+    {"id": "keen-uneek", "brand": "킨(KEEN)", "name": "유니크(남성 · 블랙)", "code": "1014097", "src": "page", "hint": "uneek",
+     "urls": _keen("1000000653", "mens-uneek-monochrome-black-black", gb="mens-uneek-black-black")},
+    {"id": "keen-jasper3", "brand": "킨(KEEN)", "name": "재스퍼 III(남성 · 블랙)", "code": "1032681", "src": "page", "hint": "jasper iii",
+     "urls": _keen("1000000996", "mens-jasper-iii-black-black")},
+    {"id": "keen-targhee4", "brand": "킨(KEEN)", "name": "타기 IV 워터프루프(남성 · 트리플 블랙)", "code": "1029827", "src": "page", "hint": "targhee iv",
+     "urls": _keen("1000000580", "mens-targhee-iv-waterproof-triple-black")},
+    {"id": "keen-jasper", "brand": "킨(KEEN)", "name": "재스퍼(남성 · 블랙)", "code": "1026592", "src": "page", "hint": "jasper",
+     "urls": _keen("1000000804", "mens-jasper-hairy-black-black", jp=False)},   # 일본 몰에 없음(10/23)
+    # v1.4 우포스 — 품번 = 모델 4자리 + 색상(한국 Article No. '1100 Black' · 미국 변형 품번 앞머리 '1100BLK…') · 한국 콜라보 상품(같은 Article No.)은 다른 상품 번호
+    {"id": "oofos-ooriginal", "brand": "우포스", "name": "OOriginal 샌들(블랙)", "code": "1000", "cc_code": {"KR": "1000 Black", "US": "1000BLK"}, "src": "page", "hint": "ooriginal",
+     "urls": _oofos("1000000050", "mens-original-sandal-black")},
+    {"id": "oofos-ooahh", "brand": "우포스", "name": "OOahh 슬라이드(블랙)", "code": "1100", "cc_code": {"KR": "1100 Black", "US": "1100BLK"}, "src": "page", "hint": "ooahh",
+     "urls": _oofos("1000000084", "mens-sandal-ooahh-slide-black")},
+    {"id": "oofos-oocloog", "brand": "우포스", "name": "OOcloog 클로그(블랙)", "code": "1200", "cc_code": {"KR": "1200 Black", "US": "1200BLK"}, "src": "page", "hint": "oocloog",
+     "urls": _oofos("1000000159", "mens-oocloog-clog-black")},
+    {"id": "oofos-ooriginalplus", "brand": "우포스", "name": "OOriginal+ 샌들(블랙)", "code": "2000", "cc_code": {"KR": "2000 Black", "US": "2000BLACK"}, "src": "page", "hint": "ooriginal",
+     "urls": _oofos("1000000062", "mens-ooriginal-plus-sandal-black")},
+    {"id": "oofos-ooahhplus", "brand": "우포스", "name": "OOahh+ 슬라이드(블랙)", "code": "2200", "cc_code": {"KR": "2200 Black", "US": "2200BLACK"}, "src": "page", "hint": "ooahh",
+     "urls": _oofos("1000000058", "mens-ooahh-plus-slide-sandal-black")},
+    {"id": "oofos-ooriginalsport", "brand": "우포스", "name": "OOriginal Sport 샌들(그라파이트)", "code": "1001", "cc_code": {"KR": "1001 Graphite", "US": "1001GRPH"}, "src": "page", "hint": "ooriginal sport",
+     "urls": _oofos("1000000087", "mens-sandal-ooriginal-sport-graphite")},
+    {"id": "oofos-sportflex", "brand": "우포스", "name": "OOahh Sport Flex 슬라이드(매트 블랙)", "code": "1550", "cc_code": {"KR": "1550 Black Matte", "US": "1550MATBLK"}, "src": "page", "hint": "sport flex",
+     "urls": _oofos("1000000031", "mens-ooahh-sport-flex-black-matte")},
 ]
 
 
@@ -542,6 +617,14 @@ def page_price(html, hint, cur, codes=()):
             lps.add(lp)
     if len(lps) == 1:
         lists.append(lps.pop())
+    # 아크테릭스 한국: JSON-LD에는 판매가만 — 화면 데이터의 정가(retail_price). 이 상품 것만(같은 { } 묶음 안에 이 상품 품번) · 판매가(sell·last)가
+    # 이 상품 JSON-LD 가격과 같을 때만 · 판매가보다 높고 5배 안
+    for m in re.finditer(r'"retail_price":([0-9.]+),"sell_price":([0-9.]+),"last_price":([0-9.]+)', flat):
+        back = flat[max(0, m.start() - 400):m.start()]
+        if not any(c in back[back.rfind("{") + 1:].lower() for c in codes): continue
+        lp, sps = num(m.group(1)), [num(m.group(2)), num(m.group(3))]
+        if lp and any(sp and sp <= lp <= sp * 5 and any(abs(sp - o) < 0.01 for o in offers) for sp in sps):
+            lists.append(lp)
     # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     base_code, base_name = set(), set()
     for m in re.finditer(r'"name":"([^"]{0,80})","newModelCodes":\[([^\]]*)\],"price":\{"basePrice":([0-9.]+),"currency":"([A-Z]{3})"', flat):
@@ -569,8 +652,10 @@ def page_price(html, hint, cur, codes=()):
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
-    if not vs and code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", ""):
-        vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰(헌터 미국·영국) — 상품 주소(handle)에 품번
+    tags = p.get("tags") if isinstance(p.get("tags"), list) else str(p.get("tags") or "").split(",")
+    if not vs and (code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", "")
+                   or code.lower() in {str(t).strip().lower() for t in tags}):
+        vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰 — 상품 주소(handle, 헌터 미국·영국)나 상품 태그(킨 미국·독일)에 품번
     if not vs:
         raise RuntimeError("품번이 다른 상품(대응표 확인)")
     # 쇼피파이 마켓은 접속한 나라 통화로 보여 줄 수 있음(GitHub 서버가 멕시코면 페소) — 변형의 통화 표시가 다르면 실패(이전 값 유지)
@@ -581,6 +666,25 @@ def shopify_price(url, code, cur):
     if not full:
         raise RuntimeError("가격 없음")
     return full, {"cur_price": min(num(v.get("price")) or full for v in vs)}
+
+
+def godo_price(html, cur, code):
+    """고도몰형 한국 몰(킨·우포스 — 수입사 LF 공식몰): 상품 정보 칸 품번(ARTICLE · Article No.)이 이 상품 품번과 같을 때만, 이 상품 주문 칸의
+    숨은 값 정가(set_goods_fixedPrice)·판매가(set_goods_price) 중 높은 값 — 정가를 비워 두면(0) 판매가 · 같은 칸 값이 여러 가지면 실패"""
+    if cur != "KRW":
+        raise RuntimeError(f"{cur} 가격 없음")
+    arts = {unescape(a).strip().lower() for a in re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', html)}
+    if code.lower() not in arts:
+        raise RuntimeError(f"상품 정보 칸 품번이 다름({', '.join(sorted(arts))[:40] or '품번 칸 없음'}) — 다른 상품으로 바뀜(대응표 확인)")
+    def hid(k):
+        vs = {num(v) for v in re.findall(rf'name="{k}"\s+value="([0-9.,]+)"', html)}
+        if len(vs) > 1:
+            raise RuntimeError(f"{k} 값이 여러 가지")
+        return vs.pop() if vs else None
+    fp, sp = hid("set_goods_fixedPrice"), hid("set_goods_price")
+    if not (fp or sp):
+        raise RuntimeError("상품 가격 칸(set_goods_price) 없음")
+    return max(fp or 0, sp or 0), {"cur_price": sp or fp}
 
 
 def fetch_one(prod, cc):
@@ -599,6 +703,8 @@ def fetch_one(prod, cc):
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
+    if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
+        return godo_price(r.text, cur, code), url
     return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
 
 
