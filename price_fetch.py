@@ -303,6 +303,47 @@ PRODUCTS = [
     {"id": "brooks-ghostamp", "brand": "브룩스", "name": "고스트 AMP(남성)", "code": "1104971D", "cc_code": {"JP": "BRM4973"}, "src": "page", "hint": "고스트 amp", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
         "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"}},
+    # v1.4 아크테릭스 — 한국은 시즌 상품 페이지마다 한국 품번(cc_code KR, 페이지 Model(KR))이 따로 · JSON-LD 판매가 + 화면 데이터 정가(retail_price)
+    {"id": "arc-atomhoody", "brand": "아크테릭스", "name": "아톰 후디(남성)", "code": "X000009556", "cc_code": {"KR": "AJQSM09556"}, "src": "page", "hint": "atom hoody",
+     "urls": _arc("686241", "atom-hoody-9556", "atom-hoody-m")},
+    {"id": "arc-atomjacket", "brand": "아크테릭스", "name": "아톰 재킷(남성)", "code": "X000009561", "cc_code": {"KR": "AJPFM09561"}, "src": "page", "hint": "atom jacket",
+     "urls": _arc("685690", "atom-jacket-9561", "atom-jacket-m")},   # 한국은 2025 가을·겨울 페이지(2026 페이지 없음 · 10/23)
+    {"id": "arc-gammapant", "brand": "아크테릭스", "name": "감마 팬츠(남성)", "code": "X000010481", "cc_code": {"KR": "APQSM10481"}, "src": "page", "hint": "gamma pant",
+     "urls": _arc("686323", "gamma-pant-0481", "gamma-pant-m")},
+    {"id": "arc-squamish", "brand": "아크테릭스", "name": "스쿼미시 후디(남성)", "code": "X000010276", "cc_code": {"KR": "AJQSM10276"}, "src": "page", "hint": "squamish hoody",
+     "urls": _arc("686259", "squamish-hoody-0276", "squamish-hoody-m")},
+    {"id": "arc-cerium", "brand": "아크테릭스", "name": "세륨 후디(남성)", "code": "X000010521", "cc_code": {"KR": "AJQFM10521"}, "src": "page", "hint": "cerium hoody",
+     "urls": _arc("686764", "cerium-hoody-0521", "cerium-hoody-m")},
+    {"id": "arc-mantis26", "brand": "아크테릭스", "name": "맨티스 26 백팩", "code": "X000010643", "cc_code": {"KR": "ABQSU10643"}, "src": "page", "hint": "mantis 26",
+     "urls": _arc("686432", "mantis-26-backpack-0643", g="")},   # 일본 몰 mantis-26-backpack은 옛 모델(X000009825)이라 뺌 · 맨티스 2 웨이스트 팩은 한국 페이지에 가격 데이터가 없어 넣지 않음(10/23)
+    # v1.4 킨 — 품번 = 색상까지 정해진 7자리 · 한국 고도몰은 상품 정보 칸 ARTICLE, 미국·독일·일본 쇼피파이는 변형 품번이 바코드라 상품 태그, 영국은 변형 품번(1022258-10)
+    {"id": "keen-newporth2", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 트리플 블랙)", "code": "1022258", "src": "page", "hint": "newport h2",
+     "urls": _keen("1000000673", "mens-newport-h2-triple-black")},
+    {"id": "keen-newporth2b", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 블랙)", "code": "1001907", "src": "page", "hint": "newport h2",
+     "urls": _keen("1000000679", "mens-newport-h2-black")},
+    {"id": "keen-uneek", "brand": "킨(KEEN)", "name": "유니크(남성 · 블랙)", "code": "1014097", "src": "page", "hint": "uneek",
+     "urls": _keen("1000000653", "mens-uneek-monochrome-black-black", gb="mens-uneek-black-black")},
+    {"id": "keen-jasper3", "brand": "킨(KEEN)", "name": "재스퍼 III(남성 · 블랙)", "code": "1032681", "src": "page", "hint": "jasper iii",
+     "urls": _keen("1000000996", "mens-jasper-iii-black-black")},
+    {"id": "keen-targhee4", "brand": "킨(KEEN)", "name": "타기 IV 워터프루프(남성 · 트리플 블랙)", "code": "1029827", "src": "page", "hint": "targhee iv",
+     "urls": _keen("1000000580", "mens-targhee-iv-waterproof-triple-black")},
+    {"id": "keen-jasper", "brand": "킨(KEEN)", "name": "재스퍼(남성 · 블랙)", "code": "1026592", "src": "page", "hint": "jasper",
+     "urls": _keen("1000000804", "mens-jasper-hairy-black-black", jp=False)},   # 일본 몰에 없음(10/23)
+    # v1.4 우포스 — 품번 = 모델 4자리 + 색상(한국 Article No. '1100 Black' · 미국 변형 품번 앞머리 '1100BLK…') · 한국 콜라보 상품(같은 Article No.)은 다른 상품 번호
+    {"id": "oofos-ooriginal", "brand": "우포스", "name": "OOriginal 샌들(블랙)", "code": "1000", "cc_code": {"KR": "1000 Black", "US": "1000BLK"}, "src": "page", "hint": "ooriginal",
+     "urls": _oofos("1000000050", "mens-original-sandal-black")},
+    {"id": "oofos-ooahh", "brand": "우포스", "name": "OOahh 슬라이드(블랙)", "code": "1100", "cc_code": {"KR": "1100 Black", "US": "1100BLK"}, "src": "page", "hint": "ooahh",
+     "urls": _oofos("1000000084", "mens-sandal-ooahh-slide-black")},
+    {"id": "oofos-oocloog", "brand": "우포스", "name": "OOcloog 클로그(블랙)", "code": "1200", "cc_code": {"KR": "1200 Black", "US": "1200BLK"}, "src": "page", "hint": "oocloog",
+     "urls": _oofos("1000000159", "mens-oocloog-clog-black")},
+    {"id": "oofos-ooriginalplus", "brand": "우포스", "name": "OOriginal+ 샌들(블랙)", "code": "2000", "cc_code": {"KR": "2000 Black", "US": "2000BLACK"}, "src": "page", "hint": "ooriginal",
+     "urls": _oofos("1000000062", "mens-ooriginal-plus-sandal-black")},
+    {"id": "oofos-ooahhplus", "brand": "우포스", "name": "OOahh+ 슬라이드(블랙)", "code": "2200", "cc_code": {"KR": "2200 Black", "US": "2200BLACK"}, "src": "page", "hint": "ooahh",
+     "urls": _oofos("1000000058", "mens-ooahh-plus-slide-sandal-black")},
+    {"id": "oofos-ooriginalsport", "brand": "우포스", "name": "OOriginal Sport 샌들(그라파이트)", "code": "1001", "cc_code": {"KR": "1001 Graphite", "US": "1001GRPH"}, "src": "page", "hint": "ooriginal sport",
+     "urls": _oofos("1000000087", "mens-sandal-ooriginal-sport-graphite")},
+    {"id": "oofos-sportflex", "brand": "우포스", "name": "OOahh Sport Flex 슬라이드(매트 블랙)", "code": "1550", "cc_code": {"KR": "1550 Black Matte", "US": "1550MATBLK"}, "src": "page", "hint": "sport flex",
+     "urls": _oofos("1000000031", "mens-ooahh-sport-flex-black-matte")},
 ]
 
 
@@ -614,14 +655,19 @@ def shopify_price(url, code, cur):
     return full, {"cur_price": min(num(v.get("price")) or full for v in vs)}
 
 
-def godo_price(html, cur):
-    """고도몰형 한국 몰(킨·우포스 — 수입사 LF 공식몰): 상품 정보 칸 품번을 먼저 확인(code_in_page)한 뒤 이 상품 주문 칸(frmView)의
-    숨은 값 정가(set_goods_fixedPrice)·판매가(set_goods_price) 중 높은 값 — 정가를 비워 두면(0) 판매가"""
+def godo_price(html, cur, code):
+    """고도몰형 한국 몰(킨·우포스 — 수입사 LF 공식몰): 상품 정보 칸 품번(ARTICLE · Article No.)이 이 상품 품번과 같을 때만, 이 상품 주문 칸의
+    숨은 값 정가(set_goods_fixedPrice)·판매가(set_goods_price) 중 높은 값 — 정가를 비워 두면(0) 판매가 · 같은 칸 값이 여러 가지면 실패"""
     if cur != "KRW":
         raise RuntimeError(f"{cur} 가격 없음")
+    arts = {unescape(a).strip().lower() for a in re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', html)}
+    if code.lower() not in arts:
+        raise RuntimeError(f"상품 정보 칸 품번이 다름({', '.join(sorted(arts))[:40] or '품번 칸 없음'}) — 다른 상품으로 바뀜(대응표 확인)")
     def hid(k):
-        m = re.search(rf'name="{k}"\s+value="([0-9.,]+)"', html)
-        return num(m.group(1)) if m else None
+        vs = {num(v) for v in re.findall(rf'name="{k}"\s+value="([0-9.,]+)"', html)}
+        if len(vs) > 1:
+            raise RuntimeError(f"{k} 값이 여러 가지")
+        return vs.pop() if vs else None
     fp, sp = hid("set_goods_fixedPrice"), hid("set_goods_price")
     if not (fp or sp):
         raise RuntimeError("상품 가격 칸(set_goods_price) 없음")
@@ -644,10 +690,8 @@ def fetch_one(prod, cc):
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
-    if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰 — JSON-LD 없음
-        if not prod.get("code_in_page"):
-            raise RuntimeError("고도몰형 몰은 페이지 품번 확인(code_in_page)이 필요함")
-        return godo_price(r.text, cur), url
+    if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
+        return godo_price(r.text, cur, code), url
     return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
 
 
