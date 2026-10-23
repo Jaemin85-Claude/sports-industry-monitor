@@ -542,6 +542,14 @@ def page_price(html, hint, cur, codes=()):
             lps.add(lp)
     if len(lps) == 1:
         lists.append(lps.pop())
+    # 아크테릭스 한국: JSON-LD에는 판매가만 — 화면 데이터의 정가(retail_price). 이 상품 것만(같은 { } 묶음 안에 이 상품 품번) · 판매가(sell·last)가
+    # 이 상품 JSON-LD 가격과 같을 때만 · 판매가보다 높고 5배 안
+    for m in re.finditer(r'"retail_price":([0-9.]+),"sell_price":([0-9.]+),"last_price":([0-9.]+)', flat):
+        back = flat[max(0, m.start() - 400):m.start()]
+        if not any(c in back[back.rfind("{") + 1:].lower() for c in codes): continue
+        lp, sps = num(m.group(1)), [num(m.group(2)), num(m.group(3))]
+        if lp and any(sp and sp <= lp <= sp * 5 and any(abs(sp - o) < 0.01 for o in offers) for sp in sps):
+            lists.append(lp)
     # 살로몬 해외: 상품 이름 바로 뒤 기본가(basePrice) — 화면 데이터가 따옴표를 \"로 감싸 둠. 품번이 맞는 것 우선, 없으면 이름(모델명)
     base_code, base_name = set(), set()
     for m in re.finditer(r'"name":"([^"]{0,80})","newModelCodes":\[([^\]]*)\],"price":\{"basePrice":([0-9.]+),"currency":"([A-Z]{3})"', flat):
@@ -569,8 +577,10 @@ def page_price(html, hint, cur, codes=()):
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
-    if not vs and code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", ""):
-        vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰(헌터 미국·영국) — 상품 주소(handle)에 품번
+    tags = p.get("tags") if isinstance(p.get("tags"), list) else str(p.get("tags") or "").split(",")
+    if not vs and (code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", "")
+                   or code.lower() in {str(t).strip().lower() for t in tags}):
+        vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰 — 상품 주소(handle, 헌터 미국·영국)나 상품 태그(킨 미국·독일)에 품번
     if not vs:
         raise RuntimeError("품번이 다른 상품(대응표 확인)")
     # 쇼피파이 마켓은 접속한 나라 통화로 보여 줄 수 있음(GitHub 서버가 멕시코면 페소) — 변형의 통화 표시가 다르면 실패(이전 값 유지)
@@ -581,6 +591,20 @@ def shopify_price(url, code, cur):
     if not full:
         raise RuntimeError("가격 없음")
     return full, {"cur_price": min(num(v.get("price")) or full for v in vs)}
+
+
+def godo_price(html, cur):
+    """고도몰형 한국 몰(킨·우포스 — 수입사 LF 공식몰): 상품 정보 칸 품번을 먼저 확인(code_in_page)한 뒤 이 상품 주문 칸(frmView)의
+    숨은 값 정가(set_goods_fixedPrice)·판매가(set_goods_price) 중 높은 값 — 정가를 비워 두면(0) 판매가"""
+    if cur != "KRW":
+        raise RuntimeError(f"{cur} 가격 없음")
+    def hid(k):
+        m = re.search(rf'name="{k}"\s+value="([0-9.,]+)"', html)
+        return num(m.group(1)) if m else None
+    fp, sp = hid("set_goods_fixedPrice"), hid("set_goods_price")
+    if not (fp or sp):
+        raise RuntimeError("상품 가격 칸(set_goods_price) 없음")
+    return max(fp or 0, sp or 0), {"cur_price": sp or fp}
 
 
 def fetch_one(prod, cc):
@@ -599,6 +623,10 @@ def fetch_one(prod, cc):
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
+    if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰 — JSON-LD 없음
+        if not prod.get("code_in_page"):
+            raise RuntimeError("고도몰형 몰은 페이지 품번 확인(code_in_page)이 필요함")
+        return godo_price(r.text, cur), url
     return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
 
 
