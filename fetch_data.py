@@ -4,9 +4,11 @@ sports-industry-monitor — Phase 1 데이터 수집 (v4)
 v4.19: (대표 지시 2026-10-23 '1,2 진행') 야후가 새 분기를 늦게 올리면 SEC 공시(XBRL companyfacts)의 더 새 분기로 분기 매출·재고 칸을 채움
       (나이키 26.08 분기 — 10/1 발표·10-Q 제출 뒤에도 야후는 26.05까지 · 화면 '새 실적 반영 대기'). 미국 상장(티커에 '.' 없음)·재무 통화 USD,
       야후 최신 분기가 끝난 지 SEC_LAG(120)일 넘은 종목만 요청 · SEC 분기가 야후보다 45일 넘게 새로울 때만 바꿈. 매출 = 같은 태그의 3개월 값
-      (10-K만 있는 4분기는 연간 − 9개월 누적) vs 1년 전 같은 분기, 재고 = 분기 끝 7일 안 재무상태표 값 vs 1년 전 — 짝이 없으면 그 칸은 야후 값.
-      같은 기간이 여러 공시에 있으면 가장 늦게 낸 값(다음 해 비교 칸·정정). q_src='SEC'(q_src_inv = 재고도) — 화면 기업 상세 출처 줄.
-      못 받으면 야후 값 그대로(로그에 '건너뜀' — 이 실행의 남은 종목은 SEC 요청 안 함)
+      (10-K만 있는 4분기는 연간 − 9개월 누적 · 그 해나 전년 연간이 나중 공시에서 다시 작성됐으면 계산 안 함) vs 1년 전 같은 분기,
+      재고 = 분기 끝 7일 안 재무상태표 값(InventoryNet·InventoryFinishedGoods·RetailRelatedInventoryMerchandise) vs 1년 전 — 짝이 없으면
+      그 칸은 야후 값(로그에 회사가 쓴 재고 태그). 같은 기간이 여러 공시에 있으면 가장 늦게 낸 값(다음 해 비교 칸·정정).
+      q_src='SEC'·q_src_form(10-Q / 10-K 연간−9개월) · 재고는 q_src_inv·q_src_inv_form — 화면 기업 상세 출처 줄. 못 받으면 야후 값(로그 '건너뜀' —
+      이 실행의 남은 종목은 SEC 요청 안 함)인데, 어제 data.json에 SEC로 채운 더 새 분기가 있으면 그 칸을 이어 씀(판정이 하루씩 흔들리지 않게)
 v4.18: (대표 지시 2026-10-23 '써코니로 맞추고') 울버린(WWW) 이름 '울버린(새코니)' → '울버린(써코니)' — 브랜드 점검표·해외 정가·네이버 감시 브랜드와 같은 표기
 v4.17: (대표 지시 2026-10-21 '국가별 대표상품 소비자가 — 미주·유럽·중남미 vs 한국') 멕시코 페소(MXN) 추가 — 해외 정가 비교(price_fetch v1)의
       멕시코 정가를 원화로 바꾸려고(값만 저장 · 1% 칸 알림 없음 · 원화 직접 쌍 이력이 짧으면 달러 경유)
@@ -232,7 +234,7 @@ SEC_NEWER = 45     # SEC 분기가 야후 분기보다 이 일수 넘게 새로�
 SEC_BUDGET = 120   # 한 실행에서 SEC에 쓰는 시간(초) — 넘으면 남은 종목은 야후 값
 SEC_REV = ("Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax",
            "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet")
-SEC_INV = ("InventoryNet", "InventoryFinishedGoods")
+SEC_INV = ("InventoryNet", "InventoryFinishedGoods", "RetailRelatedInventoryMerchandise")
 SEC_FORMS = ("10-Q", "10-K", "10-Q/A", "10-K/A")
 _SEC = {"cik": None, "t0": None, "down": None}
 
@@ -290,34 +292,49 @@ def _sec_latest(rows):
     return by
 
 
+def _sec_first(rows):
+    """같은 기간(시작·끝)을 처음 낸 값 — 연간 값이 나중 공시에서 다시 작성됐는지(사업 중단·표시 변경) 보려고"""
+    by = {}
+    for r in rows:
+        k = (r.get("start"), str(r["end"])[:10])
+        if k not in by or str(r.get("filed") or "") < str(by[k].get("filed") or ""):
+            by[k] = r
+    return by
+
+
 def sec_quarters(facts, tag):
-    """태그 하나의 3개월 값 {분기 끝: (값, 출처 글)} — 10-K만 있는 4분기는 연간 − 9개월 누적(시작일이 같고 끝이 80~100일 차이일 때)"""
+    """태그 하나의 3개월 값 {분기 끝: (값, 공시 종류, 낸 날, 계산값인가)} — 10-K만 있는 4분기는 연간 − 9개월 누적(시작일이 같고 끝이
+    80~100일 차이일 때). 그 해나 전년 연간이 나중 공시에서 0.5% 넘게 다시 작성됐으면(사업 중단 등 — 9개월 누적은 옛 기준) 4분기 계산 안 함"""
+    rows = _sec_rows(facts, tag)
+    first = _sec_first(rows)
     q, ytd9, ann = {}, {}, []
-    for (s, e), r in _sec_latest(_sec_rows(facts, tag)).items():
+    for (s, e), r in _sec_latest(rows).items():
         sd, ed = _day(s) if s else None, _day(e)
         if not sd:
             continue
-        n, src = (ed - sd).days, f"{r.get('form')} {r.get('filed') or ''}".strip()
+        n, v = (ed - sd).days, float(r["val"])
         if 80 <= n <= 100:
-            q[ed] = (float(r["val"]), src)
+            q[ed] = (v, r.get("form"), r.get("filed"), False)
         elif 260 <= n <= 285:
-            ytd9[sd] = (ed, float(r["val"]))
+            ytd9[sd] = (ed, v)
         elif 350 <= n <= 380:
-            ann.append((sd, ed, float(r["val"]), src))
-    for sd, ed, v, src in ann:
-        if ed in q or sd not in ytd9:
+            v0 = float(first[(s, e)]["val"])
+            ann.append((sd, ed, v, r, bool(v0) and abs(v / v0 - 1) > 0.005))
+    recast = [ed for sd, ed, v, r, rc in ann if rc]
+    for sd, ed, v, r, rc in ann:
+        if ed in q or sd not in ytd9 or any(0 <= (ed - x).days <= 380 for x in recast):
             continue
         e9, v9 = ytd9[sd]
         if 80 <= (ed - e9).days <= 100 and v - v9 > 0:
-            q[ed] = (v - v9, f"{src} 연간−9개월")
+            q[ed] = (v - v9, r.get("form"), r.get("filed"), True)
     return q
 
 
 def sec_instants(facts, tag):
-    """태그 하나의 시점 값(재무상태표) {날짜: 값}"""
+    """태그 하나의 시점 값(재무상태표) {날짜: (값, 공시 종류)}"""
     out = {}
     for (s, e), r in _sec_latest([r for r in _sec_rows(facts, tag) if not r.get("start")]).items():
-        out[_day(e)] = float(r["val"])
+        out[_day(e)] = (float(r["val"]), r.get("form"))
     return out
 
 
@@ -327,21 +344,33 @@ def _yago(dates, e):
     return min(c)[1] if c else None
 
 
-def sec_fill(item, ticker, today):
-    """야후 분기가 늦은 미국 상장 종목을 SEC 공시의 더 새 분기로 채움 → 로그 글(대상 아님·요청 안 함이면 None).
+def _sec_newer(a, b):
+    """날짜 글 a가 b보다 SEC_NEWER일 넘게 새로움(b가 없어도)"""
+    da, db = (_day(a) if a else None), (_day(b) if b else None)
+    return bool(da and (db is None or (da - db).days > SEC_NEWER))
+
+
+SEC_KEYS_REV = ("q_end", "q_prev_end", "latest_q_yoy", "q_src", "q_src_form")
+SEC_KEYS_INV = ("q_inv", "q_inv_date", "q_inv_prev_date", "q_inv_yoy", "q_inv_rev_yoy", "q_src_inv", "q_src_inv_form")
+
+
+def _sec_try(item, ticker, today):
+    """야후 분기가 늦은 미국 상장 종목을 SEC 공시의 더 새 분기로 채움 → (로그 글, 매출 채움, 재고 채움).
     매출은 같은 태그끼리 1년 전 같은 분기와, 재고는 분기 끝 7일 안 값과 1년 전 값 — 짝이 없으면 그 칸은 야후 값 그대로"""
     if "." in ticker or item.get("fin_currency") != "USD":
-        return None
+        return None, False, False
     yq = _day(item.get("q_end")) if item.get("q_end") else None
     if yq and (today - yq).days <= SEC_LAG:
-        return None
+        return None, False, False
     try:
         cik = sec_cik(ticker)
         if not cik:
-            return "SEC 분기 보충 건너뜀 — CIK 없음"
+            return "SEC 분기 보충 건너뜀 — CIK 없음", False, False
         facts = _sec_get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik:010d}.json")
     except Exception as e:
-        return f"SEC 분기 보충 건너뜀 — {str(e)[:100] or '자료 모양 이상'} · 야후 값 그대로"
+        return f"SEC 분기 보충 건너뜀 — {str(e)[:100] or '자료 모양 이상'} · 야후 값 그대로", False, False
+    if not isinstance(facts, dict):
+        return "SEC 분기 보충 건너뜀 — 자료 모양 이상 · 야후 값 그대로", False, False
     best = None   # (태그, 최신 분기, 1년 전 분기, 값표) — 최신 분기가 가장 새로운 태그(같으면 SEC_REV 앞 순서)
     for tag in SEC_REV:
         q = sec_quarters(facts, tag)
@@ -352,22 +381,23 @@ def sec_fill(item, ticker, today):
         if p and q[e][0] > 0 and q[p][0] > 0 and (best is None or e > best[1]):
             best = (tag, e, p, q)
     if not best:
-        return "SEC 분기 매출 짝 없음 — 야후 값 그대로"
+        return "SEC 분기 매출 짝 없음 — 야후 값 그대로", False, False
     tag, e, p, q = best
     if yq and (e - yq).days <= SEC_NEWER:
-        return f"SEC 최신 분기도 {e} — 야후와 같은 분기(그대로)"
+        return f"SEC 최신 분기도 {e} — 야후와 같은 분기(그대로)", False, False
     ry = (q[e][0] / q[p][0] - 1) * 100
+    form = f"{q[e][1]}{' 연간−9개월' if q[e][3] else ''}"
     old = item.get("q_end") or "없음"
-    item.update(q_end=e.isoformat(), q_prev_end=p.isoformat(), latest_q_yoy=ry, q_src="SEC")
-    txt = f"SEC 공시로 분기 보충(야후 {old}까지): {e} vs {p} 매출 {ry:+.1f}% ({tag} · {q[e][1]})"
+    item.update(q_end=e.isoformat(), q_prev_end=p.isoformat(), latest_q_yoy=ry, q_src="SEC", q_src_form=form)
+    txt = f"SEC 공시로 분기 보충(야후 {old}까지): {e} vs {p} 매출 {ry:+.1f}% ({tag} · {form} {q[e][2] or ''})".replace(" )", ")")
     for itag in SEC_INV:
         im = sec_instants(facts, itag)
         ie = next((d for d in sorted(im, reverse=True) if abs((d - e).days) <= 7), None)
         ip = _yago(im, ie) if ie else None
-        if ie and ip and im[ie] > 0 and im[ip] > 0:
-            item.update(q_inv=im[ie], q_inv_date=ie.isoformat(), q_inv_prev_date=ip.isoformat(),
-                        q_inv_yoy=(im[ie] / im[ip] - 1) * 100, q_inv_rev_yoy=ry, q_src_inv=True)
-            return txt + f" · 재고 {ie} vs {ip} {item['q_inv_yoy']:+.1f}% ({itag})"
+        if ie and ip and im[ie][0] > 0 and im[ip][0] > 0:
+            item.update(q_inv=im[ie][0], q_inv_date=ie.isoformat(), q_inv_prev_date=ip.isoformat(),
+                        q_inv_yoy=(im[ie][0] / im[ip][0] - 1) * 100, q_inv_rev_yoy=ry, q_src_inv=True, q_src_inv_form=im[ie][1])
+            return txt + f" · 재고 {ie} vs {ip} {item['q_inv_yoy']:+.1f}% ({itag})", True, True
     gaap = facts.get("facts", {}).get("us-gaap") if isinstance(facts.get("facts"), dict) else None
     cand = []   # 로그 확인용 — 이 분기 재고를 다른 태그로 적은 회사(SEC_INV에 넣을지 판단)
     for tg in (sorted(gaap) if isinstance(gaap, dict) else []):
@@ -379,7 +409,26 @@ def sec_fill(item, ticker, today):
             cand.append(f"{tg}{'' if _yago(im, max(near)) else '(1년 전 없음)'}")
         elif tg in SEC_INV:
             cand.append(f"{tg}(이 분기 없음 · 최근 {max(im) if im else '없음'})")
-    return txt + " · 재고 짝 없음(재고는 야후 분기 그대로" + (f" · 재고 태그: {', '.join(cand[:6])}" if cand else "") + ")"
+    return (txt + " · 재고 짝 없음(재고는 야후 분기 그대로" + (f" · 재고 태그: {', '.join(cand[:6])}" if cand else "") + ")",
+            True, False)
+
+
+def sec_fill(item, ticker, today, prev=None):
+    """v4.19 야후가 늦은 분기는 SEC 공시로 채움(_sec_try) → 로그 글(할 일 없으면 None).
+    오늘 SEC로 못 채웠는데(접속 안 됨·시간 상한·통화 칸 비어 옴·야후가 손익만 먼저 올림 등) 어제 data.json에 SEC로 채운 더 새 분기가
+    있으면 그 칸을 이어 씀 — 하루씩 옛 야후 분기로 돌아가 판정이 흔들리지 않게(야후가 같은 분기를 올리면 자연히 야후 값)"""
+    txt, rev, inv = _sec_try(item, ticker, today)
+    keep = []
+    if isinstance(prev, dict):
+        if not rev and prev.get("q_src") == "SEC" and _sec_newer(prev.get("q_end"), item.get("q_end")):
+            item.update({k: prev.get(k) for k in SEC_KEYS_REV})
+            keep.append(f"매출 {prev.get('q_end')}")
+        if not inv and prev.get("q_src_inv") and _sec_newer(prev.get("q_inv_date"), item.get("q_inv_date")):
+            item.update({k: prev.get(k) for k in SEC_KEYS_INV})
+            keep.append(f"재고 {prev.get('q_inv_date')}")
+    if keep:
+        txt = (f"{txt.replace(' · 야후 값 그대로', '').replace(' — 야후 값 그대로', '')} · " if txt else "") + f"어제 SEC로 채운 분기 이어 씀({' · '.join(keep)})"
+    return txt
 
 
 def soft_fail(msg):
@@ -832,7 +881,7 @@ def main():
             print(f"  ↳ 오늘 빈 값은 같은 결산일 이전 값으로: {', '.join(got)}", flush=True)
         snap = dict(item)
         try:
-            sec_txt = sec_fill(item, ticker, today)   # v4.19 야후가 늦은 분기는 SEC 공시로
+            sec_txt = sec_fill(item, ticker, today, prev)   # v4.19 야후가 늦은 분기는 SEC 공시로(어제 채운 분기 이어 쓰기 포함)
         except Exception as e:   # 뜻밖의 자료 모양·코드 문제 — 야후 값으로 되돌리고 알림(종목 수집은 계속)
             item.clear()
             item.update(snap)

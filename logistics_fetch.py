@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
-v1.5: (대표 지시 2026-10-23) 관세청 물동량 이상값 [WARN]은 새로 생긴 값만 — 이전 실행 logistics.json의 odd에 같은 나라·달·항목·값이 있으면
-      [WARN] 없이 '(이전 실행부터)' 줄만(12:23 점검이 [WARN] 줄로 매일 알리던 것 · 26.09 미국 항공 수출 773만 톤). 값이 바뀌면 다시 [WARN] ·
-      화면 '출처 값 확인 필요'·전체·비교에서 빼기는 그대로
+v1.5: (대표 지시 2026-10-23) 관세청 물동량 이상값 [WARN]은 처음 본 날과 그다음 날만 — 블록(mode)마다 odd_seen [나라, 달, 항목, 값, 처음 본 날]을
+      이어 적고, 처음 본 날이 어제보다 전이면 [WARN] 없이 '(이전 실행부터)' 줄만(12:23 점검이 [WARN] 줄로 매일 알리던 것 · 26.09 미국 항공 수출
+      773만 톤). 오후 수동 실행·다시 받기 작업에서 처음 봐도 다음 날 아침 정기 실행이 한 번 더 [WARN] — 점검이 놓치지 않게. 값이 바뀌면 새 값 ·
+      v1.4 파일(odd_seen 없음)의 odd는 이미 알린 것으로. 화면 '출처 값 확인 필요'·전체·비교에서 빼기는 그대로
 v1.4: (대표 승인 2026-10-21) 주석 문구 정리 — 적출 거점 설명을 '주요 거점'으로(동작 같음)
 v1.3: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털(www.data.go.kr·apis.data.go.kr — 국가정보자원관리원 27.101.x)이 일부 GitHub
       서버(IP)에서만 연결이 안 됨(10/20 시험: 서버 7대 중 2대 — 미국 워싱턴주·멕시코, 해수부 홈페이지도 같이 막힘 · 같은 실행 안에서 다시 해도
@@ -882,12 +883,20 @@ def vol_mode(items, inbound, ports, metrics):
     return out
 
 
+ODD_OLD = "2000-01-01"   # v1.4 파일(odd_seen 없음)의 odd — 그동안 매일 알렸으니 오래전에 본 것으로
+
+
 def prev_odd(prev, mode):
-    """v1.5 이전 실행에 적어 둔 이상값 {(나라, 달, 항목, 값)} — 손상된 이전 값은 빈 것으로"""
+    """v1.5 이전 실행 이상값의 처음 본 날 {(나라, 달, 항목, 값): 'YYYY-MM-DD'} — odd_seen에 없고 odd에만 있으면 ODD_OLD ·
+    손상된 이전 값은 빈 것으로"""
     blk = prev.get(mode) if isinstance(prev, dict) else None
-    rows = blk.get("odd") if isinstance(blk, dict) else None
-    return {tuple(o) for o in (rows if isinstance(rows, list) else [])
-            if isinstance(o, list) and len(o) == 4 and all(isinstance(z, (str, int, float)) for z in o)}
+    blk = blk if isinstance(blk, dict) else {}
+    ok = lambda o, n: isinstance(o, list) and len(o) == n and all(isinstance(z, (str, int, float)) and not isinstance(z, bool) for z in o)
+    out = {tuple(o): ODD_OLD for o in (blk.get("odd") if isinstance(blk.get("odd"), list) else []) if ok(o, 4)}
+    for o in (blk.get("odd_seen") if isinstance(blk.get("odd_seen"), list) else []):
+        if ok(o, 5) and isinstance(o[4], str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", o[4]):
+            out[tuple(o[:4])] = o[4]
+    return out
 
 
 def fetch_vol(key, ds, url, carg, prev=None):
@@ -915,12 +924,18 @@ def fetch_vol(key, ds, url, carg, prev=None):
         if gap > 100:   # 9월 자료는 10월 15일께 — 석 달 넘게 새 달이 없으면 갱신이 멈춘 것
             raise RuntimeError(f"{mode}: 마지막 달이 {last} — {gap}일째 새 달 없음")
         unit = {"teu": "TEU", "ton": "톤", "bl": "건"}
-        seen = prev_odd(prev, mode)
+        seen, td = prev_odd(prev, mode), today.isoformat()
+        yd = (today - datetime.timedelta(days=1)).isoformat()
+        m["odd_seen"] = [[*o, seen.get(tuple(o), td)] for o in m["odd"]]   # v1.5 처음 본 날(다음 실행이 [WARN]을 그날·다음 날만)
         for c, ym, k, v in m["odd"]:   # 출처 입력 오류로 보이는 값 — 저장은 그대로(화면은 '출처 값 확인 필요' · 전체·비교에서 뺌)
-            if ym == last and (c, ym, k, v) in seen:   # v1.5 이전 실행에서 이미 알린 같은 값 — 12:23 점검이 매일 알리지 않게 [WARN] 없이
+            if ym != last:
+                continue
+            first = seen.get((c, ym, k, v), td)
+            if first < yd:   # v1.5 처음 본 날·다음 날 [WARN]으로 알린 값 — 12:23 점검이 매일 알리지 않게 [WARN] 없이
                 log(f"    (이전 실행부터) {c} {last} {k} {v:,} — 출처 값 확인 필요 그대로(화면 전체·비교에서 뺌)")
-            elif ym == last:
-                log(f"    [WARN] {c} {last} {k} {v:,} — 출처 값 확인 필요(앞 12달보다 지나치게 큼 · 화면 전체·비교에서 뺌)")
+            else:
+                log(f"    [WARN] {c} {last} {k} {v:,} — 출처 값 확인 필요(앞 12달보다 지나치게 큼 · 화면 전체·비교에서 뺌"
+                    + (f" · {first}부터" if first != td else "") + ")")
         top = sorted(m["items"], key=lambda x: -x[metrics[0]][-1])[:5]
         log(f"  {LABELS[key]} {mode}: 행 {len(items):,} · {len(m['months'])}달 {m['months'][0]}~{last} · {last} 합계 "
             + " · ".join(f"{m['total'][k][-1]:,}{unit[k]}" for k in metrics)

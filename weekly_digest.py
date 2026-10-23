@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.12: (2026-10-23 fetch_data v4.19와 함께) '새 실적' 분기는 지난주 분기보다 45일 넘게 늦을 때만 — SEC로 채운 분기의 실제 마감일과
+      야후의 월말 날짜가 며칠 달라 같은 분기를 두 번 알리지 않게
 v1.11: (2026-10-19 감시 브랜드 8개 추가와 함께) '■ 환율'에 스위스 프랑 — 온러닝 판정의 환율 점수(fetch_data v4.15 1년 평균 대비)를
       메일에서도 확인할 수 있게. 1% 칸 알림은 그대로 엔·유로·달러만
 v1.10: (2026-10-16 물류 화면과 함께) 물류·운임 뉴스(news_monitor v2.14 logistics)를 통관·상표권처럼 '■ 물류·운임'으로 따로 묶고
@@ -228,6 +230,14 @@ def acq_core(t, segs, segs_ir):
     return (c["revenue"] / c["prev_revenue"] - 1) * 100 if c and c.get("revenue") is not None and c.get("prev_revenue") else None
 
 
+def _days_after(a, b):
+    """v1.12 날짜 글 a가 b보다 며칠 뒤인지 — 못 읽으면 글자 비교(예전 방식)로 늦으면 46, 아니면 0"""
+    try:
+        return (datetime.date.fromisoformat(str(a)[:10]) - datetime.date.fromisoformat(str(b)[:10])).days
+    except ValueError:
+        return 46 if str(a) > str(b) else 0
+
+
 def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
     """한 주 사이 새 분기·연간 실적이 반영된 상장사 — (이름, 기준, 매출 증감(분기, 없으면 연간) 또는 사유, 재고 증감, 재고 기준, 덧붙임, 티커)
     v1.4 전사 수치(삼성물산)는 빼고 두 번째 값으로 돌려줌, 인수 효과 기간(딕스)은 '인수 효과 포함'"""
@@ -243,7 +253,9 @@ def new_results(data, old, krf=None, today=None, segs=None, segs_ir=None):
         # 두 값이 모두 있고 새 값이 더 늦을 때만 새 실적(값이 비었다 생기거나 앞 분기로 흔들린 것은 제외)
         xe, pe = (x.get("fy") or [{}])[-1].get("end"), (p.get("fy") or [{}])[-1].get("end")
         fy_new = bool(xe and pe and xe > pe)
-        q_new = bool(x.get("q_end") and p.get("q_end") and x["q_end"] > p["q_end"])
+        # v1.12 분기는 45일 넘게 늦어야 새 분기 — SEC로 채운 분기(fetch_data v4.19, 실제 마감일 26.09.26)를 야후가 월말(26.09.30)로
+        # 다시 올려도 같은 분기를 두 번 '새 실적'으로 알리지 않게
+        q_new = bool(x.get("q_end") and p.get("q_end") and _days_after(x["q_end"], p["q_end"]) > 45)
         if fy_new or q_new:
             if x["ticker"] in WHOLE_CO:
                 skipped.append(WHOLE_CO[x["ticker"]])
