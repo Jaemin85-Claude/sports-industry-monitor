@@ -1,0 +1,268 @@
+[
+ {
+  "t": "detail",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/686241",
+   "https://arcteryx.com/us/en/shop/mens/atom-hoody-9556",
+   "https://arcteryx.jp/products/atom-hoody-m",
+   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000673",
+   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000084"
+  ],
+  "near": [
+   "X000009556",
+   "ARTICLE",
+   "Article No",
+   "소비자가",
+   "정가",
+   "판매가",
+   "goods_price",
+   "fixedPrice",
+   "consumer",
+   "1022258",
+   "1100"
+  ]
+ },
+ {
+  "t": "shopjson",
+  "urls": [
+   "https://arcteryx.jp/products/atom-hoody-m.json",
+   "https://www.keenfootwear.com/products/mens-newport-h2-triple-black.json",
+   "https://www.keenfootwear.co.uk/products/mens-newport-h2-triple-black.json",
+   "https://www.keenfootwear.de/en/products/mens-newport-h2-triple-black.json",
+   "https://www.keenfootwear.jp/products/all-gender-uneek-black-black.json",
+   "https://www.keenfootwear.com/products/mens-uneek-monochrome-black-black.json",
+   "https://www.oofos.com/products/mens-sandal-ooahh-slide-black.json",
+   "https://www.oofos.com/products/mens-oocloog-clog-black.json"
+  ]
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://www.keenfootwear.kr/goods/goods_search.php?keyword=1014097",
+   "https://www.keenfootwear.kr/goods/goods_search.php?keyword=1032681",
+   "https://www.keenfootwear.kr/goods/goods_search.php?keyword=1029827",
+   "https://www.keenfootwear.kr/goods/goods_search.php?keyword=1026592",
+   "https://www.keenfootwear.kr/goods/goods_search.php?keyword=1022258",
+   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOahh",
+   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOriginal"
+  ],
+  "rx": [
+   "goodsNo=\\d+[^>]*>(?:(?!</a>)[\\s\\S]){0,250}",
+   "ARTICLE[^<]{0,40}"
+  ],
+  "max": 30
+ },
+ {
+  "t": "fetch",
+  "prods": [
+   {
+    "id": "arc-atomhoody",
+    "brand": "아크테릭스",
+    "name": "아톰 후디",
+    "code": "X000009556",
+    "src": "page",
+    "hint": "atom hoody",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686241",
+     "JP": "https://arcteryx.jp/products/atom-hoody-m",
+     "US": "https://arcteryx.com/us/en/shop/mens/atom-hoody-9556",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/atom-hoody-9556",
+     "DE": "https://arcteryx.com/de/en/shop/mens/atom-hoody-9556"
+    }
+   },
+   {
+    "id": "arc-atomjacket",
+    "brand": "아크테릭스",
+    "name": "아톰 재킷",
+    "code": "X000009561",
+    "src": "page",
+    "hint": "atom jacket",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/685690",
+     "JP": "https://arcteryx.jp/products/atom-jacket-m",
+     "US": "https://arcteryx.com/us/en/shop/mens/atom-jacket-9561",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/atom-jacket-9561",
+     "DE": "https://arcteryx.com/de/en/shop/mens/atom-jacket-9561"
+    }
+   },
+   {
+    "id": "arc-gammapant",
+    "brand": "아크테릭스",
+    "name": "감마 팬츠",
+    "code": "X000010481",
+    "src": "page",
+    "hint": "gamma pant",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686323",
+     "JP": "https://arcteryx.jp/products/gamma-pant-m",
+     "US": "https://arcteryx.com/us/en/shop/mens/gamma-pant-0481",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/gamma-pant-0481",
+     "DE": "https://arcteryx.com/de/en/shop/mens/gamma-pant-0481"
+    }
+   },
+   {
+    "id": "arc-squamish",
+    "brand": "아크테릭스",
+    "name": "스쿼미시 후디",
+    "code": "X000010276",
+    "src": "page",
+    "hint": "squamish hoody",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686259",
+     "JP": "https://arcteryx.jp/products/squamish-hoody-m",
+     "US": "https://arcteryx.com/us/en/shop/mens/squamish-hoody-0276",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/squamish-hoody-0276",
+     "DE": "https://arcteryx.com/de/en/shop/mens/squamish-hoody-0276"
+    }
+   },
+   {
+    "id": "arc-mantis2",
+    "brand": "아크테릭스",
+    "name": "맨티스 2 웨이스트 팩",
+    "code": "X000008973",
+    "src": "page",
+    "hint": "mantis 2",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/684516",
+     "JP": "https://arcteryx.jp/products/mantis-2-waist-pack",
+     "US": "https://arcteryx.com/us/en/shop/mantis-2-waist-pack-8973",
+     "GB": "https://arcteryx.com/gb/en/shop/mantis-2-waist-pack-8973",
+     "DE": "https://arcteryx.com/de/en/shop/mantis-2-waist-pack-8973"
+    }
+   },
+   {
+    "id": "arc-mantis26",
+    "brand": "아크테릭스",
+    "name": "맨티스 26 백팩",
+    "code": "X000010643",
+    "src": "page",
+    "hint": "mantis 26",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686432",
+     "JP": "https://arcteryx.jp/products/mantis-26-backpack",
+     "US": "https://arcteryx.com/us/en/shop/mantis-26-backpack-0643",
+     "GB": "https://arcteryx.com/gb/en/shop/mantis-26-backpack-0643",
+     "DE": "https://arcteryx.com/de/en/shop/mantis-26-backpack-0643"
+    }
+   },
+   {
+    "id": "arc-cerium",
+    "brand": "아크테릭스",
+    "name": "세륨 후디",
+    "code": "X000010521",
+    "src": "page",
+    "hint": "cerium hoody",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686764",
+     "JP": "https://arcteryx.jp/products/cerium-hoody-m",
+     "US": "https://arcteryx.com/us/en/shop/mens/cerium-hoody-0521",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/cerium-hoody-0521",
+     "DE": "https://arcteryx.com/de/en/shop/mens/cerium-hoody-0521"
+    }
+   },
+   {
+    "id": "keen-newporth2",
+    "brand": "킨(KEEN)",
+    "name": "newport h2",
+    "code": "1022258",
+    "src": "page",
+    "hint": "newport h2",
+    "urls": {
+     "US": "https://www.keenfootwear.com/products/mens-newport-h2-triple-black.json",
+     "GB": "https://www.keenfootwear.co.uk/products/mens-newport-h2-triple-black.json",
+     "DE": "https://www.keenfootwear.de/en/products/mens-newport-h2-triple-black.json"
+    }
+   },
+   {
+    "id": "keen-uneek",
+    "brand": "킨(KEEN)",
+    "name": "uneek",
+    "code": "1014097",
+    "src": "page",
+    "hint": "uneek",
+    "urls": {
+     "US": "https://www.keenfootwear.com/products/mens-uneek-monochrome-black-black.json",
+     "GB": "https://www.keenfootwear.co.uk/products/mens-uneek-monochrome-black-black.json",
+     "DE": "https://www.keenfootwear.de/en/products/mens-uneek-monochrome-black-black.json"
+    }
+   },
+   {
+    "id": "keen-jasper3",
+    "brand": "킨(KEEN)",
+    "name": "jasper iii",
+    "code": "1032681",
+    "src": "page",
+    "hint": "jasper iii",
+    "urls": {
+     "US": "https://www.keenfootwear.com/products/mens-jasper-iii-black-black.json",
+     "GB": "https://www.keenfootwear.co.uk/products/mens-jasper-iii-black-black.json",
+     "DE": "https://www.keenfootwear.de/en/products/mens-jasper-iii-black-black.json"
+    }
+   },
+   {
+    "id": "keen-targhee4",
+    "brand": "킨(KEEN)",
+    "name": "targhee iv",
+    "code": "1029827",
+    "src": "page",
+    "hint": "targhee iv",
+    "urls": {
+     "US": "https://www.keenfootwear.com/products/mens-targhee-iv-waterproof-triple-black.json",
+     "GB": "https://www.keenfootwear.co.uk/products/mens-targhee-iv-waterproof-triple-black.json",
+     "DE": "https://www.keenfootwear.de/en/products/mens-targhee-iv-waterproof-triple-black.json"
+    }
+   },
+   {
+    "id": "keen-jasperhairy",
+    "brand": "킨(KEEN)",
+    "name": "jasper",
+    "code": "1026592",
+    "src": "page",
+    "hint": "jasper",
+    "urls": {
+     "US": "https://www.keenfootwear.com/products/mens-jasper-hairy-black-black.json",
+     "GB": "https://www.keenfootwear.co.uk/products/mens-jasper-hairy-black-black.json",
+     "DE": "https://www.keenfootwear.de/en/products/mens-jasper-hairy-black-black.json"
+    }
+   },
+   {
+    "id": "keen-newporth2-krpage",
+    "brand": "킨(KEEN)",
+    "name": "newport",
+    "code": "1022258",
+    "src": "page",
+    "hint": "newport h2",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000673"
+    }
+   },
+   {
+    "id": "oofos-ooahh",
+    "brand": "우포스",
+    "name": "ooahh",
+    "code": "1100",
+    "src": "page",
+    "hint": "ooahh",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000084",
+     "US": "https://www.oofos.com/products/mens-sandal-ooahh-slide-black.json"
+    }
+   },
+   {
+    "id": "oofos-oocloog",
+    "brand": "우포스",
+    "name": "oocloog",
+    "code": "1200",
+    "src": "page",
+    "hint": "oocloog",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000159",
+     "US": "https://www.oofos.com/products/mens-oocloog-clog-black.json"
+    }
+   }
+  ]
+ }
+]
