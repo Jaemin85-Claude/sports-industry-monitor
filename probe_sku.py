@@ -44,7 +44,7 @@ def shopify_list(j):
         ps = d.get("products") or []
         for p in ps:
             skus = [str(v.get("sku") or "") for v in p.get("variants") or []]
-            blob = (p.get("handle", "") + " " + p.get("title", "") + " " + " ".join(skus)).lower()
+            blob = (p.get("handle", "") + " " + p.get("title", "") + " " + " ".join(skus) + " " + str(p.get("tags", ""))).lower()
             hit = [q for q in pats if q in blob]
             if hit or j.get("all"):
                 vs = p.get("variants") or []
@@ -76,7 +76,7 @@ def grep(j):   # 페이지 원문에서 정규식 찾기(상품 목록 페이지
         t = r.text; hits = []
         for rx in j["rx"]:
             for m in re.finditer(rx, t):
-                g = m.group(1) if m.groups() else m.group(0)
+                g = "|".join(x or "" for x in m.groups()) if m.groups() else m.group(0)
                 if g not in hits: hits.append(g)
                 if len(hits) >= j.get("max", 60): break
         out("GREP", url=urllib.parse.unquote(u)[:120], n=len(t), hits=[urllib.parse.unquote(h)[:140] for h in hits])
