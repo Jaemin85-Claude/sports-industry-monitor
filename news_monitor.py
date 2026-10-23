@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.17: (대표 지시 2026-10-23 '써코니로 맞추고 검색어도 추가') 써코니 뉴스 이름 '새코니(울버린)' → '써코니(울버린)', 검색어에 써코니 추가(새코니는 그대로) ·
+       기사 이름표를 실행마다 지금 이름(BRANDS·INDUSTRY)으로 — news.json·1년 보관 기사에 수집 때 이름이 저장돼, 이름을 바꿔도 옛 기사는 옛 이름이었음
+       (보관 중 '새코니(울버린)' 2건 · '호카(데커스)' 54건 → 지금 이름)
 v2.16: (대표 지시 2026-10-21) 컨버스 뉴스(converse) 추가 — 컨버스코리아(krd:converse_kr) 기업 상세 뉴스와 같은 키. 영어 'converse'는 일반 낱말이라
        "Converse shoes"·"Converse sneakers"·"Chuck Taylor" 구절로만 찾고 한글은 컨버스
 v2.15: (대표 지시 2026-10-19 '2순위 새 종목 추가') 명품·패션 브랜드 뉴스 2곳 — 톰브라운(thombrowne · 본사 제냐 실적 뉴스 포함)·랄프로렌(ralphlauren).
@@ -114,7 +117,7 @@ BRANDS = {
     "anta":       ["안타스포츠", "sports", '"Anta Sports" OR 안타스포츠'],
     "lining":     ["리닝", "sports", '"Li-Ning" OR 리닝'],
     "puma":       ["푸마", "sports", '"Puma" OR 푸마 브랜드'],
-    "saucony":    ["새코니(울버린)", "sports", '"Saucony" OR "Wolverine World Wide" OR 새코니'],
+    "saucony":    ["써코니(울버린)", "sports", '"Saucony" OR "Wolverine World Wide" OR 써코니 OR 새코니'],   # v2.17 국내 공식 표기 써코니
     "columbia":   ["컬럼비아", "sports", '"Columbia Sportswear" OR 컬럼비아스포츠웨어'],
     "patagonia":  ["파타고니아", "sports", '"Patagonia" OR 파타고니아'],
     "brooks":     ["브룩스", "sports", '"Brooks Running" OR 브룩스러닝'],
@@ -158,7 +161,7 @@ BRANDS = {
     "stoneisland":["스톤아일랜드", "luxury", '"Stone Island" OR 스톤아일랜드'],
     "margiela":   ["메종마르지엘라", "luxury", '"Maison Margiela" OR 마르지엘라'],
     "viviennewestwood": ["비비안웨스트우드", "luxury", '"Vivienne Westwood" OR 비비안웨스트우드'],
-    "thombrowne": ["톰브라운(제냐)", "luxury", '"Thom Browne" OR "Ermenegildo Zegna" OR 톰브라운'],   # v2.15 본사 제냐(ZGN) 실적 뉴스도(새코니(울버린)처럼)
+    "thombrowne": ["톰브라운(제냐)", "luxury", '"Thom Browne" OR "Ermenegildo Zegna" OR 톰브라운'],   # v2.15 본사 제냐(ZGN) 실적 뉴스도(써코니(울버린)처럼)
     # ── 유통·그외 (retail) ──
     "dks":        ["딕스+풋락커", "retail", '"Dick\'s Sporting Goods" OR "Foot Locker" OR 풋락커'],
     "jd":         ["JD스포츠", "retail", '"JD Sports" OR JD스포츠'],
@@ -1283,6 +1286,20 @@ def _arch_item(it):
     return a
 
 
+def relabel(items):
+    """v2.17 기사 이름표(label)를 지금 이름(BRANDS·INDUSTRY)으로 — 이름표는 수집 때 이름이 저장돼, 이름을 바꾸면 news.json·1년 보관
+    기사가 옛 이름으로 남음(칩·검색 거르기는 scope·key라 표기만 다름). 목록 안 기사를 바로 고치고 바꾼 건수를 돌려줌"""
+    n = 0
+    for it in items:
+        if not isinstance(it, dict) or not isinstance(it.get("scope"), str) or not isinstance(it.get("key"), str):
+            continue
+        src = {"brand": BRANDS, "industry": INDUSTRY}.get(it["scope"], {}).get(it["key"])
+        if src and it.get("label") != src[0]:
+            it["label"] = src[0]
+            n += 1
+    return n
+
+
 def load_archive():
     """기존 보관 파일 → (기사 목록, 복구 기록). 없으면 (None, {}), 깨졌으면 [WARN] 후 (None, {}) — git 기록에서 다시 만듦"""
     if not os.path.exists(ARCHIVE_PATH):
@@ -1523,6 +1540,9 @@ def main():
     boards = load_boards(old, today)   # v2.13 그누보드 게시판 최신 글 번호
     kept = [it for it in kept if title_key(it.get("title", "")) not in stale or verified_fresh(it)]
     base, bf = archive_base(today)   # v2.12 1년 보관 — v2.13 수집 전에 읽어 1년 안에 고른 기사 제목은 다시 받지 않음(옛 기사 재게시 대비)
+    nl = relabel(kept) + relabel(base or [])   # v2.17 이름을 바꾼 브랜드·산업의 지난 기사도 지금 이름으로(저장할 때 반영)
+    if nl:
+        print(f"기사 이름표를 지금 이름으로: {nl}건", flush=True)
     arch_titles = {tk for tk in (title_key(str(x.get("title") or "")) for x in (base or []) if isinstance(x, dict))
                    if len(tk) >= 8}   # 너무 짧은 제목 키는 다른 기사와 겹칠 수 있어 빼고
     known = {it["id"] for it in kept}
