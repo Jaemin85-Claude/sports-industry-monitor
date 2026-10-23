@@ -368,7 +368,18 @@ def sec_fill(item, ticker, today):
             item.update(q_inv=im[ie], q_inv_date=ie.isoformat(), q_inv_prev_date=ip.isoformat(),
                         q_inv_yoy=(im[ie] / im[ip] - 1) * 100, q_inv_rev_yoy=ry, q_src_inv=True)
             return txt + f" · 재고 {ie} vs {ip} {item['q_inv_yoy']:+.1f}% ({itag})"
-    return txt + " · 재고 짝 없음(재고는 야후 분기 그대로)"
+    gaap = facts.get("facts", {}).get("us-gaap") if isinstance(facts.get("facts"), dict) else None
+    cand = []   # 로그 확인용 — 이 분기 재고를 다른 태그로 적은 회사(SEC_INV에 넣을지 판단)
+    for tg in (sorted(gaap) if isinstance(gaap, dict) else []):
+        if "inventor" not in tg.lower():
+            continue
+        im = sec_instants(facts, tg)
+        near = [d for d in im if abs((d - e).days) <= 7]
+        if near:
+            cand.append(f"{tg}{'' if _yago(im, max(near)) else '(1년 전 없음)'}")
+        elif tg in SEC_INV:
+            cand.append(f"{tg}(이 분기 없음 · 최근 {max(im) if im else '없음'})")
+    return txt + " · 재고 짝 없음(재고는 야후 분기 그대로" + (f" · 재고 태그: {', '.join(cand[:6])}" if cand else "") + ")"
 
 
 def soft_fail(msg):
