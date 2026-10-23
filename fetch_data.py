@@ -5,7 +5,7 @@ v4.19: (대표 지시 2026-10-23 '1,2 진행') 야후가 새 분기를 늦게 �
       (나이키 26.08 분기 — 10/1 발표·10-Q 제출 뒤에도 야후는 26.05까지 · 화면 '새 실적 반영 대기'). 미국 상장(티커에 '.' 없음)·재무 통화 USD,
       야후 최신 분기가 끝난 지 SEC_LAG(120)일 넘은 종목만 요청 · SEC 분기가 야후보다 45일 넘게 새로울 때만 바꿈. 매출 = 같은 태그의 3개월 값
       (10-K만 있는 4분기는 연간 − 9개월 누적 · 그 해나 전년 연간이 나중 공시에서 다시 작성됐으면 계산 안 함) vs 1년 전 같은 분기,
-      재고 = 분기 끝 7일 안 재무상태표 값(InventoryNet·InventoryFinishedGoods·RetailRelatedInventoryMerchandise) vs 1년 전 — 짝이 없으면
+      재고 = 분기 끝 7일 안 재무상태표 값(InventoryNet·…FinishedGoodsNetOfReserves(나이키)·…FinishedGoods·RetailRelated…) vs 1년 전 — 짝이 없으면
       그 칸은 야후 값(로그에 회사가 쓴 재고 태그). 같은 기간이 여러 공시에 있으면 가장 늦게 낸 값(다음 해 비교 칸·정정).
       q_src='SEC'·q_src_form(10-Q / 10-K 연간−9개월) · 재고는 q_src_inv·q_src_inv_form — 화면 기업 상세 출처 줄. 못 받으면 야후 값(로그 '건너뜀' —
       이 실행의 남은 종목은 SEC 요청 안 함)인데, 어제 data.json에 SEC로 채운 더 새 분기가 있으면 그 칸을 이어 씀(판정이 하루씩 흔들리지 않게)
@@ -234,7 +234,8 @@ SEC_NEWER = 45     # SEC 분기가 야후 분기보다 이 일수 넘게 새로�
 SEC_BUDGET = 120   # 한 실행에서 SEC에 쓰는 시간(초) — 넘으면 남은 종목은 야후 값
 SEC_REV = ("Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax",
            "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet")
-SEC_INV = ("InventoryNet", "InventoryFinishedGoods", "RetailRelatedInventoryMerchandise")
+SEC_INV = ("InventoryNet", "InventoryFinishedGoodsNetOfReserves", "InventoryFinishedGoods",   # 앞 순서 먼저(전체 재고 태그 우선) — 나이키는
+           "RetailRelatedInventoryMerchandise")                                     # 2011년 뒤 FinishedGoodsNetOfReserves(10/23 브랜치 확인)
 SEC_FORMS = ("10-Q", "10-K", "10-Q/A", "10-K/A")
 _SEC = {"cik": None, "t0": None, "down": None}
 
