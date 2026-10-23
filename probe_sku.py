@@ -89,6 +89,8 @@ def shopjson(j):   # 쇼피파이 상품 .json — 변형 품번·가격·통화
         out("SJ", url=u[:110], handle=p.get("handle"), title=str(p.get("title"))[:70], vendor=p.get("vendor"), n=len(vs),
             sku=sorted({str(v.get("sku")) for v in vs})[:6], price=sorted({(v.get("price"), v.get("compare_at_price"), v.get("price_currency")) for v in vs})[:4],
             tags=str(p.get("tags"))[:200], body=re.sub(r"<[^>]+>", " ", str(p.get("body_html")))[:300])
+def fetchb(j):   # price_fetch.PRODUCTS 중 고른 브랜드만 실제 수집 코드로
+    fetch({"prods": [p for p in pf.PRODUCTS if p["brand"] in j["brands"]]})
 KEYS = ["regularPrice", "listPrice", "originalPrice", "basePrice", "compare_at_price", "compareAtPrice", "strikethrough", "fullPrice", "salePrice", "c_listPrice", "c_salePrice", "ListPrice", "StrikethroughPrice", "priceSpecification"]
 def detail(j):   # 정가 칸 위치 보기: JSON-LD 가격·정가 명세, 정가 낱말 주변
     for u in j["urls"]:
@@ -119,5 +121,5 @@ if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
-        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page, "grep": grep, "detail": detail, "snip": snip, "shopjson": shopjson}[j["t"]](j)
+        {"sitemap": sitemap_find, "shopify": shopify_list, "fetch": fetch, "page": page, "grep": grep, "detail": detail, "snip": snip, "shopjson": shopjson, "fetchb": fetchb}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")

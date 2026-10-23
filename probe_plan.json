@@ -1,87 +1,37 @@
 [
  {
-  "t": "snip",
-  "urls": [
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000673",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000553",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000653",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000996",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000580",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000496",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000804",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000679",
-   "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000552",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000084",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000042",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000159",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000124",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000120",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000118",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000050",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000094",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000123",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000138",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000087",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000119",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000062",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000058",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000031",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000064",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000105",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000108",
-   "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000099"
-  ],
-  "keys": [
-   "<title>",
-   "name=\"set_goods_fixedPrice\" value",
-   "name=\"set_goods_price\" value",
-   "ARTICLE</td>",
-   "Article No\\.</th>",
-   "item_name"
-  ],
-  "b": 0,
-  "a": 170,
-  "n": 1
- },
- {
-  "t": "snip",
-  "urls": [
-   "https://arcteryx.co.kr/products/view/686323",
-   "https://arcteryx.co.kr/products/view/686259",
-   "https://arcteryx.co.kr/products/view/686432"
-  ],
-  "keys": [
-   "\"sku\":\"",
-   "Model\\(KR\\)\\\\\\\\?\":",
-   "retail_price"
-  ],
-  "b": 0,
-  "a": 120,
-  "n": 1
+  "t": "fetchb",
+  "brands": [
+   "아크테릭스",
+   "킨(KEEN)",
+   "우포스"
+  ]
  },
  {
   "t": "shopify",
-  "host": "www.oofos.com",
-  "pats": [
-   "1101",
-   "1001",
-   "1103",
-   "1550blk",
-   "5075",
-   "5076",
-   "5085",
-   "5086",
-   "5276",
-   "5277",
-   "5286",
-   "5374",
-   "5378",
-   "5388",
-   "5081",
-   "5082",
-   "2000",
-   "2200"
+  "host": "andar-jp.com",
+  "pats": [],
+  "all": true,
+  "pages": 1
+ },
+ {
+  "t": "grep",
+  "urls": [
+   "https://andar.co.kr/",
+   "https://www.andar.co.kr/"
   ],
-  "pages": 6
+  "rx": [
+   "(/product/[^\"' >]{3,120})",
+   "(product_no=\\d+)"
+  ],
+  "max": 40
+ },
+ {
+  "t": "page",
+  "urls": [
+   "https://andar-jp.com/",
+   "https://www.andar.com/",
+   "https://andar.com/"
+  ]
  }
 ]
