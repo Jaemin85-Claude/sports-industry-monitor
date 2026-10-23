@@ -82,6 +82,27 @@ def _sal(kr, slug):   # 살로몬 — 한국 쇼피파이 상품(.json, 색상 �
     return {"KR": f"https://salomon.co.kr/products/{kr}.json", **{cc: f"https://www.salomon.com/{loc}/product/{slug}" for cc, loc in (("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"))}}
 
 
+def _arc(kr, slug, jp=None, g="mens/"):   # 아크테릭스 — 한국 시즌 상품 페이지(시즌마다 번호·한국 품번이 바뀜) + 미국·영국·독일(같은 주소 꼴) + 일본 쇼피파이 페이지
+    u = {"KR": f"https://arcteryx.co.kr/products/view/{kr}", **{cc: f"https://arcteryx.com/{loc}/en/shop/{g}{slug}" for cc, loc in (("US", "us"), ("GB", "gb"), ("DE", "de"))}}
+    if jp:
+        u["JP"] = f"https://arcteryx.jp/products/{jp}"
+    return u
+
+
+def _keen(kr, h, jp=True, gb=None, de=True):   # 킨 — 한국 LF 공식몰(고도몰 상품 번호) + 미국·영국·독일·일본 쇼피파이 상품 .json(같은 상품 주소 꼴)
+    u = {"KR": f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={kr}", "US": f"https://www.keenfootwear.com/products/{h}.json",
+         "GB": f"https://www.keenfootwear.co.uk/products/{gb or h}.json"}
+    if de:
+        u["DE"] = f"https://www.keenfootwear.de/en/products/{h}.json"
+    if jp:
+        u["JP"] = f"https://www.keenfootwear.jp/products/{jp if isinstance(jp, str) else h}.json"
+    return u
+
+
+def _oofos(kr, h):   # 우포스 — 한국 LF 공식몰(고도몰) + 미국 쇼피파이 .json(영국·독일·일본·멕시코는 공식 온라인몰 없음 — 소매점 판매)
+    return {"KR": f"https://www.oofos.co.kr/goods/goods_view.php?goodsNo={kr}", "US": f"https://www.oofos.com/products/{h}.json"}
+
+
 PRODUCTS = [
     {"id": "nike-af1", "brand": "나이키", "name": "에어포스 1 '07", "code": "CW2288-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
     {"id": "nike-dunk", "brand": "나이키", "name": "덩크 로우 레트로", "code": "DD1391-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
