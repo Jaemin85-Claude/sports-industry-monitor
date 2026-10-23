@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.21: (대표 지시 2026-10-23 '1,2 진행') 기업 상세 출처 줄 — 분기 매출·재고를 SEC 공시로 채운 종목(fetch_data v4.19 q_src='SEC',
+  야후에 아직 없는 분기)은 '분기 26.08 매출·재고: SEC 공시(10-Q)' 한 줄. 판정 규칙·입력 측정 방식(같은 분기 1년 전 비교)은 그대로라 CHK_RULE 그대로
 v33.20: (대표 지시 2026-10-23 '링크 한 줄만 넣어주세요') 더보기 › 물류 맨 위(수입·수출 바로가기 칩 아래)에 대표 전용 비공개 페이지
   '우리 운임 vs 시장'(관세사 수입신고 자료 · claude.ai 비공개 페이지) 링크 한 줄 — 공개 저장소라 내용·숫자는 넣지 않고 주소만(LG_OURS_URL ·
   대표 계정에서만 열림).
@@ -2375,6 +2377,7 @@ function renderDetail(t){
   const pxCur=x.currency||'', curDiff=pxCur&&finCur(pxCur)!==cur;
   if(!x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: Yahoo Finance 연간(연결) · 재무 통화 ${esc(cur||'―')}${pxCur==='GBp'?' · 주가 GBp(펜스, 1/100 파운드)':(curDiff?` · 주가 ${esc(pxCur)}(상장 거래소 통화 — 재무 통화와 다름)`:'')}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · ${x.yahoo_cfs_diff?`주가·실적일: Yahoo · 분기 매출 전년 대비는 야후 연결 기준(종속회사 포함)이라 순위에서 뺌(야후 ${fmt(x.q_yoy_yahoo,1,true)})`:'주가·분기 매출 전년 대비·실적일: Yahoo'}</div>`;
+  if(x.q_src==='SEC') h+=`<div class="src" style="margin:-4px 0 10px">분기 ${esc(ym(x.q_end))} 매출${x.q_src_inv?'·재고':''}: SEC 공시(10-Q) — 야후에 아직 없는 분기라 공시 숫자로</div>`;   // v33.21 fetch_data v4.19
   if(x.group==='글로벌 브랜드') h+=koreaCard(x);
   h+=`<div class="card"><h3>매출 3개년 — 연간 (${cur}) · 증감은 직전 결산연도 대비</h3>`;
   if(x.fy.length){

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.5: (대표 지시 2026-10-23) 관세청 물동량 이상값 [WARN]은 새로 생긴 값만 — 이전 실행 logistics.json의 odd에 같은 나라·달·항목·값이 있으면
+      [WARN] 없이 '(이전 실행부터)' 줄만(12:23 점검이 [WARN] 줄로 매일 알리던 것 · 26.09 미국 항공 수출 773만 톤). 값이 바뀌면 다시 [WARN] ·
+      화면 '출처 값 확인 필요'·전체·비교에서 빼기는 그대로
 v1.4: (대표 승인 2026-10-21) 주석 문구 정리 — 적출 거점 설명을 '주요 거점'으로(동작 같음)
 v1.3: (대표 지시 2026-10-20 '보완안 1·2·3 모두') 공공데이터포털(www.data.go.kr·apis.data.go.kr — 국가정보자원관리원 27.101.x)이 일부 GitHub
       서버(IP)에서만 연결이 안 됨(10/20 시험: 서버 7대 중 2대 — 미국 워싱턴주·멕시코, 해수부 홈페이지도 같이 막힘 · 같은 실행 안에서 다시 해도
@@ -879,9 +882,17 @@ def vol_mode(items, inbound, ports, metrics):
     return out
 
 
-def fetch_vol(key, ds, url, carg):
+def prev_odd(prev, mode):
+    """v1.5 이전 실행에 적어 둔 이상값 {(나라, 달, 항목, 값)} — 손상된 이전 값은 빈 것으로"""
+    blk = prev.get(mode) if isinstance(prev, dict) else None
+    rows = blk.get("odd") if isinstance(blk, dict) else None
+    return {tuple(o) for o in (rows if isinstance(rows, list) else [])
+            if isinstance(o, list) and len(o) == 4 and all(isinstance(z, (str, int, float)) for z in o)}
+
+
+def fetch_vol(key, ds, url, carg, prev=None):
     """관세청 국가별 입항·출항 물동량 — 바닷길·항공 각각 최근 VOL_MONTHS달(한 번에 모두 옴, 쪽 나눔 없음).
-    정정·취하가 지난 달에도 반영돼(매월 15일께) 매번 기간 전체를 다시 받음"""
+    정정·취하가 지난 달에도 반영돼(매월 15일께) 매번 기간 전체를 다시 받음. prev = 이전 실행 블록(v1.5 같은 이상값은 [WARN] 한 번만)"""
     today = today_kst()
     end = today.replace(day=1)
     start = end
@@ -904,8 +915,11 @@ def fetch_vol(key, ds, url, carg):
         if gap > 100:   # 9월 자료는 10월 15일께 — 석 달 넘게 새 달이 없으면 갱신이 멈춘 것
             raise RuntimeError(f"{mode}: 마지막 달이 {last} — {gap}일째 새 달 없음")
         unit = {"teu": "TEU", "ton": "톤", "bl": "건"}
+        seen = prev_odd(prev, mode)
         for c, ym, k, v in m["odd"]:   # 출처 입력 오류로 보이는 값 — 저장은 그대로(화면은 '출처 값 확인 필요' · 전체·비교에서 뺌)
-            if ym == last:
+            if ym == last and (c, ym, k, v) in seen:   # v1.5 이전 실행에서 이미 알린 같은 값 — 12:23 점검이 매일 알리지 않게 [WARN] 없이
+                log(f"    (이전 실행부터) {c} {last} {k} {v:,} — 출처 값 확인 필요 그대로(화면 전체·비교에서 뺌)")
+            elif ym == last:
                 log(f"    [WARN] {c} {last} {k} {v:,} — 출처 값 확인 필요(앞 12달보다 지나치게 큼 · 화면 전체·비교에서 뺌)")
         top = sorted(m["items"], key=lambda x: -x[metrics[0]][-1])[:5]
         log(f"  {LABELS[key]} {mode}: 행 {len(items):,} · {len(m['months'])}달 {m['months'][0]}~{last} · {last} 합계 "
@@ -1237,7 +1251,7 @@ def main():
     for key, ds, name, unit in KCS:
         fns[key] = (name, lambda p, ds=ds, name=name, unit=unit: fetch_kcs_one(ds, name, unit))
     for key, ds, url, carg in VOL:   # v1.2 공공데이터포털 오픈 API
-        fns[key] = (LABELS[key], lambda p, key=key, ds=ds, url=url, carg=carg: fetch_vol(key, ds, url, carg))
+        fns[key] = (LABELS[key], lambda p, key=key, ds=ds, url=url, carg=carg: fetch_vol(key, ds, url, carg, p))
     fns["busan_calls"] = (LABELS["busan_calls"], fetch_portmis)
     if retry_keys:
         # 다시 받기 — 다른 자료·상태·'값 없음' 날짜는 1차 작업이 저장한 그대로 두고, 다시 받는 자료만 바꿈
