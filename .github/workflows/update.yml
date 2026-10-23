@@ -22,7 +22,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 32   # v2026-10-21 물류(12분 제한) + 해외 정가(v2026-10-22 13분 제한)가 함께 길어져도 'Commit dashboard'까지 가게
+    timeout-minutes: 34   # v2026-10-21 물류(12분 제한) + 해외 정가(v2026-10-23 15분 제한)가 함께 길어져도 'Commit dashboard'까지 가게
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}   # v2026-10-20 연결 오류로 못 받은 공공데이터포털 자료 → 아래 dgk-retry가 새 서버에서
       conn_tries: ${{ steps.logi.outputs.conn_tries }}
@@ -50,7 +50,7 @@ jobs:
         # v2026-10-17 logistics_fetch v1.2: 공공데이터포털 오픈 API(관세청 국가별 입·출항 물동량 · 해수부 선박입출항) — 인증키 DATA_GO_KR_API_KEY
         id: logi
         continue-on-error: true   # 물류 수집이 멈춰도 대시보드 갱신은 계속
-        timeout-minutes: 12       # 스크립트가 8분에 스스로 멈춤 — 그래도 안 끝나면 여기서 끊음(작업 전체 32분 제한 보호)
+        timeout-minutes: 12       # 스크립트가 8분에 스스로 멈춤 — 그래도 안 끝나면 여기서 끊음(작업 전체 34분 제한 보호)
         env:
           PYTHONUNBUFFERED: "1"
           DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
@@ -66,7 +66,7 @@ jobs:
         # v2026-10-21 해외 정가(price_fetch v1): 브랜드 대표 상품 나라별 정가(할인 전) → docs/prices.json (브랜드 상세 하단) · 매일 돌며 7일마다 받음
         id: price
         continue-on-error: true   # 해외 정가가 멈춰도 대시보드 갱신은 계속
-        timeout-minutes: 13       # 스크립트가 11분에 스스로 멈춤(v2026-10-22 상품 56개 — 주 1회만 오래 걸림)
+        timeout-minutes: 15       # 스크립트가 13분에 스스로 멈춤(v2026-10-23 상품 75개 · 값 299개 — 주 1회만 오래 걸림)
         env:
           PYTHONUNBUFFERED: "1"
           PRICE_FORCE: ${{ inputs.price_force }}   # 수동 실행 입력 price_force=1이면 7일이 안 지나도 받음
