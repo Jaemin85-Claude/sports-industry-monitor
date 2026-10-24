@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.21: (대표 지시 2026-10-23 '1,2 진행') 기업 상세 출처 줄 — 분기 매출·재고를 SEC 공시로 채운 종목(fetch_data v4.19 q_src='SEC'·q_src_inv,
+  야후에 아직 없는 분기)은 'SEC 공시로 채움: 분기 '26.08 매출(10-Q) · 재고 '26.08(10-Q)' 한 줄(4분기 계산값은 '10-K 연간−9개월').
+  매출만 SEC로 채우고 재고는 옛 분기면 재고 근거에 '새 실적 반영 대기'(invLagOf). 판정 규칙·입력 측정 방식(같은 분기 1년 전 비교)은 그대로라 CHK_RULE 그대로
 v33.20: (대표 지시 2026-10-23 '링크 한 줄만 넣어주세요') 더보기 › 물류 맨 위(수입·수출 바로가기 칩 아래)에 대표 전용 비공개 페이지
   '우리 운임 vs 시장'(관세사 수입신고 자료 · claude.ai 비공개 페이지) 링크 한 줄 — 공개 저장소라 내용·숫자는 넣지 않고 주소만(LG_OURS_URL ·
   대표 계정에서만 열림).
@@ -2375,6 +2378,10 @@ function renderDetail(t){
   const pxCur=x.currency||'', curDiff=pxCur&&finCur(pxCur)!==cur;
   if(!x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: Yahoo Finance 연간(연결) · 재무 통화 ${esc(cur||'―')}${pxCur==='GBp'?' · 주가 GBp(펜스, 1/100 파운드)':(curDiff?` · 주가 ${esc(pxCur)}(상장 거래소 통화 — 재무 통화와 다름)`:'')}</div>`;
   if(x.fin_source) h+=`<div class="src" style="margin:-4px 0 10px">재무: ${esc(x.fin_source)} · ${x.yahoo_cfs_diff?`주가·실적일: Yahoo · 분기 매출 전년 대비는 야후 연결 기준(종속회사 포함)이라 순위에서 뺌(야후 ${fmt(x.q_yoy_yahoo,1,true)})`:'주가·분기 매출 전년 대비·실적일: Yahoo'}</div>`;
+  if(x.q_src==='SEC'||x.q_src_inv){   // v33.21 fetch_data v4.19 — 야후에 아직 없는 분기를 SEC 공시로 채운 칸(10-Q · 10-K 연간−9개월)
+    const sp=[x.q_src==='SEC'?`분기 ${ym(x.q_end)} 매출(${x.q_src_form||'10-Q'})`:'',x.q_src_inv?`재고 ${ym(x.q_inv_date)}(${x.q_src_inv_form||'10-Q'})`:''].filter(Boolean).join(' · ');
+    h+=`<div class="src" style="margin:-4px 0 10px">SEC 공시로 채움: ${esc(sp)} — 야후에 아직 없는 분기</div>`;
+  }
   if(x.group==='글로벌 브랜드') h+=koreaCard(x);
   h+=`<div class="card"><h3>매출 3개년 — 연간 (${cur}) · 증감은 직전 결산연도 대비</h3>`;
   if(x.fy.length){
@@ -3860,11 +3867,13 @@ function chkDemand(b,med){
   return {pt, rel, yoy:b.yoy, med, low:!!b.low, trend:b.trend, stale:b.stale_since, txt:`전년 대비 ${pp(b.yoy)} · 감시 브랜드 중앙값(${pp(med)})보다 ${ppp(rel)}`
     +(b.trend!=null?` · 최근 4주 vs 직전 12주 ${pp(b.trend)}`:'')+(b.low?' · 검색량 적어 점수 제외':'')};
 }
+// v33.21 분기 매출만 SEC로 채우고 재고는 옛 분기(야후)면 재고 근거에 '새 실적 반영 대기' — pendOf는 q_end만 봐 사라지던 것
+const invLagOf=(x,ip)=>(x&&x.q_src==='SEC'&&ip&&ip.end&&x.q_end&&(new Date(x.q_end)-new Date(ip.end))/86400000>PEND_DAYS)?{end:x.q_end,src:'SEC'}:null;
 function chkInv(x){
   const ip=invPick(x);
   if(ip.inv==null||ip.rev==null) return {pt:0,na:1,txt:'같은 기간 재고·매출 자료 없음'};
   const P=ip.inv-ip.rev, pt=P>=5?1:(P<=-5?-1:0);
-  return {pt, P, inv:ip.inv, rev:ip.rev, lbl:ip.lbl, q:ip.q, end:ip.end, stale:x.stale_since, pend:pendOf(x), txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${ppp(P)} · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
+  return {pt, P, inv:ip.inv, rev:ip.rev, lbl:ip.lbl, q:ip.q, end:ip.end, stale:x.stale_since, pend:pendOf(x)||invLagOf(x,ip), txt:`재고 ${pp(ip.inv)} vs 매출 ${pp(ip.rev)} (${ip.lbl}) → 재고 압력 ${ppp(P)} · ${pt>0?'처분 물량 기대':(pt<0?'재고 빠듯':'보통')}`};
 }
 function chkNotes(t){
   const s=segOf(t), ex=s&&s.extract;
