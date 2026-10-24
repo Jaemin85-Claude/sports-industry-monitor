@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-24 13:23 KST",
+ "generated_at": "2026-10-25 06:37 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -859,7 +859,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "관세청 해상 수입"
  },
  "kcs_sea_export": {
@@ -1716,7 +1716,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "관세청 해상 수출"
  },
  "kcs_air_import": {
@@ -2479,7 +2479,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "관세청 항공 수입"
  },
  "kcci": {
@@ -5884,7 +5884,7 @@
    ]
   ],
   "latest": "2026-10-19",
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8194,7 +8194,7 @@
     "last_date": "2026-10-18"
    }
   ],
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "해협 통과"
  },
  "ports": {
@@ -10504,7 +10504,7 @@
     "last_date": "2026-10-16"
    }
   ],
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "항만 입항"
  },
  "hubs": {
@@ -17414,7 +17414,7 @@
     "last_date": "2026-10-16"
    }
   ],
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17562,7 +17562,7 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "전 세계 정시율"
  },
  "vol_in": {
@@ -22970,7 +22970,7 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "관세청 국가별 수입 물동량"
  },
  "vol_out": {
@@ -28395,7 +28395,7 @@
     ]
    ]
   },
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "관세청 국가별 수출 물동량"
  },
  "busan_calls": {
@@ -34331,7 +34331,7 @@
      "US": 1,
      "AU": 1
     },
-    1026.2,
+    1030.2,
     36
    ],
    [
@@ -34347,28 +34347,42 @@
      "CA": 1,
      "RU": 1
     },
-    1021.4,
-    38
+    1063.9,
+    39
    ],
    [
     "2026-10-23",
-    27,
+    26,
     {
      "CN": 12,
-     "JP": 6,
      "KR": 6,
+     "JP": 5,
      "CA": 1,
      "US": 1,
      "IN": 1
     },
-    966.2,
+    1000.7,
     26
+   ],
+   [
+    "2026-10-24",
+    29,
+    {
+     "CN": 16,
+     "KR": 5,
+     "JP": 5,
+     "TW": 1,
+     "HK": 1,
+     "AU": 1
+    },
+    919.9,
+    29
    ]
   ],
   "from": "2025-10-01",
   "missing": 0,
   "stay_cap": 96,
-  "fetched": "2026-10-24",
+  "fetched": "2026-10-25",
   "label": "부산 입항 선박"
  },
  "status": {
@@ -34390,14 +34404,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "40061984908",
+  "run": "40134897117",
   "tries": [
    {
     "n": 1,
-    "where": "135.119.x.x · Iowa · AS8075 Microsoft Corporation",
+    "where": "20.161.x.x · Virginia · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "10-24 13:24"
+    "at": "10-25 06:38"
    }
   ]
  }
