@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.6: (대표 지시 2026-10-26 '언더아머 멕시코는 다른 상품으로') 언더아머 히트기어 컴프레션 반팔(1361518)·긴팔(1361524)이 멕시코 몰에서 빠져(HTTP 410 ·
+    사이트맵에 없음) 5개 나라 몰에 같은 품번이 있는 히트기어 컴프레션 모크 반팔(1372586)·허슬 6.0 백팩(1384672)으로 바꿈(GitHub 서버 시험 10/26 — 5개 나라 정가 읽힘)
 v1.5: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) 할인가·정가 변동 기록. ① 할인가 sp = 그 상품 색상·사이즈 중 지금 가장 싼 값
     (나이키 currentPrice · 쇼피파이 변형 가격 · JSON-LD 판매가 · 고도몰 판매가 — 이미 읽던 값을 버리지 않고 저장 · 정가보다 0.5% 넘게 낮을 때만,
     할인 가드로 정가를 지킨 날은 이번에 보인 값도 할인가 후보) · 확인한 날 sp_date ② 할인 기록 sh = [날짜, 할인가 또는 null(할인 끝)] —
@@ -278,18 +280,18 @@ PRODUCTS = [
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-2.0-mens-short-sleeve/1326413.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-tech-2.0/1326413.html",
         "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html"}},   # 일본은 수입사(DOME) 품번·사양이 달라 뺌
-    {"id": "ua-hg-ss", "brand": "언더아머", "name": "히트기어 컴프레션 반팔", "code": "1361518", "src": "page", "hint": "heatgear", "urls": {
-        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361518.html",
-        "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_short_sleeve/1361518.html",
-        "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens/1361518.html",
-        "DE": "https://www.underarmour.de/de-de/p/heatgear/1361518.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/heatgear/1361518.html"}},
-    {"id": "ua-hg-ls", "brand": "언더아머", "name": "히트기어 컴프레션 긴팔", "code": "1361524", "src": "page", "hint": "heatgear", "urls": {
-        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear/1361524.html",
-        "US": "https://www.underarmour.com/en-us/p/heatgear_mens_compression_long_sleeve/1361524.html",
-        "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mens-compression-long-sleeve/1361524.html",
-        "DE": "https://www.underarmour.de/de-de/p/heatgear/1361524.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear/1361524.html"}},
+    {"id": "ua-hg-mock", "brand": "언더아머", "name": "히트기어 컴프레션 모크 반팔", "code": "1372586", "src": "page", "hint": "heatgear", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EC%BB%B4%ED%94%84%EB%A0%88%EC%85%98/1372586.html",
+        "US": "https://www.underarmour.com/en-us/p/heatgear_compression_mens_mock_short_sleeve/1372586.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-compression-mens-mock-short-sleeve/1372586.html",
+        "DE": "https://www.underarmour.de/de-de/p/heatgear-compression/1372586.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear_compression/1372586.html"}},   # v1.6 히트기어 컴프레션 반팔 1361518·긴팔 1361524 대신(멕시코 몰에서 빠짐 — HTTP 410 · 10/26 사이트맵에 없음)
+    {"id": "ua-hustle6", "brand": "언더아머", "name": "허슬 6.0 백팩", "code": "1384672", "src": "page", "hint": "hustle", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%95%A1%EC%84%B8%EC%84%9C%EB%A6%AC/ua_%ED%97%88%EC%8A%AC_6.0/1384672.html",
+        "US": "https://www.underarmour.com/en-us/p/ua_hustle_6.0_backpack/1384672.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/ua-hustle-6.0-backpack/1384672.html",
+        "DE": "https://www.underarmour.de/de-de/p/ua-hustle-6.0/1384672.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_hustle_6.0/1384672.html"}},   # 5개 나라 같은 품번(GitHub 서버 시험 10/26 — 차지드 어서트 11은 한국·멕시코 robots.txt가 막음)
     {"id": "ua-tech-hz", "brand": "언더아머", "name": "UA 테크 ½ 집", "code": "1328495", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
         "US": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
