@@ -1,0 +1,3 @@
+[{"t": "ua_codes",
+  "sites": {"MX": "www.underarmour.com.mx", "KR": "www.underarmour.co.kr", "US": "www.underarmour.com", "GB": "www.underarmour.co.uk", "DE": "www.underarmour.de"},
+  "targets": ["1361518", "1361524", "1326413", "1326799", "1328495"], "max_maps": 40, "per_host": 170, "show": 250}]
