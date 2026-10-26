@@ -9,44 +9,24 @@
     "host": "kr.puma.com",
     "path": "/kr/ko/"
    },
-   "US": {
-    "host": "us.puma.com",
-    "path": "/us/en/"
-   },
-   "GB": {
-    "host": "uk.puma.com",
-    "path": "/uk/en/"
-   },
    "DE": {
     "host": "eu.puma.com",
     "path": "/de/de/",
     "kid_pref": [
-     "/de/de",
-     "de_de",
-     "de-de",
-     "_de.",
-     "-de."
+     "/urls/de/"
     ]
-   },
-   "JP": {
-    "host": "jp.puma.com",
-    "path": "/jp/ja/"
-   },
-   "MX": {
-    "host": "mx.puma.com",
-    "path": "/mx/es/"
    }
   },
   "targets": [
    "396464",
-   "399028",
    "385296",
-   "395205",
-   "398846"
+   "399028",
+   "398846",
+   "396463"
   ],
-  "max_maps": 60,
-  "per_host": 130,
-  "show": 40
+  "max_maps": 40,
+  "per_host": 150,
+  "show": 0
  },
  {
   "t": "try",
@@ -54,24 +34,24 @@
   "brand": "푸마",
   "ccs": [
    "KR",
-   "US",
-   "GB",
-   "DE",
-   "JP",
-   "MX"
+   "DE"
   ],
   "cands": [
+   {
+    "code": "398846",
+    "hint": "speedcat"
+   },
    {
     "code": "396464",
     "hint": "palermo"
    },
    {
-    "code": "399028",
-    "hint": "easy rider"
-   },
-   {
     "code": "385296",
     "hint": "shibui"
+   },
+   {
+    "code": "399028",
+    "hint": "easy rider"
    }
   ]
  }
