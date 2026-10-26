@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.14: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) '■ 해외 정가 변동' — 지난 7일 정가 변동(price_fetch v1.5 ph)·할인 시작·할인가
+      더 내림(sh)·할인 끝을 나라·상품별로(해외 정가는 주 1회 수집이라 그 주 받은 날 기준) + 지금 할인 중 개수 · 해외 정가 화면 바로가기
 v1.13: (2026-10-26 ir_fetch v1.6과 함께) '이번 주 새 본사 발언'은 문장마다 처음 뽑힌 시각(at)이 7일 안인 것만 — 같은 분기를 더 나은
       문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 하나 늘어도 지난주에 보낸 문장은 다시 보내지 않게(at 없는 옛 기록은 그대로)
 v1.12: (2026-10-23 fetch_data v4.19와 함께) '새 실적' 분기는 지난주 분기보다 45일 넘게 늦을 때만 — SEC로 채운 분기의 실제 마감일과
@@ -546,6 +548,46 @@ def inventory_warnings(data, kr, today=None, krf=None):
     return out, skipped
 
 
+CC_KO = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코"}
+CUR_SYM = {"KRW": "원", "USD": "$", "GBP": "£", "EUR": "€", "JPY": "¥", "MXN": "MX$"}
+
+
+def _money(v, cur):
+    s = CUR_SYM.get(cur, cur + " ")
+    t = f"{v:,.0f}" if (v >= 1000 or cur in ("KRW", "JPY")) else f"{v:,.2f}".rstrip("0").rstrip(".")
+    return f"{t}{s}" if cur == "KRW" else f"{s}{t}"
+
+
+def price_changes(prices, today, n=8):
+    """v1.14 지난 7일 해외 정가 변동 — (정가 변동, 할인 시작·더 내림, 할인 끝, 지금 할인 중 수). 각 줄 = (글, 정렬 값)"""
+    start = (today - datetime.timedelta(days=DAYS)).isoformat()
+    ch, sale, end, on = [], [], [], 0
+    for it in (prices or {}).get("items") or []:
+        nm = f"{it.get('brand', '')} {it.get('name', '')}".strip()
+        for cc, o in (it.get("m") or {}).items():
+            if not isinstance(o, dict) or not o.get("cur"):
+                continue
+            cur, place = o["cur"], CC_KO.get(cc, cc)
+            if o.get("sale"):
+                on += 1
+            for d, a, b in [x for x in o.get("ph") or [] if isinstance(x, list) and len(x) == 3]:
+                if str(d) > start and a and b:
+                    ch.append((f"{nm} {place} {_money(a, cur)} → {_money(b, cur)} ({(b / a - 1) * 100:+.1f}%)", -abs(b / a - 1)))
+            sh = [x for x in o.get("sh") or [] if isinstance(x, list) and len(x) == 2]
+            for i, (d, v) in enumerate(sh):
+                if str(d) <= start:
+                    continue
+                prev = sh[i - 1][1] if i else None
+                if v is None and prev:
+                    end.append((f"{nm} {place} (마지막 할인가 {_money(prev, cur)})", 0))
+                elif v is not None and o.get("p"):
+                    off = (v / (o.get("cand") or o["p"]) - 1) * 100
+                    what = "할인 시작" if prev is None else "할인가 더 내림" if v < prev else "할인 줄어듦"
+                    sale.append((f"{nm} {place} {what} {_money(v, cur)} (정가 대비 {off:.0f}%)", off))
+    ch.sort(key=lambda r: r[1]); sale.sort(key=lambda r: r[1])
+    return [r[0] for r in ch], [r[0] for r in sale], [r[0] for r in end], on
+
+
 def build(today, now=None):
     data, hist, news = load("data.json"), load("history.json"), load("news.json")
     nv, kr, kosis = load("naver_trend.json"), load("kr_domestic.json"), load("kosis.json")
@@ -571,6 +613,8 @@ def build(today, now=None):
     dch = dart_changes(kr, kr_old)
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
     mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
+    prices = load("prices.json")
+    pch, psale, pend_s, pon = price_changes(prices, today)
     vd, vev, vfirst, vreset = verdict_summary(hist, today)
 
     # ── 휴대폰 알림 3줄 ──
@@ -667,6 +711,21 @@ def build(today, now=None):
     if fx:
         L.append(f"  환율 화면: {dash('more', 'fx')}")
     L.append("")
+
+    # v1.14 해외 정가 변동(price_fetch v1.5 — 주 1회 수집) — 정가 변동·할인 시작/더 내림·할인 끝, 각 8줄까지
+    if prices:
+        fd = str(prices.get("fetched") or "")[5:10].replace("-", "/")
+        L.append(f"■ 해외 정가 변동 (지난 7일 · 주 1회 수집{f' — {fd} 받음' if fd else ''} · 지금 할인 중 {pon}건)")
+        for title, rows in (("정가 변동", pch), ("할인", psale), ("할인 끝", pend_s)):
+            if rows:
+                L.append(f"  [{title} {len(rows)}건]")
+                L += [f"    {r}" for r in rows[:8]]
+                if len(rows) > 8:
+                    L.append(f"    … 외 {len(rows) - 8}건")
+        if not (pch or psale or pend_s):
+            L.append("  바뀐 것 없음")
+        L.append(f"  해외 정가 화면: {dash('more', 'price')}")
+        L.append("")
 
     L.append("■ 새로 반영된 실적")
     if res:
