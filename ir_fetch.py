@@ -4,8 +4,9 @@ sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채
 v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 표 해석·추출이 실패하면 이전 값을 지키고(전에는 빈 값으로 덮어씀)
       soft_fail.txt에 남김(ir.yml 'Check partial failures'가 빨간 X), 가장 최근 자료의 기간이 끝난 지 165일 넘어도 실패 표시,
       접속·Claude 일시 오류(429·5xx·연결)는 다시 시도 ② 본사 발언 빈칸 채우기 — 아디다스는 Fact Sheet과 같은 분기 폴더의
-      보도자료·분기 보고서, 아식스는 이미 받는 실적 설명자료(스크립트)에서 재고·할인·유통 문장(푸마와 같은 규칙).
-      발언 문서 주소(notes_url)가 바뀔 때만 추출(지역 표 캐시는 그대로 — 재추출 없음)
+      보도자료·분기 보고서(Q2는 H1 Report), 아식스는 이미 받는 실적 설명자료(스크립트)에서 재고·할인·유통 문장(푸마와 같은 규칙).
+      발언 문서 주소(notes_url)가 바뀔 때만 추출(지역 표 캐시는 그대로 — 재추출 없음) ③ 접속 이름을 브라우저 흉내 대신 우리 봇 이름
+      sports-industry-monitor로(봇 차단 우회 안 함 원칙 — 세 사이트 모두 이 이름으로 받아지고 robots.txt 허용 확인)
 v1.5: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언 신호 sig(more·less·neutral) — extract_segments v11.2와 같은 규칙, sig 없는 발언만 1회 분류
 v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
       추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
@@ -39,9 +40,9 @@ ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 OUT_PATH = "docs/segments_ir.json"
 IR_VER = 3   # 추출 스키마 버전 — 바뀌면 같은 자료라도 1회 재추출 (v1.3 푸마 mgmt_notes)
-UA = {"User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
-                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
-      "Accept-Language": "en-US,en;q=0.9"}
+# v1.6 우리 봇 이름으로(브라우저 흉내 안 함 — 봇 차단 우회 안 함 원칙). 2026-10-26 GitHub 서버 시험: 세 사이트 모두 200 ·
+# robots.txt 허용(아디다스·푸마) / 없음(아식스 404 = 제한 없음, RFC 9309)
+UA = {"User-Agent": "sports-industry-monitor", "Accept-Language": "en-US,en;q=0.9"}
 
 ADI_FIN = "https://www.adidas-group.com/en/investors/financial-reports"
 PUMA_NEWS = "https://about.puma.com/en/investor-relations/financial-news"
@@ -240,9 +241,10 @@ def adidas_latest_fact_sheet():
 
 
 _ADI = {"html": ""}
-# v1.6 발언 문서 고르는 순서(파일 이름) — 보도자료 > 분기 보고서 > 반기·연차 보고서 > 통화 녹취. 발표 자료·Fact Sheet은 뺌
+# v1.6 발언 문서 고르는 순서(파일 이름) — 보도자료 > 분기 보고서 > 반기·연차 보고서(Q2 = H1_Report) > 실적 자료(…_Results_…) > 통화 녹취.
+# 발표 자료·Fact Sheet·보충 자료(Financial_supplement·Alternative_Performance_Measures — 이름에 위 낱말이 없어 빠짐)는 뺌
 ADI_NOTE_RANK = ((r"press|release", 0), (r"quarterly.?statement|statement", 1),
-                 (r"half.?year|interim|annual.?report|report", 2), (r"transcript|call", 3))
+                 (r"half.?year|interim|annual.?report|report", 2), (r"results", 3), (r"transcript|call", 4))
 
 
 def _cld_date(u):
@@ -927,22 +929,6 @@ def main():
     only = [x.strip() for x in os.environ.get("IR_ONLY", "").split(",") if x.strip()]
     if only:    # v1.3 시험 모드: 지정 종목만 캐시 무시하고 추출, 결과는 로그로만(저장 안 함)
         log(f"[시험 모드] IR_ONLY={','.join(only)} — 저장하지 않음")
-        if "UA" in only:   # TEMP-PROBE (PR 전에 지움): 우리 봇 이름으로도 받아지는지 + robots.txt
-            import urllib.robotparser
-            for u in (ADI_FIN, PUMA_NEWS, ASICS_DATA, ASICS_SUMMARY):
-                host = re.match(r"https://[^/]+", u).group(0)
-                try:
-                    rb = requests.get(host + "/robots.txt", headers={"User-Agent": "sports-industry-monitor"}, timeout=30)
-                    rp = urllib.robotparser.RobotFileParser(); rp.parse(rb.text.splitlines())
-                    allow = rp.can_fetch("sports-industry-monitor", u) if rb.status_code == 200 else f"robots {rb.status_code}"
-                except Exception as e:
-                    allow = f"robots 오류 {type(e).__name__}"
-                try:
-                    r = requests.get(u, headers={"User-Agent": "sports-industry-monitor", "Accept-Language": "en-US,en;q=0.9"}, timeout=60)
-                    st = f"{r.status_code} · {len(r.text)}자 · pdf 링크 {len(re.findall(r'[.]pdf', r.text, re.I))}개"
-                except Exception as e:
-                    st = f"오류 {type(e).__name__}"
-                log(f"[UA 시험] {u} — 봇 이름으로: {st} · robots 허용: {allow}")
         for tk, fn in RUNS:
             if tk not in only:
                 continue
