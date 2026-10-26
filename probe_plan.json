@@ -1,0 +1,9 @@
+[{"t": "codes", "key": "puma", "base": "KR", "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
+  "sites": {"KR": {"host": "kr.puma.com", "path": "/kr/ko/"}, "US": {"host": "us.puma.com", "path": "/us/en/"},
+            "GB": {"host": "uk.puma.com", "path": "/uk/en/"}, "DE": {"host": "eu.puma.com", "path": "/de/de/"},
+            "JP": {"host": "jp.puma.com", "path": "/jp/ja/"}, "MX": {"host": "mx.puma.com", "path": "/mx/es/"}},
+  "targets": ["395205", "396464", "377748", "309707", "391962", "392290", "390984", "399028", "392328", "397447", "398846"],
+  "max_maps": 40, "per_host": 110, "show": 160},
+ {"t": "try", "key": "puma", "brand": "푸마", "ccs": ["KR", "US", "GB", "DE", "JP", "MX"],
+  "cands": [{"code": "395205", "hint": "suede xl"}, {"code": "396464", "hint": "palermo"}, {"code": "377748", "hint": "velocity"},
+            {"code": "309707", "hint": "deviate"}, {"code": "391962", "hint": "clyde"}, {"code": "390984", "hint": "smash"}]}]
