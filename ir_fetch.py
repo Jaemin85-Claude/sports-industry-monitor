@@ -7,13 +7,13 @@ v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 �
       보도자료·분기 보고서(Q2는 H1 Report), 아식스는 이미 받는 실적 설명자료(스크립트)에서 재고·할인·유통 문장(푸마와 같은 규칙).
       발언 문서 주소(notes_url)가 바뀔 때만 추출(지역 표 캐시는 그대로 — 재추출 없음) ③ 접속 이름을 브라우저 흉내 대신 우리 봇 이름
       sports-industry-monitor로(봇 차단 우회 안 함 원칙 — 세 사이트 모두 이 이름으로 받아지고 robots.txt 허용 확인)
-      ④ 그 밖의 실패 표시 — 늘 나오던 지역·채널 금액·전년 금액이 빠짐(표 일부만 읽힘 · 나머지는 저장 · 같은 자료를 2번까지
+      ④ 그 밖의 실패 표시 — 늘 나오던 지역·채널 금액·전년 금액·환율 제외 성장률이 빠짐(표 일부만 읽힘 · 나머지는 저장 · 같은 자료를 2번까지
       다시 추출 · 알림은 처음 나온 실행만, logistics odd_seen 방식), 전 분기까지 있던 발언을 새 분기에 21일 넘게 못 뽑음(사유 notes_err).
       이전 값을 지킨 종목은 failed·kept_failed·kept_reason, 그 밖의 실패 표시는 종목 warn(수집 상태 화면 '확인 필요').
       발언 문서를 못 받거나 못 읽으면 다음 후보 문서로(같은 서버 연결 오류면 다음 실행에 · 지역 표는 그대로 저장).
       시간: 다시 받기는 실행 9분까지, 발언·신호 분류는 12분까지, 새 요청은 18분까지(ir.yml 25분). 시험 모드(IR_ONLY)는 실패 표시 기록 안 함.
       같은 분기를 더 나은 문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 없으면 추출 시각·문서 날짜 그대로(주간 메일 중복 방지).
-      긴 문서는 재고·할인 낱말 묶음(6천 자 단위)을 먼저 골라 6만 자 안(kw_windows)
+      긴 문서는 재고·할인 낱말 묶음(6천 자 단위)을 먼저 골라 6만 자 안(kw_windows) · Claude 응답은 앞뒤 설명이 붙어도 JSON 부분만 읽음(json_obj)
 v1.5: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언 신호 sig(more·less·neutral) — extract_segments v11.2와 같은 규칙, sig 없는 발언만 1회 분류
 v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
       추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
@@ -224,6 +224,19 @@ def links(html, base):
             u = base + "/" + u.lstrip("./")
         out.append(u)
     return list(dict.fromkeys(out))
+
+
+def json_obj(txt):
+    """v1.6 Claude 응답 → JSON 객체. 앞뒤에 설명·코드 울타리가 붙어도 첫 '{'부터 마지막 '}'까지로 다시 읽음
+    (2026-10-26 브랜치 시험: 아식스 환율 제외 응답이 한 번 JSON으로 안 읽혀 그 분기 값이 빠질 뻔함)"""
+    t = re.sub(r"```json|```", "", txt or "").strip()
+    try:
+        return json.loads(t)
+    except ValueError:
+        i, j = t.find("{"), t.rfind("}")
+        if i < 0 or j <= i:
+            raise
+        return json.loads(t[i:j + 1])
 
 
 def strip_html(html):
@@ -516,7 +529,7 @@ PRESS RELEASE:
     data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1800,
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-    ex = json.loads(re.sub(r"```json|```", "", txt).strip())
+    ex = json_obj(txt)
     ex["extracted_at"] = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")   # v1.4 주간 메일 '이번 주 새 본사 발언'
     ex["mgmt_notes"] = verify_quotes(ex.get("mgmt_notes"), text[:60000])
     return ex
@@ -621,8 +634,7 @@ DOCUMENT:
     data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1200,
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-    m = re.search(r"\{.*\}", txt, re.S)      # 설명이 앞뒤에 붙어도 JSON 묶음만
-    obj = json.loads(m.group(0) if m else txt.strip())
+    obj = json_obj(txt)
     return verify_quotes(obj.get("mgmt_notes") if isinstance(obj, dict) else None, text)
 
 
@@ -862,7 +874,7 @@ DOCUMENT EXCERPTS:
     data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 800,
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-    return json.loads(re.sub(r"```json|```", "", txt).strip())
+    return json_obj(txt)
 
 
 def attach_asics_cn(regions, cn_ex, tol=1.5):
@@ -920,7 +932,7 @@ DOCUMENT EXCERPTS:
     data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 1200,
                            "messages": [{"role": "user", "content": prompt}]})
     txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-    ex = json.loads(re.sub(r"```json|```", "", txt).strip())
+    ex = json_obj(txt)
     for r in ex.get("regions", []):
         if r.get("yoy_pct") is None and r.get("revenue") and r.get("prev_revenue"):
             r["yoy_pct"] = (r["revenue"] / r["prev_revenue"] - 1) * 100
@@ -1037,7 +1049,7 @@ WANT_ROWS = {"ADS.DE": (r"europe", r"north america", r"greater china", r"emergin
 
 
 def missing_rows(tk, ex):
-    """v1.6 표 일부만 읽힘 — WANT_ROWS 중 금액(revenue)이 있는 줄이 없는 것 + (아디다스·아식스) 지역 전년 금액이 하나도 없음"""
+    """v1.6 표 일부만 읽힘 — WANT_ROWS 중 금액(revenue)이 있는 줄이 없는 것 + (아디다스·아식스) 지역 전년 금액·환율 제외 성장률이 하나도 없음"""
     rows = [r for r in (ex.get("regions") or []) + (ex.get("channels") or [])
             if isinstance(r, dict) and r.get("revenue") is not None]
     names = [str(r.get("name") or "").lower() for r in rows]
@@ -1045,6 +1057,9 @@ def missing_rows(tk, ex):
     if tk in ("ADS.DE", "7936.T") and rows and not any(isinstance(r, dict) and r.get("prev_revenue") is not None
                                                        for r in ex.get("regions") or []):
         miss.append("전년 금액")      # 두 회사 표는 늘 전년 같은 기간 금액이 함께 나옴(푸마 채널은 전년 금액 없이 나오기도 해 뺌)
+    if tk in ("ADS.DE", "7936.T") and rows and not any(isinstance(r, dict) and r.get("cn_yoy_pct") is not None
+                                                       for r in ex.get("regions") or []):
+        miss.append("환율 제외")      # 아디다스 Fact Sheet c.n. 열 · 아식스 설명자료(일본 말고는 늘 있음) — 없으면 같은 자료를 다시 추출
     return miss
 
 
