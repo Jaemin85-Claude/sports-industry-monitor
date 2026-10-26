@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-26 18:23 KST",
+ "generated_at": "2026-10-26 19:03 KST",
  "fetched": "2026-10-26",
  "attempt": "2026-10-26",
- "cfg": "a709cc4cb209",
+ "cfg": "b5db886e5c08",
  "status": "ok",
  "items": [
   {
@@ -2284,15 +2284,15 @@
      "obs": 60.0,
      "obs_date": "2026-10-26",
      "sale": true,
-     "sp": 53.97,
-     "sp_date": "2026-10-26",
      "sh": [
       [
        "2026-10-26",
        53.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 53.97,
+     "sp_date": "2026-10-26"
     },
     "GB": {
      "p": 50.0,
@@ -2302,15 +2302,15 @@
      "obs": 50.0,
      "obs_date": "2026-10-26",
      "sale": true,
-     "sp": 34.97,
-     "sp_date": "2026-10-26",
      "sh": [
       [
        "2026-10-26",
        34.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 34.97,
+     "sp_date": "2026-10-26"
     },
     "DE": {
      "p": 55.0,
@@ -2320,15 +2320,15 @@
      "obs": 55.0,
      "obs_date": "2026-10-26",
      "sale": true,
-     "sp": 27.97,
-     "sp_date": "2026-10-26",
      "sh": [
       [
        "2026-10-26",
        27.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 27.97,
+     "sp_date": "2026-10-26"
     },
     "MX": {
      "p": 1299.0,
@@ -2493,6 +2493,148 @@
    }
   },
   {
+   "id": "ua-icon-hoodie",
+   "brand": "언더아머",
+   "name": "아이콘 플리스 후디",
+   "code": "1373880",
+   "m": {
+    "KR": {
+     "p": 89000.0,
+     "cur": "KRW",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EC%95%84%EC%9D%B4%EC%BD%98_%ED%94%8C%EB%A6%AC%EC%8A%A4/1373880.html",
+     "obs": 89000.0,
+     "obs_date": "2026-10-26",
+     "sale": true,
+     "sp": 62300.0,
+     "sp_date": "2026-10-26",
+     "sh": [
+      [
+       "2026-10-26",
+       62300.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 65.0,
+     "cur": "USD",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.com/en-us/p/ua_icon_fleece_mens_hoodie/1373880.html",
+     "obs": 65.0,
+     "obs_date": "2026-10-26",
+     "sale": true,
+     "sp": 41.97,
+     "sp_date": "2026-10-26",
+     "sh": [
+      [
+       "2026-10-26",
+       41.97,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 60.0,
+     "cur": "GBP",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-icon-fleece-mens-hoodie/1373880.html",
+     "obs": 60.0,
+     "obs_date": "2026-10-26",
+     "sale": true,
+     "sp": 29.97,
+     "sp_date": "2026-10-26",
+     "sh": [
+      [
+       "2026-10-26",
+       29.97,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 70.0,
+     "cur": "EUR",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.de/de-de/p/ua-icon-fleece/1373880.html",
+     "obs": 70.0,
+     "obs_date": "2026-10-26",
+     "sale": true,
+     "sp": 41.97,
+     "sp_date": "2026-10-26",
+     "sh": [
+      [
+       "2026-10-26",
+       41.97,
+       "base"
+      ]
+     ]
+    },
+    "MX": {
+     "p": 1399.0,
+     "cur": "MXN",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.com.mx/es-mx/p/tops/sudadera_con_capucha_ua_icon_fleece_para_hombre/1373880.html",
+     "obs": 1399.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "ua-hg-sleeveless",
+   "brand": "언더아머",
+   "name": "히트기어 모크 민소매",
+   "code": "1361521",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EB%AA%A8%ED%81%AC/1361521.html",
+     "obs": 39000.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    },
+    "US": {
+     "p": 35.0,
+     "cur": "USD",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.com/en-us/p/heatgear_mock_mens_sleeveless/1361521.html",
+     "obs": 35.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    },
+    "GB": {
+     "p": 32.0,
+     "cur": "GBP",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.co.uk/en-gb/p/heatgear-mock-mens-sleeveless/1361521.html",
+     "obs": 32.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    },
+    "DE": {
+     "p": 35.0,
+     "cur": "EUR",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.de/de-de/p/heatgear-mock/1361521.html",
+     "obs": 35.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    },
+    "MX": {
+     "p": 599.0,
+     "cur": "MXN",
+     "seen": "2026-10-26",
+     "url": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html",
+     "obs": 599.0,
+     "obs_date": "2026-10-26",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "saucony-ride19",
    "brand": "써코니",
    "name": "라이드 19(남성)",
@@ -2567,9 +2709,7 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
      "obs": 219000.0,
      "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "sale": false
     },
     "US": {
      "p": 175.0,
@@ -2640,7 +2780,9 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
      "obs": 299000.0,
      "obs_date": "2026-10-26",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-26",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 240.0,
