@@ -644,9 +644,10 @@ def build(today, now=None):
     dch = dart_changes(kr, kr_old)
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
     mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
-    prices = load("prices.json")
     p_at = min(datetime.datetime.combine(today, PRICE_AT, KST), now or datetime.datetime.now(KST))   # 이번 메일 기준 시각(git)
-    pch, psale, pend_s, pon = price_changes(prices, today, load_old("prices.json", DAYS, p_at), load_old("prices.json", 0, p_at))
+    p_upto = load_old("prices.json", 0, p_at)
+    prices = p_upto or load("prices.json")   # 머리 줄(받은 날·지금 할인 중)도 같은 기준 시각 파일로 — 줄과 어긋나지 않게
+    pch, psale, pend_s, pon = price_changes(prices, today, load_old("prices.json", DAYS, p_at), p_upto)
     vd, vev, vfirst, vreset = verdict_summary(hist, today)
 
     # ── 휴대폰 알림 3줄 ──
