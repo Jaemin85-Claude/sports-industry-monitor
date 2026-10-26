@@ -7,6 +7,9 @@ v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 �
       보도자료·분기 보고서(Q2는 H1 Report), 아식스는 이미 받는 실적 설명자료(스크립트)에서 재고·할인·유통 문장(푸마와 같은 규칙).
       발언 문서 주소(notes_url)가 바뀔 때만 추출(지역 표 캐시는 그대로 — 재추출 없음) ③ 접속 이름을 브라우저 흉내 대신 우리 봇 이름
       sports-industry-monitor로(봇 차단 우회 안 함 원칙 — 세 사이트 모두 이 이름으로 받아지고 robots.txt 허용 확인)
+      ④ 그 밖의 실패 표시 — 늘 나오던 지역·채널 금액이 빠짐(표 일부만 읽힘 · 나머지는 저장), 전 분기까지 있던 발언 문서가
+      새 분기에 21일 넘게 안 나옴. 이전 값을 지킨 종목은 failed·kept_failed·kept_reason(수집 상태 화면 '실패·이전 추출 유지').
+      발언 문서를 못 받거나 못 읽으면 다음 후보 문서로(지역 표는 그대로 저장) · 다시 받기는 실행 9분까지(ir.yml 25분)
 v1.5: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언 신호 sig(more·less·neutral) — extract_segments v11.2와 같은 규칙, sig 없는 발언만 1회 분류
 v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
       추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
@@ -59,6 +62,9 @@ ADI_CHANNELS = ["Wholesale", "Direct-to-Consumer (DTC)"]
 SCRIPT = "ir_fetch"
 STALE_DAYS = 165    # v1.6 가장 최근 자료의 기간이 끝난 지 이만큼 넘으면 실패 표시(분기 끝 → 다음 분기 발표는 길어야 약 140일)
 RETRY_WAITS = (30, 90)   # v1.6 접속·Claude 일시 오류(429·5xx·연결) — 30초·90초 뒤 다시
+RETRY_DEADLINE = 9 * 60  # v1.6 실행 9분이 지나면 다시 시도하지 않음(ir.yml 작업 25분 제한 안에 저장·커밋까지)
+NOTES_LAG_DAYS = 21      # v1.6 새 분기 자료를 받은 뒤 이만큼 지나도 발언 문서가 없으면(전에는 있었는데) 실패 표시
+_T0 = time.time()
 
 
 def log(m):
@@ -70,6 +76,11 @@ def soft_fail(msg):
     print(f"실패 표시: {msg}", flush=True)
     with open("soft_fail.txt", "a", encoding="utf-8") as f:
         f.write(f"{SCRIPT}: {msg}\n")
+
+
+def _can_retry(wait):
+    """다시 시도해도 실행 시간 안에 끝나는지 — 9분이 지나면 바로 실패로 넘김(남은 종목·저장이 작업 제한에 걸리지 않게)"""
+    return wait is not None and time.time() - _T0 + wait < RETRY_DEADLINE
 
 
 def _transient(e=None, status=None):
@@ -103,12 +114,12 @@ def anthropic_post(payload, timeout=180):
                          "content-type": "application/json"},
                 json=payload, timeout=timeout)
         except requests.exceptions.RequestException as e:
-            if wait is None or not _transient(e):
+            if not _can_retry(wait) or not _transient(e):
                 raise
             log(f"  Claude {_kind(e)} — {wait}초 뒤 다시({k + 1}/{len(RETRY_WAITS)})")
             time.sleep(wait)
             continue
-        if wait is not None and _transient(status=resp.status_code):
+        if _can_retry(wait) and _transient(status=resp.status_code):
             log(f"  Claude 응답 {resp.status_code} — {wait}초 뒤 다시({k + 1}/{len(RETRY_WAITS)})")
             time.sleep(wait)
             continue
@@ -162,7 +173,7 @@ def fetch(url, as_bytes=False, timeout=90):
             r.raise_for_status()
             return r.content if as_bytes else r.text
         except requests.exceptions.RequestException as e:   # v1.6 일시 오류만 다시(403·404는 바로 올림)
-            if wait is None or not _transient(e):
+            if not _can_retry(wait) or not _transient(e):
                 raise
             log(f"  접속 일시 오류({_kind(e)}) — {wait}초 뒤 다시({k + 1}/{len(RETRY_WAITS)})")
             time.sleep(wait)
@@ -253,45 +264,56 @@ def _cld_date(u):
     return datetime.datetime.fromtimestamp(int(m.group(1)), KST).strftime("%Y-%m-%d") if m else None
 
 
-def adidas_notes_doc(fs_url):
-    """v1.6 Fact Sheet과 같은 분기 폴더(…/2026/Q2/EN/)의 PDF 중 발언 문서 1개 — 없으면 None"""
+def adidas_notes_docs(fs_url):
+    """v1.6 Fact Sheet과 같은 분기 폴더(…/2026/Q2/EN/)의 PDF 중 발언 문서 후보 — 고르는 순서대로(없으면 [])"""
     m = re.search(r"/upload/(?:v\d+/)?(.+/)[^/]+$", fs_url or "")
     if not m:
-        return None
+        return []
     folder = m.group(1)
     same = [u for u in links(_ADI["html"], "https://www.adidas-group.com")
             if folder in u and u.lower().endswith(".pdf") and u != fs_url]
     log("  같은 분기 자료: " + (", ".join(u.rsplit("/", 1)[-1][:50] for u in same) or "없음"))
-    best = None
+    ranked = []
     for u in same:
         name = u.rsplit("/", 1)[-1]
         if re.search(r"fact.?sheet|presentation|slides", name, re.I):
             continue
         rk = next((r for pat, r in ADI_NOTE_RANK if re.search(pat, name, re.I)), None)
-        if rk is not None and (best is None or rk < best[0]):
-            best = (rk, u)
-    return best[1] if best else None
+        if rk is not None:
+            ranked.append((rk, u))
+    return [u for _, u in sorted(ranked, key=lambda t: t[0])]
 
 
 def adidas_notes(res, y, q):
-    """v1.6 아디다스 본사 발언 — 발언 문서 주소가 그대로면(notes_url) 다시 안 뽑음"""
-    doc = adidas_notes_doc(res.get("url"))
-    if not doc:
-        if res.get("notes_url"):    # 전에는 찾던 문서를 못 찾음 = 사이트 구조가 바뀜
-            soft_fail(f"ADS.DE 본사 발언 문서를 못 찾음(전에는 {res['notes_url'].rsplit('/', 1)[-1][:60]}) — 이전 발언 유지")
-        else:
-            log("  본사 발언 문서 없음(보도자료·분기 보고서 PDF가 같은 분기 폴더에 없음) — 발언 없이")
+    """v1.6 아디다스 본사 발언 — 고르는 순서대로 시도(받기·읽기가 안 되는 문서는 다음 후보로). 발언 문서 주소가
+    그대로면(notes_url) 다시 안 뽑음. 어떤 경우에도 예외를 올리지 않음 — 지역 표(새 분기)는 그대로 저장되게"""
+    docs = adidas_notes_docs(res.get("url"))
+    if not docs:
+        log("  본사 발언 문서 없음(보도자료·분기 보고서 PDF가 같은 분기 폴더에 없음) — 발언 없이")
         return
-    log(f"  본사 발언 문서: {doc}")
-    if res.get("notes_url") == doc:
-        log("  발언 캐시 사용"); return
     if not ANTHROPIC_KEY:
         log("  [WARN] ANTHROPIC_API_KEY 미설정 → 발언 추출 생략"); return
     from pypdf import PdfReader
-    raw = fetch(doc, as_bytes=True, timeout=120)
-    text = kw_windows(" ".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(raw)).pages))
-    attach_notes(res, doc, text, "adidas", f"Q{q} {y}", "results document (press release or quarterly statement)",
-                 doc_date=_cld_date(doc))
+    miss = []
+    for doc in docs:
+        if res.get("notes_url") == doc:
+            log(f"  본사 발언 문서: {doc.rsplit('/', 1)[-1][:60]} — 발언 캐시 사용"); return
+        try:
+            raw = fetch(doc, as_bytes=True, timeout=120)
+            text = kw_windows(" ".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(raw)).pages))
+        except SystemExit:
+            raise
+        except Exception as e:
+            miss.append(f"{doc.rsplit('/', 1)[-1][:40]}({_kind(e) if isinstance(e, requests.exceptions.RequestException) else 'PDF 읽기 안 됨'})")
+            continue
+        if len(text) < 500:
+            miss.append(f"{doc.rsplit('/', 1)[-1][:40]}(글 없음)")
+            continue
+        log(f"  본사 발언 문서: {doc}" + (f" (앞 순서 못 받음: {', '.join(miss)})" if miss else ""))
+        attach_notes(res, doc, text, "adidas", f"Q{q} {y}", "results document (press release or quarterly statement)",
+                     doc_date=_cld_date(doc))
+        return
+    soft_fail(f"ADS.DE 본사 발언 문서를 못 받음: {', '.join(miss)[:160]} — 이전 발언 유지, 다음 실행에서 다시")
 
 
 def parse_quarter_series(tokens):
@@ -481,23 +503,31 @@ NOTE_KW = re.compile(r"inventor|promot|markdown|discount|pric(?:e|ing)|wholesale
 
 
 def kw_windows(text, limit=60000, half=1500):
-    """v1.6 발언 찾기용 — 문서가 길면 재고·할인·유통 낱말 앞뒤 1,500자 묶음만(겹치면 이어 붙임), 짧으면 통째로"""
+    """v1.6 발언 찾기용 — 문서가 길면 재고·할인·유통 낱말 앞뒤 1,500자 묶음만(겹치면 이어 붙임), 짧으면 통째로.
+    묶음이 많아 넘치면 낱말이 촘촘한 묶음부터(차례·목차의 한두 낱말보다 본문 서술 우선), 넘치는 묶음은 남은 만큼만 잘라 넣고
+    문서 순서로 다시 이음"""
     text = re.sub(r"\s+", " ", text or "")
     if len(text) <= limit:
         return text
-    spans = []
+    spans = []      # [시작, 끝, 낱말 수]
     for m in NOTE_KW.finditer(text):
         s, e = max(0, m.start() - half), min(len(text), m.end() + half)
         if spans and s <= spans[-1][1]:
             spans[-1][1] = e
+            spans[-1][2] += 1
         else:
-            spans.append([s, e])
-    out, n = [], 0
-    for s, e in spans:
-        if n + (e - s) > limit:
+            spans.append([s, e, 1])
+    if not spans:
+        return text[:limit]
+    take, n = [], 0
+    for s, e, k in sorted(spans, key=lambda t: (-t[2] / (t[1] - t[0]), t[0])):
+        room = limit - n
+        if room < 2 * half:
             break
-        out.append(text[s:e]); n += e - s
-    return " … ".join(out) if out else text[:limit]
+        if e - s > room:
+            e = s + room       # 넘치는 묶음은 앞에서부터 남은 만큼만
+        take.append((s, e)); n += e - s
+    return " … ".join(text[s:e] for s, e in sorted(take))
 
 
 def claude_mgmt_notes(text, label, period, kind):
@@ -822,7 +852,9 @@ def run_asics(cached):
     log(f"[7936.T] 최신 결산단신 {period}: {url}")
     if cache_ok(cached, url):
         log("  캐시 사용")
-        if not cached.get("notes_url"):     # v1.6 발언을 아직 못 뽑았으면(설명자료가 늦게 올라온 경우 포함) 설명자료에서
+        # v1.6 발언을 아직 못 뽑았거나 스크립트 없는 설명자료에서 뽑았으면 — 스크립트 포함본은 며칠 늦게 올라오기도 함
+        # (2026 Q2: 결산 8월 중순 → 스크립트본 PDF 8/21). 설명자료 주소가 그대로면 asics_notes가 다시 안 뽑음
+        if not re.search(r"script", cached.get("notes_url") or "", re.I):
             asics_notes(cached, key, period)
         return cached
     if not ANTHROPIC_KEY:
@@ -854,6 +886,8 @@ def run_asics(cached):
         raise
     except Exception as e:
         log(f"  환율 제외 추출 실패(지역 금액은 유지): {str(e)[:120]}")
+        if su and su not in _ASX:
+            _ASX[su] = None     # v1.6 이번 실행에서 못 받은 설명자료 — asics_notes가 같은 PDF를 다시 받지 않게
     for r in ex.get("regions", []):
         log(f"  {r.get('name')}: {r.get('revenue')} / 전년 {r.get('prev_revenue')} (엔화 {r.get('yoy_pct') and round(r['yoy_pct'],1)}%) · 환율 제외 {r.get('cn_yoy_pct')}%")
     ok = any(r.get("revenue") is not None for r in ex.get("regions", []))
@@ -879,7 +913,8 @@ def _pdf_date(raw):
 
 
 def asics_notes(res, key, period, su=None):
-    """v1.6 아식스 본사 발언 — 실적 설명자료(스크립트 포함본 우선)에서. 설명자료가 아직 없으면 다음 실행에서 다시"""
+    """v1.6 아식스 본사 발언 — 실적 설명자료(스크립트 포함본 우선)에서. 설명자료가 아직 없으면 다음 실행에서 다시,
+    이미 뽑은 설명자료(notes_url)와 같으면 다시 안 뽑음. 예외를 올리지 않음(지역 표는 그대로 저장되게)"""
     if not ANTHROPIC_KEY:
         return
     try:
@@ -887,6 +922,10 @@ def asics_notes(res, key, period, su=None):
             su = asics_summary_pdf(key)
         if not su:
             log("  실적 설명자료 미발견 — 본사 발언은 다음 실행에서 다시"); return
+        if su == res.get("notes_url"):
+            log("  본사 발언: 같은 설명자료 — 발언 캐시 사용"); return
+        if su in _ASX and _ASX[su] is None:
+            raise RuntimeError("이번 실행에서 이미 못 받음")
         if su not in _ASX:
             from pypdf import PdfReader
             raw2 = fetch(su, as_bytes=True, timeout=180)
@@ -904,6 +943,19 @@ def asics_notes(res, key, period, su=None):
 
 
 RUNS = (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics))
+NOTES_TK = ("ADS.DE", "7936.T")    # v1.6 발언을 지역 표와 다른 문서에서 뽑는 종목(notes_url)
+# v1.6 늘 금액이 나오는 줄(이름 앞부분) — 하나라도 금액이 없으면 '표 일부만 읽힘'. 푸마 채널·북미 등은 금액 없이 %만 나오기도 해 뺌
+WANT_ROWS = {"ADS.DE": (r"europe", r"north america", r"greater china", r"emerging", r"latin", r"japan", r"wholesale", r"direct|dtc"),
+             "PUM.DE": (r"emea", r"americas", r"asia"),
+             "7936.T": (r"japan", r"north america", r"europe", r"greater china", r"oceania", r"southeast", r"other")}
+
+
+def missing_rows(tk, ex):
+    """v1.6 표 일부만 읽힘 — WANT_ROWS 중 금액(revenue)이 있는 줄이 없는 것"""
+    rows = [r for r in (ex.get("regions") or []) + (ex.get("channels") or [])
+            if isinstance(r, dict) and r.get("revenue") is not None]
+    names = [str(r.get("name") or "").lower() for r in rows]
+    return [w.split("|")[0] for w in WANT_ROWS.get(tk, ()) if not any(re.match(w, n) for n in names)]
 
 
 def period_end(p):
@@ -938,6 +990,7 @@ def main():
             for n in classify_notes(ex.get("mgmt_notes") or [], tk):
                 log(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
+    failed = []     # v1.6 수집 상태 화면 '일부 실패'(build_dashboard — extract_segments와 같은 failed·kept_failed·kept_reason)
     for tk, fn in RUNS:
         prev = items.get(tk)
         try:
@@ -948,26 +1001,54 @@ def main():
         except Exception as e:
             res, err = None, f"수집 안 됨: {str(e)[:160]}"
         if not err:
+            res.pop("kept_failed", None); res.pop("kept_reason", None)
+            if tk in NOTES_TK:      # 전 분기까지 발언이 있었는지(새 분기 발언 문서가 안 나오면 NOTES_LAG_DAYS 뒤 실패 표시)
+                if res.get("notes_url"):
+                    res.pop("notes_seen", None)
+                elif prev and (prev.get("notes_url") or prev.get("notes_seen")):
+                    res["notes_seen"] = True
             items[tk] = res
             continue
         # v1.6 실패 — 이전에 잘 받아 둔 값이 있으면 지킴(전에는 표 해석 실패 결과로 덮어써 화면에서 지역·발언이 사라짐)
         keep = bool(prev and prev.get("extract"))
         log(f"[{tk}] {err}" + (" — 이전 값 유지" if keep else ""))
         soft_fail(f"{tk} {err}" + (f" — 이전 값({prev['extract'].get('period')}) 유지" if keep else ""))
-        if not keep and res:
-            items[tk] = res     # 이전 값이 없으면 오류 기록이라도(수집 상태)
-    for tk, _ in RUNS:      # v1.6 새 분기 자료가 오래 안 들어오면(사이트 구조 바뀜 등) 실패 표시
-        ex = (items.get(tk) or {}).get("extract") or {}
-        end = period_end(ex.get("period"))
-        age = (datetime.datetime.now(KST).date() - end).days if end else None
+        failed.append(tk)
+        if keep:
+            prev["kept_failed"], prev["kept_reason"] = True, err[:120]
+        elif res:
+            items[tk] = res     # 이전 값이 없으면 오류 기록이라도(수집 상태 '값 없음')
+    today = datetime.datetime.now(KST).date()
+    for tk, _ in RUNS:
+        it = items.get(tk) or {}
+        ex = it.get("extract") or {}
+        if not ex:
+            continue
+        end = period_end(ex.get("period"))      # 새 분기 자료가 오래 안 들어오면(사이트 구조 바뀜 등) 실패 표시
+        age = (today - end).days if end else None
         if age is not None and age > STALE_DAYS:
             soft_fail(f"{tk} 가장 최근 자료가 {ex.get('period')}(끝난 지 {age}일) — 새 분기 자료를 못 찾음, IR 사이트 확인")
+            if tk not in failed:
+                failed.append(tk)
+                it["kept_failed"], it["kept_reason"] = True, f"새 분기 자료 못 찾음(끝난 지 {age}일)"
+        miss = missing_rows(tk, ex)              # 표 일부만 읽힘 — 저장은 하고 알림(표 형식이 바뀌었을 수 있음)
+        if miss:
+            soft_fail(f"{tk} {ex.get('period')} 표 일부만 읽힘(금액 없음: {', '.join(miss)}) — 나머지는 저장, 표 형식 확인")
+        if it.get("notes_seen") and not it.get("notes_url"):    # 전 분기까지 있던 발언 문서가 새 분기에 안 나옴
+            try:
+                nd = (today - datetime.date.fromisoformat(str(it.get("fetched_at"))[:10])).days
+            except ValueError:
+                nd = None
+            if nd is not None and nd > NOTES_LAG_DAYS:
+                soft_fail(f"{tk} {ex.get('period')} 본사 발언 문서를 {nd}일째 못 찾음(전 분기까지는 있었음) — IR 사이트 확인")
     for tk, v in items.items():     # v1.4 캐시에도 같은 정리(새 추출은 이미 정리됨)
         ex = (v or {}).get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):
             ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], tk), tk)   # v1.5 신호 없는 발언만 분류
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "items": items,
            "claude_usage": usage_months(old)}    # v1.4 월별 Claude 사용량(수집 상태 화면)
+    if failed:
+        out["failed"] = failed
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)

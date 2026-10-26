@@ -3,7 +3,8 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.22: (대표 지시 2026-10-26 '추천 순서대로' 3번) 판정 근거가 오래됐을 때 목록에도 표시 — 연간 결산 재고가 9개월 넘은 브랜드
   (몽클레르·클락스 등 반기·연간 보고 본사)는 브랜드 목록 행·오늘 ① 매입 검토 행에 '결산 '25.12 · 오래된 자료' 꼬리표(전에는 브랜드 상세에만),
-  상세의 '실적 발표일 미확인' 줄에 '재고 점수는 다음 연간 결산 발표 때 바뀜'. 표시만 — 판정 규칙·점수 그대로라 CHK_RULE 그대로
+  상세 '다음 일정'의 실적 줄에 '재고 점수는 (다음) 연간 결산 발표 때 바뀜'(반기·분기 발표일이어도 '발표 후 재고 점수 다시 계산'이라 하지 않음).
+  표시만 — 판정 규칙·점수 그대로라 CHK_RULE 그대로
 v33.21: (대표 지시 2026-10-23 '1,2 진행') 기업 상세 출처 줄 — 분기 매출·재고를 SEC 공시로 채운 종목(fetch_data v4.19 q_src='SEC'·q_src_inv,
   야후에 아직 없는 분기)은 'SEC 공시로 채움: 분기 '26.08 매출(10-Q) · 재고 '26.08(10-Q)' 한 줄(4분기 계산값은 '10-K 연간−9개월').
   매출만 SEC로 채우고 재고는 옛 분기면 재고 근거에 '새 실적 반영 대기'(invLagOf). 판정 규칙·입력 측정 방식(같은 분기 1년 전 비교)은 그대로라 CHK_RULE 그대로
@@ -4125,7 +4126,7 @@ function chkDetail(r){
   ];
   const nx=[];
   if(r.x&&r.x.earn_date){ const dd=new Date(r.x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
-    if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · 발표 후 재고 점수 다시 계산`, kind:'실적', go:'co:'+r.x.ticker}); }
+    if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · `+(oldInv?'재고 점수는 연간 결산 발표 때 바뀜':'발표 후 재고 점수 다시 계산'), kind:'실적', go:'co:'+r.x.ticker}); }
   if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후에 다음 발표일 없음 — 본사 공시로 확인'+(oldInv?' · 재고 점수는 다음 연간 결산 발표 때 바뀜':''), kind:'실적', go:'co:'+r.x.ticker});
   const se=chkSaleEv(r.cur), curNm=((DATA.fx||{})[r.cur]||{}).name||r.cur||'';
   if(se){ const e=se.e, yy=e.s.getFullYear()!==today.getFullYear();

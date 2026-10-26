@@ -18,7 +18,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25   # v2026-10 (ir_fetch v1.6): 일시 오류 다시 받기(실행 9분까지)가 들어가 15 → 25분
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
