@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.13: (2026-10-26 ir_fetch v1.6과 함께) '이번 주 새 본사 발언'은 문장마다 처음 뽑힌 시각(at)이 7일 안인 것만 — 같은 분기를 더 나은
+      문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 하나 늘어도 지난주에 보낸 문장은 다시 보내지 않게(at 없는 옛 기록은 그대로)
 v1.12: (2026-10-23 fetch_data v4.19와 함께) '새 실적' 분기는 지난주 분기보다 45일 넘게 늦을 때만 — SEC로 채운 분기의 실제 마감일과
       야후의 월말 날짜가 며칠 달라 같은 분기를 두 번 알리지 않게
 v1.11: (2026-10-19 감시 브랜드 8개 추가와 함께) '■ 환율'에 스위스 프랑 — 온러닝 판정의 환율 점수(fetch_data v4.15 1년 평균 대비)를
@@ -347,6 +349,10 @@ def new_mgmt_notes(data, segs, segs_ir, now):
             else:
                 fresh = ddate >= today - datetime.timedelta(days=DAYS)
             if fresh:
+                # v1.13 문장별 처음 뽑힌 시각(at, ir_fetch v1.6) — 7일 넘은 문장은 빼고, 남는 문장이 없으면 이 회사는 뺌
+                notes = [n for n in notes if not n.get("at") or (_kst(n["at"]) or now) > now - datetime.timedelta(days=DAYS)]
+                if not notes:
+                    continue
                 per = re.split(r";|\(|\bended\b", str(ex.get("period") or ""), flags=re.I)[0].strip()
                 found[t] = (names.get(t) or t, dd, per, notes, t)
     return sorted(found.values(), key=lambda r: r[1], reverse=True)

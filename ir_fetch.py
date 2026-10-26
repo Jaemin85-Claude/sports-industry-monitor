@@ -13,7 +13,9 @@ v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 �
       발언 문서를 못 받거나 못 읽으면 다음 후보 문서로(같은 서버 연결 오류면 다음 실행에 · 지역 표는 그대로 저장).
       시간: 다시 받기는 실행 9분까지, 발언·신호 분류는 12분까지, 새 요청은 18분까지(ir.yml 25분). 시험 모드(IR_ONLY)는 실패 표시 기록 안 함.
       같은 분기를 더 나은 문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 없으면 추출 시각·문서 날짜 그대로(주간 메일 중복 방지).
-      같은 자료를 다시 추출할 때는 이미 뽑은 발언·신호·추출 시각을 그대로 옮김(carry_notes·merge_notes — 다시 분류·메일 중복 없음).
+      같은 자료를 다시 추출할 때는 이미 뽑은 발언·신호·추출 시각을 그대로 옮김(carry_notes·merge_notes — 다시 분류 없음 · 푸마는
+      Claude가 이번에 놓친 발언도 지키고 새 문장만 더함). 발언마다 처음 뽑힌 시각 at(weekly_digest v1.13 — 새 문장만 메일에).
+      이미 이 분기 발언이 있는데 더 나은 문서(스크립트본 등)로 바꾸기만 못 하면 조용히 다음 주에.
       푸마 최신 보도자료에 지역 금액이 없으면(예비 실적·전망) 이전 값을 지키고 한 번 알린 뒤 같은 자료는 건너뜀(skipped_url).
       긴 문서는 재고·할인 낱말 묶음을 먼저, 가격·도매 낱말 묶음은 남은 자리에 6만 자 안(kw_windows) ·
       Claude 응답은 앞뒤 설명이 붙어도 JSON 부분만 읽음(json_obj)
@@ -380,6 +382,9 @@ def adidas_notes(res, y, q):
         attach_notes(res, doc, text, "adidas", f"Q{q} {y}", "results document (press release or quarterly statement)",
                      doc_date=_cld_date(doc))
         return
+    if res.get("notes_url") and (res.get("extract") or {}).get("mgmt_notes") is not None:
+        # 이 분기 발언은 이미 있음 — 더 나은 문서로 바꾸기만 못 함: 조용히 다음 주에 다시
+        log(f"  본사 발언: 다른 문서는 다음 실행에 다시({', '.join(miss)[:120]}) — 이미 뽑아 둔 발언 그대로"); return
     res["notes_err"] = "문서 받기 안 됨"
     soft_fail(f"ADS.DE 본사 발언 문서를 못 받음: {', '.join(miss)[:160]} — "
               + ("이전 발언 유지" if (res.get("extract") or {}).get("mgmt_notes") else "이번 분기 발언은 아직 없음")
@@ -579,13 +584,14 @@ SPAN_MAX = 6000     # 이어 붙인 묶음 하나의 최대 길이 — 낱말이
 def kw_windows(text, limit=60000, half=1500):
     """v1.6 발언 찾기용 — 문서가 길면 낱말 앞뒤 1,500자 묶음만(겹치면 이어 붙이되 6천 자까지), 짧으면 통째로.
     ① 재고·할인 낱말(NOTE_STRONG) 묶음을 먼저(그 낱말끼리만 이어 붙여 — 가격·도매 글에 자리를 뺏기지 않게) ② 남은 자리에
-    가격·도매·유통 낱말 묶음. 같은 단계 안에서는 촘촘한 순, 넘치는 묶음은 가운데(낱말 쪽)를 남기고 잘라 문서 순서로 이음(이음표까지 limit 안)"""
+    가격·도매·유통 낱말 묶음. 같은 단계 안에서는 촘촘한 순, 넘치는 묶음은 첫 낱말을 가운데에 두고 잘라 문서 순서로 이음(이음표까지 limit 안).
+    낱말이 하나도 없으면 앞 6만 자"""
     text = re.sub(r"\s+", " ", text or "")
     if len(text) <= limit:
         return text
     SEP = " … "
 
-    def spans_of(pat):      # [시작, 끝, 낱말 수]
+    def spans_of(pat):      # [시작, 끝, 낱말 수, 첫 낱말 위치]
         out = []
         for m in pat.finditer(text):
             s, e = max(0, m.start() - half), min(len(text), m.end() + half)
@@ -593,7 +599,7 @@ def kw_windows(text, limit=60000, half=1500):
                 out[-1][1] = e
                 out[-1][2] += 1
             else:
-                out.append([s, e, 1])
+                out.append([s, e, 1, m.start()])
         return out
 
     def union(iv):      # 겹치거나 맞닿은 묶음은 하나로(같은 글이 두 번 나오지 않게)
@@ -610,22 +616,24 @@ def kw_windows(text, limit=60000, half=1500):
 
     take = []
     for group in (spans_of(NOTE_STRONG), spans_of(NOTE_KW)):
-        for s, e, k in sorted(group, key=lambda t: (-t[2] / max(1, t[1] - t[0]), t[0])):
+        for s, e, k, p in sorted(group, key=lambda t: (-t[2] / max(1, t[1] - t[0]), t[0])):
             if limit - size(union(take)) < half:
                 break
-            if size(union(take + [(s, e)])) > limit:      # 넘치면 가운데를 남기고 남은 만큼만
-                c, lo, hi = (s + e) // 2, 0, e - s
+            if size(union(take + [(s, e)])) > limit:      # 넘치면 첫 낱말을 가운데에 두고 남은 만큼만
+                lo, hi = 0, e - s
+                win = lambda L: (max(s, min(p - L // 2, e - L)), max(s, min(p - L // 2, e - L)) + L)
                 while hi - lo > 1:
                     mid = (lo + hi) // 2
-                    a = max(s, c - mid // 2)
-                    if size(union(take + [(a, a + mid)])) <= limit:
+                    if size(union(take + [win(mid)])) <= limit:
                         lo = mid
                     else:
                         hi = mid
                 if lo < half:
                     continue
-                s = max(s, c - lo // 2); e = s + lo
+                s, e = win(lo)
             take.append((s, e))
+    if not take:        # 재고·할인·가격·도매 낱말이 하나도 없음(글자 사이가 띄워진 PDF 등) — 앞부분이라도
+        return text[:limit]
     return SEP.join(text[s:e] for s, e in union(take))
 
 
@@ -647,16 +655,24 @@ DOCUMENT:
     return verify_quotes(obj.get("mgmt_notes") if isinstance(obj, dict) else None, text)
 
 
-def merge_notes(notes, old_notes):
-    """v1.6 다시 뽑은 발언에 이전 발언의 신호(sig)를 문장이 같으면 그대로 옮김(같은 문장을 Claude로 다시 분류하지 않게 —
-    분류가 흔들려 '어제와 달라진 판정'이 생기지 않음). → (발언 목록, 새 문장 없음 여부)"""
+def _now_kst():
+    return datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")
+
+
+def merge_notes(notes, old_notes, old_at=None):
+    """v1.6 다시 뽑은 발언에 이전 발언의 신호(sig)·처음 뽑힌 시각(at)을 문장이 같으면 그대로 옮김(같은 문장을 Claude로 다시
+    분류하지 않게 — 분류가 흔들려 '어제와 달라진 판정'이 생기지 않음 · 주간 메일은 문장별 at으로 새 문장만). 새 문장은 at = 지금.
+    old_at = 이전 기록의 extracted_at(at 없는 옛 발언용). → (발언 목록, 새 문장 없음 여부)"""
     old = {_norm_q(n.get("quote")): n for n in old_notes or [] if isinstance(n, dict)}
     out = []
     for n in notes or []:
         if not isinstance(n, dict):
             continue
-        o = old.get(_norm_q(n.get("quote")))
-        out.append(dict(n, sig=o["sig"]) if o and o.get("sig") in SIGS and n.get("sig") not in SIGS else n)
+        n, o = dict(n), old.get(_norm_q(n.get("quote")))
+        if o and o.get("sig") in SIGS and n.get("sig") not in SIGS:
+            n["sig"] = o["sig"]
+        n["at"] = (o.get("at") or old_at) if o and (o.get("at") or old_at) else (n.get("at") or _now_kst())
+        out.append(n)
     new = {_norm_q(n.get("quote")) for n in out}
     return out, bool(old and new and new <= set(old))
 
@@ -690,7 +706,7 @@ def attach_notes(res, doc_url, text, label, period, kind, doc_date=None):
         res["notes_err"] = "발언 추출 안 됨"
         soft_fail(f"{label} 본사 발언 추출 안 됨({str(e)[:80]}) — 다음 실행에서 다시")
         return
-    notes, same = merge_notes(notes, ex.get("mgmt_notes"))
+    notes, same = merge_notes(notes, ex.get("mgmt_notes"), ex.get("extracted_at"))
     ex["mgmt_notes"] = notes
     # 주간 메일 '이번 주 새 본사 발언' — 같은 분기를 더 나은 문서(스크립트본·보도자료)로 다시 뽑아 새 문장이 없으면
     # 추출 시각·문서 날짜를 그대로 둠(같은 발언이 다음 주 메일에 또 '새 발언'으로 나오지 않게)
@@ -804,11 +820,19 @@ def run_puma(cached):
         return cached
     text = strip_html(fetch(url))
     ex = claude_extract_puma(text, period, prev)
-    if cached and cached.get("url") == url:     # v1.6 같은 자료 다시 추출(표 일부만 읽힘) — 같은 발언이면 신호·추출 시각 그대로
-        notes, same = merge_notes(ex.get("mgmt_notes"), (cached.get("extract") or {}).get("mgmt_notes"))
-        ex["mgmt_notes"] = notes
-        if same and (cached.get("extract") or {}).get("extracted_at"):
-            ex["extracted_at"] = cached["extract"]["extracted_at"]
+    ox = (cached.get("extract") or {}) if cached and cached.get("url") == url else {}
+    notes, same = merge_notes(ex.get("mgmt_notes"), ox.get("mgmt_notes"), ox.get("extracted_at"))
+    if ox.get("mgmt_notes"):
+        # v1.6 같은 자료 다시 추출(표 일부만 읽힘) — 이미 뽑아 둔 발언은 지키고(Claude가 이번엔 놓쳐도) 새 문장만 더함(최대 3개)
+        olds = [dict(n, at=n.get("at") or ox.get("extracted_at") or _now_kst()) for n in ox["mgmt_notes"] if isinstance(n, dict)]
+        keep = {_norm_q(n.get("quote")) for n in olds}
+        add = [n for n in notes if _norm_q(n.get("quote")) not in keep]
+        notes = tidy_notes(olds + add, "PUM.DE")[:3]
+        kept_q = {_norm_q(n.get("quote")) for n in notes}
+        same = not any(_norm_q(n.get("quote")) in kept_q for n in add)
+        if same and ox.get("extracted_at"):
+            ex["extracted_at"] = ox["extracted_at"]
+    ex["mgmt_notes"] = notes
     ex.setdefault("schema_v", 2); ex.setdefault("sub_segments", [])
     for r in ex.get("regions", []) + ex.get("channels", []):
         if r.get("revenue") and r.get("prev_revenue"):
@@ -821,7 +845,9 @@ def run_puma(cached):
     ok = any(r.get("revenue") is not None for r in ex.get("regions", []))
     return {"accession": url.rsplit("/", 1)[-1], "source": "IR 보도자료 (HTML)", "url": url,
             "error": None if ok else "지역 금액 미추출", "extract": ex if ok else None,
-            "skip_url": None if ok else url,      # v1.6 예비 실적·전망 보도자료일 수 있음 — 이전 값을 지키고 같은 자료는 다음부터 건너뜀
+            # v1.6 예비 실적·전망 보도자료일 수 있음 — 이전 값을 지키고 같은 자료는 다음부터 건너뜀(화면에 쓰는 그 자료를 다시
+            # 추출하다 못 읽은 경우는 아님 — 그때는 보통 실패 처리로 이전 값 유지·다음 주 다시)
+            "skip_url": None if ok or (cached and cached.get("url") == url) else url,
             "doc_date": f"{d[0]:04d}-{d[1]:02d}-{d[2]:02d}" if d and d[0] else None,   # v1.4 보도자료 날짜(URL)
             "fetched_at": datetime.datetime.now(KST).strftime("%Y-%m-%d"), "ir_ver": IR_VER}
 
@@ -1083,6 +1109,10 @@ def asics_notes(res, key, period, su=None):
     except SystemExit:
         raise
     except Exception as e:
+        kind = _kind(e) if isinstance(e, requests.exceptions.RequestException) else type(e).__name__
+        if res.get("notes_url") and (res.get("extract") or {}).get("mgmt_notes") is not None:
+            # 이 분기 발언은 이미 있음(스크립트 없는 설명자료에서) — 스크립트본으로 바꾸기만 못 함: 조용히 다음 주에 다시
+            log(f"  본사 발언: 스크립트본 설명자료는 다음 실행에 다시({kind}) — 이미 뽑아 둔 발언 그대로"); return
         log(f"  [WARN] 아식스 실적 설명자료를 못 받음 — 본사 발언은 다음 실행에서 다시: {str(e)[:120]}")
         res["notes_err"] = "설명자료 받기 안 됨"
         soft_fail(f"7936.T 실적 설명자료를 못 받음({str(e)[:80]}) — 본사 발언 다음 실행에서 다시")
@@ -1198,6 +1228,8 @@ def main():
         failed.append(tk)
         if keep:
             prev["kept_failed"], prev["kept_reason"] = True, err[:120]
+            if prev.get("partial"):     # 표 일부만 읽힌 자료를 다시 추출하다 실패 — 다시 추출 횟수에 넣음(매주 되풀이하지 않게)
+                prev["partial_tries"] = int(prev.get("partial_tries") or 0) + 1
         elif res:
             items[tk] = res     # 이전 값이 없으면 오류 기록이라도(수집 상태 '값 없음')
     today = datetime.datetime.now(KST).date()
@@ -1218,6 +1250,9 @@ def main():
         # 그 뒤로는 조용히 — 수집 상태 화면 warn에는 계속 남음 · logistics odd_seen과 같은 방식)
         miss = missing_rows(tk, ex)
         p0 = prev_items.get(tk) or {}
+        CN = "환율 제외 성장률 없음"
+        if ex.get("cn_skipped") and p0.get("url") == it.get("url") and CN in (p0.get("partial") or []) and CN not in miss:
+            miss.append(CN)     # 시간이 모자라 환율 제외를 이번에도 못 읽음 — 지난번 '표 일부만 읽힘' 그대로(다시 알리지 않음)
         if miss:
             same = p0.get("url") == it.get("url") and p0.get("partial") == miss
             if tk in fresh:
