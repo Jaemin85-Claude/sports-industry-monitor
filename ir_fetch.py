@@ -76,7 +76,8 @@ OPT_DEADLINE = 12 * 60   # v1.6 실행 12분이 지나면 덜 급한 요청(본�
 HARD_DEADLINE = 18 * 60  # v1.6 실행 18분이 지나면 새 요청을 시작하지 않음(요청 1건 최대 3분 → 21분 안에 저장, 작업 25분)
 NOTES_LAG_DAYS = 21      # v1.6 새 분기 자료를 받은 뒤 이만큼 지나도 발언을 못 뽑으면(전 분기까지는 있었는데) 실패 표시
 _T0 = time.time()
-_NOW = {"tk": None, "test": False}   # v1.6 지금 처리 중인 종목(실패 표시를 그 종목 warn에 남김) · 시험 모드(IR_ONLY)
+_NOW = {"tk": None, "test": False, "retry": False}   # v1.6 지금 처리 중인 종목(실패 표시를 그 종목 warn에 남김) · 시험 모드(IR_ONLY) ·
+                                                     # 이번에 '표 일부만 읽힘' 자료를 실제로 다시 추출하기 시작했는지
 _WARN = {}                           # v1.6 {종목: [실패 표시 글]} — 저장할 때 종목의 warn(수집 상태 화면 '확인 필요')
 
 
@@ -261,6 +262,7 @@ def cache_ok(cached, url):
         log("  지난번 시간이 모자라 환율 제외 성장률을 건너뜀 — 같은 자료를 다시 추출")
         return False
     if ok and cached.get("partial") and int(cached.get("partial_tries") or 0) < PARTIAL_TRIES:
+        _NOW["retry"] = True
         log(f"  지난번 표 일부만 읽힘({' · '.join(cached['partial'])}) — 같은 자료를 다시 추출"
             f"({int(cached.get('partial_tries') or 0) + 1}/{PARTIAL_TRIES})")
         return False
@@ -375,7 +377,7 @@ def adidas_notes(res, y, q):
                     log(f"  본사 발언: 앞 순서 문서 일시 오류({miss[-1]}) — 이미 뽑아 둔 발언 그대로"); return
                 break       # 같은 서버(cloudinary)가 연결·시간 초과면 다른 후보도 같음 — 다음 실행에
             continue
-        if len(text) < 500:
+        if len(text) < 500 or not NOTE_KW.search(text):    # 글이 없거나 글자가 깨진 PDF(낱말이 하나도 안 읽힘) — 다음 후보로
             miss.append(f"{doc.rsplit('/', 1)[-1][:40]}(글 없음)")
             continue
         log(f"  본사 발언 문서: {doc}" + (f" (앞 순서 못 받음: {', '.join(miss)})" if miss else ""))
@@ -1192,7 +1194,7 @@ def main():
     fresh = set()   # 이번 실행에서 새로 추출한 종목(캐시가 아닌)
     for tk, fn in RUNS:
         prev = items.get(tk)
-        _NOW["tk"] = tk
+        _NOW["tk"], _NOW["retry"] = tk, False
         try:
             res = fn(prev)
             err = None if (res and res.get("extract")) else ((res or {}).get("error") or "자료 링크를 못 찾음")
@@ -1228,7 +1230,8 @@ def main():
         failed.append(tk)
         if keep:
             prev["kept_failed"], prev["kept_reason"] = True, err[:120]
-            if prev.get("partial"):     # 표 일부만 읽힌 자료를 다시 추출하다 실패 — 다시 추출 횟수에 넣음(매주 되풀이하지 않게)
+            if prev.get("partial") and _NOW["retry"]:   # 표 일부만 읽힌 자료를 다시 추출하다 실패 — 다시 추출 횟수에 넣음(매주 되풀이하지 않게 ·
+                                                        # 목록 페이지 접속 실패 등 다시 추출을 시작도 못 한 경우는 빼고)
                 prev["partial_tries"] = int(prev.get("partial_tries") or 0) + 1
         elif res:
             items[tk] = res     # 이전 값이 없으면 오류 기록이라도(수집 상태 '값 없음')
