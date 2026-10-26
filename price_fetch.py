@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.9: (v1.8 검토 반영 10/26) ① 다시 받기에서는 한도 사이트의 아직 안 받은 값(미룬 값·새 값)을 먼저 — 계속 실패하는 값이 한도를 다 써서
-    미룬 값이 영영 안 받히지 않게 ② 한 주기(7일+1) 넘게 미뤄진 값은 이전 값 표시·21일 알림에, 이전 값도 없는 값은 '값 없음'으로 ③ 이번 주기에
-    잘 끝난 실행이 있으면 그 뒤 다시 받기는 조용히(미룬 값 때문에 다시 받기 날이 늘어도 매일 빨간 X 없음) ④ 실패한 값만 남으면 다음 날 다시 받지 않고 다음 주에
+v1.9: (v1.8 검토 반영 10/26) ① 다시 받기에서는 한도 사이트 값 가운데 이번 주기에 아직 다시 받아 보지 않은 값(미룬 값·새 값·전체 받기 날 못 받은 값 —
+    값마다 마지막으로 실제 요청한 날 host_try로 가름)을 먼저, 다시 받기에서 이미 못 받은 값은 남은 한도로만 — 계속 실패하는 값이 한도를 다 써서
+    다른 값이 영영 안 받히지 않게 ② 한 주기(7일+1) 넘게 미뤄진 값은 이전 값 표시·21일 알림에, 이전 값도 없는 값은 '값 없음'으로 ③ 이번 주기에
+    잘 끝난 실행이 있으면 그 뒤 다시 받기는 조용히(미룬 값 때문에 다시 받기 날이 늘어도 매일 빨간 X 없음) ④ 값마다 다시 받기는 한 번 —
+    다시 받기에서도 못 받은 값만 남으면 다음 날 다시 받지 않고 다음 주에(미룬 값 로그도 '다음 주에')
 v1.8: (대표 지시 2026-10-26 '살로몬 차단 문제 점검') 살로몬 해외(www.salomon.com)는 요청 간격(8초)과 상관없이 한 실행 10번째 요청에서 403 —
     10/22·10/23·10/26 전체 받기마다 같은 6건이 막히고 다음 날 다시 받기(6건)는 다 받힘 → 한 실행 요청 한도 HOST_CAP(살로몬 해외 8건)까지만 받고
     나머지는 다음 실행으로 미룸(Defer — 이전 값 그대로 · 실패·'이전 값' 표시 아님 · tried로 다음 날 그 값만) — 차단을 일으키지 않게
@@ -800,6 +802,8 @@ def main():
     keys = {f"{p['id']} {cc}" for p in PRODUCTS for cc in (p["cc"] if p["src"] == "nike" else p["urls"])}
     failed = {k: f for f in old.get("failed", []) if isinstance(f, dict) and (k := f"{f.get('id')} {f.get('cc')}") in keys
               and f.get("code", codes.get(f.get("id"))) == codes.get(f.get("id"))}   # 값 없음(이전 값도 없음) — 처음 실패한 날
+    # v1.9 한도 사이트(HOST_CAP) 값마다 마지막으로 실제 요청한 날 — 다시 받기에서 이번 주기에 아직 다시 받아 보지 않은 값을 먼저(미룬 날은 요청 안 한 것)
+    htry = {k: v for k, v in (old.get("host_try") or {}).items() if k in keys and isinstance(v, str)}
     ok_run, again = None, False
     if not mode:
         log(f"해외 정가: 주 1회 — 마지막 {att}, 다음 {datetime.date.fromisoformat(att) + datetime.timedelta(days=DAYS)} (건너뜀)")
@@ -807,7 +811,7 @@ def main():
     else:
         if mode == "retry":
             log(f"해외 정가: 다시 받기 — {att} 받기에서 못 받은 값만")
-        items, n_try, n_fail, n_cut, n_hold, n_name, n_defer, n_defer_new = [], 0, 0, 0, 0, 0, 0, 0
+        items, n_try, n_fail, n_cut, n_hold, n_name, n_defer, n_due_defer = [], 0, 0, 0, 0, 0, 0, 0
         bt = {}   # 브랜드별 [볼 값, 못 받은 값] — 한 브랜드를 통째로 못 받으면 다음 날 다시
         def _prev_o(pi, prod, cc):   # 이전 값(나라별 수입사 품번이 바뀌었으면 없음)
             pv = pi.get("m", {})
@@ -817,32 +821,38 @@ def main():
             u = None if prod["src"] == "nike" else prod["urls"].get(cc)
             h = urllib.parse.urlsplit(u).netloc if u else ""
             return h if h in HOST_CAP else ""
-        # v1.9 다시 받기에서는 한도 사이트의 '이번 주기에 아직 안 받은 값'(미룬 값·새 값)을 먼저 — 계속 실패하는 값이 한도를 다 써서
-        # 미룬 값이 영영 안 받히지 않게(검토 반영 10/26). 아직 안 받은 값 수를 미리 세어 두고, 실패한 값은 남은 한도가 그만큼 있을 때만
-        new_left = {}
+        def _done(o):   # 다시 받기 — 이번 주기에 이미 받은 값(그대로 둠)
+            return mode == "retry" and bool(o) and not o.get("stale_since") and (o.get("obs_date") or "") >= (att or "")
+        def _due(key):   # v1.9 이번 주기에 아직 다시 받아 보지 않음(마지막 요청이 전체 받기 날이나 그 전 — 미룬 값·새 값·전체 받기 날 못 받은 값)
+            return (htry.get(key) or "") <= (att or "")
+        # v1.9 다시 받기에서는 한도 사이트의 _due 값을 먼저 — 다시 받기에서도 못 받은 값이 한도를 다 써서 다른 값이 영영 안 받히지 않게
+        # (검토 반영 10/26). _due 값 수를 미리 세어 두고, 그 밖의 값은 남은 한도가 그만큼 있을 때만
+        due_left = {}
         if mode == "retry":
             for prod in PRODUCTS:
                 pi = prev.get(prod["id"]) or {}
                 for cc in (prod["cc"] if prod["src"] == "nike" else prod["urls"]):
-                    h = _capped(prod, cc); o = _prev_o(pi, prod, cc) if h else {}
-                    if h and (not o or (not o.get("stale_since") and (o.get("obs_date") or "") < (att or ""))):
-                        new_left[h] = new_left.get(h, 0) + 1
+                    h = _capped(prod, cc)
+                    if h and _due(f"{prod['id']} {cc}") and not _done(_prev_o(pi, prod, cc)):
+                        due_left[h] = due_left.get(h, 0) + 1
         for prod in PRODUCTS:
             pi = prev.get(prod["id"]) or {}; pv = pi.get("m", {})
             cc_list = prod["cc"] if prod["src"] == "nike" else list(prod["urls"])
             m, b = {}, bt.setdefault(prod["brand"], [0, 0])
             for cc in cc_list:
                 o = _prev_o(pi, prod, cc); key = f"{prod['id']} {cc}"   # 나라별 수입사 품번을 바꾸면 그 나라 이전 값은 다른 상품
-                if mode == "retry" and o and not o.get("stale_since") and (o.get("obs_date") or "") >= (att or ""):
+                if _done(o):
                     m[cc] = o; b[0] += 1   # 지난 받기에서 받은 값 — 그대로
                     continue
-                host = _capped(prod, cc); is_new = bool(host) and (not o or not o.get("stale_since"))
+                host = _capped(prod, cc); due = bool(host) and _due(key)
                 if host and mode == "retry":
-                    if is_new:
-                        new_left[host] = max(0, new_left.get(host, 0) - 1)
-                    elif _HCOUNT.get(host, 0) + new_left.get(host, 0) >= HOST_CAP[host]:   # 이미 실패한 값 — 아직 안 받은 값에 한도를 먼저
-                        n_defer += 1; m[cc] = o
-                        log(f"  {key}: 다음에 다시 — {host} 한도는 아직 안 받은 값 먼저")
+                    if due:
+                        due_left[host] = max(0, due_left.get(host, 0) - 1)
+                    elif _HCOUNT.get(host, 0) + due_left.get(host, 0) >= HOST_CAP[host]:   # 다시 받기에서도 못 받은 값 — 아직 다시 받아 보지 않은 값에 한도를 먼저
+                        n_defer += 1
+                        if o:
+                            m[cc] = o
+                        log(f"  {key}: 다음에 다시 — {host} 한도는 아직 다시 받아 보지 않은 값 먼저")
                         continue
                 if time.time() - t0 > TIME_LIMIT:   # 남은 것은 이전 값(다음 날 다시)
                     n_cut += 1
@@ -852,12 +862,19 @@ def main():
                         f = failed.get(key) or {"id": prod["id"], "cc": cc, "since": td}
                         f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="시간 초과로 못 받음"); failed[key] = f
                     continue
+                t_old = htry.get(key)
+                if host:
+                    htry[key] = td   # v1.9 실제로 요청한 날(한도로 미루면 되돌림)
                 try:
                     (full, extra), src_url = fetch_one(prod, cc)
                     if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
                         raise RuntimeError(f"원화 값이 이상함({full:g})")
                 except Defer as e:   # v1.8 사이트 요청 한도 — 이전 값 그대로 두고 다음 실행에서(실패·이전 값 표시 아님)
-                    n_defer += 1; n_defer_new += is_new
+                    n_defer += 1; n_due_defer += due
+                    if t_old:
+                        htry[key] = t_old
+                    else:
+                        htry.pop(key, None)
                     if o:
                         if not o.get("stale_since") and _days(o.get("obs_date") or o.get("seen") or td) > DAYS + 1:   # v1.9 한 주기 넘게 못 받음 → 이전 값 표시·21일 알림에 들어가게
                             o["stale_since"] = o.get("obs_date") or o.get("seen") or td; o["why"] = "사이트 요청 한도로 미룸"
@@ -865,7 +882,7 @@ def main():
                     else:   # v1.9 이전 값도 없음(새 상품·나라) → 값 없음으로 보이게(다음 날 받으면 지움)
                         f = failed.get(key) or {"id": prod["id"], "cc": cc, "since": td}
                         f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="사이트 요청 한도로 미룸 — 다음 실행에서"); failed[key] = f
-                    log(f"  {key}: 다음 실행에서 받음 — {e}")
+                    log(f"  {key}: {'다음 실행에서' if mode == 'full' or due else '다음 주에'} 받음 — {e}")
                     continue
                 except Skip as e:
                     if not o:   # 처음부터 이 나라에서 팔지 않음 — 실패 아님
@@ -926,12 +943,15 @@ def main():
         ok = n_try - n_fail
         whole = [br for br, (n, f) in bt.items() if n and f == n]
         half = bool(n_try and n_fail * 2 > n_try)
-        log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
-            + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
-            + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "") + (f" · 사이트 요청 한도로 {n_defer}건은 다음 실행에서" if n_defer else ""))
         # v1.3 전체 받기는 잘 끝났는데 몇 값만 못 받은 날(사이트가 중간에 막음·연결 끊김) → 다음 날 그 값만 한 번 더(조용한 다시 받기 —
         # 또 못 받아도 알림 없이 다음 주에 · 21일 기준은 그대로). 전체 받기가 잘 끝났으면 받은 날(fetched) = 받으러 간 날(attempt)
         quiet = mode == "retry" and bool(last) and last >= (att or "")   # v1.9 이번 주기에 잘 끝난 실행이 있으면 그 뒤 다시 받기는 조용히(미룬 값으로 다시 받기가 길어져도 매일 알림 안 냄)
+        ok_run = not (half or whole or n_cut) and not quiet
+        again = (not ok_run and not quiet) or (mode == "full" and (n_fail > 0 or n_defer > 0)) or n_due_defer > 0   # v1.8·v1.9 미룬 값(아직 다시 받아 보지 않은 값)은 다음 날 다시 받기로
+        log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
+            + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
+            + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "")
+            + (f" · 사이트 요청 한도로 {n_defer}건은 {'다음 실행에서' if again else '다음 주에'}" if n_defer else ""))
         if mode == "full":
             if half:
                 soft_fail(f"해외 정가 절반 넘게 못 받음({n_fail}/{n_try}) — 이전 값 유지, 내일 다시")
@@ -946,8 +966,6 @@ def main():
             log(f"해외 정가: 다시 받기에서도 {n_fail}건 못 받음 — 다음 주 받을 때 다시")
         if n_cut:
             log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
-        ok_run = not (half or whole or n_cut) and not quiet
-        again = (not ok_run and not quiet) or (mode == "full" and (n_fail > 0 or n_defer > 0)) or n_defer_new > 0   # v1.8·v1.9 미룬 값(아직 안 받은 값)은 다음 날 다시 받기로
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and _days(o["stale_since"]) > STALE_ALERT]
@@ -958,7 +976,7 @@ def main():
            "fetched": td if ok_run else last,                       # 받은 날 — 잘 끝난 실행만
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
            "cfg": cfg if mode else old.get("cfg"),
-           "status": "ok" if not stale else "kept", "items": items, "failed": list(failed.values()),
+           "status": "ok" if not stale else "kept", "items": items, "failed": list(failed.values()), "host_try": htry,
            "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"}
     if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
