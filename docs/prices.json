@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-26 19:03 KST",
+ "generated_at": "2026-10-26 19:49 KST",
  "fetched": "2026-10-26",
  "attempt": "2026-10-26",
  "cfg": "b5db886e5c08",
@@ -1504,35 +1504,29 @@
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/en-us/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
+     "obs_date": "2026-10-26",
+     "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/en-gb/product/xt-6-expanse-lg9334",
      "obs": 150.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-26",
+     "sale": false
     },
     "DE": {
      "p": 165.0,
      "cur": "EUR",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/de-de/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-26",
+     "sale": false
     }
    }
   },
@@ -1554,35 +1548,29 @@
     "US": {
      "p": 220.0,
      "cur": "USD",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
      "obs": 220.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-26",
+     "sale": false
     },
     "GB": {
      "p": 195.0,
      "cur": "GBP",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
      "obs": 195.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-26",
+     "sale": false
     },
     "DE": {
      "p": 210.0,
      "cur": "EUR",
-     "seen": "2026-10-23",
+     "seen": "2026-10-26",
      "url": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806",
      "obs": 210.0,
-     "obs_date": "2026-10-23",
-     "sale": false,
-     "stale_since": "2026-10-23",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-26",
+     "sale": false
     }
    }
   },
@@ -2780,9 +2768,7 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
      "obs": 299000.0,
      "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "sale": false
     },
     "US": {
      "p": 240.0,
@@ -4000,6 +3986,5 @@
   }
  ],
  "failed": [],
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
- "tried": "2026-10-26"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
 }
