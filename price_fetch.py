@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.7: (대표 상시 지시 2026-10-26 '브랜드 별 주요 SKU는 계속 늘려주세요' — 1차) 언더아머 아이콘 플리스 후디(1373880)·히트기어 모크 민소매(1361521)
+    — 5개 나라 같은 품번 · GitHub 서버에서 정가 읽기 확인(10/26)
 v1.6: (대표 지시 2026-10-26 '언더아머 멕시코는 다른 상품으로') 언더아머 히트기어 컴프레션 반팔(1361518)·긴팔(1361524)이 멕시코 몰에서 빠져(HTTP 410 ·
     사이트맵에 없음) 5개 나라 몰에 같은 품번이 있는 히트기어 컴프레션 모크 반팔(1372586)·허슬 6.0 백팩(1384672)으로 바꿈(GitHub 서버 시험 10/26 — 5개 나라 정가 읽힘)
 v1.5: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) 할인가·정가 변동 기록. ① 할인가 sp = 그 상품 색상·사이즈 중 지금 가장 싼 값
@@ -303,6 +305,18 @@ PRODUCTS = [
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
         "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html"}},
+    {"id": "ua-icon-hoodie", "brand": "언더아머", "name": "아이콘 플리스 후디", "code": "1373880", "src": "page", "hint": "icon fleece", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EC%95%84%EC%9D%B4%EC%BD%98_%ED%94%8C%EB%A6%AC%EC%8A%A4/1373880.html",
+        "US": "https://www.underarmour.com/en-us/p/ua_icon_fleece_mens_hoodie/1373880.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/ua-icon-fleece-mens-hoodie/1373880.html",
+        "DE": "https://www.underarmour.de/de-de/p/ua-icon-fleece/1373880.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/sudadera_con_capucha_ua_icon_fleece_para_hombre/1373880.html"}},   # v1.7 SKU 늘리기 — 5개 나라 같은 품번(GitHub 서버 시험 10/26)
+    {"id": "ua-hg-sleeveless", "brand": "언더아머", "name": "히트기어 모크 민소매", "code": "1361521", "src": "page", "hint": "heatgear", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EB%AA%A8%ED%81%AC/1361521.html",
+        "US": "https://www.underarmour.com/en-us/p/heatgear_mock_mens_sleeveless/1361521.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mock-mens-sleeveless/1361521.html",
+        "DE": "https://www.underarmour.de/de-de/p/heatgear-mock/1361521.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html"}},
     {"id": "saucony-ride19", "brand": "써코니", "name": "라이드 19(남성)", "code": "S21055", "src": "page", "hint": "라이드 19", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",   # 품번은 상품 정보 칸 '모델 S21055-172'
         "US": "https://www.saucony.com/en/ride-19/60823M.html",
