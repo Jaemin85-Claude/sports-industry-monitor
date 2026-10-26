@@ -18,7 +18,7 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25   # v2026-10 (ir_fetch v1.6): 일시 오류 다시 받기(실행 9분까지)가 들어가 15 → 25분
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -39,3 +39,12 @@ jobs:
           git commit -m "update ir segments $(date -u +%F)" || echo "no changes"
           git pull --rebase origin main
           git push
+      - name: Check partial failures
+        # v2026-10 (ir_fetch v1.6): 자료를 못 찾거나 추출이 실패해 이전 값을 지킨 경우(soft_fail.txt) — 저장·커밋은 마친 뒤
+        # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
+        run: |
+          if [ -s soft_fail.txt ]; then
+            while IFS= read -r l; do echo "::error::$l"; done < soft_fail.txt
+            echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
+            exit 1
+          fi
