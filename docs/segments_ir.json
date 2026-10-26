@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-25 04:51 KST",
+ "generated_at": "2026-10-26 14:34 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
@@ -73,10 +73,22 @@
      }
     ],
     "sub_segments": [],
-    "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance"
+    "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance",
+    "mgmt_notes": [
+     {
+      "topic": "discount",
+      "quote": "Gross margin in Greater China was up 1.7 percentage points to 56.3%, reflecting reduced discounting, a more favorable business mix, and lower sourcing costs.",
+      "ko": "중국 대륙에서 할인 축소와 유리한 제품 믹스로 매출총이익률이 1.7%p 상승함",
+      "at": "2026-10-26 14:34",
+      "sig": "less"
+     }
+    ],
+    "extracted_at": "2026-10-26 14:34"
    },
    "fetched_at": "2026-10-10",
-   "ir_ver": 3
+   "ir_ver": 3,
+   "doc_date": "2026-07-30",
+   "notes_url": "https://res.cloudinary.com/confirmed-web/image/upload/v1785388904/adidas-group/investors/financial-publications/2026/Q2/EN/H1_Report_2026_en_emhpcd.pdf"
   },
   "PUM.DE": {
    "accession": "31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
@@ -239,18 +251,30 @@
     ],
     "channels": [],
     "sub_segments": [],
-    "notes": "Figures are external sales only (Sales to customers), excluding inter-segment sales, as explicitly stated in the segment information table. Unit is millions of yen as shown in the document. Japan 6M 2026 sales to customers: ¥90,310M (inter-segment ¥15,784M; total ¥106,094M). Japan 6M 2025 sales to customers: ¥75,730M (inter-segment ¥23,532M; total ¥99,263M). Greater China 6M 2026 sales to customers: ¥81,043M (inter-segment ¥5M; total ¥81,048M). Greater China 6M 2025 sales to customers: ¥61,966M (inter-segment ¥65M; total ¥62,032M). Others 6M 2026 sales to customers: ¥32,269M (inter-segment ¥1M; total ¥32,271M). YoY % for Japan and Greater China not separately stated for external-only sales in the summary table (summary table shows total sales growth); North America, Europe, Oceania, Southeast and South Asia, and Others YoY % figures are from the summary reportable segment table which reflects total sales (equal to external sales for those segments as inter-segment is zero or negligible). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함"
+    "notes": "Figures are external sales only (Sales to customers), excluding inter-segment sales, as explicitly stated in the segment information table. Unit is millions of yen as shown in the document. Japan 6M 2026 sales to customers: ¥90,310M (inter-segment ¥15,784M; total ¥106,094M). Japan 6M 2025 sales to customers: ¥75,730M (inter-segment ¥23,532M; total ¥99,263M). Greater China 6M 2026 sales to customers: ¥81,043M (inter-segment ¥5M; total ¥81,048M). Greater China 6M 2025 sales to customers: ¥61,966M (inter-segment ¥65M; total ¥62,032M). Others 6M 2026 sales to customers: ¥32,269M (inter-segment ¥1M; total ¥32,271M). YoY % for Japan and Greater China not separately stated for external-only sales in the summary table (summary table shows total sales growth); North America, Europe, Oceania, Southeast and South Asia, and Others YoY % figures are from the summary reportable segment table which reflects total sales (equal to external sales for those segments as inter-segment is zero or negligible). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함",
+    "mgmt_notes": [
+     {
+      "topic": "channel",
+      "quote": "EC sales increased +13.7% YoY, growth in all regions excluding North America which experiences strategic business downsizing.",
+      "ko": "북미는 전략적 사업 축소로 EC 매출 감소, 여타 지역은 성장 유지",
+      "at": "2026-10-26 14:34",
+      "sig": "less"
+     }
+    ],
+    "extracted_at": "2026-10-26 14:34"
    },
    "fetched_at": "2026-10-10",
-   "ir_ver": 3
+   "ir_ver": 3,
+   "doc_date": "2026-08-21",
+   "notes_url": "https://assets.asics.com/system/libraries/4225/Consolidated%20Financial%20Summary%20For%20The%20Second%20Quarter%20and%20The%20Six%20Months%20Ended%20June%2030,%202026%ef%bc%88with%20script%ef%bc%89.pdf"
   }
  },
  "claude_usage": {
   "2026-10": {
-   "calls": 1,
-   "in": 339,
-   "out": 10,
-   "usd": 0.0012,
+   "calls": 5,
+   "in": 37478,
+   "out": 661,
+   "usd": 0.1224,
    "since": "2026-10-10"
   }
  }
