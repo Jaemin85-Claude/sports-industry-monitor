@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # 임시 시험(병합하지 않음) — 해외 정가 SKU 늘리기(대표 상시 지시 2026-10-26): 나라별 몰 사이트맵에서 같은 품번 상품 찾기 + price_fetch로 정가 읽기 시험
 # robots.txt·요청 간격·막힘 처리는 price_fetch.get(우리 봇 이름 · RFC 9309)을 그대로 씀
-import gzip, json, re, sys, time, urllib.parse
+import gzip, html, json, re, sys, time, urllib.parse
 import price_fetch as pf
 T0 = time.time(); LIMIT = 17 * 60
 def out(kind, **kw): print(kind, json.dumps(kw, ensure_ascii=False), flush=True)
@@ -29,10 +29,13 @@ def codes(j):   # 나라별 사이트맵 → {품번: 주소}, 겹치는 품번
             sm = queue.pop(0)
             try: r = pf.get(sm); seen += 1
             except Exception as e: out("SMERR", cc=cc, sm=sm[:120], err=str(e)[:120]); continue
-            txt = body(r); locs = re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", txt)
+            txt = body(r); locs = [html.unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", txt)]   # XML 안 &lt;br&gt; 등을 풂
             if "<sitemapindex" in txt[:3000]:
                 kids = [k for k in locs if urllib.parse.urlsplit(k).netloc == host]
+                pref = [x.lower() for x in site.get("kid_pref", [])]
+                if pref: kids = [k for k in kids if any(x in k.lower() for x in pref)] or kids
                 kids.sort(key=lambda u: (not any(k in u.lower() for k in ("product", "pdp", "prod")), u))
+                out("INDEX", cc=cc, sm=sm[-90:], n=len(kids), kids=[k[-80:] for k in kids[:6]])
                 queue = kids + queue; continue
             for u in locs:
                 sp = urllib.parse.urlsplit(u)
