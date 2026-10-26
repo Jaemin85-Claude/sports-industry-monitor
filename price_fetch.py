@@ -2,7 +2,7 @@
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
 v1.9: (v1.8 검토 반영 10/26) ① 다시 받기에서는 한도 사이트 값 가운데 이번 주기에 아직 다시 받아 보지 않은 값(미룬 값·새 값·전체 받기 날 못 받은 값 —
-    값마다 마지막으로 실제 요청한 날 host_try로 가름)을 먼저, 다시 받기에서 이미 못 받은 값은 남은 한도로만 — 계속 실패하는 값이 한도를 다 써서
+    값마다 마지막으로 받으러 간 날 host_try로 가름)을 먼저, 다시 받기에서 이미 못 받은 값은 남은 한도로만 — 계속 실패하는 값이 한도를 다 써서
     다른 값이 영영 안 받히지 않게 ② 한 주기(7일+1) 넘게 미뤄진 값은 이전 값 표시·21일 알림에, 이전 값도 없는 값은 '값 없음'으로 ③ 이번 주기에
     잘 끝난 실행이 있으면 그 뒤 다시 받기는 조용히(미룬 값 때문에 다시 받기 날이 늘어도 매일 빨간 X 없음) ④ 값마다 다시 받기는 한 번 —
     다시 받기에서도 못 받은 값만 남으면 다음 날 다시 받지 않고 다음 주에(미룬 값 로그도 '다음 주에')
@@ -802,7 +802,7 @@ def main():
     keys = {f"{p['id']} {cc}" for p in PRODUCTS for cc in (p["cc"] if p["src"] == "nike" else p["urls"])}
     failed = {k: f for f in old.get("failed", []) if isinstance(f, dict) and (k := f"{f.get('id')} {f.get('cc')}") in keys
               and f.get("code", codes.get(f.get("id"))) == codes.get(f.get("id"))}   # 값 없음(이전 값도 없음) — 처음 실패한 날
-    # v1.9 한도 사이트(HOST_CAP) 값마다 마지막으로 실제 요청한 날 — 다시 받기에서 이번 주기에 아직 다시 받아 보지 않은 값을 먼저(미룬 날은 요청 안 한 것)
+    # v1.9 한도 사이트(HOST_CAP) 값마다 마지막으로 받으러 간 날(그 실행에서 사이트가 막혀 요청을 못 보낸 날 포함 — 그날 못 받은 것으로 셈) — 다시 받기에서 이번 주기에 아직 다시 받아 보지 않은 값을 먼저(한도로 미룬 날은 받으러 간 날이 아님)
     htry = {k: v for k, v in (old.get("host_try") or {}).items() if k in keys and isinstance(v, str)}
     ok_run, again = None, False
     if not mode:
@@ -864,7 +864,7 @@ def main():
                     continue
                 t_old = htry.get(key)
                 if host:
-                    htry[key] = td   # v1.9 실제로 요청한 날(한도로 미루면 되돌림)
+                    htry[key] = td   # v1.9 받으러 간 날(한도로 미루면 되돌림)
                 try:
                     (full, extra), src_url = fetch_one(prod, cc)
                     if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
