@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.22: (대표 지시 2026-10-26 '추천 순서대로' 3번) 판정 근거가 오래됐을 때 목록에도 표시 — 연간 결산 재고가 9개월 넘은 브랜드
+  (몽클레르·클락스 등 반기·연간 보고 본사)는 브랜드 목록 행·오늘 ① 매입 검토 행에 '결산 '25.12 · 오래된 자료' 꼬리표(전에는 브랜드 상세에만),
+  상세의 '실적 발표일 미확인' 줄에 '재고 점수는 다음 연간 결산 발표 때 바뀜'. 표시만 — 판정 규칙·점수 그대로라 CHK_RULE 그대로
 v33.21: (대표 지시 2026-10-23 '1,2 진행') 기업 상세 출처 줄 — 분기 매출·재고를 SEC 공시로 채운 종목(fetch_data v4.19 q_src='SEC'·q_src_inv,
   야후에 아직 없는 분기)은 'SEC 공시로 채움: 분기 '26.08 매출(10-Q) · 재고 '26.08(10-Q)' 한 줄(4분기 계산값은 '10-K 연간−9개월').
   매출만 SEC로 채우고 재고는 옛 분기면 재고 근거에 '새 실적 반영 대기'(invLagOf). 판정 규칙·입력 측정 방식(같은 분기 1년 전 비교)은 그대로라 CHK_RULE 그대로
@@ -1882,6 +1885,9 @@ const pendTag=p=>p?`<span class="wait-b" title="${esc(p.src)} 공시 ${esc(p.end
 const tagA=(t,title)=>`<span class="tg"${title?` title="${esc(title)}"`:''}>${esc(t)}</span>`;
 const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
+// v33.22 연간 결산 재고가 9개월 넘음(chkInv 결과 i) → 그 결산일 — 표시만, 점수 그대로(결정 D14) · 브랜드 상세·목록·오늘 ①이 같이 씀
+const oldInvOf=i=>(i&&!i.na&&i.q===false&&i.end&&(kstMid()-new Date(i.end+'T00:00:00'))/86400000>270)?i.end:null;
+const oldInvA=i=>{ const e=oldInvOf(i); return e?tagA(`결산 ${ym(e)} · 오래된 자료`,'연간 결산 재고가 9개월 넘게 지남 — 다음 연간 결산 발표 때 바뀜 · 점수는 그대로'):''; };
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
 // 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
@@ -1944,7 +1950,7 @@ function todayModel(){
         full:L.map(chkChgTxt).join(' · ')}; }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
     return {n:M.main.length, chg,
       head:pick.length?`지금 검토 ${gos.length}곳 · 주의 ${warn.length}곳`:`오늘은 지금 검토·주의 없음 · 관망 ${hold.length}곳`,
-      rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short,
+      rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short, old:oldInvA(r.inv),
         hint:pick.length?'':(r.dem.pt>=0?`지금 검토까지 매입 조건 +${2-r.buy}`:'국내 수요 약함')})),
       more:pick.length>4?`외 ${pick.length-4}곳 · 관망 ${hold.length}곳`
         :(hold.length?`관망 ${hold.length}곳 · ${holdByDem.slice(0,3).map(r=>r.b.name).join(', ')}${hold.length>3?` 외 ${hold.length-3}곳`:''}`:`판정 안 함 ${M.rest.length}곳`)};
@@ -2037,7 +2043,7 @@ function tdBuyHtml(B){   // ① 매입 검토(머리는 글자만 — 아래 '�
   else { h+=`<h2 class="dc-h">${esc(B.head)}</h2>`;
     // 한 곳이면 '1곳'을 빼서 '클락스 관망 → 지금 검토'가 좁은 화면(360px)에서도 한 줄에 — 넘치는 끝(바뀐 점수)부터 …
     if(G&&G.n) h+=`<p class="dc-chg" title="${esc(G.full)}"><b>${esc(G.vs)} 달라진 판정${G.n>1?` ${G.n}곳`:''}</b> · ${esc(G.list.join(G.sep))}${G.more?` 외 ${G.more}곳`:''}</p>`;
-    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}${chgTag(r.name)}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
+    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}${chgTag(r.name)}${r.old||''}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
   // '점검표 전체 보기' = 판정 필터 '전체'로(전에 고른 필터가 남아 글자와 결과가 달라지지 않게 — goKey 'brand-all')
   if(B.more) h+=`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span><span class="s">${esc(B.more)}</span></span>${ic('arrow',20,'s2')}</button>`;
   return h+`</section>`;
@@ -4082,7 +4088,7 @@ function chkDetail(r){
   const today=kstMid();
   const s8=(r.b.s||[]).slice(-8), wk=((NAVER&&NAVER.weeks)||[]).slice(-8);
   const sparkOk=s8.length===8&&wk.length===8&&s8.every(v=>typeof v==='number'&&isFinite(v));
-  const oldInv=!i.na&&i.q===false&&!!i.end&&(today-new Date(i.end+'T00:00:00'))/86400000>270;   // 연간 결산 재고가 9개월 넘음 — 표시만, 점수 그대로(결정 D14)
+  const oldInv=!!oldInvOf(i);   // 연간 결산 재고가 9개월 넘음 — 표시만, 점수 그대로(결정 D14)
   const unc=n.list.length&&n.u===n.list.length;
   const ev=[
     {id:'dem', label:'국내 수요', score:d.na?'':sg0(d.pt), tone:tone(d), word:d.low?'보통(검색량 적음)':word(d,'강함','약함'),
@@ -4096,7 +4102,7 @@ function chkDetail(r){
       spark:sparkOk?{vals:s8, wk}:null},
     {id:'inv', label:'본사 재고', score:i.na?'':sg0(i.pt), tone:tone(i), word:word(i,'유리','불리'),
       value:i.na?'같은 기간 재고·매출 자료 없음':`재고 압력 ${ppp(i.P)}`,
-      tags:(i.na?'':staleA(i.stale)+pendA(i.pend))+(oldInv?tagA(`결산 ${ym(i.end)} · 오래된 자료`,'연간 결산 재고가 9개월 넘게 지남 — 점수는 그대로'):''),
+      tags:(i.na?'':staleA(i.stale)+pendA(i.pend))+oldInvA(i),
       explain:i.na?'본사 재고와 같은 기간 매출이 없어 점수에 넣지 않았습니다.'
         :`재고 ${pctU(i.inv)} vs 매출 ${pctU(i.rev)}(${i.lbl}). `+(Math.abs(i.P)<1?'재고 증가율과 매출 증가율이 거의 같습니다. ':'')
           +(i.pt===0?'차이가 5%p 이상이어야 신호로 봅니다.':i.pt>0?'재고가 매출보다 5%p 넘게 빨리 늘어 할인·처분 물량이 나올 수 있습니다.':'재고가 매출보다 5%p 넘게 덜 늘어 처분 물량이 적을 수 있습니다.')
@@ -4120,7 +4126,7 @@ function chkDetail(r){
   const nx=[];
   if(r.x&&r.x.earn_date){ const dd=new Date(r.x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
     if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · 발표 후 재고 점수 다시 계산`, kind:'실적', go:'co:'+r.x.ticker}); }
-  if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후에 다음 발표일 없음 — 본사 공시로 확인', kind:'실적', go:'co:'+r.x.ticker});
+  if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후에 다음 발표일 없음 — 본사 공시로 확인'+(oldInv?' · 재고 점수는 다음 연간 결산 발표 때 바뀜':''), kind:'실적', go:'co:'+r.x.ticker});
   const se=chkSaleEv(r.cur), curNm=((DATA.fx||{})[r.cur]||{}).name||r.cur||'';
   if(se){ const e=se.e, yy=e.s.getFullYear()!==today.getFullYear();
     nx.push({dn:se.dn, d:se.live?'진행 중':'D-'+se.dn, title:e.nm, kind:'세일', go:'mk:cal:saleList',
@@ -4232,7 +4238,7 @@ function brandBodyHtml(){
 }
 function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄 이유 / 점수 4칸 — 누르면 브랜드 상세(이름은 data 속성: 따옴표 안전)
   return `<button type="button" class="br-row" data-brand="${esc(r.b.name)}"><span class="br-m">
-    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${chgTag(r.b.name)}${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}</span>${vbadge(r.lv)}</span>
+    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${chgTag(r.b.name)}${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}${oldInvA(r.inv)}</span>${vbadge(r.lv)}</span>
     <span class="br-why">${nb(esc(chkWhy(r).short))}</span>
     <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
 }
