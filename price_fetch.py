@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.8: (대표 지시 2026-10-26 '살로몬 차단 문제 점검') 살로몬 해외(www.salomon.com)는 요청 간격(8초)과 상관없이 한 실행 10번째 요청에서 403 —
+    10/22·10/23·10/26 전체 받기마다 같은 6건이 막히고 다음 날 다시 받기(6건)는 다 받힘 → 한 실행 요청 한도 HOST_CAP(살로몬 해외 8건)까지만 받고
+    나머지는 다음 실행으로 미룸(Defer — 이전 값 그대로 · 실패·'이전 값' 표시 아님 · tried로 다음 날 그 값만) — 차단을 일으키지 않게
 v1.7: (대표 상시 지시 2026-10-26 '브랜드 별 주요 SKU는 계속 늘려주세요' — 1차) 언더아머 아이콘 플리스 후디(1373880)·히트기어 모크 민소매(1361521)
     — 5개 나라 같은 품번 · GitHub 서버에서 정가 읽기 확인(10/26)
 v1.6: (대표 지시 2026-10-26 '언더아머 멕시코는 다른 상품으로') 언더아머 히트기어 컴프레션 반팔(1361518)·긴팔(1361524)이 멕시코 몰에서 빠져(HTTP 410 ·
@@ -89,6 +92,8 @@ STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
 TIME_LIMIT = 13 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분 · v1.4 값 299개라 13분
 GAP = 1.5           # 초 — 요청 사이 쉬는 시간
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
+HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
+                                    # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
@@ -424,7 +429,11 @@ class Skip(Exception):
     """이 나라에서는 팔지 않음·주소 없음(실패로 세지 않음)"""
 
 
-_ROB, _LAST, _BLOCKED, _HLAST, _DOWN = {}, [0.0], set(), {}, {}
+class Defer(Exception):
+    """v1.8 이 사이트의 한 실행 요청 한도(HOST_CAP)를 다 씀 — 다음 실행에서 받음(실패로 세지 않음)"""
+
+
+_ROB, _LAST, _BLOCKED, _HLAST, _DOWN, _HCOUNT = {}, [0.0], set(), {}, {}, {}
 # robots.txt를 두지 않는 API 주소 → 같은 회사 대표 사이트 robots.txt를 따름(그 사이트 robots.txt도 못 받으면 건너뜀)
 # api.nike.com: 상품 정보 경로 밖 모든 주소(/, robots.txt, 없는 주소)에 Akamai가 '503 DNS failure' — 2026-10-21 브랜치 시험에서 확인
 ROBOTS_ALT = {"api.nike.com": "https://www.nike.com"}
@@ -501,6 +510,9 @@ def get(url, hops=5):
         ok, why = robots_ok(url)
         if not ok:
             raise RuntimeError(pre + why)
+        if host in HOST_CAP and _HCOUNT.get(host, 0) >= HOST_CAP[host]:
+            raise Defer(f"{host} 한 실행 요청 한도 {HOST_CAP[host]}건")
+        _HCOUNT[host] = _HCOUNT.get(host, 0) + 1
         w = max(GAP - (time.time() - _LAST[0]), HOST_GAP.get(host, 0) - (time.time() - _HLAST.get(host, 0.0)))
         if w > 0: time.sleep(w)
         _LAST[0] = _HLAST[host] = time.time()
@@ -792,7 +804,7 @@ def main():
     else:
         if mode == "retry":
             log(f"해외 정가: 다시 받기 — {att} 받기에서 못 받은 값만")
-        items, n_try, n_fail, n_cut, n_hold, n_name = [], 0, 0, 0, 0, 0
+        items, n_try, n_fail, n_cut, n_hold, n_name, n_defer = [], 0, 0, 0, 0, 0, 0
         bt = {}   # 브랜드별 [볼 값, 못 받은 값] — 한 브랜드를 통째로 못 받으면 다음 날 다시
         for prod in PRODUCTS:
             pi = prev.get(prod["id"]) or {}; pv = pi.get("m", {})
@@ -816,6 +828,12 @@ def main():
                     (full, extra), src_url = fetch_one(prod, cc)
                     if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
                         raise RuntimeError(f"원화 값이 이상함({full:g})")
+                except Defer as e:   # v1.8 사이트 요청 한도 — 이전 값 그대로 두고 다음 실행에서(실패·이전 값 표시 아님)
+                    n_defer += 1
+                    if o:
+                        m[cc] = o
+                    log(f"  {key}: 다음 실행에서 받음 — {e}")
+                    continue
                 except Skip as e:
                     if not o:   # 처음부터 이 나라에서 팔지 않음 — 실패 아님
                         log(f"  {key}: 건너뜀 — {e}"); failed.pop(key, None)
@@ -877,7 +895,7 @@ def main():
         half = bool(n_try and n_fail * 2 > n_try)
         log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
             + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
-            + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else ""))
+            + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "") + (f" · 사이트 요청 한도로 {n_defer}건은 다음 실행에서" if n_defer else ""))
         # v1.3 전체 받기는 잘 끝났는데 몇 값만 못 받은 날(사이트가 중간에 막음·연결 끊김) → 다음 날 그 값만 한 번 더(조용한 다시 받기 —
         # 또 못 받아도 알림 없이 다음 주에 · 21일 기준은 그대로). 전체 받기가 잘 끝났으면 받은 날(fetched) = 받으러 간 날(attempt)
         quiet = mode == "retry" and last == att
@@ -896,7 +914,7 @@ def main():
         if n_cut:
             log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
         ok_run = not (half or whole or n_cut) and not quiet
-        again = (not ok_run and not quiet) or (mode == "full" and n_fail > 0)
+        again = (not ok_run and not quiet) or (mode == "full" and n_fail > 0) or n_defer > 0   # v1.8 미룬 값은 다음 날 다시 받기로
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and _days(o["stale_since"]) > STALE_ALERT]
