@@ -6,6 +6,8 @@ v1.5: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) 할�
     할인 가드로 정가를 지킨 날은 이번에 보인 값도 할인가 후보) · 확인한 날 sp_date ② 할인 기록 sh = [날짜, 할인가 또는 null(할인 끝)] —
     할인 시작·끝·할인가가 바뀐 날만, 최근 20개 ③ 정가 변동 기록 ph = [날짜, 이전 정가, 새 정가] — 정가가 0.5% 넘게 바뀐 날만(크게 바뀜·할인
     가드는 반영된 날), 최근 12개 · 통화가 바뀌면 기록을 새로. 화면(build_dashboard v33.23)·주간 메일(weekly_digest v1.14 '■ 해외 정가 변동')이 씀
+    · 할인은 화면에 보이는 정가 p 기준(크게 바뀌어 보류 중인 날은 할인 판단 안 함) · 언제 시작했는지 모르는 할인(v1.5 전부터 할인 중 · 새 상품·나라)은
+    첫 기록에 'base'([날짜, 할인가, "base"]) — 주간 메일이 '할인 시작'으로 세지 않음
 v1.4: (대표 지시 2026-10-22 '스포츠 브랜드는 모두 추가하고 싶습니다' — 봇 차단은 우회하지 않고 되는 곳만) 아크테릭스 6 · 킨(KEEN) 6 · 우포스 7 추가
     (상품 56 → 75개 · 값 227 → 299개 · 나라별 같은 품번을 GitHub 서버에서 확인 — 브랜치 시험 10/23 72/72).
     ① 아크테릭스 한국(아머스포츠코리아 공식몰): 시즌 상품 페이지마다 한국 품번(Model(KR) — PRODUCTS cc_code KR, 시즌이 바뀌면 주소와 함께 바꿈) ·
@@ -86,15 +88,18 @@ JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
 
-def note_sale(o, now, td):
-    """v1.5 할인가(sp)·할인 기록(sh) — now = 지금 가장 싼 값(없으면 None). 정가(o['p'] — 크게 바뀌어 보류 중이면 후보 cand)보다
-    0.5% 넘게 낮으면 할인 중. 할인 시작·끝·할인가가 바뀐 날만 sh에 남김"""
-    base = o.get("cand") or o.get("p")
-    sh = [x for x in (o.get("sh") or []) if isinstance(x, list) and len(x) == 2]
+def note_sale(o, now, td, seen_off=False):
+    """v1.5 할인가(sp)·할인 기록(sh) — now = 지금 가장 싼 값(없으면 None). 화면에 보이는 정가 o['p']보다 0.5% 넘게 낮으면 할인 중.
+    할인 시작·끝·할인가가 바뀐 날만 sh에 남김. seen_off = 이 값이 할인 아닌 상태로 보인 적이 있음(이전 실행 sale False) —
+    없으면(v1.5 전 자료가 이미 할인 중 · 새 상품·나라 · 품번·통화가 바뀜) 첫 기록에 'base'를 붙여 주간 메일이 '할인 시작'으로 세지 않음"""
+    base = o.get("p")
+    sh = [x for x in (o.get("sh") or []) if isinstance(x, list) and len(x) >= 2]
     last = sh[-1][1] if sh else None
     if now and base and now < base * 0.995:
         o["sale"], o["sp"], o["sp_date"] = True, round(now, 2), td
-        if last is None or abs(last - o["sp"]) > max(0.01, last * 0.005):
+        if not sh and not seen_off:
+            sh.append([td, o["sp"], "base"])     # 언제 시작했는지 모르는 할인 — 기록의 출발점
+        elif last is None or abs(last - o["sp"]) > max(0.01, last * 0.005):
             sh.append([td, o["sp"]])
     else:
         o["sale"] = False
@@ -818,11 +823,13 @@ def main():
                 note, held, guard = "", False, False
                 same = o.get("p") and o.get("cur") == cur
                 hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
+                seen_off = bool(same and (o.get("sh") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것)
                 big = same and (full > o["p"] * JUMP or (prod["src"] == "nike" and full < o["p"] / JUMP))
                 if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
                     n_hold += 1; held = True
                     o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
                     o.pop("stale_since", None); o.pop("why", None)
+                    o.pop("sp", None); o.pop("sp_date", None)   # v1.5 보류 중엔 할인 판단 안 함(어느 정가 기준인지 모름) — 할인 기록 sh는 그대로 두고 확인 뒤 이어 감
                     note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
                 elif (same and not big and prod["src"] != "nike" and full < o["p"] * 0.995
                       and _days(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
@@ -837,12 +844,13 @@ def main():
                         o["ph"] = (o.get("ph") or [])[-(PH_MAX - 1):] + [[td, old_p, full]]
                         note += f" (전 {old_p:,g} → {(full / old_p - 1) * 100:+.1f}%)"
                 # v1.5 할인가 — 지금 가장 싼 색상·사이즈(cur_price). 할인 가드로 정가를 지킨 날은 이번에 보인 값(full)도 할인가 후보
-                cands = [v for v in (extra.get("cur_price"), full if guard else None) if v]
-                note_sale(o, min(cands) if cands else None, td)
+                if not held:
+                    cands = [v for v in (extra.get("cur_price"), full if guard else None) if v]
+                    note_sale(o, min(cands) if cands else None, td, seen_off)
                 if extra.get("by") == "이름":
                     n_name += 1; note += " · 이름으로 찾음(페이지에 품번 있음)" if prod.get("code_in_page") else " · 품번이 없어 이름으로 찾음"
                 m[cc] = o
-                log(f"  {key}: {note}" + (f" · 할인 중 {o['sp']:,g}({(o['sp'] / (o.get('cand') or o['p']) - 1) * 100:+.0f}%)" if o.get("sp") else ""))
+                log(f"  {key}: {note}" + (f" · 할인 중 {o['sp']:,g}({(o['sp'] / o['p'] - 1) * 100:+.0f}%)" if o.get("sp") else ""))
             items.append({"id": prod["id"], "brand": prod["brand"], "name": prod["name"], "code": prod["code"], "m": m,
                           **({"cc_code": prod["cc_code"]} if prod.get("cc_code") else {})})
         ok = n_try - n_fail

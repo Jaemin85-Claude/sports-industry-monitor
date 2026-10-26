@@ -2,9 +2,11 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.23: (대표 지시 2026-10-26 '추천 순서대로' 5·6번 — 블프 전) 해외 정가 ① 할인가·정가 변동(price_fetch v1.5) — '할인 중'을 '할인 −30%'로
-  (지금 가장 싼 색상·사이즈 — 누르면 값·확인한 날) · 최근 60일 정가 변동 꼬리표 '정가 ▲8.3%'(브랜드 상세·더보기 › 해외 정가 표).
+  (지금 가장 싼 색상·사이즈 — 화면 정가보다 낮을 때만 · 브랜드 상세에 그 값·확인한 날을 글로) · 최근 60일 정가 변동 꼬리표 '정가 ▲8.3%'
+  (브랜드 상세·더보기 › 해외 정가 표 · 브랜드 상세에 전 정가).
   ② 더보기 › 해외 정가에 세 번째 보기 '착지원가' — 칸 = (현지 가격 × 환율 + 항공 운임 kg당 × 1.5kg) × 관세 13% × 수입 부가세 10%,
-  아래 = 마진(1 − 착지원가 ÷ 한국 정가) · 추천 열 = 착지원가가 가장 싼 나라·마진 · 가격 기준(정가 / 지금 할인가) · 현지 부가세(포함 / 환급 가정) ·
+  아래 = 마진(1 − 착지원가 ÷ 한국 정가) · 추천 열 = 착지원가가 가장 싼 나라·마진(운임을 넣은 나라끼리) · 가격 기준(정가 / 지금 할인가 — 할인가를
+  아직 못 받은 할인은 '할인가 미확인'으로 정가 계산) · 현지 부가세(포함 / 환급 가정) ·
   목표 마진 입력칸(이 기기에만 저장 — localStorage 'pm_target', 저장소·대시보드 파일에는 안 들어감) — 목표 이상인 상품 표시.
   항공 운임 = 관세청 항공 수입 운임(logistics.json kcs_air_import 최근 달 · 미국·유럽연합·일본 — 영국은 유럽연합, 멕시코는 미국 값으로 대신)
 v33.22: (대표 지시 2026-10-26 '추천 순서대로' 3번) 판정 근거가 오래됐을 때 목록에도 표시 — 연간 결산 재고가 9개월 넘은 브랜드
@@ -1019,6 +1021,7 @@ div.bd-nx{cursor:default}
 .bd-pr-tbl th:first-child,.bd-pr-tbl td:first-child{text-align:left;white-space:nowrap}
 .bd-pr .tg{margin-left:4px}.bd-pr-tbl .tg{white-space:normal}
 .bd-pr-tbl td:last-child{white-space:nowrap}
+.bd-pr-tbl tr.bd-pr-has td{border-bottom:0;padding-bottom:2px}.bd-pr-tbl tr.bd-pr-ex td{text-align:left;white-space:normal;font-size:13px;color:var(--sub);padding:0 4px 8px}   /* v33.23 할인가·전 정가 한 줄 */
 .bd-pr-sale{font-size:13px;color:var(--sub);font-weight:400}
 .bd-pr-src{margin:0;font-size:13px;color:var(--sub)}
 /* v33.16 더보기 › 해외 정가 — 상품 × 나라 한 표(첫 열 고정 · 표만 가로 넘김) */
@@ -4286,19 +4289,27 @@ function prRows(it){   // 한 상품의 나라별 줄 — {kr, rows:[{cc, o, krw
 const prMiss=id=>((PRICES&&PRICES.missing||{})[id]||[]).filter(cc=>cc==='KR'||PR_CC[cc]);   // 값 없음(수집 실패 · 이전 값도 없음) 나라
 const prAvg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 /* v33.23 할인가·정가 변동(price_fetch v1.5 sp·sp_date·ph) — 할인 n% = 지금 가장 싼 색상·사이즈 ÷ 정가 − 1 */
+const prSp=o=>o&&o.sale&&o.sp&&o.p&&o.sp<o.p?o.sp:null;   // 확인된 할인가(화면 정가보다 낮을 때만)
 function prSaleA(o,tag,cls){
   if(!o||!o.sale) return '';
-  const b=o.cand||o.p, off=o.sp&&b?Math.round((o.sp/b-1)*100):null;
+  const sp=prSp(o), off=sp?Math.round((sp/o.p-1)*100):null;
   const t=off!=null&&off<0?`할인 −${-off}%`:'할인 중';
-  const ti=o.sp?`지금 가장 싼 색상·사이즈 ${prLocal(o.sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''} — 표는 할인 전 정가`:'지금 할인 중인 색상·사이즈가 있음 — 표는 할인 전 정가';
-  return `<${tag||'span'} class="${cls||'pm-sale'}" title="${esc(ti)}">${t}</${tag||'span'}>`;
+  const ti=sp?`지금 가장 싼 색상·사이즈 ${prLocal(sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''} — 표는 할인 전 정가`:'지금 할인 중인 색상·사이즈가 있음 — 표는 할인 전 정가';
+  return `<${tag||'span'} class="${cls||'pm-sale'}" title="${esc(ti)}">${esc(t)}</${tag||'span'}>`;
 }
 const PR_CHG_DAYS=60;   // 이 기간 안 정가 변동만 꼬리표
+const prChgX=o=>{ const ph=(o&&Array.isArray(o.ph))?o.ph:[], x=ph[ph.length-1];   // 최근 60일 안 마지막 정가 변동 [날짜, 전, 후]
+  return !x||!x[0]||!x[1]||!x[2]||(kstMid()-new Date(x[0]+'T00:00:00'))/86400000>PR_CHG_DAYS?null:x; };
 function prChgA(o){
-  const ph=(o&&Array.isArray(o.ph))?o.ph:[], x=ph[ph.length-1];
-  if(!x||!x[0]||!x[1]||!x[2]||(kstMid()-new Date(x[0]+'T00:00:00'))/86400000>PR_CHG_DAYS) return '';
+  const x=prChgX(o); if(!x) return '';
   const g=(x[2]/x[1]-1)*100;
   return tagA(`정가 ${g>0?'▲':'▼'}${Math.abs(g).toFixed(Math.abs(g)<10?1:0)}%`,`${mdOf(x[0])} 정가 ${prLocal(x[1],o.cur)} → ${prLocal(x[2],o.cur)}`);
+}
+function prExTxt(o){   // 브랜드 상세 나라 줄 아래 전체 너비 한 줄 — 휴대폰은 title이 안 보여 할인가·확인한 날·전 정가를 글로
+  const sp=prSp(o), x=prChgX(o), a=[];
+  if(sp) a.push(`지금 가장 싼 색상·사이즈 ${prLocal(sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''}`);
+  if(x) a.push(`${mdOf(x[0])} 정가 변경 — 전 ${prLocal(x[1],o.cur)}`);
+  return a.join(' · ');
 }
 /* v33.23 착지원가(대표 지시 2026-10-26 6번) = (현지 가격[정가 또는 지금 할인가 · 현지 부가세 포함/환급] × 환율 + 항공 운임 원/kg × 1.5kg) × 1.13 × 1.10
    항공 운임 = 관세청 항공 수입 운임 최근 달(logistics.json kcs_air_import) — 영국은 유럽연합, 멕시코는 미국 값으로 대신 */
@@ -4312,12 +4323,12 @@ function landFreight(){   // {cc: 원/kg, ym: {cc: 기준 달}} — 열마다 �
 }
 let PR_LB='list', PR_LV='in';   // 착지원가 가격 기준(정가 / 지금 할인가) · 현지 부가세(포함 / 환급 가정)
 let PR_TGT=(()=>{ try{ const v=parseFloat(localStorage.getItem('pm_target')); return isFinite(v)?v:null; }catch(e){ return null; } })();   // 목표 마진(%) — 이 기기에만
-function landOf(o,cc,F){   // 한 나라 착지원가 {v 원, fr 운임(원), sale 할인가 썼는지} — 환율 없으면 null
+function landOf(o,cc,F){   // 한 나라 착지원가 {v 원, fr 운임(원), sale 할인가 썼는지, unk 할인 중인데 할인가 모름(정가로 계산)} — 환율 없으면 null
   if(!o||!o.p) return null;
-  const sale=PR_LB==='now'&&o.sale&&o.sp, base=sale?o.sp:(o.cand||o.p);
+  const now=PR_LB==='now'&&!!o.sale, sp=now?prSp(o):null, base=sp||o.p;
   const krw=krwOf(PR_LV==='out'?base/(1+(LAND.lvat[cc]||0)):base,o.cur); if(krw==null) return null;
   const fr=F&&F[cc]!=null?F[cc]*LAND.kg:null;
-  return {v:(krw+(fr||0))*(1+LAND.duty)*(1+LAND.vat), fr, sale:!!sale};
+  return {v:(krw+(fr||0))*(1+LAND.duty)*(1+LAND.vat), fr, sale:!!sp, unk:now&&!sp};
 }
 const pmM=m=>`<span class="pm-g${Math.abs(m)<0.5?'':m>0?' pos':' neg'}">마진 ${Math.abs(m)<0.5?'0':(m>0?'':'−')+Math.abs(m).toFixed(0)}%</span>`;   // 착지원가 마진(+ 파랑 = 한국 정가보다 싸게 들여옴)
 const prGapB=g=>`<b class="${Math.abs(g)<0.5?'':g>0?'pos':'neg'}">${prGapTxt(g)}</b>`;
@@ -4335,8 +4346,8 @@ function prFxHtml(curs){   // v33.15 적용 환율 줄(대표 지시 10/22) — 
     return `${jp?'100엔':(f.name||c)} ${v.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원${f.stale_since?`(${mdOf(f.stale_since)} 값 — 그 뒤 수집 실패)`:(!as1&&f.asof?`(${mdOf(f.asof)})`:'')}`; };
   return `<p class="bd-pr-src bd-pr-fx">적용 환율${as1?`(${mdOf(as1)} 종가)`:''} ${esc(curs.map(one).join(' · '))}</p>`;
 }
-const LAND_WHY='착지원가 보기 = 그 나라에서 사 와 한국에 들여올 때 대략의 원가: (현지 가격 × 적용 환율 + 항공 운임 kg당 × 1.5kg) × 관세 1.13 × 수입 부가세 1.10. 관세 13% = 신발·의류 기본세율(FTA 협정 세율은 원산지가 그 나라여야 해 베트남·중국 생산품은 대개 해당 없음 — 상품마다 다를 수 있음), 부가세는 (물건값 + 운임 + 관세)에. 항공 운임 = 관세청 항공 수입 운임(kg당, 최근 달 — 영국은 유럽연합, 멕시코는 미국 값으로 대신) · 1.5kg = 신발 한 켤레 박스 기준(옷은 더 가벼움). 현지 가격은 정가 기준 또는 지금 할인가(가장 싼 색상·사이즈) 기준, 현지 부가세(영국 20 · 독일 19 · 일본 10 · 멕시코 16%)는 포함 또는 수출 환급 가정으로 뺌(미국은 판매세 별도라 그대로). 마진 = 1 − 착지원가 ÷ 한국 정가(둘 다 부가세 포함) — 국내 배송·통관 수수료·카드·판매 수수료는 넣지 않음. 추천 = 착지원가가 가장 싼 나라. 목표 마진은 이 기기(브라우저)에만 저장되고 저장소·대시보드 파일에는 들어가지 않음.';
-const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(누르면 값·확인한 날, 표는 할인 전 정가) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(누르면 전후 값). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함.';
+const LAND_WHY='착지원가 보기 = 그 나라에서 사 와 한국에 들여올 때 대략의 원가: (현지 가격 × 적용 환율 + 항공 운임 kg당 × 1.5kg) × 관세 1.13 × 수입 부가세 1.10. 관세 13% = 신발·의류 기본세율(FTA 협정 세율은 원산지가 그 나라여야 해 베트남·중국 생산품은 대개 해당 없음 — 상품마다 다를 수 있음), 부가세는 (물건값 + 운임 + 관세)에. 항공 운임 = 관세청 항공 수입 운임(kg당, 최근 달 — 영국은 유럽연합, 멕시코는 미국 값으로 대신) · 1.5kg = 신발 한 켤레 박스 기준(옷은 더 가벼움). 현지 가격은 정가 기준 또는 지금 할인가(가장 싼 색상·사이즈) 기준, 현지 부가세(영국 20 · 독일 19 · 일본 10 · 멕시코 16%)는 포함 또는 수출 환급 가정으로 뺌(미국은 판매세 별도라 그대로). 마진 = 1 − 착지원가 ÷ 한국 정가(둘 다 부가세 포함) — 국내 배송·통관 수수료·카드·판매 수수료는 넣지 않음. 추천 = 착지원가가 가장 싼 나라(운임을 넣어 계산한 나라끼리 — 운임 자료가 없는 나라는 칸에 \'운임 없음\'). 지금 할인가 기준에서 \'할인가 미확인\' = 할인 중이지만 할인가를 아직 받지 못해 정가로 계산. 목표 마진은 이 기기(브라우저)에만 저장되고 저장소·대시보드 파일에는 들어가지 않음.';
+const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(브랜드 상세 나라 줄 아래에 그 값·확인한 날 — 표는 할인 전 정가 · 해외 정가는 주 1회 수집이라 그사이 바뀐 할인은 다음 수집 때) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(브랜드 상세에 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함.';
 // v33.18 브랜드 상세 해외 정가 — 펼친 상품 칸(브랜드 → 상품 id 모음). 뒤로 와서 다시 그려도 같은 칸이 열려 있어 되살린 스크롤 위치가 맞음
 const PR_OPEN={};
 document.addEventListener('toggle',e=>{ const d=e.target; if(!d||!d.classList||!d.classList.contains('bd-prd')) return;
@@ -4361,8 +4372,10 @@ function prSecHtml(bname){
     h+=fold?`<details class="bd-pr bd-prd" data-br="${esc(bname)}" data-pid="${esc(it.id)}"${(op?op.has(it.id):!ix)?' open':''}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
       h+=`<div class="tblwrap"><table class="bd-pr-tbl"><tr><th>나라</th><th>현지 정가</th><th>원화</th><th>한국은</th></tr>`
-        +rows.map(r=>`<tr><td>${PR_CC[r.cc]}${prSaleA(r.o,'div','bd-pr-sale')}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}${prChgA(r.o)}</td>`
-          +`<td>${r.krw?wonR(r.krw)+'원'+prFxA(r.o.cur):'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':prGapB(r.gap)}</td></tr>`).join('')
+        +rows.map(r=>{ const ex=prExTxt(r.o);
+          return `<tr${ex?' class="bd-pr-has"':''}><td>${PR_CC[r.cc]}${prSaleA(r.o,'div','bd-pr-sale')}</td><td>${esc(prLocal(r.o.p,r.o.cur))}${staleA(r.o.stale_since)}${prChgA(r.o)}</td>`
+          +`<td>${r.krw?wonR(r.krw)+'원'+prFxA(r.o.cur):'<span class="na">환율 없음</span>'}</td><td>${r.gap==null?'—':prGapB(r.gap)}</td></tr>`
+          +(ex?`<tr class="bd-pr-ex"><td colspan="4">${esc(ex)}</td></tr>`:''); }).join('')
         +`</table></div>`;
     } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
     if(miss.length) h+=`<p class="bd-pr-src">값 없음: ${missN.join('·')}(수집 실패)</p>`;
@@ -4390,7 +4403,8 @@ function prData(){   // 지금 고른 브랜드·정렬로 묶은 표 자료
     .filter(x=>!sel||x.it.brand===sel);
   if(land) L.forEach(x=>{   // v33.23 나라별 착지원가·마진, 가장 싼 나라(추천) — 마진 = 1 − 착지원가 ÷ 한국 정가(%)
     x.land={}; x.rows.forEach(r=>{ const a=landOf(r.o,r.cc,F); if(a){ a.m=x.kr?(1-a.v/x.kr.p)*100:null; x.land[r.cc]=a; } });
-    const c=Object.entries(x.land); x.best=c.length?c.reduce((a,b)=>b[1].v<a[1].v?b:a):null;
+    const c0=Object.entries(x.land), cf=c0.filter(e=>e[1].fr!=null), c=cf.length?cf:c0;   // 추천은 운임을 넣어 계산한 나라끼리(운임 없는 나라가 싸 보이지 않게)
+    x.best=c.length?c.reduce((a,b)=>b[1].v<a[1].v?b:a):null;
     x.bm=x.best?x.best[1].m:null; x.hit=PR_TGT!=null&&x.bm!=null&&x.bm>=PR_TGT; x.avg=x.bm; });   // 착지원가 보기의 정렬·묶음 평균 = 추천 나라 마진
   const G=BR.filter(b=>!sel||b===sel).map(b=>{ const xs=L.filter(x=>x.it.brand===b); return {b,xs,avg:land?prAvg(xs.map(x=>x.bm).filter(v=>v!=null)):prSt(xs).avg}; }).filter(g=>g.xs.length);
   if(PR_SORT!=='brand'){ const cmp=(a,b)=>(a.avg==null)-(b.avg==null)||(a.avg==null?0:PR_SORT==='hi'?b.avg-a.avg:a.avg-b.avg);
@@ -4440,11 +4454,11 @@ function prMxHtml(D){
     const r=x.rows.find(r=>r.cc===cc);
     if(!r) return `<td>${x.miss.includes(cc)?'<span class="na">값 없음</span>':'<span class="na">—</span>'}</td>`;
     if(land){ const a=(x.land||{})[cc];
-      return `<td${x.lo===cc?' class="pm-lo"':''}>${a?wonR(a.v)+prFxA(r.o.cur):'<span class="na">환율 없음</span>'}${staleA(r.o.stale_since)}${a&&a.m!=null?pmM(a.m):''}${a&&a.sale?prSaleA(r.o):''}${a&&a.fr==null?'<span class="pm-sale">운임 없음</span>':''}</td>`; }
+      return `<td${x.lo===cc?' class="pm-lo"':''}>${a?wonR(a.v)+prFxA(r.o.cur):'<span class="na">환율 없음</span>'}${staleA(r.o.stale_since)}${a&&a.m!=null?pmM(a.m):''}${a&&a.sale?prSaleA(r.o):''}${a&&a.unk?'<span class="pm-sale" title="할인 중이지만 할인가를 아직 받지 못해 정가로 계산">할인가 미확인</span>':''}${a&&a.fr==null?'<span class="pm-sale">운임 없음</span>':''}</td>`; }
     const v=loc?esc(prLocal(r.o.p,r.o.cur)):(r.krw?wonR(r.krw)+prFxA(r.o.cur):'<span class="na">환율 없음</span>');
     return `<td${x.lo===cc?' class="pm-lo"':''}>${v}${staleA(r.o.stale_since)}${prChgA(r.o)}${r.gap!=null?pmG(r.gap):''}${prSaleA(r.o)}</td>`;
   };
-  const third=x=>land?(x.best?`<span class="pm-best">${PR_CC[x.best[0]]}</span>${x.bm!=null?pmM(x.bm):''}${x.hit?'<span class="pm-sale">목표 이상</span>':''}`:'<span class="na">—</span>')
+  const third=x=>land?(x.best?`<span class="pm-best">${PR_CC[x.best[0]]}</span>${x.bm!=null?pmM(x.bm):''}${x.hit?'<span class="pm-sale">목표 이상</span>':''}${x.best[1].fr==null?'<span class="pm-sale">운임 없음</span>':''}`:'<span class="na">—</span>')
     :(x.avg==null?'<span class="na">—</span>':pmG(x.avg));
   const row=x=>`<tr tabindex="0" data-brand="${esc(x.it.brand)}"${land&&x.hit?' class="pm-hit"':''}><th scope="row"><span class="pm-nm">${esc(x.it.name)}</span><span class="pm-sub">${esc(x.it.code||'')}</span></th>`
     +`<td${!land&&x.lo==='KR'?' class="pm-lo"':''}>${x.kr?wonR(x.kr.p)+staleA(x.kr.stale_since)+(land?'':prChgA(x.kr)):`<span class="na">${x.miss.includes('KR')?'값 없음':'—'}</span>`}</td>`
