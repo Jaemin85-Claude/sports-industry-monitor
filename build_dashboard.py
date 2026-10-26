@@ -5141,7 +5141,7 @@ def _partial(fn, d):
         if k_fail:
             notes.append("실패·이전 추출 유지 " + "·".join(k_fail))
         if k_note:
-            notes.append("최신 공시 건너뜀(투자자의 날·프로포마 등) " + "·".join(k_note))
+            notes.append("최신 공시 건너뜀(투자자의 날·프로포마·예비 실적 등) " + "·".join(k_note))   # v33.22 푸마 예비 실적·전망 보도자료(ir_fetch v1.6)
         if k_unread:
             notes.append("최신 공시 못 읽음·이전 추출 유지 " + "·".join(k_unread))
         if k_keep:
