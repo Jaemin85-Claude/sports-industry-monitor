@@ -10,7 +10,7 @@ def body(r):
     if c[:2] == b"\x1f\x8b": c = gzip.decompress(c)
     return c.decode("utf-8", "replace")
 def left(): return LIMIT - (time.time() - T0)
-SM = {}
+SM = {}; CODES = {}
 def sitemaps(host):
     if host not in SM:
         try:
@@ -35,9 +35,14 @@ def ua_codes(j):   # 나라별 사이트맵에서 상품 품번(7자리) 모아 
                 out("INDEX", cc=cc, sm=sm[-80:], kids=[k[-70:] for k in kids[:8]], n=len(kids))
                 queue = kids + queue; continue
             for u in locs:
+                sp = urllib.parse.urlsplit(u)
+                if sp.netloc != host or (j.get("path", {}).get(cc) and not sp.path.startswith(j["path"][cc])):
+                    continue      # 다른 나라 사이트맵이 섞임(미국 색인에 전 세계 몰) — 그 나라 몰 주소만
                 m = re.search(r"/(\d{7})(?:\.html|/|\?|$)", u)
-                if m and m.group(1) not in got: got[m.group(1)] = u
-        codes[cc] = got
+                if m:
+                    old = got.get(m.group(1))
+                    if not old or sp.path.count("/") > urllib.parse.urlsplit(old).path.count("/"): got[m.group(1)] = u   # 이름 붙은 주소 우선
+        codes[cc] = got; CODES[cc] = got
         out("CODES", cc=cc, host=host, maps_read=seen, n=len(got), sample=[urllib.parse.unquote(u)[-80:] for u in list(got.values())[:3]])
     for t in j.get("targets", []):
         out("TARGET", code=t, where={cc: urllib.parse.unquote(codes[cc].get(t) or "")[-110:] for cc in codes})
@@ -49,6 +54,25 @@ def ua_codes(j):   # 나라별 사이트맵에서 상품 품번(7자리) 모아 
         print("ROW", json.dumps({"code": c, "n": n, "mx": urllib.parse.unquote(u)[-95:], "kr": urllib.parse.unquote(codes["KR"][c])[-95:],
                                  "us": c in codes.get("US", {}), "gb": c in codes.get("GB", {}), "de": c in codes.get("DE", {})},
                                 ensure_ascii=False), flush=True)
+def ua_try(j):   # 후보 품번을 나라별 주소로 price_fetch에 넣어 정가 읽기 시험 + 페이지 제목
+    for c in j["codes"]:
+        cand = c if isinstance(c, dict) else {"code": c}
+        code = cand["code"]; urls = {cc: CODES.get(cc, {}).get(code) for cc in j["ccs"]}
+        urls = {cc: u for cc, u in urls.items() if u}
+        prod = {"id": "try-" + code, "brand": "언더아머", "name": cand.get("name", code), "code": code, "src": "page", "hint": cand.get("hint", ""), "urls": urls}
+        out("TRY", code=code, urls={cc: urllib.parse.unquote(u)[-100:] for cc, u in urls.items()}, missing=[cc for cc in j["ccs"] if cc not in urls])
+        for cc, u in urls.items():
+            if left() < 30: out("TIMEOUT"); return
+            try:
+                (full, extra), src = pf.fetch_one(prod, cc)
+                out("OK", code=code, cc=cc, full=full, cur=pf.MK[cc][2], extra=extra)
+            except Exception as e:
+                out("FAIL", code=code, cc=cc, err=f"{type(e).__name__}: {str(e)[:160]}")
+            try:
+                t = pf.get(u).text
+                out("TITLE", code=code, cc=cc, title=(re.search(r"<title>(.*?)</title>", t, re.S) or [None, ""])[1].strip()[:90])
+            except Exception as e:
+                out("TITLEERR", code=code, cc=cc, err=str(e)[:100])
 def fetch(j):
     for prod in j["prods"]:
         if left() < 30: out("TIMEOUT"); return
@@ -62,5 +86,5 @@ if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
-        {"ua_codes": ua_codes, "fetch": fetch}[j["t"]](j)
+        {"ua_codes": ua_codes, "ua_try": ua_try, "fetch": fetch}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
