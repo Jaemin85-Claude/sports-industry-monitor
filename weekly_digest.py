@@ -3,7 +3,7 @@
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
 v1.14: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) '■ 해외 정가 변동' — 지난 7일 정가 변동(price_fetch v1.5 ph)·할인 시작·할인가
       커짐·줄어듦(sh)·할인 끝을 나라·상품별로(해외 정가는 주 1회 수집이라 그 주 받은 날 기준) + 지금 할인 중 개수 · 해외 정가 화면 바로가기
-      (기간 첫날 포함 + 지난 메일이 본 기록(7일 전 prices.json)은 뺌 · 시작 날짜를 모르는 할인 'base'는 '할인 시작'에서 뺌 · 할인 커짐·줄어듦은
+      (기간 첫날 포함 + 기록마다 한 번만 — 지난 메일·이번 메일 기준 시각(월 07:47 PRICE_AT)의 git prices.json으로 가름 · 시작 날짜를 모르는 할인 'base'는 '할인 시작'에서 뺌 · 할인 커짐·줄어듦은
       그 날짜 정가 기준 할인율로 · 할인가가 그대로 새 정가가 되면 '할인 끝' 대신 정가 변동만)
 v1.13: (2026-10-26 ir_fetch v1.6과 함께) '이번 주 새 본사 발언'은 문장마다 처음 뽑힌 시각(at)이 7일 안인 것만 — 같은 분기를 더 나은
       문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 하나 늘어도 지난주에 보낸 문장은 다시 보내지 않게(at 없는 옛 기록은 그대로)
@@ -51,6 +51,7 @@ KST = datetime.timezone(datetime.timedelta(hours=9))
 DOCS = "docs"
 DASH_URL = "https://jaemin85-claude.github.io/sports-industry-monitor/"
 DAYS = 7
+PRICE_AT = datetime.time(7, 47)   # v1.14 해외 정가 변동 기준 시각 = 루틴 예약 시각(월 07:47) — 바꾸면 함께
 
 
 def dash(*path):
@@ -66,10 +67,10 @@ def load(name):
         return None
 
 
-def load_old(name, days=DAYS):
-    """git 이력에서 N일 전 시점의 docs 파일(없으면 None)"""
+def load_old(name, days=DAYS, at=None):
+    """git 이력에서 N일 전 시점의 docs 파일(없으면 None) — at = 기준 시각(없으면 지금)"""
     try:
-        before = (datetime.datetime.now(KST) - datetime.timedelta(days=days)).isoformat()
+        before = ((at or datetime.datetime.now(KST)) - datetime.timedelta(days=days)).isoformat()
         sha = subprocess.run(["git", "log", "-1", f"--before={before}", "--format=%H", "HEAD", "--", f"{DOCS}/{name}"],
                              capture_output=True, text=True, timeout=30).stdout.strip()
         if not sha:
@@ -560,19 +561,22 @@ def _money(v, cur):
     return f"{t}{s}" if cur == "KRW" else f"{s}{t}"
 
 
-def price_changes(prices, today, old=None, n=8):
+def price_changes(prices, today, old=None, upto=None, n=8):
     """v1.14 지난 7일 해외 정가 변동 — (정가 변동, 할인 시작·커짐·줄어듦, 할인 끝, 지금 할인 중 수). 각 줄 = (글, 정렬 값)
-    기간 첫날 포함 + 지난 메일이 이미 본 기록은 뺌(old = 7일 전 이 시각 prices.json — 해외 정가를 월요일 메일 앞뒤 언제 받든 한 번만)
+    기간 첫날 포함 + 지난 메일 기준 시각까지의 기록은 빼고(old) 이번 기준 시각까지의 기록만(upto) — 둘 다 월요일 07:47(PRICE_AT) 고정 git 시점이라
+    루틴이 늦게 돌거나 해외 정가를 메일 앞뒤 언제 받든 기록마다 한 번만(old·upto가 없으면 기간으로만)
     · sh 첫 기록 'base'(언제 시작했는지 모르는 할인)는 '할인 시작'으로 세지 않음 · 할인율은 그 날짜에 걸려 있던 정가 기준(정가가 바뀐 주에
     할인가만 보고 '줄어듦'이라 하지 않게) · 할인가가 그대로 새 정가가 됐으면(직전 할인 뒤 마지막 정가 변경이 그 할인가 이하) '할인 끝' 대신 정가 변동만"""
     start = (today - datetime.timedelta(days=DAYS)).isoformat()
-    seen = set()
-    for it in (old or {}).get("items") or []:
-        for cc, o in (it.get("m") or {}).items():
-            if not isinstance(o, dict):
-                continue
-            for k in ("ph", "sh"):
-                seen.update((it.get("id"), cc, k, json.dumps(x)) for x in o.get(k) or [] if isinstance(x, list))
+    def keys(snap):
+        out = set()
+        for it in (snap or {}).get("items") or []:
+            for cc, o in (it.get("m") or {}).items():
+                if isinstance(o, dict):
+                    for k in ("ph", "sh"):
+                        out.update((it.get("id"), cc, k, json.dumps(x)) for x in o.get(k) or [] if isinstance(x, list))
+        return out
+    seen, until = keys(old), (keys(upto) if upto else None)
     ch, sale, end, on = [], [], [], 0
     for it in (prices or {}).get("items") or []:
         nm = f"{it.get('brand', '')} {it.get('name', '')}".strip()
@@ -582,7 +586,8 @@ def price_changes(prices, today, old=None, n=8):
             cur, place = o["cur"], CC_KO.get(cc, cc)
             if o.get("sale"):
                 on += 1
-            new = lambda k, x: str(x[0]) >= start and (it.get("id"), cc, k, json.dumps(x)) not in seen
+            new = lambda k, x: (str(x[0]) >= start and (it.get("id"), cc, k, json.dumps(x)) not in seen
+                                and (until is None or (it.get("id"), cc, k, json.dumps(x)) in until))
             ph = [x for x in o.get("ph") or [] if isinstance(x, list) and len(x) == 3 and x[1] and x[2]]
             for x in ph:
                 if new("ph", x):
@@ -604,9 +609,11 @@ def price_changes(prices, today, old=None, n=8):
                     off = (v / p_at(d) - 1) * 100
                     if not prev or prev[1] is None:
                         what = "할인 시작"
-                    else:
+                    elif any(str(prev[0]) < str(y[0]) <= str(d) for y in ph):   # 그사이 정가가 바뀜 — 할인율로 비교
                         po = (prev[1] / p_at(prev[0]) - 1) * 100 if p_at(prev[0]) else off
                         what = "할인 커짐" if off < po - 0.5 else "할인 줄어듦" if off > po + 0.5 else "할인가 바뀜(정가 변경)"
+                    else:
+                        what = "할인 커짐" if v < prev[1] else "할인 줄어듦"
                     sale.append((f"{nm} {place} {what} {_money(v, cur)} (정가 대비 {off:.0f}%)", off))
     ch.sort(key=lambda r: r[1]); sale.sort(key=lambda r: r[1])
     return [r[0] for r in ch], [r[0] for r in sale], [r[0] for r in end], on
@@ -638,7 +645,8 @@ def build(today, now=None):
     inv, inv_skip = inventory_warnings(data, kr, today, load("kr_listed_fin.json"))
     mg = new_mgmt_notes(data, segs, segs_ir, now or datetime.datetime.now(KST))
     prices = load("prices.json")
-    pch, psale, pend_s, pon = price_changes(prices, today, load_old("prices.json"))
+    p_at = min(datetime.datetime.combine(today, PRICE_AT, KST), now or datetime.datetime.now(KST))   # 이번 메일 기준 시각(git)
+    pch, psale, pend_s, pon = price_changes(prices, today, load_old("prices.json", DAYS, p_at), load_old("prices.json", 0, p_at))
     vd, vev, vfirst, vreset = verdict_summary(hist, today)
 
     # ── 휴대폰 알림 3줄 ──

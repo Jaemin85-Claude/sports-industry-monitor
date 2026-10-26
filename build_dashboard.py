@@ -4367,7 +4367,7 @@ function prSecHtml(bname){
     // 접힌 칸도 수집 실패 표시는 머리 줄에(화면 규칙 '수집 실패 표시는 접지 않음') — 해외 이전 값 n곳 · 값 없음 n곳
     const nSt=fold?rows.filter(r=>r.o.stale_since).length:0, missN=miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]);
     const bad=fold?(nSt?' '+tagA(`이전 값 ${nSt}곳`,'해외 정가 일부가 이전 수집분 — 펼치면 나라별 날짜'):'')+(miss.length?' '+tagA(`값 없음 ${miss.length}곳`,`수집 실패: ${missN.join('·')}`):''):'';
-    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}${prChgA(kr)}${prSaleA(kr)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
+    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}${prChgA(kr)}${kr.sale?' · '+prSaleA(kr,'span','nw'):''}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
     const op=PR_OPEN[bname];
     h+=fold?`<details class="bd-pr bd-prd" data-br="${esc(bname)}" data-pid="${esc(it.id)}"${(op?op.has(it.id):!ix)?' open':''}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
