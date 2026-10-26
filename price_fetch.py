@@ -6,7 +6,8 @@ v1.5: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) 할�
     할인 가드로 정가를 지킨 날은 이번에 보인 값도 할인가 후보) · 확인한 날 sp_date ② 할인 기록 sh = [날짜, 할인가 또는 null(할인 끝)] —
     할인 시작·끝·할인가가 바뀐 날만, 최근 20개 ③ 정가 변동 기록 ph = [날짜, 이전 정가, 새 정가] — 정가가 0.5% 넘게 바뀐 날만(크게 바뀜·할인
     가드는 반영된 날), 최근 12개 · 통화가 바뀌면 기록을 새로. 화면(build_dashboard v33.23)·주간 메일(weekly_digest v1.14 '■ 해외 정가 변동')이 씀
-    · 할인은 화면에 보이는 정가 p 기준(크게 바뀌어 보류 중인 날은 할인 판단 안 함) · 언제 시작했는지 모르는 할인(v1.5 전부터 할인 중 · 새 상품·나라)은
+    · 할인은 화면에 보이는 정가 p 기준(크게 바뀌어 보류 중인 날은 할인 판단 안 함 — 보류 전에 '할인 아님'을 본 것은 off_seen으로 이어 감) ·
+    언제 시작했는지 모르는 할인(v1.5 전부터 할인 중 · 새 상품·나라)은
     첫 기록에 'base'([날짜, 할인가, "base"]) — 주간 메일이 '할인 시작'으로 세지 않음
 v1.4: (대표 지시 2026-10-22 '스포츠 브랜드는 모두 추가하고 싶습니다' — 봇 차단은 우회하지 않고 되는 곳만) 아크테릭스 6 · 킨(KEEN) 6 · 우포스 7 추가
     (상품 56 → 75개 · 값 227 → 299개 · 나라별 같은 품번을 GitHub 서버에서 확인 — 브랜치 시험 10/23 72/72).
@@ -823,18 +824,20 @@ def main():
                 note, held, guard = "", False, False
                 same = o.get("p") and o.get("cur") == cur
                 hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
-                seen_off = bool(same and (o.get("sh") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것)
+                seen_off = bool(same and (o.get("sh") or o.get("off_seen") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것 — 보류 전에 본 것은 off_seen으로 이어 감)
                 big = same and (full > o["p"] * JUMP or (prod["src"] == "nike" and full < o["p"] / JUMP))
                 if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
                     n_hold += 1; held = True
                     o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
                     o.pop("stale_since", None); o.pop("why", None)
                     o.pop("sp", None); o.pop("sp_date", None)   # v1.5 보류 중엔 할인 판단 안 함(어느 정가 기준인지 모름) — 할인 기록 sh는 그대로 두고 확인 뒤 이어 감
+                    if seen_off:
+                        o["off_seen"] = True
                     note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
                 elif (same and not big and prod["src"] != "nike" and full < o["p"] * 0.995
                       and _days(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
                     o.update(obs=full, obs_date=td, sale=True, url=src_url)
-                    for k in ("stale_since", "why", "cand", "cand_date"): o.pop(k, None)
+                    for k in ("stale_since", "why", "cand", "cand_date", "off_seen"): o.pop(k, None)
                     note, guard = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 할인으로 봄)", True
                 else:
                     old_p = o.get("p") if same else None

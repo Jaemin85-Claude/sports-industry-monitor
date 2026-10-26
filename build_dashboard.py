@@ -3,7 +3,7 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.23: (대표 지시 2026-10-26 '추천 순서대로' 5·6번 — 블프 전) 해외 정가 ① 할인가·정가 변동(price_fetch v1.5) — '할인 중'을 '할인 −30%'로
   (지금 가장 싼 색상·사이즈 — 화면 정가보다 낮을 때만 · 브랜드 상세에 그 값·확인한 날을 글로) · 최근 60일 정가 변동 꼬리표 '정가 ▲8.3%'
-  (브랜드 상세·더보기 › 해외 정가 표 · 브랜드 상세에 전 정가).
+  (브랜드 상세·더보기 › 해외 정가 표 · 브랜드 상세에 전 정가 — 한국은 머리 줄 꼬리표 + 표 아래 줄 · 한국 공식몰 할인도 꼬리표).
   ② 더보기 › 해외 정가에 세 번째 보기 '착지원가' — 칸 = (현지 가격 × 환율 + 항공 운임 kg당 × 1.5kg) × 관세 13% × 수입 부가세 10%,
   아래 = 마진(1 − 착지원가 ÷ 한국 정가) · 추천 열 = 착지원가가 가장 싼 나라·마진(운임을 넣은 나라끼리) · 가격 기준(정가 / 지금 할인가 — 할인가를
   아직 못 받은 할인은 '할인가 미확인'으로 정가 계산) · 현지 부가세(포함 / 환급 가정) ·
@@ -4277,7 +4277,7 @@ function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 �
    나라는 price_fetch MK와 같게(나라를 늘리면 PR_ORD·PR_CC·PR_SYM과 파이썬 _partial의 ccn도) ── */
 const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코'}, PR_ORD=['US','GB','DE','JP','MX'];
 const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$'};
-const prLocal=(p,cur)=>(PR_SYM[cur]||cur+' ')+(p>=1000||cur==='JPY'?Math.round(p).toLocaleString('ko-KR'):(+p).toFixed(p%1?2:0));
+const prLocal=(p,cur)=>cur==='KRW'?wonR(p)+'원':(PR_SYM[cur]||cur+' ')+(p>=1000||cur==='JPY'?Math.round(p).toLocaleString('ko-KR'):(+p).toFixed(p%1?2:0));
 const prFxA=cur=>{ const d=((DATA.fx||{})[cur]||{}).stale_since; return d?tagA(`이전 값(${mdOf(d)})`,`환율 ${d} 수집분 — 그 뒤 환율 수집 실패`):''; };
 const prGapTxt=g=>Math.abs(g)<0.5?'거의 같음':`${Math.abs(Math.round(g))}% ${g>0?'비쌈':'쌈'}`;
 function prRows(it){   // 한 상품의 나라별 줄 — {kr, rows:[{cc, o, krw, gap}]} · v33.16 한국 정가가 없어도 나라 줄은 냄(gap 없음 — 더보기 › 해외 정가 표가 현지 정가를 보여 줌)
@@ -4305,10 +4305,10 @@ function prChgA(o){
   const g=(x[2]/x[1]-1)*100;
   return tagA(`정가 ${g>0?'▲':'▼'}${Math.abs(g).toFixed(Math.abs(g)<10?1:0)}%`,`${mdOf(x[0])} 정가 ${prLocal(x[1],o.cur)} → ${prLocal(x[2],o.cur)}`);
 }
-function prExTxt(o){   // 브랜드 상세 나라 줄 아래 전체 너비 한 줄 — 휴대폰은 title이 안 보여 할인가·확인한 날·전 정가를 글로
+function prExTxt(o,who){   // 브랜드 상세 나라 줄 아래 전체 너비 한 줄 — 휴대폰은 title이 안 보여 할인가·확인한 날·전 정가를 글로(who = '한국 ' — 표 아래 한국 줄)
   const sp=prSp(o), x=prChgX(o), a=[];
-  if(sp) a.push(`지금 가장 싼 색상·사이즈 ${prLocal(sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''}`);
-  if(x) a.push(`${mdOf(x[0])} 정가 변경 — 전 ${prLocal(x[1],o.cur)}`);
+  if(sp) a.push(`${who||''}지금 가장 싼 색상·사이즈 ${prLocal(sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''}`);
+  if(x) a.push(`${mdOf(x[0])} ${who||''}정가 변경 — 전 ${prLocal(x[1],o.cur)}`);
   return a.join(' · ');
 }
 /* v33.23 착지원가(대표 지시 2026-10-26 6번) = (현지 가격[정가 또는 지금 할인가 · 현지 부가세 포함/환급] × 환율 + 항공 운임 원/kg × 1.5kg) × 1.13 × 1.10
@@ -4367,7 +4367,7 @@ function prSecHtml(bname){
     // 접힌 칸도 수집 실패 표시는 머리 줄에(화면 규칙 '수집 실패 표시는 접지 않음') — 해외 이전 값 n곳 · 값 없음 n곳
     const nSt=fold?rows.filter(r=>r.o.stale_since).length:0, missN=miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]);
     const bad=fold?(nSt?' '+tagA(`이전 값 ${nSt}곳`,'해외 정가 일부가 이전 수집분 — 펼치면 나라별 날짜'):'')+(miss.length?' '+tagA(`값 없음 ${miss.length}곳`,`수집 실패: ${missN.join('·')}`):''):'';
-    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
+    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${staleA(kr.stale_since)}${prChgA(kr)}${prSaleA(kr)}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
     const op=PR_OPEN[bname];
     h+=fold?`<details class="bd-pr bd-prd" data-br="${esc(bname)}" data-pid="${esc(it.id)}"${(op?op.has(it.id):!ix)?' open':''}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
@@ -4378,6 +4378,7 @@ function prSecHtml(bname){
           +(ex?`<tr class="bd-pr-ex"><td colspan="4">${esc(ex)}</td></tr>`:''); }).join('')
         +`</table></div>`;
     } else h+=`<p class="bd-none">${kr?'비교할 해외 정가 없음':'한국 공식몰 정가를 받지 못해 비교하지 않음'}</p>`;
+    const krx=kr?prExTxt(kr,'한국 '):''; if(krx) h+=`<p class="bd-pr-src">${esc(krx)}</p>`;   // v33.23 한국 할인가·전 정가(휴대폰은 꼬리표 title이 안 보임)
     if(miss.length) h+=`<p class="bd-pr-src">값 없음: ${missN.join('·')}(수집 실패)</p>`;
     h+=fold?`</details>`:`</div>`;
   });
@@ -4446,7 +4447,8 @@ function prSumHtml(D){
 }
 function prMxHtml(D){
   const {sel,L,G,ccs,land,F}=D, loc=PR_VIEW==='loc', ncol=2+ccs.length;
-  L.forEach(x=>{ const c=land?Object.entries(x.land||{}).map(([cc,a])=>[cc,a.v])   // 착지원가 보기 = 해외 중 가장 싼 곳(한국 매장 가격은 빼고)
+  L.forEach(x=>{ const la=Object.entries(x.land||{}), lf=la.filter(e=>e[1].fr!=null);
+    const c=land?(lf.length?lf:la).map(([cc,a])=>[cc,a.v])   // 착지원가 보기 = 해외 중 가장 싼 곳(한국 매장 가격은 빼고 · 추천과 같이 운임을 넣은 나라끼리)
       :[x.kr?['KR',x.kr.p]:null,...x.rows.filter(r=>r.krw).map(r=>[r.cc,r.krw])].filter(Boolean);   // 원화로 가장 싼 곳(비교할 곳이 둘 이상일 때)
     x.lo=c.length>1?c.reduce((a,b)=>b[1]<a[1]?b:a)[0]:''; });
   const gap=g=>land?pmM(g):pmG(g);
@@ -4461,7 +4463,7 @@ function prMxHtml(D){
   const third=x=>land?(x.best?`<span class="pm-best">${PR_CC[x.best[0]]}</span>${x.bm!=null?pmM(x.bm):''}${x.hit?'<span class="pm-sale">목표 이상</span>':''}${x.best[1].fr==null?'<span class="pm-sale">운임 없음</span>':''}`:'<span class="na">—</span>')
     :(x.avg==null?'<span class="na">—</span>':pmG(x.avg));
   const row=x=>`<tr tabindex="0" data-brand="${esc(x.it.brand)}"${land&&x.hit?' class="pm-hit"':''}><th scope="row"><span class="pm-nm">${esc(x.it.name)}</span><span class="pm-sub">${esc(x.it.code||'')}</span></th>`
-    +`<td${!land&&x.lo==='KR'?' class="pm-lo"':''}>${x.kr?wonR(x.kr.p)+staleA(x.kr.stale_since)+(land?'':prChgA(x.kr)):`<span class="na">${x.miss.includes('KR')?'값 없음':'—'}</span>`}</td>`
+    +`<td${!land&&x.lo==='KR'?' class="pm-lo"':''}>${x.kr?wonR(x.kr.p)+staleA(x.kr.stale_since)+(land?'':prChgA(x.kr))+prSaleA(x.kr):`<span class="na">${x.miss.includes('KR')?'값 없음':'—'}</span>`}</td>`
     +`<td>${third(x)}</td>`
     +ccs.map(cc=>cell(x,cc)).join('')+`</tr>`;
   const A=D.st;
@@ -5470,7 +5472,7 @@ def main():
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
                 for o in it["m"].values():
-                    for k in ("url", "why", "obs", "obs_date", "cand", "cand_date"):
+                    for k in ("url", "why", "obs", "obs_date", "cand", "cand_date", "off_seen", "sh"):   # v33.23 할인 기록 sh·off_seen은 주간 메일용(화면은 sp·ph만)
                         o.pop(k, None)
         except Exception as e:
             print(f"[WARN] prices.json 읽기 실패: {str(e)[:100]}")
