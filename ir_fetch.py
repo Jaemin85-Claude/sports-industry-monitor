@@ -7,9 +7,13 @@ v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 �
       보도자료·분기 보고서(Q2는 H1 Report), 아식스는 이미 받는 실적 설명자료(스크립트)에서 재고·할인·유통 문장(푸마와 같은 규칙).
       발언 문서 주소(notes_url)가 바뀔 때만 추출(지역 표 캐시는 그대로 — 재추출 없음) ③ 접속 이름을 브라우저 흉내 대신 우리 봇 이름
       sports-industry-monitor로(봇 차단 우회 안 함 원칙 — 세 사이트 모두 이 이름으로 받아지고 robots.txt 허용 확인)
-      ④ 그 밖의 실패 표시 — 늘 나오던 지역·채널 금액이 빠짐(표 일부만 읽힘 · 나머지는 저장), 전 분기까지 있던 발언 문서가
-      새 분기에 21일 넘게 안 나옴. 이전 값을 지킨 종목은 failed·kept_failed·kept_reason(수집 상태 화면 '실패·이전 추출 유지').
-      발언 문서를 못 받거나 못 읽으면 다음 후보 문서로(지역 표는 그대로 저장) · 다시 받기는 실행 9분까지(ir.yml 25분)
+      ④ 그 밖의 실패 표시 — 늘 나오던 지역·채널 금액·전년 금액이 빠짐(표 일부만 읽힘 · 나머지는 저장 · 같은 자료를 2번까지
+      다시 추출 · 알림은 처음 나온 실행만, logistics odd_seen 방식), 전 분기까지 있던 발언을 새 분기에 21일 넘게 못 뽑음(사유 notes_err).
+      이전 값을 지킨 종목은 failed·kept_failed·kept_reason, 그 밖의 실패 표시는 종목 warn(수집 상태 화면 '확인 필요').
+      발언 문서를 못 받거나 못 읽으면 다음 후보 문서로(같은 서버 연결 오류면 다음 실행에 · 지역 표는 그대로 저장).
+      시간: 다시 받기는 실행 9분까지, 발언·신호 분류는 12분까지, 새 요청은 18분까지(ir.yml 25분). 시험 모드(IR_ONLY)는 실패 표시 기록 안 함.
+      같은 분기를 더 나은 문서(아식스 스크립트본 등)로 다시 뽑아 새 문장이 없으면 추출 시각·문서 날짜 그대로(주간 메일 중복 방지).
+      긴 문서는 재고·할인 낱말 묶음(6천 자 단위)을 먼저 골라 6만 자 안(kw_windows)
 v1.5: (대표 지시 2026-10-10, 브랜드 점검표) 본사 발언 신호 sig(more·less·neutral) — extract_segments v11.2와 같은 규칙, sig 없는 발언만 1회 분류
 v1.4: (대표 지시 2026-10-10) 본사 발언 다듬기(extract_segments v11.1과 같은 규칙 — 주제 바로잡기·비슷한 문장 빼기, 캐시에도 적용),
       추출 시각 extracted_at·보도자료 날짜 doc_date(주간 메일 '이번 주 새 본사 발언'), 월별 Claude 사용량 claude_usage(수집 상태)
@@ -63,8 +67,12 @@ SCRIPT = "ir_fetch"
 STALE_DAYS = 165    # v1.6 가장 최근 자료의 기간이 끝난 지 이만큼 넘으면 실패 표시(분기 끝 → 다음 분기 발표는 길어야 약 140일)
 RETRY_WAITS = (30, 90)   # v1.6 접속·Claude 일시 오류(429·5xx·연결) — 30초·90초 뒤 다시
 RETRY_DEADLINE = 9 * 60  # v1.6 실행 9분이 지나면 다시 시도하지 않음(ir.yml 작업 25분 제한 안에 저장·커밋까지)
-NOTES_LAG_DAYS = 21      # v1.6 새 분기 자료를 받은 뒤 이만큼 지나도 발언 문서가 없으면(전에는 있었는데) 실패 표시
+OPT_DEADLINE = 12 * 60   # v1.6 실행 12분이 지나면 덜 급한 요청(본사 발언 추출·신호 분류)은 다음 실행에
+HARD_DEADLINE = 18 * 60  # v1.6 실행 18분이 지나면 새 요청을 시작하지 않음(요청 1건 최대 3분 → 21분 안에 저장, 작업 25분)
+NOTES_LAG_DAYS = 21      # v1.6 새 분기 자료를 받은 뒤 이만큼 지나도 발언을 못 뽑으면(전 분기까지는 있었는데) 실패 표시
 _T0 = time.time()
+_NOW = {"tk": None, "test": False}   # v1.6 지금 처리 중인 종목(실패 표시를 그 종목 warn에 남김) · 시험 모드(IR_ONLY)
+_WARN = {}                           # v1.6 {종목: [실패 표시 글]} — 저장할 때 종목의 warn(수집 상태 화면 '확인 필요')
 
 
 def log(m):
@@ -72,10 +80,33 @@ def log(m):
 
 
 def soft_fail(msg):
-    """v1.6 심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함"""
+    """v1.6 심각한 실패 표시 — 저장은 하되 워크플로우 마지막 단계가 빨간 X로 끝내 점검 알림이 가게 함.
+    처리 중인 종목이 있으면 그 종목 warn에도 남김(수집 상태 화면). 시험 모드(IR_ONLY)는 로그만(저장 안 하는 실행이라 알림 안 감)"""
+    if _NOW["test"]:
+        print(f"실패 표시(시험 모드 — 기록 안 함): {msg}", flush=True)
+        return
     print(f"실패 표시: {msg}", flush=True)
     with open("soft_fail.txt", "a", encoding="utf-8") as f:
         f.write(f"{SCRIPT}: {msg}\n")
+    if _NOW["tk"]:
+        _WARN.setdefault(_NOW["tk"], []).append(re.sub(r"^" + re.escape(_NOW["tk"]) + r"\s*", "", msg))
+
+
+class OutOfTime(RuntimeError):
+    """v1.6 실행 시간이 모자라 새 요청을 시작하지 않음"""
+
+
+def _check_time():
+    if time.time() - _T0 > HARD_DEADLINE:
+        raise OutOfTime(f"실행 {HARD_DEADLINE // 60}분 넘어 남은 요청은 다음 실행에")
+
+
+def _opt_ok(what):
+    """덜 급한 요청(발언 추출·신호 분류)을 지금 해도 되는지 — 실행 12분이 지나면 다음 실행에(로그만)"""
+    if time.time() - _T0 <= OPT_DEADLINE:
+        return True
+    log(f"  실행 시간이 길어져 {what}은 다음 실행에")
+    return False
 
 
 def _can_retry(wait):
@@ -107,6 +138,7 @@ def _kind(e):
 # ── Anthropic 호출 공통: 인증/크레딧 오류는 즉시 실패(워크플로우 빨간 X) · v1.6 일시 오류는 2번 다시 ──
 def anthropic_post(payload, timeout=180):
     for k, wait in enumerate(RETRY_WAITS + (None,)):
+        _check_time()
         try:
             resp = requests.post(
                 "https://api.anthropic.com/v1/messages",
@@ -168,6 +200,7 @@ def usage_months(old):
 
 def fetch(url, as_bytes=False, timeout=90):
     for k, wait in enumerate(RETRY_WAITS + (None,)):
+        _check_time()
         try:
             r = requests.get(url, headers=UA, timeout=timeout, allow_redirects=True)
             r.raise_for_status()
@@ -200,9 +233,17 @@ def strip_html(html):
     return re.sub(r"\s+", " ", txt)
 
 
+PARTIAL_TRIES = 2   # v1.6 표 일부만 읽힌 추출은 같은 자료라도 이만큼까지 다시 추출(Claude가 한 번 놓친 값일 수 있음)
+
+
 def cache_ok(cached, url):
-    return bool(cached and cached.get("url") == url and cached.get("extract")
-                and cached.get("ir_ver") == IR_VER)
+    ok = bool(cached and cached.get("url") == url and cached.get("extract")
+              and cached.get("ir_ver") == IR_VER)
+    if ok and cached.get("partial") and int(cached.get("partial_tries") or 0) < PARTIAL_TRIES:
+        log(f"  지난번 표 일부만 읽힘({', '.join(cached['partial'])}) — 같은 자료를 다시 추출"
+            f"({int(cached.get('partial_tries') or 0) + 1}/{PARTIAL_TRIES})")
+        return False
+    return ok
 
 
 PCT_RE = re.compile(r"^(\()?([+-]?\d[\d.,]*)(%|pp)(\))?$")
@@ -298,13 +339,18 @@ def adidas_notes(res, y, q):
     for doc in docs:
         if res.get("notes_url") == doc:
             log(f"  본사 발언 문서: {doc.rsplit('/', 1)[-1][:60]} — 발언 캐시 사용"); return
+        if not _opt_ok("아디다스 본사 발언"):
+            return
         try:
             raw = fetch(doc, as_bytes=True, timeout=120)
             text = kw_windows(" ".join((p.extract_text() or "") for p in PdfReader(io.BytesIO(raw)).pages))
         except SystemExit:
             raise
         except Exception as e:
-            miss.append(f"{doc.rsplit('/', 1)[-1][:40]}({_kind(e) if isinstance(e, requests.exceptions.RequestException) else 'PDF 읽기 안 됨'})")
+            net = isinstance(e, requests.exceptions.RequestException)
+            miss.append(f"{doc.rsplit('/', 1)[-1][:40]}({_kind(e) if net else ('시간 부족' if isinstance(e, OutOfTime) else 'PDF 읽기 안 됨')})")
+            if isinstance(e, OutOfTime) or (net and _transient(e)):
+                break       # 같은 서버(cloudinary)가 연결·시간 초과면 다른 후보도 같음 — 다음 실행에
             continue
         if len(text) < 500:
             miss.append(f"{doc.rsplit('/', 1)[-1][:40]}(글 없음)")
@@ -313,7 +359,10 @@ def adidas_notes(res, y, q):
         attach_notes(res, doc, text, "adidas", f"Q{q} {y}", "results document (press release or quarterly statement)",
                      doc_date=_cld_date(doc))
         return
-    soft_fail(f"ADS.DE 본사 발언 문서를 못 받음: {', '.join(miss)[:160]} — 이전 발언 유지, 다음 실행에서 다시")
+    res["notes_err"] = "문서 받기 안 됨"
+    soft_fail(f"ADS.DE 본사 발언 문서를 못 받음: {', '.join(miss)[:160]} — "
+              + ("이전 발언 유지" if (res.get("extract") or {}).get("mgmt_notes") else "이번 분기 발언은 아직 없음")
+              + ", 다음 실행에서 다시")
 
 
 def parse_quarter_series(tokens):
@@ -500,34 +549,62 @@ def verify_quotes(notes, doc_text):
 
 NOTE_KW = re.compile(r"inventor|promot|markdown|discount|pric(?:e|ing)|wholesale|off-price|"
                      r"distribut|marketplace|sell-in|clearance|liquidat|stock level", re.I)
+# 재고·할인 쪽 낱말 — 이 낱말이 든 묶음을 먼저 남김(긴 보고서에 흔한 가격·도매·유통 낱말(주가 share price 등)만 있는 묶음보다)
+NOTE_STRONG = re.compile(r"inventor|promot|markdown|discount|off-price|clearance|liquidat|stock level", re.I)
+SPAN_MAX = 6000     # 이어 붙인 묶음 하나의 최대 길이 — 낱말이 3천 자 안쪽으로 이어지는 긴 문서가 한 묶음이 되어 앞부분만 남지 않게
 
 
 def kw_windows(text, limit=60000, half=1500):
-    """v1.6 발언 찾기용 — 문서가 길면 재고·할인·유통 낱말 앞뒤 1,500자 묶음만(겹치면 이어 붙임), 짧으면 통째로.
-    묶음이 많아 넘치면 낱말이 촘촘한 묶음부터(차례·목차의 한두 낱말보다 본문 서술 우선), 넘치는 묶음은 남은 만큼만 잘라 넣고
-    문서 순서로 다시 이음"""
+    """v1.6 발언 찾기용 — 문서가 길면 재고·할인·유통 낱말 앞뒤 1,500자 묶음만(겹치면 이어 붙이되 6천 자까지), 짧으면 통째로.
+    넘치면 재고·할인 낱말(NOTE_STRONG)이 든 묶음을 먼저(그 안에서는 촘촘한 순), 가격·도매·유통 낱말만 있는 묶음은 남은 자리에.
+    마지막 묶음은 남은 만큼만 잘라 넣고 문서 순서로 다시 이음(이음표 ' … '까지 limit 안)"""
     text = re.sub(r"\s+", " ", text or "")
     if len(text) <= limit:
         return text
-    spans = []      # [시작, 끝, 낱말 수]
+    spans = []      # [시작, 끝, 재고·할인 낱말 수, 모든 낱말 수]
     for m in NOTE_KW.finditer(text):
         s, e = max(0, m.start() - half), min(len(text), m.end() + half)
-        if spans and s <= spans[-1][1]:
+        st = 1 if NOTE_STRONG.match(m.group(0)) else 0
+        if spans and s <= spans[-1][1] and e - spans[-1][0] <= SPAN_MAX:
             spans[-1][1] = e
-            spans[-1][2] += 1
+            spans[-1][2] += st
+            spans[-1][3] += 1
         else:
-            spans.append([s, e, 1])
+            spans.append([s, e, st, 1])     # 길이 제한으로 새 묶음이면 앞 묶음과 겹칠 수 있음(낱말 앞뒤를 온전히) — 고른 뒤 합침
     if not spans:
         return text[:limit]
-    take, n = [], 0
-    for s, e, k in sorted(spans, key=lambda t: (-t[2] / (t[1] - t[0]), t[0])):
-        room = limit - n
-        if room < 2 * half:
+    SEP = " … "
+
+    def union(iv):      # 겹치거나 맞닿은 묶음은 하나로(같은 글이 두 번 나오지 않게)
+        out = []
+        for s, e in sorted(iv):
+            if out and s <= out[-1][1]:
+                out[-1][1] = max(out[-1][1], e)
+            else:
+                out.append([s, e])
+        return out
+
+    def size(iv):       # 이었을 때 글자 수(이음표 포함)
+        return sum(e - s for s, e in iv) + len(SEP) * max(0, len(iv) - 1)
+
+    take = []
+    for s, e, st, k in sorted(spans, key=lambda t: (0 if t[2] else 1, -(t[2] or t[3]) / max(1, t[1] - t[0]), t[0])):
+        cur = size(union(take))
+        if limit - cur < half:
             break
-        if e - s > room:
-            e = s + room       # 넘치는 묶음은 앞에서부터 남은 만큼만
-        take.append((s, e)); n += e - s
-    return " … ".join(text[s:e] for s, e in sorted(take))
+        if size(union(take + [(s, e)])) > limit:      # 넘치면 앞에서부터 남은 만큼만(겹친 부분은 이미 들어 있음)
+            lo, hi = s, e
+            while hi - lo > 1:
+                mid = (lo + hi) // 2
+                if size(union(take + [(s, mid)])) <= limit:
+                    lo = mid
+                else:
+                    hi = mid
+            e = lo
+            if e - s < half:
+                continue
+        take.append((s, e))
+    return SEP.join(text[s:e] for s, e in union(take))
 
 
 def claude_mgmt_notes(text, label, period, kind):
@@ -560,13 +637,20 @@ def attach_notes(res, doc_url, text, label, period, kind, doc_date=None):
         raise
     except Exception as e:
         log(f"  [WARN] {label} 본사 발언 추출 안 됨 — 다음 실행에서 다시: {str(e)[:120]}")
+        res["notes_err"] = "발언 추출 안 됨"
         soft_fail(f"{label} 본사 발언 추출 안 됨({str(e)[:80]}) — 다음 실행에서 다시")
         return
+    old = {_norm_q(n.get("quote")) for n in ex.get("mgmt_notes") or [] if isinstance(n, dict)}
+    new = {_norm_q(n.get("quote")) for n in notes}
     ex["mgmt_notes"] = notes
-    ex["extracted_at"] = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")   # 주간 메일 '이번 주 새 본사 발언'
+    # 주간 메일 '이번 주 새 본사 발언' — 같은 분기를 더 나은 문서(스크립트본·보도자료)로 다시 뽑아 새 문장이 없으면
+    # 추출 시각·문서 날짜를 그대로 둠(같은 발언이 다음 주 메일에 또 '새 발언'으로 나오지 않게)
+    if not (old and new and new <= old):
+        ex["extracted_at"] = datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M")
+        if doc_date:
+            res["doc_date"] = doc_date
     res["notes_url"] = doc_url
-    if doc_date:
-        res["doc_date"] = doc_date
+    res.pop("notes_err", None)
 
 
 # v1.4 주제별 키워드 — extract_segments v11.1과 같음(붙은 주제 키워드가 없고 다른 주제 키워드만 있으면 그 주제로)
@@ -592,7 +676,7 @@ def classify_notes(notes, label=""):
     """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) — extract_segments v11.2와 같음. 실패하면 그대로(다음 실행에서 다시)"""
     notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
     todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
-    if not todo or not ANTHROPIC_KEY:
+    if not todo or not ANTHROPIC_KEY or not _opt_ok(f"{label} 발언 신호 분류"):
         return notes
     lines = "\n".join(f"{k + 1}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
     n = len(todo)
@@ -915,7 +999,7 @@ def _pdf_date(raw):
 def asics_notes(res, key, period, su=None):
     """v1.6 아식스 본사 발언 — 실적 설명자료(스크립트 포함본 우선)에서. 설명자료가 아직 없으면 다음 실행에서 다시,
     이미 뽑은 설명자료(notes_url)와 같으면 다시 안 뽑음. 예외를 올리지 않음(지역 표는 그대로 저장되게)"""
-    if not ANTHROPIC_KEY:
+    if not ANTHROPIC_KEY or not _opt_ok("아식스 본사 발언"):
         return
     try:
         if su is None:
@@ -934,6 +1018,7 @@ def asics_notes(res, key, period, su=None):
         raise
     except Exception as e:
         log(f"  [WARN] 아식스 실적 설명자료를 못 받음 — 본사 발언은 다음 실행에서 다시: {str(e)[:120]}")
+        res["notes_err"] = "설명자료 받기 안 됨"
         soft_fail(f"7936.T 실적 설명자료를 못 받음({str(e)[:80]}) — 본사 발언 다음 실행에서 다시")
         return
     pages2, dd = _ASX[su]
@@ -944,18 +1029,23 @@ def asics_notes(res, key, period, su=None):
 
 RUNS = (("ADS.DE", run_adidas), ("PUM.DE", run_puma), ("7936.T", run_asics))
 NOTES_TK = ("ADS.DE", "7936.T")    # v1.6 발언을 지역 표와 다른 문서에서 뽑는 종목(notes_url)
-# v1.6 늘 금액이 나오는 줄(이름 앞부분) — 하나라도 금액이 없으면 '표 일부만 읽힘'. 푸마 채널·북미 등은 금액 없이 %만 나오기도 해 뺌
+# v1.6 늘 금액이 나오는 줄(이름 앞부분) — 하나라도 금액이 없으면 '표 일부만 읽힘'. 푸마 북미·중화권·중남미는 금액 없이 %만 나와 뺌
+# (푸마 도매·직판은 분기마다 금액이 나옴 — 2024 Q1·Q3, 2025 Q4, 2026 Q1·Q2 확인)
 WANT_ROWS = {"ADS.DE": (r"europe", r"north america", r"greater china", r"emerging", r"latin", r"japan", r"wholesale", r"direct|dtc"),
-             "PUM.DE": (r"emea", r"americas", r"asia"),
+             "PUM.DE": (r"emea", r"americas", r"asia", r"wholesale", r"direct|dtc"),
              "7936.T": (r"japan", r"north america", r"europe", r"greater china", r"oceania", r"southeast", r"other")}
 
 
 def missing_rows(tk, ex):
-    """v1.6 표 일부만 읽힘 — WANT_ROWS 중 금액(revenue)이 있는 줄이 없는 것"""
+    """v1.6 표 일부만 읽힘 — WANT_ROWS 중 금액(revenue)이 있는 줄이 없는 것 + (아디다스·아식스) 지역 전년 금액이 하나도 없음"""
     rows = [r for r in (ex.get("regions") or []) + (ex.get("channels") or [])
             if isinstance(r, dict) and r.get("revenue") is not None]
     names = [str(r.get("name") or "").lower() for r in rows]
-    return [w.split("|")[0] for w in WANT_ROWS.get(tk, ()) if not any(re.match(w, n) for n in names)]
+    miss = [w.split("|")[0] for w in WANT_ROWS.get(tk, ()) if not any(re.match(w, n) for n in names)]
+    if tk in ("ADS.DE", "7936.T") and rows and not any(isinstance(r, dict) and r.get("prev_revenue") is not None
+                                                       for r in ex.get("regions") or []):
+        miss.append("전년 금액")      # 두 회사 표는 늘 전년 같은 기간 금액이 함께 나옴(푸마 채널은 전년 금액 없이 나오기도 해 뺌)
+    return miss
 
 
 def period_end(p):
@@ -970,6 +1060,7 @@ def period_end(p):
 
 
 def main():
+    _WARN.clear(); _NOW.update(tk=None)     # 한 프로세스에서 여러 번 불러도(시험) 지난 실행의 실패 표시가 섞이지 않게
     old = {}
     if os.path.exists(OUT_PATH):
         try:
@@ -978,21 +1069,26 @@ def main():
         except Exception:
             pass
     items = dict(old.get("items", {}))
+    prev_items = json.loads(json.dumps(items))     # v1.6 이번 실행 전 상태(표 일부만 읽힘 — 처음 나온 실행만 알림)
     only = [x.strip() for x in os.environ.get("IR_ONLY", "").split(",") if x.strip()]
-    if only:    # v1.3 시험 모드: 지정 종목만 캐시 무시하고 추출, 결과는 로그로만(저장 안 함)
+    if only:    # v1.3 시험 모드: 지정 종목만 캐시 무시하고 추출, 결과는 로그로만(저장 안 함 · v1.6 실패 표시도 기록 안 함)
         log(f"[시험 모드] IR_ONLY={','.join(only)} — 저장하지 않음")
+        _NOW["test"] = True
         for tk, fn in RUNS:
             if tk not in only:
                 continue
             res = fn(None) or {}
             ex = res.get("extract") or {}
-            log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}")
+            log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}"
+                + (f" · 표 일부만 읽힘(금액 없음: {', '.join(missing_rows(tk, ex))})" if ex and missing_rows(tk, ex) else ""))
             for n in classify_notes(ex.get("mgmt_notes") or [], tk):
                 log(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
     failed = []     # v1.6 수집 상태 화면 '일부 실패'(build_dashboard — extract_segments와 같은 failed·kept_failed·kept_reason)
+    fresh = set()   # 이번 실행에서 새로 추출한 종목(캐시가 아닌)
     for tk, fn in RUNS:
         prev = items.get(tk)
+        _NOW["tk"] = tk
         try:
             res = fn(prev)
             err = None if (res and res.get("extract")) else ((res or {}).get("error") or "자료 링크를 못 찾음")
@@ -1002,6 +1098,8 @@ def main():
             res, err = None, f"수집 안 됨: {str(e)[:160]}"
         if not err:
             res.pop("kept_failed", None); res.pop("kept_reason", None)
+            if res is not prev:
+                fresh.add(tk)
             if tk in NOTES_TK:      # 전 분기까지 발언이 있었는지(새 분기 발언 문서가 안 나오면 NOTES_LAG_DAYS 뒤 실패 표시)
                 if res.get("notes_url"):
                     res.pop("notes_seen", None)
@@ -1020,6 +1118,7 @@ def main():
             items[tk] = res     # 이전 값이 없으면 오류 기록이라도(수집 상태 '값 없음')
     today = datetime.datetime.now(KST).date()
     for tk, _ in RUNS:
+        _NOW["tk"] = tk
         it = items.get(tk) or {}
         ex = it.get("extract") or {}
         if not ex:
@@ -1031,16 +1130,33 @@ def main():
             if tk not in failed:
                 failed.append(tk)
                 it["kept_failed"], it["kept_reason"] = True, f"새 분기 자료 못 찾음(끝난 지 {age}일)"
-        miss = missing_rows(tk, ex)              # 표 일부만 읽힘 — 저장은 하고 알림(표 형식이 바뀌었을 수 있음)
+        # 표 일부만 읽힘 — 저장은 하고, 그 결과가 처음 나온 실행에만 알림(같은 자료는 PARTIAL_TRIES까지 다시 추출,
+        # 그 뒤로는 조용히 — 수집 상태 화면 warn에는 계속 남음 · logistics odd_seen과 같은 방식)
+        miss = missing_rows(tk, ex)
+        p0 = prev_items.get(tk) or {}
         if miss:
-            soft_fail(f"{tk} {ex.get('period')} 표 일부만 읽힘(금액 없음: {', '.join(miss)}) — 나머지는 저장, 표 형식 확인")
-        if it.get("notes_seen") and not it.get("notes_url"):    # 전 분기까지 있던 발언 문서가 새 분기에 안 나옴
+            same = p0.get("url") == it.get("url") and p0.get("partial") == miss
+            if tk in fresh:
+                it["partial_tries"] = int(p0.get("partial_tries") or 0) + 1 if p0.get("url") == it.get("url") else 1
+            it["partial"] = miss
+            msg = f"{tk} {ex.get('period')} 표 일부만 읽힘(금액 없음: {', '.join(miss)}) — 나머지는 저장, 표 형식 확인"
+            if not same:        # 처음 나왔거나 빠진 줄이 바뀜(캐시로 이어 온 옛 자료라도 아직 알린 적 없으면)
+                soft_fail(msg)
+            else:
+                log(f"  (이전 실행부터) {msg[len(tk) + 1:]}")
+                _WARN.setdefault(tk, []).append(msg[len(tk) + 1:])
+        else:
+            it.pop("partial", None); it.pop("partial_tries", None)
+        if it.get("notes_seen") and not it.get("notes_url"):    # 전 분기까지 있던 발언이 새 분기에 안 나옴
             try:
                 nd = (today - datetime.date.fromisoformat(str(it.get("fetched_at"))[:10])).days
             except ValueError:
                 nd = None
             if nd is not None and nd > NOTES_LAG_DAYS:
-                soft_fail(f"{tk} {ex.get('period')} 본사 발언 문서를 {nd}일째 못 찾음(전 분기까지는 있었음) — IR 사이트 확인")
+                why = (f"본사 발언을 {nd}일째 못 뽑음({it['notes_err']})" if it.get("notes_err")
+                       else f"본사 발언 문서를 {nd}일째 못 찾음")
+                soft_fail(f"{tk} {ex.get('period')} {why}(전 분기까지는 있었음) — IR 사이트 확인")
+    _NOW["tk"] = None
     for tk, v in items.items():     # v1.4 캐시에도 같은 정리(새 추출은 이미 정리됨)
         ex = (v or {}).get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):
@@ -1049,6 +1165,13 @@ def main():
            "claude_usage": usage_months(old)}    # v1.4 월별 Claude 사용량(수집 상태 화면)
     if failed:
         out["failed"] = failed
+    for tk, v in items.items():     # v1.6 실패 표시가 난 종목 — 수집 상태 화면 '확인 필요'(이전 값 유지는 failed·kept_failed로 따로)
+        if not isinstance(v, dict):
+            continue
+        if _WARN.get(tk) and tk not in failed:
+            v["warn"] = " · ".join(dict.fromkeys(_WARN[tk]))[:160]
+        else:
+            v.pop("warn", None)
     os.makedirs("docs", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)

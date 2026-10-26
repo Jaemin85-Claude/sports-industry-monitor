@@ -3,7 +3,8 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.22: (대표 지시 2026-10-26 '추천 순서대로' 3번) 판정 근거가 오래됐을 때 목록에도 표시 — 연간 결산 재고가 9개월 넘은 브랜드
   (몽클레르·클락스 등 반기·연간 보고 본사)는 브랜드 목록 행·오늘 ① 매입 검토 행에 '결산 '25.12 · 오래된 자료' 꼬리표(전에는 브랜드 상세에만),
-  상세 '다음 일정'의 실적 줄에 '재고 점수는 (다음) 연간 결산 발표 때 바뀜'(반기·분기 발표일이어도 '발표 후 재고 점수 다시 계산'이라 하지 않음).
+  상세 '다음 일정'의 실적 줄 — 재고 근거가 연간 결산끼리인 브랜드(닥터마틴·버버리 등 오래되지 않아도)는 '재고 점수는 연간 결산 기준'
+  (반기·분기 발표일이어도 '발표 후 재고 점수 다시 계산'이라 하지 않음). 수집 상태 '유럽·일본 IR'에 ir_fetch v1.6 warn('확인 필요 …').
   표시만 — 판정 규칙·점수 그대로라 CHK_RULE 그대로
 v33.21: (대표 지시 2026-10-23 '1,2 진행') 기업 상세 출처 줄 — 분기 매출·재고를 SEC 공시로 채운 종목(fetch_data v4.19 q_src='SEC'·q_src_inv,
   야후에 아직 없는 분기)은 'SEC 공시로 채움: 분기 '26.08 매출(10-Q) · 재고 '26.08(10-Q)' 한 줄(4분기 계산값은 '10-K 연간−9개월').
@@ -4090,6 +4091,7 @@ function chkDetail(r){
   const s8=(r.b.s||[]).slice(-8), wk=((NAVER&&NAVER.weeks)||[]).slice(-8);
   const sparkOk=s8.length===8&&wk.length===8&&s8.every(v=>typeof v==='number'&&isFinite(v));
   const oldInv=!!oldInvOf(i);   // 연간 결산 재고가 9개월 넘음 — 표시만, 점수 그대로(결정 D14)
+  const annInv=!i.na&&i.q===false;   // v33.22 재고 근거가 연간 결산끼리(분기 매출 없음) — 반기·분기 발표로는 재고 점수가 안 바뀜
   const unc=n.list.length&&n.u===n.list.length;
   const ev=[
     {id:'dem', label:'국내 수요', score:d.na?'':sg0(d.pt), tone:tone(d), word:d.low?'보통(검색량 적음)':word(d,'강함','약함'),
@@ -4126,8 +4128,8 @@ function chkDetail(r){
   ];
   const nx=[];
   if(r.x&&r.x.earn_date){ const dd=new Date(r.x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
-    if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · `+(oldInv?'재고 점수는 연간 결산 발표 때 바뀜':'발표 후 재고 점수 다시 계산'), kind:'실적', go:'co:'+r.x.ticker}); }
-  if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후에 다음 발표일 없음 — 본사 공시로 확인'+(oldInv?' · 재고 점수는 다음 연간 결산 발표 때 바뀜':''), kind:'실적', go:'co:'+r.x.ticker});
+    if(dn>=0) nx.push({dn, d:dn===0?'오늘':'D-'+dn, title:`${hq} 실적 발표`, sub:`${md2(dd)} · `+(annInv?'재고 점수는 연간 결산 기준(연간 결산 발표 때 바뀜)':'발표 후 재고 점수 다시 계산'), kind:'실적', go:'co:'+r.x.ticker}); }
+  if(!nx.length&&r.x) nx.push({dn:9999, d:'―', title:`${hq} 실적 발표일 미확인`, sub:'야후에 다음 발표일 없음 — 본사 공시로 확인'+(annInv?' · 재고 점수는 다음 연간 결산 발표 때 바뀜':''), kind:'실적', go:'co:'+r.x.ticker});
   const se=chkSaleEv(r.cur), curNm=((DATA.fx||{})[r.cur]||{}).name||r.cur||'';
   if(se){ const e=se.e, yy=e.s.getFullYear()!==today.getFullYear();
     nx.push({dn:se.dn, d:se.live?'진행 중':'D-'+se.dn, title:e.nm, kind:'세일', go:'mk:cal:saleList',
@@ -5146,6 +5148,11 @@ def _partial(fn, d):
             notes.append("새 공시에 분해 없음·이전 추출 유지 " + "·".join(k_keep))
         if bad:
             notes.append(f"종목 {len(bad)}곳 값 없음")
+        # v33.22 ir_fetch v1.6 warn — 값은 저장했지만 실패 표시(점검 알림)가 난 종목: 표 일부만 읽힘·발언 문서 못 받음 등
+        wn = [t for t, v in items.items() if isinstance(v, dict) and v.get("warn") and t not in failed]
+        if wn:
+            n += len(wn)
+            notes.append("확인 필요 " + " · ".join(f"{t}({str(items[t]['warn'])[:60]})" for t in wn))
     elif fn == "news.json":
         st = d.get("status") or {}      # news_monitor v2.9 — 선별 실패는 1곳으로 셈, 검색어 일부 실패는 설명만
         if st.get("curate") == "failed":
