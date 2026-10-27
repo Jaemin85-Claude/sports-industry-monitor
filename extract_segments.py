@@ -3,7 +3,8 @@
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
 v11.4: (대표 지시 2026-10-27 'A' — 브랜드 판정) 본사 발언마다 범위 scope — global(회사 전체·여러 주요 지역) / region(한 지역·나라만,
        region = 그 지역 한국어 이름). 신호(sig)와 같은 1회 호출로 분류 — sig 또는 scope가 없는 발언만(이미 있는 sig는 그대로 · 1곳 약 $0.003),
-       모르면 global. build_dashboard v33.24가 한 지역 이야기를 판정 점수에서 빼고 같은 방향 발언 2건 이상일 때만 반영
+       모르면 global · temperature 0 · 답은 객체 n개 배열만 읽음(아니면 다음 실행에서 다시) · 비슷한 문장 합치기(_same)는 지역 이름이 다르면 안 합침.
+       build_dashboard v33.24가 한 지역 이야기를 판정 점수에서 빼고 같은 방향 발언 2건 이상일 때만 반영
 v11.3: (대표 지시 2026-10-19 '2순위 새 종목 추가') 미국 공시 대상에 랄프로렌(RL · 8-K 실적 발표)·제냐(ZGN · 톰브라운 모회사,
        외국 기업이라 6-K 실적 발표 — 온홀딩·아머스포츠와 같은 방식). 몽클레르(MONC.MI)·버버리(BRBY.L)는 EDGAR 미대상이고 IR 사이트가
        자동 접속을 막아(몽클레르 403 · 버버리 빈 화면, 10/19 브랜치 시험) 발언 없이 야후 재고만. 제냐만 기간 이름(H1, Q2 아님)·증감 기준
@@ -686,6 +687,40 @@ SIGS = ("more", "less", "neutral")
 SCOPES = ("global", "region")   # v11.4 발언 범위 — region = 한 지역·나라만(판정 점수에서 뺌)
 
 
+# v11.4 지역 이름(비슷한 문장 합치기에서 지역이 다르면 다른 말) — 긴 이름 먼저('us'는 낱말 us와 헷갈려 뺌)
+_GEO = re.compile(r"\b(greater china|mainland china|hong kong|taiwan|china|chinese|north america|latin america|south america|americas|"
+                  r"united states|u\.s|usa|canada|mexico|brazil|emea|europe|european|united kingdom|uk|germany|france|italy|spain|"
+                  r"middle east|africa|apac|asia[- ]pacific|southeast asia|asia|japan|korea|india|oceania|australia)\b", re.I)
+
+
+def _geo(q):
+    return frozenset(m.lower().replace("-", " ") for m in _GEO.findall(str(q or "")))
+
+
+def _obj_list(txt, n):
+    """v11.4 응답에서 객체 n개짜리 JSON 배열(n이 1이면 객체 하나도)을 찾음 — 설명·다른 괄호([1] 등)가 앞뒤에 붙어도. 없으면 None(다음 실행에서 다시)"""
+    dec = json.JSONDecoder()
+    for i, ch in enumerate(txt or ""):
+        if ch not in "[{":
+            continue
+        try:
+            v, _ = dec.raw_decode(txt, i)
+        except ValueError:
+            continue
+        if isinstance(v, dict) and n == 1:
+            v = [v]
+        if isinstance(v, list) and len(v) == n and all(isinstance(a, dict) for a in v):
+            return v
+    return None
+
+
+def _region_ko(v):
+    """v11.4 지역 이름 — 글자일 때만, 괄호 뒤(영문 약자 등)는 버리고 16자까지"""
+    if not isinstance(v, str):
+        return ""
+    return re.split(r"[\(\[（【]", v)[0].strip(" \"'·,")[:16]
+
+
 def classify_notes(notes, label=""):
     """v11.2 본사 발언마다 병행수입 매입 관점 신호(sig) · v11.4 범위(scope·region) — 둘 중 하나라도 없는 발언만 짧게 1회 호출
     (이미 있는 sig는 그대로). 실패하면 그대로(다음 실행에서 다시)"""
@@ -700,21 +735,20 @@ Below {"is the only statement" if n == 1 else f"are all {n} statements"} taken f
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Also decide its scope:
-  "global" - about the company or brand as a whole, or several major regions together (a region mentioned only as a side detail is still global)
-  "region" - about ONE specific region or country only (e.g. only Greater China, only North America)
-Respond with ONLY a JSON array of exactly {n} object(s), one per statement in the same order, e.g. {'[{"sig":"less","scope":"region","region":"중화권"}]' if n == 1 else '[{"sig":"more","scope":"global"},{"sig":"neutral","scope":"region","region":"북미"}]'}. "region" = that region's short Korean name, only when scope is "region". No explanation.
+Also decide its scope, by where the condition behind your answer applies:
+  "global" - the company or brand as a whole, or several major regions together. Regions named only as growth drivers, examples or side effects still count as global (e.g. "e-commerce rose despite lower promotions, supported by marketplaces in APAC" is global: the lower promotions are company-wide)
+  "region" - ONE specific region or country only (e.g. "gross margin in Greater China rose on reduced discounting"; "growth in all regions except North America, which is being strategically downsized" is region 북미, because the downsizing is in North America)
+Respond with ONLY a JSON array of exactly {n} object(s), one per statement in the same order, e.g. {'[{"sig":"less","scope":"region","region":"중화권"}]' if n == 1 else '[{"sig":"more","scope":"global"},{"sig":"neutral","scope":"region","region":"북미"}]'}. "region" = that region's short Korean name such as 중화권, 중국, 북미, 미국, 유럽, 일본, 한국, 아시아태평양, 중남미, 중동 — only when scope is "region". No explanation.
 
 {lines}"""
     try:
         txt = ""
-        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 600,
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 600, "temperature": 0,
                                "messages": [{"role": "user", "content": prompt}]}, timeout=60)
         txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-        m = re.search(r"\[[^\[\]]*\]", txt)      # 설명이 앞뒤에 붙어도 첫 JSON 배열만 읽음
-        arr = json.loads(m.group(0) if m else txt.strip())
-        if not isinstance(arr, list) or len(arr) != len(todo):
-            raise ValueError(f"응답 개수 {len(arr) if isinstance(arr, list) else '?'} ≠ {len(todo)}")
+        arr = _obj_list(txt, len(todo))      # 설명·다른 괄호가 앞뒤에 붙어도 객체 n개짜리 배열만
+        if arr is None:
+            raise ValueError(f"발언 {len(todo)}개짜리 객체 배열을 못 찾음")
     except SystemExit:
         raise
     except Exception as e:
@@ -722,14 +756,14 @@ Respond with ONLY a JSON array of exactly {n} object(s), one per statement in th
         print(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}{head}", flush=True)
         return notes
     for k, i in enumerate(todo):
-        a = arr[k] if isinstance(arr[k], dict) else {"sig": arr[k]}
+        a = arr[k]
         if notes[i].get("sig") not in SIGS:      # 이미 있는 신호는 그대로(다시 분류해 판정이 흔들리지 않게)
             v = str(a.get("sig") or "").strip().lower()
             notes[i]["sig"] = v if v in SIGS else "neutral"
         if notes[i].get("scope") not in SCOPES:
             v = str(a.get("scope") or "").strip().lower()
             notes[i]["scope"] = v if v in SCOPES else "global"   # 모르면 전체 이야기로(점수에 넣음 — 예전과 같게)
-            rg = str(a.get("region") or "").strip()[:12]
+            rg = _region_ko(a.get("region"))
             if notes[i]["scope"] == "region" and rg:
                 notes[i]["region"] = rg
     print(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" + (f"·{notes[i].get('region') or '한 지역'}만" if notes[i].get("scope") == "region" else "") for i in todo), flush=True)
@@ -737,7 +771,10 @@ Respond with ONLY a JSON array of exactly {n} object(s), one per statement in th
 
 
 def _same(n, w, o):
-    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
+    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김) ·
+    v11.4 나오는 지역 이름이 다르면 다른 말 — 회사 전체 문장과 한 지역 문장이 합쳐져 한 지역만 남으면 판정 점수에서 빠지므로"""
+    if _geo(n.get("quote")) != _geo(o.get("quote")):
+        return False
     ow = _words(o.get("quote"))
     sh = len(w & ow)
     return o.get("topic") == n.get("topic") and sh >= 6 and sh / max(1, min(len(w), len(ow))) > 0.6
@@ -973,7 +1010,7 @@ def main():
         entry, st = process_ticker(t, prev, cik_map)
         ex = entry.get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):   # v11.1 캐시·이전 값에도 같은 정리(새 추출은 이미 정리됨)
-            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], t), t)   # v11.2 신호 없는 발언만 분류
+            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], t), t)   # v11.2 신호 없는 발언만 분류 · v11.4 범위(scope) 없는 발언도
         out["items"][t] = entry
         stat[t] = st
 

@@ -3908,7 +3908,7 @@ function chkNotes(t){
   const L=ex.mgmt_notes, SG=['more','less','neutral'], G=L.filter(n=>n.scope!=='region'),
     m=G.filter(n=>n.sig==='more').length, l=G.filter(n=>n.sig==='less').length, z=G.filter(n=>n.sig==='neutral').length,
     u=L.filter(n=>SG.indexOf(n.sig)<0).length, R=L.filter(n=>n.scope==='region'&&SG.indexOf(n.sig)>=0), rg=R.length,   // u = 아직 신호 분류 전(다음 추출 때 판정)
-    rgn=R.map(n=>n.region).filter((v,j,a)=>v&&a.indexOf(v)===j), one=(m>l&&m===1)||(l>m&&l===1), per=perKo((ex.period||'').split(/;| ended/)[0]);
+    rgn=R.every(n=>n.region)?R.map(n=>n.region).filter((v,j,a)=>a.indexOf(v)===j):[], one=(m>l&&m===1)||(l>m&&l===1), per=perKo((ex.period||'').split(/;| ended/)[0]);
   return {pt:(m>l&&m>=2)?1:((l>m&&l>=2)?-1:0), na:(L.length&&u===L.length)?1:0, list:L, m, l, z, u, rg, rgn, one, per, tag:/^IR/.test(s.source||'')?'IR 추출':'공시 추출', txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
     +(z?` · 중립 ${z}건`:'')+(rg?` · 한 지역 ${rg}건 제외`:'')+(u?` · 신호 분류 전 ${u}건(다음 추출 때 판정)`:''):'재고·할인·유통 관련 발언 없음')};
 }
@@ -4134,14 +4134,15 @@ function chkDetail(r){
           +(i.pend?` 본사가 ${mdTxt(i.pend.end)} 끝난 분기 실적을 냈지만 야후 미반영 — 이전 분기 값입니다.`:'')},
     {id:'notes', label:'본사 발언', score:n.na?'':sg0(n.pt), tone:tone(n), word:unc?'분류 전':word(n,'유리','불리'),
       value:n.none?'발언 자료 없음':!n.list.length?'재고·할인·유통 관련 발언 없음'
-        :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.rg?` · 한 지역 ${n.rg}건 제외`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
+        :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`${n.rg?'회사 전체 ':''}할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.rg?` · 한 지역 ${n.rg}건 제외`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
       explain:n.none?`${hq||r.b.name} 본사 실적 자료에서 재고 처분·할인 관련 발언을 뽑지 못해(표 형식 자료·야후 수치만) 점수에 넣지 않았습니다.`
         :!n.list.length?`${n.per||'최근 실적'} 자료에 재고·할인·유통 관련 발언이 없어 0입니다.`
         :unc?'발언은 뽑혔지만 신호(할인 물량↑/할인·공급↓) 분류 전이라 점수에 넣지 않았습니다. 매주 공시 추출 때 분류됩니다.'
-        :(n.one?`${n.m>n.l?'할인 물량을 늘린다는':'할인·공급을 줄인다는'} 발언이 1건뿐이라 0입니다(같은 방향 발언이 2건 이상일 때 반영).`
-          :(!n.m&&!n.l&&n.rg)?'회사 전체의 할인 물량·공급 발언이 없어 0입니다.'
-          :`할인 물량을 늘린다는 발언 ${n.m}건, 할인·공급을 줄인다는 발언 ${n.l}건이라 ${sg0(n.pt)}입니다.`)
-          +(n.rg?` 한 지역 이야기${n.rgn&&n.rgn.length?`(${n.rgn.join('·')})`:''} ${n.rg}건은 점수에서 뺐습니다.`:'')+(n.per?` (${n.per}${n.tag?' · '+n.tag:''})`:''),
+        :(n.one?`${n.rg?'회사 전체 이야기로는 ':''}${n.m>n.l?'할인 물량을 늘린다는':'할인·공급을 줄인다는'} 발언이 1건뿐이라 0입니다(같은 방향 발언이 2건 이상일 때 반영).`
+          :(!n.m&&!n.l&&n.rg)?`${n.u?'분류된 발언 중 ':''}회사 전체의 할인 물량·공급 발언이 없어 0입니다.`
+          :`${n.rg?'회사 전체 이야기로는 ':''}할인 물량을 늘린다는 발언 ${n.m}건, 할인·공급을 줄인다는 발언 ${n.l}건이라 ${sg0(n.pt)}입니다.`)
+          +(n.rg?` 한 지역 이야기${n.rgn&&n.rgn.length?`(${n.rgn.join(', ')})`:''} ${n.rg}건은 점수에서 뺐습니다.`:'')
+          +(n.u?` 분류 전 ${n.u}건은 다음 추출 때 반영합니다.`:'')+(n.per?` (${n.per}${n.tag?' · '+n.tag:''})`:''),
       list:(n.list||[]).map(q=>({sig:q.sig||null, topic:q.topic, ko:q.ko, quote:q.quote, rg:q.scope==='region'?(q.region||'한 지역'):null}))},   // v33.24 한 지역 꼬리표
     {id:'fx', label:`원산지 통화 · ${x.name||curKo||'미지정'}`, score:x.na?'':sg0(x.pt), tone:tone(x), word:word(x,'유리','불리'),
       value:(x.na||x.rate==null)?'환율 자료 없음':`${fxNm} ${wonR(x.rate*x.mul)}원 · ${base}보다 ${p1(x.v)}% ${x.v<0?'쌈':'비쌈'}`, tags:x.na?'':staleA(x.stale),
@@ -4239,9 +4240,9 @@ function brandBodyHtml(){
   // 판정 기준 패널은 자료가 없어도 그림 — 머리의 (i) 단추가 늘 펼칠 것이 있게
   let h=`<section id="brInfo" class="br-info" aria-label="판정 기준"${BR_INFO?'':' hidden'}><p class="bi-t">판정 = 국내 수요 + 매입 조건</p>
     <p><b>국내 수요</b> 네이버 검색 전년 대비가 감시 브랜드 중앙값(${M.med!=null?`${medT}, 검색량 충분한 ${medN}곳 기준`:'자료 수집 전'})보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)</p>
-    <p><b>매입 조건</b> 본사 재고 + 본사 발언 + 환율. 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높으면 +1(처분 물량 기대), 5%p 이상 낮으면 −1. 할인 물량을 늘린다는 발언이 많으면 +1, 할인·공급을 줄인다는 발언이 많으면 −1. 원산지 통화가 1년 평균(없으면 1년 전)보다 5% 이상 싸면 +1, 10% 이상 싸면 +2, 비싸면 같은 폭으로 −1·−2</p>
+    <p><b>매입 조건</b> 본사 재고 + 본사 발언 + 환율. 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높으면 +1(처분 물량 기대), 5%p 이상 낮으면 −1. 본사 발언은 한 지역 이야기를 빼고, 할인 물량을 늘린다는 발언이 2건 이상이고 더 많으면 +1, 할인·공급을 줄인다는 발언이 2건 이상이고 더 많으면 −1. 원산지 통화가 1년 평균(없으면 1년 전)보다 5% 이상 싸면 +1, 10% 이상 싸면 +2, 비싸면 같은 폭으로 −1·−2</p>
     <p><b>판정</b> 수요가 약하지 않고 매입 조건 +2 이상이면 지금 검토. 수요가 약하고 매입 조건 +1 이하이거나, 매입 조건이 −1 이하면 주의. 나머지는 관망</p>
-    <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류(한 지역 이야기는 빼고 같은 방향 2건 이상일 때 점수) · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
+    <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
   if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
   const q=brNorm(BR_Q);
   if(q){   // v33.15 검색 중 — 판정 필터와 상관없이 전체에서, 판정 안 함 결과는 펼쳐서
