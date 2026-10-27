@@ -1,0 +1,83 @@
+[
+ {
+  "t": "shopjson",
+  "key": "drm",
+  "cc": "KR",
+  "urls": [
+   "https://www.drmartens.co.kr/products.json?limit=250&page=1",
+   "https://www.drmartens.co.kr/products.json?limit=250&page=2",
+   "https://www.drmartens.co.kr/products.json?limit=250&page=3"
+  ],
+  "show": true
+ },
+ {
+  "t": "codes",
+  "key": "drm",
+  "base": "KR",
+  "rx": "/p/(\\d{8})$",
+  "sites": {
+   "KR": {
+    "preset": true,
+    "host": "www.drmartens.co.kr"
+   },
+   "US": {
+    "host": "www.drmartens.com",
+    "path": "/us/en/",
+    "kid_pref": [
+     "/us/",
+     "en_us",
+     "us_en",
+     "-us"
+    ]
+   },
+   "GB": {
+    "host": "www.drmartens.com",
+    "path": "/uk/en_gb/",
+    "kid_pref": [
+     "/uk/",
+     "en_gb",
+     "gb_en",
+     "-gb"
+    ]
+   }
+  },
+  "targets": [
+   "11838002",
+   "15265001",
+   "22227001"
+  ],
+  "max_maps": 40,
+  "per_host": 150,
+  "show": 80
+ },
+ {
+  "t": "grep",
+  "rx": "/product/[^/]*(아드레날린|글리세린|하이페리온|런치|칼데라|캐스케디아|고스트|레비테이트|트레이스|리빌|글리세린)[^/]*/\\d+/",
+  "sites": {
+   "KR": {
+    "host": "brooksrunning.co.kr",
+    "start": [
+     "https://brooksrunning.co.kr/sitemap.xml"
+    ]
+   }
+  },
+  "max_maps": 10,
+  "per_host": 90,
+  "show": 120
+ },
+ {
+  "t": "grep",
+  "rx": "/products/br[mw]\\d{4}",
+  "sites": {
+   "JP": {
+    "host": "brooksrunning.co.jp",
+    "kid_pref": [
+     "product"
+    ]
+   }
+  },
+  "max_maps": 12,
+  "per_host": 120,
+  "show": 400
+ }
+]
