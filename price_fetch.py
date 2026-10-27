@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.10: (SKU 늘리기 2차 10/27 — 대표 상시 지시 '브랜드 별 주요 SKU는 계속 늘려주세요', 값이 적은 브랜드부터) 드래곤디퓨전 난터켓 빅 백·청키 펠리니 포셰트
+    (한국·미국) · 헌터 오리지널 톨 글로스(한국·미국·영국·일본)·숏 글로스(한국·미국·영국) — 상품 81개 · 값 320개(+11). 써코니 엔돌핀 프로 5 미국은
+    색상 없는 주소가 10/23부터 JSON-LD 없는 페이지라 색상(품번) 지정 주소로. 브룩스 아드레날린 GTS 25는 한국 몰 상품 페이지가 시험 중 없어져(pageNotFound) 다음 차례에
 v1.9: (v1.8 검토 반영 10/26) ① 다시 받기에서는 한도 사이트 값 가운데 이번 주기에 아직 다시 받아 보지 않은 값(미룬 값·새 값·전체 받기 날 못 받은 값 —
     값마다 마지막으로 받으러 간 날 host_try로 가름)을 먼저, 다시 받기에서 이미 못 받은 값은 남은 한도로만 — 계속 실패하는 값이 한도를 다 써서
     다른 값이 영영 안 받히지 않게 ② 한 주기(7일+1) 넘게 미뤄진 값은 이전 값 표시·21일 알림에, 이전 값도 없는 값은 '값 없음'으로 ③ 이번 주기에
@@ -263,6 +266,12 @@ PRODUCTS = [
     {"id": "dd-ars", "brand": "드래곤디퓨전", "name": "아르스 토트백", "code": "8848", "alt": ["W2BAS26027DBR"], "src": "page", "hint": "ars", "urls": {
         "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR",
         "US": "https://dragondiffusion.com/products/ars-tote-dark-brown-woven-leather-bag"}},
+    {"id": "dd-nantucket", "brand": "드래곤디퓨전", "name": "난터켓 빅 백", "code": "8822", "alt": ["W2BAS26030DBR"], "src": "page", "hint": "nantucket", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26030DBR",
+        "US": "https://dragondiffusion.com/products/nantucket-big-dark-brown-woven-leather-bag-handmade"}},
+    {"id": "dd-chunkyfellini", "brand": "드래곤디퓨전", "name": "청키 펠리니 포셰트", "code": "8036", "alt": ["W2BAS26028DBR"], "src": "page", "hint": "chunky fellini", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26028DBR",
+        "US": "https://dragondiffusion.com/products/chunky-fellini-pochette-dark-brown-woven-leather-pochette-handmade"}},
     {"id": "hunter-origtall", "brand": "헌터", "name": "오리지널 톨(여성·무광)", "code": "WFT1000RMA", "src": "page", "hint": "wft1000rmablk", "urls": {
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01",   # 코오롱몰 — 품번은 상품 이름 끝(WFT1000RMABLK)에만
         "US": "https://hunterboots.com/products/womens-original-tall-rain-boots-in-black-wft1000rma-hbl01.json",
@@ -286,6 +295,15 @@ PRODUCTS = [
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01",
         "US": "https://hunterboots.com/products/womens-play-short-rain-boots-in-black-wfs2020rma-hbl01.json",
         "GB": "https://hunterboots.co.uk/products/womens-play-short-wellington-boots-wfs2020rma-blk.json"}},   # 일본 몰에는 없음(404, 10/22)
+    {"id": "hunter-glosstall", "brand": "헌터", "name": "오리지널 톨 글로스(여성)", "code": "WFT1000RGL", "src": "page", "hint": "wft1000rglblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508619617098BK01",
+        "US": "https://hunterboots.com/products/womens-original-tall-gloss-rain-boots-in-black-wft1000rgl-hbl01.json",
+        "GB": "https://hunterboots.co.uk/products/womens-original-tall-gloss-wellington-boots-wft1000rgl-blk.json",
+        "JP": "https://hunterboots.co.jp/products/wft1000rgl-blk.json"}},
+    {"id": "hunter-glossshort", "brand": "헌터", "name": "오리지널 숏 글로스(여성)", "code": "WFS1000RGL", "src": "page", "hint": "wfs1000rglblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
+        "US": "https://hunterboots.com/products/womens-original-short-gloss-rain-boots-in-black-wfs1000rgl-hbl01.json",
+        "GB": "https://hunterboots.co.uk/products/womens-original-short-gloss-wellington-boots-wfs1000rgl-blk.json"}},   # 일본 몰 사이트맵에 없음(10/27)
     {"id": "ua-tech2", "brand": "언더아머", "name": "UA 테크 2.0 반팔", "code": "1326413", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
         "US": "https://www.underarmour.com/en-us/p/ua_tech_2.0_mens_short_sleeve/1326413.html",
@@ -339,7 +357,7 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html"}},
     {"id": "saucony-endpro5", "brand": "써코니", "name": "엔돌핀 프로 5(남성)", "code": "S21064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
-        "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html",
+        "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100",   # 색상 없는 주소는 10/23부터 JSON-LD 없는 페이지
         "GB": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html",
         "DE": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60803M.html"}},
     {"id": "saucony-triumph24", "brand": "써코니", "name": "트라이엄프 24(남성)", "code": "S100997", "src": "page", "hint": "트라이엄프 24", "code_in_page": True, "urls": {
