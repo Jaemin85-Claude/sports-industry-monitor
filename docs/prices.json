@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-27 15:07 KST",
+ "generated_at": "2026-10-27 17:19 KST",
  "fetched": "2026-10-27",
  "attempt": "2026-10-27",
- "cfg": "c1579fbad155",
+ "cfg": "2fce6a70d913",
  "status": "ok",
  "items": [
   {
@@ -772,9 +772,13 @@
        "2026-10-26",
        89.99,
        "base"
+      ],
+      [
+       "2026-10-27",
+       44.99
       ]
      ],
-     "sp": 89.99,
+     "sp": 44.99,
      "sp_date": "2026-10-27"
     },
     "GB": {
@@ -997,6 +1001,103 @@
      "seen": "2026-10-27",
      "url": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html",
      "obs": 4999.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-speedcatgo",
+   "brand": "푸마",
+   "name": "스피드캣 GO(여성)",
+   "code": "403589",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
+     "obs": 119000.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "US": {
+     "p": 90.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
+     "obs": 90.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "JP": {
+     "p": 13200.0,
+     "cur": "JPY",
+     "seen": "2026-10-27",
+     "url": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
+     "obs": 13200.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "MX": {
+     "p": 1999.0,
+     "cur": "MXN",
+     "seen": "2026-10-27",
+     "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html",
+     "obs": 1999.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-dnetrail",
+   "brand": "푸마",
+   "name": "디비에이트 나이트로 엘리트 트레일(남성)",
+   "code": "310034",
+   "m": {
+    "KR": {
+     "p": 329000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
+     "obs": 329000.0,
+     "obs_date": "2026-10-27",
+     "sale": true,
+     "sp": 230300.0,
+     "sp_date": "2026-10-27",
+     "sh": [
+      [
+       "2026-10-27",
+       230300.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 250.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
+     "obs": 250.0,
+     "obs_date": "2026-10-27",
+     "sale": true,
+     "sp": 230.0,
+     "sp_date": "2026-10-27",
+     "sh": [
+      [
+       "2026-10-27",
+       230.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 229.95,
+     "cur": "EUR",
+     "seen": "2026-10-27",
+     "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034",
+     "obs": 229.95,
      "obs_date": "2026-10-27",
      "sale": false
     }
@@ -1387,24 +1488,20 @@
     "GB": {
      "p": 185.0,
      "cur": "GBP",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333",
      "obs": 185.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
+     "obs_date": "2026-10-27",
+     "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     }
    }
   },
@@ -1426,35 +1523,29 @@
     "US": {
      "p": 185.0,
      "cur": "USD",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/en-us/product/xt-6-lg4239",
      "obs": 185.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     },
     "GB": {
      "p": 165.0,
      "cur": "GBP",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
      "obs": 165.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     },
     "DE": {
      "p": 180.0,
      "cur": "EUR",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/de-de/product/xt-6-lg4239",
      "obs": 180.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     }
    }
   },
@@ -1476,24 +1567,20 @@
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
      "obs": 200.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     },
     "GB": {
      "p": 175.0,
      "cur": "GBP",
-     "seen": "2026-10-26",
+     "seen": "2026-10-27",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
      "obs": 175.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-27",
+     "sale": false
     },
     "DE": {
      "p": 190.0,
@@ -1819,6 +1906,146 @@
    }
   },
   {
+   "id": "drm-adrian",
+   "brand": "닥터마틴",
+   "name": "아드리안 태슬 로퍼",
+   "code": "14573001",
+   "m": {
+    "KR": {
+     "p": 239000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.co.kr/products/adeurian",
+     "obs": 239000.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/us/en/adrian-smooth-leather-tassel-loafers-black/p/14573001",
+     "obs": 160.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "GB": {
+     "p": 155.0,
+     "cur": "GBP",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/uk/en_gb/adrian-smooth-leather-tassel-loafers-black/p/14573001",
+     "obs": 155.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-8065",
+   "brand": "닥터마틴",
+   "name": "8065 메리제인",
+   "code": "12916001",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.co.kr/products/shoes-8065-maryjane-black-smooth-12916001",
+     "obs": 229000.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "US": {
+     "p": 150.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/us/en/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
+     "obs": 150.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "GB": {
+     "p": 145.0,
+     "cur": "GBP",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/uk/en_gb/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
+     "obs": 145.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-sinclair",
+   "brand": "닥터마틴",
+   "name": "싱클레어",
+   "code": "22564001",
+   "m": {
+    "KR": {
+     "p": 299000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.co.kr/products/singkeulreeo",
+     "obs": 299000.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "US": {
+     "p": 220.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/us/en/sinclair-womens-leather-platform-boots-black-milled-nappa/p/22564001",
+     "obs": 220.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "GB": {
+     "p": 200.0,
+     "cur": "GBP",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/uk/en_gb/sinclair-soft-leather-platform-boots-black/p/22564001",
+     "obs": 200.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "drm-1461mono",
+   "brand": "닥터마틴",
+   "name": "1461 모노",
+   "code": "14345001",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001",
+     "obs": 229000.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/us/en/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
+     "obs": 160.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    },
+    "GB": {
+     "p": 145.0,
+     "cur": "GBP",
+     "seen": "2026-10-27",
+     "url": "https://www.drmartens.com/uk/en_gb/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
+     "obs": 145.0,
+     "obs_date": "2026-10-27",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "dd-santacroce",
    "brand": "드래곤디퓨전",
    "name": "산타크로체 빅 백",
@@ -1834,11 +2061,11 @@
      "sale": false
     },
     "US": {
-     "p": 583.0,
+     "p": 582.0,
      "cur": "USD",
      "seen": "2026-10-27",
      "url": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 583.0,
+     "obs": 582.0,
      "obs_date": "2026-10-27",
      "sale": false
     }
@@ -1860,11 +2087,11 @@
      "sale": false
     },
     "US": {
-     "p": 534.0,
+     "p": 533.0,
      "cur": "USD",
      "seen": "2026-10-27",
      "url": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag",
-     "obs": 534.0,
+     "obs": 533.0,
      "obs_date": "2026-10-27",
      "sale": false
     }
@@ -2862,7 +3089,9 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
      "obs": 219000.0,
      "obs_date": "2026-10-27",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-27",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 175.0,
@@ -3254,11 +3483,17 @@
      "cur": "KRW",
      "seen": "2026-10-26",
      "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-%EB%A7%A5%EC%8A%A4-2%ED%8C%AC%ED%85%80-medium/697/",
-     "obs": 249000.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "페이지에 품번(1104791D) 없음 — 다른 상품으로 바뀜(대응표 확인)"
+     "obs": 174300.0,
+     "obs_date": "2026-10-27",
+     "sale": true,
+     "sp": 174300.0,
+     "sp_date": "2026-10-27",
+     "sh": [
+      [
+       "2026-10-27",
+       174300.0
+      ]
+     ]
     },
     "JP": {
      "p": 29700.0,
