@@ -1,71 +1,85 @@
 [
  {
-  "t": "codes",
-  "key": "puma",
-  "base": "KR",
-  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
-  "sites": {
-   "KR": {
-    "host": "kr.puma.com",
-    "path": "/kr/ko/"
-   },
-   "US": {
-    "host": "us.puma.com",
-    "path": "/us/en/"
-   },
-   "GB": {
-    "host": "uk.puma.com",
-    "path": "/uk/en/"
-   },
-   "DE": {
-    "host": "eu.puma.com",
-    "path": "/de/de/",
-    "kid_pref": [
-     "/urls/de/"
-    ]
-   },
-   "JP": {
-    "host": "jp.puma.com",
-    "path": "/jp/ja/"
-   },
-   "MX": {
-    "host": "mx.puma.com",
-    "path": "/mx/es/"
-   }
-  },
-  "targets": [
-   "310034",
-   "403589",
-   "401744"
-  ],
-  "max_maps": 60,
-  "per_host": 125,
-  "show": 0
- },
- {
-  "t": "try",
-  "key": "puma",
-  "brand": "푸마",
-  "ccs": [
-   "KR",
-   "US",
-   "GB",
-   "DE",
-   "JP",
-   "MX"
-  ],
-  "cands": [
+  "t": "tryp",
+  "prods": [
    {
+    "id": "puma-speedcatgo",
+    "brand": "푸마",
+    "name": "스피드캣 GO(여성)",
     "code": "403589",
-    "hint": "speedcat"
+    "src": "page",
+    "hint": "speedcat go",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
+     "US": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
+     "JP": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html"
+    }
    },
    {
+    "id": "puma-dnetrail",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 엘리트 트레일(남성)",
     "code": "310034",
-    "hint": "deviate nitro elite trail"
+    "src": "page",
+    "hint": "deviate nitro elite trail",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
+     "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"
+    }
    },
    {
-    "code": "401744",
-    "hint": "palermo"
+    "id": "drm-adrian",
+    "brand": "닥터마틴",
+    "name": "아드리안 태슬 로퍼",
+    "code": "14573001",
+    "src": "page",
+    "hint": "adrian",
+    "urls": {
+     "KR": "https://www.drmartens.co.kr/products/adeurian.json",
+     "US": "https://www.drmartens.com/us/en/adrian-smooth-leather-tassel-loafers-black/p/14573001",
+     "GB": "https://www.drmartens.com/uk/en_gb/adrian-smooth-leather-tassel-loafers-black/p/14573001"
+    }
+   },
+   {
+    "id": "drm-8065",
+    "brand": "닥터마틴",
+    "name": "8065 메리제인",
+    "code": "12916001",
+    "src": "page",
+    "hint": "8065",
+    "urls": {
+     "KR": "https://www.drmartens.co.kr/products/shoes-8065-maryjane-black-smooth-12916001.json",
+     "US": "https://www.drmartens.com/us/en/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
+     "GB": "https://www.drmartens.com/uk/en_gb/8065-smooth-leather-mary-jane-shoes-black/p/12916001"
+    }
+   },
+   {
+    "id": "drm-sinclair",
+    "brand": "닥터마틴",
+    "name": "싱클레어",
+    "code": "22564001",
+    "src": "page",
+    "hint": "sinclair",
+    "urls": {
+     "KR": "https://www.drmartens.co.kr/products/singkeulreeo.json",
+     "US": "https://www.drmartens.com/us/en/sinclair-womens-leather-platform-boots-black-milled-nappa/p/22564001",
+     "GB": "https://www.drmartens.com/uk/en_gb/sinclair-soft-leather-platform-boots-black/p/22564001"
+    }
+   },
+   {
+    "id": "drm-1461mono",
+    "brand": "닥터마틴",
+    "name": "1461 모노",
+    "code": "14345001",
+    "src": "page",
+    "hint": "1461",
+    "urls": {
+     "KR": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001.json",
+     "US": "https://www.drmartens.com/us/en/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
+     "GB": "https://www.drmartens.com/uk/en_gb/1461-mono-smooth-leather-oxford-shoes-black/p/14345001"
+    }
    }
   ]
  }
