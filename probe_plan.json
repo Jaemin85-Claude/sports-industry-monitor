@@ -1,0 +1,91 @@
+[
+ {
+  "t": "pages",
+  "urls": [
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/List/133010200000",
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/List/133010020000",
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071605",
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071600"
+  ],
+  "link_rx": "/Product/[A-Z0-9]{12,24}",
+  "code_rx": "(?:W2BAS\\d{5}[A-Z]{3}|[WM]F[TS]\\d{4}R[A-Z]{2}[A-Z]{3})",
+  "show": 80
+ },
+ {
+  "t": "grep",
+  "rx": "[wm]f[ts]\\d{4}r(gl|ma)",
+  "sites": {
+   "US": {
+    "host": "hunterboots.com"
+   },
+   "GB": {
+    "host": "hunterboots.co.uk"
+   },
+   "JP": {
+    "host": "hunterboots.co.jp"
+   }
+  },
+  "show": 80,
+  "max_maps": 12,
+  "per_host": 90
+ },
+ {
+  "t": "grep",
+  "rx": "/products/",
+  "sites": {
+   "DD-US": {
+    "host": "dragondiffusion.com"
+   }
+  },
+  "show": 120,
+  "max_maps": 8,
+  "per_host": 60
+ },
+ {
+  "t": "grep",
+  "rx": "/product/",
+  "sites": {
+   "BROOKS-KR": {
+    "host": "brooksrunning.co.kr"
+   }
+  },
+  "show": 150,
+  "max_maps": 8,
+  "per_host": 90
+ },
+ {
+  "t": "grep",
+  "rx": "/products/br[mw]\\d{4}",
+  "sites": {
+   "BROOKS-JP": {
+    "host": "brooksrunning.co.jp"
+   }
+  },
+  "show": 150,
+  "max_maps": 8,
+  "per_host": 90
+ },
+ {
+  "t": "grep",
+  "rx": "endorphin-pro",
+  "sites": {
+   "SAUC-US": {
+    "host": "www.saucony.com",
+    "kid_pref": [
+     "en"
+    ]
+   }
+  },
+  "show": 20,
+  "max_maps": 20,
+  "per_host": 150
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://www.saucony.com/en/endorphin-pro-5/60803M.html"
+  ],
+  "code_rx": "S2106[0-9][-0-9]*|60803M?",
+  "show": 0
+ }
+]
