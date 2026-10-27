@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.25: (대표 지시 2026-10-27 '우리 운임 VS 시장 데이터 실제 화면에 반영' · 결정 '이름 빼고 공개') 더보기 › 물류 맨 위 링크 한 줄 → '우리 운임 vs 시장'
+  카드 — docs/our_freight.json(관세사 수입신고 계산값 중 kg당 운임·시장 대비 배수·변화율·지수만 · 포워더 이름·건수·총액·무게·물건값 대비 비율 없음 ·
+  비공개 갱신 도구 public_ours.py가 만듦 · '우리 운임 갱신해줘' 때 이 파일만 PR) · 항공 kg당 최근 4분기·시장 대비 · 분기 추이(우리·시장) · 무게별 시장의 배수 ·
+  전쟁 전후 변화(우리·시장) · 해상 지수(2024=100) · 포워더별 비교는 대표 전용 페이지 링크(그대로)
 v33.24: (대표 지시 2026-10-27 'A') 브랜드 판정의 본사 발언 점수 — ① 한 지역 이야기(extract_segments v11.4·ir_fetch v1.7이 분류한
   scope 'region' — 예: 아디다스 '중화권 할인 축소', 아식스 '북미 전략적 축소')는 점수에서 빼고 ② 같은 방향(할인 물량↑ 또는 할인·공급↓) 발언이
   2건 이상이고 반대쪽보다 많을 때만 ±1(한 문장이 판정을 뒤집지 않게 — 10/26 아디다스·아식스·오니츠카타이거가 문장 1개로 바뀜). 화면 JS chkNotes와
@@ -1294,6 +1298,7 @@ const HIST = __HIST__;
 const KRD = __KRD__;
 const STATUS = __STATUS__;
 const LOGI = __LOGI__;   // v33.4 물류(docs/logistics.json · logistics_fetch v1) — 없으면 null
+const OURS = __OURS__;   // v33.25 우리 운임 공개판(docs/our_freight.json · 대표 자료) — 없으면 null
 const PRICES = __PRICES__;   // v33.14 해외 정가(docs/prices.json · price_fetch v1) — 없으면 null
 const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
 
@@ -3778,6 +3783,27 @@ function lgJump(id){   // v33.5 맨 위 칩 → 그 묶음 제목으로(고정 �
   cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0; phSync(); e.scrollIntoView({behavior:smoothB(),block:'start'});
 }
 const LG_OURS_URL='https://claude.ai/artifact/2ehAvGB9SJwEVFv3BfZQWg';   // v33.20 대표 전용 비공개 페이지 '우리 운임 vs 시장' — 주소만(내용은 대표 계정에서만 열림)
+function lgOursCard(){   // v33.25 우리 운임 vs 시장(docs/our_freight.json) — kg당·배수·변화율·지수만(이름·건수·총액 없음)
+  const O=OURS, link=`<a class="nmore" href="${LG_OURS_URL}" target="_blank" rel="noopener noreferrer">포워더별 — 대표 전용 페이지 ${ic('right',16)}</a>`;
+  if(!O||!Array.isArray(O.air_q)||O.air_q.length<2) return link;
+  const qL=q=>q?`${q.slice(2,4)}${q.slice(4)}`:'', qM=q=>`${q.slice(0,4)}-${String((+q.slice(5)-1)*3+1).padStart(2,'0')}`;   // '2026Q1' → '26Q1' · 그래프용 첫 달 '2026-01'
+  const xC=x=>x==null?'<span class="na">―</span>':`<span class="${x>1?'neg':x<1?'pos':''}">${Number(x).toFixed(1)}배</span>`;
+  const pc=v=>v==null?'<span class="na">―</span>':lgChg(1+v/100,false), per=Array.isArray(O.period)?O.period.map(lgMon).join('~'):'';
+  const L=(O.air_lead||{}).last, F=(O.air_lead||{}).first, Q=O.air_q, kp=(l,v,sub)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`;
+  let h=`<div class="card" id="lgOurs"><h3>우리 운임 vs 시장 <span class="na" style="font-weight:400">관세사 수입신고 · ${per}</span></h3>`;
+  if(L) h+=`<div class="kpis lgk">${kp('항공 kg당 · 최근 4분기',lgU(L.ours,'<small>원</small>'),`시장 대비 ${pc(L.gap)}`)}${F&&Array.isArray(F.p)&&F.p.length?kp('시장의 배수',`${xC(F.x)} → ${xC(L.x)}`,`${F.p[0].slice(0,4)===F.p[F.p.length-1].slice(0,4)?F.p[0].slice(2,4)+'년':qL(F.p[0])+'~'+qL(F.p[F.p.length-1])} → 최근 4분기`):''}</div>`;
+  h+=`<div class="cb-trend lg-tr">${[['ours','우리 항공 kg당',1],['mkt','시장(관세청)',0]].map(([k,t,a])=>`<div class="cb-tr"><div class="h"><b>${t}</b><span class="num">${lgN(Q[Q.length-1][k])}</span></div>${lgSpark(Q.map(r=>[qM(r.q),r[k]]),{accent:!!a,label:t+' 분기'})}<div class="ax"><span>${qL(Q[0].q)}</span><span>${qL(Q[Q.length-1].q)}</span></div></div>`).join('')}</div>`;
+  const B=(O.air_band||{}).rows||[];
+  if(B.length) h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>항공 무게</th><th>우리 kg당</th><th>시장의</th></tr>${B.map(r=>`<tr><td>${esc(r.band||'')}</td><td class="num">${lgN(r.ours)}</td><td>${xC(r.x)}</td></tr>`).join('')}</table></div>`;
+  const W=(O.war||[]).filter(r=>r&&(r.chg!=null||r.mkt_chg!=null));   // 전쟁 뒤 신고가 없는 길(두바이 등)은 뺌
+  if(W.length) h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>전쟁 전 → 후</th><th>우리</th><th>시장</th></tr>${W.map(r=>`<tr><td>${esc(r.lane||'')}</td><td>${pc(r.chg)}</td><td>${pc(r.mkt_chg)}</td></tr>`).join('')}</table></div>`;
+  const S=(O.sea||[]).filter(x=>x&&Array.isArray(x.rows)&&x.rows.length);
+  if(S.length){ const lq=S[0].rows[S[0].rows.length-1].q;
+    h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>해상 지수 ${esc(qL(lq))}</th><th>우리</th><th>시장</th></tr>${S.map(x=>{ const r=x.rows[x.rows.length-1];
+      return `<tr><td>${esc(x.lane||'')}</td><td class="num">${lgN(r.ours_i)}</td><td class="num">${r.mkt_i==null?'<span class="na">―</span>':lgN(r.mkt_i)}</td></tr>`; }).join('')}</table></div>`; }
+  const wp=O.war_p||{};
+  return h+link+why(`운임이 적힌 수입신고만(EXW·FOB·FCA — CIF 등은 운임이 물건값에 섞여 뺌) · kg당 = 운임 합계 ÷ 총중량 · 항공 = 인천공항세관 통관 · 시장 = 관세청 수입신고 운임(같은 기간 · 항공 kg당, 해상은 40ft라 ${esc(S.length?S[0].base||'2024':'2024')}년 = 100 지수로 견줌 · 홍콩 = 중국 값 · 싱가포르는 시장 값 없음) · 시장의 배수 = 우리 kg당 ÷ 시장 kg당(가벼운 짐일수록 큼) · 전쟁 전 = ${esc(wp.pre||'')} · 후 = ${esc(wp.post||'')} · 우리 값이 높으면 주황 · 갱신 ${esc(O.built||'―')}(대표 자료가 오면 '우리 운임 갱신해줘')`)+`</div>`;
+}
 function moreLogiHtml(){
   let h=moreHead('물류','갱신 <span class="nw">'+esc((LOGI&&LOGI.generated_at)||'―')+'</span>');   // v33.9 머리 줄은 갱신 시각만
   if(!LOGI) return h+'<div class="card"><div class="na">물류 자료 수집 전 — update-dashboard 실행 후 표시</div></div>';
@@ -3785,7 +3811,7 @@ function moreLogiHtml(){
   const sec=(id,t,sub)=>`<h2 class="lg-h2" id="${id}">${t}<span>${sub}</span></h2>`;
   h+=sf('요약',lgKpis);
   h+=`<div class="chips lg-jump">${[['lgImp','수입'],['lgExp','수출'],['lgRisk','공통 위험 신호']].map(([id,t])=>`<button type="button" class="chip" onclick="lgJump('${id}')">${t}${ic('down',16)}</button>`).join('')}</div>`;
-  h+=`<a class="nmore" href="${LG_OURS_URL}" target="_blank" rel="noopener noreferrer">우리 운임 vs 시장 — 대표 전용 페이지 ${ic('right',16)}</a>`;   // v33.20 링크 한 줄
+  h+=sf('우리 운임',lgOursCard);   // v33.25 링크 한 줄 → 카드(우리 운임 공개판 · 포워더별은 카드 안 링크)
   h+=why(`① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 그 나라에서 부산항(바닷길)·인천공항(항공)으로 들어온 물량은 나라별 도착 물동량(관세청 · 월 — 인천·평택·광양항 등은 빠짐), 어제까지 부산항에 들어온 배는 부산항 입항 컨테이너선(해수부 · 매일 — 수출 선적·환적 배 포함). 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고)·나라별 출발 물동량(부산항·인천공항). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.`,'이 화면 읽는 법');   // v33.9 접음
   h+=sec('lgImp','수입','적출 거점 → 부산 · 항공 → 인천')+sf('적출 거점',lgHubCard)+sf('나라별 도착 물동량',()=>`<div class="card" id="lgVol_vol_in">${lgVolCard('vol_in')}</div>`)
     +sf('부산항 입항 선박',lgPmCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
@@ -5471,6 +5497,22 @@ def main():
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None
+    ours = None   # v33.25 우리 운임 공개판(docs/our_freight.json · 대표 자료 — 갱신 도구 public_ours.py) — 정한 칸만 넣음(이름·건수 같은 칸이 섞여 와도 화면에 안 실림)
+    if os.path.exists("docs/our_freight.json"):
+        try:
+            with open("docs/our_freight.json", encoding="utf-8") as f:
+                o = json.load(f)
+            kp = lambda d, ks: {k: d[k] for k in ks if isinstance(d, dict) and k in d}
+            ours = {"built": o.get("built"), "period": o.get("period"), "war_p": kp(o.get("war_p"), ("pre", "post")),
+                    "air_q": [kp(r, ("q", "ours", "mkt")) for r in o.get("air_q") or [] if isinstance(r, dict)],
+                    "air_band": {"rows": [kp(r, ("band", "ours", "x")) for r in (o.get("air_band") or {}).get("rows") or [] if isinstance(r, dict)]},
+                    "air_lead": {k: kp(v, ("p", "x", "ours", "gap")) for k, v in (o.get("air_lead") or {}).items() if k in ("first", "last") and isinstance(v, dict)},
+                    "war": [kp(r, ("lane", "chg", "mkt_chg")) for r in o.get("war") or [] if isinstance(r, dict)],
+                    "sea": [dict(kp(x, ("lane", "base")), rows=[kp(r, ("q", "ours_i", "mkt_i")) for r in x.get("rows") or [] if isinstance(r, dict)])
+                            for x in o.get("sea") or [] if isinstance(x, dict)]}
+        except Exception as e:
+            print(f"[WARN] our_freight.json 읽기 실패: {str(e)[:100]}")
+            ours = None
     prices = None   # v33.14 해외 정가(price_fetch v1) — 화면에 안 쓰는 주소·사유·이번 관측값은 빼고, 값 없음은 상품별 나라 목록(missing)만
     if os.path.exists("docs/prices.json"):
         try:
@@ -5521,6 +5563,7 @@ def main():
             .replace("__WMAP__", js(wmap))
             .replace("__LOGI__", js(logi))
             .replace("__PRICES__", js(prices))
+            .replace("__OURS__", js(ours))
             .replace("__CHK_CUR__", js(CHK_CUR))
             .replace("__CHK_RULE__", str(CHK_RULE))
             .replace("__CHK_SIG__", json.dumps(sig)))
