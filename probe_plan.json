@@ -1,32 +1,78 @@
 [
  {
+  "t": "pages",
+  "urls": [
+   "https://brooksrunning.co.kr/product/list.html?cate_no=23",
+   "https://brooksrunning.co.kr/product/list.html?cate_no=25"
+  ],
+  "link_rx": "/product/[^\\\"'<>\\s]*(아드레날린|글리세린-23|고스트-18|글리세린-gts-23)[^\\\"'<>\\s]*/\\d+/",
+  "show": 80
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://brooksrunning.co.kr/product/black-friday-여성-아드레날린gts-25블랙medium/673/"
+  ],
+  "code_rx": "1[12]0\\d{4}[A-Z0-9]{1,3}",
+  "snip_rx": [
+   "prd_model|모델명|상품코드"
+  ]
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://brooksrunning.co.jp/products/brm4543-blk-w.json",
+   "https://brooksrunning.co.jp/products/brm4544-blk-w.json",
+   "https://brooksrunning.co.jp/products/brw4362-blk.json"
+  ],
+  "code_rx": "\\\"(title|sku|product_type)\\\":\\s*\\\"[^\\\"]{0,80}\\\""
+ },
+ {
+  "t": "grep",
+  "rx": "/products/(juventus|chunky-fellini-pochette-dark|nantucket-big-dark)",
+  "sites": {
+   "DD-US": {
+    "host": "dragondiffusion.com"
+   }
+  },
+  "show": 20,
+  "max_maps": 8,
+  "per_host": 60
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://dragondiffusion.com/products/chunky-fellini-pochette-dark-brown-woven-leather-pochette-handmade.json",
+   "https://dragondiffusion.com/products/nantucket-big-dark-brown-woven-leather-bag-handmade.json",
+   "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade.json"
+  ],
+  "code_rx": "\\\"(sku|title|price|compare_at_price)\\\":\\s*\\\"?[^\\\",]{0,60}"
+ },
+ {
   "t": "tryp",
   "prods": [
    {
-    "id": "hunter-glosstall",
-    "brand": "헌터",
-    "name": "오리지널 톨 글로스(여성)",
-    "code": "WFT1000RGL",
+    "id": "saucony-endpro5",
+    "brand": "써코니",
+    "name": "엔돌핀 프로 5(남성)",
+    "code": "S21064",
     "src": "page",
-    "hint": "wft1000rglblk",
+    "hint": "엔돌핀 프로 5",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508619617098BK01",
-     "US": "https://hunterboots.com/products/womens-original-tall-gloss-rain-boots-in-black-wft1000rgl-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-original-tall-gloss-wellington-boots-wft1000rgl-blk.json",
-     "JP": "https://hunterboots.co.jp/products/wft1000rgl-blk.json"
+     "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100"
     }
    },
    {
-    "id": "hunter-glossshort",
-    "brand": "헌터",
-    "name": "오리지널 숏 글로스(여성)",
-    "code": "WFS1000RGL",
+    "id": "saucony-endpro5b",
+    "brand": "써코니",
+    "name": "엔돌핀 프로 5(남성)",
+    "code": "S21064",
     "src": "page",
-    "hint": "wfs1000rglblk",
+    "hint": "엔돌핀 프로 5",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
-     "US": "https://hunterboots.com/products/womens-original-short-gloss-rain-boots-in-black-wfs1000rgl-hbl01.json",
-     "GB": "https://hunterboots.co.uk/products/womens-original-short-gloss-wellington-boots-wfs1000rgl-blk.json"
+     "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=100"
     }
    }
   ]
@@ -34,39 +80,10 @@
  {
   "t": "pages",
   "urls": [
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023DBR",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26028DBR",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26030DBR",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR"
+   "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100"
   ],
-  "code_rx": "\\b8\\d{3}\\b",
   "snip_rx": [
-   "(?i)style\\s*(no|number)|모델\\s*번호|품번|원산지|\\b8\\d{3}\\b"
-  ]
- },
- {
-  "t": "pages",
-  "urls": [
-   "https://brooksrunning.co.kr/",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=24",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=42"
-  ],
-  "link_rx": "/product/[^\\\"'<>\\s]+/\\d+/",
-  "show": 120
- },
- {
-  "t": "pages",
-  "urls": [
-   "https://www.saucony.com/en/endorphin-pro-5/60803M.html",
-   "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html"
-  ],
-  "code_rx": "S21064-\\d{3}",
-  "snip_rx": [
-   "itemprop=\\\"price\\\"",
-   "data-stock-number",
-   "price-standard",
-   "priceincents",
-   "(?i)sold out|not available|unavailable"
+   "data-stock-number=\\\"[^\\\"]+\\\""
   ]
  }
 ]
