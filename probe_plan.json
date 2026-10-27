@@ -2,67 +2,59 @@
  {
   "t": "pages",
   "urls": [
-   "https://dragondiffusion.com/products/chunky-fellini-pochette-dark-brown-woven-leather-pochette-handmade.json"
+   "https://brooksrunning.co.kr/product/detail.html?product_no=664",
+   "https://brooksrunning.co.kr/product/detail.html?product_no=784"
   ],
   "snip_rx": [
-   "\\\"sku\\\":\\s*\\\"[^\\\"]*\\\""
+   "rel=\\\"canonical\\\"[^>]*",
+   "og:url\\\"[^>]*",
+   "product_custom",
+   "소비자가",
+   "product_price\\b"
   ]
  },
  {
-  "t": "pages",
-  "urls": [
-   "https://brooksrunning.co.kr/product/detail.html?product_no=784"
-  ],
-  "code_rx": "1[12]0\\d{4}[A-Z0-9]{1,4}",
-  "snip_rx": [
-   "prd_model\\\">[^<]+"
-  ]
+  "t": "grep",
+  "rx": "brm4763|brm4543|brm4764",
+  "sites": {
+   "JP": {
+    "host": "brooksrunning.co.jp",
+    "kid_pref": [
+     "product"
+    ]
+   }
+  },
+  "max_maps": 12,
+  "per_host": 120
  },
  {
   "t": "tryp",
   "prods": [
    {
+    "id": "dd-chunkyfellini",
+    "brand": "드래곤디퓨전",
+    "name": "청키 펠리니 포셰트",
+    "code": "8036",
+    "alt": [
+     "W2BAS26028DBR"
+    ],
+    "src": "page",
+    "hint": "chunky fellini",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26028DBR",
+     "US": "https://dragondiffusion.com/products/chunky-fellini-pochette-dark-brown-woven-leather-pochette-handmade"
+    }
+   },
+   {
     "id": "brooks-adrgts25",
     "brand": "브룩스",
     "name": "아드레날린 GTS 25(남성)",
     "code": "1104541D",
-    "cc_code": {
-     "JP": "BRM4543"
-    },
     "src": "page",
     "hint": "아드레날린",
     "code_in_page": true,
     "urls": {
-     "KR": "https://brooksrunning.co.kr/product/detail.html?product_no=664",
-     "JP": "https://brooksrunning.co.jp/products/brm4543-w-blk.json"
-    }
-   },
-   {
-    "id": "dd-nantucket",
-    "brand": "드래곤디퓨전",
-    "name": "난터켓 빅 백",
-    "code": "8822",
-    "alt": [
-     "W2BAS26030DBR"
-    ],
-    "src": "page",
-    "hint": "nantucket",
-    "urls": {
-     "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26030DBR",
-     "US": "https://dragondiffusion.com/products/nantucket-big-dark-brown-woven-leather-bag-handmade"
-    }
-   },
-   {
-    "id": "saucony-endpro5",
-    "brand": "써코니",
-    "name": "엔돌핀 프로 5(남성)",
-    "code": "S21064",
-    "src": "page",
-    "hint": "엔돌핀 프로 5",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
-     "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100"
+     "KR": "https://brooksrunning.co.kr/product/a/664/"
     }
    }
   ]
