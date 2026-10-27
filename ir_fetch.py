@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
+v1.7: (대표 지시 2026-10-27 'A' — 브랜드 판정) 본사 발언 범위 scope(global·region + region 이름) — extract_segments v11.4와 같은 규칙,
+      sig 또는 scope가 없는 발언만 1회 분류(이미 있는 sig는 그대로 · temperature 0 · 객체 n개 배열만 읽음) · 다시 뽑은 같은 문장은 이전 scope·region도
+      옮김(merge_notes) · 비슷한 문장 합치기(_same)는 지역 이름이 다르면 안 합침
 v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 표 해석·추출이 실패하면 이전 값을 지키고(전에는 빈 값으로 덮어씀)
       soft_fail.txt에 남김(ir.yml 'Check partial failures'가 빨간 X), 가장 최근 자료의 기간이 끝난 지 165일 넘어도 실패 표시,
       접속·Claude 일시 오류(429·5xx·연결)는 다시 시도 ② 본사 발언 빈칸 채우기 — 아디다스는 Fact Sheet과 같은 분기 폴더의
@@ -673,6 +676,10 @@ def merge_notes(notes, old_notes, old_at=None):
         n, o = dict(n), old.get(_norm_q(n.get("quote")))
         if o and o.get("sig") in SIGS and n.get("sig") not in SIGS:
             n["sig"] = o["sig"]
+        if o and o.get("scope") in SCOPES and n.get("scope") not in SCOPES:   # v1.7 범위도 그대로
+            n["scope"] = o["scope"]
+            if o.get("region"):
+                n["region"] = o["region"]
         n["at"] = (o.get("at") or old_at) if o and (o.get("at") or old_at) else (n.get("at") or _now_kst())
         out.append(n)
     new = {_norm_q(n.get("quote")) for n in out}
@@ -737,12 +744,47 @@ def _words(q):
 
 
 SIGS = ("more", "less", "neutral")
+SCOPES = ("global", "region")   # v1.7 발언 범위 — region = 한 지역·나라만(판정 점수에서 뺌)
+
+
+# v1.7 지역 이름(비슷한 문장 합치기에서 지역이 다르면 다른 말) — 긴 이름 먼저('us'는 낱말 us와 헷갈려 뺌)
+_GEO = re.compile(r"\b(greater china|mainland china|hong kong|taiwan|china|chinese|north america|latin america|south america|americas|"
+                  r"united states|u\.s|usa|canada|mexico|brazil|emea|europe|european|united kingdom|uk|germany|france|italy|spain|"
+                  r"middle east|africa|apac|asia[- ]pacific|southeast asia|asia|japan|korea|india|oceania|australia)\b", re.I)
+
+
+def _geo(q):
+    return frozenset(m.lower().replace("-", " ") for m in _GEO.findall(str(q or "")))
+
+
+def _obj_list(txt, n):
+    """v1.7 응답에서 객체 n개짜리 JSON 배열(n이 1이면 객체 하나도)을 찾음 — 설명·다른 괄호([1] 등)가 앞뒤에 붙어도. 없으면 None(다음 실행에서 다시)"""
+    dec = json.JSONDecoder()
+    for i, ch in enumerate(txt or ""):
+        if ch not in "[{":
+            continue
+        try:
+            v, _ = dec.raw_decode(txt, i)
+        except ValueError:
+            continue
+        if isinstance(v, dict) and n == 1:
+            v = [v]
+        if isinstance(v, list) and len(v) == n and all(isinstance(a, dict) for a in v):
+            return v
+    return None
+
+
+def _region_ko(v):
+    """v1.7 지역 이름 — 글자일 때만, 괄호 뒤(영문 약자 등)는 버리고 16자까지"""
+    if not isinstance(v, str):
+        return ""
+    return re.split(r"[\(\[（【]", v)[0].strip(" \"'·,")[:16]
 
 
 def classify_notes(notes, label=""):
-    """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) — extract_segments v11.2와 같음. 실패하면 그대로(다음 실행에서 다시)"""
+    """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) · v1.7 범위(scope·region) — extract_segments v11.4와 같음. 실패하면 그대로(다음 실행에서 다시)"""
     notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
-    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
+    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS or n.get("scope") not in SCOPES]
     if not todo or not ANTHROPIC_KEY or not _opt_ok(f"{label} 발언 신호 분류"):
         return notes
     lines = "\n".join(f"{k + 1}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
@@ -752,18 +794,20 @@ Below {"is the only statement" if n == 1 else f"are all {n} statements"} taken f
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Respond with ONLY a JSON array of exactly {n} string(s), one per statement in the same order, e.g. {'["more"]' if n == 1 else '["more","neutral"]'}. No explanation.
+Also decide its scope, by where the condition behind your answer applies:
+  "global" - the company or brand as a whole, or several major regions together. Regions named only as growth drivers, examples or side effects still count as global (e.g. "e-commerce rose despite lower promotions, supported by marketplaces in APAC" is global: the lower promotions are company-wide)
+  "region" - ONE specific region or country only (e.g. "gross margin in Greater China rose on reduced discounting"; "growth in all regions except North America, which is being strategically downsized" is region 북미, because the downsizing is in North America)
+Respond with ONLY a JSON array of exactly {n} object(s), one per statement in the same order, e.g. {'[{"sig":"less","scope":"region","region":"중화권"}]' if n == 1 else '[{"sig":"more","scope":"global"},{"sig":"neutral","scope":"region","region":"북미"}]'}. "region" = that region's short Korean name such as 중화권, 중국, 북미, 미국, 유럽, 일본, 한국, 아시아태평양, 중남미, 중동 — only when scope is "region". No explanation.
 
 {lines}"""
     try:
         txt = ""
-        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 200,
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 600, "temperature": 0,
                                "messages": [{"role": "user", "content": prompt}]}, timeout=60)
         txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
-        m = re.search(r"\[[^\[\]]*\]", txt)      # 설명이 앞뒤에 붙어도 첫 JSON 배열만 읽음
-        arr = json.loads(m.group(0) if m else txt.strip())
-        if not isinstance(arr, list) or len(arr) != len(todo):
-            raise ValueError(f"응답 개수 {len(arr) if isinstance(arr, list) else '?'} ≠ {len(todo)}")
+        arr = _obj_list(txt, len(todo))      # 설명·다른 괄호가 앞뒤에 붙어도 객체 n개짜리 배열만
+        if arr is None:
+            raise ValueError(f"발언 {len(todo)}개짜리 객체 배열을 못 찾음")
     except SystemExit:
         raise
     except Exception as e:
@@ -771,14 +815,25 @@ Respond with ONLY a JSON array of exactly {n} string(s), one per statement in th
         log(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}{head}")
         return notes
     for k, i in enumerate(todo):
-        v = str(arr[k]).strip().lower()
-        notes[i]["sig"] = v if v in SIGS else "neutral"
-    log(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" for i in todo))
+        a = arr[k]
+        if notes[i].get("sig") not in SIGS:      # 이미 있는 신호는 그대로(다시 분류해 판정이 흔들리지 않게)
+            v = str(a.get("sig") or "").strip().lower()
+            notes[i]["sig"] = v if v in SIGS else "neutral"
+        if notes[i].get("scope") not in SCOPES:
+            v = str(a.get("scope") or "").strip().lower()
+            notes[i]["scope"] = v if v in SCOPES else "global"   # 모르면 전체 이야기로(점수에 넣음 — 예전과 같게)
+            rg = _region_ko(a.get("region"))
+            if notes[i]["scope"] == "region" and rg:
+                notes[i]["region"] = rg
+    log(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" + (f"·{notes[i].get('region') or '한 지역'}만" if notes[i].get("scope") == "region" else "") for i in todo))
     return notes
 
 
 def _same(n, w, o):
-    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김)"""
+    """같은 주제이고 내용어가 6개 이상·짧은 쪽의 60% 넘게 겹치면 같은 말(브랜드·지역만 다른 문장은 남김) ·
+    v1.7 나오는 지역 이름이 다르면 다른 말 — 회사 전체 문장과 한 지역 문장이 합쳐져 한 지역만 남으면 판정 점수에서 빠지므로"""
+    if _geo(n.get("quote")) != _geo(o.get("quote")):
+        return False
     ow = _words(o.get("quote"))
     sh = len(w & ow)
     return o.get("topic") == n.get("topic") and sh >= 6 and sh / max(1, min(len(w), len(ow))) > 0.6
@@ -1188,7 +1243,7 @@ def main():
             log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}"
                 + (f" · 표 일부만 읽힘({' · '.join(missing_rows(tk, ex))})" if ex and missing_rows(tk, ex) else ""))
             for n in classify_notes(ex.get("mgmt_notes") or [], tk):
-                log(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
+                log(f"    [{n['topic']}·{n.get('sig', '?')}·{n.get('region') or n.get('scope', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
     failed = []     # v1.6 수집 상태 화면 '일부 실패'(build_dashboard — extract_segments와 같은 failed·kept_failed·kept_reason)
     fresh = set()   # 이번 실행에서 새로 추출한 종목(캐시가 아닌)
@@ -1282,7 +1337,7 @@ def main():
     for tk, v in items.items():     # v1.4 캐시에도 같은 정리(새 추출은 이미 정리됨)
         ex = (v or {}).get("extract")
         if isinstance(ex, dict) and isinstance(ex.get("mgmt_notes"), list):
-            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], tk), tk)   # v1.5 신호 없는 발언만 분류
+            ex["mgmt_notes"] = classify_notes(tidy_notes(ex["mgmt_notes"], tk), tk)   # v1.5 신호 없는 발언만 분류 · v1.7 범위(scope) 없는 발언도
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "items": items,
            "claude_usage": usage_months(old)}    # v1.4 월별 Claude 사용량(수집 상태 화면)
     if failed:

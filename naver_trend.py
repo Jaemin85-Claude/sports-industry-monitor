@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 8: 네이버 데이터랩 검색 관심도 (v1)
+v1.11: (대표 지시 2026-10-27 'B') 끝난 지 이틀이 지난 날까지만 받음(READY_DAYS) — 네이버는 전날 자료가 아침에 덜 들어와, 월요일 아침
+       실행의 마지막 주(전날 일요일까지)가 13~24% 낮게 잡혀 검색 전년 대비·판정이 그날 오후까지 흔들림(10/12·10/19·10/26 실측 — 같은 날 오후·
+       다음 날은 정상). 새 주는 화요일부터(월요일은 지난주 그대로), 새 달은 2일부터(1일은 지난달 그대로)
 v1.10: (대표 지시 2026-10-19 '네이버 400 재시도') 요청이 400(Bad Request)이면 5xx처럼 잠시 뒤(3초·6초) 두 번 더 시도 — 10/19 07:14 실행에서
        한 묶음(아크테릭스·룰루레몬·온러닝·써코니)만 400으로 실패하고 같은 요청이 앞뒤 실행에서는 정상(일시 오류). 끝내 실패하면 오류 글에
        네이버 응답 앞부분을 붙여 원인을 로그로 볼 수 있게(키는 머리글에만 있어 응답·주소에 없음). 재시도를 다 쓰고도 400인 요청이
@@ -153,9 +156,17 @@ def soft_fail(msg):
         f.write(f"{SCRIPT}: {msg}\n")
 
 
+READY_DAYS = 2   # v1.11 끝난 지 이 날수가 지난 날까지만 — 네이버는 전날 자료가 아침에 덜 들어와 있음(월요일 아침 마지막 주 13~24% 낮게)
+
+
+def ready_day():
+    """v1.11 자료가 다 들어왔다고 보는 마지막 날(오늘 − READY_DAYS)"""
+    return datetime.datetime.now(KST).date() - datetime.timedelta(days=READY_DAYS)
+
+
 def date_range():
-    """어제 기준 마지막 일요일까지의 완전한 주 WEEKS개 (주 시작 = 월요일)"""
-    ref = datetime.datetime.now(KST).date() - datetime.timedelta(days=1)
+    """자료가 다 들어온 마지막 일요일까지의 완전한 주 WEEKS개 (주 시작 = 월요일) — 새 주는 화요일부터"""
+    ref = ready_day()
     end = ref - datetime.timedelta(days=(ref.weekday() + 1) % 7)       # 일요일
     start = end - datetime.timedelta(days=7 * WEEKS - 1)                 # 월요일
     return start, end
@@ -262,8 +273,8 @@ def collect():
 
 
 def month_range():
-    """지난달까지 완전한 달 MONTHS개"""
-    end = datetime.datetime.now(KST).date().replace(day=1) - datetime.timedelta(days=1)
+    """자료가 다 들어온 지난달까지 완전한 달 MONTHS개 — 새 달은 2일부터(v1.11)"""
+    end = (ready_day() + datetime.timedelta(days=1)).replace(day=1) - datetime.timedelta(days=1)
     y, m = end.year, end.month - (MONTHS - 1)
     while m <= 0:
         y, m = y - 1, m + 12
@@ -295,8 +306,7 @@ def collect_monthly():
 
 def collect_brand_monthly():
     """국내 패션·아이웨어 브랜드별 월간 검색(v1.5). 요청 = 나이키 + 브랜드 4개, 나이키 최근 12개월 월평균 = 100으로 환산"""
-    today = datetime.datetime.now(KST).date()
-    end = today.replace(day=1) - datetime.timedelta(days=1)
+    end = (ready_day() + datetime.timedelta(days=1)).replace(day=1) - datetime.timedelta(days=1)   # v1.11 새 달은 2일부터
     start = datetime.date(end.year - 3, 1, 1)
     ALL = KR_BRANDS + EYE_BRANDS
     months, series = None, {}

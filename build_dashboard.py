@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.24: (대표 지시 2026-10-27 'A') 브랜드 판정의 본사 발언 점수 — ① 한 지역 이야기(extract_segments v11.4·ir_fetch v1.7이 분류한
+  scope 'region' — 예: 아디다스 '중화권 할인 축소', 아식스 '북미 전략적 축소')는 점수에서 빼고 ② 같은 방향(할인 물량↑ 또는 할인·공급↓) 발언이
+  2건 이상이고 반대쪽보다 많을 때만 ±1(한 문장이 판정을 뒤집지 않게 — 10/26 아디다스·아식스·오니츠카타이거가 문장 1개로 바뀜). 화면 JS chkNotes와
+  파이썬 _chk_notes를 함께 · CHK_RULE 2(이전 기록과 비교 안 함) · 브랜드 상세·기업 상세 발언 줄에 '중화권만 · 점수 제외' 꼬리표, 근거 카드에 제외·1건 이유
 v33.23: (대표 지시 2026-10-26 '추천 순서대로' 5·6번 — 블프 전) 해외 정가 ① 할인가·정가 변동(price_fetch v1.5) — '할인 중'을 '할인 −30%'로
   (지금 가장 싼 색상·사이즈 — 화면 정가보다 낮을 때만 · 브랜드 상세에 그 값·확인한 날을 글로) · 최근 60일 정가 변동 꼬리표 '정가 ▲8.3%'
   (브랜드 상세·더보기 › 해외 정가 표 · 브랜드 상세에 전 정가 — 한국은 머리 줄 꼬리표 + 표 아래 줄 · 한국 공식몰 할인도 꼬리표).
@@ -530,7 +534,7 @@ table.nowrap th,table.nowrap td{white-space:nowrap;padding-left:3px;padding-righ
 .mn-b summary{display:inline-flex;align-items:center;min-height:44px;min-width:44px;font-size:var(--fs-2xs);color:var(--accent);cursor:pointer}
 .mn-b q{display:block;font-size:var(--fs-2xs);color:var(--sub);margin:0 0 6px;overflow-wrap:anywhere}
 .mn-s{display:inline-block;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 5px;margin-left:4px;vertical-align:1px;white-space:nowrap}
-.mn-more{color:var(--accent);border:1px solid var(--accent)}.mn-less{color:var(--bad);border:1px solid var(--bad)}
+.mn-more{color:var(--accent);border:1px solid var(--accent)}.mn-less{color:var(--bad);border:1px solid var(--bad)}.mn-rg{color:var(--sub);border:1px solid var(--sub)}
 /* 이전 값 · 새 실적 반영 대기 */
 .wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px;color:var(--bad);border:1px solid var(--bad)}   /* 새 화면 꼬리표(.tg)와 같은 색·굵기 */
 /* 시장 › 기업 */
@@ -2382,10 +2386,10 @@ const MGMT_SIG={more:'<span class="mn-s mn-more">할인 물량↑</span>',less:'
 function mgmtCardHtml(s,tag){
   const ex=s&&s.extract; if(!ex||!Array.isArray(ex.mgmt_notes)) return '';
   const per=perKo((ex.period||'').split(/;| ended/)[0]);
-  const rows=ex.mgmt_notes.map(n=>`<div class="mn-row"><span class="mn-t mn-${esc(n.topic)}">${MGMT_TOPIC[n.topic]||esc(n.topic)}</span><div class="mn-b">${esc(n.ko||'')}${MGMT_SIG[n.sig]||''}
+  const rows=ex.mgmt_notes.map(n=>`<div class="mn-row"><span class="mn-t mn-${esc(n.topic)}">${MGMT_TOPIC[n.topic]||esc(n.topic)}</span><div class="mn-b">${esc(n.ko||'')}${MGMT_SIG[n.sig]||''}${n.scope==='region'?`<span class="mn-s mn-rg">${esc(n.region||'한 지역')}만</span>`:''}
     <details><summary>원문</summary><q>${esc(n.quote)}</q></details></div></div>`).join('');
   return `<div class="card"><h3>본사 발언 — ${esc(per||'최근 실적')} <span class="tag">${esc(tag)}</span></h3>${rows||'<div class="na">이번 실적 자료에는 재고·할인·유통 관련 발언 없음</div>'}
-    ${why('실적 문서에서 재고 처분·할인·유통 통제 관련 문장을 원문 그대로 뽑음(원문에 있는 문장만 표시) · 요약은 참고용 · 할인 물량↑/할인·공급↓ = 병행수입 매입 관점 신호(Claude 분류)')}</div>`;   // v33.9 접음
+    ${why('실적 문서에서 재고 처분·할인·유통 통제 관련 문장을 원문 그대로 뽑음(원문에 있는 문장만 표시) · 요약은 참고용 · 할인 물량↑/할인·공급↓ = 병행수입 매입 관점 신호(Claude 분류) · ‘중화권만’처럼 지역 이름 + 만 = 한 지역 이야기(브랜드 판정 점수에서 뺌)')}</div>`;   // v33.9 접음
 }
 function renderDetail(t){
   if(String(t).startsWith('krd:')){ renderKrdDetail(t.slice(4)); return; }
@@ -3900,10 +3904,13 @@ function chkInv(x){
 function chkNotes(t){
   const s=segOf(t), ex=s&&s.extract;
   if(!ex||!Array.isArray(ex.mgmt_notes)) return {pt:0,na:1,none:1,list:[],m:0,l:0,z:0,u:0,txt:'발언 자료 없음 — 이 회사 실적 자료에서 뽑은 발언이 없음(표 형식 자료·야후 수치만)'};
-  const L=ex.mgmt_notes, m=L.filter(n=>n.sig==='more').length, l=L.filter(n=>n.sig==='less').length,
-    z=L.filter(n=>n.sig==='neutral').length, u=L.length-m-l-z, per=perKo((ex.period||'').split(/;| ended/)[0]);   // u = 아직 신호 분류 전(다음 추출 때 판정)
-  return {pt:m>l?1:(l>m?-1:0), na:(L.length&&u===L.length)?1:0, list:L, m, l, z, u, per, tag:/^IR/.test(s.source||'')?'IR 추출':'공시 추출', txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
-    +(z?` · 중립 ${z}건`:'')+(u?` · 신호 분류 전 ${u}건(다음 추출 때 판정)`:''):'재고·할인·유통 관련 발언 없음')};
+  // v33.24 점수는 한 지역 이야기(scope 'region')를 빼고, 같은 방향 발언이 2건 이상이고 반대쪽보다 많을 때만 ±1 — 파이썬 _chk_notes와 같은 규칙
+  const L=ex.mgmt_notes, SG=['more','less','neutral'], G=L.filter(n=>n.scope!=='region'),
+    m=G.filter(n=>n.sig==='more').length, l=G.filter(n=>n.sig==='less').length, z=G.filter(n=>n.sig==='neutral').length,
+    u=L.filter(n=>SG.indexOf(n.sig)<0).length, R=L.filter(n=>n.scope==='region'&&SG.indexOf(n.sig)>=0), rg=R.length,   // u = 아직 신호 분류 전(다음 추출 때 판정)
+    rgn=R.every(n=>n.region)?R.map(n=>n.region).filter((v,j,a)=>a.indexOf(v)===j):[], one=(m>l&&m===1)||(l>m&&l===1), per=perKo((ex.period||'').split(/;| ended/)[0]);
+  return {pt:(m>l&&m>=2)?1:((l>m&&l>=2)?-1:0), na:(L.length&&u===L.length)?1:0, list:L, m, l, z, u, rg, rgn, one, per, tag:/^IR/.test(s.source||'')?'IR 추출':'공시 추출', txt:(per?per+' · ':'')+(L.length?`할인 물량↑ ${m}건 · 할인·공급↓ ${l}건`
+    +(z?` · 중립 ${z}건`:'')+(rg?` · 한 지역 ${rg}건 제외`:'')+(u?` · 신호 분류 전 ${u}건(다음 추출 때 판정)`:''):'재고·할인·유통 관련 발언 없음')};
 }
 function chkFx(cur){
   const f=(DATA.fx||{})[cur]; if(!f) return {pt:0,na:1,txt:`${cur} 환율 자료 없음`};
@@ -4127,12 +4134,16 @@ function chkDetail(r){
           +(i.pend?` 본사가 ${mdTxt(i.pend.end)} 끝난 분기 실적을 냈지만 야후 미반영 — 이전 분기 값입니다.`:'')},
     {id:'notes', label:'본사 발언', score:n.na?'':sg0(n.pt), tone:tone(n), word:unc?'분류 전':word(n,'유리','불리'),
       value:n.none?'발언 자료 없음':!n.list.length?'재고·할인·유통 관련 발언 없음'
-        :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
+        :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`${n.rg?'회사 전체 ':''}할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.rg?` · 한 지역 ${n.rg}건 제외`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
       explain:n.none?`${hq||r.b.name} 본사 실적 자료에서 재고 처분·할인 관련 발언을 뽑지 못해(표 형식 자료·야후 수치만) 점수에 넣지 않았습니다.`
         :!n.list.length?`${n.per||'최근 실적'} 자료에 재고·할인·유통 관련 발언이 없어 0입니다.`
         :unc?'발언은 뽑혔지만 신호(할인 물량↑/할인·공급↓) 분류 전이라 점수에 넣지 않았습니다. 매주 공시 추출 때 분류됩니다.'
-        :`할인 물량을 늘린다는 발언 ${n.m}건, 할인·공급을 줄인다는 발언 ${n.l}건이라 ${sg0(n.pt)}입니다.${n.per?` (${n.per}${n.tag?' · '+n.tag:''})`:''}`,
-      list:(n.list||[]).map(q=>({sig:q.sig||null, topic:q.topic, ko:q.ko, quote:q.quote}))},
+        :(n.one?`${n.rg?'회사 전체 이야기로는 ':''}${n.m>n.l?'할인 물량을 늘린다는':'할인·공급을 줄인다는'} 발언이 1건뿐이라 0입니다(같은 방향 발언이 2건 이상일 때 반영).`
+          :(!n.m&&!n.l&&n.rg)?`${n.u?'분류된 발언 중 ':''}회사 전체의 할인 물량·공급 발언이 없어 0입니다.`
+          :`${n.rg?'회사 전체 이야기로는 ':''}할인 물량을 늘린다는 발언 ${n.m}건, 할인·공급을 줄인다는 발언 ${n.l}건이라 ${sg0(n.pt)}입니다.`)
+          +(n.rg?` 한 지역 이야기${n.rgn&&n.rgn.length?`(${n.rgn.join(', ')})`:''} ${n.rg}건은 점수에서 뺐습니다.`:'')
+          +(n.u?` 분류 전 ${n.u}건은 다음 추출 때 반영합니다.`:'')+(n.per?` (${n.per}${n.tag?' · '+n.tag:''})`:''),
+      list:(n.list||[]).map(q=>({sig:q.sig||null, topic:q.topic, ko:q.ko, quote:q.quote, rg:q.scope==='region'?(q.region||'한 지역'):null}))},   // v33.24 한 지역 꼬리표
     {id:'fx', label:`원산지 통화 · ${x.name||curKo||'미지정'}`, score:x.na?'':sg0(x.pt), tone:tone(x), word:word(x,'유리','불리'),
       value:(x.na||x.rate==null)?'환율 자료 없음':`${fxNm} ${wonR(x.rate*x.mul)}원 · ${base}보다 ${p1(x.v)}% ${x.v<0?'쌈':'비쌈'}`, tags:x.na?'':staleA(x.stale),
       explain:x.na?'원산지 통화 환율이 없어 점수에 넣지 않았습니다.'
@@ -4229,7 +4240,7 @@ function brandBodyHtml(){
   // 판정 기준 패널은 자료가 없어도 그림 — 머리의 (i) 단추가 늘 펼칠 것이 있게
   let h=`<section id="brInfo" class="br-info" aria-label="판정 기준"${BR_INFO?'':' hidden'}><p class="bi-t">판정 = 국내 수요 + 매입 조건</p>
     <p><b>국내 수요</b> 네이버 검색 전년 대비가 감시 브랜드 중앙값(${M.med!=null?`${medT}, 검색량 충분한 ${medN}곳 기준`:'자료 수집 전'})보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)</p>
-    <p><b>매입 조건</b> 본사 재고 + 본사 발언 + 환율. 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높으면 +1(처분 물량 기대), 5%p 이상 낮으면 −1. 할인 물량을 늘린다는 발언이 많으면 +1, 할인·공급을 줄인다는 발언이 많으면 −1. 원산지 통화가 1년 평균(없으면 1년 전)보다 5% 이상 싸면 +1, 10% 이상 싸면 +2, 비싸면 같은 폭으로 −1·−2</p>
+    <p><b>매입 조건</b> 본사 재고 + 본사 발언 + 환율. 재고 증가율이 같은 기간 매출 증가율보다 5%p 이상 높으면 +1(처분 물량 기대), 5%p 이상 낮으면 −1. 본사 발언은 한 지역 이야기를 빼고, 할인 물량을 늘린다는 발언이 2건 이상이고 더 많으면 +1, 할인·공급을 줄인다는 발언이 2건 이상이고 더 많으면 −1. 원산지 통화가 1년 평균(없으면 1년 전)보다 5% 이상 싸면 +1, 10% 이상 싸면 +2, 비싸면 같은 폭으로 −1·−2</p>
     <p><b>판정</b> 수요가 약하지 않고 매입 조건 +2 이상이면 지금 검토. 수요가 약하고 매입 조건 +1 이하이거나, 매입 조건이 −1 이하면 주의. 나머지는 관망</p>
     <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
   if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
@@ -4524,7 +4535,7 @@ function brDetailHtml(d,bname){
   d.ev.forEach(e=>{
     h+=`<div class="bd-ev" data-ev="${e.id}"><div class="bd-ev-hd"><span class="bd-ev-l">${esc(e.label)}</span>${ptB(e)}</div><p class="bd-ev-v">${nb(esc(e.value))}${e.tags||''}</p><p class="bd-ev-x">${esc(e.explain)}</p>`;
     if(e.spark){ const S=e.spark; h+=`<div class="bd-sp"><span class="cap">최근 8주 검색 지수</span>${spark8(S.vals,S.wk)}<div class="ends"><span>첫 주(${nvWk(S.wk[0])}) ${S.vals[0].toFixed(1)}</span><b>마지막 주(${nvWk(S.wk[7])}) ${S.vals[7].toFixed(1)}</b></div></div>`; }
-    if(e.list&&e.list.length) h+=`<div class="bdq">${e.list.map(q=>`<div class="bdq-row"><span class="bdq-t">${esc(MGMT_TOPIC[q.topic]||q.topic||'기타')}</span><div class="bdq-b">${esc(q.ko||'')}<span class="bdq-s${q.sig==='more'||q.sig==='less'?' '+q.sig:''}">${SIGT[q.sig]||'분류 전'}</span>${q.quote?`<details><summary>원문</summary><q>${esc(q.quote)}</q></details>`:''}</div></div>`).join('')}</div>`;
+    if(e.list&&e.list.length) h+=`<div class="bdq">${e.list.map(q=>`<div class="bdq-row"><span class="bdq-t">${esc(MGMT_TOPIC[q.topic]||q.topic||'기타')}</span><div class="bdq-b">${esc(q.ko||'')}<span class="bdq-s${q.sig==='more'||q.sig==='less'?' '+q.sig:''}">${SIGT[q.sig]||'분류 전'}</span>${q.rg?`<span class="bdq-s">${esc(q.rg)}만 · 점수 제외</span>`:''}${q.quote?`<details><summary>원문</summary><q>${esc(q.quote)}</q></details>`:''}</div></div>`).join('')}</div>`;
     h+=`</div>`;
   });
   h+=`</div></section><section class="bd-sec" aria-labelledby="bdNxH"><h2 id="bdNxH">다음 일정</h2>`;
@@ -4955,7 +4966,7 @@ WF_GO=true; requestAnimationFrame(()=>setTimeout(webFont,0));   // v33 첫 화�
 # ── v33.2 브랜드 점검표 판정 — 파이썬 쌍둥이(history_append가 매일 history.json verdicts에 기록, weekly_digest가 요약) ──
 # 화면 JS chkMedian·chkDemand·chkInv(invPick)·chkNotes(segOf)·chkFx·chkModel과 같은 규칙. 규칙(점수 기준·판정식·대상)을 바꾸면
 # 양쪽을 함께 고치고 CHK_RULE을 올림 — 기록의 rule이 다르면 화면·주간 메일이 판정 변화를 비교하지 않음(규칙이 바뀐 날 '변화'가 잘못 뜨지 않게)
-CHK_RULE = 1
+CHK_RULE = 2   # v33.24 발언 점수: 한 지역 이야기 제외 · 같은 방향 2건 이상(1 = v33.2~v33.23)
 CHK_CUR = {   # 원산지(본사) 통화 — 네이버 감시 브랜드(global)를 추가하면 함께 넣음(화면 JS CHK_CUR로 그대로 들어감)
     "나이키": "USD", "뉴발란스": "USD", "우포스": "USD", "아디다스": "EUR", "호카": "USD", "드래곤디퓨전": "EUR", "메종키츠네": "EUR",
     "푸마": "EUR", "킨(KEEN)": "USD", "가니": "EUR", "언더아머": "USD", "헌터": "GBP", "닥터마틴": "GBP", "크록스": "USD", "핏플랍": "GBP",
@@ -5039,7 +5050,8 @@ def _js_true(v):
 
 
 def _chk_notes(t, segs, segs_ir):
-    """본사 발언 점수(None = 발언 자료 없음·모두 신호 분류 전) — JS chkNotes·segOf(IR 추출이 있으면 IR, 없으면 공시)"""
+    """본사 발언 점수(None = 발언 자료 없음·모두 신호 분류 전) — JS chkNotes·segOf(IR 추출이 있으면 IR, 없으면 공시).
+    v33.24 한 지역 이야기(scope region)는 빼고, 같은 방향 발언이 2건 이상이고 반대쪽보다 많을 때만 ±1"""
     e = None
     for src in (segs_ir, segs):
         c = ((src or {}).get("items") or {}).get(t)
@@ -5049,11 +5061,12 @@ def _chk_notes(t, segs, segs_ir):
     ex = e["extract"] if e else None
     if not isinstance(ex, dict) or not isinstance(ex.get("mgmt_notes"), list):
         return None
-    sig = [n.get("sig") if isinstance(n, dict) else None for n in ex["mgmt_notes"]]
-    m, l, z = sig.count("more"), sig.count("less"), sig.count("neutral")
-    if sig and len(sig) - m - l - z == len(sig):
+    d = [n if isinstance(n, dict) else {} for n in ex["mgmt_notes"]]
+    if d and all(n.get("sig") not in ("more", "less", "neutral") for n in d):
         return None
-    return 1 if m > l else (-1 if l > m else 0)
+    g = [n.get("sig") for n in d if n.get("scope") != "region"]   # v33.24 한 지역 이야기는 빼고
+    m, l = g.count("more"), g.count("less")
+    return 1 if (m > l and m >= 2) else (-1 if (l > m and l >= 2) else 0)   # v33.24 같은 방향 2건 이상일 때만
 
 
 def _chk_fx(f):

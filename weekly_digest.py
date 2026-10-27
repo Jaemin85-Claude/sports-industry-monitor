@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.15: (대표 지시 2026-10-27 'A') '이번 주 새 본사 발언' 줄에 한 지역 이야기면 '중화권만(점수 제외)'(build_dashboard v33.24 — 판정 점수에서 뺌) ·
+      판정 규칙 판(CHK_RULE)이 바뀐 주에는 '판정 기록은 m/d부터' 대신 '판정 규칙이 바뀌어(…) 그 전 기록과는 비교하지 않음'
 v1.14: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) '■ 해외 정가 변동' — 지난 7일 정가 변동(price_fetch v1.5 ph)·할인 시작·할인가
       커짐·줄어듦(sh)·할인 끝을 나라·상품별로(해외 정가는 주 1회 수집이라 그 주 받은 날 기준) + 지금 할인 중 개수 · 해외 정가 화면 바로가기
       (기간 첫날 포함 + 기록마다 한 번만 — 지난 메일·이번 메일 기준 시각(월 07:47 PRICE_AT)의 git prices.json으로 가름 · 시작 날짜를 모르는 할인 'base'는 '할인 시작'에서 뺌 · 할인 커짐·줄어듦은
@@ -305,6 +307,7 @@ def upcoming_earnings(data, today):
 
 
 TOPIC_KO = {"inventory": "재고", "discount": "할인·판촉", "channel": "유통·도매"}
+RULE_NOTE = {2: "본사 발언 점수 — 한 지역 이야기 제외·같은 방향 2건 이상"}   # v1.15 판정 규칙 판(build_dashboard CHK_RULE)별 바뀐 점
 SIG_KO = {"more": "할인 물량↑", "less": "할인·공급↓"}   # v1.8 병행수입 매입 관점 신호(대시보드 본사 발언·브랜드 점검표와 같음)
 
 
@@ -697,7 +700,11 @@ def build(today, now=None):
         if vd["date"] < (today - datetime.timedelta(days=2)).isoformat():
             L.append(f"  ※ 판정 기록이 {vd['date'][5:].replace('-', '/')}에서 멈춤 — 대시보드 갱신(update-dashboard) 확인 필요")
         if vfirst and vfirst >= (today - datetime.timedelta(days=DAYS)).isoformat():
-            L.append(f"  ※ 판정 기록은 {vfirst[5:].replace('-', '/')}부터 — 그 전 변화는 비교하지 않음")
+            from build_dashboard import CHK_RULE, chk_records
+            if any(r["rule"] != CHK_RULE and r["date"] < vfirst for r in chk_records(hist)):   # v1.15 규칙 판이 바뀐 날부터
+                L.append(f"  ※ {vfirst[5:].replace('-', '/')} 판정 규칙이 바뀌어{f'({RULE_NOTE[CHK_RULE]})' if CHK_RULE in RULE_NOTE else ''} 그 전 기록과는 비교하지 않음")
+            else:
+                L.append(f"  ※ 판정 기록은 {vfirst[5:].replace('-', '/')}부터 — 그 전 변화는 비교하지 않음")
         L.append(f"  점검표 전체: {dash('brand')}")
     else:
         L.append("  판정 기록 없음 — 대시보드 갱신(매일) 때부터 쌓임")
@@ -781,7 +788,8 @@ def build(today, now=None):
         for x in notes:
             q = str(x.get("quote") or "")
             sg = SIG_KO.get(x.get("sig"))
-            L.append(f"    [{TOPIC_KO.get(x.get('topic'), x.get('topic'))}{' · ' + sg if sg else ''}] {x.get('ko') or ''}")
+            rg = f" · {x.get('region') or '한 지역'}만(점수 제외)" if x.get("scope") == "region" else ""   # v1.15 한 지역 이야기
+            L.append(f"    [{TOPIC_KO.get(x.get('topic'), x.get('topic'))}{' · ' + sg if sg else ''}{rg}] {x.get('ko') or ''}")
             L.append(f"      \"{q[:160]}{'…' if len(q) > 160 else ''}\"")
     if not mg:
         L.append("  없음 — 본사 실적 발표가 나오면 다음 월요일 메일에 모아 보냄")
