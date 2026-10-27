@@ -95,8 +95,12 @@ def pages(j):   # 페이지를 받아 제목·JSON-LD 이름·가격·품번 후
             for m in re.finditer(j["link_rx"], h):
                 v = m.group(0)
                 if v not in links: links.append(v)
+        snips = []
+        for rx in j.get("snip_rx", []):
+            for m in list(re.finditer(rx, h))[:4]:
+                snips.append(h[max(0, m.start() - 160): m.end() + 160].replace("\n", " "))
         out("PAGE", url=urllib.parse.unquote(u)[-120:], status=r.status_code, kb=len(h) // 1000, og=og.group(1)[:120] if og else None,
-            names=names, prices=prices, codes=codes, links=links[: j.get("show", 60)])
+            names=names, prices=prices, codes=codes, links=links[: j.get("show", 60)], snips=snips)
 
 def tryp(j):   # 완성된 상품 정의(PRODUCTS 모양)로 나라별 정가 읽기 시험
     for prod in j["prods"]:
