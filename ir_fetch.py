@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
+v1.7: (대표 지시 2026-10-27 'A' — 브랜드 판정) 본사 발언 범위 scope(global·region + region 이름) — extract_segments v11.4와 같은 규칙,
+      sig 또는 scope가 없는 발언만 1회 분류(이미 있는 sig는 그대로) · 다시 뽑은 같은 문장은 이전 scope·region도 옮김(merge_notes)
 v1.6: (대표 지시 2026-10-26) ① 실패 알림 — 자료를 못 찾거나 표 해석·추출이 실패하면 이전 값을 지키고(전에는 빈 값으로 덮어씀)
       soft_fail.txt에 남김(ir.yml 'Check partial failures'가 빨간 X), 가장 최근 자료의 기간이 끝난 지 165일 넘어도 실패 표시,
       접속·Claude 일시 오류(429·5xx·연결)는 다시 시도 ② 본사 발언 빈칸 채우기 — 아디다스는 Fact Sheet과 같은 분기 폴더의
@@ -673,6 +675,10 @@ def merge_notes(notes, old_notes, old_at=None):
         n, o = dict(n), old.get(_norm_q(n.get("quote")))
         if o and o.get("sig") in SIGS and n.get("sig") not in SIGS:
             n["sig"] = o["sig"]
+        if o and o.get("scope") in SCOPES and n.get("scope") not in SCOPES:   # v1.7 범위도 그대로
+            n["scope"] = o["scope"]
+            if o.get("region"):
+                n["region"] = o["region"]
         n["at"] = (o.get("at") or old_at) if o and (o.get("at") or old_at) else (n.get("at") or _now_kst())
         out.append(n)
     new = {_norm_q(n.get("quote")) for n in out}
@@ -737,12 +743,13 @@ def _words(q):
 
 
 SIGS = ("more", "less", "neutral")
+SCOPES = ("global", "region")   # v1.7 발언 범위 — region = 한 지역·나라만(판정 점수에서 뺌)
 
 
 def classify_notes(notes, label=""):
-    """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) — extract_segments v11.2와 같음. 실패하면 그대로(다음 실행에서 다시)"""
+    """v1.5 본사 발언마다 병행수입 매입 관점 신호(sig) · v1.7 범위(scope·region) — extract_segments v11.4와 같음. 실패하면 그대로(다음 실행에서 다시)"""
     notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
-    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
+    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS or n.get("scope") not in SCOPES]
     if not todo or not ANTHROPIC_KEY or not _opt_ok(f"{label} 발언 신호 분류"):
         return notes
     lines = "\n".join(f"{k + 1}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
@@ -752,12 +759,15 @@ Below {"is the only statement" if n == 1 else f"are all {n} statements"} taken f
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Respond with ONLY a JSON array of exactly {n} string(s), one per statement in the same order, e.g. {'["more"]' if n == 1 else '["more","neutral"]'}. No explanation.
+Also decide its scope:
+  "global" - about the company or brand as a whole, or several major regions together (a region mentioned only as a side detail is still global)
+  "region" - about ONE specific region or country only (e.g. only Greater China, only North America)
+Respond with ONLY a JSON array of exactly {n} object(s), one per statement in the same order, e.g. {'[{"sig":"less","scope":"region","region":"중화권"}]' if n == 1 else '[{"sig":"more","scope":"global"},{"sig":"neutral","scope":"region","region":"북미"}]'}. "region" = that region's short Korean name, only when scope is "region". No explanation.
 
 {lines}"""
     try:
         txt = ""
-        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 200,
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 600,
                                "messages": [{"role": "user", "content": prompt}]}, timeout=60)
         txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
         m = re.search(r"\[[^\[\]]*\]", txt)      # 설명이 앞뒤에 붙어도 첫 JSON 배열만 읽음
@@ -771,9 +781,17 @@ Respond with ONLY a JSON array of exactly {n} string(s), one per statement in th
         log(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}{head}")
         return notes
     for k, i in enumerate(todo):
-        v = str(arr[k]).strip().lower()
-        notes[i]["sig"] = v if v in SIGS else "neutral"
-    log(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" for i in todo))
+        a = arr[k] if isinstance(arr[k], dict) else {"sig": arr[k]}
+        if notes[i].get("sig") not in SIGS:      # 이미 있는 신호는 그대로(다시 분류해 판정이 흔들리지 않게)
+            v = str(a.get("sig") or "").strip().lower()
+            notes[i]["sig"] = v if v in SIGS else "neutral"
+        if notes[i].get("scope") not in SCOPES:
+            v = str(a.get("scope") or "").strip().lower()
+            notes[i]["scope"] = v if v in SCOPES else "global"   # 모르면 전체 이야기로(점수에 넣음 — 예전과 같게)
+            rg = str(a.get("region") or "").strip()[:12]
+            if notes[i]["scope"] == "region" and rg:
+                notes[i]["region"] = rg
+    log(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" + (f"·{notes[i].get('region') or '한 지역'}만" if notes[i].get("scope") == "region" else "") for i in todo))
     return notes
 
 
@@ -1188,7 +1206,7 @@ def main():
             log(f"[{tk}] {res.get('source')} · {ex.get('period')} · 지역 {len(ex.get('regions') or [])}"
                 + (f" · 표 일부만 읽힘({' · '.join(missing_rows(tk, ex))})" if ex and missing_rows(tk, ex) else ""))
             for n in classify_notes(ex.get("mgmt_notes") or [], tk):
-                log(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
+                log(f"    [{n['topic']}·{n.get('sig', '?')}·{n.get('region') or n.get('scope', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
     failed = []     # v1.6 수집 상태 화면 '일부 실패'(build_dashboard — extract_segments와 같은 failed·kept_failed·kept_reason)
     fresh = set()   # 이번 실행에서 새로 추출한 종목(캐시가 아닌)

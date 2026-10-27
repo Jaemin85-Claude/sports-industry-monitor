@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 2: 공시 추출 (v5.1)
+v11.4: (대표 지시 2026-10-27 'A' — 브랜드 판정) 본사 발언마다 범위 scope — global(회사 전체·여러 주요 지역) / region(한 지역·나라만,
+       region = 그 지역 한국어 이름). 신호(sig)와 같은 1회 호출로 분류 — sig 또는 scope가 없는 발언만(이미 있는 sig는 그대로 · 1곳 약 $0.003),
+       모르면 global. build_dashboard v33.24가 한 지역 이야기를 판정 점수에서 빼고 같은 방향 발언 2건 이상일 때만 반영
 v11.3: (대표 지시 2026-10-19 '2순위 새 종목 추가') 미국 공시 대상에 랄프로렌(RL · 8-K 실적 발표)·제냐(ZGN · 톰브라운 모회사,
        외국 기업이라 6-K 실적 발표 — 온홀딩·아머스포츠와 같은 방식). 몽클레르(MONC.MI)·버버리(BRBY.L)는 EDGAR 미대상이고 IR 사이트가
        자동 접속을 막아(몽클레르 403 · 버버리 빈 화면, 10/19 브랜치 시험) 발언 없이 야후 재고만. 제냐만 기간 이름(H1, Q2 아님)·증감 기준
@@ -680,12 +683,14 @@ def _words(q):
 
 
 SIGS = ("more", "less", "neutral")
+SCOPES = ("global", "region")   # v11.4 발언 범위 — region = 한 지역·나라만(판정 점수에서 뺌)
 
 
 def classify_notes(notes, label=""):
-    """v11.2 본사 발언마다 병행수입 매입 관점 신호(sig) — sig가 없는 발언만 짧게 1회 호출. 실패하면 그대로(다음 실행에서 다시)"""
+    """v11.2 본사 발언마다 병행수입 매입 관점 신호(sig) · v11.4 범위(scope·region) — 둘 중 하나라도 없는 발언만 짧게 1회 호출
+    (이미 있는 sig는 그대로). 실패하면 그대로(다음 실행에서 다시)"""
     notes = [dict(n) for n in notes or [] if isinstance(n, dict)]
-    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS]
+    todo = [i for i, n in enumerate(notes) if n.get("sig") not in SIGS or n.get("scope") not in SCOPES]
     if not todo or not API_KEY:
         return notes
     lines = "\n".join(f"{k + 1}. [{notes[i].get('topic')}] {notes[i].get('quote')}" for k, i in enumerate(todo))
@@ -695,12 +700,15 @@ Below {"is the only statement" if n == 1 else f"are all {n} statements"} taken f
   "more"    - more discounted or excess product likely available (inventory elevated or being cleared/liquidated, more promotions or markdowns, off-price or liquidation channel sales)
   "less"    - less discounted product or tighter supply (lower discounting, full-price protection, fewer promotions, cutting wholesale accounts or doors, limiting supply, inventory already lean or clean)
   "neutral" - neither, or unclear
-Respond with ONLY a JSON array of exactly {n} string(s), one per statement in the same order, e.g. {'["more"]' if n == 1 else '["more","neutral"]'}. No explanation.
+Also decide its scope:
+  "global" - about the company or brand as a whole, or several major regions together (a region mentioned only as a side detail is still global)
+  "region" - about ONE specific region or country only (e.g. only Greater China, only North America)
+Respond with ONLY a JSON array of exactly {n} object(s), one per statement in the same order, e.g. {'[{"sig":"less","scope":"region","region":"중화권"}]' if n == 1 else '[{"sig":"more","scope":"global"},{"sig":"neutral","scope":"region","region":"북미"}]'}. "region" = that region's short Korean name, only when scope is "region". No explanation.
 
 {lines}"""
     try:
         txt = ""
-        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 200,
+        data = anthropic_post({"model": "claude-sonnet-4-6", "max_tokens": 600,
                                "messages": [{"role": "user", "content": prompt}]}, timeout=60)
         txt = "".join(p.get("text", "") for p in data.get("content", []) if p.get("type") == "text")
         m = re.search(r"\[[^\[\]]*\]", txt)      # 설명이 앞뒤에 붙어도 첫 JSON 배열만 읽음
@@ -714,9 +722,17 @@ Respond with ONLY a JSON array of exactly {n} string(s), one per statement in th
         print(f"  [WARN] {label} 본사 발언 신호 분류 실패 — 다음 실행에서 다시: {str(e)[:120]}{head}", flush=True)
         return notes
     for k, i in enumerate(todo):
-        v = str(arr[k]).strip().lower()
-        notes[i]["sig"] = v if v in SIGS else "neutral"
-    print(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" for i in todo), flush=True)
+        a = arr[k] if isinstance(arr[k], dict) else {"sig": arr[k]}
+        if notes[i].get("sig") not in SIGS:      # 이미 있는 신호는 그대로(다시 분류해 판정이 흔들리지 않게)
+            v = str(a.get("sig") or "").strip().lower()
+            notes[i]["sig"] = v if v in SIGS else "neutral"
+        if notes[i].get("scope") not in SCOPES:
+            v = str(a.get("scope") or "").strip().lower()
+            notes[i]["scope"] = v if v in SCOPES else "global"   # 모르면 전체 이야기로(점수에 넣음 — 예전과 같게)
+            rg = str(a.get("region") or "").strip()[:12]
+            if notes[i]["scope"] == "region" and rg:
+                notes[i]["region"] = rg
+    print(f"  {label} 본사 발언 신호: " + " · ".join(f"{notes[i].get('topic')}→{notes[i]['sig']}" + (f"·{notes[i].get('region') or '한 지역'}만" if notes[i].get("scope") == "region" else "") for i in todo), flush=True)
     return notes
 
 
@@ -948,7 +964,7 @@ def main():
             for k in ("regions", "channels"):   # v11.3 이름·증감 — 새 종목 지역 이름 확인(화면 지역 매칭)
                 print(f"    {k}: " + " · ".join(f"{r.get('name')} {r.get('yoy_pct')}" for r in (ex.get(k) or []))[:600])
             for n in classify_notes(ex.get("mgmt_notes") or [], t):
-                print(f"    [{n['topic']}·{n.get('sig', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
+                print(f"    [{n['topic']}·{n.get('sig', '?')}·{n.get('region') or n.get('scope', '?')}] {n['ko']} — \"{n['quote'][:200]}\"")
         return
 
     stat = {}
