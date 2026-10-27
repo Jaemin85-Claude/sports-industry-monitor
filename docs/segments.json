@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-26 04:16 KST",
+ "generated_at": "2026-10-27 11:07 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -104,13 +104,16 @@
       "topic": "inventory",
       "quote": "Inventories for NIKE, Inc. were $7.8 billion, down 3 percent, primarily reflecting shifts in product mix.",
       "ko": "재고 78억 달러로 3% 감소, 주요 원인은 제품 믹스 변화",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "channel",
       "quote": "Taking actions to reposition NIKE Sportswear, Jordan Brand, and Greater China",
       "ko": "나이키 스포츠웨어·조던 브랜드·중국 사업 재포지셔닝 조치 시행 중",
-      "sig": "neutral"
+      "sig": "neutral",
+      "scope": "region",
+      "region": "중화권"
      }
     ],
     "notes": "mgmt_notes 적격 문장이 문서에 매우 제한적으로 존재하며, 할인/프로모션 관련 명시적 언급은 없음.",
@@ -165,13 +168,15 @@
       "topic": "channel",
       "quote": "On is deliberately managing wholesale sell-in to protect full-price integrity in a promotional marketplace, ensuring a clean runway for On's upcoming breakthrough innovations leading into 2027.",
       "ko": "On은 풀프라이스 무결성 보호 및 혁신 제품 출시를 위해 도매 셀인을 의도적으로 관리하고 있음.",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "discount",
       "quote": "We do not compromise our full-price integrity for volume - even in the heavily promotional environment we saw this quarter in some markets.",
       "ko": "일부 시장의 강한 프로모션 환경에서도 풀프라이스 원칙을 타협하지 않음.",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      }
     ],
     "notes": "지역 매출은 거래 상대방 소재지 기준이며, 6개월 누적 데이터도 문서에 명시되어 있으나 본 JSON은 Q2 분기 수치를 기준으로 작성됨.",
@@ -220,7 +225,8 @@
       "topic": "channel",
       "quote": "As we move through the back half of fiscal 2027, we are taking deliberate actions to strengthen our connection with consumers, sharpen execution, and concentrate resources behind our greatest opportunities.",
       "ko": "FY2027 하반기에 소비자 연결 강화·실행력 제고·핵심 기회에 자원 집중 등 의도적 행동 추진",
-      "sig": "neutral"
+      "sig": "neutral",
+      "scope": "global"
      }
     ],
     "notes": "지역 매출은 'Domestic/International' 구분으로만 공시되며, 세부 지역(북미·EMEA 등) 수치는 문서에 명시되지 않음.",
@@ -389,7 +395,8 @@
       "topic": "channel",
       "quote": "The majority of this growth came from within existing doors driven by an expanded assortment of BIRKENSTOCK styles, high sales velocity and strong full-price realization.",
       "ko": "기존 매장 내 assortment 확대와 강한 정가 판매로 B2B 성장 달성",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      }
     ],
     "notes": "지역별 및 채널별 수치는 천 유로 단위 원문 기준이며 백만 유로로 변환하여 표기함. Corporate/Other 항목은 regions/channels 목록에서 제외함.",
@@ -510,7 +517,8 @@
       "topic": "channel",
       "quote": "We expect Vans® Wholesale to improve significantly in the second half of the year.",
       "ko": "반스 도매 채널이 하반기에 크게 개선될 것으로 기대",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      }
     ],
     "notes": "지역별·채널별 구체적 매출 금액은 문서에 명시되지 않았으며, 성장률(%)만 일부 제공됨. 세그먼트는 Outdoor/Active/All Other 기준으로 보고됨.",
@@ -571,13 +579,15 @@
       "topic": "discount",
       "quote": "Excluding this benefit, the company continues to expect gross margin expansion driven by pricing actions, lower discounting, and a more favorable channel mix, partially offset by supply chain headwinds related to the conflict in the Middle East and unfavorable foreign exchange impacts.",
       "ko": "IEEPA 효과 제외 시, 가격 조정 및 할인 축소로 매출총이익률 확대 전망",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "channel",
       "quote": "The company remains focused on balancing near-term revenue opportunities with actions that strengthen long-term brand health, including disciplined marketplace management and protection of full-price selling.",
       "ko": "장기 브랜드 건강을 위해 유통 채널 관리 강화 및 정가 판매 보호에 집중",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      }
     ],
     "notes": "채널별 수익은 라이선스 및 Corporate Other 항목 제외한 순매출 기준이며, 지역별 합계와 총 순매출 간 차이는 Corporate Other 항목 때문임",
@@ -668,7 +678,8 @@
       "topic": "discount",
       "quote": "Gross margin expansion primarily reflected an approximate 980 basis point benefit from the recovery of IEEPA tariffs, partially offset by unfavorable channel profitability resulting from increased promotional activity within DTC B&M.",
       "ko": "IEEPA 관세 환급으로 총이익률 개선, DTC 오프라인 매장 프로모션 확대로 일부 상쇄",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      }
     ],
     "notes": "지역별·채널별 수치는 Q2 2026 단일 분기 기준이며, 반기(6개월) 수치도 문서에 별도 제공됨",
@@ -710,19 +721,22 @@
       "topic": "discount",
       "quote": "As the quarter progressed, conditions across portions of the athletic footwear and apparel marketplace became increasingly promotional, and we took action to remain competitively priced to protect and grow our leadership position.",
       "ko": "운동화·의류 시장의 프로모션 심화로 경쟁력 유지를 위해 가격 조정 조치를 취함",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      },
      {
       "topic": "inventory",
       "quote": "As previously announced, the Company has initiated a review of unproductive assets, which includes optimizing inventory, closing underperforming stores, and right-sizing assets that do not align with our go-forward vision for the Foot Locker Business.",
       "ko": "풋락커 부문의 비생산적 자산 검토 일환으로 재고 최적화·부진 점포 폐쇄·자산 적정화 추진 중",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      },
      {
       "topic": "inventory",
       "quote": "Foot Locker acquisition-related costs of $125.8 million include $40.4 million to write down and liquidate inventory from the Company's review of the Foot Locker Business and merger and integration costs of $85.4 million, which includes severance and other employee-related costs, store closing charges, legal and professional fees, and other costs related to the Foot Locker acquisition.",
       "ko": "풋락커 인수 관련 비용 1억 2,580만 달러 중 4,040만 달러는 재고 평가절하·청산 비용",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      }
     ],
     "notes": "풋락커 사업부는 2025년 9월 인수로 전년 비교치가 없으며, 재고 수치는 주석에서 대략값(DICK'S $3.6B, Foot Locker $2.0B)으로만 제시됨",
@@ -746,7 +760,8 @@
       "topic": "discount",
       "quote": "We are reinvesting tariff-related benefits into value, expanding compelling new brands and categories, and accelerating initiatives across stores, omni-channel and loyalty.",
       "ko": "관세 혜택을 가치 제공(할인)에 재투자하고 신규 브랜드·카테고리 및 옴니채널·충성도 프로그램을 확대 중",
-      "sig": "more"
+      "sig": "more",
+      "scope": "global"
      }
     ],
     "notes": "지역별 및 채널별 매출 세분화 데이터는 문서에 명시되지 않아 해당 항목은 빈 목록으로 처리함",
@@ -813,19 +828,22 @@
       "topic": "discount",
       "quote": "Increased Average Unit Retail (\"AUR\") by 15% across our direct-to-consumer network in the first quarter, above expectations, reflecting our continued elevation and strong full-price selling trends, with lower than planned promotions",
       "ko": "DTC 네트워크 AUR 15% 상승, 예상보다 낮은 프로모션으로 정가 판매 강세 반영",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "discount",
       "quote": "Gross margin expansion was driven by AUR growth as well as favorable channel and geographic mix shifts, more than offsetting incremental pressure from tariffs and other product costs.",
       "ko": "AUR 성장과 채널·지역 믹스 개선으로 총이익률 확대, 관세 압력을 상쇄",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "inventory",
       "quote": "Maintained Healthy Balance Sheet Positioning with $1.9 Billion in Cash and Short-Term Investments and Inventories Well-Positioned to Global Demand",
       "ko": "재고가 글로벌 수요에 맞게 적정 수준으로 관리되고 있다고 강조",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      }
     ],
     "notes": "채널별 YoY 성장률은 문서에 명시되지 않아 null 처리; 리테일·홀세일 채널 매출은 지역별 합산 수치로 제공됨",
@@ -905,13 +923,16 @@
       "topic": "discount",
       "quote": "an improved gross profit margin driven by a higher proportion of DTC sales, which have higher gross profit margins compared to wholesale, and reduced markdown sales in line with the brand's strategy, and (iii) lower costs for prototype and sample products following the elevated design and development activities undertaken under the new design leadership in the prior period;",
       "ko": "TOM FORD FASHION, DTC 비중 확대 및 브랜드 전략에 따른 마크다운 축소로 매출총이익률 개선",
-      "sig": "less"
+      "sig": "less",
+      "scope": "global"
      },
      {
       "topic": "channel",
       "quote": "a decrease in TOM FORD FASHION wholesale revenues of €1,830 thousand or -3.5% (-2.8% Organic), primarily reflecting our strategic decision to strengthen direct control over distribution, as well as fewer deliveries to the Middle East due to the impact of the ongoing conflict in the region.",
       "ko": "TOM FORD FASHION 도매 매출 감소, 유통 직접 통제 강화 전략 및 중동 분쟁 영향",
-      "sig": "less"
+      "sig": "less",
+      "scope": "region",
+      "region": "중동"
      }
     ],
     "notes": "매출은 유로화(€천) 기준으로 보고되었으며, 지역별·채널별 수치는 Note 5에 명시적으로 기재된 값을 사용함.",
@@ -923,10 +944,10 @@
  },
  "claude_usage": {
   "2026-10": {
-   "calls": 14,
-   "in": 68379,
-   "out": 2154,
-   "usd": 0.2374,
+   "calls": 25,
+   "in": 74117,
+   "out": 2394,
+   "usd": 0.2582,
    "since": "2026-10-10"
   }
  }
