@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.11: (SKU 늘리기 3차 10/27 — 대표 '계속 진행하시지요', 상품이 적은 브랜드부터) 닥터마틴 아드리안·8065 메리제인·싱클레어·1461 모노(한국·미국·영국) ·
+    푸마 스피드캣 GO 여성(한국·미국·일본·멕시코)·디비에이트 나이트로 엘리트 트레일(한국·미국·독일) — 상품 87개 · 값 339개(+19). 브룩스 아드레날린 GTS 25는 이번에도,
+    고스트 맥스 3·하이페리온 3은 처음 시험에서 한국 몰 페이지가 pageNotFound(사이트맵에는 있음 · 기존 고스트 18은 정상 · 10/27 실행 3번)라 뺌 · 푸마 팔레르모 프리미엄은 한국 404
 v1.10: (SKU 늘리기 2차 10/27 — 대표 상시 지시 '브랜드 별 주요 SKU는 계속 늘려주세요', 값이 적은 브랜드부터) 드래곤디퓨전 난터켓 빅 백·청키 펠리니 포셰트
     (한국·미국) · 헌터 오리지널 톨 글로스(한국·미국·영국·일본)·숏 글로스(한국·미국·영국) — 상품 81개 · 값 320개(+11). 써코니 엔돌핀 프로 5 미국은
     색상 없는 주소가 10/23부터 JSON-LD 없는 페이지라 색상(품번) 지정 주소로. 브룩스 아드레날린 GTS 25는 한국 몰 상품 페이지가 시험 중 없어져(pageNotFound) 다음 차례에
@@ -208,6 +211,15 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A1%E3%83%B3%E3%82%BA-%E3%83%87%E3%82%A3%E3%83%B4%E3%82%A3%E3%82%A8%E3%82%A4%E3%83%88-%E3%83%8B%E3%83%88%E3%83%AD-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88-4-%E3%83%A9%E3%83%B3%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA/312127",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html"}},   # 인헤일(401560) 대신 — 미국 몰은 전 색상 할인가(73.99달러)뿐이라 뺌(검토 반영 10/22)
+    {"id": "puma-speedcatgo", "brand": "푸마", "name": "스피드캣 GO(여성)", "code": "403589", "src": "page", "hint": "speedcat go", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
+        "US": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
+        "JP": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27)
+    {"id": "puma-dnetrail", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 트레일(남성)", "code": "310034", "src": "page", "hint": "deviate nitro elite trail", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
+        "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
         cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
         for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},
@@ -251,6 +263,22 @@ PRODUCTS = [
         "KR": "https://www.drmartens.co.kr/products/1460-mofalse.json",
         "US": f"{DM}/us/en/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
         "GB": f"{DM}/uk/en_gb/1460-mono-smooth-leather-lace-up-boots-black/p/14353001"}},
+    {"id": "drm-adrian", "brand": "닥터마틴", "name": "아드리안 태슬 로퍼", "code": "14573001", "src": "page", "hint": "adrian", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/adeurian.json",
+        "US": f"{DM}/us/en/adrian-smooth-leather-tassel-loafers-black/p/14573001",
+        "GB": f"{DM}/uk/en_gb/adrian-smooth-leather-tassel-loafers-black/p/14573001"}},
+    {"id": "drm-8065", "brand": "닥터마틴", "name": "8065 메리제인", "code": "12916001", "src": "page", "hint": "8065", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/shoes-8065-maryjane-black-smooth-12916001.json",
+        "US": f"{DM}/us/en/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
+        "GB": f"{DM}/uk/en_gb/8065-smooth-leather-mary-jane-shoes-black/p/12916001"}},
+    {"id": "drm-sinclair", "brand": "닥터마틴", "name": "싱클레어", "code": "22564001", "src": "page", "hint": "sinclair", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/singkeulreeo.json",
+        "US": f"{DM}/us/en/sinclair-womens-leather-platform-boots-black-milled-nappa/p/22564001",
+        "GB": f"{DM}/uk/en_gb/sinclair-soft-leather-platform-boots-black/p/22564001"}},
+    {"id": "drm-1461mono", "brand": "닥터마틴", "name": "1461 모노", "code": "14345001", "src": "page", "hint": "1461", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001.json",
+        "US": f"{DM}/us/en/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
+        "GB": f"{DM}/uk/en_gb/1461-mono-smooth-leather-oxford-shoes-black/p/14345001"}},
     {"id": "dd-santacroce", "brand": "드래곤디퓨전", "name": "산타크로체 빅 백", "code": "8892", "alt": ["W2BAS26025DBR"], "src": "page", "hint": "santa croce", "urls": {
         "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",   # 코오롱몰(공식 수입) 자체 품번
         "US": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade"}},   # 글로벌 몰 1곳 — 접속한 나라 통화(미국 서버 → 달러), 달러가 아니면 실패
