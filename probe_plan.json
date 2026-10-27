@@ -1,17 +1,5 @@
 [
  {
-  "t": "pages",
-  "urls": [
-   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",
-   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0gts-25%EB%B8%94%EB%9E%99medium/664/",
-   "https://brooksrunning.co.kr/product/detail.html?product_no=664"
-  ],
-  "code_rx": "1[12]0\\d{4}[A-Z]\\d{3}",
-  "snip_rx": [
-   "rel=\\\"canonical\\\"[^>]*"
-  ]
- },
- {
   "t": "codes",
   "key": "puma",
   "base": "KR",
@@ -46,11 +34,39 @@
    }
   },
   "targets": [
-   "398846",
-   "396463"
+   "310034",
+   "403589",
+   "401744"
   ],
   "max_maps": 60,
   "per_host": 125,
-  "show": 150
+  "show": 0
+ },
+ {
+  "t": "try",
+  "key": "puma",
+  "brand": "푸마",
+  "ccs": [
+   "KR",
+   "US",
+   "GB",
+   "DE",
+   "JP",
+   "MX"
+  ],
+  "cands": [
+   {
+    "code": "403589",
+    "hint": "speedcat"
+   },
+   {
+    "code": "310034",
+    "hint": "deviate nitro elite trail"
+   },
+   {
+    "code": "401744",
+    "hint": "palermo"
+   }
+  ]
  }
 ]
