@@ -3,7 +3,7 @@
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.26: (대표 지시 2026-10-27 '텍스트가 너무 많습니다 — 전체적으로 최소화' · 결정 '설명만 접기') 전 화면(오늘·브랜드·시장 6칩·더보기 7화면)의
   설명 문장·기준·방법·주의 글을 '읽는 법'(why)으로 접거나 몇 낱말로 줄임 — 숫자·판정·제목·출처 한 줄·수집 실패·이전 값 표시는 그대로(화면 보이는 한글 약 22%↓).
-  판정 규칙(chkModel·chk_verdicts)은 그대로 — JS↔파이썬 대조 22곳 일치
+  판정 규칙(chkModel·chk_verdicts)은 그대로 — JS↔파이썬 대조 22곳 일치 · 검토 반영 21건(단위·기간·제외 목록·기준 이름처럼 숫자를 읽는 데 필요한 말은 다시 보이게)
 v33.25: (대표 지시 2026-10-27 '우리 운임 VS 시장 데이터 실제 화면에 반영' · 결정 '이름 빼고 공개') 더보기 › 물류 맨 위 링크 한 줄 → '우리 운임 vs 시장'
   카드 — docs/our_freight.json(관세사 수입신고 계산값 중 kg당 운임·시장 대비 배수·변화율·지수만 · 포워더 이름·건수·총액·무게·물건값 대비 비율 없음 ·
   비공개 갱신 도구 public_ours.py가 만듦 · '우리 운임 갱신해줘' 때 이 파일만 PR) · 항공 kg당 최근 4분기·시장 대비 · 분기 추이(우리·시장) · 무게별 시장의 배수 ·
@@ -427,7 +427,7 @@ button.go{display:inline-flex;align-items:center;justify-content:center;min-widt
 .ksig .kb .v{flex:none;white-space:nowrap;font-weight:600}
 .ksig .ks{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
 #statusTbl td,#statusTbl th,#claudeTbl td,#claudeTbl th{white-space:nowrap;padding:7px 4px}
-#statusTbl td:first-child,#claudeTbl td:first-child{white-space:normal;word-break:keep-all;overflow-wrap:break-word}   /* break-word: 'update-dashboard'가 'dashboa·rd'로 끊기지 않게(anywhere는 첫 칸을 너무 좁힘) */
+#statusTbl td:first-child,#claudeTbl td:first-child{white-space:normal;word-break:keep-all;overflow-wrap:break-word} #statusTbl td:nth-child(3){white-space:normal;word-break:keep-all}   /* break-word: 'update-dashboard'가 'dashboa·rd'로 끊기지 않게(anywhere는 첫 칸을 너무 좁힘) */
 .cl-tot{font-size:var(--fs-lg);margin:2px 0 8px}.cl-tot b{font-size:var(--fs-xl)}
 .st-ok{color:var(--accent);font-weight:600;white-space:nowrap}
 .st-late{display:inline-block;padding:0 7px;border-radius:999px;background:var(--warn-bg);color:var(--warn-fg);font-weight:700;white-space:nowrap}
@@ -2197,7 +2197,7 @@ function buildSig(){
   h+=`<div class="card" id="warnCard"><h3>재고 경고</h3>${(()=>{ const row=r=>rkRow(r,`<span class="rk-v2"><span>재고 <b>${fmtInv(r.inv_yoy)}</b></span><small>매출 ${fmt(r.inv_rev,1,true)}${r.dio!=null?` · ${Math.round(r.dio)}일`:''}</small></span>`);
     return (warn.slice(0,8).map(row).join('')||'<div class="na">해당 없음</div>')
       +(warn.length>8?`<div id="warnMore" hidden>${warn.slice(8).map(row).join('')}</div><button type="button" class="wm-tog" data-n="${warn.length}" aria-expanded="false" aria-controls="warnMore" onclick="warnTog(this)"><span>전체 보기(${warn.length}곳)</span>${ic('down',16)}</button>`:''); })()}
-    ${why('기준: 재고 1년 전보다 +10% 이상 · 매출 증가율보다 10%p 이상 빠름 · 같은 기간끼리(최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산) · N일 = 재고일수(연간) · 기업을 누르면 상세'+(wex.length?'<br>'+wex.join(' · '):''))}</div>`;   // v33.25 접음
+    ${wex.length?`<div class="note">${wex.join(' · ')}</div>`:''}${why('기준: 재고 1년 전보다 +10% 이상 · 매출 증가율보다 10%p 이상 빠름 · 같은 기간끼리(최근 분기 vs 1년 전 같은 분기, 없으면 연간 결산) · N일 = 재고일수(연간) · 기업을 누르면 상세')}</div>`;   // v33.25 접음
   h+=`<div class="card"><h3>다가오는 실적 발표 <button type="button" class="go" onclick="sw('cal')">캘린더 ›</button></h3>${ev.slice(0,5).map(r=>rkRow({...r,basis:''},`<span>${calDot(r.dn)}D-${r.dn} · ${r.d.getMonth()+1}/${r.d.getDate()}</span>`)).join('')||'<div class="na">90일 내 일정 없음</div>'}</div>`;
   document.getElementById('sigBody').innerHTML=h;
 }
@@ -2497,7 +2497,7 @@ function renderDetail(t){
     if(totalOnly){
       const tt=regsAll[0];
       const yoy=tt.yoy_pct!=null?' '+fmt(tt.yoy_pct,1,true):'';
-      bars=`<div class="na">지역별 매출액 미공시 — 이 회사는 지역 분해 금액을 공시하지 않습니다(성장률만 공시하는 경우 하단 주석 참조)</div>
+      bars=`<div class="na">지역별 매출액 미공시 — 이 회사는 지역 분해 금액을 공시하지 않습니다(성장률만 공시하면 아래 읽는 법)</div>
       <div class="kv"><span class="k">분기 총매출</span><span>${segMoney(tt.revenue,segCur)}${yoy}</span></div>`;
     } else {
       bars=pairBars(s.extract.regions,"당기","전년",segCur);
@@ -2913,7 +2913,7 @@ function naverDetailCard(t){
   bs.forEach(b=>{
     const g=nvGrpOf(b), med=nvMed(g), grpN=nvBrands(g).length;
     h+=`<div class="nv-det"><div class="krhead"><span class="krname">${esc(b.name)}</span><span class="nv-pill ${nvRel(b.yoy,med)}" style="margin-left:auto">전년 ${b.yoy!=null?pp(b.yoy):'―'}</span></div>
-      <div class="krmeta">규모 ${nvSc(b.scale)} · ${g==='kr'?'국내 패션 ':g==='eye'?'아이웨어 ':''}${grpN}개 중앙값 ${med!=null?pp(med):'―'} · 4주 vs 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
+      <div class="krmeta">규모 ${nvSc(b.scale)} · ${g==='kr'?'국내 패션 ':g==='eye'?'아이웨어 ':''}${grpN}개 브랜드 중앙값 ${med!=null?pp(med):'―'} · 4주 vs 12주 ${b.trend!=null?pp(b.trend):'―'}</div>
       ${nvSpark(b.s,300,44,true)}${b.group==='global'&&brKnown(b.name)?`<button type="button" class="br-link" data-brand="${esc(b.name)}">${esc(b.name)} ${brJudged(b.name)?'매입 판정 보기':'브랜드 상세 보기'} ›</button>`:''}</div>`;   // v33 수입·해외 브랜드 → 브랜드 상세(판정)
   });
   return h+`<div class="note" style="margin-top:6px">네이버 데이터랩 · ${nvWk(NAVER.end)} 주까지${bs.some(b=>b.low)?' · 검색량 적음':''}</div>${why('주간 검색 지수 · 규모 = 나이키 최근 4주를 100 · 4주 vs 12주 = 최근 4주 vs 직전 12주(계절 영향 포함) · 그래프: 최근 1년 실선, 그 전 1년 점선'+(bs.some(b=>b.low)?' · 검색량이 적어 변동이 큼':''))}</div>`;   // v33.26 접음
@@ -3007,7 +3007,7 @@ function platformCardHtml(){
   const kr=rows.filter(r=>!r.listed&&r.rev!=null).map(r=>({r,e:ents.find(z=>'krd:'+z.id===r.key)})).filter(o=>o.e);
   const api=kr.filter(o=>o.e.route==='api').map(o=>{const c=(o.e.cfs&&o.e.cfs.years)||[]; return `${esc(o.r.name)} = 사업보고서 별도${c.length&&c[c.length-1].rev!=null?'(연결 매출 '+moneyShort(c[c.length-1].rev,'KRW')+' — 상세 참조)':''}`;});
   const doc=kr.filter(o=>o.e.route==='doc').map(o=>esc(o.r.name.replace(/\(.*\)/,'')));
-  h+=`</table></div><div class="note" style="margin-top:6px">매출 큰 순</div>${why(`쿠팡 = 미국 상장 연결(US GAAP) 달러 실적을 최근 환율${usd&&usd.rate?'(1달러 = '+Math.round(usd.rate).toLocaleString()+'원)':''}로 환산한 근사치 · ${api.join(' · ')}${api.length?' · ':''}${doc.length?doc.join('·')+' = 감사보고서 별도 연간 · ':''}플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세`)}</div>`;   // v33.26 접음
+  h+=`</table></div><div class="note" style="margin-top:6px">매출 큰 순${api.length?' · '+api.join(' · '):''}</div>${why(`쿠팡 = 미국 상장 연결(US GAAP) 달러 실적을 최근 환율${usd&&usd.rate?'(1달러 = '+Math.round(usd.rate).toLocaleString()+'원)':''}로 환산한 근사치 · ${doc.length?doc.join('·')+' = 감사보고서 별도 연간 · ':''}플랫폼 매출은 거래액과 다름(크림 등은 수수료 매출) · 행을 누르면 상세`)}</div>`;   // v33.26 접음
   return h;
 }
 /* ── 비교 카드 (v30.4 수입 브랜드 유통사 → v31.1 공통화) — 수치는 공시 그대로, 자사(트렉시)는 위치·강조로만 앞세움 ── */
@@ -3240,7 +3240,7 @@ function finCardHtml(cid='peer'){
     h+=`</tr>`;
   });
   h+=`<tr class="fi-med"><td>중앙값<span class="pg-rk">${me?esc(c.selfName)+' 제외':''}</span></td>${fys.map(f=>{const t=fiStat(rows,FI_MET,f); return `<td>${t.mdv!=null?m.fmt(t.mdv):'―'}${m.c&&t.md!=null?`<span class="fi-sub">${cp(t.md)}</span>`:''}</td>`;}).join('')}</tr></table></div>`;
-  if(m.cn) h+=`<div class="note" style="margin-top:4px">작은 글씨 = ${esc(m.cn)}${m.ref?'':' · 순위 기준'}</div>`;
+  if(m.cn) h+=`<div class="note" style="margin-top:4px">작은 글씨 = ${esc(m.cn)}${m.ref?'':' · 순위·배지 기준(규모 보정)'}</div>`;
   // 최근 연도 순위 막대
   const bars=rows.map(r=>({r,x:fiVal(r,FI_MET,L)})).filter(o=>o.x.v!=null&&o.x.c!=null).sort((a,b)=>m.hi||m.ref?b.x.c-a.x.c:a.x.c-b.x.c);
   const bf=m.c?cp:m.fmt, md=m.ref?null:s.md;
@@ -3256,7 +3256,7 @@ function finCardHtml(cid='peer'){
     if(no.length) h+=`<div class="note" style="margin-top:4px">제외: ${no.map(r=>esc(r.name)+'('+esc(fiVal(r,FI_MET,L).t)+')').join(' · ')}</div>`;
     h+=`<div class="src-legend" style="margin-top:8px">${me?`<span><i style="background:var(--accent)"></i>${esc(c.selfName)}</span>`:''}<span><i style="background:var(--sub);opacity:.4"></i>${c.who}</span>${md!=null?`<span><i style="border-left:1.5px dashed var(--sub);width:0;height:11px;border-radius:0"></i>중앙값${me?'('+esc(c.selfName)+' 제외)':''}</span>`:''}</div>`;
   } else h+=`<div class="na" style="margin-top:8px">비교할 수치 없음</div>`;
-  h+=why(`식 = ${esc(m.f)} · 왜 보나: ${esc(m.why)}<br>${c.src}${m.bs?' · 재무상태표·현금흐름표':''}${me?' · 파란 배지 = 비교군 중앙값보다 나음':''}${cid==='fb'&&m.bs?' · 상장 3곳은 사업보고서 재무제표(감가상각비가 따로 없으면 EBITDA 지표 ―)':''} · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본, 두 감사보고서의 같은 연도 값이 다름, 또는 부채 항목 합 ≠ 부채총계 · 행을 누르면 기업 상세`,'식 · 읽는 법')+`</div>`;   // v33.25 접음
+  h+=why(`식 = ${esc(m.f)} · 왜 보나: ${esc(m.why)}${nI&&(nG||nS||nU)&&['nd','ndx','dr','ocf','fcf','conv','roe'].includes(FI_MET)?'<br>회계기준 혼재: K-IFRS는 리스부채·RCPS를 부채로 잡고 임차료가 감가상각비·이자로 나뉘어, 이 지표가 회사마다 다른 잣대로 계산됨':''}<br>${c.src}${m.bs?' · 재무상태표·현금흐름표':''}${me?' · 파란 배지 = 비교군 중앙값보다 나음':''}${cid==='fb'&&m.bs?' · 상장 3곳은 사업보고서 재무제표(감가상각비가 따로 없으면 EBITDA 지표 ―)':''} · 순위는 수치가 있는 기업끼리 · '확인 필요' = 자산≠부채+자본, 두 감사보고서의 같은 연도 값이 다름, 또는 부채 항목 합 ≠ 부채총계 · 행을 누르면 기업 상세`,'식 · 읽는 법')+`</div>`;   // v33.25 접음
   return h;
 }
 // 기업 상세: 유통사 재무 지표 3개년(재무상태표·현금흐름이 있는 법인만)
@@ -3399,7 +3399,7 @@ function moreHead(t,sub){   // v33 S2: 더보기 하위 화면 머리 = '‹ 바
 function moreFxHtml(){
   const FXD=DATA.fx||{}, al=fxAlertsAll();
   let h=moreHead('환율','갱신 <span class="nw">'+esc(DATA.generated_at||'')+'</span>');
-  h+=`<div class="card"><h3>최근 알림 <span class="na" style="font-weight:400">1년 평균 ±1% 선</span></h3>`
+  h+=`<div class="card"><h3>최근 알림 <span class="na" style="font-weight:400">1년 평균 대비 1% 단위 선</span></h3>`
     +(al.length?`<div class="frec">${al.slice(0,6).map(a=>`<div><span class="d">${mdTxt(a.date)}</span><i class="${a.dir}"></i><span>${esc(fxAlertTxt(a))}</span></div>`).join('')}</div>`:'<div class="na">지난 1년 알림 없음</div>')+`</div>`;
   const cards=FX_ALERT.filter(c=>FXD[c]).map(c=>fxCard(c,FXD[c])).join('');
   h+=cards?`<div class="fxgrid">${cards}</div>`:'<div class="card"><div class="na">환율 수집 전 — 다음 갱신 후 표시</div></div>';
@@ -3432,7 +3432,7 @@ function cbBarsHtml(){
   if(!rows.length) return h+'<div class="na">자료 없음</div>';
   const mx=Math.max(...rows.map(r=>r.v));
   h+=rows.map(r=>{ const y=cbYoy(r.v,r.pv); return `<div class="cb-row"><span class="lb">${r.nm}</span><div class="bar-wrap"><div class="bar${r.k==='eu'||r.k==='jp'?'':' cb-oth'}" style="width:${(r.v/mx*100).toFixed(1)}%"></div><span class="bar-val num">${cbMoney(r.v)}</span></div><span class="yy">${y!=null?fmt(y,1,true):'<span class="na">―</span>'}</span></div>`; }).join('');
-  return h+`<div class="note">합계 ${cbMoney(tot)}원 · 파란 막대 = 유럽·일본</div>`;
+  return h+`<div class="note">합계 ${cbMoney(tot)}원 · 파란 막대 = 유럽·일본 · % = 전년 같은 분기 대비</div>`;
 }
 function cbTrendHtml(){
   const S=KR.cross_border.series, out=[];
@@ -3533,7 +3533,7 @@ function lgKcci(){   // → {cols, rows, L, P, W(전쟁 전 마지막 주)} 또�
 }
 function lgKcciCard(){
   const K=lgKcci();
-  let h=`<div class="card"><h3>부산발 운임 <span class="na" style="font-weight:400">KCCI · 40ft · 주</span>${staleTag(K&&K.B.stale_since)}</h3>`;
+  let h=`<div class="card"><h3>부산발 운임 <span class="na" style="font-weight:400">KCCI · 40ft당 달러 · 주</span>${staleTag(K&&K.B.stale_since)}</h3>`;
   if(!K) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
   const R52=K.R.slice(-52);
   h+=`<div class="cb-trend lg-tr">${LG_KCCI.map(([c,nm],k)=>{ const i=K.cols.indexOf(c)+1; if(i<1) return '';
@@ -3564,7 +3564,7 @@ function lgSuezShare(){   // 컨테이너선: 수에즈 ÷ (수에즈 + 희망�
 }
 function lgChokeCard(){
   const B=LOGI&&LOGI.choke;
-  let h=`<div class="card"><h3>바닷길 · 해협 통과 <span class="na" style="font-weight:400">IMF PortWatch · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
+  let h=`<div class="card"><h3>바닷길 · 해협 통과 <span class="na" style="font-weight:400">IMF PortWatch · 컨테이너선 하루 평균 · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
   if(!B||!B.items||!B.items.length) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
   const sw=lgSuezShare();
   if(sw&&sw.now!=null) h+=`<div class="lg-share"><div><span>수에즈 쪽 비율</span><b class="num">${sw.now.toFixed(0)}%</b><span class="na">${lgMd(sw.wk)} 주</span></div>
@@ -3578,7 +3578,7 @@ function lgChokeCard(){
 }
 function lgPortCard(){   // v33.5 '중동 항만' — 걸프 안 제벨알리(막힌 쪽) ↔ 해협 밖 우회 코르파칸·푸자이라. 부산은 수입의 적출 거점 카드 위
   const B=LOGI&&LOGI.ports, its=((B&&B.items)||[]).filter(it=>it.id!=='Busan'), ms=lgMiss(B).filter(nm=>nm!=='부산');
-  let h=`<div class="card"><h3>중동 항만 <span class="na" style="font-weight:400">IMF PortWatch · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
+  let h=`<div class="card"><h3>중동 항만 <span class="na" style="font-weight:400">IMF PortWatch · 하루 평균 · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
   if(!its.length&&!ms.length) return h+'<div class="na">자료 수집 전 — 다음 갱신 후 표시</div></div>';
   h+=its.map(it=>{ const w=lgWk(it), b=it.base||[];
     const gulf=it.id==='Jebel Ali';   // 걸프 안(호르무즈 안쪽) — 나머지는 해협 밖 우회 항만
@@ -3605,7 +3605,7 @@ function lgYa(it,w){   // 1년 전 같은 주(52주 전 월요일)
 }
 function lgRoute(r){   // 한국까지 길목 → [줄에 짧게, 펼친 설명]
   if(r==='eu'){ const sw=lgSuezShare(), ok=sw&&sw.now!=null;
-    return [ok?`수에즈 쪽 ${sw.now.toFixed(0)}%`:'수에즈·희망봉',
+    return [ok?`수에즈 쪽 ${sw.now.toFixed(0)}%(전 세계)`:'수에즈·희망봉',
       `수에즈 운하·홍해로 오거나 아프리카 남단 희망봉으로 돌아옵니다 — 전 세계 컨테이너선 수에즈 쪽 비율 ${ok?sw.now.toFixed(0)+'%':'―'}(전쟁 전 ${sw&&sw.pre!=null?sw.pre.toFixed(0)+'%':'―'} · 수에즈 ÷ (수에즈+희망봉) 통과 척수). 유럽→한국 항로만의 값은 아님(실제 노선은 선사·포워더 확인). 희망봉으로 돌면 약 1~2주 더 걸립니다`]; }
   if(r==='me'){ const hz=lgItem('choke','chokepoint6'), w=lgWk(hz), b=(hz&&hz.base)||[];
     return [w&&w[2]!=null?`호르무즈 ${lgN(w[2],1)}척`:'호르무즈',
@@ -3633,7 +3633,7 @@ function lgHubRow(it){
 }
 function lgHubCard(){
   const B=LOGI&&LOGI.hubs, P=LOGI&&LOGI.ports;
-  let h=`<div class="card" id="lgHubs"><h3>적출 거점 → 부산 <span class="na" style="font-weight:400">IMF PortWatch · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
+  let h=`<div class="card" id="lgHubs"><h3>적출 거점 → 부산 <span class="na" style="font-weight:400">IMF PortWatch · 한국행만 아님 · 주</span>${staleTag(B&&B.stale_since)}</h3>`;
   const bu=lgItem('ports','Busan'), bw=lgWk(bu), bb=(bu&&bu.base)||[], by=lgYa(bu,bw);   // 도착항 부산
   if(bu) h+=`<div class="lg-share lg-bu"><div><span>부산 입항</span><b class="num">${lgU(bw&&bw[2],'척',1)}</b><span class="na">컨테이너선 하루${bw?' · '+lgMd(bw[0])+' 주':''}</span></div>
     <div class="lh-b"><span class="s">전쟁 전 ${lgU(bb[1],'척',1)} ${lgHubChg(bw&&bw[2],bb[1])}</span><span class="s">1년 전 ${lgU(by&&by[2],'척',1)} ${lgHubChg(bw&&bw[2],by&&by[2])}</span>${staleTag(bu.stale_since||(P&&P.stale_since))}</div>
@@ -3699,7 +3699,7 @@ function lgVolCard(key){   // key = 'vol_in'(수입 묶음 · 나라 → 부산�
   const blTop=air?I.filter(x=>lgLast(x.bl)!=null&&!O2.has(x.c)).sort((a,b)=>lgLast(b.bl)-lgLast(a.bl)).slice(0,2).map(x=>lgVolNm(x.c)):[];
   const cov=air?'항공은 인천공항만(김해공항 등은 빠짐)':`바닷길은 부산항만(신항+북항+감천항 · 북항 = 관세청 항구 이름 '부산항') — 인천·평택·광양항 등은 빠짐${out?'':'(중국·베트남 화물은 인천항으로도 많이 들어옴)'}`;
   const unitNote=air?`항공 = 화물 무게(톤) · 항공 B/L 건수엔 ${out?'전자상거래 수출(역직구)':'해외직구'} 특송 소포가 섞임${blTop.length?`(${lgMon(mo[L])} 건수 많은 곳: ${esc(blTop.join('·'))})`:''}`:'TEU = 20ft 컨테이너 1개 기준(40ft = 2 · 빈 컨테이너 제외)';
-  return h+why(`${M.others?`목록 밖 ${M.others}개 나라는 전체에만 · `:''}관세청 ${out?'출항':'입항'} 적재화물목록 기준 ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 1년 전 = 전년 같은 달 · 나라를 누르면 최근 ${mo.length}달 추이 · 점선 = 전쟁 시작`);   // v33.9 접음 · v33.26 '목록 밖 n개 나라'·단위 줄도 접음
+  return h+(M.others?`<div class="na">목록 밖 ${M.others}개 나라는 전체에만</div>`:'')+why(`관세청 ${out?'출항':'입항'} 적재화물목록 기준 ${out?'목적지(화물목록상 내리는 항구·공항 — 허브 나라로 잡힐 수 있음: 항공 룩셈부르크·카타르, 바닷길 슬로베니아(코페르항 → 중부 유럽) 등)':'선적지(B/L상 실은 곳)'} 나라별 — ${out?'수출':'수입'} 화물만(환적 제외) · ${cov} · 매월 15일께 전달 자료(지난 달도 정정·취하로 조금씩 바뀜) · ${unitNote} · 물량이 늘고 주는 건 좋고 나쁨이 아니라 색 없음 · '출처 값 확인 필요' = 앞 12달 가운데값의 20배 넘는 값(입력 오류로 보여 전체·그래프·비교에서 뺌 — 관세청이 고치면 사라짐) · 1년 전 = 전년 같은 달 · 나라를 누르면 최근 ${mo.length}달 추이 · 점선 = 전쟁 시작`);   // v33.9 접음 · v33.26 '목록 밖 n개 나라'·단위 줄도 접음
 }
 /* 부산항 입항 컨테이너선 — 직전 출항지 나라(부산 오기 바로 전 항구) 묶음 */
 const LG_PM_GRP=[['중국',['CN']],['일본',['JP']],['대만·홍콩',['TW','HK','MO']],['동남아',['VN','TH','MY','SG','ID','PH','KH','MM','BN','TL']],
@@ -3718,7 +3718,7 @@ function lgPmCard(){
   const sEnd=lgDay(last,-4), s0=stay(win(sEnd,7)), s4w=win(lgDay(sEnd,-7),28), s4=s4w.length>=14?stay(s4w):null;   // 체류는 출항 신고가 다 들어온 4일 전까지
   h+=`<div class="lg-share"><div><span>최근 7일 · ${lgMd(lgDay(last,-6))}~${lgMd(last)}</span><b class="num">${lgN(a0)}<small>척/일</small></b></div>
     <div class="lg-shx">지난 4주 ${lgU(a4,'척')} ${a4!=null?lgChgI(lgRatio(a0,a4),true):''} · 1년 전 ${ay!=null?lgU(ay,'척')+' '+lgChgI(lgRatio(a0,ay),true):'<span class="na">모으는 중</span>'}<br>
-    체류 평균 ${lgU(s0,'시간')}${s4!=null?` · 지난 4주 ${lgU(s4,'시간')} ${lgChgI(lgRatio(s0,s4),false)}`:''}</div></div>`;
+    체류 평균 ${lgU(s0,'시간')}${s4!=null?` · 지난 4주 ${lgU(s4,'시간')} ${lgChgI(lgRatio(s0,s4),false)}`:''} <span class="na">(${lgMd(lgDay(sEnd,-6))}~${lgMd(sEnd)} 입항)</span></div></div>`;
   const cc={}; w0.forEach(r=>Object.entries(r[2]||{}).forEach(([c,k])=>{ cc[c]=(cc[c]||0)+(+k||0); }));
   const known=new Set(LG_PM_GRP.flatMap(g=>g[1])), grp=LG_PM_GRP.map(([nm,cs])=>[nm,lgSum(cs.map(c=>cc[c]))]);
   grp.push(['그 밖',lgSum(Object.entries(cc).filter(([c])=>!known.has(c)).map(([,k])=>k))]);   // 유럽·중동·인도·남미 등
@@ -4170,7 +4170,7 @@ function chkDetail(r){
       explain:x.na?'원산지 통화 환율이 없어 점수에 넣지 않았습니다.'
         :(x.basis==='yago'?'1년 평균을 계산하지 않는 통화라 1년 전 대비로 봅니다. ':'')
           +(x.pt===0?'±5% 안이라 0입니다.':`${Math.abs(x.v)>=10?'10':'5'}% 이상 ${x.v<0?'싸서':'비싸서'} ${sgn(x.pt)}`+((judged&&r.lv===2&&i.pt+n.pt<=0)?` — 매입 조건 ${jo(sgn(r.buy),'이','가')} 모두 환율에서 나왔습니다.`:'입니다.'))
-          +(CHK_CUR_NOTE[r.b.name]?` 원산지 통화: ${CHK_CUR_NOTE[r.b.name]}`:'')}
+          +(CHK_CUR_NOTE[r.b.name]?` 원산지 통화: ${CHK_CUR_NOTE[r.b.name]}${r.b.name==='톰브라운'?' — 본사 제냐 재무는 유로':''}`:'')}
   ];
   const nx=[];
   if(r.x&&r.x.earn_date){ const dd=new Date(r.x.earn_date+'T00:00:00'), dn=Math.round((dd-today)/86400000);
@@ -4194,7 +4194,7 @@ function chkDetail(r){
     head:w.head, say:w.say,
     tiles:{dem:{v:d.na?'―':sg0(d.pt), cap:d.na?'검색 자료 없음':d.low?'검색량 적어 점수 제외':d.pt>0?'강함':d.pt<0?'약함':'보통'},
            buy:!judged?{v:'―', cap:'본사 자료 없음', ring:''}
-             :{v:sg0(r.buy), cap:r.lv===2?'기준 +2 충족':r.buy<=-1?'−1 이하':d.pt<0?(r.buy>=2?'수요 약함':'+1 이하 · 수요 약함'):`지금 검토까지 +${2-r.buy}`,
+             :{v:sg0(r.buy), cap:r.lv===2?'기준 +2 충족':r.buy<=-1?'주의 기준(−1 이하)':d.pt<0?(r.buy>=2?'+2 넘지만 수요 약함':'주의 기준 · 수요 약함'):`지금 검토까지 +${2-r.buy}`,
                ring:r.buy>=2?'acc':(r.buy<=-1?'warn':'')}},
     ev:judged?ev:[ev[0],ev[3]], next:nx,
     news:chkNewsList(r.b,3).map(it=>({t:it.summary||it.title||'', link:it.link||'', meta:[newsDay(it), it.source, '★'.repeat(Math.max(1,Math.min(3,it.importance||1)))].filter(Boolean).join(' · ')})),
@@ -4499,7 +4499,7 @@ function prMxHtml(D){
     +`<td>${third(x)}</td>`
     +ccs.map(cc=>cell(x,cc)).join('')+`</tr>`;
   const A=D.st;
-  const cap=land?'회색 = 착지원가가 가장 싼 나라':'회색 = 원화로 가장 싼 곳';   // v33.26 칸·아래 줄 뜻은 읽는 법으로
+  const cap=land?`칸 = 착지원가(관세 ${Math.round(LAND.duty*100)}% · 수입 부가세 ${Math.round(LAND.vat*100)}% · 항공 운임 ${LAND.kg}kg 포함) · 회색 = 가장 싼 나라`:'회색 = 원화로 가장 싼 곳';   // v33.26 칸·아래 줄 뜻은 읽는 법으로
   let h=`<div id="prMx"><p class="pm-cap">${cap}</p>`
     +`<div class="tblwrap" tabindex="0" role="region" aria-label="${sel?esc(sel)+' ':''}상품별 나라 ${land?'착지원가':'정가'} 표 — 가로로 넘겨 봄"><table class="pm-tbl"><thead><tr><th scope="col">상품</th><th scope="col">한국${land?' 정가':''}</th><th scope="col">${land?'추천':'평균'}</th>${ccs.map(cc=>`<th scope="col">${PR_CC[cc]}</th>`).join('')}</tr></thead>`;
   if(land){   // 맨 위 줄 = 나라별 평균 마진 · 추천 열 = 추천 나라 마진 평균
@@ -4537,7 +4537,7 @@ function morePriceHtml(){
   h+=`<div class="pm-ctl">${seg('view',PR_VIEW,'금액 보기',[['krw','원화 환산'],['loc','현지 정가'],['land','착지원가']])}${seg('sort',PR_SORT,'정렬',Object.entries(PR_SORT_T).map(([k,t])=>[k,t[L_]]))}</div>`;
   // v33.23 착지원가 보기에서만 — 가격 기준 · 현지 부가세 · 목표 마진(이 기기에만 저장)
   h+=`<div id="prLand" class="pm-ctl pm-land"${L_?'':' hidden'}>${seg('lb',PR_LB,'착지원가 가격 기준',[['list','정가 기준'],['now','지금 할인가 기준']])}${seg('lv',PR_LV,'현지 부가세',[['in','현지 부가세 포함'],['out','현지 부가세 환급 가정']])}`
-    +`<label class="pm-tgt">목표 마진 <input type="number" inputmode="decimal" min="0" max="90" step="1" placeholder="예: 30" value="${PR_TGT??''}" oninput="prTgt(this.value)" aria-label="목표 마진(%) — 이 기기에만 저장"> %</label></div>`;
+    +`<label class="pm-tgt">목표 마진 <input type="number" inputmode="decimal" min="0" max="90" step="1" placeholder="예: 30" value="${PR_TGT??''}" oninput="prTgt(this.value)" aria-label="목표 마진(%) — 이 기기에만 저장"> % <span class="na">(이 기기에만 저장)</span></label></div>`;
   h+=prMxHtml(D);
   return h+why(PR_WHY+' '+LAND_WHY+' 칸 아래 % = 한국 정가가 그 나라보다 비싼지·싼지(착지원가 보기는 마진 = 1 − 착지원가 ÷ 한국 정가) · 회색 칸 = 원화로(착지원가 보기는 착지원가가) 가장 싼 곳 · 현지 정가 보기 = 할인 전 현지 통화 · 상품 = 브랜드 공식몰 대표 상품 · 행을 누르면 브랜드 상세. 위 칩으로 브랜드를 고르면 그 브랜드만, 전체는 브랜드별로 묶어 보여 줌(브랜드순 = 가나다순 · 비싼/싼 순 = 브랜드 평균으로 브랜드 순서를, 그 안에서 상품 평균으로 상품 순서를 정함). 평균 열 = 그 상품(묶음 줄은 그 브랜드) 나라별 차이의 단순 평균, 맨 위 평균 줄 = 그 나라 상품들의 단순 평균(나라마다 상품 수가 달라 나라끼리 견줄 때는 개수도 봄). — = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름), 값 없음 = 수집 실패(이전 값도 없음). 접속을 막는 몰(아디다스·뉴발란스·아식스·크록스 한국·어그 등)의 브랜드는 넣지 않음.');
 }
@@ -4550,7 +4550,7 @@ function brDetailHtml(d,bname){
   let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>${d.hist?`<p class="bd-chg">${esc(d.hist)}</p>`:''}
     <h2 class="bd-head">${esc(d.head)}</h2>
     <div class="bd-tiles"><div class="bd-tile"><span class="tl">국내 수요</span><span class="tv">${esc(T.dem.v)}</span><span class="tc">${nb(esc(T.dem.cap))}</span></div>
-    <div class="bd-tile${T.buy.ring?' '+T.buy.ring:''}"><span class="tl">매입 조건</span><span class="tv">${esc(T.buy.v)}</span><span class="tc">${nb(esc(T.buy.cap))}</span></div></div>${why(esc(d.say)+(judged?'<br>판정 = 국내 수요 + 매입 조건(본사 재고 + 본사 발언 + 환율) · 지금 검토 = 수요가 약하지 않고 매입 +2 이상 · 주의 = 수요가 약하고 매입 +1 이하, 또는 매입 −1 이하 · 나머지 관망 · 국내 수요는 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1':''),'판정 이유')}</section>`;   // v33.25 이유 문장·판정 기준 접음
+    <div class="bd-tile${T.buy.ring?' '+T.buy.ring:''}"><span class="tl">매입 조건</span><span class="tv">${esc(T.buy.v)}</span><span class="tc">${nb(esc(T.buy.cap))}</span></div></div>${why(esc(d.say)+(judged?'<br>판정 = 국내 수요 + 매입 조건(본사 재고 + 본사 발언 + 환율) · 지금 검토 = 수요가 약하지 않고 매입 +2 이상 · 주의 = 수요가 약하고 매입 +1 이하, 또는 매입 −1 이하 · 나머지 관망 · 국내 수요는 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)':''),'판정 이유')}</section>`;   // v33.25 이유 문장·판정 기준 접음
   h+=`<section class="bd-sec" aria-labelledby="bdEvH"><h2 id="bdEvH">${judged?'판단 근거 4가지':'참고 근거 2가지'}</h2><div class="bd-evs">`;
   d.ev.forEach(e=>{
     h+=`<div class="bd-ev" data-ev="${e.id}"><div class="bd-ev-hd"><span class="bd-ev-l">${esc(e.label)}</span>${ptB(e)}</div><p class="bd-ev-v">${nb(esc(e.value))}${e.tags||''}</p>${e.sub?`<p class="bd-ev-x">${nb(esc(e.sub))}</p>`:''}`;
