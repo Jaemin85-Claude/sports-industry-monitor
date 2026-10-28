@@ -110,13 +110,8 @@ jobs:
                   continue
               if path.endswith("worldmap.json") and not all(k in d for k in ("viewBox", "europe")):
                   errs.append(f"{path}: 최상위 키 viewBox·europe 없음")
-              if path.endswith("our_freight.json"):   # 우리 운임 공개판(대표 자료) — 최상위 키 + 넣지 않기로 한 칸이 없는지
-                  if not all(k in d for k in ("air_q", "war")):
-                      errs.append(f"{path}: 최상위 키 air_q·war 없음")
-                  t = json.dumps(d, ensure_ascii=False)
-                  for k in ('"fwd"', '"n"', '"n_pre"', '"n_post"', '"avgkg"', '"avg_kg"', '"kg"', '"spend"', '"share', '"mix_note"', '"name"'):
-                      if k in t:
-                          errs.append(f"{path}: 공개판에 넣지 않기로 한 칸 {k}")
+              if path.endswith("our_freight.json") and not all(k in d for k in ("air_q", "war")):   # 우리 운임(대표 자료 · 2026-10-28 전부 공개)
+                  errs.append(f"{path}: 최상위 키 air_q·war 없음")
 
           if errs:
               for e in errs:
