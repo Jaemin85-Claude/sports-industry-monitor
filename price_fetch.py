@@ -5,7 +5,7 @@ v1.13: (SKU 늘리기 4차 10/28 — 대표 '네 진행해주세요', v1.12 묶�
     킨 하우저 III 슬라이드·유니크 트레커·A86(5개 나라)·재스퍼 자이오닉 워터프루프(한국·미국·일본 — 영국·독일 몰에 없음) — 상품 93개 · 값 361개(+22).
     카페24 몰 소비자가 칸(CAFE24_LIST · 브룩스 한국): 할인 중이면 JSON-LD에 판매가만이라, 이 상품 판매가 칸 바로 뒤 소비자가(price_custom)를 정가로
     (판매가 칸이 이 상품 JSON-LD 판매가와 같고 소비자가가 한 가지일 때만 · 판매가보다 높고 5배 안) — 10/28 블랙프라이데이 GTS 25 판매가 132,300 · 소비자가 189,000.
-    브룩스 고스트 맥스 3(607)은 10/27·10/28 모두 한국 몰 pageNotFound라 후보에서 뺌 · 온러닝은 robots.txt에 사이트맵이 없어 다음 차례에
+    브룩스 고스트 맥스 3(607)은 10/27·10/28 모두 한국 몰 pageNotFound라 후보에서 뺌 · 온러닝은 robots.txt에 사이트맵이 없어 다음 차례에 다른 방법으로
 v1.12: (대표 승인 10/28 '1번(수집 방식 변경)부터' — 전체 받기 615초 = 13분 한도의 79%라 SKU를 더 늘리면 한도에 걸림) 묶음 동시 받기.
     지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 브랜드·사이트가 이어진 상품끼리 한 묶음
     (코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
@@ -447,7 +447,7 @@ PRODUCTS = [
     {"id": "brooks-ghostamp", "brand": "브룩스", "name": "고스트 AMP(남성)", "code": "1104971D", "cc_code": {"JP": "BRM4973"}, "src": "page", "hint": "고스트 amp", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
         "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"}},
-    # v1.13 SKU 4차 — 한국 몰이 블랙프라이데이 할인 중(10/28)이라 JSON-LD에는 판매가만 → 소비자가 칸(price_custom, CAFE24_LIST)으로 정가 · 일본은 검정이 없어 다른 색(같은 품번 · 같은 값)
+    # v1.13 SKU 4차 — 한국 몰이 블랙프라이데이 할인 중(10/28)이라 JSON-LD에는 판매가만 → 소비자가 칸(price_custom, CAFE24_LIST)으로 정가 · 일본은 한국과 같은 색이 없어 다른 색(같은 품번 · 색과 상관없이 같은 값)
     {"id": "brooks-gts25", "brand": "브룩스", "name": "아드레날린 GTS 25(남성)", "code": "1104541D", "cc_code": {"JP": "BRM4543"}, "src": "page", "hint": "아드레날린gts 25", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0gts-25%EB%B8%94%EB%9E%99medium/664/",
         "JP": "https://brooksrunning.co.jp/products/brm4543-dgry.json"}},
