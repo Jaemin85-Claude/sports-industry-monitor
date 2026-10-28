@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-28 23:28 KST",
+ "generated_at": "2026-10-29 08:15 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -859,7 +859,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "관세청 해상 수입"
  },
  "kcs_sea_export": {
@@ -1716,7 +1716,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "관세청 해상 수출"
  },
  "kcs_air_import": {
@@ -2479,7 +2479,7 @@
   "file_date": "2026-09-30",
   "updated": "2026-10-16",
   "next": "2026-11-18",
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "관세청 항공 수입"
  },
  "kcci": {
@@ -5901,7 +5901,7 @@
    ]
   ],
   "latest": "2026-10-26",
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -6489,7 +6489,8 @@
      68.1,
      11.9
     ],
-    "last_date": "2026-10-25"
+    "last_date": "2026-10-25",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "chokepoint4",
@@ -8235,7 +8236,7 @@
     "last_date": "2026-10-25"
    }
   ],
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "해협 통과"
  },
  "ports": {
@@ -8823,7 +8824,8 @@
      52.1,
      31.0
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Jebel Ali",
@@ -9404,7 +9406,8 @@
      25.4,
      13.2
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Khor Fakkan",
@@ -9985,7 +9988,8 @@
      0.9,
      0.1
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Fujairah",
@@ -10569,7 +10573,7 @@
     "last_date": "2026-10-23"
    }
   ],
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "항만 입항"
  },
  "hubs": {
@@ -11157,7 +11161,8 @@
      41.2,
      33.4
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Rotterdam",
@@ -12319,7 +12324,8 @@
      25.4,
      13.2
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Antwerp",
@@ -12900,7 +12906,8 @@
      55.2,
      12.4
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Shanghai",
@@ -13481,7 +13488,8 @@
      126.3,
      49.3
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Singapore",
@@ -14062,7 +14070,8 @@
      128.3,
      40.0
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Ningbo",
@@ -14643,7 +14652,8 @@
      55.1,
      33.9
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Shenzhen",
@@ -15224,7 +15234,8 @@
      20.1,
      18.5
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Qingdao",
@@ -16386,7 +16397,8 @@
      9.3,
      5.2
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Port Klang",
@@ -16967,7 +16979,8 @@
      34.8,
      20.1
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    },
    {
     "id": "Hamburg",
@@ -17548,10 +17561,11 @@
      15.6,
      8.4
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-28"
    }
   ],
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17693,13 +17707,19 @@
     49.9,
     6.81,
     "https://www.sea-intelligence.com/press-room/410-global-schedule-reliability-continues-to-plummet-in-august"
+   ],
+   [
+    "2026-09",
+    50.6,
+    6.65,
+    "https://www.sea-intelligence.com/press-room/415-global-schedule-reliability-records-a-marginal-gain-in-september"
    ]
   ],
   "skip": [],
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "전 세계 정시율"
  },
  "vol_in": {
@@ -23107,7 +23127,7 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "관세청 국가별 수입 물동량"
  },
  "vol_out": {
@@ -28532,7 +28552,7 @@
     ]
    ]
   },
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "관세청 국가별 수출 물동량"
  },
  "busan_calls": {
@@ -34539,7 +34559,7 @@
      "KR": 2,
      "HK": 1
     },
-    706.5,
+    708.5,
     27
    ],
    [
@@ -34553,14 +34573,28 @@
      "US": 1,
      "VN": 1
     },
-    728.3,
+    737.5,
     26
+   ],
+   [
+    "2026-10-28",
+    29,
+    {
+     "CN": 12,
+     "JP": 9,
+     "KR": 3,
+     "US": 3,
+     "MP": 1,
+     "RU": 1
+    },
+    917.8,
+    29
    ]
   ],
   "from": "2025-10-01",
   "missing": 0,
   "stay_cap": 96,
-  "fetched": "2026-10-28",
+  "fetched": "2026-10-29",
   "label": "부산 입항 선박"
  },
  "status": {
@@ -34569,27 +34603,28 @@
    "관세청 해상 수출",
    "관세청 항공 수입",
    "KCCI 부산발 운임",
-   "해협 통과",
-   "항만 입항",
-   "적출 거점 입항",
    "전 세계 정시율",
    "관세청 국가별 수입 물동량",
    "관세청 국가별 수출 물동량",
    "부산 입항 선박"
   ],
-  "kept": [],
+  "kept": [
+   "해협 통과(호르무즈 해협)",
+   "항만 입항(부산·제벨알리·코르파칸)",
+   "적출 거점 입항(홍콩·두바이·앤트워프·상하이·싱가포르·닝보·선전·LA/롱비치·포트클랑·함부르크)"
+  ],
   "failed": []
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "40705850744",
+  "run": "40785618422",
   "tries": [
    {
     "n": 1,
-    "where": "134.33.x.x · Arizona · AS8075 Microsoft Corporation",
+    "where": "158.23.x.x · Querétaro · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "10-28 23:29"
+    "at": "10-29 08:20"
    }
   ]
  }
