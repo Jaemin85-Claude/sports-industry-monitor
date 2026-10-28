@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.13: (SKU 늘리기 4차 10/28 — 대표 '네 진행해주세요', v1.12 묶음 동시 받기로 시간 여유) 브룩스 아드레날린 GTS 25·하이페리온 3(한국·일본) ·
+    킨 하우저 III 슬라이드·유니크 트레커·A86(5개 나라)·재스퍼 자이오닉 워터프루프(한국·미국·일본 — 영국·독일 몰에 없음) — 상품 93개 · 값 361개(+22).
+    카페24 몰 소비자가 칸(CAFE24_LIST · 브룩스 한국): 할인 중이면 JSON-LD에 판매가만이라, 이 상품 판매가 칸 바로 뒤 소비자가(price_custom)를 정가로
+    (판매가 칸이 이 상품 JSON-LD 판매가와 같고 소비자가가 한 가지일 때만 · 판매가보다 높고 5배 안) — 10/28 블랙프라이데이 GTS 25 판매가 132,300 · 소비자가 189,000.
+    브룩스 고스트 맥스 3(607)은 10/27·10/28 모두 한국 몰 pageNotFound라 후보에서 뺌 · 온러닝은 robots.txt에 사이트맵이 없어 다음 차례에
 v1.12: (대표 승인 10/28 '1번(수집 방식 변경)부터' — 전체 받기 615초 = 13분 한도의 79%라 SKU를 더 늘리면 한도에 걸림) 묶음 동시 받기.
     지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 브랜드·사이트가 이어진 상품끼리 한 묶음
     (코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
@@ -442,6 +447,13 @@ PRODUCTS = [
     {"id": "brooks-ghostamp", "brand": "브룩스", "name": "고스트 AMP(남성)", "code": "1104971D", "cc_code": {"JP": "BRM4973"}, "src": "page", "hint": "고스트 amp", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
         "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"}},
+    # v1.13 SKU 4차 — 한국 몰이 블랙프라이데이 할인 중(10/28)이라 JSON-LD에는 판매가만 → 소비자가 칸(price_custom, CAFE24_LIST)으로 정가 · 일본은 검정이 없어 다른 색(같은 품번 · 같은 값)
+    {"id": "brooks-gts25", "brand": "브룩스", "name": "아드레날린 GTS 25(남성)", "code": "1104541D", "cc_code": {"JP": "BRM4543"}, "src": "page", "hint": "아드레날린gts 25", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0gts-25%EB%B8%94%EB%9E%99medium/664/",
+        "JP": "https://brooksrunning.co.jp/products/brm4543-dgry.json"}},
+    {"id": "brooks-hyperion3", "brand": "브룩스", "name": "하이페리온 3(남성)", "code": "1104651D", "cc_code": {"JP": "BRM4653"}, "src": "page", "hint": "하이페리온 3", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A8-3%EC%98%A4%EC%9D%B4%EC%8A%A4%ED%84%B0-medium/583/",
+        "JP": "https://brooksrunning.co.jp/products/brm4653-gry.json"}},
     # v1.4 아크테릭스 — 한국은 시즌 상품 페이지마다 한국 품번(cc_code KR, 페이지 Model(KR))이 따로 · JSON-LD 판매가 + 화면 데이터 정가(retail_price)
     {"id": "arc-atomhoody", "brand": "아크테릭스", "name": "아톰 후디(남성)", "code": "X000009556", "cc_code": {"KR": "AJQSM09556"}, "src": "page", "hint": "atom hoody",
      "urls": _arc("686241", "atom-hoody-9556", "atom-hoody-m")},
@@ -468,6 +480,17 @@ PRODUCTS = [
      "urls": _keen("1000000580", "mens-targhee-iv-waterproof-triple-black")},
     {"id": "keen-jasper", "brand": "킨(KEEN)", "name": "재스퍼(남성 · 블랙)", "code": "1026592", "src": "page", "hint": "jasper",
      "urls": _keen("1000000804", "mens-jasper-hairy-black-black", jp=False)},   # 일본 몰에 없음(10/23)
+    # v1.13 SKU 4차 — 한국 LF 몰 상품 번호 ↔ 상품 정보 칸 품번(Article No.)을 미국 쇼피파이 상품 태그 품번과 대조(10/28) · 재스퍼 자이오닉 블랙은 한국 품번이 달라(1029584) 뺌
+    {"id": "keen-howser3", "brand": "킨(KEEN)", "name": "하우저 III 슬라이드(남성 · 블랙)", "code": "1032618", "src": "page", "hint": "howser",
+     "urls": _keen("1000001043", "mens-howser-iii-slide-black-quilted")},
+    {"id": "keen-uneektrek", "brand": "킨(KEEN)", "name": "유니크 트레커(남성 · 블랙)", "code": "1032783", "src": "page", "hint": "uneek trekker",
+     "urls": _keen("1000000868", "mens-uneek-trekker-black-keen-maple")},
+    {"id": "keen-a86", "brand": "킨(KEEN)", "name": "A86(남성 · 트리플 블랙)", "code": "1032844", "src": "page", "hint": "a86",
+     "urls": _keen("1000001054", "mens-a86-triple-black")},
+    {"id": "keen-jzwp", "brand": "킨(KEEN)", "name": "재스퍼 자이오닉 워터프루프(남성 · 블랙)", "code": "1032795", "src": "page", "hint": "jasper zionic", "urls": {
+        "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000945",
+        "US": "https://www.keenfootwear.com/products/mens-jasper-zionic-waterproof-black-black.json",
+        "JP": "https://www.keenfootwear.jp/products/mens-jasper-zionic-waterproof-black-black.json"}},   # 영국·독일 몰에 없음(404, 10/28)
     # v1.4 우포스 — 품번 = 모델 4자리 + 색상(한국 Article No. '1100 Black' · 미국 변형 품번 앞머리 '1100BLK…') · 한국 콜라보 상품(같은 Article No.)은 다른 상품 번호
     {"id": "oofos-ooriginal", "brand": "우포스", "name": "OOriginal 샌들(블랙)", "code": "1000", "cc_code": {"KR": "1000 Black", "US": "1000BLK"}, "src": "page", "hint": "ooriginal",
      "urls": _oofos("1000000050", "mens-original-sandal-black")},
