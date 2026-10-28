@@ -2,11 +2,12 @@
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
 v1.12: (대표 승인 10/28 '1번(수집 방식 변경)부터' — 전체 받기 615초 = 13분 한도의 79%라 SKU를 더 늘리면 한도에 걸림) 묶음 동시 받기.
-    지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 같은 회사 사이트끼리 한 묶음
-    (브랜드·사이트가 이어진 상품 — 코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
+    지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 브랜드·사이트가 이어진 상품끼리 한 묶음
+    (코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
     묶음 안은 지금과 같은 순서·간격(1.5초 · 살로몬 해외 8초·한 실행 8건) · 같은 사이트는 묶음과 상관없이 한 번에 한 요청·1.5초 넘게 ·
-    여러 회사가 함께 쓰는 쇼핑몰 플랫폼(쇼피파이 — .json 상품·PACE_EXTRA, 카페24)은 묶음을 넘어서도 지금처럼 한 줄로 1.5초(PACE) — 한 사이트·플랫폼이
-    받는 요청 빠르기는 그대로. 430(쇼피파이 접속 거절)도 403·429처럼 차단으로 봄. 결과는 값마다 모아 PRODUCTS 순서로 합침(파일·알림 규칙 그대로 —
+    여러 회사가 함께 쓰는 쇼핑몰 플랫폼(쇼피파이 — .json 상품·PACE_EXTRA, 카페24, 고도몰)은 묶음을 넘어서도 지금처럼 한 줄로 1.5초(PACE — 그 몰의
+    robots.txt·다른 이름 사이트로 넘겨진 요청도) — 한 사이트·플랫폼이 받는 요청 빠르기는 그대로(SFCC형 몰은 브랜드마다 따로 운영이라 사이트별 간격만).
+    430(쇼피파이가 우리 서버를 거절)도 차단으로 봄 — 그 실행에서 쇼피파이 몰 모두 더 요청 안 함. 결과는 값마다 모아 PRODUCTS 순서로 합침(파일·알림 규칙 그대로 —
     받은 날·다시 받기·한도 미룸·21일 알림). 묶음이 13분 + 60초 안에 안 끝나면 멈추고 남은 값은 시간 초과처럼 이전 값(내일 다시) · 묶음 안에서
     예상 못 한 오류가 나면 저장하지 않고 멈춤(예전과 같음). update.yml 수동 실행 입력 price_lanes(PRICE_LANES) — 비우면 6, 1이면 예전처럼 차례대로.
     로그 '해외 정가 묶음 …' 줄에 묶음별 걸린 시간(가장 긴 묶음 = 전체 받기 시간의 기준).
@@ -116,7 +117,8 @@ LANES = 6           # v1.12 동시에 받는 묶음 수(update.yml 수동 실행
 LANE_GRACE = 60     # 초 — 묶음이 TIME_LIMIT + 이만큼 안에 안 끝나면 멈추고 남은 값은 이전 값(단계 15분 제한 전에 저장)
 LANE_JOIN = [("킨(KEEN)", "우포스")]   # v1.12 사이트는 다르지만 같은 회사·수입사 몰 — 한 묶음(차례대로) · 킨·우포스 한국 = LF 공식몰(고도몰)
 PACE_EXTRA = {"arcteryx.jp": "shopify", "dragondiffusion.com": "shopify",   # v1.12 여러 회사가 함께 쓰는 플랫폼 — 묶음을 넘어 한 줄로 GAP
-              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24"}   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify)
+              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify)
+              "www.keenfootwear.kr": "godo", "www.oofos.co.kr": "godo"}     # SFCC형 몰(푸마·언더아머·써코니 해외)은 브랜드마다 따로 운영(자체 CDN)이라 넣지 않음 — 사이트별 간격만
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
@@ -511,7 +513,7 @@ class Defer(Exception):
 
 
 _ROB, _BLOCKED, _HLAST, _DOWN, _HCOUNT = {}, set(), {}, {}, {}   # 사이트별 — v1.12 그 사이트 자물쇠(_HLOCK) 안에서만 읽고 씀
-_PACE, _GLAST = {}, {}            # v1.12 사이트 → 플랫폼 묶음(쇼피파이·카페24) · 플랫폼별 마지막 요청 시각
+_PACE, _GLAST, _GBLOCKED = {}, {}, set()   # v1.12 사이트 → 플랫폼 묶음(쇼피파이·카페24·고도몰) · 플랫폼별 마지막 요청 시각 · 430으로 막힌 플랫폼
 _HLOCK, _GLOCK = {}, {}           # v1.12 사이트별·플랫폼별 자물쇠(한 번에 한 요청) — 자물쇠 순서는 늘 사이트 → 플랫폼
 _GUARD, _PRINT = threading.Lock(), threading.Lock()
 _STOP = threading.Event()         # v1.12 묶음 시간 초과 — 남은 묶음은 더 요청하지 않음
@@ -600,31 +602,42 @@ _S = _MAIN.sess   # 넘겨짐 사이 쿠키를 이어 주려고(예전 allow_red
 def get(url, hops=5):
     """주소 → 응답. 넘겨짐(3xx)은 직접 따라가며 매번 막힘·robots.txt를 먼저 확인(막힌 주소는 요청하지 않음).
     v1.12 그 사이트 자물쇠 안에서 확인·기다림·요청(같은 사이트는 묶음과 상관없이 한 번에 한 요청) — 기다림 = 묶음 안 GAP과
-    같은 사이트 GAP(살로몬 해외 HOST_GAP) 중 긴 것, 플랫폼(PACE)이면 플랫폼 자물쇠 안에서 플랫폼 GAP도. 넘겨짐은 자물쇠를 풀고 따라감"""
-    c, moved = _ctx(), False
+    같은 사이트 GAP(살로몬 해외 HOST_GAP) 중 긴 것, 플랫폼(PACE)이면 플랫폼 자물쇠 안에서 플랫폼 GAP도(그 몰의 robots.txt도 ·
+    플랫폼 몰이 다른 이름 사이트로 넘기면 그 사이트도 같은 플랫폼으로). 넘겨짐은 자물쇠를 풀고 따라감 · 멈춤(_STOP)은 요청 바로 전에도 확인"""
+    c, moved, g0 = _ctx(), False, None
     for _ in range(hops + 1):
-        host = urllib.parse.urlsplit(url).netloc
+        p = urllib.parse.urlsplit(url); host = p.netloc
         pre = "넘겨진 주소: " if moved else ""
+        g = _PACE.get(host) or g0
         with _lock(_HLOCK, host):
             if _STOP.is_set():
-                raise RuntimeError(pre + "묶음 시간 초과로 멈춤 — 더 요청 안 함")
+                raise RuntimeError(pre + "묶음을 멈춤(시간 초과·다른 묶음 오류) — 더 요청 안 함")
             if host in _BLOCKED:
                 raise RuntimeError(pre + "이번 실행에서 이 사이트가 막음 — 더 요청 안 함")
+            if g in _GBLOCKED:
+                raise RuntimeError(pre + f"이번 실행에서 이 플랫폼({g})이 막음(430) — 더 요청 안 함")
             if _DOWN.get(host, 0) >= 2:
                 raise RuntimeError(pre + "이번 실행에서 이 사이트가 연달아 응답 없음 — 더 요청 안 함")
+            if g and f"{p.scheme}://{host}" not in _ROB:   # 플랫폼 몰의 robots.txt도 플랫폼 줄에 맞춰(앞 요청이 끝나고 GAP 뒤)
+                with _lock(_GLOCK, g):
+                    w = GAP - (time.time() - _GLAST.get(g, 0.0))
+                    if w > 0: time.sleep(w)
+                    _GLAST[g] = time.time()
+                    robots_ok(url)
             ok, why = robots_ok(url)
             if not ok:
                 raise RuntimeError(pre + why)
             if host in HOST_CAP and _HCOUNT.get(host, 0) >= HOST_CAP[host]:
                 raise Defer(f"{host} 한 실행 요청 한도 {HOST_CAP[host]}건")
-            _HCOUNT[host] = _HCOUNT.get(host, 0) + 1
             w = max(GAP - (time.time() - c.last), max(GAP, HOST_GAP.get(host, 0)) - (time.time() - _HLAST.get(host, 0.0)))
             if w > 0: time.sleep(w)
-            g = _PACE.get(host)
             with (_lock(_GLOCK, g) if g else contextlib.nullcontext()):   # 플랫폼은 묶음을 넘어 한 줄로(앞 요청이 끝나고 GAP 뒤)
                 if g:
                     w = GAP - (time.time() - _GLAST.get(g, 0.0))
                     if w > 0: time.sleep(w)
+                if _STOP.is_set():   # 기다리는 사이 멈춤 — 요청하지 않음(한도 셈도 안 씀)
+                    raise RuntimeError(pre + "묶음을 멈춤(시간 초과·다른 묶음 오류) — 더 요청 안 함")
+                _HCOUNT[host] = _HCOUNT.get(host, 0) + 1
                 c.last = _HLAST[host] = time.time()
                 if g:
                     _GLAST[g] = c.last
@@ -636,8 +649,10 @@ def get(url, hops=5):
             _DOWN.pop(host, None)
             loc = (getattr(r, "headers", None) or {}).get("Location") if 300 <= r.status_code < 400 else None
             if not loc:
-                if r.status_code in (403, 429, 430):   # v1.12 430 = 쇼피파이 접속 거절
+                if r.status_code in (403, 429, 430):   # v1.12 430 = 쇼피파이가 우리 서버(IP)를 거절
                     _BLOCKED.add(host)   # 실제로 막은 사이트
+                    if r.status_code == 430 and g:
+                        _GBLOCKED.add(g)   # 플랫폼이 거절 — 그 실행에서 같은 플랫폼 몰 모두 더 요청 안 함
                     raise RuntimeError(pre + f"HTTP {r.status_code}(접속 차단 — 우회하지 않음)")
                 if r.status_code >= 400:
                     raise RuntimeError(pre + f"HTTP {r.status_code}")
@@ -646,7 +661,7 @@ def get(url, hops=5):
             loc = loc.encode("latin1").decode("utf-8")   # requests와 같게 UTF-8 주소 되살림
         except (UnicodeEncodeError, UnicodeDecodeError):
             pass
-        url, moved = urllib.parse.urljoin(url, loc), True
+        url, moved, g0 = urllib.parse.urljoin(url, loc), True, g
     raise RuntimeError(f"넘겨짐이 {hops}번 넘음")
 
 
@@ -999,7 +1014,7 @@ def main():
             f = dict(failed.get(key) or {"id": prod["id"], "cc": cc, "since": td})
             f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="시간 초과로 못 받음")
             return {"fop": ("set", f), "n": {"cut": 1}}
-        def _value(prod, cc, pi):
+        def _value(prod, cc, pi, cut=False):
             """v1.12 값 하나 받기 — 묶음(스레드) 안에서 돎. 공유 기록(failed·htry·bt)은 읽기만 하고 결과로 돌려줌 —
             o = 상품 m에 넣을 값 · fop = 값 없음 기록(pop·set) · hop = 받으러 간 날(host_try) · n = 셈 · b = 브랜드 [볼 값, 못 받은 값]"""
             o = _prev_o(pi, prod, cc); key = f"{prod['id']} {cc}"   # 나라별 수입사 품번을 바꾸면 그 나라 이전 값은 다른 상품
@@ -1012,7 +1027,7 @@ def main():
                 elif _HCOUNT.get(host, 0) + due_left.get(host, 0) >= HOST_CAP[host]:   # 다시 받기에서도 못 받은 값 — 아직 다시 받아 보지 않은 값에 한도를 먼저
                     log(f"  {key}: 다음에 다시 — {host} 한도는 아직 다시 받아 보지 않은 값 먼저")
                     return {"o": o, "n": {"defer": 1}}
-            if time.time() - t0 > TIME_LIMIT:   # 남은 것은 이전 값(다음 날 다시)
+            if cut or time.time() - t0 > TIME_LIMIT:   # 남은 것은 이전 값(다음 날 다시) · cut = 묶음이 안 끝나 요청 없이 시간 초과로
                 return _cut(prod, cc, o, key)
             hop = ("set", td) if host else None   # v1.9 받으러 간 날(한도로 미루면 그대로 둠)
             try:
@@ -1143,9 +1158,8 @@ def main():
             for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
                 key = f"{prod['id']} {cc}"
                 out = res.get(key)
-                if out is None:   # 묶음이 시간 안에 안 끝나 못 받은 값 — 시간 초과와 같게
-                    o = _prev_o(pi, prod, cc)
-                    out = {"o": o, "b": (1, 0)} if _done(o) else _cut(prod, cc, o, key)
+                if out is None:   # 묶음이 시간 안에 안 끝나 못 받은 값 — 시간 초과와 같게(이미 받은 값·한도 미룸은 예전 차례대로)
+                    out = _value(prod, cc, pi, cut=True)
                 if out.get("o"):
                     m[cc] = out["o"]
                 fop, hop = out.get("fop"), out.get("hop")
