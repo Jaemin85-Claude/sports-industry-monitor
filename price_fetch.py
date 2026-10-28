@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.14: (SKU 늘리기 5차 10/28 — 대표 '네 바로 진행해주세요', 쇼피파이 몰이 아닌 브랜드부터) 온러닝 클라우드몬스터 3·클라우드러너 3·클라우드 X 5·
+    클라우드 6 워터프루프(검정 · 5개 나라 같은 품번) — 상품 97개 · 값 381개(+20). 온러닝 상품은 https://www.on.com/sitemap.xml(robots.txt에는 없음 · ko-kr 상품 사이트맵)에서 찾음.
+    아크테릭스는 한국 몰 목록 화면이 스크립트로 그려져(상품 번호가 페이지에 없음) 이번에 못 찾음 — 다음 차례에 다른 방법
 v1.13: (SKU 늘리기 4차 10/28 — 대표 '네 진행해주세요', v1.12 묶음 동시 받기로 시간 여유) 브룩스 아드레날린 GTS 25·하이페리온 3(한국·일본) ·
     킨 하우저 III 슬라이드·유니크 트레커·A86(5개 나라)·재스퍼 자이오닉 워터프루프(한국·미국·일본 — 영국·독일 몰에 없음) — 상품 93개 · 값 361개(+22).
     카페24 몰 소비자가 칸(CAFE24_LIST · 브룩스 한국): 할인 중이면 JSON-LD에 판매가만이라, 이 상품 판매가 칸 바로 뒤 소비자가(price_custom)를 정가로
@@ -254,6 +257,11 @@ PRODUCTS = [
     {"id": "on-cloudtilt", "brand": "온러닝", "name": "클라우드틸트", "code": "3ME10101430", "src": "page", "hint": "cloudtilt", "urls": _on("cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430")},
     {"id": "on-roger", "brand": "온러닝", "name": "더 로저 어드밴티지", "code": "3MF30641200", "src": "page", "hint": "roger", "urls": _on("the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200")},
     {"id": "on-cloudnova2", "brand": "온러닝", "name": "클라우드노바 2", "code": "3ME30210108", "src": "page", "hint": "cloudnova", "urls": _on("cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108")},
+    # v1.14 SKU 5차 — 한국 몰 사이트맵(https://www.on.com/sitemap.xml → ko-kr 상품 · robots.txt에는 적혀 있지 않음)의 남성 신발 중 주요 모델 검정 · 5개 나라 같은 품번(10/28 GitHub 서버 확인)
+    {"id": "on-cloudmonster3", "brand": "온러닝", "name": "클라우드몬스터 3", "code": "3MG10051043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043")},
+    {"id": "on-cloudrunner3", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043")},
+    {"id": "on-cloudx5", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043")},
+    {"id": "on-cloud6wp", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043")},
     {"id": "salomon-xt6", "brand": "살로몬", "name": "XT-6 고어텍스", "code": "L47450600", "alt": ["LG9333"], "src": "page", "hint": "xt-6", "urls": {
         "KR": "https://salomon.co.kr/products/l47450600.json",
         "US": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
