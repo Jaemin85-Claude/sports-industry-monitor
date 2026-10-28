@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-28 19:36 KST",
+ "generated_at": "2026-10-28 23:28 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -34582,14 +34582,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "40673115643",
+  "run": "40705850744",
   "tries": [
    {
     "n": 1,
-    "where": "4.242.x.x · Arizona · AS8075 Microsoft Corporation",
+    "where": "134.33.x.x · Arizona · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "10-28 19:37"
+    "at": "10-28 23:29"
    }
   ]
  }
