@@ -116,7 +116,8 @@ def shopjson(j):   # 쇼피파이 몰 /products.json 쪽마다 → 상품 이름
         base = u.split("/products.json")[0]
         for pr in ps:
             vs = pr.get("variants") or []
-            skus = sorted({str(v.get("sku") or "") for v in vs})
+            tg = pr.get("tags") if isinstance(pr.get("tags"), list) else str(pr.get("tags") or "").split(",")
+            skus = sorted({str(v.get("sku") or "") for v in vs} | ({str(t).strip() for t in tg} if j.get("tags") else set()))
             m = [re.match(j.get("sku_rx", r"(\d{8})"), x) for x in skus]
             codes8 = sorted({x.group(1) for x in m if x})
             for c in codes8: CODES[key][cc].setdefault(c, f"{base}/products/{pr.get('handle')}.json")
