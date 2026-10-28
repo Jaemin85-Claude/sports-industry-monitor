@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-27 17:19 KST",
+ "generated_at": "2026-10-28 09:39 KST",
  "fetched": "2026-10-27",
  "attempt": "2026-10-27",
  "cfg": "2fce6a70d913",
@@ -1585,13 +1585,11 @@
     "DE": {
      "p": 190.0,
      "cur": "EUR",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/de-de/product/xt-4-og-li3335",
      "obs": 190.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     }
    }
   },
@@ -1613,35 +1611,29 @@
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/en-us/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/en-gb/product/xt-6-expanse-lg9334",
      "obs": 150.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     },
     "DE": {
      "p": 165.0,
      "cur": "EUR",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/de-de/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     }
    }
   },
@@ -1663,35 +1655,29 @@
     "US": {
      "p": 220.0,
      "cur": "USD",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
      "obs": 220.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     },
     "GB": {
      "p": 195.0,
      "cur": "GBP",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
      "obs": 195.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     },
     "DE": {
      "p": 210.0,
      "cur": "EUR",
-     "seen": "2026-10-26",
+     "seen": "2026-10-28",
      "url": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806",
      "obs": 210.0,
-     "obs_date": "2026-10-26",
-     "sale": false,
-     "stale_since": "2026-10-26",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-10-28",
+     "sale": false
     }
    }
   },
@@ -3085,13 +3071,11 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-10-27",
+     "seen": "2026-10-28",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
      "obs": 219000.0,
-     "obs_date": "2026-10-27",
-     "sale": false,
-     "stale_since": "2026-10-27",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-10-28",
+     "sale": false
     },
     "US": {
      "p": 175.0,
@@ -4395,14 +4379,13 @@
   "salomon-xt6base DE": "2026-10-27",
   "salomon-xt4og US": "2026-10-27",
   "salomon-xt4og GB": "2026-10-27",
-  "salomon-xt4og DE": "2026-10-27",
-  "salomon-xt6expanse US": "2026-10-27",
-  "salomon-xt6expanse GB": "2026-10-27",
-  "salomon-xt6expanse DE": "2026-10-27",
-  "salomon-xt4oggtx US": "2026-10-27",
-  "salomon-xt4oggtx GB": "2026-10-27",
-  "salomon-xt4oggtx DE": "2026-10-27"
+  "salomon-xt4og DE": "2026-10-28",
+  "salomon-xt6expanse US": "2026-10-28",
+  "salomon-xt6expanse GB": "2026-10-28",
+  "salomon-xt6expanse DE": "2026-10-28",
+  "salomon-xt4oggtx US": "2026-10-28",
+  "salomon-xt4oggtx GB": "2026-10-28",
+  "salomon-xt4oggtx DE": "2026-10-28"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
- "tried": "2026-10-27"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
 }
