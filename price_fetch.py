@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.13: (SKU 늘리기 4차 10/28 — 대표 '네 진행해주세요', v1.12 묶음 동시 받기로 시간 여유) 브룩스 아드레날린 GTS 25·하이페리온 3(한국·일본) ·
+    킨 하우저 III 슬라이드·유니크 트레커·A86(5개 나라)·재스퍼 자이오닉 워터프루프(한국·미국·일본 — 영국·독일 몰에 없음) — 상품 93개 · 값 361개(+22).
+    카페24 몰 소비자가 칸(CAFE24_LIST · 브룩스 한국): 할인 중이면 JSON-LD에 판매가만이라, 이 상품 판매가 칸 바로 뒤 소비자가(price_custom)를 정가로
+    (판매가 칸이 이 상품 JSON-LD 판매가와 같고 소비자가가 한 가지일 때만 · 판매가보다 높고 5배 안) — 10/28 블랙프라이데이 GTS 25 판매가 132,300 · 소비자가 189,000.
+    브룩스 고스트 맥스 3(607)은 10/27·10/28 모두 한국 몰 pageNotFound라 후보에서 뺌 · 온러닝은 robots.txt에 사이트맵이 없어 다음 차례에 다른 방법으로
 v1.12: (대표 승인 10/28 '1번(수집 방식 변경)부터' — 전체 받기 615초 = 13분 한도의 79%라 SKU를 더 늘리면 한도에 걸림) 묶음 동시 받기.
     지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 브랜드·사이트가 이어진 상품끼리 한 묶음
     (코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
@@ -125,6 +130,8 @@ HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
+CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
+                                         # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
 
@@ -440,6 +447,13 @@ PRODUCTS = [
     {"id": "brooks-ghostamp", "brand": "브룩스", "name": "고스트 AMP(남성)", "code": "1104971D", "cc_code": {"JP": "BRM4973"}, "src": "page", "hint": "고스트 amp", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-amp%ED%94%84%EB%9D%BC%EC%9D%B4%EB%A8%B8medium/947/",
         "JP": "https://brooksrunning.co.jp/products/brm4973-blu.json"}},
+    # v1.13 SKU 4차 — 한국 몰이 블랙프라이데이 할인 중(10/28)이라 JSON-LD에는 판매가만 → 소비자가 칸(price_custom, CAFE24_LIST)으로 정가 · 일본은 한국과 같은 색이 없어 다른 색(같은 품번 · 색과 상관없이 같은 값)
+    {"id": "brooks-gts25", "brand": "브룩스", "name": "아드레날린 GTS 25(남성)", "code": "1104541D", "cc_code": {"JP": "BRM4543"}, "src": "page", "hint": "아드레날린gts 25", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EB%93%9C%EB%A0%88%EB%82%A0%EB%A6%B0gts-25%EB%B8%94%EB%9E%99medium/664/",
+        "JP": "https://brooksrunning.co.jp/products/brm4543-dgry.json"}},
+    {"id": "brooks-hyperion3", "brand": "브룩스", "name": "하이페리온 3(남성)", "code": "1104651D", "cc_code": {"JP": "BRM4653"}, "src": "page", "hint": "하이페리온 3", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A8-3%EC%98%A4%EC%9D%B4%EC%8A%A4%ED%84%B0-medium/583/",
+        "JP": "https://brooksrunning.co.jp/products/brm4653-gry.json"}},
     # v1.4 아크테릭스 — 한국은 시즌 상품 페이지마다 한국 품번(cc_code KR, 페이지 Model(KR))이 따로 · JSON-LD 판매가 + 화면 데이터 정가(retail_price)
     {"id": "arc-atomhoody", "brand": "아크테릭스", "name": "아톰 후디(남성)", "code": "X000009556", "cc_code": {"KR": "AJQSM09556"}, "src": "page", "hint": "atom hoody",
      "urls": _arc("686241", "atom-hoody-9556", "atom-hoody-m")},
@@ -466,6 +480,17 @@ PRODUCTS = [
      "urls": _keen("1000000580", "mens-targhee-iv-waterproof-triple-black")},
     {"id": "keen-jasper", "brand": "킨(KEEN)", "name": "재스퍼(남성 · 블랙)", "code": "1026592", "src": "page", "hint": "jasper",
      "urls": _keen("1000000804", "mens-jasper-hairy-black-black", jp=False)},   # 일본 몰에 없음(10/23)
+    # v1.13 SKU 4차 — 한국 LF 몰 상품 번호 ↔ 상품 정보 칸 품번(Article No.)을 미국 쇼피파이 상품 태그 품번과 대조(10/28) · 재스퍼 자이오닉 블랙은 한국 품번이 달라(1029584) 뺌
+    {"id": "keen-howser3", "brand": "킨(KEEN)", "name": "하우저 III 슬라이드(남성 · 블랙)", "code": "1032618", "src": "page", "hint": "howser",
+     "urls": _keen("1000001043", "mens-howser-iii-slide-black-quilted")},
+    {"id": "keen-uneektrek", "brand": "킨(KEEN)", "name": "유니크 트레커(남성 · 블랙)", "code": "1032783", "src": "page", "hint": "uneek trekker",
+     "urls": _keen("1000000868", "mens-uneek-trekker-black-keen-maple")},
+    {"id": "keen-a86", "brand": "킨(KEEN)", "name": "A86(남성 · 트리플 블랙)", "code": "1032844", "src": "page", "hint": "a86",
+     "urls": _keen("1000001054", "mens-a86-triple-black")},
+    {"id": "keen-jzwp", "brand": "킨(KEEN)", "name": "재스퍼 자이오닉 워터프루프(남성 · 블랙)", "code": "1032795", "src": "page", "hint": "jasper zionic", "urls": {
+        "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000945",
+        "US": "https://www.keenfootwear.com/products/mens-jasper-zionic-waterproof-black-black.json",
+        "JP": "https://www.keenfootwear.jp/products/mens-jasper-zionic-waterproof-black-black.json"}},   # 영국·독일 몰에 없음(404, 10/28)
     # v1.4 우포스 — 품번 = 모델 4자리 + 색상(한국 Article No. '1100 Black' · 미국 변형 품번 앞머리 '1100BLK…') · 한국 콜라보 상품(같은 Article No.)은 다른 상품 번호
     {"id": "oofos-ooriginal", "brand": "우포스", "name": "OOriginal 샌들(블랙)", "code": "1000", "cc_code": {"KR": "1000 Black", "US": "1000BLK"}, "src": "page", "hint": "ooriginal",
      "urls": _oofos("1000000050", "mens-original-sandal-black")},
@@ -838,6 +863,17 @@ def page_price(html, hint, cur, codes=()):
     return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code or micro else "이름" if prods or base_name else ""}
 
 
+def cafe24_list(html, sale):
+    """v1.13 카페24 몰(브룩스 한국): 할인 중이면 JSON-LD에는 판매가만 — 이 상품 판매가 칸(product_price) 바로 뒤 소비자가 칸(price_custom)을 정가로.
+    판매가 칸 값이 이 상품 JSON-LD 판매가와 같을 때만(추천 상품 칸 섞임 방지) · 그런 소비자가가 한 가지일 때만 · 판매가보다 높고 5배 안"""
+    lps = set()
+    for m in re.finditer(r'class="product_price">\s*([\d,]+)\s*<span>원</span>\s*</p>\s*<p class="price_custom[^"]*">\s*([\d,]+)\s*원', html):
+        sv, lp = num(m.group(1)), num(m.group(2))
+        if sv and lp and abs(sv - sale) < 0.01 and sv < lp <= sv * 5:
+            lps.add(lp)
+    return lps.pop() if len(lps) == 1 else None
+
+
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
@@ -894,7 +930,12 @@ def fetch_one(prod, cc):
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
         return godo_price(r.text, cur, code), url
-    return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
+    full, extra = page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", []))
+    if urllib.parse.urlsplit(url).netloc in CAFE24_LIST:   # v1.13 카페24 몰 소비자가 칸 — 할인 중이면 JSON-LD에 판매가만
+        lp = cafe24_list(r.text, full)
+        if lp:
+            full = lp
+    return (full, extra), url
 
 
 def cfg_hash():
