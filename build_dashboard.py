@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.27: (대표 지시 2026-10-28 '대표 전용 페이지 없어도 됩니다. 영업 기밀에 해당하는 내용이 없습니다. 합쳐주세요') 물류 '우리 운임 vs 시장' 카드에
+  비공개 페이지 내용을 합침 — 보기 6개(요약 · 연도별 물류비 지수 · 항공(유럽발) · 전쟁 전후 · 해상 · 포워더별) · 비공개 페이지 링크(LG_OURS_URL) 없앰 ·
+  항공 숫자에 '유럽발' 표기(v33.25는 빠져 있었음) · 자료에 없는 보기(포워더·연도별 등)는 칩을 숨김
 v33.26: (대표 지시 2026-10-27 '텍스트가 너무 많습니다 — 전체적으로 최소화' · 결정 '설명만 접기') 전 화면(오늘·브랜드·시장 6칩·더보기 7화면)의
   설명 문장·기준·방법·주의 글을 '읽는 법'(why)으로 접거나 몇 낱말로 줄임 — 숫자·판정·제목·출처 한 줄·수집 실패·이전 값 표시는 그대로(화면 보이는 한글 약 22%↓).
   판정 규칙(chkModel·chk_verdicts)은 그대로 — JS↔파이썬 대조 22곳 일치 · 검토 반영 21건(단위·기간·제외 목록·기준 이름처럼 숫자를 읽는 데 필요한 말은 다시 보이게)
@@ -1299,7 +1302,7 @@ const HIST = __HIST__;
 const KRD = __KRD__;
 const STATUS = __STATUS__;
 const LOGI = __LOGI__;   // v33.4 물류(docs/logistics.json · logistics_fetch v1) — 없으면 null
-const OURS = __OURS__;   // v33.25 우리 운임 공개판(docs/our_freight.json · 대표 자료) — 없으면 null
+const OURS = __OURS__;   // v33.27 우리 운임(docs/our_freight.json · 대표 자료) — 없으면 null
 const PRICES = __PRICES__;   // v33.14 해외 정가(docs/prices.json · price_fetch v1) — 없으면 null
 const WMAP = __WMAP__;   // 소싱 지도 경계(docs/worldmap.json)   // 수집 상태(소스별 마지막 갱신)   // 국내 법인(비상장) — 연 1회 수동 갱신
 
@@ -3773,27 +3776,90 @@ function lgJump(id){   // v33.5 맨 위 칩 → 그 묶음 제목으로(고정 �
   const e=document.getElementById(id); if(!e) return;
   cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0; phSync(); e.scrollIntoView({behavior:smoothB(),block:'start'});
 }
-const LG_OURS_URL='https://claude.ai/artifact/2ehAvGB9SJwEVFv3BfZQWg';   // v33.20 대표 전용 비공개 페이지 '우리 운임 vs 시장' — 주소만(내용은 대표 계정에서만 열림)
-function lgOursCard(){   // v33.25 우리 운임 vs 시장(docs/our_freight.json) — kg당·배수·변화율·지수만(이름·건수·총액 없음)
-  const O=OURS, link=`<a class="nmore" href="${LG_OURS_URL}" target="_blank" rel="noopener noreferrer">포워더별 — 대표 전용 페이지 ${ic('right',16)}</a>`;
-  if(!O||!Array.isArray(O.air_q)||O.air_q.length<2) return link;
-  const qL=q=>q?`${q.slice(2,4)}${q.slice(4)}`:'', qM=q=>`${q.slice(0,4)}-${String((+q.slice(5)-1)*3+1).padStart(2,'0')}`;   // '2026Q1' → '26Q1' · 그래프용 첫 달 '2026-01'
+let LG_OV='sum', LG_OYR='all', LG_OFW='air';   // v33.27 우리 운임 카드 — 보기(요약·연도별·항공·전쟁 전후·해상·포워더) · 연도별 묶음 · 포워더 운송
+function lgOursSet(k,v){ if(k==='v') LG_OV=v; else if(k==='y') LG_OYR=v; else LG_OFW=v; const e=document.getElementById('lgOurs'); if(e) e.outerHTML=lgOursCard(); }
+function lgOursCard(){   // v33.27 우리 운임 vs 시장(docs/our_freight.json · 관세사 수입신고 계산값 전부 — 대표 전용 페이지를 합침, 대표 지시 2026-10-28)
+  const O=OURS;
+  if(!O||!Array.isArray(O.air_q)||O.air_q.length<2) return '';
+  const end=Array.isArray(O.period)?String(O.period[1]||''):'', won=v=>v==null?'―':lgN(v), f1=v=>v==null?'―':Number(v).toFixed(1);
+  const sg=x=>(x>0?'+':x<0?'−':'')+Math.abs(Math.round(x)), pc=v=>v==null?'<span class="na">―</span>':lgChg(1+v/100,false);
   const xC=x=>x==null?'<span class="na">―</span>':`<span class="${x>1?'neg':x<1?'pos':''}">${Number(x).toFixed(1)}배</span>`;
-  const pc=v=>v==null?'<span class="na">―</span>':lgChg(1+v/100,false), per=Array.isArray(O.period)?O.period.map(lgMon).join('~'):'';
-  const L=(O.air_lead||{}).last, F=(O.air_lead||{}).first, Q=O.air_q, kp=(l,v,sub)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${sub}</div></div>`;
-  let h=`<div class="card" id="lgOurs"><h3>우리 운임 vs 시장 <span class="na" style="font-weight:400">관세사 수입신고 · ${per}</span></h3>`;
-  if(L) h+=`<div class="kpis lgk">${kp('항공 kg당 · 최근 4분기',lgU(L.ours,'<small>원</small>'),`시장 대비 ${pc(L.gap)}`)}${F&&Array.isArray(F.p)&&F.p.length?kp('시장의 배수',`${xC(F.x)} → ${xC(L.x)}`,`${F.p[0].slice(0,4)===F.p[F.p.length-1].slice(0,4)?F.p[0].slice(2,4)+'년':qL(F.p[0])+'~'+qL(F.p[F.p.length-1])} → 최근 4분기`):''}</div>`;
-  h+=`<div class="cb-trend lg-tr">${[['ours','우리 항공 kg당',1],['mkt','시장(관세청)',0]].map(([k,t,a])=>`<div class="cb-tr"><div class="h"><b>${t}</b><span class="num">${lgN(Q[Q.length-1][k])}</span></div>${lgSpark(Q.map(r=>[qM(r.q),r[k]]),{accent:!!a,label:t+' 분기'})}<div class="ax"><span>${qL(Q[0].q)}</span><span>${qL(Q[Q.length-1].q)}</span></div></div>`).join('')}</div>`;
-  const B=(O.air_band||{}).rows||[];
-  if(B.length) h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>항공 무게</th><th>우리 kg당</th><th>시장의</th></tr>${B.map(r=>`<tr><td>${esc(r.band||'')}</td><td class="num">${lgN(r.ours)}</td><td>${xC(r.x)}</td></tr>`).join('')}</table></div>`;
-  const W=(O.war||[]).filter(r=>r&&(r.chg!=null||r.mkt_chg!=null));   // 전쟁 뒤 신고가 없는 길(두바이 등)은 뺌
-  if(W.length) h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>전쟁 전 → 후</th><th>우리</th><th>시장</th></tr>${W.map(r=>`<tr><td>${esc(r.lane||'')}</td><td>${pc(r.chg)}</td><td>${pc(r.mkt_chg)}</td></tr>`).join('')}</table></div>`;
-  const S=(O.sea||[]).filter(x=>x&&Array.isArray(x.rows)&&x.rows.length);
-  if(S.length){ const lq=S[0].rows[S[0].rows.length-1].q;
-    h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>해상 지수 ${esc(qL(lq))}</th><th>우리</th><th>시장</th></tr>${S.map(x=>{ const r=x.rows[x.rows.length-1];
-      return `<tr><td>${esc(x.lane||'')}</td><td class="num">${lgN(r.ours_i)}</td><td class="num">${r.mkt_i==null?'<span class="na">―</span>':lgN(r.mkt_i)}</td></tr>`; }).join('')}</table></div>`; }
-  const wp=O.war_p||{};
-  return h+link+why(`운임이 적힌 수입신고만(EXW·FOB·FCA — CIF 등은 운임이 물건값에 섞여 뺌) · kg당 = 운임 합계 ÷ 총중량 · 항공 = 인천공항세관 통관 · 시장 = 관세청 수입신고 운임(같은 기간 · 항공 kg당, 해상은 40ft라 ${esc(S.length?S[0].base||'2024':'2024')}년 = 100 지수로 견줌 · 홍콩 = 중국 값 · 싱가포르는 시장 값 없음) · 시장의 배수 = 우리 kg당 ÷ 시장 kg당(가벼운 짐일수록 큼) · 전쟁 전 = ${esc(wp.pre||'')} · 후 = ${esc(wp.post||'')} · 우리 값이 높으면 주황 · 갱신 ${esc(O.built||'―')}(대표 자료가 오면 '우리 운임 갱신해줘')`)+`</div>`;
+  const qL=q=>q?`${q.slice(2,4)}${q.slice(4)}`:'', qM=q=>q.includes('H')?`${q.slice(0,4)}-${q.endsWith('H1')?'01':'07'}`:`${q.slice(0,4)}-${String((+q.slice(5)-1)*3+1).padStart(2,'0')}`;
+  const part=q=>{ const m=+end.slice(5); if(!q||!end||!q.startsWith(end.slice(0,4))) return ''; const [a,b]=q.endsWith('H1')?[1,6]:q.endsWith('H2')?[7,12]:q.includes('Q')?[3*+q.slice(-1)-2,3*+q.slice(-1)]:[1,12];
+    return m>=a&&m<b?(a===m?m+'월':a+'~'+m+'월'):''; };
+  const qp=q=>qL(q)+(part(q)?`(${part(q)})`:'');   // 덜 찬 마지막 분기·반기는 들어간 달
+  const span=p=>!Array.isArray(p)||!p.length?'':(p.length===4&&p.every(q=>q.startsWith(p[0].slice(0,4)))?p[0].slice(2,4)+'년':qL(p[0])+'~'+qp(p[p.length-1]));
+  const kp=(l,v,s)=>`<div class="kpi"><div class="l">${l}</div><div class="v num">${v}</div><div class="s">${s}</div></div>`;
+  const chip=(k,cur,v,t)=>`<button type="button" class="chip${cur===v?' on':''}" aria-pressed="${cur===v}" onclick="lgOursSet('${k}','${v}')">${t}</button>`;
+  const per=Array.isArray(O.period)?O.period.map(lgMon).join('~'):'', K=O.kpi||{}, AL=O.air_lead||{}, F=AL.first, L=AL.last;
+  const views=[['sum','요약'],['yr','연도별'],['air','항공'],['war','전쟁 전후'],['sea','해상'],['fwd','포워더']].filter(([v])=>v!=='fwd'||O.fwd).filter(([v])=>v!=='sea'||(O.sea&&Object.keys(O.sea).length)).filter(([v])=>v!=='yr'||(O.yearly&&Object.keys(O.yearly).length));
+  if(!views.some(([v])=>v===LG_OV)) LG_OV='sum';
+  let h=`<div class="card" id="lgOurs"><h3>우리 운임 vs 시장 <span class="na" style="font-weight:400">관세사 수입신고 · ${per}${O.n_usable?` · ${lgN(O.n_usable)}건`:''}</span></h3>
+    <div class="chips" style="margin-bottom:8px">${views.map(([v,t])=>chip('v',LG_OV,v,t)).join('')}</div>`;
+  let w='';   // 보기별 읽는 법
+  if(LG_OV==='sum'){
+    h+=`<div class="kpis lgk">${kp('항공 kg당 · 유럽발',lgU(K.air_ours,'<small>원</small>'),`${esc(K.air_lbl||'')} · 시장 대비 ${pc(K.air_gap)}`)}
+      ${kp('항공 큰 화물',K.heavy_x==null?'―':`${xC(K.heavy_x)}`,`${esc(K.heavy_band||'')} · 시장 평균 대비`)}
+      ${kp('운임 ÷ 물건값',K.share_air==null?'―':K.share_air.toFixed(1)+'<small>%</small>',`항공 · 해상 ${K.share_sea==null?'―':K.share_sea.toFixed(1)+'%'} · ${esc(K.share_lbl||'')}`)}</div>`;
+    if(F&&L) h+=`<div class="note">시장의 배수 ${xC(F.x)} → ${xC(L.x)} (${span(F.p)} → 최근 4분기)${F.avgkg&&L.avgkg?` · 건당 무게 ${won(F.avgkg)} → ${won(L.avgkg)}kg`:''}</div>`;
+    w=`항공 = 유럽발(인천공항세관 통관) · 시장 = 관세청 수입신고 운임 같은 기간 평균 · 큰 화물 배수 = ${esc(K.heavy_band||'')} 우리 kg당 ÷ 시장 평균(모든 크기) · 운임 ÷ 물건값 = 운임이 따로 적힌 신고의 운임 합계 ÷ 물건값 합계`;
+  } else if(LG_OV==='yr'){
+    const YR=O.yearly||{}, modes=[['all','전체'],['air','항공'],['sea','해상']].filter(([k])=>Array.isArray(YR[k])&&YR[k].length>1);
+    if(!modes.some(([k])=>k===LG_OYR)) LG_OYR=(modes[0]||['all'])[0];
+    const R=YR[LG_OYR]||[], mon=r=>r.months<12?`${r.m_from}~${r.m_to}월`:'', man=v=>v==null?'―':lgN(Math.round(v/1e4))+'만원';
+    const ar=(t,k)=>`${t} ${R.map(r=>r[k]==null?'―':Math.round(r[k])).join(' → ')}`;
+    h+=`<div class="chips" style="margin-bottom:8px">${modes.map(([k,t])=>chip('y',LG_OYR,k,t)).join('')}</div>`;
+    h+=`<div class="note">${R.length?`${esc(R[0].y)} = 100 · `:''}${ar('요율','idx')} · ${ar('시장','mkt')} · ${ar('물류비','spend_i')}</div>`;
+    h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>연도</th><th>요율</th><th>시장</th><th>월 물류비</th><th>kg당</th></tr>${R.map((r,i)=>`<tr><td>${esc(r.y)}<div class="na">${mon(r)?mon(r)+' · ':''}${lgN(r.n)}건</div></td>
+      <td class="num"><b>${f1(r.idx)}</b>${i&&r.lo!=null?`<div class="na">${Math.round(r.lo)}~${Math.round(r.hi)}</div>`:''}</td><td class="num">${f1(r.mkt)}</td>
+      <td class="num">${man(r.spend_m)}<div class="na">${f1(r.spend_i)}${r.spend_chg!=null?` · ${pc(r.spend_chg)}`:''}</div></td><td class="num">${won(r.kpk)}원<div class="na">${f1(r.kpk_i)}</div></td></tr>`).join('')}</table></div>`;
+    w=`요율 = 운송방식·출발지·무게 구간이 같은 칸끼리 kg당을 견준 뒤 앞·뒤 해 화물 구성으로 다시 평균한 값(보낸 크기·출발지 구성 변화를 뺀 운임 수준 · 앞뒤 해 모두 2건 이상인 칸만) · 아래 작은 숫자 = 무게 구간을 달리 잡아 본 범위 ·
+      월 물류비 = 운임이 따로 적힌 신고(EXW·FOB·FCA)의 운임 합계 ÷ 달 수(CIF 등은 운임이 물건값에 들어 있어 빠져 실제보다 낮게 보일 수 있음 · 보험료·통관 수수료·국내 운송 빠짐) — 아래 = 지수 · 앞 해 같은 달 대비 ·
+      kg당 = 운임 합계 ÷ 총중량(구성 안 맞춤${LG_OYR==='all'?' — 항공·해상이 섞여 해상 비중에 흔들림':''}) · 시장 = 관세청 같은 달 평균의 변화를 앞 해 우리 물류비 비중으로 가중(시장 운임이 있는 경로만) · 덜 찬 해는 앞 해 같은 달과 견줌`;
+  } else if(LG_OV==='air'){
+    const Q=O.air_q, B=O.air_band||{}, BR=B.rows||[];
+    if(F&&L) h+=`<div class="note">시장의 배수 ${xC(F.x)} → ${xC(L.x)} (${span(F.p)} → ${span(L.p)})${F.avgkg&&L.avgkg?` · 건당 무게 ${won(F.avgkg)} → ${won(L.avgkg)}kg`:''}</div>`;
+    h+=`<div class="cb-trend lg-tr">${[['ours','우리 · 유럽발',1],['mkt','시장 · 유럽연합',0]].map(([k,t,a])=>`<div class="cb-tr"><div class="h"><b>${t}</b><span class="num">${won(Q[Q.length-1][k])}</span></div>${lgSpark(Q.map(r=>[qM(r.q),r[k]]),{accent:!!a,label:t+' 항공 kg당 분기'})}<div class="ax"><span>${qL(Q[0].q)}</span><span>${qp(Q[Q.length-1].q)}</span></div></div>`).join('')}</div>`;
+    if(BR.length) h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>무게</th><th>건</th><th>우리 kg당</th><th>시장의</th></tr>${BR.map(r=>`<tr><td>${esc(r.band||'')}</td><td class="num">${won(r.n)}</td><td class="num">${won(r.ours)}</td><td>${xC(r.x)}</td></tr>`).join('')}</table></div>
+      <div class="na" style="margin-top:4px">시장 평균 ${won(B.mkt)}원/kg(${esc(qL((B.period||[])[0]||''))}~${esc(qp((B.period||[])[1]||''))})</div>`;
+    w=`원/kg · 우리 = 분기마다 운임 합계 ÷ 총중량 · 시장 = 관세청 유럽연합 같은 분기 월평균 · 작은 화물일수록 최소 요금·서류비 때문에 kg당이 커짐(묶어 보낼수록 시장에 가까움) · 건당 무게가 커지면 kg당이 내려가 보임<br>`
+      +`<div class="tblwrap"><table class="lg-tbl"><tr><th>분기</th><th>우리</th><th>시장</th><th>배</th><th>건</th><th>건당 kg</th></tr>${Q.map(r=>`<tr><td>${esc(qp(r.q))}</td><td class="num">${won(r.ours)}</td><td class="num">${won(r.mkt)}</td><td class="num">${r.ours==null||!r.mkt?'―':(r.ours/r.mkt).toFixed(1)}</td><td class="num">${r.n??'―'}</td><td class="num">${won(r.avgkg)}</td></tr>`).join('')}</table></div>`;
+  } else if(LG_OV==='war'){
+    const W=Array.isArray(O.war)?O.war:[], w0=W.find(x=>x&&x.pre_p)||{};
+    h+=`<div class="note">kg당 · 전 ${esc(w0.pre_p||'')} → 뒤 ${esc(w0.post_p||'')}</div>`;
+    h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>길</th><th>우리</th><th>시장</th><th>입항</th></tr>${W.map(x=>{
+      const R=x.mix_range, md=String(x.lane||'').startsWith('항공')?'항공':'해상';
+      const tag=x.post==null?`<span class="na">${md} 0건</span>`:Array.isArray(R)?`<span class="${R[0]>0?'neg':R[1]<0?'pos':''}">${R[0]===R[1]?sg(R[0]):sg(R[0])+'~'+sg(R[1])}%</span>`:pc(x.chg);
+      const sub=x.post==null?`${md} ${lgN(x.n_pre)}건 ${won(x.pre)}원 → 없음${x.air_post?` · 뒤 항공 ${x.air_post.n}건 ${won(x.air_post.kpk)}원`:''}`
+        :`${won(x.pre)} → ${won(x.post)}원${Array.isArray(R)?`(그대로 ${pp(x.chg)})`:''} · ${lgN(x.n_pre)} → ${lgN(x.n_post)}건${Array.isArray(x.avg_kg)&&x.avg_kg[1]!=null?` · 건당 ${won(x.avg_kg[0])} → ${won(x.avg_kg[1])}kg`:''}`;
+      return `<tr><td>${esc(x.lane||'')}<div class="na" style="white-space:normal">${sub}</div></td><td>${tag}</td><td>${x.mkt_chg==null?'<span class="na">―</span>':pc(x.mkt_chg)}</td><td>${x.hub&&x.hub.chg!=null?`<span class="nw">${pp(x.hub.chg)}</span>`:'<span class="na">―</span>'}</td></tr>`; }).join('')}</table></div>`;
+    const ma=W.find(x=>x&&x.mix_note), dg=W.find(x=>x&&x.post==null&&x.last_sea);
+    w=`항공 = 무게 구간(20·50·150kg)별 kg당을 같은 무게 구성으로 다시 평균해 전·뒤를 견준 범위(큰 화물이 늘면 그대로 나눈 값이 낮게 나옴)${ma?' — '+esc(ma.mix_note):''} · 해상은 그대로 나눈 값 ·
+      전 = 2025.09.01~2026.02.27 신고, 뒤 = 2026.02.28~ 신고(신고일 기준 — 전쟁 전에 실린 화물이 '뒤'에 일부 들어감) · 시장 = 관세청 같은 기간 월평균의 변화(홍콩 = 중국 값 · 싱가포르·두바이는 없음) ·
+      입항 = IMF PortWatch 그 항만(홍콩·싱가포르·로테르담·두바이) 컨테이너선 하루 평균 변화(전쟁 전 1/1~2/27 → 3/1 뒤)${dg?` · ${esc(String(dg.lane||'').replace(/^해상 · /,''))} 마지막 해상 신고 ${esc(dg.last_sea)}${dg.sea_gap?`(전쟁 뒤 ${dg.sea_gap.post_n}달째 해상 없음 · 예전 최장 공백 ${dg.sea_gap.prior_max}달)`:''}`:''}`;
+  } else if(LG_OV==='sea'){
+    const S=O.sea||{}, ks=Object.keys(S);
+    h+=`<div class="cb-trend lg-tr${ks.length===3?' k3':''}">${ks.map((k,j)=>{ const x=S[k], rows=x.rows||[], la=[...rows].reverse().find(r=>r.ours_i!=null)||{};
+      return `<div class="cb-tr"><div class="h"><b>${esc(x.name||k)}</b><span class="num">${won(la.ours_i)}</span></div>${lgSpark(rows.map(r=>[qM(r.q),r.ours_i]),{accent:true,label:(x.name||k)+' 해상 지수 반기'})}<div class="ax"><span>${qL(rows[0]&&rows[0].q)}</span><span>${qp(la.q||'')}</span></div></div>`; }).join('')}</div>`;
+    h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>출발지 · 최근 반기</th><th>우리</th><th>시장</th><th>kg당</th></tr>${ks.map(k=>{ const x=S[k], la=[...(x.rows||[])].reverse().find(r=>r.ours_i!=null)||{};
+      return `<tr><td>${esc(x.name||k)}<div class="na">${esc(qp(la.q||''))} · ${lgN(la.n)}건 · 전체 ${lgN(x.n)}건</div></td><td class="num">${won(la.ours_i)}</td><td class="num">${la.mkt_i==null?'<span class="na">―</span>':won(la.mkt_i)}</td><td class="num">${won(la.ours)}원</td></tr>`; }).join('')}</table></div>`;
+    w=`반기 · 첫해(${esc((S[ks[0]]||{}).base||'2024')}년) = 100 지수 — 해상 시장 운임은 40ft 컨테이너 1개 값이라 kg당과 직접 견주지 않고 변화만 견줌 · 시장 = 관세청(홍콩은 중국 값 · 싱가포르는 없음) · 건수가 적은 반기는 크게 흔들림<br>`
+      +ks.map(k=>{ const x=S[k]; return `<b>${esc(x.name||k)}</b> ${(x.rows||[]).map(r=>`${esc(qp(r.q))} ${r.ours_i??'―'}/${r.mkt_i??'―'}(${won(r.ours)}원 · ${r.n}건)`).join(' · ')}`; }).join('<br>');
+  } else {
+    const FW=O.fwd||{}, mode=LG_OFW==='sea'?'sea':'air', bands=['~20kg','20~50kg','50~150kg','150kg~'], B=FW.best;
+    h+=`<div class="chips" style="margin-bottom:8px">${chip('f',mode,'air','항공 · 유럽')}${chip('f',mode,'sea','해상')}</div>`;
+    h+=`<div class="na" style="margin-bottom:6px">최근 12달(${esc(lgMon(FW.since))}~${esc(lgMon(FW.until))}) · 3건 이상</div>`;
+    if(mode==='air'){
+      const iga=t=>{ const c=String(t).trim().slice(-1).charCodeAt(0)-0xAC00; return c>=0&&c<11172?(c%28?'이':'가'):'이(가)'; };   // 받침 있으면 '이'
+      if(B) h+=`<div class="note">${esc(B.band)}: ${esc(B.hi)}(${B.n_hi}건)${iga(B.hi)} ${esc(B.lo)}(${B.n_lo}건)보다 kg당 <span class="neg">${B.d}%</span> 비쌈</div>`;
+      h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>포워더</th>${bands.map(b=>`<th>${b}</th>`).join('')}</tr>${(FW.air||[]).map(r=>`<tr><td colspan="5" style="white-space:normal"><b>${esc(r.name)}</b> <span class="na">${lgN(r.n)}건 · 전체 ${won(r.kpk)}원</span></td></tr>
+        <tr><td></td>${(r.bands||[]).map(c=>`<td class="num">${c?`${won(c.kpk)}<div class="na">${c.n}건</div>`:'<span class="na">―</span>'}</td>`).join('')}</tr>`).join('')}</table></div>`;
+    } else {
+      h+=`<div class="tblwrap"><table class="lg-tbl"><tr><th>포워더</th><th>kg당</th><th>건당</th></tr>${(FW.sea||[]).map(r=>`<tr><td style="white-space:normal"><b>${esc(r.name)}</b><div class="na">${lgN(r.n)}건 · ${esc(r.og||'')}</div></td><td class="num">${won(r.kpk)}원</td><td class="num">${won(r.avgkg)}kg</td></tr>`).join('')}</table></div>`;
+    }
+    w=`이름 = 수입신고서의 운송주선인 상호(법인 표기 뺌) · kg당 = 운임 합계 ÷ 총중량 · 항공은 무게 구간별(작은 화물일수록 kg당이 큼) · 해상은 출발지·건당 무게가 달라 포워더끼리 그대로 견주기 어려움`;
+  }
+  return h+why(`${w}<br>공통: 운임이 적힌 수입신고만(EXW·FOB·FCA — CIF 등은 운임이 물건값에 섞여 뺌 · 운임·총중량 0 제외) · 항공 = 인천공항세관(040) 통관, 나머지는 해상 · 유럽 = EU 27개국 · 운임이 오르거나 시장보다 높으면 주황 · 갱신 ${esc(O.built||'―')} — 새 관세사 자료를 구글 드라이브 'Trexi Industry Monitor' 폴더에 넣고 '우리 운임 갱신해줘'`)+`</div>`;
 }
 function moreLogiHtml(){
   let h=moreHead('물류','갱신 <span class="nw">'+esc((LOGI&&LOGI.generated_at)||'―')+'</span>');   // v33.9 머리 줄은 갱신 시각만
@@ -3802,7 +3868,7 @@ function moreLogiHtml(){
   const sec=(id,t,sub)=>`<h2 class="lg-h2" id="${id}">${t}<span>${sub}</span></h2>`;
   h+=sf('요약',lgKpis);
   h+=`<div class="chips lg-jump">${[['lgImp','수입'],['lgExp','수출'],['lgRisk','공통 위험 신호']].map(([id,t])=>`<button type="button" class="chip" onclick="lgJump('${id}')">${t}${ic('down',16)}</button>`).join('')}</div>`;
-  h+=sf('우리 운임',lgOursCard);   // v33.25 링크 한 줄 → 카드(우리 운임 공개판 · 포워더별은 카드 안 링크)
+  h+=sf('우리 운임',lgOursCard);   // v33.27 대표 전용 페이지를 합친 카드(보기 6개)
   h+=why(`① 수입: 적출 거점 입항이 줄면 그 항만이 막혔거나 배(노선)가 빠졌다는 신호일 수 있습니다 — 연휴(춘절·국경절·추석)·태풍 주간에도 줄어드니 1년 전 같은 주와 함께 봅니다. 운송기간은 한국까지 지나는 길목(유럽 = 수에즈·희망봉, 두바이 = 호르무즈)이 정합니다. 그 나라에서 부산항(바닷길)·인천공항(항공)으로 들어온 물량은 나라별 도착 물동량(관세청 · 월 — 인천·평택·광양항 등은 빠짐), 어제까지 부산항에 들어온 배는 부산항 입항 컨테이너선(해수부 · 매일 — 수출 선적·환적 배 포함). 원가는 한국향 운임(관세청 수입신고 운임 — 바닷길은 부산 등 전국 항만, 항공은 인천공항 도착). ② 수출: 부산발 운임(KCCI)·한국발 운임(관세청 수출신고)·나라별 출발 물동량(부산항·인천공항). ③ 공통 위험 신호: 해협 통과·중동 항만·정시율이 나빠지면 도착일이 늦어지고 들쭉날쭉해집니다.`,'이 화면 읽는 법');   // v33.9 접음
   h+=sec('lgImp','수입','')+sf('적출 거점',lgHubCard)+sf('나라별 도착 물동량',()=>`<div class="card" id="lgVol_vol_in">${lgVolCard('vol_in')}</div>`)
     +sf('부산항 입항 선박',lgPmCard)+sf('한국향 운임',()=>`<div class="card" id="lgKcs">${lgKcsCard()}</div>`);
@@ -5491,19 +5557,14 @@ def main():
         except Exception as e:
             print(f"[WARN] logistics.json 읽기 실패: {str(e)[:100]}")
             logi = None
-    ours = None   # v33.25 우리 운임 공개판(docs/our_freight.json · 대표 자료 — 갱신 도구 public_ours.py) — 정한 칸만 넣음(이름·건수 같은 칸이 섞여 와도 화면에 안 실림)
+    ours = None   # v33.27 우리 운임(docs/our_freight.json · 대표 자료 — analyze_real.py 결과 전부 · 대표 지시 2026-10-28 '대표 전용 페이지 합쳐주세요')
     if os.path.exists("docs/our_freight.json"):
         try:
             with open("docs/our_freight.json", encoding="utf-8") as f:
-                o = json.load(f)
-            kp = lambda d, ks: {k: d[k] for k in ks if isinstance(d, dict) and k in d}
-            ours = {"built": o.get("built"), "period": o.get("period"), "war_p": kp(o.get("war_p"), ("pre", "post")),
-                    "air_q": [kp(r, ("q", "ours", "mkt")) for r in o.get("air_q") or [] if isinstance(r, dict)],
-                    "air_band": {"rows": [kp(r, ("band", "ours", "x")) for r in (o.get("air_band") or {}).get("rows") or [] if isinstance(r, dict)]},
-                    "air_lead": {k: kp(v, ("p", "x", "ours", "gap")) for k, v in (o.get("air_lead") or {}).items() if k in ("first", "last") and isinstance(v, dict)},
-                    "war": [kp(r, ("lane", "chg", "mkt_chg")) for r in o.get("war") or [] if isinstance(r, dict)],
-                    "sea": [dict(kp(x, ("lane", "base")), rows=[kp(r, ("q", "ours_i", "mkt_i")) for r in x.get("rows") or [] if isinstance(r, dict)])
-                            for x in o.get("sea") or [] if isinstance(x, dict)]}
+                ours = json.load(f)
+            if not isinstance(ours, dict) or not isinstance(ours.get("air_q"), list):
+                print("[WARN] our_freight.json 모양이 다름 — 우리 운임 카드 안 그림")
+                ours = None
         except Exception as e:
             print(f"[WARN] our_freight.json 읽기 실패: {str(e)[:100]}")
             ours = None
