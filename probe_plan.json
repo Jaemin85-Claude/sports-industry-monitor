@@ -1,0 +1,33 @@
+[
+ {
+  "t": "pages",
+  "urls": [
+   "https://www.on.com/robots.txt",
+   "https://arcteryx.co.kr/robots.txt",
+   "https://arcteryx.com/robots.txt",
+   "https://arcteryx.jp/robots.txt"
+  ],
+  "snip_rx": [
+   "(?i)(sitemap|disallow: /[a-z-]*products?)[^\\n]{0,160}"
+  ]
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://www.on.com/ko-kr/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+   "https://www.on.com/ko-kr/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200"
+  ],
+  "link_rx": "/ko-kr/products/[^\"'\\s<>?#\\\\]+",
+  "show": 120
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/686241",
+   "https://arcteryx.co.kr/products/view/686432"
+  ],
+  "link_rx": "/products/view/\\d+",
+  "code_rx": "A[A-Z]{3}[MWU]\\d{5}",
+  "show": 120
+ }
+]
