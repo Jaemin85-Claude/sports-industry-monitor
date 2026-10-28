@@ -125,6 +125,8 @@ HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
+CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
+                                         # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
 
@@ -838,6 +840,17 @@ def page_price(html, hint, cur, codes=()):
     return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code or micro else "이름" if prods or base_name else ""}
 
 
+def cafe24_list(html, sale):
+    """v1.13 카페24 몰(브룩스 한국): 할인 중이면 JSON-LD에는 판매가만 — 이 상품 판매가 칸(product_price) 바로 뒤 소비자가 칸(price_custom)을 정가로.
+    판매가 칸 값이 이 상품 JSON-LD 판매가와 같을 때만(추천 상품 칸 섞임 방지) · 그런 소비자가가 한 가지일 때만 · 판매가보다 높고 5배 안"""
+    lps = set()
+    for m in re.finditer(r'class="product_price">\s*([\d,]+)\s*<span>원</span>\s*</p>\s*<p class="price_custom[^"]*">\s*([\d,]+)\s*원', html):
+        sv, lp = num(m.group(1)), num(m.group(2))
+        if sv and lp and abs(sv - sale) < 0.01 and sv < lp <= sv * 5:
+            lps.add(lp)
+    return lps.pop() if len(lps) == 1 else None
+
+
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
@@ -894,7 +907,12 @@ def fetch_one(prod, cc):
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
         return godo_price(r.text, cur, code), url
-    return page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", [])), url
+    full, extra = page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", []))
+    if urllib.parse.urlsplit(url).netloc in CAFE24_LIST:   # v1.13 카페24 몰 소비자가 칸 — 할인 중이면 JSON-LD에 판매가만
+        lp = cafe24_list(r.text, full)
+        if lp:
+            full = lp
+    return (full, extra), url
 
 
 def cfg_hash():
