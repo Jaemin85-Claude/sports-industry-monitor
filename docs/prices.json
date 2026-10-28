@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-10-28 19:37 KST",
+ "generated_at": "2026-10-28 23:29 KST",
  "fetched": "2026-10-28",
  "attempt": "2026-10-28",
- "cfg": "e1c212a627c6",
+ "cfg": "6c5e7b67529f",
  "status": "ok",
  "items": [
   {
@@ -1462,6 +1462,218 @@
    }
   },
   {
+   "id": "on-cloudmonster3",
+   "brand": "온러닝",
+   "name": "클라우드몬스터 3",
+   "code": "3MG10051043",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
+     "obs": 229000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "US": {
+     "p": 190.0,
+     "cur": "USD",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-us/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
+     "obs": 190.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "GB": {
+     "p": 180.0,
+     "cur": "GBP",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-gb/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
+     "obs": 180.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "DE": {
+     "p": 200.0,
+     "cur": "EUR",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/de-de/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
+     "obs": 200.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "JP": {
+     "p": 24200.0,
+     "cur": "JPY",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ja-jp/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
+     "obs": 24200.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudrunner3",
+   "brand": "온러닝",
+   "name": "클라우드러너 3",
+   "code": "3MG10071043",
+   "m": {
+    "KR": {
+     "p": 199000.0,
+     "cur": "KRW",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ko-kr/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
+     "obs": 199000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-us/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
+     "obs": 160.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "GB": {
+     "p": 140.0,
+     "cur": "GBP",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-gb/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
+     "obs": 140.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "DE": {
+     "p": 160.0,
+     "cur": "EUR",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/de-de/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
+     "obs": 160.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "JP": {
+     "p": 18700.0,
+     "cur": "JPY",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ja-jp/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
+     "obs": 18700.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloudx5",
+   "brand": "온러닝",
+   "name": "클라우드 X 5",
+   "code": "3MG30081043",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ko-kr/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
+     "obs": 209000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "US": {
+     "p": 160.0,
+     "cur": "USD",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-us/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
+     "obs": 160.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "GB": {
+     "p": 150.0,
+     "cur": "GBP",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-gb/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
+     "obs": 150.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "DE": {
+     "p": 170.0,
+     "cur": "EUR",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/de-de/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
+     "obs": 170.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "JP": {
+     "p": 22000.0,
+     "cur": "JPY",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ja-jp/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
+     "obs": 22000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "on-cloud6wp",
+   "brand": "온러닝",
+   "name": "클라우드 6 워터프루프",
+   "code": "3MF10061043",
+   "m": {
+    "KR": {
+     "p": 219000.0,
+     "cur": "KRW",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ko-kr/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
+     "obs": 219000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-us/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
+     "obs": 180.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "GB": {
+     "p": 160.0,
+     "cur": "GBP",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/en-gb/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
+     "obs": 160.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "DE": {
+     "p": 180.0,
+     "cur": "EUR",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/de-de/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
+     "obs": 180.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    },
+    "JP": {
+     "p": 22000.0,
+     "cur": "JPY",
+     "seen": "2026-10-28",
+     "url": "https://www.on.com/ja-jp/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
+     "obs": 22000.0,
+     "obs_date": "2026-10-28",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "salomon-xt6",
    "brand": "살로몬",
    "name": "XT-6 고어텍스",
@@ -2047,11 +2259,11 @@
      "sale": false
     },
     "US": {
-     "p": 580.0,
+     "p": 581.0,
      "cur": "USD",
      "seen": "2026-10-28",
      "url": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 580.0,
+     "obs": 581.0,
      "obs_date": "2026-10-28",
      "sale": false
     }
@@ -2099,11 +2311,11 @@
      "sale": false
     },
     "US": {
-     "p": 427.0,
+     "p": 428.0,
      "cur": "USD",
      "seen": "2026-10-28",
      "url": "https://dragondiffusion.com/products/triple-jump-small-black-woven-leather-bag-handmade",
-     "obs": 427.0,
+     "obs": 428.0,
      "obs_date": "2026-10-28",
      "sale": false
     }
@@ -2125,11 +2337,11 @@
      "sale": false
     },
     "US": {
-     "p": 427.0,
+     "p": 428.0,
      "cur": "USD",
      "seen": "2026-10-28",
      "url": "https://dragondiffusion.com/products/rosanna-black-woven-leather-bag-handmade",
-     "obs": 427.0,
+     "obs": 428.0,
      "obs_date": "2026-10-28",
      "sale": false
     }
@@ -2177,11 +2389,11 @@
      "sale": false
     },
     "US": {
-     "p": 570.0,
+     "p": 571.0,
      "cur": "USD",
      "seen": "2026-10-28",
      "url": "https://dragondiffusion.com/products/nantucket-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 570.0,
+     "obs": 571.0,
      "obs_date": "2026-10-28",
      "sale": false
     }
@@ -3228,7 +3440,9 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
      "obs": 209000.0,
      "obs_date": "2026-10-28",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-28",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 170.0,
@@ -3560,15 +3774,15 @@
      "obs": 189000.0,
      "obs_date": "2026-10-28",
      "sale": true,
-     "sp": 132300.0,
-     "sp_date": "2026-10-28",
      "sh": [
       [
        "2026-10-28",
        132300.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 132300.0,
+     "sp_date": "2026-10-28"
     },
     "JP": {
      "p": 22000.0,
@@ -3598,15 +3812,15 @@
      "obs": 189000.0,
      "obs_date": "2026-10-28",
      "sale": true,
-     "sp": 94500.0,
-     "sp_date": "2026-10-28",
      "sh": [
       [
        "2026-10-28",
        94500.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 94500.0,
+     "sp_date": "2026-10-28"
     },
     "JP": {
      "p": 22000.0,
@@ -3616,15 +3830,15 @@
      "obs": 22000.0,
      "obs_date": "2026-10-28",
      "sale": true,
-     "sp": 17600.0,
-     "sp_date": "2026-10-28",
      "sh": [
       [
        "2026-10-28",
        17600.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 17600.0,
+     "sp_date": "2026-10-28"
     }
    },
    "cc_code": {
