@@ -15,6 +15,10 @@ on:
         description: "해외 정가 바로 받기(1) — 7일이 안 지나도 지금 받음(수집 코드를 고친 뒤 확인용). 비우면 주 1회대로"
         required: false
         default: ""
+      price_lanes:
+        description: "해외 정가 동시 묶음 수(price_fetch v1.12) — 비우면 6, 1이면 예전처럼 차례대로"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -66,10 +70,11 @@ jobs:
         # v2026-10-21 해외 정가(price_fetch v1): 브랜드 대표 상품 나라별 정가(할인 전) → docs/prices.json (브랜드 상세 하단) · 매일 돌며 7일마다 받음
         id: price
         continue-on-error: true   # 해외 정가가 멈춰도 대시보드 갱신은 계속
-        timeout-minutes: 15       # 스크립트가 13분에 스스로 멈춤(v2026-10-23 상품 75개 · 값 299개 — 주 1회만 오래 걸림)
+        timeout-minutes: 15       # 스크립트가 13분에 스스로 멈춤(v2026-10-23 상품 75개 · 값 299개 — 주 1회만 오래 걸림) · v2026-10-28 묶음 동시 받기(v1.12)로 전체 받기 약 2~3분, 묶음이 걸려도 14분에 저장
         env:
           PYTHONUNBUFFERED: "1"
           PRICE_FORCE: ${{ inputs.price_force }}   # 수동 실행 입력 price_force=1이면 7일이 안 지나도 받음
+          PRICE_LANES: ${{ inputs.price_lanes }}   # 수동 실행 입력 — 비우면 묶음 6개 동시, 1이면 예전처럼 차례대로
         run: python price_fetch.py
       - name: Note price failure
         if: steps.price.outcome == 'failure'

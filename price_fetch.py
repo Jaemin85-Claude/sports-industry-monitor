@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.12: (대표 승인 10/28 '1번(수집 방식 변경)부터' — 전체 받기 615초 = 13분 한도의 79%라 SKU를 더 늘리면 한도에 걸림) 묶음 동시 받기.
+    지금까지는 모든 요청이 한 줄로 1.5초씩 띄워져(339건 × 1.5초 ≈ 500초) 사이트와 상관없이 오래 걸림 → 같은 회사 사이트끼리 한 묶음
+    (브랜드·사이트가 이어진 상품 — 코오롱몰 = 드래곤디퓨전+헌터 · LANE_JOIN 킨+우포스 = LF 수입사 몰)으로 나눠 묶음 6개까지 동시에 받음.
+    묶음 안은 지금과 같은 순서·간격(1.5초 · 살로몬 해외 8초·한 실행 8건) · 같은 사이트는 묶음과 상관없이 한 번에 한 요청·1.5초 넘게 ·
+    여러 회사가 함께 쓰는 쇼핑몰 플랫폼(쇼피파이 — .json 상품·PACE_EXTRA, 카페24)은 묶음을 넘어서도 지금처럼 한 줄로 1.5초(PACE) — 한 사이트·플랫폼이
+    받는 요청 빠르기는 그대로. 430(쇼피파이 접속 거절)도 403·429처럼 차단으로 봄. 결과는 값마다 모아 PRODUCTS 순서로 합침(파일·알림 규칙 그대로 —
+    받은 날·다시 받기·한도 미룸·21일 알림). 묶음이 13분 + 60초 안에 안 끝나면 멈추고 남은 값은 시간 초과처럼 이전 값(내일 다시) · 묶음 안에서
+    예상 못 한 오류가 나면 저장하지 않고 멈춤(예전과 같음). update.yml 수동 실행 입력 price_lanes(PRICE_LANES) — 비우면 6, 1이면 예전처럼 차례대로.
+    로그 '해외 정가 묶음 …' 줄에 묶음별 걸린 시간(가장 긴 묶음 = 전체 받기 시간의 기준).
 v1.11: (SKU 늘리기 3차 10/27 — 대표 '계속 진행하시지요', 상품이 적은 브랜드부터) 닥터마틴 아드리안·8065 메리제인·싱클레어·1461 모노(한국·미국·영국) ·
     푸마 스피드캣 GO 여성(한국·미국·일본·멕시코)·디비에이트 나이트로 엘리트 트레일(한국·미국·독일) — 상품 87개 · 값 339개(+19). 브룩스 아드레날린 GTS 25는 이번에도,
     고스트 맥스 3·하이페리온 3은 처음 시험에서 한국 몰 페이지가 pageNotFound(사이트맵에는 있음 · 기존 고스트 18은 정상 · 10/27 실행 3번)라 뺌 · 푸마 팔레르모 프리미엄은 한국 404
@@ -87,7 +96,7 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     한 실행에서 절반 넘게 실패하거나, 한 값이 21일 넘게 이전 값·값 없음이면 실패 표시(soft_fail.txt).
     나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM + (새 통화면) fetch_data FX를 함께 고친다.
 """
-import datetime, hashlib, json, os, re, time, urllib.parse
+import collections, contextlib, datetime, hashlib, json, os, re, sys, threading, time, traceback, urllib.parse
 from html import unescape
 import requests
 
@@ -101,7 +110,13 @@ DAYS = 7            # 주 1회
 SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 할인으로 보고 정가를 지킴
 STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
 TIME_LIMIT = 13 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분 · v1.4 값 299개라 13분
-GAP = 1.5           # 초 — 요청 사이 쉬는 시간
+                       # v1.12 묶음 동시 받기로 전체 받기 약 2~3분 — 13분은 여유로 둠
+GAP = 1.5           # 초 — 요청 사이 쉬는 시간(v1.12 묶음 안 · 같은 사이트 · 같은 플랫폼(PACE) 각각)
+LANES = 6           # v1.12 동시에 받는 묶음 수(update.yml 수동 실행 입력 price_lanes → PRICE_LANES · 1이면 예전처럼 차례대로)
+LANE_GRACE = 60     # 초 — 묶음이 TIME_LIMIT + 이만큼 안에 안 끝나면 멈추고 남은 값은 이전 값(단계 15분 제한 전에 저장)
+LANE_JOIN = [("킨(KEEN)", "우포스")]   # v1.12 사이트는 다르지만 같은 회사·수입사 몰 — 한 묶음(차례대로) · 킨·우포스 한국 = LF 공식몰(고도몰)
+PACE_EXTRA = {"arcteryx.jp": "shopify", "dragondiffusion.com": "shopify",   # v1.12 여러 회사가 함께 쓰는 플랫폼 — 묶음을 넘어 한 줄로 GAP
+              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24"}   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify)
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
@@ -466,7 +481,18 @@ PRODUCTS = [
 
 
 def log(msg):
-    print(msg, flush=True)
+    """v1.12 묶음(스레드)이 값을 받는 중이면 그 값의 줄로 모았다가 값이 끝날 때 한꺼번에 출력(묶음끼리 줄이 섞이지 않게)"""
+    c = _ctx()
+    if c.buf is not None:
+        c.buf.append(msg)
+    else:
+        _out([msg])
+
+
+def _out(lines):
+    if lines:
+        with _PRINT:
+            sys.stdout.write("".join(f"{x}\n" for x in lines)); sys.stdout.flush()
 
 
 def soft_fail(msg):
@@ -484,7 +510,30 @@ class Defer(Exception):
     """v1.8 이 사이트의 한 실행 요청 한도(HOST_CAP)를 다 씀 — 다음 실행에서 받음(실패로 세지 않음)"""
 
 
-_ROB, _LAST, _BLOCKED, _HLAST, _DOWN, _HCOUNT = {}, [0.0], set(), {}, {}, {}
+_ROB, _BLOCKED, _HLAST, _DOWN, _HCOUNT = {}, set(), {}, {}, {}   # 사이트별 — v1.12 그 사이트 자물쇠(_HLOCK) 안에서만 읽고 씀
+_PACE, _GLAST = {}, {}            # v1.12 사이트 → 플랫폼 묶음(쇼피파이·카페24) · 플랫폼별 마지막 요청 시각
+_HLOCK, _GLOCK = {}, {}           # v1.12 사이트별·플랫폼별 자물쇠(한 번에 한 요청) — 자물쇠 순서는 늘 사이트 → 플랫폼
+_GUARD, _PRINT = threading.Lock(), threading.Lock()
+_STOP = threading.Event()         # v1.12 묶음 시간 초과 — 남은 묶음은 더 요청하지 않음
+_TL = threading.local()
+
+
+class _Ctx:
+    """v1.12 묶음 하나의 요청 상태 — 마지막 요청 시각(묶음 안 GAP) · 세션(넘겨짐 사이 쿠키) · 값 하나의 로그 줄"""
+    def __init__(self):
+        self.last, self.sess, self.buf = 0.0, requests.Session(), None
+
+
+_MAIN = _Ctx()   # 차례대로 받을 때(PRICE_LANES=1 — 예전처럼 모든 요청이 한 줄로 GAP)·스레드 밖
+
+
+def _ctx():
+    return getattr(_TL, "c", None) or _MAIN
+
+
+def _lock(d, k):
+    with _GUARD:
+        return d.setdefault(k, threading.Lock())
 # robots.txt를 두지 않는 API 주소 → 같은 회사 대표 사이트 robots.txt를 따름(그 사이트 robots.txt도 못 받으면 건너뜀)
 # api.nike.com: 상품 정보 경로 밖 모든 주소(/, robots.txt, 없는 주소)에 Akamai가 '503 DNS failure' — 2026-10-21 브랜치 시험에서 확인
 ROBOTS_ALT = {"api.nike.com": "https://www.nike.com"}
@@ -545,48 +594,59 @@ def robots_ok(url):
     return (True, "") if not hit or max(hit)[1] else (False, "robots.txt가 막음")
 
 
-_S = requests.Session()   # 넘겨짐 사이 쿠키를 이어 주려고(예전 allow_redirects=True와 같게)
+_S = _MAIN.sess   # 넘겨짐 사이 쿠키를 이어 주려고(예전 allow_redirects=True와 같게) · v1.12 묶음마다 세션(_Ctx.sess)
 
 
 def get(url, hops=5):
-    """주소 → 응답. 넘겨짐(3xx)은 직접 따라가며 매번 막힘·robots.txt를 먼저 확인(막힌 주소는 요청하지 않음)"""
-    moved = False
+    """주소 → 응답. 넘겨짐(3xx)은 직접 따라가며 매번 막힘·robots.txt를 먼저 확인(막힌 주소는 요청하지 않음).
+    v1.12 그 사이트 자물쇠 안에서 확인·기다림·요청(같은 사이트는 묶음과 상관없이 한 번에 한 요청) — 기다림 = 묶음 안 GAP과
+    같은 사이트 GAP(살로몬 해외 HOST_GAP) 중 긴 것, 플랫폼(PACE)이면 플랫폼 자물쇠 안에서 플랫폼 GAP도. 넘겨짐은 자물쇠를 풀고 따라감"""
+    c, moved = _ctx(), False
     for _ in range(hops + 1):
         host = urllib.parse.urlsplit(url).netloc
         pre = "넘겨진 주소: " if moved else ""
-        if host in _BLOCKED:
-            raise RuntimeError(pre + "이번 실행에서 이 사이트가 막음 — 더 요청 안 함")
-        if _DOWN.get(host, 0) >= 2:
-            raise RuntimeError(pre + "이번 실행에서 이 사이트가 연달아 응답 없음 — 더 요청 안 함")
-        ok, why = robots_ok(url)
-        if not ok:
-            raise RuntimeError(pre + why)
-        if host in HOST_CAP and _HCOUNT.get(host, 0) >= HOST_CAP[host]:
-            raise Defer(f"{host} 한 실행 요청 한도 {HOST_CAP[host]}건")
-        _HCOUNT[host] = _HCOUNT.get(host, 0) + 1
-        w = max(GAP - (time.time() - _LAST[0]), HOST_GAP.get(host, 0) - (time.time() - _HLAST.get(host, 0.0)))
-        if w > 0: time.sleep(w)
-        _LAST[0] = _HLAST[host] = time.time()
+        with _lock(_HLOCK, host):
+            if _STOP.is_set():
+                raise RuntimeError(pre + "묶음 시간 초과로 멈춤 — 더 요청 안 함")
+            if host in _BLOCKED:
+                raise RuntimeError(pre + "이번 실행에서 이 사이트가 막음 — 더 요청 안 함")
+            if _DOWN.get(host, 0) >= 2:
+                raise RuntimeError(pre + "이번 실행에서 이 사이트가 연달아 응답 없음 — 더 요청 안 함")
+            ok, why = robots_ok(url)
+            if not ok:
+                raise RuntimeError(pre + why)
+            if host in HOST_CAP and _HCOUNT.get(host, 0) >= HOST_CAP[host]:
+                raise Defer(f"{host} 한 실행 요청 한도 {HOST_CAP[host]}건")
+            _HCOUNT[host] = _HCOUNT.get(host, 0) + 1
+            w = max(GAP - (time.time() - c.last), max(GAP, HOST_GAP.get(host, 0)) - (time.time() - _HLAST.get(host, 0.0)))
+            if w > 0: time.sleep(w)
+            g = _PACE.get(host)
+            with (_lock(_GLOCK, g) if g else contextlib.nullcontext()):   # 플랫폼은 묶음을 넘어 한 줄로(앞 요청이 끝나고 GAP 뒤)
+                if g:
+                    w = GAP - (time.time() - _GLAST.get(g, 0.0))
+                    if w > 0: time.sleep(w)
+                c.last = _HLAST[host] = time.time()
+                if g:
+                    _GLAST[g] = c.last
+                try:
+                    r = c.sess.get(url, headers=HDR, timeout=25, allow_redirects=False)
+                except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+                    _DOWN[host] = _DOWN.get(host, 0) + 1   # v1.3 같은 사이트가 연달아 2번 응답 없으면 이번 실행에서 건너뜀(한 사이트가 시간 제한을 다 쓰지 않게)
+                    raise
+            _DOWN.pop(host, None)
+            loc = (getattr(r, "headers", None) or {}).get("Location") if 300 <= r.status_code < 400 else None
+            if not loc:
+                if r.status_code in (403, 429, 430):   # v1.12 430 = 쇼피파이 접속 거절
+                    _BLOCKED.add(host)   # 실제로 막은 사이트
+                    raise RuntimeError(pre + f"HTTP {r.status_code}(접속 차단 — 우회하지 않음)")
+                if r.status_code >= 400:
+                    raise RuntimeError(pre + f"HTTP {r.status_code}")
+                return r
         try:
-            r = _S.get(url, headers=HDR, timeout=25, allow_redirects=False)
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
-            _DOWN[host] = _DOWN.get(host, 0) + 1   # v1.3 같은 사이트가 연달아 2번 응답 없으면 이번 실행에서 건너뜀(한 사이트가 시간 제한을 다 쓰지 않게)
-            raise
-        _DOWN.pop(host, None)
-        loc = (getattr(r, "headers", None) or {}).get("Location") if 300 <= r.status_code < 400 else None
-        if loc:
-            try:
-                loc = loc.encode("latin1").decode("utf-8")   # requests와 같게 UTF-8 주소 되살림
-            except (UnicodeEncodeError, UnicodeDecodeError):
-                pass
-            url, moved = urllib.parse.urljoin(url, loc), True
-            continue
-        if r.status_code in (403, 429):
-            _BLOCKED.add(host)   # 실제로 막은 사이트
-            raise RuntimeError(pre + f"HTTP {r.status_code}(접속 차단 — 우회하지 않음)")
-        if r.status_code >= 400:
-            raise RuntimeError(pre + f"HTTP {r.status_code}")
-        return r
+            loc = loc.encode("latin1").decode("utf-8")   # requests와 같게 UTF-8 주소 되살림
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            pass
+        url, moved = urllib.parse.urljoin(url, loc), True
     raise RuntimeError(f"넘겨짐이 {hops}번 넘음")
 
 
@@ -824,6 +884,58 @@ def cfg_hash():
     return hashlib.sha1(json.dumps(PRODUCTS, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:12]
 
 
+def _hosts(p):
+    """상품이 요청하는 사이트(나라마다 하나)"""
+    if p["src"] == "nike":
+        return [urllib.parse.urlsplit(NIKE_FEED).netloc] * len(p["cc"])
+    return [urllib.parse.urlsplit(u).netloc for u in p["urls"].values()]
+
+
+def build_lanes(products):
+    """v1.12 동시에 받을 묶음 — 브랜드·사이트(·ROBOTS_ALT·LANE_JOIN)로 이어진 상품끼리 한 묶음, 묶음 안은 PRODUCTS 순서.
+    한 사이트·한 브랜드는 늘 한 묶음에만 있음(사이트별 요청 수·한도 미룸·브랜드 셈을 그 묶음만 씀).
+    est = 예상 초(값 × max(GAP, HOST_GAP), 한도 사이트는 한도까지) — 긴 묶음부터 시작"""
+    par = {}
+    def find(x):
+        par.setdefault(x, x)
+        while par[x] != x:
+            par[x] = par[par[x]]; x = par[x]
+        return x
+    def union(a, b):
+        par[find(a)] = find(b)
+    for p in products:
+        for h in _hosts(p):
+            union("b:" + p["brand"], "h:" + h)
+            if h in ROBOTS_ALT:
+                union("h:" + h, "h:" + urllib.parse.urlsplit(ROBOTS_ALT[h]).netloc)
+    for a, b in LANE_JOIN:
+        union("b:" + a, "b:" + b)
+    lanes = {}
+    for p in products:
+        ln = lanes.setdefault(find("b:" + p["brand"]), {"prods": [], "brands": [], "hosts": collections.Counter()})
+        ln["prods"].append(p); ln["hosts"].update(_hosts(p))
+        if p["brand"] not in ln["brands"]:
+            ln["brands"].append(p["brand"])
+    for ln in lanes.values():
+        ln["name"], ln["n"] = "+".join(ln["brands"]), sum(ln["hosts"].values())
+        ln["est"] = sum(min(n, HOST_CAP.get(h, n)) * max(GAP, HOST_GAP.get(h, 0)) for h, n in ln["hosts"].items())
+    return list(lanes.values())
+
+
+def pace_map(products):
+    """v1.12 사이트 → 플랫폼 묶음 — 쇼피파이 상품 .json 주소의 사이트 + PACE_EXTRA"""
+    pm = {urllib.parse.urlsplit(u).netloc: "shopify" for p in products if p["src"] != "nike" for u in p["urls"].values() if u.endswith(".json")}
+    pm.update(PACE_EXTRA)
+    return pm
+
+
+def _lanes_n():
+    try:
+        return max(1, min(16, int(os.environ.get("PRICE_LANES") or LANES)))
+    except ValueError:
+        return LANES
+
+
 def main():
     t0 = time.time(); now = datetime.datetime.now(KST); today = now.date(); td = today.isoformat()
     old = {}
@@ -857,8 +969,7 @@ def main():
     else:
         if mode == "retry":
             log(f"해외 정가: 다시 받기 — {att} 받기에서 못 받은 값만")
-        items, n_try, n_fail, n_cut, n_hold, n_name, n_defer, n_due_defer = [], 0, 0, 0, 0, 0, 0, 0
-        bt = {}   # 브랜드별 [볼 값, 못 받은 값] — 한 브랜드를 통째로 못 받으면 다음 날 다시
+        items, bt, cnt = [], {}, collections.Counter()   # bt = 브랜드별 [볼 값, 못 받은 값] — 한 브랜드를 통째로 못 받으면 다음 날 다시
         def _prev_o(pi, prod, cc):   # 이전 값(나라별 수입사 품번이 바뀌었으면 없음)
             pv = pi.get("m", {})
             same = (pi.get("cc_code") or {}).get(cc) == (prod.get("cc_code") or {}).get(cc)
@@ -881,111 +992,174 @@ def main():
                     h = _capped(prod, cc)
                     if h and _due(f"{prod['id']} {cc}") and not _done(_prev_o(pi, prod, cc)):
                         due_left[h] = due_left.get(h, 0) + 1
-        for prod in PRODUCTS:
-            pi = prev.get(prod["id"]) or {}; pv = pi.get("m", {})
-            cc_list = prod["cc"] if prod["src"] == "nike" else list(prod["urls"])
-            m, b = {}, bt.setdefault(prod["brand"], [0, 0])
-            for cc in cc_list:
-                o = _prev_o(pi, prod, cc); key = f"{prod['id']} {cc}"   # 나라별 수입사 품번을 바꾸면 그 나라 이전 값은 다른 상품
-                if _done(o):
-                    m[cc] = o; b[0] += 1   # 지난 받기에서 받은 값 — 그대로
-                    continue
-                host = _capped(prod, cc); due = bool(host) and _due(key)
-                if host and mode == "retry":
-                    if due:
-                        due_left[host] = max(0, due_left.get(host, 0) - 1)
-                    elif _HCOUNT.get(host, 0) + due_left.get(host, 0) >= HOST_CAP[host]:   # 다시 받기에서도 못 받은 값 — 아직 다시 받아 보지 않은 값에 한도를 먼저
-                        n_defer += 1
-                        if o:
-                            m[cc] = o
-                        log(f"  {key}: 다음에 다시 — {host} 한도는 아직 다시 받아 보지 않은 값 먼저")
-                        continue
-                if time.time() - t0 > TIME_LIMIT:   # 남은 것은 이전 값(다음 날 다시)
-                    n_cut += 1
-                    if o:
-                        o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = "시간 초과로 못 받음"; m[cc] = o
-                    else:   # 이전 값도 없음 → 값 없음(처음 못 받은 날부터 21일 알림)
-                        f = failed.get(key) or {"id": prod["id"], "cc": cc, "since": td}
-                        f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="시간 초과로 못 받음"); failed[key] = f
-                    continue
-                t_old = htry.get(key)
-                if host:
-                    htry[key] = td   # v1.9 받으러 간 날(한도로 미루면 되돌림)
+        def _cut(prod, cc, o, key):   # 시간 초과 — 이전 값(다음 날 다시) · 이전 값도 없으면 값 없음(처음 못 받은 날부터 21일 알림)
+            if o:
+                o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = "시간 초과로 못 받음"
+                return {"o": o, "n": {"cut": 1}}
+            f = dict(failed.get(key) or {"id": prod["id"], "cc": cc, "since": td})
+            f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="시간 초과로 못 받음")
+            return {"fop": ("set", f), "n": {"cut": 1}}
+        def _value(prod, cc, pi):
+            """v1.12 값 하나 받기 — 묶음(스레드) 안에서 돎. 공유 기록(failed·htry·bt)은 읽기만 하고 결과로 돌려줌 —
+            o = 상품 m에 넣을 값 · fop = 값 없음 기록(pop·set) · hop = 받으러 간 날(host_try) · n = 셈 · b = 브랜드 [볼 값, 못 받은 값]"""
+            o = _prev_o(pi, prod, cc); key = f"{prod['id']} {cc}"   # 나라별 수입사 품번을 바꾸면 그 나라 이전 값은 다른 상품
+            if _done(o):
+                return {"o": o, "b": (1, 0)}   # 지난 받기에서 받은 값 — 그대로
+            host = _capped(prod, cc); due = bool(host) and _due(key)
+            if host and mode == "retry":   # 한도 사이트는 한 묶음에만 있어 due_left·_HCOUNT를 그 묶음만 씀
+                if due:
+                    due_left[host] = max(0, due_left.get(host, 0) - 1)
+                elif _HCOUNT.get(host, 0) + due_left.get(host, 0) >= HOST_CAP[host]:   # 다시 받기에서도 못 받은 값 — 아직 다시 받아 보지 않은 값에 한도를 먼저
+                    log(f"  {key}: 다음에 다시 — {host} 한도는 아직 다시 받아 보지 않은 값 먼저")
+                    return {"o": o, "n": {"defer": 1}}
+            if time.time() - t0 > TIME_LIMIT:   # 남은 것은 이전 값(다음 날 다시)
+                return _cut(prod, cc, o, key)
+            hop = ("set", td) if host else None   # v1.9 받으러 간 날(한도로 미루면 그대로 둠)
+            try:
+                (full, extra), src_url = fetch_one(prod, cc)
+                if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
+                    raise RuntimeError(f"원화 값이 이상함({full:g})")
+            except Defer as e:   # v1.8 사이트 요청 한도 — 이전 값 그대로 두고 다음 실행에서(실패·이전 값 표시 아님)
+                n = {"defer": 1, "due_defer": int(due)}
+                log(f"  {key}: {'다음 실행에서' if mode == 'full' or due else '다음 주에'} 받음 — {e}")
+                if o:
+                    if not o.get("stale_since") and _days(o.get("obs_date") or o.get("seen") or td) > DAYS + 1:   # v1.9 한 주기 넘게 못 받음 → 이전 값 표시·21일 알림에 들어가게
+                        o["stale_since"] = o.get("obs_date") or o.get("seen") or td; o["why"] = "사이트 요청 한도로 미룸"
+                    return {"o": o, "n": n}
+                f = dict(failed.get(key) or {"id": prod["id"], "cc": cc, "since": td})   # v1.9 이전 값도 없음(새 상품·나라) → 값 없음으로 보이게(다음 날 받으면 지움)
+                f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="사이트 요청 한도로 미룸 — 다음 실행에서")
+                return {"fop": ("set", f), "n": n}
+            except Skip as e:
+                if not o:   # 처음부터 이 나라에서 팔지 않음 — 실패 아님
+                    log(f"  {key}: 건너뜀 — {e}")
+                    return {"fop": ("pop",), "hop": hop}
+                e = RuntimeError(f"전에는 받았는데 이번엔 {e}")   # 조용히 사라지지 않게 실패로 셈
+                log(f"  {key}: 못 받음 — {e}")
+                o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = str(e)[:80]
+                return {"o": o, "hop": hop, "n": {"try": 1, "fail": 1}, "b": (1, 1)}
+            except Exception as e:   # 이상한 응답 모양(AttributeError 등)도 이 값만 실패로
+                why = f"{type(e).__name__}: {e}" if not isinstance(e, RuntimeError) else str(e)
+                log(f"  {key}: 못 받음 — {why[:120]}")
+                if o:
+                    o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = why[:80]
+                    return {"o": o, "hop": hop, "n": {"try": 1, "fail": 1}, "b": (1, 1)}
+                f = dict(failed.get(key) or {"id": prod["id"], "cc": cc, "since": td})
+                f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why=why[:80])
+                return {"fop": ("set", f), "hop": hop, "n": {"try": 1, "fail": 1}, "b": (1, 1)}
+            n = {"try": 1}
+            full = round(full, 2); cur = MK[cc][2]
+            note, held, guard = "", False, False
+            same = o.get("p") and o.get("cur") == cur
+            hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
+            seen_off = bool(same and (o.get("sh") or o.get("off_seen") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것 — 보류 전에 본 것은 off_seen으로 이어 감)
+            big = same and (full > o["p"] * JUMP or (prod["src"] == "nike" and full < o["p"] / JUMP))
+            if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
+                n["hold"] = 1; held = True
+                o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
+                o.pop("stale_since", None); o.pop("why", None)
+                o.pop("sp", None); o.pop("sp_date", None)   # v1.5 보류 중엔 할인 판단 안 함(어느 정가 기준인지 모름) — 할인 기록 sh는 그대로 두고 확인 뒤 이어 감
+                if seen_off:
+                    o["off_seen"] = True
+                note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
+            elif (same and not big and prod["src"] != "nike" and full < o["p"] * 0.995
+                  and _days(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
+                o.update(obs=full, obs_date=td, sale=True, url=src_url)
+                for k in ("stale_since", "why", "cand", "cand_date", "off_seen"): o.pop(k, None)
+                note, guard = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 할인으로 봄)", True
+            else:
+                old_p = o.get("p") if same else None
+                o = {"p": full, "cur": cur, "seen": td, "url": src_url, "obs": full, "obs_date": td, "sale": False, **hist}
+                note = f"정가 {full:,g} {cur}"
+                if old_p and abs(full - old_p) > old_p * 0.005:   # v1.5 정가 변동 기록(크게 바뀐 값은 다음 확인에서 반영된 날)
+                    o["ph"] = (o.get("ph") or [])[-(PH_MAX - 1):] + [[td, old_p, full]]
+                    note += f" (전 {old_p:,g} → {(full / old_p - 1) * 100:+.1f}%)"
+            # v1.5 할인가 — 지금 가장 싼 색상·사이즈(cur_price). 할인 가드로 정가를 지킨 날은 이번에 보인 값(full)도 할인가 후보
+            if not held:
+                cands = [v for v in (extra.get("cur_price"), full if guard else None) if v]
+                note_sale(o, min(cands) if cands else None, td, seen_off)
+            if extra.get("by") == "이름":
+                n["name"] = 1; note += " · 이름으로 찾음(페이지에 품번 있음)" if prod.get("code_in_page") else " · 품번이 없어 이름으로 찾음"
+            log(f"  {key}: {note}" + (f" · 할인 중 {o['sp']:,g}({(o['sp'] / o['p'] - 1) * 100:+.0f}%)" if o.get("sp") else ""))
+            return {"o": o, "fop": ("pop",), "hop": hop, "n": n, "b": (1, 0)}
+        # v1.12 묶음 동시 받기 — 묶음마다 값을 차례대로 받아 결과(res)에 넣고, 다 끝나면 PRODUCTS 순서로 합침(예전과 같은 파일·알림)
+        res, rlock, closed, errs, took = {}, threading.Lock(), [False], [], {}
+        def run_lane(ln):   # 다 받으면 True · 시간 초과로 멈추면 False
+            c = _ctx()
+            for prod in ln["prods"]:
+                pi = prev.get(prod["id"]) or {}
+                for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
+                    if _STOP.is_set():
+                        return False
+                    c.buf = []
+                    try:
+                        out = _value(prod, cc, pi)
+                    finally:
+                        lines, c.buf = c.buf, None
+                    with rlock:
+                        if closed[0]:
+                            return False
+                        res[f"{prod['id']} {cc}"] = out
+                        _out(lines)   # 값 하나의 줄은 한꺼번에(묶음끼리 섞이지 않게)
+            return True
+        def worker(q):
+            while True:
+                with rlock:
+                    if not q or closed[0] or _STOP.is_set():
+                        return
+                    ln = q.pop(0)
+                c = _TL.c = _Ctx(); s = time.time()   # 묶음마다 새 세션·간격 시계
                 try:
-                    (full, extra), src_url = fetch_one(prod, cc)
-                    if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
-                        raise RuntimeError(f"원화 값이 이상함({full:g})")
-                except Defer as e:   # v1.8 사이트 요청 한도 — 이전 값 그대로 두고 다음 실행에서(실패·이전 값 표시 아님)
-                    n_defer += 1; n_due_defer += due
-                    if t_old:
-                        htry[key] = t_old
-                    else:
-                        htry.pop(key, None)
-                    if o:
-                        if not o.get("stale_since") and _days(o.get("obs_date") or o.get("seen") or td) > DAYS + 1:   # v1.9 한 주기 넘게 못 받음 → 이전 값 표시·21일 알림에 들어가게
-                            o["stale_since"] = o.get("obs_date") or o.get("seen") or td; o["why"] = "사이트 요청 한도로 미룸"
-                        m[cc] = o
-                    else:   # v1.9 이전 값도 없음(새 상품·나라) → 값 없음으로 보이게(다음 날 받으면 지움)
-                        f = failed.get(key) or {"id": prod["id"], "cc": cc, "since": td}
-                        f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why="사이트 요청 한도로 미룸 — 다음 실행에서"); failed[key] = f
-                    log(f"  {key}: {'다음 실행에서' if mode == 'full' or due else '다음 주에'} 받음 — {e}")
-                    continue
-                except Skip as e:
-                    if not o:   # 처음부터 이 나라에서 팔지 않음 — 실패 아님
-                        log(f"  {key}: 건너뜀 — {e}"); failed.pop(key, None)
-                        continue
-                    e = RuntimeError(f"전에는 받았는데 이번엔 {e}")   # 조용히 사라지지 않게 실패로 셈
-                    n_try += 1; n_fail += 1; b[0] += 1; b[1] += 1
-                    log(f"  {key}: 못 받음 — {e}")
-                    o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = str(e)[:80]; m[cc] = o
-                    continue
-                except Exception as e:   # 이상한 응답 모양(AttributeError 등)도 이 값만 실패로
-                    n_try += 1; n_fail += 1; b[0] += 1; b[1] += 1
-                    why = f"{type(e).__name__}: {e}" if not isinstance(e, RuntimeError) else str(e)
-                    log(f"  {key}: 못 받음 — {why[:120]}")
-                    if o:
-                        o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = why[:80]; m[cc] = o
-                    else:
-                        f = failed.get(key) or {"id": prod["id"], "cc": cc, "since": td}
-                        f.update(code=prod["code"], brand=prod["brand"], name=prod["name"], why=why[:80]); failed[key] = f
-                    continue
-                n_try += 1; b[0] += 1; failed.pop(key, None)
-                full = round(full, 2); cur = MK[cc][2]
-                note, held, guard = "", False, False
-                same = o.get("p") and o.get("cur") == cur
-                hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
-                seen_off = bool(same and (o.get("sh") or o.get("off_seen") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것 — 보류 전에 본 것은 off_seen으로 이어 감)
-                big = same and (full > o["p"] * JUMP or (prod["src"] == "nike" and full < o["p"] / JUMP))
-                if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
-                    n_hold += 1; held = True
-                    o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
-                    o.pop("stale_since", None); o.pop("why", None)
-                    o.pop("sp", None); o.pop("sp_date", None)   # v1.5 보류 중엔 할인 판단 안 함(어느 정가 기준인지 모름) — 할인 기록 sh는 그대로 두고 확인 뒤 이어 감
-                    if seen_off:
-                        o["off_seen"] = True
-                    note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
-                elif (same and not big and prod["src"] != "nike" and full < o["p"] * 0.995
-                      and _days(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
-                    o.update(obs=full, obs_date=td, sale=True, url=src_url)
-                    for k in ("stale_since", "why", "cand", "cand_date", "off_seen"): o.pop(k, None)
-                    note, guard = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 할인으로 봄)", True
-                else:
-                    old_p = o.get("p") if same else None
-                    o = {"p": full, "cur": cur, "seen": td, "url": src_url, "obs": full, "obs_date": td, "sale": False, **hist}
-                    note = f"정가 {full:,g} {cur}"
-                    if old_p and abs(full - old_p) > old_p * 0.005:   # v1.5 정가 변동 기록(크게 바뀐 값은 다음 확인에서 반영된 날)
-                        o["ph"] = (o.get("ph") or [])[-(PH_MAX - 1):] + [[td, old_p, full]]
-                        note += f" (전 {old_p:,g} → {(full / old_p - 1) * 100:+.1f}%)"
-                # v1.5 할인가 — 지금 가장 싼 색상·사이즈(cur_price). 할인 가드로 정가를 지킨 날은 이번에 보인 값(full)도 할인가 후보
-                if not held:
-                    cands = [v for v in (extra.get("cur_price"), full if guard else None) if v]
-                    note_sale(o, min(cands) if cands else None, td, seen_off)
-                if extra.get("by") == "이름":
-                    n_name += 1; note += " · 이름으로 찾음(페이지에 품번 있음)" if prod.get("code_in_page") else " · 품번이 없어 이름으로 찾음"
-                m[cc] = o
-                log(f"  {key}: {note}" + (f" · 할인 중 {o['sp']:,g}({(o['sp'] / o['p'] - 1) * 100:+.0f}%)" if o.get("sp") else ""))
+                    if run_lane(ln):
+                        took[ln["name"]] = time.time() - s
+                except Exception:   # 예상 못 한 오류 — 다른 묶음도 멈추고 저장하지 않음(예전처럼 실행 실패)
+                    errs.append((ln["name"], traceback.format_exc())); _STOP.set()
+                finally:
+                    c.sess.close(); _TL.c = None
+        lanes, k = build_lanes(PRODUCTS), _lanes_n()
+        _PACE.clear(); _PACE.update(pace_map(PRODUCTS)); _STOP.clear(); cpu0 = time.process_time()
+        if k <= 1:   # 예전처럼 차례대로(한 세션 · 모든 요청이 한 줄로 GAP)
+            for ln in lanes:
+                s = time.time(); run_lane(ln); took[ln["name"]] = time.time() - s
+        else:
+            q = sorted(lanes, key=lambda x: -x["est"])   # 긴 묶음부터
+            ths = [threading.Thread(target=worker, args=(q,), daemon=True) for _ in range(min(k, len(lanes)))]
+            for th in ths:
+                th.start()
+            for th in ths:   # 묶음이 걸려도 단계 제한(15분) 전에 저장하도록 TIME_LIMIT + LANE_GRACE까지만 기다림
+                th.join(max(0.0, t0 + TIME_LIMIT + LANE_GRACE - time.time()))
+            with rlock:
+                closed[0] = True   # 이 뒤에 끝나는 값은 받지 않음
+            _STOP.set()
+            if errs:
+                for name, tb in errs:
+                    log(f"해외 정가: {name} 묶음 오류 — 저장 안 함\n{tb.rstrip()}")
+                raise RuntimeError(f"해외 정가 묶음 오류({', '.join(n for n, _ in errs)})")
+            stuck = [ln["name"] for ln in lanes if ln["name"] not in took]
+            if stuck:
+                log(f"[WARN] 해외 정가: {', '.join(stuck)} 묶음이 {TIME_LIMIT + LANE_GRACE}초 안에 안 끝남 — 남은 값은 이전 값(내일 다시)")
+        for prod in PRODUCTS:   # PRODUCTS 순서로 합침
+            pi = prev.get(prod["id"]) or {}
+            m, b = {}, bt.setdefault(prod["brand"], [0, 0])
+            for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
+                key = f"{prod['id']} {cc}"
+                out = res.get(key)
+                if out is None:   # 묶음이 시간 안에 안 끝나 못 받은 값 — 시간 초과와 같게
+                    o = _prev_o(pi, prod, cc)
+                    out = {"o": o, "b": (1, 0)} if _done(o) else _cut(prod, cc, o, key)
+                if out.get("o"):
+                    m[cc] = out["o"]
+                fop, hop = out.get("fop"), out.get("hop")
+                if fop and fop[0] == "pop":
+                    failed.pop(key, None)
+                elif fop:
+                    failed[key] = fop[1]
+                if hop:
+                    htry[key] = hop[1]
+                cnt.update(out.get("n") or {})
+                db, df = out.get("b") or (0, 0); b[0] += db; b[1] += df
             items.append({"id": prod["id"], "brand": prod["brand"], "name": prod["name"], "code": prod["code"], "m": m,
                           **({"cc_code": prod["cc_code"]} if prod.get("cc_code") else {})})
+        n_try, n_fail, n_cut, n_hold, n_name, n_defer, n_due_defer = (cnt[x] for x in ("try", "fail", "cut", "hold", "name", "defer", "due_defer"))
         ok = n_try - n_fail
         whole = [br for br, (n, f) in bt.items() if n and f == n]
         half = bool(n_try and n_fail * 2 > n_try)
@@ -998,6 +1172,10 @@ def main():
             + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
             + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "")
             + (f" · 사이트 요청 한도로 {n_defer}건은 {'다음 실행에서' if again else '다음 주에'}" if n_defer else ""))
+        log(f"해외 정가 묶음 {len(lanes)}개 · 동시 {min(k, len(lanes))}: "   # v1.12 가장 긴 묶음 = 전체 받기 시간의 기준
+            + " · ".join(f"{ln['name']} {took[ln['name']]:.0f}초({ln['n']})" if ln["name"] in took else f"{ln['name']} 안 끝남({ln['n']})"
+                         for ln in sorted(lanes, key=lambda x: -took.get(x["name"], 1e9)))
+            + f" · CPU {time.process_time() - cpu0:.0f}초")
         if mode == "full":
             if half:
                 soft_fail(f"해외 정가 절반 넘게 못 받음({n_fail}/{n_try}) — 이전 값 유지, 내일 다시")
