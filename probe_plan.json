@@ -2,21 +2,27 @@
  {
   "t": "pages",
   "urls": [
-   "https://arcteryx.co.kr/"
+   "https://arcteryx.co.kr/products/category/97",
+   "https://arcteryx.co.kr/products/category/92",
+   "https://arcteryx.co.kr/products/category/96",
+   "https://arcteryx.co.kr/products/category/102",
+   "https://arcteryx.co.kr/products/category/134",
+   "https://arcteryx.co.kr/products/category/139",
+   "https://arcteryx.co.kr/products/category/225",
+   "https://arcteryx.co.kr/products/category/226",
+   "https://arcteryx.co.kr/products/category/255",
+   "https://arcteryx.co.kr/products/category/256",
+   "https://arcteryx.co.kr/products/category/268",
+   "https://arcteryx.co.kr/products/category/269",
+   "https://arcteryx.co.kr/products/category/334",
+   "https://arcteryx.co.kr/products/category/335",
+   "https://arcteryx.co.kr/products/category/410",
+   "https://arcteryx.co.kr/products/category/411"
   ],
-  "link_rx": "href=\"/[^\"#]{1,120}\"|src=\"[^\"]+\\.js[^\"]*\"|\"/api/[^\"]{1,80}\"|https?://[a-z0-9.-]*arcteryx[^\"' ]{0,80}",
+  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}|/products/view/\\d{6}",
   "snip_rx": [
-   "(?i)window\\.__[A-Z_]+",
-   "(?i)data-page="
+   "(?i)<title>[^<]{0,60}"
   ],
-  "show": 200
- },
- {
-  "t": "pages",
-  "urls": [
-   "https://arcteryx.co.kr/products/view/686241"
-  ],
-  "link_rx": "href=\"/[^\"#]{1,120}\"|src=\"[^\"]+\\.js[^\"]*\"|\"/api/[^\"]{1,80}\"|https?://[a-z0-9.-]*arcteryx[^\"' ]{0,80}",
-  "show": 200
+  "show": 300
  }
 ]
