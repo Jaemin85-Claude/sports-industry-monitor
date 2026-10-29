@@ -2,45 +2,51 @@
  {
   "t": "pages",
   "urls": [
-   "https://arcteryx.co.kr/robots.txt"
-  ],
-  "snip_rx": [
-   "(?i)disallow[^\\n]{0,60}",
-   "(?i)sitemap[^\\n]{0,100}"
-  ],
-  "show": 5
- },
- {
-  "t": "pages",
-  "urls": [
-   "https://arcteryx.co.kr/products/view/686241"
+   "https://arcteryx.co.kr/shop/RC3dxKQyjPooWHrY8Lc6lzjBta5BFOqXlOiv86fS"
   ],
   "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
-  "link_rx": "(?:/products/view/\\d+|/shop/[A-Za-z0-9_\\-]+|/api/[A-Za-z0-9_/\\-]+)",
+  "link_rx": "(?:/products/view/|\"(?:id|product_id|productId|product_no|goods_no|no)\"\\s*:\\s*\"?)6\\d{5}",
   "snip_rx": [
+   "data-page=",
+   "__NUXT__|__NEXT_DATA__",
    "\"retail_price\"",
-   "(?i)graphql",
-   "(?i)\"product_?no\"",
-   "(?i)\"productId\"",
-   "(?i)\"(?:related|recommend)[A-Za-z_]*\"",
-   "(?i)fetch\\(|axios"
+   "(?i)/api/[a-z]",
+   "(?i)<title>"
   ],
-  "show": 80
+  "show": 120
  },
  {
   "t": "pages",
   "urls": [
-   "https://arcteryx.co.kr/products/view/685690",
-   "https://arcteryx.co.kr/products/view/686323",
-   "https://arcteryx.co.kr/products/view/686259",
-   "https://arcteryx.co.kr/products/view/686764",
-   "https://arcteryx.co.kr/products/view/686432",
-   "https://arcteryx.co.kr/",
-   "https://arcteryx.co.kr/shop/arctype_mens",
-   "https://arcteryx.co.kr/shop/ski_and_snowboard_product_guides_mens_2022"
+   "https://arcteryx.co.kr/shop/gnLBVdOwT5Wn5xTojlw1cNz4L8PhvW51qvLO5eR6",
+   "https://arcteryx.co.kr/shop/COYQwvFUTAvPXw4egNwmW2zcM4s2zn0u2qDcBa9h",
+   "https://arcteryx.co.kr/shop/e36er88J9xKR9nh2Wt8n7RBZatTxtpNRNHFAwEly",
+   "https://arcteryx.co.kr/shop/b0DzsVM20Qsxw4IeJxNYeqFtcWtFsBw5EoOrEAtr",
+   "https://arcteryx.co.kr/shop/jN1N2zAqVelMJYxdXYWlS5ok45cxid7LdHifX6Zw",
+   "https://arcteryx.co.kr/shop/KgGZxmVMVf19WOsRmggB0Bo9QjhPX5qEC8OvFN7r",
+   "https://arcteryx.co.kr/shop/M1ma1a2LXJZsu0IDKv8x0fCHI9Wx6tIhvjGraNYW",
+   "https://arcteryx.co.kr/shop/oZnWAUTBD0qXnyUOOhDEHZSBrvy0Ei9zviBkXce1",
+   "https://arcteryx.co.kr/shop/yMCn94cnxfZI0Xs7NU3mvGllgFBOZaaEmzjioEvf",
+   "https://arcteryx.co.kr/shop/gcEp9NPNxNA6CnpjtHjuo2HaA4QJjg7Qfal8U5Cc",
+   "https://arcteryx.co.kr/shop/jzs7J1ZI1eHjIlLlLsRxbCPkd0gP7D3GarYztAZp",
+   "https://arcteryx.co.kr/shop/6kydtDhGO3n3hXVdJySAt7baKUQ7IFsResslu3t1"
   ],
   "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
-  "link_rx": "(?:/products/view/\\d+|/shop/[A-Za-z0-9_\\-]+|/api/[A-Za-z0-9_/\\-]+)",
-  "show": 80
+  "link_rx": "(?:/products/view/|\"(?:id|product_id|productId|product_no|goods_no|no)\"\\s*:\\s*\"?)6\\d{5}",
+  "snip_rx": [
+   "(?i)<title>[^<]{0,80}"
+  ],
+  "show": 120
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/686244",
+   "https://arcteryx.co.kr/products/view/686747",
+   "https://arcteryx.co.kr/products/view/686769"
+  ],
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
+  "link_rx": "(?:/products/view/|\"(?:id|product_id|productId|product_no|goods_no|no)\"\\s*:\\s*\"?)6\\d{5}",
+  "show": 20
  }
 ]
