@@ -1,12 +1,21 @@
 [
  {
-  "t": "jsfollow",
+  "t": "pages",
   "urls": [
-   "https://arcteryx.co.kr/products/category/97"
+   "https://arcteryx.co.kr/system-0/",
+   "https://arcteryx.co.kr/veilance",
+   "https://arcteryx.co.kr/rebird",
+   "https://arcteryx.co.kr/explore/walk-gently",
+   "https://arcteryx.co.kr/UTNP2026",
+   "https://arcteryx.co.kr/lp",
+   "https://arcteryx.co.kr/products/best",
+   "https://arcteryx.co.kr/products/new"
   ],
-  "rx": "https?://[A-Za-z0-9.-]*arcteryx[A-Za-z0-9.-]*\\.[a-z.]+[^\"'`\\s)]{0,60}|[\"'`](?:/api|/v\\d|/products/(?:list|category|search))[^\"'`]{0,80}[\"'`]|NEXT_PUBLIC_[A-Z_]+",
-  "pad": 40,
-  "show": 25,
-  "max_js": 60
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
+  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}|/products/view/\\d{6}",
+  "snip_rx": [
+   "(?i)<title>[^<]{0,60}"
+  ],
+  "show": 200
  }
 ]
