@@ -120,6 +120,8 @@ PW_RESERVE = 150               # v1.6 처음 받기에서 남은 시간이 이�
 PW_ROWS = {}                   # v1.6 이번 실행에서 받은 PortWatch 질의(층, 조건) → 일별 행 — 더하는 항만은 받은 쪽을 다시 묻지 않음(main이 비움)
 PW_KINDS = ("choke", "ports", "hubs")   # v1.6 PortWatch 블록(해협·항만·적출 거점)
 PW_NREQ = [0]                  # v1.6 이번 실행에서 PortWatch에 보낸 요청 수(로그 요약 — main이 비움)
+PW_FLOOR = [0]                 # v1.6 처음 받기 동안 PW_RESERVE — 질의마다(더하는 항만은 두 번) 남은 시간이 이보다 적으면 묻지 않고 실행 끝으로
+PW_DUR = {}                    # v1.6 질의(층, 조건) → 이번 실행에서 마지막으로 걸린 초 — 다시 받기에서 남은 시간에 못 끝낼 질의는 그만(main이 비움)
 DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
                                # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
 DGK_AUTH = []                  # v1.2 인증키 오류가 난 자료 — 실행 끝에 바로 실패 표시(main이 비움)
@@ -537,6 +539,8 @@ def pw_get(layer, params):
     """v1.6 PortWatch 요청 한 번 — 연결 안 됨(pw_down)은 5초 뒤 한 번 더 해 보고 NetError(남은 PortWatch 건너뜀), 5xx·읽기 시간 초과·
     응답 중 끊김은 PwBusy(연결은 됨 — 서버가 느리거나 과부하 · 실행 끝에 다시), HTTP 403·429는 PwStop. 실행 시간을 다 쓴 NetError는 그대로"""
     for k in range(2):
+        if PW_FLOOR[0] and time_left() < PW_FLOOR[0]:   # 처음 받기 — 뒤 자료 시간을 남김(받은 질의는 PW_ROWS에 있어 끝에 나머지만)
+            raise PwBusy("뒤 자료 시간을 남기려고 처음에 다 묻지 않음")
         if time_left() >= 5:   # http는 5초 밑이면 보내지 않음 — 보낸 요청만 셈
             PW_NREQ[0] += 1
         try:
@@ -566,6 +570,15 @@ def pw_rows(layer, where, fields):
     key = (layer, where)
     if key in PW_ROWS:
         return PW_ROWS[key]
+    t0 = time.monotonic()
+    try:
+        return pw_rows_get(layer, where, fields, key)
+    finally:
+        PW_DUR[key] = time.monotonic() - t0
+
+
+def pw_rows_get(layer, where, fields, key):
+    """pw_rows의 받기 — 받으면 PW_ROWS[key]에 둠"""
     out, off = [], 0
     while True:
         r = pw_get(layer, {"where": where, "outFields": ",".join(fields), "orderByFields": "date ASC",
@@ -700,16 +713,22 @@ def pw_first(kind, sts):
     _, _, items, _ = pw_spec(kind)
     log(f"[{LABELS[kind]}]")
     sts[kind] = {}
+    PW_FLOOR[0] = PW_RESERVE
+    try:
+        pw_first_items(kind, items, sts)
+    finally:
+        PW_FLOOR[0] = 0
+
+
+def pw_first_items(kind, items, sts):
     for iid, name in items:
         st = sts[kind][iid] = {"res": None, "err": "", "n": 0, "busy": False}
         if not PW_DOWN and time_left() < PW_RESERVE:   # 뒤 자료 시간을 남김 — 이 항목은 실행 끝에
             st.update(err="뒤 자료 시간을 남기려고 처음에 묻지 않음", busy=True, defer=True)
             log(f"  {name}: 뒤 자료 시간을 남기려고 지금은 묻지 않음 — 실행 끝에 다시")
             continue
-        t = st["at"] = time.monotonic()
-        ok = pw_once(kind, iid, name, st)
-        st["dur"] = time.monotonic() - t
-        if ok:
+        st["at"] = time.monotonic()
+        if pw_once(kind, iid, name, st):
             log(pw_line(name, st["res"]))
         elif st["busy"]:
             st["defer"] = True
@@ -759,12 +778,13 @@ def pw_retry(sts, prev_all):
             if PW_DOWN or time_left() < PW_MIN_LEFT:
                 stop = PW_DOWN or "이번 실행 시간이 모자람"
                 break
-            if time_left() < st.get("dur", 0) + 5:   # 지난번만큼 걸리면 못 끝냄(상하이 약 60초) — 이번 실행은 이 항목 그만, 다른 항목 먼저
+            layer, _, _, where = pw_spec(k)
+            cost = sum(PW_DUR.get((layer, w), 0) for w in where(i) if (layer, w) not in PW_ROWS)
+            if time_left() < cost + 5:   # 남은 질의가 지난번만큼 걸리면 못 끝냄(상하이 약 60초) — 이번 실행은 이 항목 그만, 다른 항목 먼저
                 slow += 1
                 continue
-            t = st["at"] = time.monotonic()
+            st["at"] = time.monotonic()
             ok = pw_once(k, i, names[k][i], st)
-            st["dur"] = time.monotonic() - t
             if ok:
                 got += 1
                 log(pw_line(names[k][i], st["res"]) + f" · {st['n']}번째에 받음")
@@ -1450,7 +1470,8 @@ def main():
     T_END = time.monotonic() + RUN_LIMIT
     PW_DOWN, DGK_NOKEY = "", False
     PW_ROWS.clear()
-    PW_NREQ[0] = 0
+    PW_DUR.clear()
+    PW_NREQ[0], PW_FLOOR[0] = 0, 0
     DGK_DOWN.clear()
     DGK_AUTH.clear()
     DGK_BLOCKED.clear()
