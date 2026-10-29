@@ -4,15 +4,20 @@ sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
 v1.6: (대표 지시 2026-10-29 '1번부터 진행') IMF PortWatch가 10/28부터 질의를 자주 거절 — 10/29 아침 23곳 중 14곳 실패(400 'Cannot
       perform query'·'Invalid URL'·빈 응답(0행)·가끔 504). 브랜치 시험(10/29 GitHub 서버 · 질의 105번): 질의마다 약 60~65% 실패, 질의 모양
       (정렬 빼기·날짜 조건·최근 70일·건수만)을 바꿔도 같음, 같은 질의를 다시 하면 20~40% 받음(서버 쪽 문제 · 질의마다 거의 따로 실패) →
-      ① 서버 오류(오류 응답·빈 응답·60행 미만·5xx·읽기 시간 초과 — PwBusy)는 연결 안 됨과 나눔: 연결 안 됨(연결 오류·연결 시간 초과)만 그 실행의
-         남은 PortWatch를 건너뜀(PW_DOWN) — 전에는 느린 질의의 504·읽기 시간 초과도 '연결 안 됨'으로 봐 남은 항목을 다 건너뛸 수 있었음
-      ② 처음 한 번씩 받은 뒤(자리 그대로), 못 받은 항목은 다른 자료를 다 받고 실행 끝에 남은 시간 동안 다시(항목마다 한 실행 최대
-         PW_TRIES번 · 값 없음 → 오래 이전 값인 것부터 · 8분 제한에서 PW_MIN_LEFT초는 남김) — 블록 기록은 다시 받은 뒤에(이전 값·
-         stale_since·값 없음 규칙 그대로 · 7일 넘으면 실패 표시도 그대로)
+      ① 서버 오류(오류 응답·빈 응답·60행 미만·5xx·읽기 시간 초과·응답 중 끊김 — PwBusy)는 연결 안 됨과 나눔: 연결 안 됨(연결 거부·연결 시간
+         초과·주소 못 찾음·프록시·TLS — pw_down)만 5초 뒤 한 번 더 해 보고 그 실행의 남은 PortWatch를 건너뜀(PW_DOWN) — 전에는 느린 질의의
+         504·읽기 시간 초과도 '연결 안 됨'으로 봐 남은 항목을 다 건너뛸 수 있었음 · 요청 제한·권한 오류(403·429 — PwStop)도 그 실행은 그만
+      ② 처음 한 번씩 받은 뒤(자리 그대로 · 남은 시간이 PW_RESERVE초 밑이면 남은 항목은 묻지 않고 넘김 — 느린 504가 이어져도 뒤 자료(정시율·
+         물동량·부산 선박)를 v1.5처럼 지킴), 못 받은 항목은 다른 자료를 다 받고 실행 끝에 남은 시간 동안 다시(항목마다 한 실행 최대
+         PW_TRIES번 · 값 없음 → 오래 이전 값인 것부터 · 같은 항목은 PW_GAP_SAME초 간격 · 지난번만큼 걸리면 못 끝낼 항목은 그만 · 8분 제한에서
+         PW_MIN_LEFT초는 남김) — 블록 기록은 다시 받은 뒤에(이전 값·stale_since·값 없음 규칙 그대로 · 7일 넘으면 실패 표시도 그대로 ·
+         상태 줄은 자료 순서로 정렬해 v1.5와 같은 순서)
       ③ 받은 질의는 이번 실행에서 다시 묻지 않음(PW_ROWS — 더하는 항만 상하이+양산·옌톈+서커우의 받은 쪽, 제벨알리 항만 = 두바이 거점은
          한 번만 · 다시 받기에서도 같은 질의는 앞 항목만 묻고 결과를 나눔)
-      ④ 처음에 못 받은 줄은 '실패' 없이 '실행 끝에 다시'만, 끝까지 못 받은 항목만 '실패 — … (n번 시도) · 이전 값'(또는 값 없음) ·
-         요약 '[PortWatch 다시 받기] … 받음 n곳 · 못 받음 n곳 · 요청 n번 · n초'
+      ④ 로그(12:23 점검이 '실패'·[WARN] 줄로 알림): 처음에 못 받은 줄은 '… — 실행 끝에 다시', 끝 요약 '  PortWatch 다시 받기: 받음 n곳 ·
+         못 받음 n곳 · 요청 n번 · n초', 끝까지 못 받았어도 서버 오류이고 이전 값이 기준일(7일) 안이면 '이번 실행 못 받음 — … · 이전 값(m-d 받은
+         값)'(블록 전부면 '이번 실행 모두 못 받음') — 알릴 일은 기준일을 넘은 '오래된 이전 값' 실패 표시가 맡음. 값 없음·4xx·연결 안 됨·요청 제한·
+         기준일 넘음은 v1.5처럼 '실패'·[WARN]
 v1.5: (대표 지시 2026-10-23) 관세청 물동량 이상값 [WARN]은 처음 본 날과 그다음 날만 — 블록(mode)마다 odd_seen [나라, 달, 항목, 값, 처음 본 날]을
       이어 적고, 처음 본 날이 어제보다 전이면 [WARN] 없이 '(이전 실행부터)' 줄만(12:23 점검이 [WARN] 줄로 매일 알리던 것 · 26.09 미국 항공 수출
       773만 톤). 오후 수동 실행·다시 받기 작업에서 처음 봐도 다음 날 아침 정기 실행이 한 번 더 [WARN] — 점검이 놓치지 않게. 값이 바뀌면 새 값 ·
@@ -96,6 +101,7 @@ import xml.etree.ElementTree as ET
 from urllib.parse import quote, quote_plus, urlsplit
 
 import requests
+import urllib3
 
 SCRIPT = "logistics_fetch"
 OUT = "docs/logistics.json"
@@ -104,9 +110,13 @@ UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics; +https://gi
 TIMEOUT = (15, 40)             # (연결, 읽기) 초 — 연결이 안 되는 곳은 빨리 포기
 RUN_LIMIT = 8 * 60             # 한 실행 최대 8분 — 넘으면 남은 요청은 바로 실패(이전 값 유지), 대시보드 갱신 작업(20분 제한)은 계속
 T_END = float("inf")           # main()이 시작할 때 정함
-PW_DOWN = ""                   # 이번 실행에서 PortWatch 연결이 안 된 첫 항목 — 남은 해협·항만·거점은 기다리지 않음(main이 비움)
+PW_DOWN = ""                   # 이번 실행에서 PortWatch를 그만 물을 사유('제벨알리에서 연결 안 됨' — v1.6부터 '홍콩에서 요청 제한·권한 오류(429)'도) —
+                               # 남은 해협·항만·거점은 기다리지 않음(main이 비움)
 PW_TRIES = 4                   # v1.6 PortWatch 항목마다 한 실행 최대 시도(처음 1번 + 실행 끝에 다시 3번까지 — 남은 시간 안에서)
 PW_MIN_LEFT = 20               # v1.6 이번 실행에 남은 시간이 이보다 적으면 PortWatch 다시 받기를 시작하지 않음(초)
+PW_GAP_SAME = 10               # v1.6 같은 항목을 다시 물을 때 앞 요청 시작부터 최소 간격(초) — 남은 항목이 적을 때 잇달아 보내지 않게
+PW_RESERVE = 150               # v1.6 처음 받기에서 남은 시간이 이보다 적으면 남은 항목은 묻지 않고 실행 끝으로 — 뒤 자료(정시율·물동량·
+                               # 부산 선박 · 10/29 약 40초 + 부산 지난 날 채우기 90초)를 위해(느린 504·읽기 시간 초과가 이어져도 v1.5처럼 뒤 자료를 지킴)
 PW_ROWS = {}                   # v1.6 이번 실행에서 받은 PortWatch 질의(층, 조건) → 일별 행 — 더하는 항만은 받은 쪽을 다시 묻지 않음(main이 비움)
 PW_KINDS = ("choke", "ports", "hubs")   # v1.6 PortWatch 블록(해협·항만·적출 거점)
 PW_NREQ = [0]                  # v1.6 이번 실행에서 PortWatch에 보낸 요청 수(로그 요약 — main이 비움)
@@ -223,6 +233,14 @@ def soft_fail(msg):
 
 class NetError(RuntimeError):
     """연결 안 됨·시간 초과·5xx — 잠시 뒤 다시 해 볼 만한 오류(형식 오류와 구분). v1.6 마지막 요청 오류는 __cause__에"""
+
+
+class PwStop(RuntimeError):
+    """v1.6 PortWatch가 요청 제한·권한 오류(403·429·498·499)를 줌 — 그 실행의 남은 PortWatch는 묻지 않음(다른 사이트와 같은 규칙)"""
+
+
+class PwKept(RuntimeError):
+    """v1.6 PortWatch 블록 항목을 하나도 새로 못 받았지만 모두 서버 오류이고 이전 값이 기준일 안 — run_block이 [WARN]·'실패' 없이 씀"""
 
 
 class PwBusy(RuntimeError):
@@ -504,23 +522,42 @@ def fetch_kcci(prev):
 
 
 # ───────────────────────── ③ IMF PortWatch ─────────────────────────
+def pw_down(c):
+    """v1.6 연결 자체가 안 됨(연결 시간 초과·연결 거부·주소 못 찾음·프록시·TLS) — 연결된 뒤 끊김(응답 중 끊김·본문 읽기 시간 초과 —
+    requests는 이것도 ConnectionError로 줌)은 서버 쪽 문제라 아님"""
+    if isinstance(c, (requests.ConnectTimeout, requests.exceptions.ProxyError, requests.exceptions.SSLError)):
+        return True
+    if not isinstance(c, requests.ConnectionError):
+        return False
+    r = c.args[0] if c.args else None
+    return isinstance(getattr(r, "reason", r), (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError))
+
+
 def pw_get(layer, params):
-    """v1.6 PortWatch 요청 한 번 — 연결 안 됨(연결 오류·연결 시간 초과)은 5초 뒤 한 번 더 해 보고 NetError(남은 PortWatch 건너뜀),
-    5xx·읽기 시간 초과는 PwBusy(연결은 됨 — 서버가 느려 질의를 못 끝냄 · 실행 끝에 다시). 실행 시간을 다 쓴 NetError는 그대로"""
+    """v1.6 PortWatch 요청 한 번 — 연결 안 됨(pw_down)은 5초 뒤 한 번 더 해 보고 NetError(남은 PortWatch 건너뜀), 5xx·읽기 시간 초과·
+    응답 중 끊김은 PwBusy(연결은 됨 — 서버가 느리거나 과부하 · 실행 끝에 다시), HTTP 403·429는 PwStop. 실행 시간을 다 쓴 NetError는 그대로"""
     for k in range(2):
-        PW_NREQ[0] += 1
+        if time_left() >= 5:   # http는 5초 밑이면 보내지 않음 — 보낸 요청만 셈
+            PW_NREQ[0] += 1
         try:
             return http(PW.format(layer), params=params, timeout=(15, 60), tries=1)
         except requests.RequestException:   # 응답이 중간에 끊김(본문 조각 오류 등 — http가 잡지 않는 것)
             raise PwBusy("PortWatch 응답이 중간에 끊김") from None
         except NetError as e:
             c = e.__cause__
-            if c is None or isinstance(c, requests.ConnectionError):   # 실행 시간을 다 씀 · 연결 안 됨(ConnectTimeout 포함)
+            if c is None or pw_down(c):   # 실행 시간을 다 씀 · 연결 안 됨
                 if c is not None and k == 0 and time_left() > 15:
                     time.sleep(5)
                     continue
                 raise
-            raise PwBusy("PortWatch 서버 응답 없음(" + ("읽기 시간 초과" if isinstance(c, requests.Timeout) else str(c)[:40]) + ")") from e
+            raise PwBusy("PortWatch " + ("서버 응답 없음(읽기 시간 초과)" if isinstance(c, requests.Timeout) else
+                                         "서버 응답 중 끊김" if isinstance(c, requests.ConnectionError) else
+                                         f"서버 오류({str(c)[:40]})")) from e
+        except RuntimeError as e:   # http의 4xx — 요청 제한·권한이면 그 실행은 그만(그 밖의 4xx는 그 항목만 실패)
+            m = re.match(r"HTTP (403|429)\b", str(e))
+            if m:
+                raise PwStop(f"PortWatch 요청 제한·권한 오류(HTTP {m.group(1)})") from None
+            raise
 
 
 def pw_rows(layer, where, fields):
@@ -541,6 +578,8 @@ def pw_rows(layer, where, fields):
             raise PwBusy("PortWatch 응답 형식이 다름")
         if "error" in d:
             er = d["error"]
+            if isinstance(er, dict) and er.get("code") in (403, 429, 498, 499):   # 요청 제한·권한(토큰) — 다시 해도 안 됨
+                raise PwStop(f"PortWatch 요청 제한·권한 오류({er.get('code')} '{str(er.get('message'))[:40]}')")
             raise PwBusy(f"PortWatch 오류 응답 {er.get('code')} '{str(er.get('message'))[:60]}'" if isinstance(er, dict)
                          else f"PortWatch 오류 응답: {str(er)[:100]}")
         fs = d.get("features") or []
@@ -635,18 +674,21 @@ def pw_line(name, it):
 
 def pw_once(kind, iid, name, st):
     """v1.6 항목 하나를 한 번 받음 — st = {"res": 받은 값, "err": 오류 글, "n": 시도 수, "busy": 서버 오류(다시 받을 만함)}.
-    연결이 안 되면(NetError) 같은 서버라 이번 실행의 남은 PortWatch는 묻지 않음(PW_DOWN · 실행 시간을 다 쓴 때는 빼고)"""
+    연결이 안 되면(NetError) 같은 서버라 이번 실행의 남은 PortWatch는 묻지 않음(PW_DOWN · 실행 시간을 다 쓴 때는 빼고) ·
+    요청 제한·권한 오류(PwStop)도 그 실행은 그만([WARN] 한 줄)"""
     global PW_DOWN
     layer, fields, _, where = pw_spec(kind)
     try:
         if PW_DOWN:
-            raise NetError(f"{PW_DOWN}에서 연결 안 됨 — 이번 실행은 건너뜀")
+            raise NetError(f"{PW_DOWN} — 이번 실행은 건너뜀")
         st["n"] += 1
         it = pw_item(layer, where(iid), fields, name)
     except Exception as e:
         st["err"], st["busy"] = str(e)[:150], isinstance(e, PwBusy)
-        if isinstance(e, NetError) and e.__cause__ is not None and not PW_DOWN:
-            PW_DOWN = name
+        if not PW_DOWN and (isinstance(e, PwStop) or isinstance(e, NetError) and e.__cause__ is not None):
+            PW_DOWN = f"{name}에서 " + ("요청 제한·권한 오류" if isinstance(e, PwStop) else "연결 안 됨")
+            if isinstance(e, PwStop):
+                log(f"  [WARN] {e} — 이번 실행의 남은 PortWatch는 묻지 않음")
         return False
     st.update(res=it, err="", busy=False)
     return True
@@ -660,9 +702,17 @@ def pw_first(kind, sts):
     sts[kind] = {}
     for iid, name in items:
         st = sts[kind][iid] = {"res": None, "err": "", "n": 0, "busy": False}
-        if pw_once(kind, iid, name, st):
+        if not PW_DOWN and time_left() < PW_RESERVE:   # 뒤 자료 시간을 남김 — 이 항목은 실행 끝에
+            st.update(err="뒤 자료 시간을 남기려고 처음에 묻지 않음", busy=True, defer=True)
+            log(f"  {name}: 뒤 자료 시간을 남기려고 지금은 묻지 않음 — 실행 끝에 다시")
+            continue
+        t = st["at"] = time.monotonic()
+        ok = pw_once(kind, iid, name, st)
+        st["dur"] = time.monotonic() - t
+        if ok:
             log(pw_line(name, st["res"]))
         elif st["busy"]:
+            st["defer"] = True
             log(f"  {name}: {st['err']} — 실행 끝에 다시")
         else:
             log(f"  {name}: 실패 — {st['err']}")
@@ -681,9 +731,13 @@ def pw_retry(sts, prev_all):
     """v1.6 처음에 서버 오류로 못 받은 PortWatch 항목만 — 다른 자료를 다 받은 뒤, 남은 시간 동안 다시(항목마다 한 실행 최대 PW_TRIES번 ·
     값 없음 → 오래 이전 값인 것부터 한 바퀴씩 · 남은 시간이 PW_MIN_LEFT초보다 적으면 멈춤 · 연결이 끊기면 멈춤)"""
     names = {k: dict(pw_spec(k)[2]) for k in sts}
-    todo = [(k, i) for k in sts for i, st in sts[k].items() if st["res"] is None and st["busy"]]
-    if not todo or PW_DOWN:
+    todo = [(k, i) for k in sts for i, st in sts[k].items() if st["res"] is None and st.get("defer")]
+    if not todo:
         return
+    if PW_DOWN:
+        log(f"[PortWatch 다시 받기] 건너뜀 — {PW_DOWN}")
+        return
+    mine = list(todo)
     todo.sort(key=lambda x: pw_since(prev_all.get(x[0]), x[1]))
     lead, follow = {}, []   # 같은 질의(제벨알리 항만 = 두바이 거점)는 앞 항목만 묻고 결과를 나눔
     for k, i in list(todo):
@@ -693,16 +747,25 @@ def pw_retry(sts, prev_all):
             todo.remove((k, i))
         else:
             lead[q] = (k, i)
-    t0, n0, got, stop = time.monotonic(), PW_NREQ[0], 0, ""
+    t0, n0, got, stop, slow = time.monotonic(), PW_NREQ[0], 0, "", 0
     log(f"[PortWatch 다시 받기] 처음에 서버 오류로 못 받은 {len(todo) + len(follow)}곳 — 남은 시간 {max(0, time_left()):.0f}초 안에서 항목마다 최대 {PW_TRIES}번까지")
     while todo and not stop:
         nxt = []
         for k, i in todo:
             st = sts[k][i]
+            wait = st.get("at", -1e9) + PW_GAP_SAME - time.monotonic()   # 같은 질의를 잇달아 보내지 않음(남은 항목이 적을 때)
+            if wait > 0 and not PW_DOWN:
+                time.sleep(min(wait, max(0.0, time_left() - PW_MIN_LEFT)))
             if PW_DOWN or time_left() < PW_MIN_LEFT:
-                stop = "PortWatch 연결 안 됨" if PW_DOWN else "이번 실행 시간이 모자람"
+                stop = PW_DOWN or "이번 실행 시간이 모자람"
                 break
-            if pw_once(k, i, names[k][i], st):
+            if time_left() < st.get("dur", 0) + 5:   # 지난번만큼 걸리면 못 끝냄(상하이 약 60초) — 이번 실행은 이 항목 그만, 다른 항목 먼저
+                slow += 1
+                continue
+            t = st["at"] = time.monotonic()
+            ok = pw_once(k, i, names[k][i], st)
+            st["dur"] = time.monotonic() - t
+            if ok:
                 got += 1
                 log(pw_line(names[k][i], st["res"]) + f" · {st['n']}번째에 받음")
             elif st["busy"] and st["n"] < PW_TRIES:
@@ -718,9 +781,21 @@ def pw_retry(sts, prev_all):
             log(pw_line(names[k][i], st["res"]) + f" · {names[lk][li]}와 같은 질의")
         else:
             st.update(err=src["err"], busy=src["busy"], n=max(st["n"], src["n"]))
-    left = [names[k][i] for k in sts for i, st in sts[k].items() if st["res"] is None and st["busy"]]
+    left = [i for k, i in mine if sts[k][i]["res"] is None]
     log(f"  PortWatch 다시 받기: 받음 {got}곳 · 못 받음 {len(left)}곳 · 요청 {PW_NREQ[0] - n0}번 · {time.monotonic() - t0:.0f}초"
-        + (f" · 멈춤({stop})" if stop else ""))
+        + (f" · 멈춤({stop})" if stop else "") + (f" · 오래 걸려 남은 시간에 못 끝낼 {slow}곳은 그만" if slow else ""))
+
+
+def pw_quiet(kind, prev, iid, st):
+    """v1.6 끝까지 못 받았어도 알릴 일이 아님 — 서버 오류(또는 처음에 묻지 못함)이고 이전 값이 기준일(STALE_ALERT · PortWatch 7일) 안.
+    12:23 점검이 '실패'·[WARN] 줄로 알리므로 이때는 그 낱말 없이 씀(기준일을 넘으면 '오래된 이전 값' 실패 표시가 따로 알림)"""
+    if PW_DOWN or not (st.get("busy") or st.get("n") == 0):   # 연결 안 됨·요청 제한은 v1.5처럼 '실패'(알림)
+        return False
+    d = pw_since(prev, iid)
+    try:
+        return (today_kst() - datetime.date.fromisoformat(d[:10])).days <= STALE_ALERT.get(kind, 7)
+    except ValueError:
+        return False
 
 
 def pw_block(kind, st_k, prev):
@@ -729,14 +804,19 @@ def pw_block(kind, st_k, prev):
     _, fields, items, _ = pw_spec(kind)
     items0 = (prev or {}).get("items")
     old = {x.get("id"): x for x in (items0 if isinstance(items0, list) else []) if isinstance(x, dict)}
-    out, bad, kept = [], [], []
+    out, bad, kept, quiet = [], [], [], []
     for iid, name in items:
         st = st_k.get(iid) or {"res": None, "err": "받지 않음", "n": 0, "busy": False}
         if st["res"] is not None:
             out.append({"id": iid, "name": name, **st["res"]})
             continue
-        if st["busy"]:
-            log(f"  {name}: 실패 — {st['err']} ({st['n']}번 시도) · {'이전 값' if iid in old else '값 없음'}")
+        if st.get("defer"):   # 처음 줄에 '실행 끝에 다시'라고 쓴 항목 — 끝까지 못 받은 까닭(마지막 오류)
+            tried = f"{st['n']}번 시도" if st["n"] else "묻지 못함"
+            if iid in old and pw_quiet(kind, prev, iid, st):
+                quiet.append(name)
+                log(f"  {name}: 이번 실행 못 받음 — {st['err']} ({tried}) · 이전 값({pw_since(prev, iid)[5:10]} 받은 값)")
+            else:
+                log(f"  {name}: 실패 — {st['err']} ({tried}) · {'이전 값' if iid in old else '값 없음'}")
         if iid in old:
             o = dict(old[iid])
             o["stale_since"] = o.get("stale_since") or (prev or {}).get("fetched") or today_kst().isoformat()
@@ -745,7 +825,7 @@ def pw_block(kind, st_k, prev):
         else:
             bad.append(name)
     if not [x for x in out if not x.get("stale_since")]:
-        raise RuntimeError(f"모두 실패({', '.join(bad + kept)})")
+        raise (PwKept if quiet and len(quiet) == len(kept) and not bad else RuntimeError)(f"모두 실패({', '.join(bad + kept)})")
     return {"fields": fields, "items": out, "kept": kept, "failed": bad}
 
 
@@ -1319,7 +1399,9 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False, head=Tr
             log(f"  {label}: {net_why(e)} — 다른 자료를 받은 뒤 한 번 더")   # v1.3 오류 원문(…Error)은 12:23 점검이 오류로 읽어 갈래만
             return False
         dgk_net = key in DGK_ALL and isinstance(e, NetError)
-        if dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패'·오류 원문(…Error) 없이 갈래만
+        if isinstance(e, PwKept):   # v1.6 PortWatch 서버 오류 — 이전 값이 기준일 안이라 알릴 일이 아님
+            log(f"  {label}: 이번 실행 모두 못 받음(PortWatch 서버 오류) · 이전 값 유지")
+        elif dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패'·오류 원문(…Error) 없이 갈래만
             log(f"  {label}: 공공데이터포털 {net_why(e)} — {NET_QUIET} · {'이전 값 유지' if prev else '값 없음'}")
         else:
             log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
@@ -1460,6 +1542,9 @@ def main():
             run_block(kind, LABELS[kind], lambda p, kind=kind: pw_block(kind, pw_st.get(kind) or {}, p),
                       prev_all, out, status, fails, head=False)
     out = {k: out[k] for k in ["generated_at", "war_start", "base_period"] + list(LABELS) if k in out}   # 다시 받은 자료도 원래 순서로
+    rank = {lb: n for n, lb in enumerate(LABELS.values())}
+    for g in status:   # v1.6 상태 줄도 자료 순서로(PortWatch 기록이 실행 끝으로 옮겨도 화면 '일부 실패' 줄 순서 그대로)
+        status[g].sort(key=lambda x: rank.get(x.split("(")[0], len(rank)))
     out["status"] = status
     out["failed_since"] = fails[1]
     # v1.3 공공데이터포털 연결 기록 — tries = 이번 워크플로우 실행의 차례별 서버(같은 실행이면 이어 붙임) · since = 서버를 다 바꿔도 막힌 첫날
