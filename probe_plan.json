@@ -13,7 +13,7 @@
     "src": "page",
     "hint": "norvan ld 4 gtx",
     "urls": {
-     "JP": "https://arcteryx.jp/products/norvan-ld-4-gtx-m"
+     "JP": "https://arcteryx.jp/products/norvan-ld-4-gtx-m.json"
     }
    },
    {
@@ -27,7 +27,7 @@
     "src": "page",
     "hint": "norvan ld 4",
     "urls": {
-     "JP": "https://arcteryx.jp/products/norvan-ld-4-m"
+     "JP": "https://arcteryx.jp/products/norvan-ld-4-m.json"
     }
    },
    {
@@ -41,7 +41,7 @@
     "src": "page",
     "hint": "kragg",
     "urls": {
-     "JP": "https://arcteryx.jp/products/kragg-m"
+     "JP": "https://arcteryx.jp/products/kragg-m.json"
     }
    },
    {
@@ -55,21 +55,7 @@
     "src": "page",
     "hint": "konseal trek boot",
     "urls": {
-     "JP": "https://arcteryx.jp/products/konseal-trek-m"
-    }
-   },
-   {
-    "id": "arc-norvanjacket",
-    "brand": "아크테릭스",
-    "name": "노반 재킷(남성)",
-    "code": "X000009571",
-    "cc_code": {
-     "KR": "AJQFM09571"
-    },
-    "src": "page",
-    "hint": "norvan jacket",
-    "urls": {
-     "JP": "https://arcteryx.jp/products/norvan-jacket-m"
+     "JP": "https://arcteryx.jp/products/konseal-trek-m.json"
     }
    },
    {
@@ -83,7 +69,7 @@
     "src": "page",
     "hint": "sylan 2",
     "urls": {
-     "JP": "https://arcteryx.jp/products/sylan-2-m"
+     "JP": "https://arcteryx.jp/products/sylan-2-m.json"
     }
    }
   ]
