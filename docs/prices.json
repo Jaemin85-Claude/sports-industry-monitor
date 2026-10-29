@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-28 23:29 KST",
+ "generated_at": "2026-10-29 08:20 KST",
  "fetched": "2026-10-28",
  "attempt": "2026-10-28",
  "cfg": "6c5e7b67529f",
@@ -3297,13 +3297,11 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-10-28",
+     "seen": "2026-10-29",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
      "obs": 219000.0,
-     "obs_date": "2026-10-28",
-     "sale": false,
-     "stale_since": "2026-10-28",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-10-29",
+     "sale": false
     },
     "US": {
      "p": 175.0,
@@ -3436,13 +3434,11 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-10-28",
+     "seen": "2026-10-29",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
      "obs": 209000.0,
-     "obs_date": "2026-10-28",
-     "sale": false,
-     "stale_since": "2026-10-28",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-10-29",
+     "sale": false
     },
     "US": {
      "p": 170.0,
@@ -4904,6 +4900,5 @@
   "salomon-xt4oggtx GB": "2026-10-28",
   "salomon-xt4oggtx DE": "2026-10-28"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
- "tried": "2026-10-28"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
 }
