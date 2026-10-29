@@ -1,0 +1,46 @@
+[
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/robots.txt"
+  ],
+  "snip_rx": [
+   "(?i)disallow[^\\n]{0,60}",
+   "(?i)sitemap[^\\n]{0,100}"
+  ],
+  "show": 5
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/686241"
+  ],
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
+  "link_rx": "(?:/products/view/\\d+|/shop/[A-Za-z0-9_\\-]+|/api/[A-Za-z0-9_/\\-]+)",
+  "snip_rx": [
+   "\"retail_price\"",
+   "(?i)graphql",
+   "(?i)\"product_?no\"",
+   "(?i)\"productId\"",
+   "(?i)\"(?:related|recommend)[A-Za-z_]*\"",
+   "(?i)fetch\\(|axios"
+  ],
+  "show": 80
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/685690",
+   "https://arcteryx.co.kr/products/view/686323",
+   "https://arcteryx.co.kr/products/view/686259",
+   "https://arcteryx.co.kr/products/view/686764",
+   "https://arcteryx.co.kr/products/view/686432",
+   "https://arcteryx.co.kr/",
+   "https://arcteryx.co.kr/shop/arctype_mens",
+   "https://arcteryx.co.kr/shop/ski_and_snowboard_product_guides_mens_2022"
+  ],
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
+  "link_rx": "(?:/products/view/\\d+|/shop/[A-Za-z0-9_\\-]+|/api/[A-Za-z0-9_/\\-]+)",
+  "show": 80
+ }
+]
