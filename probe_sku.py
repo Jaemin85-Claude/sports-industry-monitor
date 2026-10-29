@@ -148,9 +148,32 @@ def try_codes(j):   # 후보 품번을 나라별 주소로 price_fetch에 넣어
                 out("OK", code=code, cc=cc, full=full, cur=pf.MK[cc][2], extra=extra)
             except Exception as e:
                 out("FAIL", code=code, cc=cc, err=f"{type(e).__name__}: {str(e)[:160]}")
+def jsfollow(j):   # 페이지의 스크립트(src)를 받아 정규식에 맞는 글(목록을 받아 오는 주소 등)을 보여 줌
+    for u in j["urls"]:
+        try:
+            h = pf.get(u).text
+        except Exception as e:
+            out("PAGEERR", url=u[:150], err=str(e)[:160]); continue
+        base = "{0.scheme}://{0.netloc}".format(urllib.parse.urlsplit(u))
+        srcs = []
+        for s in re.findall(r'src="([^"]+\.js[^"]*)"', h):
+            s = html.unescape(s); s = s if s.startswith("http") else base + s
+            if urllib.parse.urlsplit(s).netloc == urllib.parse.urlsplit(u).netloc and s not in srcs and re.search(j.get("src_rx", "."), s): srcs.append(s)
+        out("SRCS", url=u[-60:], n=len(srcs))
+        for s in srcs[: j.get("max_js", 60)]:
+            if left() < 60: out("TIMEOUT"); return
+            try:
+                t = pf.get(s).text
+            except Exception as e:
+                out("JSERR", js=s[-80:], err=str(e)[:120]); continue
+            hits = []
+            for m in re.finditer(j["rx"], t):
+                v = t[max(0, m.start() - j.get("pad", 0)): m.end() + j.get("pad", 0)]
+                if v not in hits: hits.append(v)
+            if hits: out("JS", js=s.split("/chunks/")[-1][:90], kb=len(t) // 1000, hits=hits[: j.get("show", 30)])
 if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
-        {"codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson}[j["t"]](j)
+        {"codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson, "jsfollow": jsfollow}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")

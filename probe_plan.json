@@ -1,28 +1,12 @@
 [
  {
-  "t": "pages",
+  "t": "jsfollow",
   "urls": [
-   "https://arcteryx.co.kr/products/category/97",
-   "https://arcteryx.co.kr/products/category/92",
-   "https://arcteryx.co.kr/products/category/96",
-   "https://arcteryx.co.kr/products/category/102",
-   "https://arcteryx.co.kr/products/category/134",
-   "https://arcteryx.co.kr/products/category/139",
-   "https://arcteryx.co.kr/products/category/225",
-   "https://arcteryx.co.kr/products/category/226",
-   "https://arcteryx.co.kr/products/category/255",
-   "https://arcteryx.co.kr/products/category/256",
-   "https://arcteryx.co.kr/products/category/268",
-   "https://arcteryx.co.kr/products/category/269",
-   "https://arcteryx.co.kr/products/category/334",
-   "https://arcteryx.co.kr/products/category/335",
-   "https://arcteryx.co.kr/products/category/410",
-   "https://arcteryx.co.kr/products/category/411"
+   "https://arcteryx.co.kr/products/category/97"
   ],
-  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}|/products/view/\\d{6}",
-  "snip_rx": [
-   "(?i)<title>[^<]{0,60}"
-  ],
-  "show": 300
+  "rx": "https?://[A-Za-z0-9.-]*arcteryx[A-Za-z0-9.-]*\\.[a-z.]+[^\"'`\\s)]{0,60}|[\"'`](?:/api|/v\\d|/products/(?:list|category|search))[^\"'`]{0,80}[\"'`]|NEXT_PUBLIC_[A-Z_]+",
+  "pad": 40,
+  "show": 25,
+  "max_js": 60
  }
 ]
