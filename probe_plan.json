@@ -2,20 +2,53 @@
  {
   "t": "pages",
   "urls": [
-   "https://arcteryx.co.kr/system-0/",
-   "https://arcteryx.co.kr/veilance",
-   "https://arcteryx.co.kr/rebird",
-   "https://arcteryx.co.kr/explore/walk-gently",
-   "https://arcteryx.co.kr/UTNP2026",
-   "https://arcteryx.co.kr/lp",
-   "https://arcteryx.co.kr/products/best",
-   "https://arcteryx.co.kr/products/new"
+   "https://arcteryx.co.kr/products/view/686206",
+   "https://arcteryx.co.kr/products/view/686212",
+   "https://arcteryx.co.kr/products/view/686214",
+   "https://arcteryx.co.kr/products/view/686215",
+   "https://arcteryx.co.kr/products/view/686216",
+   "https://arcteryx.co.kr/products/view/686217",
+   "https://arcteryx.co.kr/products/view/686221",
+   "https://arcteryx.co.kr/products/view/686226",
+   "https://arcteryx.co.kr/products/view/686228",
+   "https://arcteryx.co.kr/products/view/686229",
+   "https://arcteryx.co.kr/products/view/686230",
+   "https://arcteryx.co.kr/products/view/686231",
+   "https://arcteryx.co.kr/products/view/686342",
+   "https://arcteryx.co.kr/products/view/686680",
+   "https://arcteryx.co.kr/products/view/686681",
+   "https://arcteryx.co.kr/products/view/686683",
+   "https://arcteryx.co.kr/products/view/686685",
+   "https://arcteryx.co.kr/products/view/686686",
+   "https://arcteryx.co.kr/products/view/686700",
+   "https://arcteryx.co.kr/products/view/686729",
+   "https://arcteryx.co.kr/products/view/686731",
+   "https://arcteryx.co.kr/products/view/686737",
+   "https://arcteryx.co.kr/products/view/686738",
+   "https://arcteryx.co.kr/products/view/686739",
+   "https://arcteryx.co.kr/products/view/686750",
+   "https://arcteryx.co.kr/products/view/686883",
+   "https://arcteryx.co.kr/products/view/686905",
+   "https://arcteryx.co.kr/products/view/686948",
+   "https://arcteryx.co.kr/products/view/686979",
+   "https://arcteryx.co.kr/products/view/686980",
+   "https://arcteryx.co.kr/products/view/686986",
+   "https://arcteryx.co.kr/products/view/687008",
+   "https://arcteryx.co.kr/products/view/687020"
   ],
   "code_rx": "A[A-Z]{3}[MWUX]\\d{5}",
-  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}|/products/view/\\d{6}",
-  "snip_rx": [
-   "(?i)<title>[^<]{0,60}"
-  ],
-  "show": 200
+  "show": 3
+ },
+ {
+  "t": "grep",
+  "rx": "/us/en/shop/(?:mens/|womens/)?[a-z0-9-]+-(?:0023|0028|0078|0081|0153|0155|0397|0398|0399|0400|0502|0504|0613|0627|0628|0635|0730|0748|0764|0831|0833|6747|6803|9571|9602|9603)$",
+  "sites": {
+   "US": {
+    "host": "arcteryx.com"
+   }
+  },
+  "max_maps": 40,
+  "per_host": 200,
+  "show": 120
  }
 ]
