@@ -1,17 +1,5 @@
 [
  {
-  "t": "grep",
-  "rx": "/products/(?:norvan|kragg|kopec|konseal|sylan)[a-z0-9-]*",
-  "sites": {
-   "JP": {
-    "host": "arcteryx.jp"
-   }
-  },
-  "max_maps": 20,
-  "per_host": 120,
-  "show": 60
- },
- {
   "t": "tryp",
   "prods": [
    {
@@ -25,10 +13,7 @@
     "src": "page",
     "hint": "norvan ld 4 gtx",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686729",
-     "US": "https://arcteryx.com/us/en/shop/mens/norvan-ld-4-gtx-shoe-0397",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/norvan-ld-4-gtx-shoe-0397",
-     "DE": "https://arcteryx.com/de/en/shop/mens/norvan-ld-4-gtx-shoe-0397"
+     "JP": "https://arcteryx.jp/products/norvan-ld-4-gtx-m"
     }
    },
    {
@@ -42,10 +27,7 @@
     "src": "page",
     "hint": "norvan ld 4",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686685",
-     "US": "https://arcteryx.com/us/en/shop/mens/norvan-ld-4-shoe-0398",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/norvan-ld-4-shoe-0398",
-     "DE": "https://arcteryx.com/de/en/shop/mens/norvan-ld-4-shoe-0398"
+     "JP": "https://arcteryx.jp/products/norvan-ld-4-m"
     }
    },
    {
@@ -59,27 +41,7 @@
     "src": "page",
     "hint": "kragg",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686681",
-     "US": "https://arcteryx.com/us/en/shop/mens/kragg-shoe-0078",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/kragg-shoe-0078",
-     "DE": "https://arcteryx.com/de/en/shop/mens/kragg-shoe-0078"
-    }
-   },
-   {
-    "id": "arc-kopec2lowgtx",
-    "brand": "아크테릭스",
-    "name": "코펙 2 로우 GTX(남성)",
-    "code": "X000010831",
-    "cc_code": {
-     "KR": "AFQFM10831"
-    },
-    "src": "page",
-    "hint": "kopec 2 low gtx",
-    "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686948",
-     "US": "https://arcteryx.com/us/en/shop/mens/kopec-2-low-gtx-shoe-0831",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/kopec-2-low-gtx-shoe-0831",
-     "DE": "https://arcteryx.com/de/en/shop/mens/kopec-2-low-gtx-shoe-0831"
+     "JP": "https://arcteryx.jp/products/kragg-m"
     }
    },
    {
@@ -93,10 +55,7 @@
     "src": "page",
     "hint": "konseal trek boot",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686731",
-     "US": "https://arcteryx.com/us/en/shop/mens/konseal-trek-boot-0504",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/konseal-trek-boot-0504",
-     "DE": "https://arcteryx.com/de/en/shop/mens/konseal-trek-boot-0504"
+     "JP": "https://arcteryx.jp/products/konseal-trek-m"
     }
    },
    {
@@ -110,10 +69,7 @@
     "src": "page",
     "hint": "norvan jacket",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686750",
-     "US": "https://arcteryx.com/us/en/shop/mens/norvan-jacket-9571",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/norvan-jacket-9571",
-     "DE": "https://arcteryx.com/de/en/shop/mens/norvan-jacket-9571"
+     "JP": "https://arcteryx.jp/products/norvan-jacket-m"
     }
    },
    {
@@ -127,10 +83,7 @@
     "src": "page",
     "hint": "sylan 2",
     "urls": {
-     "KR": "https://arcteryx.co.kr/products/view/686215",
-     "US": "https://arcteryx.com/us/en/shop/mens/sylan-2-shoe-0155",
-     "GB": "https://arcteryx.com/gb/en/shop/mens/sylan-2-shoe-0155",
-     "DE": "https://arcteryx.com/de/en/shop/mens/sylan-2-shoe-0155"
+     "JP": "https://arcteryx.jp/products/sylan-2-m"
     }
    }
   ]
