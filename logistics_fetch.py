@@ -19,7 +19,8 @@ v1.6: (대표 지시 2026-10-29 '1번부터 진행') IMF PortWatch가 10/28부�
          못 받음 n곳 · 요청 n번 · n초', 끝까지 못 받았어도 서버 오류이고 이전 값이 기준일(7일) 안이면 '이번 실행 못 받음 — … · 이전 값(m-d 받은
          값)'(블록 전부면 '이번 실행 모두 못 받음') — 알릴 일은 기준일을 넘은 '오래된 이전 값' 실패 표시가 맡음. 값 없음·4xx·연결 안 됨·요청 제한·
          기준일 넘음은 v1.5처럼 '실패'·[WARN] · '수집 결과' 줄의 '일부 항목 실패 n'은 '일부 항목 이전 값 n · 일부 항목 값 없음 n'으로 ·
-         한 실행 질의를 10번 넘게 해 하나도 못 받으면(질의·주소가 바뀌었을 수 있음) '[WARN] PortWatch 질의 n번 모두 못 받음' + 조용히 쓰지 않음
+         한 실행 질의를 10번 넘게 해 하나도 못 받거나 한 층(해협·항만 표)만 25번 넘게 0건이면(질의·주소가 바뀌었을 수 있음)
+         '[WARN] PortWatch 해협(또는 항만·거점) 질의 n번 모두 못 받음' + 그 층은 조용히 쓰지 않음
       ⑤ 받아 둔 같은 질의가 있는 항목(제벨알리 = 두바이)은 시간 한도·다시 받기 순서와 상관없이 요청 없이 값을 만듦(pw_cached)
 v1.5: (대표 지시 2026-10-23) 관세청 물동량 이상값 [WARN]은 처음 본 날과 그다음 날만 — 블록(mode)마다 odd_seen [나라, 달, 항목, 값, 처음 본 날]을
       이어 적고, 처음 본 날이 어제보다 전이면 [WARN] 없이 '(이전 실행부터)' 줄만(12:23 점검이 [WARN] 줄로 매일 알리던 것 · 26.09 미국 항공 수출
@@ -125,7 +126,11 @@ PW_KINDS = ("choke", "ports", "hubs")   # v1.6 PortWatch 블록(해협·항만·
 PW_NREQ = [0]                  # v1.6 이번 실행에서 PortWatch에 보낸 요청 수(로그 요약 — main이 비움)
 PW_FLOOR = [0]                 # v1.6 처음 받기 동안 PW_RESERVE — 질의마다(더하는 항만은 두 번) 남은 시간이 이보다 적으면 묻지 않고 실행 끝으로
 PW_LAYER_STOP = {}             # v1.6 층(Daily_Chokepoints_Data·Daily_Ports_Data) → 권한·토큰 오류(403·498·499 오류 응답) 사유 — 그 층만 그만(main이 비움)
-PW_ALLBAD = [False]            # v1.6 이번 실행 PortWatch 질의를 10번 넘게 해 하나도 못 받음 — 질의·주소가 바뀌었을 수 있어 조용히 쓰지 않음([WARN])
+PW_ALLBAD = set()              # v1.6 질의를 하나도 못 받은 층 — 실행 전체 10번 넘게 0건이면 모든 층, 한 층만 PW_ALLBAD_N번 넘게 0건이면 그 층 —
+                               # 질의·주소가 바뀌었을 수 있어 조용히 쓰지 않음([WARN] · main이 비움)
+PW_ALLBAD_N = 25               # v1.6 한 층만 볼 때 기준 — 약 70~80% 실패에서 25번 연속 실패는 0.1% 안팎(해협 층은 한 실행 최대 16번이라 실행 전체 기준으로만)
+PW_NREQ_L = {}                 # v1.6 층별 보낸 요청 수(main이 비움)
+PW_LAYER_KO = {"Daily_Chokepoints_Data": "해협", "Daily_Ports_Data": "항만·거점"}
 PW_DUR = {}                    # v1.6 질의(층, 조건) → 이번 실행에서 마지막으로 걸린 초 — 다시 받기에서 남은 시간에 못 끝낼 질의는 그만(main이 비움)
 DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
                                # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
@@ -553,6 +558,7 @@ def pw_get(layer, params):
             raise PwBusy("뒤 자료 시간을 남기려고 처음에 다 묻지 않음")
         if time_left() >= 5:   # http는 5초 밑이면 보내지 않음 — 보낸 요청만 셈
             PW_NREQ[0] += 1
+            PW_NREQ_L[layer] = PW_NREQ_L.get(layer, 0) + 1
         try:
             return http(PW.format(layer), params=params, timeout=(15, 60), tries=1)
         except requests.RequestException:   # 응답이 중간에 끊김(본문 조각 오류 등 — http가 잡지 않는 것)
@@ -705,7 +711,7 @@ def pw_once(kind, iid, name, st):
     global PW_DOWN
     layer, fields, _, where = pw_spec(kind)
     try:
-        if PW_DOWN or layer in PW_LAYER_STOP:
+        if (PW_DOWN or layer in PW_LAYER_STOP) and not pw_cached(kind, iid):   # 받아 둔 같은 질의면 요청 없이 만듦
             raise NetError(f"{PW_DOWN or PW_LAYER_STOP[layer]} — 이번 실행은 건너뜀")
         st["n"] += 1
         it = pw_item(layer, where(iid), fields, name)
@@ -832,7 +838,7 @@ def pw_retry(sts, prev_all):
 def pw_quiet(kind, prev, iid, st):
     """v1.6 끝까지 못 받았어도 알릴 일이 아님 — 서버 오류(또는 처음에 묻지 못함)이고 이전 값이 기준일(STALE_ALERT · PortWatch 7일) 안.
     12:23 점검이 '실패'·[WARN] 줄로 알리므로 이때는 그 낱말 없이 씀(기준일을 넘으면 '오래된 이전 값' 실패 표시가 따로 알림)"""
-    if PW_DOWN or PW_ALLBAD[0] or pw_spec(kind)[0] in PW_LAYER_STOP or not (st.get("busy") or st.get("n") == 0):
+    if PW_DOWN or pw_spec(kind)[0] in PW_ALLBAD | set(PW_LAYER_STOP) or not (st.get("busy") or st.get("n") == 0):
         return False   # 연결 안 됨·요청 제한·권한·한 번도 못 받음은 v1.5처럼 '실패'(알림)
     d = pw_since(prev, iid)
     try:
@@ -1502,7 +1508,8 @@ def main():
     PW_ROWS.clear()
     PW_DUR.clear()
     PW_LAYER_STOP.clear()
-    PW_ALLBAD[0] = False
+    PW_ALLBAD.clear()
+    PW_NREQ_L.clear()
     PW_NREQ[0], PW_FLOOR[0] = 0, 0
     DGK_DOWN.clear()
     DGK_AUTH.clear()
@@ -1591,9 +1598,13 @@ def main():
             pw_retry(pw_st, prev_all)   # v1.6 PortWatch 서버 오류로 못 받은 항목 — 남은 시간 동안 다시
         except Exception as e:
             log(f"  [WARN] PortWatch 다시 받기 중 오류 — {str(e)[:150]}")
-        if PW_NREQ[0] >= 10 and not PW_ROWS and not PW_DOWN:   # 질의마다 따로 실패하면(약 70%) 10번 넘게 하나도 못 받을 일은 드묾
-            PW_ALLBAD[0] = True
-            log(f"  [WARN] PortWatch 질의 {PW_NREQ[0]}번 모두 못 받음 — 질의·주소가 바뀌었을 수 있음(처음 날부터 알림)")
+        if not PW_DOWN:   # 질의마다 따로 실패하면(약 70%) 하나도 못 받을 일은 드묾 — 층이 바뀌었거나 고장(처음 날부터 알림)
+            got = {k[0] for k in PW_ROWS}
+            whole = PW_NREQ[0] >= 10 and not PW_ROWS
+            for ly, n in sorted(PW_NREQ_L.items()):
+                if ly not in got and ly not in PW_LAYER_STOP and (whole or n >= PW_ALLBAD_N):
+                    PW_ALLBAD.add(ly)
+                    log(f"  [WARN] PortWatch {PW_LAYER_KO.get(ly, ly)} 질의 {n}번 모두 못 받음 — 질의·주소가 바뀌었을 수 있음")
         for kind in PW_KINDS:
             run_block(kind, LABELS[kind], lambda p, kind=kind: pw_block(kind, pw_st.get(kind) or {}, p),
                       prev_all, out, status, fails, head=False)
