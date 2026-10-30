@@ -1,46 +1,60 @@
-# 임시 시험(병합하지 않음) — 관세청 운송비용 파일 화면(공공데이터포털)이 GitHub 서버에서 어떻게 보이는지
+# 임시 시험(병합하지 않음) — 공공데이터포털 새 화면(KRDS)의 파일 내려받기 함수 fn_fileDataDown이 부르는 주소 찾기
 import re, json, requests
 import logistics_fetch as lf
 
 S = requests.Session()
 S.headers.update(lf.UA)
-
-def show(tag, url, **kw):
-    try:
-        r = S.get(url, timeout=(10, 40), allow_redirects=True, **kw)
-    except Exception as e:
-        print(tag, "ERR", type(e).__name__, str(e)[:200], flush=True); return None
-    t = r.text
-    print(f"{tag} HTTP {r.status_code} · 최종 {r.url[:120]} · {len(t)}자 · type {r.headers.get('content-type')}", flush=True)
-    print(f"{tag} 넘겨짐: {[ (h.status_code, h.headers.get('location','')[:100]) for h in r.history]}", flush=True)
-    print(f"{tag} title: {lf.clean((re.search(r'(?is)<title>(.*?)</title>', t) or [None,''])[1])[:150]}", flush=True)
-    for name, rx in (("FILE_", r"FILE_\w{0,30}"), ("atchFileId", r"atchFileId[\"'=:\s]+[\w-]{0,40}"),
-                     ("fileDownload", r"fileDownload[^\"'<>\s]{0,120}"), ("onclick down", r"onclick=\"[^\"]*[Dd]own[^\"]{0,120}\""),
-                     ("fileDetailSn", r"fileDetailSn[\"'=:\s]+\w{0,10}"), ("csv", r"[\w가-힣_.-]{0,60}\.csv"),
-                     ("수정일", r"수정일.{0,160}"), ("차기", r"차기 등록 예정일.{0,160}"), ("publicDataDetailPk", r"publicDataDetailPk[\"'=:\s]+[\w-]{0,40}"),
-                     ("uddi", r"uddi:[\w-]{10,}"), ("dataSetId", r"(?:dataSetId|publicDataPk)[\"'=:\s]+[\w-]{0,30}")):
-        ms = re.findall(rx, t, re.S)
-        u = []
-        for m in ms:
-            m = re.sub(r"\s+", " ", m)
-            if m not in u: u.append(m)
-        print(f"{tag}   {name}: {len(ms)}건 {json.dumps(u[:6], ensure_ascii=False)[:600]}", flush=True)
-    return r
-
+B = "https://www.data.go.kr"
 try:
     print("GitHub 서버:", requests.get("https://api.ipify.org", timeout=8).text[:7], flush=True)
 except Exception as e:
     print("IP 확인 실패", type(e).__name__, flush=True)
-for ds in ("15116806", "15116850", "15116807"):
-    r = show(f"[{ds} 화면]", lf.KCS_PAGE.format(ds))
-    if r is not None and "FILE_" not in r.text:
-        body = lf.clean(re.sub(r"(?is)<(script|style)\b.*?</\1>", " ", r.text))
-        print(f"[{ds} 화면] 본문 앞 1200자: {body[:1200]}", flush=True)
-        # 내려받기 단추 근처
-        for k in ("다운로드", "내려받기", "바로가기", "fileDown"):
-            i = r.text.find(k)
-            if i >= 0:
-                near = re.sub(r"\s+", " ", r.text[max(0, i-500):i+300])
-                print(f"[{ds} 화면] '{k}' 근처: {near}", flush=True)
-    show(f"[{ds} 목록 JSON]", f"https://www.data.go.kr/catalog/{ds}/fileData.json")
+
+ds = "15116807"
+try:
+    r = S.get(lf.KCS_PAGE.format(ds), timeout=(10, 40))
+except Exception as e:
+    print("화면 ERR", type(e).__name__, str(e)[:150]); raise SystemExit
+t = r.text
+print("화면", r.status_code, len(t), flush=True)
+calls = re.findall(r"fn_fileDataDown\(([^)]*)\)", t)
+print("호출:", calls[:3], flush=True)
+srcs = re.findall(r'<script[^>]+src="([^"]+)"', t)
+print("스크립트", len(srcs), [s for s in srcs if "/biz/" in s][:40], flush=True)
+for name in ("fn_fileDataDown", "fileDetailObj"):
+    for m in re.finditer(name, t):
+        i = m.start()
+        print(f"화면 안 '{name}' 근처:", re.sub(r"\s+", " ", t[max(0, i-200):i+600])[:800], flush=True)
+        break
+found = False
+for s in srcs:
+    if not s.startswith("/js/"):
+        continue
+    try:
+        js = S.get(B + s.split("?")[0], timeout=(10, 30)).text
+    except Exception as e:
+        print("JS ERR", s, type(e).__name__); continue
+    if "fn_fileDataDown" in js:
+        i = js.find("fn_fileDataDown")
+        print(f"[JS {s}] {len(js)}자 — fn_fileDataDown 정의 근처:", flush=True)
+        print(js[max(0, i-300):i+3500], flush=True)
+        for u in sorted(set(re.findall(r"[\"'](/[\w/]+\.do)[\"']", js))):
+            print("  .do 주소:", u, flush=True)
+        found = True
+if not found:
+    # 인라인 스크립트에 있을 수도
+    for blk in re.findall(r"(?is)<script(?![^>]*src)[^>]*>(.*?)</script>", t):
+        if "fileDataDown" in blk or "fileDetailObj" in blk:
+            print("[인라인 스크립트]", re.sub(r"\s+", " ", blk)[:3500], flush=True)
+# 예전 포털 방식 주소 시험(있으면 내려받기 번호를 JSON으로 줌)
+if calls:
+    a = [x.strip().strip("'\"") for x in calls[0].split(",")]
+    for path in ("/tcs/dss/selectFileDataDownload.do",):
+        for meth in ("GET", "POST"):
+            try:
+                p = {"publicDataPk": a[0], "publicDataDetailPk": a[1], "fileDetailSn": a[3] if len(a) > 3 else "1"}
+                rr = S.request(meth, B + path, params=p if meth == "GET" else None, data=p if meth == "POST" else None, timeout=(10, 30))
+                print(f"[{meth} {path}] HTTP {rr.status_code} · {rr.headers.get('content-type')} · {rr.text[:600]}", flush=True)
+            except Exception as e:
+                print(f"[{meth} {path}] ERR", type(e).__name__, str(e)[:150], flush=True)
 print("끝", flush=True)
