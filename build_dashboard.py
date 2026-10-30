@@ -1179,6 +1179,40 @@ div.bd-nx{cursor:default}
 /* ==== A-BRAND-LIST ====
    브랜드 점검표(#brandList) 전용 규칙 — 이 아래에(다음 표식 전까지만)
    ==== */
+/* 머리: 제목 줄(제목 + 'n곳 판정 · m/d 기준' 한 줄)은 스크롤과 함께 올라가고 판정 필터·검색창만 위에 남음(top은 스크립트 brlStick) */
+#brHead{gap:8px;padding-bottom:10px}
+#brHead .brl-top{display:contents}
+#brHead .brl-tt{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:0 8px}
+#brHead .seg4{padding:3px}
+#brHead .seg4 button{font-size:var(--fs2)}
+@media(max-width:374px){#brHead .seg4 button{font-size:14px;letter-spacing:-.03em}}
+@media(max-width:359px){#brHead .seg4 button{font-size:13px;letter-spacing:-.04em}}
+#brHead #brSearch{margin:0;scroll-margin-top:-100vh}   /* 고정 머리 안 입력 칸 — 눌러도 내용 창이 튀지 않게(위 .phead 단추와 같음) */
+/* 환율 공통 한 줄(fxCommon) — 검색창 아래 */
+.brl-common{display:flex;gap:6px;align-items:flex-start;margin:-2px 2px 10px;font-size:var(--fs1);color:var(--sub);line-height:1.5;word-break:keep-all;overflow-wrap:break-word}
+.brl-common .ic{margin-top:2px}
+/* 판정 묶음 카드 — 묶음 머리는 머리 아래(--brl-hh)에 고정 · 고정이 되도록 카드는 넘침을 자르지 않고 첫 줄·끝 줄 모서리를 둥글게 */
+.br-list.brl-grp{overflow:visible}
+.brl-gh{position:sticky;top:var(--brl-hh,0px);z-index:5;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:6px 14px 6px 12px;
+  background:var(--card);border-bottom:1px solid var(--line);border-radius:var(--r) var(--r) 0 0}
+.brl-gl{display:flex;align-items:center;gap:6px;min-width:0}
+.brl-cols,.brl-sc{display:grid;grid-template-columns:repeat(4,30px);gap:2px;flex:none;text-align:center}
+.brl-cols i{font-style:normal;font-size:var(--fs1);color:var(--sub);line-height:1.2;white-space:nowrap}
+/* 두 줄 행: 이름 + 점수 4개 / 이유 한 줄(말줄임) + 자료 꼬리표 */
+.br-row.brl-row{display:flex;flex-direction:column;align-items:stretch;gap:2px;min-height:62px;padding:8px 14px}
+.brl-gh+.br-row.brl-row{border-top:0}
+.brl-grp>.brl-row:last-child{border-radius:0 0 var(--r) var(--r)}
+.brl-l1{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.brl-nm{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 6px;min-width:0}
+.brl-row .br-name{font-size:var(--fs3);line-height:1.3}
+.brl-sc b{font-size:var(--fs2);line-height:1.3;font-variant-numeric:tabular-nums}
+.brl-l2{display:flex;align-items:baseline;gap:6px;min-width:0;font-size:var(--fs1);line-height:1.45}
+.brl-why{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--tx2)}
+.brl-why.same{color:var(--sub)}
+.brl-l2 .ds{flex:none}
+@media(min-width:380px){.brl-l2{font-size:var(--fs2)}}
+/* PC·태블릿: 점수 칸을 이름 칸 옆으로(넓은 화면에서 이름과 점수가 양 끝으로 벌어지지 않게) — 묶음 머리 칸 이름도 같은 자리 */
+@media(min-width:760px){.brl-gh,.brl-l1{justify-content:flex-start}.brl-gl{flex:0 0 282px}.brl-nm{flex:0 0 280px}}
 .a-sep-brlist1{}
 .a-sep-brlist2{}
 /* ==== A-BRAND-DETAIL ====
@@ -1244,7 +1278,7 @@ div.bd-nx{cursor:default}
 <div class="pane" id="p-brand">
   <div id="brandList">
     <div class="phead" id="brHead"></div>
-    <input class="search" id="brSearch" type="search" enterkeyhint="search" autocomplete="off" maxlength="40" aria-label="브랜드 검색" placeholder="브랜드 검색 (예: 나이키, adidas, 본사 이름)">
+    <input class="search" id="brSearch" type="search" enterkeyhint="search" autocomplete="off" maxlength="40" aria-label="브랜드·본사 검색" placeholder="브랜드·본사 검색">
     <div class="sr" id="brSrchLive" aria-live="polite"></div>
     <div id="brandBody"></div>
   </div>
@@ -4479,17 +4513,21 @@ function spark8(vals,wk){
 
 /* ── v33 A안 S2: 브랜드 탭(A2) — 머리(제목·판정 기준 (i)·판정 필터 4칸) + 압축 행 + 판정 안 함 접기. 필터·(i)·접기는 기록 없이 메모리만 ── */
 let BR_FILTER='all', BR_INFO=false, BR_REST=false;
-const BR_F=[['all','전체',null],['go','지금 검토',2],['wait','관망',1],['warn','주의',0]];
+const BR_F=[['all','전체',null],['go','지금 검토',2],['warn','주의',0],['wait','관망',1]];   // v33.28 판정 묶음 순서(BRL_ORD)와 같게 — 지금 검토 → 주의 → 관망
 const BR_NOTE={all:'', go:'수요 보통 이상 · 매입 +2 이상', wait:'지금 검토·주의 아님', warn:'수요 약함 · 매입 +1 이하, 또는 매입 −1 이하'};   // v33.25 짧게 — 점수 범례는 (i) 판정 기준으로
 const chkMedN=()=>((NAVER&&NAVER.brands)||[]).filter(b=>b.group==='global'&&b.yoy!=null&&!b.low).length;   // chkMedian과 같은 거름(검색량 충분)
 let BR_DAY=null;   // v33.2 브랜드 목록을 그린 한국 날짜
-function buildBrand(){
+function buildBrand(){   // v33.28 머리 = 제목 줄(제목 + 'n곳 판정 · m/d 기준' 한 줄, 스크롤과 함께 올라감) + 판정 필터 + 검색창(둘은 위에 고정 — brlStick)
   BR_DAY=kstToday();
   const M=chkModel(), cnt=lv=>M.main.filter(r=>r.lv===lv).length, gd=String(DATA.generated_at||'').slice(0,10);
-  paint('brHead',()=>`<div class="hd-row"><div class="hd-tt"><h1>브랜드 점검표</h1><span class="hd-sub">${M.main.length}곳 판정${gd?` · ${mdTxt(gd)} 기준`:''}</span></div>
+  const hd=document.getElementById('brHead'); let top=document.getElementById('brHdTop');
+  if(hd&&!top){ hd.insertAdjacentHTML('afterbegin','<div id="brHdTop" class="brl-top"></div>'); top=document.getElementById('brHdTop'); }   // 그리는 칸 — 검색창은 다시 그리지 않음(입력·자판 그대로)
+  const si=document.getElementById('brSearch'); if(hd&&si&&si.parentElement!==hd) hd.append(si);   // 검색창을 머리 안으로(판정 필터와 함께 고정 · 입력 처리는 그대로 붙어 감)
+  paint(top?'brHdTop':'brHead',()=>`<div class="hd-row brl-t"><div class="hd-tt brl-tt"><h1>브랜드 점검표</h1><span class="hd-sub">${M.main.length}곳 판정${gd?` · ${mdTxt(gd)} 기준`:''}</span></div>
     <button type="button" class="icbtn" id="brInfoBtn" aria-label="판정 기준 보기" aria-expanded="${BR_INFO}" aria-controls="brInfo" onclick="brInfo()">${ic('info',22)}</button></div>
     <div class="seg4" role="group" aria-label="판정으로 거르기">${BR_F.map(([f,l,lv])=>`<button type="button" data-filter="${f}" aria-pressed="${!brNorm(BR_Q)&&BR_FILTER===f}" onclick="brFilter('${f}')">${l} <span class="tn">${lv==null?M.main.length:cnt(lv)}</span></button>`).join('')}</div>`,'브랜드 점검표 머리');
   paint('brandBody',brandBodyHtml,'브랜드 점검표');
+  phSoon();
 }
 function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머리의 단추는 그대로 두고 눌림 표시만). 스크롤은 부르는 쪽에서
   BR_FILTER=f;
@@ -4519,9 +4557,23 @@ function brInfo(){   // (i) 판정 기준 — 펼침만 바꿈(다시 그리지 
   if(p) p.hidden=!BR_INFO; if(b) b.setAttribute('aria-expanded',BR_INFO?'true':'false');
   if(BR_INFO&&p&&hd){ const d=p.getBoundingClientRect().top-hd.getBoundingClientRect().bottom-(parseFloat(getComputedStyle(hd).marginBottom)||0); if(d<0) scrollBox().scrollBy(0,d); }
 }
+/* v33.28 A안 다듬기 — 판정 묶음(지금 검토 → 주의 → 관망)마다 카드 하나: 고정 묶음 머리(배지 + n곳 + 칸 이름 수요·재고·발언·환율 한 번) + 두 줄 행
+   (이름 + 점수 4개 / 이유 한 줄 + 자료 꼬리표). 환율이 모든 판정 브랜드에 같은 방향이면(fxCommon) 검색창 아래 한 줄로 · 행의 환율 점수 회색 · 이유에서 환율 꼬리 뺌 */
+const BRL_ORD=[2,0,1];
+const BRL_COLS=['수요','재고','발언','환율'];
+function brlGroup(lv,rs){
+  return `<section class="br-list brl-grp" aria-label="${CHK_LV[lv].t}"><div class="brl-gh" role="heading" aria-level="2"><span class="brl-gl">${vbadge(lv)}<span class="a-gn">${rs.length}곳</span></span>`
+    +`<span class="brl-cols" aria-hidden="true">${BRL_COLS.map(k=>`<i>${k}</i>`).join('')}</span></div>${rs.map(brRowHtml).join('')}</section>`;
+}
+function brlCommon(M){   // 환율 공통 한 줄 — 판정 브랜드(환율 자료 있는 곳)의 환율 점수가 모두 같은 부호일 때만
+  const C=fxCommon(M); if(!C) return '';
+  const g=C.dir>0?'+':'−', rg=C.lo===C.hi?`${g}${C.lo}`:`${g}${C.lo}~${g}${C.hi}`;
+  const bs=[...new Set(M.main.filter(r=>r.fx&&!r.fx.na).map(r=>r.fx.basis==='avg'?'1년 평균':'1년 전'))];
+  return `<p class="brl-common">${ic('fx',16)}<span>환율 <b class="sc-g">${rg}</b>는 ${C.n<M.main.length?`환율 자료 있는 ${C.n}곳`:'전 브랜드'} 공통 — 모든 원산지 통화가 ${bs.length===1?bs[0]:'1년 평균·1년 전'}보다 ${C.dir>0?'쌈':'비쌈'}</span></p>`;
+}
 function brandBodyHtml(){
   const M=chkModel();
-  const lvOf={go:2,wait:1,warn:0}, rows=M.main.filter(r=>BR_FILTER==='all'||r.lv===lvOf[BR_FILTER]), medT=M.med!=null?pctU(M.med):'―', medN=chkMedN();
+  const lvOf={go:2,wait:1,warn:0}, medT=M.med!=null?pctU(M.med):'―', medN=chkMedN();
   // 판정 기준 패널은 자료가 없어도 그림 — 머리의 (i) 단추가 늘 펼칠 것이 있게
   let h=`<section id="brInfo" class="br-info" aria-label="판정 기준"${BR_INFO?'':' hidden'}><p class="bi-t">판정 = 국내 수요 + 매입 조건</p>
     <p><b>국내 수요</b> 네이버 검색 전년 대비가 감시 브랜드 중앙값(${M.med!=null?`${medT}, 검색량 충분한 ${medN}곳 기준`:'자료 수집 전'})보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)</p>
@@ -4531,30 +4583,36 @@ function brandBodyHtml(){
     <p class="bi-s">본사 재고는 브랜드가 아니라 본사 전체 기준 · 본사 발언 신호는 매주 공시 추출 때 Claude가 분류 · 본사 재고·발언 자료가 둘 다 없으면 판정하지 않음 · 다음 세일·뉴스는 참고</p></section>`;
   if(!M.main.length&&!M.rest.length) return h+`<p class="br-empty">네이버 검색 자료 수집 전 — 다음 갱신 후 표시</p>`;
   const q=brNorm(BR_Q);
-  if(q){   // v33.15 검색 중 — 판정 필터와 상관없이 전체에서, 판정 안 함 결과는 펼쳐서
+  if(q){   // v33.15 검색 중 — 판정 필터와 상관없이 전체에서, 판정 안 함 결과는 펼쳐서 · v33.28 판정 결과도 판정 묶음으로
     const by=(a,c)=>brRank(a,q)-brRank(c,q), hm=M.main.filter(r=>brHit(r,q)).sort(by), hr=M.rest.filter(r=>brHit(r,q)).sort(by), n=hm.length+hr.length;   // 맞는 정도 순(같으면 원래 순서)
     h+=`<p class="br-fnote">‘${esc(BR_Q.trim())}’ ${n?n+'곳':'없음'} · 판정 전체에서</p>`;
     if(!n) return h+`<p class="br-empty">맞는 브랜드가 없습니다 — 영문·본사 이름으로도 찾아 보세요</p>`;
-    if(hm.length) h+=`<section class="br-list" aria-label="검색 결과 — 판정">${hm.map(brRowHtml).join('')}</section>`;
+    if(hm.length) h+=brlCommon(M)+BRL_ORD.map(lv=>{ const rs=hm.filter(r=>r.lv===lv); return rs.length?brlGroup(lv,rs):''; }).join('');
     if(hr.length) h+=brRestHtml({...M,rest:hr},true);
     return h;
   }
+  if(M.main.length) h+=brlCommon(M);
   if(BR_NOTE[BR_FILTER]) h+=`<p class="br-fnote">${BR_NOTE[BR_FILTER]}</p>`;
   if(!M.main.length) h+=`<p class="br-empty">판정할 브랜드 없음 — 본사 재고·발언 자료 수집 전${BR_FILTER==='all'&&M.rest.length?` · 아래 판정 안 함 ${M.rest.length}곳은 검색·환율만`:''}</p>`;
-  else h+=rows.length?`<section class="br-list" aria-label="판정 목록">${rows.map(brRowHtml).join('')}</section>`:`<p class="br-empty">이 판정에 해당하는 브랜드가 없습니다</p>`;
+  else { const lvs=BR_FILTER==='all'?BRL_ORD:[lvOf[BR_FILTER]], g=lvs.map(lv=>{ const rs=M.main.filter(r=>r.lv===lv); return rs.length?brlGroup(lv,rs):''; }).join('');
+    h+=g||`<p class="br-empty">이 판정에 해당하는 브랜드가 없습니다</p>`; }
   if(BR_FILTER==='all'&&M.rest.length) h+=brRestHtml(M);
   // 맺음: 점검표 중앙값(검색량 충분한 N곳)과 시장 › 국내 네이버 카드 중앙값(전체)이 다른 이유를 밝힘 · 같은 본사를 쓰는 브랜드 묶음은 자동
   const grp={}; nvAll().filter(b=>b.group==='global').forEach(b=>{ const r=M.main.find(o=>o.b===b); if(r&&r.x) (grp[r.x.ticker]=grp[r.x.ticker]||{hq:chkHq(r),bs:[]}).bs.push(b.name); });
   const same=Object.values(grp).filter(g=>g.bs.length>1).map(g=>`${g.bs.join('·')} = ${g.hq}`);
-  h+=`<p class="br-foot">검색 전년 대비 중앙값 ${medT}(${medN}곳)</p>`+why(`검색 = 네이버 전년 대비, 감시 브랜드 중 검색량 충분한 ${medN}곳의 중앙값과 비교 · 본사 재고는 본사 전체 기준${same.length?`(${esc(same.join(', '))})`:''}`);   // v33.25 설명 접음
+  h+=`<p class="br-foot">검색 전년 대비 중앙값 ${medT}(${medN}곳)</p>`+why(`검색 = 네이버 전년 대비, 감시 브랜드 중 검색량 충분한 ${medN}곳의 중앙값과 비교 · 본사 재고는 본사 전체 기준${same.length?`(${esc(same.join(', '))})`:''} · 본사·원산지 통화는 브랜드 상세에 · 같은 본사에 이유가 같은 브랜드가 이어지면 아래 줄은 '위와 같음'`);   // v33.25 설명 접음
   h+=`<button type="button" class="br-link" data-go="mk:map">지역별로 보기 › 소싱 지도</button>`;
   return h;
 }
-function brRowHtml(r){   // 압축 행: 이름·본사·통화·배지 / 한 줄 이유 / 점수 4칸 — 누르면 브랜드 상세(이름은 data 속성: 따옴표 안전)
-  return `<button type="button" class="br-row" data-brand="${esc(r.b.name)}"><span class="br-m">
-    <span class="br-l1"><span class="br-nm"><span class="br-name">${esc(r.b.name)}</span><span class="br-hq">본사 ${esc(chkHq(r))} · ${esc(chkCurKo(r))}</span>${chgTag(r.b.name)}${staleA(r.x&&r.x.stale_since)}${pendA(r.inv&&r.inv.pend)}${oldInvA(r.inv)}</span>${vbadge(r.lv)}</span>
-    <span class="br-why">${nb(esc(chkWhy(r).short))}</span>
-    <span class="br-cells">${chkCells(r).map(c=>`<span class="br-c">${c.k}<b class="sc-${c.tone}">${c.v}</b></span>`).join('')}</span></span>${ic('right',20,'s2 chev')}</button>`;
+function brRowHtml(r,i,a){   // v33.28 두 줄 행: 이름(+ 달라진 판정) + 점수 4개(숫자만 — 칸 이름은 묶음 머리) / 이유 한 줄 + 자료 꼬리표 — 누르면 브랜드 상세(이름은 data 속성: 따옴표 안전)
+  // a·i = 같은 묶음 안 행들(map) — 바로 위 행과 본사·이유가 같으면 '위와 같음 · 본사 X'(꼬리표도 같은 본사 것이라 뺌)
+  const M=chkModel(), C=fxCommon(M), hq=chkHq(r), w=whyShort(r,M), p=a&&i>0?a[i-1]:null;
+  const same=!!(p&&hq&&chkHq(p)===hq&&whyShort(p,M)===w);
+  const cells=chkCells(r).map((c,j)=>`<b class="sc-${c.tone}${j===3&&C&&c.tone!=='na'?' sc-g':''}"><span class="sr">${c.k} </span>${c.v}</b>`).join('');
+  const tags=same?'':staleDs(r.x&&r.x.stale_since)
+    +(r.inv&&r.inv.pend?ds('새 실적 대기',`${r.inv.pend.src} 공시 ${r.inv.pend.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'')+oldDs(r.inv);
+  return `<button type="button" class="br-row brl-row" data-brand="${esc(r.b.name)}"><span class="brl-l1"><span class="brl-nm"><span class="br-name">${esc(r.b.name)}</span>${chgTag(r.b.name)}</span><span class="brl-sc">${cells}</span></span>`
+    +`<span class="brl-l2"><span class="brl-why${same?' same':''}">${same?`위와 같음 · 본사 ${esc(hq)}`:nb(esc(w))}</span>${tags}</span></button>`;
 }
 function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 없음) — 접힘, 검색 강한 순(rest 정렬 그대로) · srch = 검색 결과(펼침, 접힘 기억 안 바꿈)
   const k=M.rest.filter(r=>r.dem.pt>0).length, byCur={};
@@ -5031,11 +5089,22 @@ function scrollSet(y,lazy){
 let PH_RAF=0;
 function phSync(){
   if(PH_RAF){ cancelAnimationFrame(PH_RAF); PH_RAF=0; } const c=scrollBox(); if(!c) return; let h=0;
-  document.querySelectorAll('.pane.on .phead,.pane.on .mk-chips').forEach(e=>{ h=Math.max(h,e.offsetHeight); });
-  const v=h?(h+8)+'px':''; if(c.style.scrollPaddingTop!==v) c.style.scrollPaddingTop=v;
+  const bo=brlStick();   // v33.28 브랜드 점검표 머리는 제목 줄이 올라간 뒤 남는 높이(판정 필터 + 검색창)로 셈
+  document.querySelectorAll('.pane.on .phead,.pane.on .mk-chips').forEach(e=>{ h=Math.max(h,e.offsetHeight-(e.id==='brHead'?bo:0)); });
+  const gh=document.querySelector('.pane.on .brl-gh');   // 고정 묶음 머리 밑에도 숨지 않게(점검표 목록일 때만 — 상세면 목록이 숨어 높이 0)
+  const v=h?(h+8+(gh?gh.offsetHeight:0))+'px':''; if(c.style.scrollPaddingTop!==v) c.style.scrollPaddingTop=v;
   c.style.setProperty('--ch',c.clientHeight+'px'); c.style.setProperty('--phh',h+'px');   // v33.19 화면 높이·고정 머리 높이 — 해외 정가 표 상자 높이(머리 줄 고정)
 }
 function phSoon(){ if(!PH_RAF) PH_RAF=requestAnimationFrame(phSync); }
+/* v33.28 브랜드 점검표 머리 — 제목 줄은 스크롤과 함께 올라가고 판정 필터·검색창만 위에 남음(머리 top = −제목 줄 높이). 묶음 머리(.brl-gh)는 그 아래(--brl-hh)에 고정.
+   보일 때만 잼(목록이 숨어 있으면 전에 잰 값 그대로) · 돌려주는 값 = 올라가 숨는 높이(숨어 있으면 0) */
+function brlStick(){
+  const hd=document.getElementById('brHead'), t=hd&&hd.querySelector('.brl-t'); if(!t||!hd.offsetHeight) return 0;
+  const off=Math.max(0,Math.round(t.getBoundingClientRect().bottom-hd.getBoundingClientRect().top));   // 제목 줄 아래 끝까지(남는 머리 위 여백 = 제목 줄과 판정 필터 사이 간격)
+  const tp=off?(-off)+'px':''; if(hd.style.top!==tp) hd.style.top=tp;
+  const p=document.getElementById('p-brand'), v=(hd.offsetHeight-off)+'px'; if(p&&p.style.getPropertyValue('--brl-hh')!==v) p.style.setProperty('--brl-hh',v);
+  return off;
+}
 try{ const ro=new ResizeObserver(phSoon); ['tdHead','brHead'].forEach(id=>{ const e=document.getElementById(id); if(e) ro.observe(e); }); }catch(e){}
 window.addEventListener('resize',phSoon);
 function renderBrand(st){
