@@ -304,14 +304,17 @@ TEMPLATE = r"""<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>스포츠 산업 모니터</title>
-<meta name="theme-color" content="#ffffff" id="themeColor">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
 /* v33 A안 토큰 — 흰 종이 · 검정 잉크 · 파랑 하나(#0043FF, v21 CI 블루). 옛 이름(--pos·--neg·--up·--down·--barbg 등)은 새 값을 가리켜
-   옛 화면이 그대로 따라옴. 다크 = [data-theme="dark"](더보기 '화면 테마'). 글자는 13px 바닥(옛 6단계 2xs~sm도 13px) */
+   옛 화면이 그대로 따라옴. 다크 = [data-theme="dark"](더보기 '화면 테마' — 자동이면 휴대폰 설정). 글자는 13px 바닥(옛 6단계 2xs~sm도 13px)
+   v33.28 A안 다듬기: 글자 5단계 --fs1 13(본문·보조) · --fs2 15(줄 제목·강조 본문) · --fs3 17(이름·카드 제목) · --fs4 22(화면 제목·큰 값) · --fs5 28(가장 큰 숫자)
+   — 옛 이름(--fs-lg·--fs-title·--fs-hero 등)은 이 단계를 가리킴 · 카드 모서리 --r 14 · 줄 구분선 --line2 한 단계 진하게 · --warn-bd = 다크 주황 테두리(밝게는 없음) */
 :root{color-scheme:light;
- --bg:#ffffff;--card:#ffffff;--fill:#f3f4f6;--line:#e5e7eb;--line2:#f0f1f3;
+ --bg:#ffffff;--card:#ffffff;--fill:#f3f4f6;--line:#e5e7eb;--line2:#e5e7eb;
  --tx:#111111;--tx2:#374151;--sub:#4b5563;--muted:#6b7280;
  --accent:#0043FF;--accent-fill:#0043FF;--on-accent:#ffffff;--accent-weak:#eef3ff;
  --bad:#9a3412;--warn-bg:#f6ad72;--warn-fg:#5a1f08;--hold-bd:#6b7280;--hold-fg:#374151;
@@ -320,17 +323,20 @@ TEMPLATE = r"""<!DOCTYPE html>
  --lv2-bg:#0043FF;--lv2-fg:#ffffff;--lv1-bg:#becfff;--lv1-fg:#0b1a4a;--lv0-bg:#e9edf5;--lv0-fg:#374151;
  --lv2-map:#0043FF;--lv1-map:#90adff;--lv0-map:#c3cfe9;--lv2-ring:#0043FF;--lv1-ring:#799dff;--lv0-ring:#b9c4de;
  --map-sea:#f9fbfe;--map-land:#e8ebf0;--map-kr:#111111;
- --fs-2xs:13px;--fs-xs:13px;--fs-sm:13px;--fs-base:13px;--fs-lg:15px;--fs-xl:17px;
- --fs-name:17px;--fs-title:20px;--fs-page:22px;--fs-dhead:26px;--fs-tile:28px;--fs-hero:30px}
+ --fs1:13px;--fs2:15px;--fs3:17px;--fs4:22px;--fs5:28px;--r:14px;--warn-bd:transparent;
+ --fs-2xs:var(--fs1);--fs-xs:var(--fs1);--fs-sm:var(--fs1);--fs-base:var(--fs1);--fs-lg:var(--fs2);--fs-xl:var(--fs3);
+ --fs-name:var(--fs3);--fs-title:var(--fs3);--fs-page:var(--fs4);--fs-dhead:var(--fs4);--fs-tile:var(--fs4);--fs-hero:var(--fs5)}
 [data-theme="dark"]{color-scheme:dark;
- --bg:#0f1115;--card:#16191f;--fill:#1f232b;--line:#2b313b;--line2:#232831;
+ --bg:#0f1115;--card:#16191f;--fill:#1f232b;--line:#2b313b;--line2:#2b313b;
  --tx:#f3f4f6;--tx2:#d1d5db;--sub:#9ca3af;--muted:#9ca3af;
- --accent:#7aa2ff;--accent-fill:#3b6cf0;--accent-weak:#1b2440;
- --bad:#fb923c;--hold-bd:#9ca3af;--hold-fg:#e5e7eb;
+ --accent:#7aa2ff;--accent-fill:#4f7dff;--accent-weak:#1b2440;
+ --bad:#fb923c;--warn-bg:#3a2312;--warn-fg:#fdba74;--warn-bd:#c2671f;--hold-bd:#9ca3af;--hold-fg:#e5e7eb;
  --accent-prev:#3a4a78;--chart-prev:#6b7280;--s-shoe:#fb923c;--s-apparel:#9ca3af;
  --lv2-bg:#3b6cf0;--lv1-bg:#2c437f;--lv1-fg:#e5e7eb;--lv0-bg:#232831;--lv0-fg:#9ca3af;
  --lv2-map:#3b6cf0;--lv1-map:#3456a8;--lv0-map:#394254;--lv2-ring:#7aa2ff;--lv1-ring:#4b64a8;--lv0-ring:#3a414d;
  --map-sea:#121620;--map-land:#21252d;--map-kr:#f3f4f6}
+/* v33.28 스크립트가 data-theme을 붙이기 전(문서 끝 스크립트) 빈 틀도 휴대폰 설정을 따름 — 스크립트는 늘 light·dark 중 하나를 붙임 */
+@media(prefers-color-scheme:dark){html:not([data-theme]){color-scheme:dark;--bg:#0f1115;--card:#16191f;--fill:#1f232b;--line:#2b313b;--tx:#f3f4f6;--tx2:#d1d5db;--sub:#9ca3af}}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:var(--bg);color:var(--tx);font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:var(--fs-base);line-height:1.45;letter-spacing:-.01em;overflow:hidden}
@@ -387,12 +393,14 @@ td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
 .lgfb-lg{width:28px;height:28px;border-radius:6px;font-size:var(--fs-base)}
 .logo-lg{width:28px;height:28px;border-radius:6px;vertical-align:-8px;margin-right:8px;background:#fff;border:1px solid var(--line);object-fit:contain}
 /* 카드 */
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
-.card h3{font-size:var(--fs-base);color:var(--sub);margin-bottom:10px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card h3{font-size:var(--fs2);color:var(--tx);margin-bottom:10px;font-weight:700;line-height:1.4}   /* v33.28 카드 제목 = 15px 잉크(13px 회색 → 한 단계 위) */
+.card h3 .na{font-size:var(--fs1);color:var(--sub);font-weight:400}
 .det-head{font-size:var(--fs-xl);font-weight:700;margin-bottom:12px}
 .det-head .tk{font-size:var(--fs-sm);color:var(--sub);font-weight:400}
-.tag{display:inline-block;font-size:var(--fs-2xs);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:1px;font-weight:400}
-.tag2{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);border:1px solid var(--sub);border-radius:6px;padding:0 5px;margin-left:4px;font-weight:400}
+/* v33.28 표시용 태그(.tag·.tag2·.ntag·.std-b·.mn-rg·.sl-k·.nv-low) = 테두리 없는 회색 — 파랑·테두리는 누르는 것에만 */
+.tag{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px;font-weight:400}
+.tag2{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:400}
 /* 카드 머리 오른쪽 '… ›' 이동 단추 — 글자는 작게, 누르는 곳은 44px(줄 높이는 그대로) */
 button.go{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;margin:-14px 0 -14px 2px;padding:0 4px;color:var(--accent);font-size:var(--fs-sm);font-weight:600;vertical-align:middle;white-space:nowrap}
 /* 바 */
@@ -440,7 +448,7 @@ button.go{display:inline-flex;align-items:center;justify-content:center;min-widt
 .src-seg{grid-area:seg}.src-mapbox{grid-area:map}.src-regs{grid-area:regs}.src-btns{grid-area:btns}
 .seg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
 .seg2 button{min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--tx);font-size:var(--fs-sm);font-weight:600}
-.seg2 button.on{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+.seg2 button.on{background:var(--tx);border-color:var(--tx);color:var(--bg);font-weight:700}   /* v33.28 고른 것 = 잉크 채움(.chip.on과 같음) */
 .src-desc{font-size:var(--fs-xs);color:var(--sub);margin-top:6px;line-height:1.5}
 .src-map{position:relative}
 .src-svg{width:100%;height:auto;display:block;border-radius:10px;cursor:pointer}
@@ -545,9 +553,9 @@ table.nowrap th,table.nowrap td{white-space:nowrap;padding-left:3px;padding-righ
 .mn-b summary{display:inline-flex;align-items:center;min-height:44px;min-width:44px;font-size:var(--fs-2xs);color:var(--accent);cursor:pointer}
 .mn-b q{display:block;font-size:var(--fs-2xs);color:var(--sub);margin:0 0 6px;overflow-wrap:anywhere}
 .mn-s{display:inline-block;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 5px;margin-left:4px;vertical-align:1px;white-space:nowrap}
-.mn-more{color:var(--accent);border:1px solid var(--accent)}.mn-less{color:var(--bad);border:1px solid var(--bad)}.mn-rg{color:var(--sub);border:1px solid var(--sub)}
-/* 이전 값 · 새 실적 반영 대기 */
-.wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 4px;margin-left:4px;white-space:nowrap;line-height:1.45;vertical-align:1px;color:var(--bad);border:1px solid var(--bad)}   /* 새 화면 꼬리표(.tg)와 같은 색·굵기 */
+.mn-more{color:var(--accent);border:1px solid var(--accent)}.mn-less{color:var(--bad);border:1px solid var(--bad)}.mn-rg{color:var(--sub);background:var(--fill);padding:1px 6px}
+/* 이전 값 · 새 실적 반영 대기 — v33.28 회색 글(테두리 없음) · 앞 표시는 아래 'A안 다듬기 바탕'(.stl = 주황 점 · .wait-b = 시계) */
+.wait-b,.stl{display:inline-block;font-size:var(--fs-2xs);font-weight:400;margin-left:4px;white-space:nowrap;line-height:1.45;color:var(--sub)}   /* 새 화면 꼬리표(.tg)와 같은 색·굵기 */
 /* 시장 › 기업 */
 .search{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px;margin-bottom:8px;background:var(--card);color:var(--tx);-webkit-appearance:none;appearance:none}   /* 16px = 휴대폰에서 눌러도 확대되지 않음 */
 .search::placeholder{color:var(--sub);opacity:1}   /* 안내 글 대비 4.5 이상(기본 회색은 다크에서 3.8) */
@@ -570,7 +578,7 @@ tr.co td:first-child .lg{vertical-align:-4px}
 tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .co-more{display:flex;align-items:center;min-height:44px;margin:2px 0 -6px;color:var(--accent);font-weight:600}
 /* 시장 › 캘린더 */
-.cal{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px}
+.cal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 6px}
 .cal h3{font-size:var(--fs-base);color:var(--sub);font-weight:600;margin:0 4px 6px}
 .cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px 0}
 .cgrid .wd{font-size:var(--fs-2xs);color:var(--sub);text-align:center;padding:2px 0}
@@ -592,14 +600,15 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .sl-row .t1{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-base)}
 .sl-row .t1>span:first-child{min-width:0}.sl-row .t1>span:last-child{flex:none;white-space:nowrap}
 .sl-row .t2{font-size:var(--fs-xs);color:var(--sub);margin-top:2px}
-.sl-k{font-size:var(--fs-2xs);border:1px solid var(--line);border-radius:6px;padding:0 4px;margin-left:4px;color:var(--sub);font-weight:400;white-space:nowrap}
+.sl-k{font-size:var(--fs-2xs);background:var(--fill);border-radius:6px;padding:1px 6px;margin-left:4px;color:var(--sub);font-weight:400;white-space:nowrap}
 .sl-live{color:var(--accent);font-weight:700}
 .sv-tbl td:first-child{white-space:normal;min-width:96px;max-width:132px;word-break:keep-all;overflow-wrap:break-word}   /* 회사 이름은 낱말 단위('하이라이트브랜즈'의 '즈'가 혼자 줄에 가지 않게 — 표는 원래 가로 스크롤) */
 .sv-tbl td:first-child .pg-rk{display:block;margin-left:0}
 /* 알약 칩(뉴스·기업 그룹·지표) — 한 줄 가로 넘김 */
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:var(--fs-sm);white-space:nowrap}
-.chip.on{background:var(--accent-fill);border-color:var(--accent-fill);color:var(--on-accent)}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx2);font-size:var(--fs-sm);white-space:nowrap}
+/* v33.28 고른 것 하나의 모양 — 필터 칩·분절 단추(.chip.on · .seg2 .on · .seg3·.seg4 눌림) = 잉크 채움(다크 = 흰 채움). 파랑 채움은 '지금 검토'·실행 단추만 */
+.chip.on{background:var(--tx);border-color:var(--tx);color:var(--bg);font-weight:700}
 .chip.sep{border:0;background:transparent;padding:0 2px;cursor:default}
 #newsChips,#coChips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px;margin:-4px -4px 10px;scroll-padding-inline:8px}   /* 가로 스크롤 상자 — 안쪽 4px(바깥은 같은 만큼 당김)이라 키보드 초점 테두리(칩 바깥 4px)가 위·아래·맨 앞에서 잘리지 않음 · Tab으로 간 칩은 상자 안으로 스크롤(chipRowFocus) */
 #newsChips::-webkit-scrollbar,#coChips::-webkit-scrollbar{display:none}
@@ -616,14 +625,14 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .nitem .nsum a{color:var(--tx);text-decoration:none}
 .nitem .nsum a::after{content:'';position:absolute;inset:0}
 .nitem .nmeta{font-size:var(--fs-xs);color:var(--sub);margin-top:3px}
-.ntag{display:inline-block;font-size:var(--fs-2xs);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0 5px;margin-right:5px}
+.ntag{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-right:5px}
 /* v33.1 지난 뉴스 검색 — 찾은 낱말 강조 · 요약에 없는 낱말로 찾았으면 원문 제목 한 줄 · 결과 머리 줄 */
 #newsBody mark{background:var(--accent-weak);color:inherit;font-weight:600;border-radius:3px;padding:0 1px}
 .nitem .ntitle{font-size:var(--fs-xs);color:var(--sub);margin-top:3px;word-break:keep-all;overflow-wrap:break-word}
 .ns-st{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 6px}
 a.nmore{text-decoration:none}
 /* 시장 › 국내: KOSIS·추이 카드 */
-.krcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer}
+.krcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;cursor:pointer}
 .krhead{display:flex;align-items:baseline;gap:8px}
 .krname{font-size:var(--fs-base);font-weight:600}
 .krval{margin-left:auto;font-size:var(--fs-lg);font-weight:700;white-space:nowrap}
@@ -646,7 +655,7 @@ a.nmore{text-decoration:none}
 .nv-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
 .nv-nm{display:flex;align-items:center;gap:6px;min-width:0;font-weight:700;font-size:var(--fs-base)}
 .nv-nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nv-low{font-style:normal;font-size:var(--fs-2xs);color:var(--sub);border:1px solid var(--line);border-radius:6px;padding:0 5px;font-weight:400;flex:none}
+.nv-low{font-style:normal;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;font-weight:400;flex:none}
 .nv-pill{justify-self:end;align-self:center;border-radius:999px;padding:1px 9px;font-size:var(--fs-sm);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
 .nv-pill.up{background:var(--accent-fill);color:var(--on-accent)}.nv-pill.down{background:var(--warn-bg);color:var(--warn-fg)}.nv-pill.mid{background:var(--fill);color:var(--tx)}
 .nv-bar{display:flex;align-items:center;gap:8px;min-width:0}
@@ -686,8 +695,7 @@ a.nmore{text-decoration:none}
 .fi-nm{display:inline-block;vertical-align:top;max-width:100px;white-space:normal;text-wrap:balance}   /* 비교 표 법인명: 칸보다 길면 말줄임 대신 두 줄(휴대폰은 title이 안 보임) */
 @media(max-width:389px){.fi-nm{max-width:84px}}@media(max-width:372px){.fi-nm{max-width:68px}}
 .fi-tbl tr.me td{background:var(--barbg)}
-.std-b{display:inline-block;font-size:var(--fs-2xs);line-height:1.45;border-radius:4px;padding:0 4px;margin-left:4px;border:1px solid var(--line);color:var(--sub);font-weight:400;vertical-align:middle}
-.std-b.ifrs{color:var(--accent);border-color:var(--accent)}
+.std-b{display:inline-block;font-size:var(--fs-2xs);line-height:1.45;border-radius:6px;padding:1px 6px;margin-left:4px;background:var(--fill);color:var(--sub);font-weight:400;vertical-align:middle}
 .fi-tbl td:first-child .fi-nsub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin:1px 0 0 24px;line-height:1.4}
 .fi-nsub .std-b{margin-left:0}.fi-nsub .std-b:not(:first-child){margin-left:4px}
 .fi-warn{font-size:var(--fs-xs);color:var(--sub);background:var(--barbg);border-radius:8px;padding:8px 10px;margin:6px 0 8px;line-height:1.5}
@@ -722,7 +730,7 @@ a.nmore{text-decoration:none}
 .mbadge.up,.mbadge.late{background:var(--warn-bg);color:var(--warn-fg)}
 .fxgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:10px}
 @media(min-width:760px){.fxgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.fxc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--card);min-width:0}
+.fxc{border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--card);min-width:0}
 .fxc.dn{border-color:var(--accent)}.fxc.up{border-color:var(--warn-bg)}
 .fxtop{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px;font-size:var(--fs-sm)}
 .fpill{margin-left:auto;font-size:var(--fs-2xs);font-weight:700;border-radius:999px;padding:0 8px;line-height:1.7;white-space:nowrap}
@@ -782,7 +790,6 @@ a.nmore{text-decoration:none}
 .lg-share{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center;background:var(--barbg);border-radius:10px;padding:8px 10px;margin-bottom:8px}
 .lg-share>div:first-child{display:flex;flex-direction:column;min-width:0}
 .lg-share>div:first-child span{font-size:var(--fs-2xs);color:var(--sub)}
-.lg-share>div:first-child .stl{color:var(--bad)}   /* v33.6 위 줄(회색)보다 우선 — '출처 값 확인 필요' 꼬리표는 주황 */
 .lg-share b{font-size:var(--fs-xl);line-height:1.2}
 .lg-shx{font-size:var(--fs-xs);min-width:0;word-break:keep-all;overflow-wrap:anywhere}
 .lg-bars{display:flex;align-items:flex-end;gap:4px;margin:8px 0 2px}
@@ -871,12 +878,12 @@ a.nmore{text-decoration:none}
 .vb.wait{background:var(--card);color:var(--hold-fg);border:1.5px solid var(--hold-bd)}
 .vb.none{background:var(--card);color:var(--sub);border:1.5px dashed var(--hold-bd)}
 .vb.lg{height:30px;padding:0 11px 0 8px;font-size:14px;gap:5px}
-.tg{display:inline-block;font-size:13px;font-weight:600;line-height:1.4;border:1px solid var(--bad);color:var(--bad);border-radius:6px;padding:0 5px;white-space:nowrap;vertical-align:1px}
+.tg{display:inline-block;font-size:13px;font-weight:400;line-height:1.4;color:var(--sub);white-space:nowrap}   /* v33.28 회색 글(테두리 없음) — 앞 표시(시계·주황 점)는 'A안 다듬기 바탕' */
 .sc-p{color:var(--accent);font-weight:700}.sc-n{color:var(--bad);font-weight:700}.sc-z{color:var(--tx2);font-weight:600}.sc-na{color:var(--sub);font-weight:400}.sc-tx{color:var(--tx);font-weight:600}
 .t-p{color:var(--accent)}.t-n{color:var(--bad)}
 /* 오늘: 수집 지연 띠 · 결정 카드 4장 · 트렉시 위치 · 맺음 줄 */
 .warnbar{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;margin:0 0 12px;padding:8px 12px;border-radius:12px;background:var(--warn-bg);color:var(--warn-fg);font-size:13px;font-weight:600;line-height:1.45;word-break:keep-all;overflow-wrap:break-word}
-.dc{margin:0 0 12px;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;word-break:keep-all;overflow-wrap:break-word}
+.dc{margin:0 0 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);overflow:hidden;word-break:keep-all;overflow-wrap:break-word}
 .dc.dc1{border:1.5px solid var(--tx)}
 .dc-hh{margin:0;font-size:inherit;font-weight:inherit}
 .dc-hd{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:0 12px 0 16px}
@@ -894,7 +901,7 @@ div.dc-hd{cursor:default}
 .dc-why{font-size:14px;color:var(--tx2);line-height:1.45}
 .dc-hint{font-size:13px;color:var(--sub)}
 .dc-chg{margin:0;padding:0 16px 10px;font-size:13px;color:var(--tx2);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dc-chg b{color:var(--tx);font-weight:600}
-.tg.chg{border-color:var(--hold-bd);color:var(--tx2);font-weight:500}
+.tg.chg{border:1px solid var(--hold-bd);border-radius:6px;padding:0 5px;color:var(--tx2);font-weight:500}   /* 어제와 달라진 판정 = 테두리 꼬리표(자료 상태 아님 — 시계 없음) */
 .dc-more{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 12px 8px 16px;border-top:1px solid var(--line);color:var(--accent)}
 .dc-mt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dc-mt .t{font-size:15px;font-weight:700}.dc-mt .s{font-size:13px;color:var(--sub)}
@@ -924,7 +931,7 @@ div.dc-hd{cursor:default}
 .dc-news:first-child{border-top:0}
 .dc-news .t{font-size:15px;font-weight:600;line-height:1.5}.dc-news .s{font-size:13px;color:var(--sub)}
 .dc-xmore{display:flex;align-items:center;width:100%;min-height:44px;border-top:1px solid var(--line);font-size:13px;color:var(--accent)}
-.dc-peer{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:0 0 12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.dc-peer{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:0 0 12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
 .dc-peer .tt,.bd-hq .tt,.bd-link .tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dc-peer .s,.bd-hq .s,.bd-link .s{font-size:13px;color:var(--sub)}
 .dc-peer .t,.bd-hq .t,.bd-link .t{font-size:15px;font-weight:600}
@@ -935,15 +942,14 @@ div.dc-hd{cursor:default}
 .seg4 button{min-height:44px;padding:0 2px;border-radius:9px;color:var(--tx2);font-size:14px;white-space:nowrap}
 .seg4 button[aria-pressed="true"]{background:var(--tx);color:var(--bg);font-weight:700}
 @media(max-width:359px){.seg4 button{font-size:13px;letter-spacing:-.04em;padding:0}}   /* 아주 좁은 폭: '지금 검토 2'가 알약 안에 */
-/* 다크: 반전 강조(번호 원·고른 필터)가 밝은 칸으로 남지 않게 — 번호 원은 테두리 원, 고른 필터는 파랑 채움 + 흰 글자 */
+/* 다크: 번호 원은 밝은 칸으로 남지 않게 테두리 원 · 고른 필터는 v33.28부터 흰 채움(밝게의 잉크 채움과 같은 규칙 — 파랑 채움은 '지금 검토'만) */
 [data-theme="dark"] .dc-no{background:transparent;color:var(--tx);box-shadow:inset 0 0 0 1.5px var(--tx)}
-[data-theme="dark"] .seg4 button[aria-pressed="true"]{background:var(--accent-fill);color:var(--on-accent)}
 [data-theme="dark"] .src-more{background:var(--fill);color:var(--tx);box-shadow:inset 0 0 0 1.5px var(--sub)}   /* 지도 '+N' — 다크에서 밝은 알약이 되지 않게 */
-.tn{font-variant-numeric:tabular-nums}
+.tn,.num{font-variant-numeric:tabular-nums}   /* 숫자 자릿수 맞춤(표·큰 값) */
 .br-info{display:flex;flex-direction:column;gap:8px;margin:0 0 10px;padding:12px 14px;border-radius:14px;background:var(--fill);font-size:14px;line-height:1.55;word-break:keep-all;overflow-wrap:break-word}
 .br-info p{margin:0}.br-info .bi-t{font-size:15px;font-weight:700}.br-info .bi-s{font-size:13px;color:var(--sub)}
 .br-fnote,.br-foot{margin:0 0 10px;padding:0 2px;font-size:13px;color:var(--sub);line-height:1.5;word-break:keep-all;overflow-wrap:break-word}
-.br-list,.br-rest{margin:0 0 10px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
+.br-list,.br-rest{margin:0 0 10px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
 .br-row{display:flex;align-items:center;gap:8px;width:100%;padding:12px 10px 12px 14px;border-top:1px solid var(--line)}
 .br-row:first-child{border-top:0}
 .br-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
@@ -955,7 +961,7 @@ div.dc-hd{cursor:default}
 .br-cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:2px}
 .br-c{display:flex;align-items:baseline;gap:5px;font-size:13px;color:var(--sub);white-space:nowrap}
 .br-c b{font-size:15px;font-variant-numeric:tabular-nums}
-.br-empty{margin:0 0 10px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--card);font-size:14px;color:var(--sub);line-height:1.5}
+.br-empty{margin:0 0 10px;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);font-size:14px;color:var(--sub);line-height:1.5}
 .br-rest>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:8px 12px 8px 14px;cursor:pointer;list-style:none}
 .br-rest>summary::-webkit-details-marker{display:none}
 .br-rest>summary .tt{display:flex;flex-direction:column;gap:1px;min-width:0}
@@ -979,13 +985,13 @@ div.dc-hd{cursor:default}
 .bd-say{margin:0;font-size:15px;line-height:1.6}
 .bd-chg{margin:0;font-size:13px;color:var(--tx2);line-height:1.5}
 .bd-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
-.bd-tile{display:flex;flex-direction:column;gap:2px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-tile{display:flex;flex-direction:column;gap:2px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r)}
 .bd-tile.acc{border:1.5px solid var(--accent)}.bd-tile.acc .tv{color:var(--accent)}
 .bd-tile.warn{border:1.5px solid var(--warn-bg)}.bd-tile.warn .tv{color:var(--bad)}
 .bd-tile .tl{font-size:13px;color:var(--sub)}
 .bd-tile .tv{font-size:var(--fs-tile);font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
 .bd-tile .tc{font-size:13px;color:var(--tx2);line-height:1.4}
-.bd-ev{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-ev{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r)}
 .bd-ev-hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .bd-ev-l{font-size:14px;font-weight:600;color:var(--tx2)}
 .bd-pt{display:inline-flex;align-items:baseline;gap:4px;flex:none;padding:2px 9px;border-radius:8px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--fill);color:var(--tx2)}
@@ -1008,7 +1014,7 @@ div.dc-hd{cursor:default}
 .bdq-s.more{border-color:var(--accent);color:var(--accent)}.bdq-s.less{border-color:var(--bad);color:var(--bad)}
 .bdq-b summary{display:inline-flex;align-items:center;min-height:44px;min-width:44px;font-size:13px;color:var(--accent);cursor:pointer}
 .bdq-b q{display:block;margin-bottom:8px;font-size:13px;color:var(--sub);line-height:1.5;overflow-wrap:anywhere}
-.bd-next,.bd-nws{border:1px solid var(--line);border-radius:14px;padding:0 14px}
+.bd-next,.bd-nws{border:1px solid var(--line);border-radius:var(--r);padding:0 14px}
 .bd-nx{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:60px;padding:8px 0;border-top:1px solid var(--line)}
 .bd-nx:first-child{border-top:0}
 div.bd-nx{cursor:default}
@@ -1018,9 +1024,9 @@ div.bd-nx{cursor:default}
 .bd-link{display:flex;align-items:center;gap:8px;width:100%;min-height:52px;padding:8px 0;border-top:1px solid var(--line)}
 .bd-link .t{color:var(--accent)}
 .bd-none{margin:0;padding:12px 0;font-size:14px;color:var(--sub)}
-.bd-hq{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}
+.bd-hq{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 12px 8px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
 .bd-pr-sum{margin:0;font-size:15px;line-height:1.5}
-.bd-pr{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+.bd-pr{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r)}
 .bd-pr-hd{display:flex;flex-direction:column;gap:2px}.bd-pr-hd .t{font-size:15px;font-weight:700}.bd-pr-hd .s{font-size:13px;color:var(--sub)}.bd-pr-hd .s b{color:var(--tx);font-weight:600}
 .bd-pr-hd .s b.pos{color:var(--pos)}.bd-pr-hd .s b.neg{color:var(--neg)}
 /* v33.18 상품이 셋 이상인 브랜드는 상품 칸을 접음(첫 상품만 펼침) */
@@ -1068,7 +1074,7 @@ div.bd-nx{cursor:default}
 .pm-tbl tr.pm-hit>th{box-shadow:inset 3px 0 0 var(--accent),inset -1px 0 0 var(--line)}   /* v33.23 목표 마진 이상 상품 줄 */
 .pm-tbl .pm-best{display:block;font-size:13px;font-weight:600;color:var(--tx)}
 /* 더보기 메뉴(머리 '더보기' + 줄 5개 + 화면 테마) */
-.mmenu{margin:0 0 10px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
+.mmenu{margin:0 0 10px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
 .mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:60px;padding:8px 12px 8px 14px;border-top:1px solid var(--line)}
 .mi:first-child{border-top:0}
 .mi .mic{display:inline-flex;justify-content:center;color:var(--tx2)}
@@ -1083,8 +1089,75 @@ div.bd-nx{cursor:default}
 .co-hq{margin:0 0 12px}   /* 국내 법인 상세 '글로벌 본사' 줄(브랜드 상세 본사 줄과 같은 모양 · 44px 이상) */
 /* PC·태블릿: 환율 표 값·차이 글이 벌어지지 않게 · 점수 4칸 폭 상한 */
 @media(min-width:760px){.fx-r{grid-template-columns:76px 72px auto;justify-content:start}.br-cells{max-width:480px}}
+/* ── v33.28 A안 다듬기 바탕 — 여러 화면이 함께 쓰는 규칙(글자 단계·모서리 토큰은 맨 위 :root) ─────────────────────────────
+   화면별 규칙은 맨 아래 표식 묶음(A-TODAY · A-BRAND-LIST · A-BRAND-DETAIL · A-MARKET · A-PRICE · A-LOGI)에 넣고, 다른 화면에 새지 않게
+   그 화면 칸(#p-today·#p-brand·#brandDetail·#p-market·#moreBody 등)이나 화면 전용 클래스로 좁혀 씀. 이 묶음 = 고른 것·자료 상태 꼬리표·점수 회색·
+   가로 넘김 흐림·다크 배지·테마 줄 */
+/* 고른 것 하나의 모양 — 분절 단추(.seg3·.seg4 눌림)도 잉크 채움(다크 = 흰 채움 · --tx/--bg가 뒤바뀜) · .seg3 = 3칸 고르기(화면 테마 등) */
+.seg3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:12px;background:var(--fill)}
+.seg3 button{min-height:44px;padding:0 2px;border-radius:9px;color:var(--tx2);font-size:var(--fs2);white-space:nowrap}
+.seg3 button[aria-pressed="true"],.seg4 button[aria-pressed="true"]{background:var(--tx);color:var(--bg);font-weight:700}
+/* 자료 상태 꼬리표 — 스크립트 ds()(회색 글 + 시계: 오래된 결산·새 실적 대기 같은 '알아 둘 것') · dsBad()(실제 수집 실패 = 회색 글 + 작은 주황 점) */
+.ds{display:inline-flex;align-items:center;gap:3px;font-size:var(--fs1);font-weight:400;color:var(--sub);white-space:nowrap;vertical-align:baseline}
+.ds .ic{width:13px;height:13px;vertical-align:-2px}
+.ds.bad i,.a-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--bad);flex:none;margin-right:2px}
+.a-dot{margin:0 0 1px 6px;vertical-align:middle}   /* 글 없이 점 하나(줄 이름 뒤 — title·aria-label에 사유) */
+/* 옛 꼬리표도 같은 말 — .tg·.wait-b = 시계 · 실제 수집 실패(.stl, 설명에 '실패'·'수집분'이 있는 .tg) = 주황 점 · .tg.chg(달라진 판정)·.tg.nt(정가 변동 등 상태 아님) = 표시 없음 */
+.tg::before,.wait-b::before{content:'';display:inline-block;width:12px;height:12px;margin:0 3px -1px 0;background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6.2'/%3E%3Cpath d='M8 4.8V8l2.3 1.5'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6.2'/%3E%3Cpath d='M8 4.8V8l2.3 1.5'/%3E%3C/svg%3E") center/contain no-repeat}
+.tg[title*="실패"]::before,.tg[title*="수집분"]::before,.stl::before{content:'';display:inline-block;width:7px;height:7px;margin:0 4px 1px 0;border-radius:50%;background:var(--bad);-webkit-mask:none;mask:none;vertical-align:middle}
+.tg.chg::before,.tg.nt::before{display:none}
+.tg.nt{color:var(--tx2)}
+/* 점수 — .sc-g = 모든 판정 브랜드에 같은 방향이라 브랜드를 가르지 못하는 점수(fxCommon — 지금은 환율)를 회색으로 */
+.sc-g,.sc-p.sc-g,.sc-n.sc-g,.sc-z.sc-g{color:var(--sub);font-weight:600}
+.a-gn{font-size:var(--fs2);font-weight:700;color:var(--tx)}   /* 판정 배지 옆 'n곳' */
+/* 가로 넘김 줄 오른쪽 흐림 — <div class="a-fade"><div class="(넘기는 줄)">…</div></div> + 스크립트 aFade(줄) · 끝까지 넘기면(.a-end) 흐림 끔 */
+.a-fade{position:relative}
+.a-fade::after{content:'';position:absolute;top:0;right:calc(-1*var(--gr));bottom:0;width:32px;pointer-events:none;background:linear-gradient(to right,transparent,var(--bg))}
+.a-fade.a-end::after{opacity:0}
+/* 다크 주황 — 배경(--warn-bg)이 어두운 갈색이라 테두리(--warn-bd)로 모양을 지킴 · 판정 배지: 지금 검토(밝은 파랑 채움) ≥ 주의(갈색 바탕 + 주황 글자·테두리) */
+[data-theme="dark"] .vb.warn{box-shadow:inset 0 0 0 1.5px var(--warn-bd)}
+[data-theme="dark"] .mi .mr .wn,[data-theme="dark"] .st-late,[data-theme="dark"] .warnbar,[data-theme="dark"] .mbadge.up,[data-theme="dark"] .mbadge.late,
+[data-theme="dark"] .fpill.up,[data-theme="dark"] .nv-pill.down,[data-theme="dark"] .bd-pt.n{box-shadow:inset 0 0 0 1px var(--warn-bd)}
+[data-theme="dark"] .fxc.up,[data-theme="dark"] .bd-tile.warn{border-color:var(--warn-bd)}
+[data-theme="dark"] .sh-warn{border-left-color:var(--warn-bd)}
+/* 더보기 '화면 테마' 줄 — 자동 · 밝게 · 어둡게(.seg3)가 이름 아래 한 줄 */
+.mi.mi-thm{grid-template-columns:30px minmax(0,1fr);row-gap:8px;cursor:default}
+.mi.mi-thm:active{background:none}
+.mi-thm .seg3{grid-column:2}
 /* '움직임 줄이기' 설정(스크롤은 smoothB) */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+/* ==== A-TODAY ====
+   오늘 화면(#p-today) 전용 규칙 — 이 아래에(다음 표식 전까지만)
+   ==== */
+.a-sep-today1{}
+.a-sep-today2{}
+/* ==== A-BRAND-LIST ====
+   브랜드 점검표(#brandList) 전용 규칙 — 이 아래에(다음 표식 전까지만)
+   ==== */
+.a-sep-brlist1{}
+.a-sep-brlist2{}
+/* ==== A-BRAND-DETAIL ====
+   브랜드 상세(#brandDetail) 전용 규칙 — 이 아래에(다음 표식 전까지만)
+   ==== */
+.a-sep-brdet1{}
+.a-sep-brdet2{}
+/* ==== A-MARKET ====
+   시장(#p-market) 전용 규칙 — 이 아래에(다음 표식 전까지만)
+   ==== */
+.a-sep-market1{}
+.a-sep-market2{}
+/* ==== A-PRICE ====
+   더보기 › 해외 정가 전용 규칙 — 이 아래에(다음 표식 전까지만)
+   ==== */
+.a-sep-price1{}
+.a-sep-price2{}
+/* ==== A-LOGI ====
+   더보기 › 물류 전용 규칙 — 이 아래에(스타일 끝까지)
+   ==== */
+.a-sep-logi1{}
+.a-sep-logi2{}
 </style>
 </head>
 <body>
@@ -1113,6 +1186,8 @@ div.bd-nx{cursor:default}
 <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
 <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l2.5-6 5 12 2.5-6H21"/></symbol>
 <symbol id="i-ship" viewBox="0 0 24 24"><path d="M3 14.5h18l-2.8 5.5H5.8z"/><path d="M6 14.5V10h12v4.5"/><path d="M9.5 10V6.5h5V10"/><path d="M12 6.5V3.5"/></symbol>
+<symbol id="i-clock" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.8V8l2.3 1.5"/></symbol>
+<symbol id="i-sort" viewBox="0 0 16 16"><path d="M5 3v10"/><path d="m2.5 10.5 2.5 2.5 2.5-2.5"/><path d="M11 13V3"/><path d="m8.5 5.5 2.5-2.5 2.5 2.5"/></symbol>
 </defs></svg>
 <div class="app">
 <main class="content" id="content">
@@ -1206,20 +1281,34 @@ div.bd-nx{cursor:default}
 <div class="sheet" id="sheet"></div>
 </div>
 <script>
-/* v33 A안: 테마 — 더보기 '화면 테마' 줄(id="themeBtn", 저장 키 'sim-theme' 그대로). 스크립트 맨 앞(데이터 전)에서 적용 — 스크립트가 문서 끝에 있어
-   그 전에 그려지는 빈 틀은 다크 저장 상태에서도 잠깐 밝게 보일 수 있음(head에는 스크립트를 넣지 않음 — check.yml). 버튼이 없어도(메뉴를 아직 안 그렸거나 다른 화면) 멈추지 않음 */
-let theme='light';
-try{ theme=localStorage.getItem('sim-theme')||'light'; }catch(e){}
-function applyTheme(t){
-  if(t==='dark') document.documentElement.setAttribute('data-theme','dark'); else document.documentElement.removeAttribute('data-theme');
-  const m=document.getElementById('themeColor'); if(m) m.setAttribute('content',t==='dark'?'#0f1115':'#ffffff');   // 휴대폰 상태 표시줄 색
+/* v33 A안: 테마 — 더보기 '화면 테마' 줄(id="themeBtn", 저장 키 'sim-theme' 그대로). 스크립트 맨 앞(데이터 전)에서 적용 — head에는 스크립트를 넣지 않음(check.yml).
+   줄이 없어도(메뉴를 아직 안 그렸거나 다른 화면) 멈추지 않음.
+   v33.28 세 가지 — 자동(저장 키 없음 = 휴대폰 설정 prefers-color-scheme, 설정이 바뀌면 바로) · 밝게 · 어둡게(저장). 옛 저장값(light·dark)은 그대로 고른 것으로.
+   data-theme은 늘 light·dark 중 하나(스크립트 전 빈 틀은 CSS @media가 휴대폰 설정을 따름) · 상태 표시줄 색(theme-color 두 개) = 지금 바탕(--bg) */
+let THEME_PREF='auto', theme='light';   // THEME_PREF = 고른 것(auto·light·dark) · theme = 지금 보이는 것(light·dark)
+try{ const t=localStorage.getItem('sim-theme'); if(t==='light'||t==='dark') THEME_PREF=t; }catch(e){}
+const THEME_MQ=(()=>{ try{ return window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null; }catch(e){ return null; } })();
+const THEME_T={auto:'자동',light:'밝게',dark:'어둡게'};
+const themeDesc=()=>THEME_PREF==='auto'?`휴대폰 설정 따름 · 지금 ${THEME_T[theme]}`:`${THEME_T[THEME_PREF]}로 고정`;
+function applyTheme(){
+  theme=THEME_PREF!=='auto'?THEME_PREF:(THEME_MQ&&THEME_MQ.matches?'dark':'light');
+  const root=document.documentElement; root.setAttribute('data-theme',theme);
+  let bg=''; try{ bg=getComputedStyle(root).getPropertyValue('--bg').trim(); }catch(e){}
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>m.setAttribute('content',bg||(theme==='dark'?'#0f1115':'#ffffff')));   // 휴대폰 상태 표시줄 색 — 두 개(밝게·어둡게 설정용) 모두 지금 바탕으로
   const b=document.getElementById('themeBtn'); if(!b) return;
-  b.setAttribute('aria-pressed',t==='dark'?'true':'false');
-  const v=b.querySelector('.mr'); if(v) v.innerHTML=`<b>${t==='dark'?'어둡게':'밝게'}</b>`;
-  const u=b.querySelector('.mic use'); if(u) u.setAttribute('href',t==='dark'?'#i-moon':'#i-sun');
+  b.querySelectorAll('[data-thm]').forEach(x=>x.setAttribute('aria-pressed',String(x.getAttribute('data-thm')===THEME_PREF)));
+  const d=b.querySelector('.md'); if(d) d.textContent=themeDesc();
+  const u=b.querySelector('.mic use'); if(u) u.setAttribute('href',theme==='dark'?'#i-moon':'#i-sun');
 }
-function toggleTheme(){ theme=theme==='dark'?'light':'dark'; applyTheme(theme); try{ localStorage.setItem('sim-theme',theme); }catch(e){} }
-applyTheme(theme);
+function setTheme(p){   // 자동 = 저장 키를 지움(다음에 열 때도 휴대폰 설정)
+  THEME_PREF=(p==='light'||p==='dark')?p:'auto';
+  try{ if(THEME_PREF==='auto') localStorage.removeItem('sim-theme'); else localStorage.setItem('sim-theme',THEME_PREF); }catch(e){}
+  applyTheme();
+}
+function toggleTheme(){ setTheme(theme==='dark'?'light':'dark'); }   // 옛 이름(밝게↔어둡게)
+if(THEME_MQ){ const f=()=>{ if(THEME_PREF==='auto') applyTheme(); };
+  try{ THEME_MQ.addEventListener('change',f); }catch(e){ try{ THEME_MQ.addListener(f); }catch(_){} } }   // 옛 사파리는 addListener
+applyTheme();
 /* v33 A안: 선 아이콘(스프라이트) · 로컬 날짜 'YYYY-MM-DD'(toISOString은 한국 시간에서 하루 당겨짐) */
 /* v33 글꼴(IBM Plex Sans KR, 구글 글꼴 display=swap — 한글은 굵기마다 조각 94개): 첫 화면을 그린 뒤 글꼴 CSS를 붙이고, 들어오면 지금 보이는 글자에
    필요한 조각만 받아(fonts.load) 굵기·크기 한 쌍씩 숨은 글로 글꼴 자료를 미리 만든 뒤 html.wf로 한 번에 바꿈. 숨은 글 배치로 조각을 받고 한꺼번에
@@ -1794,7 +1883,7 @@ function logoImg(t, large, name){
     src="https://www.google.com/s2/favicons?domain=${d}&sz=64">${fb}</span>`;
 }
 
-/* 테마(applyTheme·toggleTheme)는 스크립트 맨 앞(v33) */
+/* 테마(applyTheme·setTheme·toggleTheme)는 스크립트 맨 앞(v33 · v33.28 자동·밝게·어둡게) */
 
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1912,12 +2001,42 @@ function acqCore(t){   // 인수 회사의 본체 매출 증가율 — 공시 �
 }
 const pendTag=p=>p?`<span class="wait-b" title="${esc(p.src)} 공시 ${esc(p.end)} 분기 발표됨 — 야후 미반영, 값은 이전 분기">새 실적 반영 대기</span>`:'';
 // v33 A안 새 화면(오늘·브랜드·브랜드 상세)용 꼬리표(13px) — 이전 값 · 새 실적 반영 대기 · 오래된 자료
-const tagA=(t,title)=>`<span class="tg"${title?` title="${esc(title)}"`:''}>${esc(t)}</span>`;
+const tagA=(t,title,c)=>`<span class="tg${c?' '+c:''}"${title?` title="${esc(title)}"`:''}>${esc(t)}</span>`;   // c 'nt' = 자료 상태가 아닌 꼬리표(앞 시계·점 없음)
 const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
 // v33.22 연간 결산 재고가 9개월 넘음(chkInv 결과 i) → 그 결산일 — 표시만, 점수 그대로(결정 D14) · 브랜드 상세·목록·오늘 ①이 같이 씀
 const oldInvOf=i=>(i&&!i.na&&i.q===false&&i.end&&(kstMid()-new Date(i.end+'T00:00:00'))/86400000>270)?i.end:null;
 const oldInvA=i=>{ const e=oldInvOf(i); return e?tagA(`결산 ${ym(e)} · 오래된 자료`,'연간 결산 재고가 9개월 넘게 지남 — 다음 연간 결산 발표 때 바뀜 · 점수는 그대로'):''; };
+/* ── v33.28 A안 다듬기 바탕 — 여러 화면이 함께 쓰는 도움 함수(화면 담당은 다시 만들지 말고 이것을 씀 · CSS는 스타일 'A안 다듬기 바탕') ──
+   ds(글, 설명)     자료 상태 꼬리표 = 회색 글 + 시계(테두리 없음) — 오래된 결산·새 실적 대기처럼 '알아 둘 것'(실패 아님)
+   dsBad(글, 설명)  실제 수집 실패(이전 값·값 없음)만 = 회색 글 + 작은 주황 점
+   oldDs(i)         chkInv 결과 i의 연간 결산 재고가 9개월 넘으면 ds("'25.12 결산") — oldInvOf와 같은 기준, 점수는 그대로
+   staleDs(d)       stale_since 날짜 d → dsBad('이전 값 10/28')(d 없으면 '')
+   fxCommon(M)      chkModel() 결과 M의 판정 브랜드 환율 점수가 모두 같은 부호면 {dir: 1(유리)|−1, lo, hi(점수 크기 범위), n(브랜드 수)}, 아니면 null —
+                    환율이 브랜드를 가르지 못하는 날은 목록·오늘에서 환율 점수를 회색(.sc-g)으로 · 공통 한 줄로
+   FXTAIL           chkWhy(r).short의 ' · ' 조각 중 환율 꼬리('유로 10.8% 쌈')를 알아보는 식
+   whyShort(r,M)    chkWhy(r).short — fxCommon(M)이면 환율 꼬리를 뺀 것(남는 조각이 없으면 그대로) · 오늘 ①·브랜드 목록이 같이 씀
+   aFade(el)        가로 넘김 줄 el(.a-fade 안)의 끝·처음에 a-end·a-start를 붙여 오른쪽 흐림을 켜고 끔(넘길 때마다) — 시장 뉴스 칩·해외 정가 브랜드 칩
+   아이콘 ic('clock') · ic('sort') 추가 · 판정 규칙(chkModel·chk_verdicts)은 그대로 */
+const ds=(t,title)=>`<span class="ds"${title?` title="${esc(title)}"`:''}>${ic('clock',13)}${esc(t)}</span>`;
+const dsBad=(t,title)=>`<span class="ds bad"${title?` title="${esc(title)}"`:''}><i aria-hidden="true"></i>${esc(t)}</span>`;
+const oldDs=i=>{ const e=oldInvOf(i); return e?ds(`${ym(e)} 결산`,'연간 결산 재고가 9개월 넘게 지남 — 다음 연간 결산 발표 때 바뀜 · 점수는 그대로'):''; };
+const staleDs=d=>d?dsBad(`이전 값 ${mdOf(d)}`,`${d} 수집분 — 그 뒤 수집 실패`):'';
+const FXTAIL=/\d+(\.\d+)?% (쌈|비쌈)$/;
+function fxCommon(M){
+  const ps=((M&&M.main)||[]).filter(r=>r.fx&&!r.fx.na).map(r=>r.fx.pt); if(!ps.length) return null;
+  const dir=ps.every(p=>p>0)?1:ps.every(p=>p<0)?-1:0;
+  return dir?{dir, lo:Math.min(...ps.map(Math.abs)), hi:Math.max(...ps.map(Math.abs)), n:ps.length}:null;
+}
+function whyShort(r,M){
+  const s=chkWhy(r).short.split(' · '); if(s.length<2||!fxCommon(M)) return s.join(' · ');
+  const t=s.filter(p=>!FXTAIL.test(p)); return (t.length?t:s).join(' · ');
+}
+function aFade(el){
+  if(!el) return;
+  const w=el.closest('.a-fade')||el, f=()=>{ w.classList.toggle('a-end',el.scrollLeft+el.clientWidth>=el.scrollWidth-4); w.classList.toggle('a-start',el.scrollLeft>4); };
+  f(); if(!el._aF){ el._aF=1; el.addEventListener('scroll',f,{passive:true}); }
+}
 
 /* ── 공통: 기업 행 데이터(상장 41 + 국내 법인) ── */
 // 유통사 비교 카드(와 상세)에만 보이는 법인 — 기업 목록·종합·플랫폼 카드에서 제외(대표 요청 2026-10-05, 나중에 합칠 때 여기서 삭제)
@@ -3954,8 +4073,9 @@ function moreMenuHtml(){   // v33 S2: 머리 '더보기' + 메뉴 줄 5개(선 �
     ${themeRowHtml()}
   </nav>`;   // v33.25 운영 메모 문장 뺌(CLAUDE.md에 있음)
 }
-// '화면 테마' 줄(자료와 무관) — 메뉴가 통째로 실패해도 buildMore가 남김
-const themeRowHtml=()=>`<button type="button" class="mi" id="themeBtn" aria-pressed="${theme==='dark'}" onclick="toggleTheme()"><span class="mic">${ic(theme==='dark'?'moon':'sun',22)}</span><span class="mtt"><span class="mt">화면 테마</span><span class="md">밝게 · 어둡게</span></span><span class="mr"><b>${theme==='dark'?'어둡게':'밝게'}</b></span></button>`;
+// '화면 테마' 줄(자료와 무관) — 메뉴가 통째로 실패해도 buildMore가 남김 · v33.28 자동·밝게·어둡게 세 단추(지금 고른 것 = 잉크 채움) + 이름 아래 지금 상태
+const themeRowHtml=()=>`<div class="mi mi-thm" id="themeBtn" role="group" aria-labelledby="thmT"><span class="mic">${ic(theme==='dark'?'moon':'sun',22)}</span><span class="mtt"><span class="mt" id="thmT">화면 테마</span><span class="md">${esc(themeDesc())}</span></span>`
+  +`<span class="seg3">${['auto','light','dark'].map(v=>`<button type="button" data-thm="${v}" aria-pressed="${THEME_PREF===v}" onclick="setTheme('${v}')">${THEME_T[v]}</button>`).join('')}</span></div>`;
 function moreFashionHtml(){   // 패션 브랜드: 국내 패션 브랜드 비교 + 아이웨어 비교(v32.6)
   const sec=cid=>{const c=CMP[cid], n=cmpData(c).length; return n?`<div class="ndate" style="margin-top:16px">${esc(c.name)} <span class="na" style="font-weight:400">${n}곳 · ${esc(c.tag)}</span></div>`+(fiHas(cid)?finCardHtml(cid):cmpCardHtml(cid)):'';};
   return moreHead('패션 브랜드','DART 별도 · 연간')+sec('fb')+sec('ey')+svCardHtml();
@@ -4409,7 +4529,7 @@ const prChgX=o=>{ const ph=(o&&Array.isArray(o.ph))?o.ph:[], x=ph[ph.length-1]; 
 function prChgA(o){
   const x=prChgX(o); if(!x) return '';
   const g=(x[2]/x[1]-1)*100;
-  return tagA(`정가 ${g>0?'▲':'▼'}${Math.abs(g).toFixed(Math.abs(g)<10?1:0)}%`,`${mdOf(x[0])} 정가 ${prLocal(x[1],o.cur)} → ${prLocal(x[2],o.cur)}`);
+  return tagA(`정가 ${g>0?'▲':'▼'}${Math.abs(g).toFixed(Math.abs(g)<10?1:0)}%`,`${mdOf(x[0])} 정가 ${prLocal(x[1],o.cur)} → ${prLocal(x[2],o.cur)}`,'nt');   // v33.28 자료 상태 아님(시계·점 없음)
 }
 function prExTxt(o,who){   // 브랜드 상세 나라 줄 아래 전체 너비 한 줄 — 휴대폰은 title이 안 보여 할인가·확인한 날·전 정가를 글로(who = '한국 ' — 표 아래 한국 줄)
   const sp=prSp(o), x=prChgX(o), a=[];
