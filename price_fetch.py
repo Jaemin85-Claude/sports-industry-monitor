@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.15: (SKU 늘리기 6차 10/29 — 대표 '네 1번부터 진행해주세요') 아크테릭스 노반 LD 4 GTX·사일렌 2·크래그·컨실 트렉 부츠·노반 재킷(남성 · 5개 나라 같은 품번)
+    — 상품 102개 · 값 406개(+25). 한국 몰은 목록 화면이 스크립트로 그려져 상품 번호가 페이지에 없음 → 공개 기획전 페이지(arcteryx.co.kr/lp)의
+    상품 이미지 주소 products/{상품 번호}/S26_X0000{모델}에서 상품 번호를 찾아 상품 페이지 Model(KR) 품번으로 확인(몰 내부 API는 쓰지 않음) ·
+    일본 몰 신발 페이지는 JSON-LD가 없어 상품 .json(변형 품번 X0000…) · 코펙 2 로우 GTX는 영국·독일 몰 404·일본 몰에 없어 뺌 · 노반 LD 4는 다음 차례
 v1.14: (SKU 늘리기 5차 10/28 — 대표 '네 바로 진행해주세요', 쇼피파이 몰이 아닌 브랜드부터) 온러닝 클라우드몬스터 3·클라우드러너 3·클라우드 X 5·
     클라우드 6 워터프루프(검정 · 5개 나라 같은 품번) — 상품 97개 · 값 381개(+20). 온러닝 상품은 https://www.on.com/sitemap.xml(robots.txt에는 없음 · ko-kr 상품 사이트맵)에서 찾음.
     아크테릭스는 한국 몰 목록 화면이 스크립트로 그려져(상품 번호가 페이지에 없음) 이번에 못 찾음 — 다음 차례에 다른 방법
@@ -475,6 +479,18 @@ PRODUCTS = [
      "urls": _arc("686764", "cerium-hoody-0521", "cerium-hoody-m")},
     {"id": "arc-mantis26", "brand": "아크테릭스", "name": "맨티스 26 백팩", "code": "X000010643", "cc_code": {"KR": "ABQSU10643"}, "src": "page", "hint": "mantis 26",
      "urls": _arc("686432", "mantis-26-backpack-0643", g="")},   # 일본 몰 mantis-26-backpack은 옛 모델(X000009825)이라 뺌 · 맨티스 2 웨이스트 팩은 한국 페이지에 가격 데이터가 없어 넣지 않음(10/23)
+    # v1.15 SKU 6차 — 한국 상품 번호는 공개 기획전 페이지(/lp)의 상품 이미지 주소 products/{상품 번호}/S26_X0000{모델}에서 찾아 상품 페이지 품번으로 확인 ·
+    #   일본 몰 신발 페이지는 JSON-LD가 없어 상품 .json(변형 품번 X0000…)
+    {"id": "arc-norvanld4gtx", "brand": "아크테릭스", "name": "노반 LD 4 GTX(남성)", "code": "X000010397", "cc_code": {"KR": "AFQFM10397"}, "src": "page", "hint": "norvan ld 4 gtx",
+     "urls": _arc("686729", "norvan-ld-4-gtx-shoe-0397", "norvan-ld-4-gtx-m.json")},
+    {"id": "arc-sylan2", "brand": "아크테릭스", "name": "사일렌 2(남성)", "code": "X000010155", "cc_code": {"KR": "AFQSM10155"}, "src": "page", "hint": "sylan 2",
+     "urls": _arc("686215", "sylan-2-shoe-0155", "sylan-2-m.json")},
+    {"id": "arc-kragg", "brand": "아크테릭스", "name": "크래그(남성)", "code": "X000010078", "cc_code": {"KR": "AFQFM10078"}, "src": "page", "hint": "kragg",
+     "urls": _arc("686681", "kragg-shoe-0078", "kragg-m.json")},
+    {"id": "arc-konsealtrek", "brand": "아크테릭스", "name": "컨실 트렉 부츠(남성)", "code": "X000010504", "cc_code": {"KR": "AFQFM10504"}, "src": "page", "hint": "konseal trek boot",
+     "urls": _arc("686731", "konseal-trek-boot-0504", "konseal-trek-m.json")},
+    {"id": "arc-norvanjacket", "brand": "아크테릭스", "name": "노반 재킷(남성)", "code": "X000009571", "cc_code": {"KR": "AJQFM09571"}, "src": "page", "hint": "norvan jacket",
+     "urls": _arc("686750", "norvan-jacket-9571", "norvan-jacket-m")},   # 노반 LD 4(GTX 아님)는 다음 차례 · 코펙 2 로우 GTX는 영국·독일 몰 404·일본 몰에 없어 뺌(10/29)
     # v1.4 킨 — 품번 = 색상까지 정해진 7자리 · 한국 고도몰은 상품 정보 칸 ARTICLE, 미국·독일·일본 쇼피파이는 변형 품번이 바코드라 상품 태그, 영국은 변형 품번(1022258-10)
     {"id": "keen-newporth2", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 트리플 블랙)", "code": "1022258", "src": "page", "hint": "newport h2",
      "urls": _keen("1000000673", "mens-newport-h2-triple-black")},
