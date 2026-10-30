@@ -27,6 +27,10 @@ def show(tag, url, **kw):
         print(f"{tag}   {name}: {len(ms)}건 {json.dumps(u[:6], ensure_ascii=False)[:600]}", flush=True)
     return r
 
+try:
+    print("GitHub 서버:", requests.get("https://api.ipify.org", timeout=8).text[:7], flush=True)
+except Exception as e:
+    print("IP 확인 실패", type(e).__name__, flush=True)
 for ds in ("15116806", "15116850", "15116807"):
     r = show(f"[{ds} 화면]", lf.KCS_PAGE.format(ds))
     if r is not None and "FILE_" not in r.text:
