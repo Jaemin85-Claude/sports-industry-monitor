@@ -1132,6 +1132,49 @@ div.bd-nx{cursor:default}
    오늘 화면(#p-today) 전용 규칙 — 이 아래에(다음 표식 전까지만)
    ==== */
 .a-sep-today1{}
+/* 머리 단추 — 일부 이전 값 = 회색 시계(파랑 체크는 모두 정상일 때만 · 지연 = 주황 경고는 그대로) */
+#tdHead .hd-pill.part .ic{color:var(--sub)}
+/* 카드 머리 15px 굵게 · ① = 흰 액자 대신 위쪽 파랑 띠(다크는 밝은 파랑) */
+#p-today .dc-hd{min-height:46px;padding-top:2px}
+#p-today .dc-t{font-size:var(--fs2);font-weight:700}
+#p-today .dc.dc1{border:1px solid var(--line);box-shadow:inset 0 3px 0 var(--accent)}
+#p-today .dc1 .dc-h.td-none{padding-top:4px}
+/* ① 묶음 머리(판정 배지 + n곳 · 오른쪽 '매입' = 줄 끝 점수 칸 이름) — 오른쪽 여백 = 줄 오른쪽 여백 10 + 화살표 18 + 사이 8 */
+#p-today .td-gh{display:flex;align-items:center;gap:8px;min-height:44px;padding:8px 36px 0 16px;border-top:1px solid var(--line)}
+#p-today .td-colh{margin-left:auto;font-size:var(--fs1);color:var(--sub)}
+/* ① 줄 = 이름(17) + 짧은 이유(15 잉크) + 매입 점수 하나(이유가 360px에서도 잘리지 않게 숫자 하나만) · 줄 사이 선은 안쪽에서 시작 */
+#p-today .dc-row.td-row{min-height:54px;padding:6px 10px 6px 16px;border-top:0;gap:8px}
+#p-today .dc-row.td-row+.dc-row.td-row{border-top:1px solid var(--line2);margin-left:16px;padding-left:0;width:calc(100% - 16px)}
+#p-today .td-l1{display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap;min-width:0}
+#p-today .td-row .dc-nm{font-size:var(--fs3);line-height:1.3}
+#p-today .td-hq{font-size:var(--fs1);color:var(--sub);white-space:nowrap}
+#p-today .td-row .dc-why{display:block;font-size:var(--fs2);color:var(--tx);line-height:1.45}
+#p-today .td-row .dc-why .ds{white-space:nowrap}
+#p-today .td-sc{flex:none;min-width:28px;text-align:right;font-size:var(--fs3);line-height:1;font-variant-numeric:tabular-nums}
+/* ① 주의 = 누르는 이름(44px) — 상자 왼쪽 여백 8 + 이름 단추 안쪽 8 = 16: 줄바꿈된 둘째 줄 이름도 배지 왼쪽 끝에 맞춤 */
+#p-today .td-names{display:flex;flex-wrap:wrap;align-items:center;gap:0 2px;padding:4px 8px;border-top:1px solid var(--line)}
+#p-today .td-wl{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0 6px 0 8px}
+#p-today .td-names button{min-height:44px;padding:0 8px;font-size:var(--fs2);font-weight:700;color:var(--tx);text-decoration:underline;text-decoration-color:var(--line2);text-decoration-thickness:1px;text-underline-offset:5px}
+#p-today .td-names button:active{background:var(--fill);border-radius:8px}
+/* ① 끝 줄 '점검표 전체 보기 · 관망 n곳 · 판정 안 함 n곳' — 넓으면 한 줄, 좁으면 둘째 줄 */
+#p-today .dc1 .dc-more{min-height:48px}
+#p-today .dc1 .dc-mt{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:0 8px}
+#p-today .dc1 .dc-mt .t{white-space:nowrap}
+/* ② 환율 — 큰 숫자 줄 + 세 칸 표(자릿수 맞춤) */
+#p-today .fx-hero .nm,#p-today .fx-hero .d{font-size:var(--fs2)}
+#p-today .fx-hero .ds{align-self:center}
+#p-today .td-fxt{width:100%;margin-top:10px;border-collapse:collapse;font-size:var(--fs2)}
+#p-today .td-fxt th{padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs1);font-weight:400;color:var(--sub);text-align:right;white-space:nowrap}
+#p-today .td-fxt td{padding:9px 0;border-bottom:1px solid var(--line2);font-weight:700;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#p-today .td-fxt th:first-child,#p-today .td-fxt td:first-child{text-align:left;font-weight:400}
+#p-today .td-fxt td:first-child .ds{display:flex;margin-top:2px}   /* 이전 값 꼬리표는 통화 이름 아래(칸이 넓어지지 않게) */
+#p-today .td-fxt tr:last-child td{border-bottom:0}
+#p-today .td-fxt small{margin-left:3px;font-size:var(--fs1);font-weight:400;color:var(--sub)}
+/* ③ 일정 제목 굵게 · ④ 뉴스 제목 15px 보통 굵기 2줄(넘치면 …) · 정보 줄 ★ 회색 */
+#p-today .dc-ev .ev-tt .t{font-weight:700}
+#p-today .dc-news{padding:11px 0}
+#p-today .dc-news .t{font-size:var(--fs2);font-weight:400;line-height:1.5;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+#p-today .dc-news .s .stars{color:var(--tx2);letter-spacing:-.05em}
 .a-sep-today2{}
 /* ==== A-BRAND-LIST ====
    브랜드 점검표(#brandList) 전용 규칙 — 이 아래에(다음 표식 전까지만)
@@ -2166,12 +2209,15 @@ function todayModel(){
   });
   return out;
 }
-function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 갱신 시각 단추(지연 있으면 경고 아이콘 + '지연 n') → 수집 상태
-  const g=String(DATA.generated_at||''), gd=g.slice(0,10), late=statusRows().filter(r=>r.late).length;
-  const upd=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)} 갱신`:'갱신 시각 없음', vis=upd+(late?` · 지연 ${late}`:'');
+function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 수집 상태 단추 하나 → 수집 상태
+  // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) — 지연 = 경고 '11:27 · 지연 n' · 일부 이전 값 = 회색 시계 '11:27 · 이전 값 n'(수집 상태 '일부 실패 n곳(이전 값)'과 같은 셈) · 모두 정상일 때만 파랑 체크 '11:27 갱신'
+  const g=String(DATA.generated_at||''), gd=g.slice(0,10), st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0);
+  const t=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)}`:'갱신 시각 없음';
+  const vis=late?`${t} · 지연 ${late}`:part?`${t} · 이전 값 ${part}`:(g?`${t} 갱신`:t);
+  const say=[late?`수집 지연 ${late}곳`:'',part?`일부 실패 ${part}곳 이전 값`:''].filter(Boolean).join(' · ')||'수집 정상';
   const date=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
   return `<div class="hd-row"><div class="hd-tt"><span class="hd-kick">${esc(date)}</span><h1>오늘 볼 것 4가지</h1></div>
-    <button type="button" class="hd-pill${late?' late':''}" id="tdStatus" data-go="more:status" aria-label="${esc(vis)}, 수집 상태 ${late?`지연 ${late}곳`:'정상'}">${ic(late?'alert':'go',16)}<span>${esc(vis)}</span></button></div>`;
+    <button type="button" class="hd-pill${late?' late':part?' part':''}" id="tdStatus" data-go="more:status" aria-label="${esc(`${g?t+' 갱신':t}, ${say}, 수집 상태 보기`)}">${ic(late?'alert':part?'clock':'go',16)}<span>${esc(vis)}</span></button></div>`;
 }
 const dcNo=n=>`<span class="dc-no" aria-hidden="true">${n}</span>`;
 const dcHd=(n,t,meta,dest)=>`<h2 class="dc-hh"><button type="button" class="dc-hd" data-go="${dest}">${dcNo(n)}<span class="dc-t">${esc(t)}</span><span class="dc-meta">${esc(meta)}</span>${ic('right',16,'s2 chev')}</button></h2>`;   // 카드 머리 = 해당 화면으로(결정 D10)
@@ -2183,31 +2229,56 @@ function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 
   };
   return card('buy',1,'매입 검토','brand-all',tdBuyHtml)+card('fx',2,'환율 타이밍','more:fx',tdFxHtml)+card('events',3,'다가오는 일정','mk:cal',tdEvHtml)+card('news',4,'중요 뉴스','news:all',tdNewsHtml)
     +card('peer',0,'트렉시 위치','',p=>`<button type="button" class="dc-peer" data-go="more:peer"><span class="tt"><span class="s">${esc(p.sub)}</span><span class="t">${esc(p.main)}</span></span>${ic('right',20,'s2 chev')}</button>`)
-    +card('foot',0,'맺음 줄','',f=>`<button type="button" class="td-foot" data-go="more:status">${esc(f.t)}${f.c?` · ${esc(f.c).replace(/(Claude 사용액 \S+)$/,'<span class="nw">$1</span>')}`:''}</button>`);
+    // v33.28 맺음 줄 = Claude 사용액만(갱신 시각·수집 상태는 머리 단추 하나 — 같은 말을 두 번 쓰지 않음)
+    +card('foot',0,'맺음 줄','',f=>f.c?`<button type="button" class="td-foot" data-go="more:status">${esc(f.c).replace(/(Claude 사용액 \S+)$/,'<span class="nw">$1</span>')}</button>`:'');
 }
-function tdBuyHtml(B){   // ① 매입 검토(머리는 글자만 — 아래 '점검표 전체 보기'가 링크)
+function tdHq(q){   // v33.28 ① 한 줄로 합친 브랜드(같은 본사·판정·이유) → 점검표를 그 본사 이름으로 검색한 화면(검색어는 점검표 검색창에 — 지우면 전체)
+  const i=document.getElementById('brSearch'); if(i) i.value=q; brSearch(q); go({tab:'brand'});
+}
+function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지금 검토 n곳' 배지는 묶음 머리에 한 번 → 브랜드마다 한 줄(이름 + 짧은 이유 + 오른쪽 끝 매입 조건 점수 하나)
+  // · 주의 = 누르는 이름만(줄바꿈돼도 왼쪽 맞춤) · 관망·판정 안 함 = 끝 줄 '점검표 전체 보기'의 개수 · 판정·점수는 chkModel 그대로(표시만)
   const G=B.chg, same=G&&!G.n&&!G.skip;   // v33.2 판정 기록 비교 — 바뀐 곳이 있으면 머리 아래 한 줄, 없으면 머리 끝에 '어제와 같음'
   let h=`<section class="dc dc1" aria-label="매입 검토"><div class="dc-hd">${dcNo(1)}<span class="dc-t">매입 검토</span><span class="dc-meta">${same?`${B.n}곳 판정 · ${esc(G.vs)} 같음`:`${B.n}곳 판정`}</span></div>`;
-  if(B.empty) h+=`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}`;
-  else { h+=`<h2 class="dc-h">${esc(B.head)}</h2>`;
-    // 한 곳이면 '1곳'을 빼서 '클락스 관망 → 지금 검토'가 좁은 화면(360px)에서도 한 줄에 — 넘치는 끝(바뀐 점수)부터 …
-    if(G&&G.n) h+=`<p class="dc-chg" title="${esc(G.full)}"><b>${esc(G.vs)} 달라진 판정${G.n>1?` ${G.n}곳`:''}</b> · ${esc(G.list.join(G.sep))}${G.more?` 외 ${G.more}곳`:''}</p>`;
-    h+=B.rows.map(r=>`<button type="button" class="dc-row" data-go="brand:${esc(r.name)}"><span class="dc-rb"><span class="dc-rt"><span class="dc-nm">${esc(r.name)}</span>${vbadge(r.lv)}${chgTag(r.name)}${r.old||''}</span><span class="dc-why">${nb(esc(r.why))}</span>${r.hint?`<span class="dc-hint">${esc(r.hint)}</span>`:''}</span>${ic('right',20,'s2 chev')}</button>`).join(''); }
   // '점검표 전체 보기' = 판정 필터 '전체'로(전에 고른 필터가 남아 글자와 결과가 달라지지 않게 — goKey 'brand-all')
-  if(B.more) h+=`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span><span class="s">${esc(B.more)}</span></span>${ic('arrow',20,'s2')}</button>`;
-  return h+`</section>`;
+  const more=s=>`<button type="button" class="dc-more" data-go="brand-all"><span class="dc-mt"><span class="t">점검표 전체 보기</span>${s?`<span class="s">${esc(s)}</span>`:''}</span>${ic('arrow',20,'s2')}</button>`;
+  if(B.empty) return h+`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}${B.more?more(B.more):''}</section>`;
+  const M=chkModel(), gos=M.main.filter(r=>r.lv===2), warn=M.main.filter(r=>r.lv===0), hold=M.main.filter(r=>r.lv===1);
+  // 한 곳이면 '1곳'을 빼서 '클락스 관망 → 지금 검토'가 좁은 화면(360px)에서도 한 줄에 — 넘치는 끝(바뀐 점수)부터 …
+  if(G&&G.n) h+=`<p class="dc-chg" title="${esc(G.full)}"><b>${esc(G.vs)} 달라진 판정${G.n>1?` ${G.n}곳`:''}</b> · ${esc(G.list.join(G.sep))}${G.more?` 외 ${G.more}곳`:''}</p>`;
+  // 줄 묶기 — 본사·판정·짧은 이유(fxCommon이면 환율 꼬리 뺌 — whyShort)·매입 점수·달라진 판정 꼬리표가 모두 같으면 한 줄('몽클레르 · 스톤아일랜드')
+  const rowsOf=rs=>{ const out=[]; rs.forEach(r=>{ const w=whyShort(r,M), hq=chkHq(r), tg=chgTag(r.b.name), k=[hq,r.lv,w,r.buy,tg].join('|'), p=hq?out.find(x=>x.k===k):null;
+    if(p) p.names.push(r.b.name); else out.push({k,names:[r.b.name],w,hq,tg,r}); }); return out; };
+  const gh=(lv,n)=>`<div class="td-gh">${vbadge(lv)}<span class="a-gn">${n}곳</span><span class="td-colh" aria-hidden="true">매입</span></div>`;
+  const row=(x,hint)=>{ const many=x.names.length>1, v=x.r.buy;
+    return `<button type="button" class="dc-row td-row" ${many?`data-hq="${esc(x.hq)}" onclick="tdHq(this.dataset.hq)"`:`data-go="brand:${esc(x.names[0])}"`}><span class="dc-rb">`
+      +`<span class="td-l1"><span class="dc-nm">${esc(x.names.join(' · '))}</span>${many?`<span class="td-hq">본사 ${esc(x.hq)}</span>`:''}${x.tg}</span>`
+      +`<span class="dc-why">${nb(esc(x.w))}${oldDs(x.r.inv)?' '+oldDs(x.r.inv):''}</span>${hint?`<span class="dc-hint">${esc(hint)}</span>`:''}</span>`
+      +`<b class="td-sc ${v>0?'sc-p':v<0?'sc-n':'sc-z'}"><span class="sr">매입 조건 </span>${sg0(v)}</b>${ic('right',18,'s2 chev')}</button>`; };
+  if(gos.length) h+=gh(2,gos.length)+rowsOf(gos).map(x=>row(x)).join('');
+  if(warn.length) h+=`<div class="td-names"><span class="td-wl">${vbadge(0)}<span class="a-gn">${warn.length}곳</span></span>${warn.map(r=>`<button type="button" data-go="brand:${esc(r.b.name)}">${esc(r.b.name)}</button>`).join('')}</div>`;
+  if(!gos.length&&!warn.length&&hold.length){   // 지금 검토·주의가 없는 날 — 관망 앞 2곳(지금 검토까지 남은 매입 점수 · 수요 약함)
+    const hint={}; (B.rows||[]).forEach(r=>{ hint[r.name]=r.hint; });
+    h+=`<h2 class="dc-h td-none">오늘은 지금 검토·주의 없음</h2>`+gh(1,hold.length)+rowsOf(hold.slice(0,2)).map(x=>row(x,hint[x.names[0]])).join(''); }
+  return h+more([hold.length?`관망 ${hold.length}곳`:'',M.rest.length?`판정 안 함 ${M.rest.length}곳`:''].filter(Boolean).join(' · '))+`</section>`;
 }
-function tdFxHtml(F){   // ② 환율 타이밍
+function tdFxHtml(F){   // ② 환율 타이밍 — v33.28 큰 숫자 한 줄 + 세 칸 표(통화 | 원화 | 1년 평균 대비) · 모든 판정 브랜드의 환율 점수가 같은 방향(fxCommon)일 때만 공통 한 줄
   let h=`<section class="dc" aria-label="환율 타이밍">${dcHd(2,'환율 타이밍',F.asof||'','more:fx')}<div class="dc-in">`;
-  if(F.empty) h+=`<p class="dc-s">${esc(F.empty)}</p>`;
-  else { const H=F.hero, A=F.alert;
-    h+=`<p class="fx-hero"><span class="nm">${esc(H.name)}</span><span class="v">${esc(H.value)}</span><span class="d ${H.tone}">${nb(esc(H.dev))}</span>${staleA(H.stale)}</p>`;
-    if(H.chg) h+=`<p class="dc-s">${nb(esc(H.chg))}</p>`;
-    if(H.brands) h+=`<p class="dc-s">${esc(H.brands)}</p>`;
-    // 이전 값 꼬리표는 이름 칸(76px)을 넘쳐 줄 아래 한 칸에
-    if(F.rows.length) h+=`<div class="fx-rows">${F.rows.map(o=>`<div class="fx-r"><span class="nm">${esc(o.name)}</span><span class="v">${esc(o.value)}</span><span class="d ${o.tone}">${nb(esc(o.diff))}</span>${o.stale?`<span class="fx-st">${staleA(o.stale)}</span>`:''}</div>`).join('')}</div>`;
-    h+=A.n?`<p class="fx-al">${esc(A.day)} 새 환율 알림 ${A.n}건</p>${A.list.map(t=>`<p class="fx-ai">${esc(t)}</p>`).join('')}`
-      :`<p class="fx-al">${esc(A.day)} 새 환율 알림 없음 · ${esc(A.last)}</p>`; }
+  if(F.empty) return h+`<p class="dc-s">${esc(F.empty)}</p></div></section>`;
+  const H=F.hero, A=F.alert;
+  let C=null; try{ C=fxCommon(chkModel()); }catch(e){ console.error('[오늘 볼 것 · 환율] 점검표 공통 판단 실패:',e); }   // 점검표가 실패해도 환율은 그림
+  // '1년 평균보다 7.6% 쌈' → −7.6%(쌈 = 파랑 · 비쌈 = 주황) · 1년 평균이 없어 1년 전과 비교한 통화는 값 뒤 '(1년 전)'
+  const sh=t=>{ const m=/(1년 평균|1년 전)보다 ([\d.]+)% (쌈|비쌈)/.exec(t||''); return m?{v:(m[3]==='쌈'?'−':'+')+m[2]+'%',b:m[1],c:m[3]==='쌈'?'t-p':'t-n'}:{v:'―',b:'',c:''}; };
+  h+=`<p class="fx-hero"><span class="nm">${esc(H.name)}</span><span class="v">${esc(H.value)}</span><span class="d ${H.tone}">${nb(esc(H.dev))}</span>${staleDs(H.stale)}</p>`;
+  if(H.chg) h+=`<p class="dc-s">${nb(esc(H.chg))}</p>`;
+  const cs=d=>d>0?'+':'−', cr=C?(C.lo===C.hi?`${cs(C.dir)}${C.hi}`:`${cs(C.dir)}${C.lo}~${cs(C.dir)}${C.hi}`):'';
+  // 좁은 화면에서 '+1~+2'가 혼자 다음 줄로 가지 않게 '환율 점수 +1~+2'를 묶음
+  if(C) h+=`<p class="dc-s">${esc(`모든 원산지 통화가 ${C.dir>0?'쌈':'비쌈'} → ${C.n}곳 모두`)} <span class="nw">환율 점수 ${esc(cr)}</span></p>`;
+  else if(H.brands) h+=`<p class="dc-s">${esc(H.brands)}</p>`;
+  if(F.rows.length){ const b0=sh(F.rows[0].diff).b||'1년 평균';
+    h+=`<table class="td-fxt"><thead><tr><th scope="col">통화</th><th scope="col">원화</th><th scope="col">${esc(b0)} 대비</th></tr></thead><tbody>${F.rows.map(o=>{ const s=sh(o.diff);
+      return `<tr><td>${esc(o.name)}${staleDs(o.stale)}</td><td class="tn">${esc(o.value)}</td><td class="tn ${s.c}">${s.v}${s.b&&s.b!==b0?`<small>(${esc(s.b)})</small>`:''}</td></tr>`; }).join('')}</tbody></table>`; }
+  h+=A.n?`<p class="fx-al">${esc(A.day)} 새 환율 알림 ${A.n}건</p>${A.list.map(t=>`<p class="fx-ai">${esc(t)}</p>`).join('')}`
+    :`<p class="fx-al">${esc(A.day)} 새 환율 알림 없음 · ${esc(A.last)}</p>`;
   return h+`</div></section>`;
 }
 function tdEvHtml(ev){   // ③ 다가오는 일정
@@ -2215,10 +2286,10 @@ function tdEvHtml(ev){   // ③ 다가오는 일정
     +(ev.length?ev.map(e=>`<button type="button" class="dc-ev" data-go="${esc(e.go)}"><span class="d">${esc(e.d)}</span><span class="ev-tt"><span class="t">${esc(e.title)}</span><span class="s">${esc(e.sub)}</span></span><span class="kind${e.kind==='세일'?' sale':''}">${e.kind}</span></button>`).join('')
       :`<p class="dc-s" style="padding-bottom:8px">90일 안 본사 실적·150일 안 해외 세일 없음</p>`)+`</div></section>`;
 }
-function tdNewsHtml(N){   // ④ 오늘 중요 뉴스(기사는 원문 새 창, 카드 머리는 시장 › 뉴스 전체)
+function tdNewsHtml(N){   // ④ 오늘 중요 뉴스(기사는 원문 새 창, 카드 머리는 시장 › 뉴스 전체) — v33.28 제목 15px 보통 굵기 2줄 · 정보 줄 '★★★ · 브랜드 · 매체'
   if(N.empty) return `<section class="dc" aria-label="중요 뉴스">${dcHd(4,'중요 뉴스','','news:all')}<div class="dc-nws"><p class="dc-s" style="padding-bottom:8px">${esc(N.empty)}</p></div></section>`;
   let h=`<section class="dc" aria-label="${esc(N.head)}">${dcHd(4,N.head,N.sub,'news:all')}<div class="dc-nws">`;
-  h+=N.items.map(i=>`<a class="dc-news" href="${esc(safeUrl(i.link))}" target="_blank" rel="noopener"><span class="t">${esc(i.t)}</span><span class="s">${esc(i.meta)}</span></a>`).join('');
+  h+=N.items.map(i=>`<a class="dc-news" href="${esc(safeUrl(i.link))}" target="_blank" rel="noopener"><span class="t">${esc(i.t)}</span><span class="s"><span class="stars" role="img" aria-label="중요도 3">★★★</span> · ${esc(i.meta)}</span></a>`).join('');
   if(N.none) h+=`<p class="dc-s" style="padding-bottom:8px">보관 기간 안 ★3 뉴스 없음</p>`;
   if(N.more) h+=`<button type="button" class="dc-xmore" data-go="news:all">외 ★3 ${N.more}건 — 뉴스에서 보기</button>`;
   return h+`</div></section>`;
