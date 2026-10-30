@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-30 11:36 KST",
+ "generated_at": "2026-10-30 19:24 KST",
  "fetched": "2026-10-30",
  "attempt": "2026-10-30",
  "cfg": "2fbe341c511d",
@@ -1811,10 +1811,10 @@
     "DE": {
      "p": 190.0,
      "cur": "EUR",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/de-de/product/xt-4-og-li3335",
      "obs": 190.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     }
    }
@@ -1837,28 +1837,28 @@
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/en-us/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/en-gb/product/xt-6-expanse-lg9334",
      "obs": 150.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     },
     "DE": {
      "p": 165.0,
      "cur": "EUR",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/de-de/product/xt-6-expanse-lg9334",
      "obs": 165.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     }
    }
@@ -1881,28 +1881,28 @@
     "US": {
      "p": 220.0,
      "cur": "USD",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
      "obs": 220.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     },
     "GB": {
      "p": 195.0,
      "cur": "GBP",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
      "obs": 195.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     },
     "DE": {
      "p": 210.0,
      "cur": "EUR",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806",
      "obs": 210.0,
-     "obs_date": "2026-10-28",
+     "obs_date": "2026-10-30",
      "sale": false
     }
    }
@@ -3719,13 +3719,11 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-10-28",
+     "seen": "2026-10-30",
      "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-gts-23%ED%8E%84-medium/799/",
      "obs": 209000.0,
-     "obs_date": "2026-10-28",
-     "sale": false,
-     "stale_since": "2026-10-28",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-10-30",
+     "sale": false
     },
     "JP": {
      "p": 26400.0,
@@ -5223,14 +5221,13 @@
   "salomon-xt6base DE": "2026-10-30",
   "salomon-xt4og US": "2026-10-30",
   "salomon-xt4og GB": "2026-10-30",
-  "salomon-xt4og DE": "2026-10-28",
-  "salomon-xt6expanse US": "2026-10-28",
-  "salomon-xt6expanse GB": "2026-10-28",
-  "salomon-xt6expanse DE": "2026-10-28",
-  "salomon-xt4oggtx US": "2026-10-28",
-  "salomon-xt4oggtx GB": "2026-10-28",
-  "salomon-xt4oggtx DE": "2026-10-28"
+  "salomon-xt4og DE": "2026-10-30",
+  "salomon-xt6expanse US": "2026-10-30",
+  "salomon-xt6expanse GB": "2026-10-30",
+  "salomon-xt6expanse DE": "2026-10-30",
+  "salomon-xt4oggtx US": "2026-10-30",
+  "salomon-xt4oggtx GB": "2026-10-30",
+  "salomon-xt4oggtx DE": "2026-10-30"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
- "tried": "2026-10-30"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"
 }
