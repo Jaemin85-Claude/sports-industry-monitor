@@ -329,7 +329,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 [data-theme="dark"]{color-scheme:dark;
  --bg:#0f1115;--card:#16191f;--fill:#1f232b;--line:#2b313b;--line2:#2b313b;
  --tx:#f3f4f6;--tx2:#d1d5db;--sub:#9ca3af;--muted:#9ca3af;
- --accent:#7aa2ff;--accent-fill:#4f7dff;--accent-weak:#1b2440;
+ --accent:#7aa2ff;--accent-fill:#3b6cf0;--accent-weak:#1b2440;
  --bad:#fb923c;--warn-bg:#3a2312;--warn-fg:#fdba74;--warn-bd:#c2671f;--hold-bd:#9ca3af;--hold-fg:#e5e7eb;
  --accent-prev:#3a4a78;--chart-prev:#6b7280;--s-shoe:#fb923c;--s-apparel:#9ca3af;
  --lv2-bg:#3b6cf0;--lv1-bg:#2c437f;--lv1-fg:#e5e7eb;--lv0-bg:#232831;--lv0-fg:#9ca3af;
@@ -398,7 +398,7 @@ td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
 .card h3 .na{font-size:var(--fs1);color:var(--sub);font-weight:400}
 .det-head{font-size:var(--fs-xl);font-weight:700;margin-bottom:12px}
 .det-head .tk{font-size:var(--fs-sm);color:var(--sub);font-weight:400}
-/* v33.28 표시용 태그(.tag·.tag2·.ntag·.std-b·.mn-rg·.sl-k·.nv-low) = 테두리 없는 회색 — 파랑·테두리는 누르는 것에만 */
+/* v33.28 표시용 태그(.tag·.tag2·.std-b·.mn-rg·.sl-k·.nv-low·.bdq-s) = 테두리 없는 회색 — 파랑·테두리는 누르는 것에만 */
 .tag{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px;font-weight:400}
 .tag2{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-left:4px;font-weight:400}
 /* 카드 머리 오른쪽 '… ›' 이동 단추 — 글자는 작게, 누르는 곳은 44px(줄 높이는 그대로) */
@@ -470,6 +470,7 @@ button.go{display:inline-flex;align-items:center;justify-content:center;min-widt
 .src-legend{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--fs-xs);color:var(--sub);margin-top:6px}
 .src-legend span{display:inline-flex;align-items:center;gap:4px}
 .src-legend i{width:11px;height:11px;border-radius:3px;display:inline-block;box-sizing:border-box}
+.src-legend i.lg-wn{background:var(--warn-bg)}   /* 시장 › 국내 '5%p 이상 나쁨' — 다크는 아래 --warn-bd 테두리 */
 .src-regs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .src-regs button{min-height:52px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 2px}
 .src-regs b{font-size:var(--fs-base)}
@@ -579,7 +580,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .co-more{display:flex;align-items:center;min-height:44px;margin:2px 0 -6px;color:var(--accent);font-weight:600}
 /* 시장 › 캘린더 */
 .cal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:10px 6px}
-.cal h3{font-size:var(--fs-base);color:var(--sub);font-weight:600;margin:0 4px 6px}
+.cal h3{font-size:var(--fs2);color:var(--tx);font-weight:700;margin:0 4px 6px}
 .cgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px 0}
 .cgrid .wd{font-size:var(--fs-2xs);color:var(--sub);text-align:center;padding:2px 0}
 .cd{min-height:48px;min-width:0;overflow:hidden;border-radius:6px;padding:3px;font-size:var(--fs-2xs);border:1px solid transparent}
@@ -625,7 +626,6 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .nitem .nsum a{color:var(--tx);text-decoration:none}
 .nitem .nsum a::after{content:'';position:absolute;inset:0}
 .nitem .nmeta{font-size:var(--fs-xs);color:var(--sub);margin-top:3px}
-.ntag{display:inline-block;font-size:var(--fs-2xs);color:var(--sub);background:var(--fill);border-radius:6px;padding:1px 6px;margin-right:5px}
 /* v33.1 지난 뉴스 검색 — 찾은 낱말 강조 · 요약에 없는 낱말로 찾았으면 원문 제목 한 줄 · 결과 머리 줄 */
 #newsBody mark{background:var(--accent-weak);color:inherit;font-weight:600;border-radius:3px;padding:0 1px}
 .nitem .ntitle{font-size:var(--fs-xs);color:var(--sub);margin-top:3px;word-break:keep-all;overflow-wrap:break-word}
@@ -695,6 +695,7 @@ a.nmore{text-decoration:none}
 .fi-nm{display:inline-block;vertical-align:top;max-width:100px;white-space:normal;text-wrap:balance}   /* 비교 표 법인명: 칸보다 길면 말줄임 대신 두 줄(휴대폰은 title이 안 보임) */
 @media(max-width:389px){.fi-nm{max-width:84px}}@media(max-width:372px){.fi-nm{max-width:68px}}
 .fi-tbl tr.me td{background:var(--barbg)}
+.fi-tbl tr.me .std-b{background:var(--card)}   /* 자사 줄 바탕(--fill)과 같은 색이라 꼬리표가 사라지지 않게 */
 .std-b{display:inline-block;font-size:var(--fs-2xs);line-height:1.45;border-radius:6px;padding:1px 6px;margin-left:4px;background:var(--fill);color:var(--sub);font-weight:400;vertical-align:middle}
 .fi-tbl td:first-child .fi-nsub{display:block;font-size:var(--fs-2xs);color:var(--sub);font-weight:400;margin:1px 0 0 24px;line-height:1.4}
 .fi-nsub .std-b{margin-left:0}.fi-nsub .std-b:not(:first-child){margin-left:4px}
@@ -802,8 +803,6 @@ a.nmore{text-decoration:none}
 /* v33.5 물류 세 묶음(수입·수출·공통 위험) + 적출 거점 줄 */
 .lg-h2{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;margin:20px 2px 8px;font-size:16px;font-weight:700;line-height:1.3;word-break:keep-all;overflow-wrap:break-word}
 .lg-h2 span{font-size:13px;font-weight:400;color:var(--sub)}
-.lg-jump{margin:-2px 0 10px}
-.lg-jump .chip{gap:2px;color:var(--tx)}
 .lh{border-top:1px solid var(--line)}
 .lh:first-child{border-top:none}
 .lh>summary{display:flex;align-items:center;gap:8px;min-height:52px;padding:6px 0;cursor:pointer;list-style:none}
@@ -817,7 +816,6 @@ a.nmore{text-decoration:none}
 .lh-b b{font-size:15px}
 .lh-b b small,.lg-share b small{font-size:var(--fs-xs);font-weight:400;margin-left:1px}   /* v33.6 단위(TEU·톤·척/일) 13px */
 .lh-b .s{white-space:nowrap}
-.lg-bu .lg-bux{grid-column:1/-1;font-size:var(--fs-xs);color:var(--sub);word-break:keep-all;overflow-wrap:break-word}
 .lh-ic{flex:none;color:var(--tx2);transition:transform .15s}
 .lh[open] .lh-ic{transform:rotate(180deg)}
 .lh-in{padding:0 0 10px}
@@ -864,6 +862,7 @@ a.nmore{text-decoration:none}
 .hd-kick,.hd-sub{display:block;font-size:13px;color:var(--sub)}
 .hd-pill{display:inline-flex;align-items:center;gap:6px;flex:none;min-height:44px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:13px;font-weight:600;white-space:nowrap}
 .hd-pill .ic{color:var(--accent)}.hd-pill.late .ic{color:var(--bad)}
+@media(max-width:359px){.hd-row{gap:8px}.hd-tt h1{font-size:var(--fs3)}.hd-pill{gap:4px;padding:0 10px}}   /* 320px: 상태 단추 옆 제목이 두 줄로 커지지 않게(고정 머리 높이) */
 .phead.dethead{display:grid;grid-template-columns:minmax(44px,1fr) minmax(0,max-content) minmax(44px,1fr);align-items:center;column-gap:4px;min-height:56px;padding:0 max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px))}
 .dethead h1{font-size:var(--fs-name);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;letter-spacing:-.01em}
 .hd-back{display:inline-flex;align-items:center;justify-self:start;gap:2px;max-width:100%;min-width:44px;min-height:44px;padding:0 8px 0 2px;font-size:15px;white-space:nowrap}
@@ -911,12 +910,6 @@ div.dc-hd{cursor:default}
 .fx-hero .v{font-size:var(--fs-hero);line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .dc-s{margin:4px 0 0;font-size:13px;color:var(--sub);line-height:1.5}
 .dc-s+.dc-s{margin-top:0}
-.fx-rows{margin-top:10px;border-top:1px solid var(--line)}
-.fx-r{display:grid;grid-template-columns:76px 72px minmax(0,1fr);align-items:center;gap:2px 8px;min-height:40px;padding:2px 0;border-bottom:1px solid var(--line2)}
-.fx-r .fx-st{grid-column:1/-1;padding-bottom:6px;line-height:1}
-.fx-r .nm,.fx-r .v{font-size:15px;font-weight:600}
-.fx-r .v{text-align:right;font-variant-numeric:tabular-nums}
-.fx-r .d{font-size:14px;text-align:right}
 .fx-al{margin:8px 0 0;font-size:13px;color:var(--sub);line-height:1.5}
 .fx-ai{margin:2px 0 0;font-size:14px;color:var(--tx);line-height:1.5}
 .dc-evs,.dc-nws{padding:0 16px 6px}
@@ -952,15 +945,7 @@ div.dc-hd{cursor:default}
 .br-list,.br-rest{margin:0 0 10px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
 .br-row{display:flex;align-items:center;gap:8px;width:100%;padding:12px 10px 12px 14px;border-top:1px solid var(--line)}
 .br-row:first-child{border-top:0}
-.br-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
-.br-l1{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.br-nm{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px;min-width:0}
 .br-name{font-size:var(--fs-name);font-weight:700}
-.br-hq{font-size:13px;color:var(--sub)}
-.br-why{font-size:14px;color:var(--tx2);line-height:1.45}
-.br-cells{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:2px}
-.br-c{display:flex;align-items:baseline;gap:5px;font-size:13px;color:var(--sub);white-space:nowrap}
-.br-c b{font-size:15px;font-variant-numeric:tabular-nums}
 .br-empty{margin:0 0 10px;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);font-size:14px;color:var(--sub);line-height:1.5}
 .br-rest>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:8px 12px 8px 14px;cursor:pointer;list-style:none}
 .br-rest>summary::-webkit-details-marker{display:none}
@@ -984,13 +969,6 @@ div.dc-hd{cursor:default}
 .bd .bd-head{font-size:var(--fs-dhead);line-height:1.3;letter-spacing:-.02em}
 .bd-say{margin:0;font-size:15px;line-height:1.6}
 .bd-chg{margin:0;font-size:13px;color:var(--tx2);line-height:1.5}
-.bd-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
-.bd-tile{display:flex;flex-direction:column;gap:2px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r)}
-.bd-tile.acc{border:1.5px solid var(--accent)}.bd-tile.acc .tv{color:var(--accent)}
-.bd-tile.warn{border:1.5px solid var(--warn-bg)}.bd-tile.warn .tv{color:var(--bad)}
-.bd-tile .tl{font-size:13px;color:var(--sub)}
-.bd-tile .tv{font-size:var(--fs-tile);font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
-.bd-tile .tc{font-size:13px;color:var(--tx2);line-height:1.4}
 .bd-ev{display:flex;flex-direction:column;gap:4px;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:var(--r)}
 .bd-ev-hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .bd-ev-l{font-size:14px;font-weight:600;color:var(--tx2)}
@@ -1010,8 +988,8 @@ div.dc-hd{cursor:default}
 .bdq-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0 0;border-top:1px solid var(--line2)}
 .bdq-t{flex:none;font-size:13px;font-weight:600;line-height:1.5;border-radius:6px;padding:0 6px;background:var(--fill);color:var(--tx2)}
 .bdq-b{min-width:0;font-size:14px;line-height:1.5}
-.bdq-s{display:inline-block;font-size:13px;font-weight:600;line-height:1.4;border-radius:6px;padding:0 5px;margin-left:4px;white-space:nowrap;border:1px solid var(--sub);color:var(--sub)}
-.bdq-s.more{border-color:var(--accent);color:var(--accent)}.bdq-s.less{border-color:var(--bad);color:var(--bad)}
+.bdq-s{display:inline-block;font-size:13px;font-weight:600;line-height:1.4;border-radius:6px;padding:1px 6px;margin-left:4px;white-space:nowrap;border:0;background:var(--fill);color:var(--sub)}   /* 발언 신호·범위 = 표시용 회색 태그(테두리 없음) */
+.bdq-s.more{color:var(--accent)}.bdq-s.less{color:var(--bad)}
 .bdq-b summary{display:inline-flex;align-items:center;min-height:44px;min-width:44px;font-size:13px;color:var(--accent);cursor:pointer}
 .bdq-b q{display:block;margin-bottom:8px;font-size:13px;color:var(--sub);line-height:1.5;overflow-wrap:anywhere}
 .bd-next,.bd-nws{border:1px solid var(--line);border-radius:var(--r);padding:0 14px}
@@ -1046,7 +1024,6 @@ div.bd-nx{cursor:default}
 .bd-pr-sale{font-size:13px;color:var(--sub);font-weight:400}
 .bd-pr-src{margin:0;font-size:13px;color:var(--sub)}
 /* v33.16 더보기 › 해외 정가 — 상품 × 나라 한 표(첫 열 고정 · 표만 가로 넘김) */
-.pm-ctl{display:flex;flex-direction:column;gap:6px;margin:10px 0}
 .pm-cap{margin:0 0 6px;font-size:13px;color:var(--sub);word-break:keep-all;overflow-wrap:break-word}
 #prMx .tblwrap{margin:0 0 8px;border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:max(320px,calc(var(--ch,80vh) - var(--phh,0px) - 16px))}   /* v33.19 표 상자 높이를 화면 안으로 — 세로로 넘겨도 나라 머리 줄이 보이게(표 안에서 넘김) */
 #prMx .tblwrap:focus-visible{outline-offset:-2px}
@@ -1062,17 +1039,14 @@ div.bd-nx{cursor:default}
 .pm-tbl .pm-nm{display:block;font-size:14px;font-weight:600;color:var(--tx)}
 .pm-tbl .pm-sub,.pm-tbl .pm-n,.pm-tbl .pm-sale{display:block;font-size:13px;font-weight:400;color:var(--sub)}
 .pm-tbl .pm-g{display:block;font-size:13px;font-weight:600}
-.pm-tbl td.pm-lo{background:var(--fill)}
 .pm-chips{margin:10px 0 0}
 .pm-tbl tr.pm-bh th,.pm-tbl tr.pm-bh td{padding-top:12px;padding-bottom:4px;border-bottom:0}   /* 브랜드 묶음 줄(누르는 곳 아님) — 아래 상품 줄과 한 덩어리 */
 .pm-tbl tbody:nth-of-type(n+3) tr.pm-bh>*{border-top:2px solid var(--line)}   /* 묶음 사이 굵은 선(첫 묶음은 위 평균 줄 선이 대신) */
 .pm-tbl .pm-bn{display:block;font-size:15px;font-weight:700;color:var(--tx)}
-.pm-tbl .tg{display:inline-block;margin:2px 0 0 4px}
 .pm-land[hidden]{display:none}
 .pm-tgt{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--sub)}
 .pm-tgt input{width:88px;min-height:44px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);font-size:16px;text-align:right}
 .pm-tbl tr.pm-hit>th{box-shadow:inset 3px 0 0 var(--accent),inset -1px 0 0 var(--line)}   /* v33.23 목표 마진 이상 상품 줄 */
-.pm-tbl .pm-best{display:block;font-size:13px;font-weight:600;color:var(--tx)}
 /* 더보기 메뉴(머리 '더보기' + 줄 5개 + 화면 테마) */
 .mmenu{margin:0 0 10px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card);word-break:keep-all;overflow-wrap:break-word}
 .mi{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:60px;padding:8px 12px 8px 14px;border-top:1px solid var(--line)}
@@ -1088,7 +1062,6 @@ div.bd-nx{cursor:default}
 .mnote{margin:0 2px 10px;font-size:13px;color:var(--sub);line-height:1.5;word-break:keep-all;overflow-wrap:break-word}
 .co-hq{margin:0 0 12px}   /* 국내 법인 상세 '글로벌 본사' 줄(브랜드 상세 본사 줄과 같은 모양 · 44px 이상) */
 /* PC·태블릿: 환율 표 값·차이 글이 벌어지지 않게 · 점수 4칸 폭 상한 */
-@media(min-width:760px){.fx-r{grid-template-columns:76px 72px auto;justify-content:start}.br-cells{max-width:480px}}
 /* ── v33.28 A안 다듬기 바탕 — 여러 화면이 함께 쓰는 규칙(글자 단계·모서리 토큰은 맨 위 :root) ─────────────────────────────
    화면별 규칙은 맨 아래 표식 묶음(A-TODAY · A-BRAND-LIST · A-BRAND-DETAIL · A-MARKET · A-PRICE · A-LOGI)에 넣고, 다른 화면에 새지 않게
    그 화면 칸(#p-today·#p-brand·#brandDetail·#p-market·#moreBody 등)이나 화면 전용 클래스로 좁혀 씀. 이 묶음 = 고른 것·자료 상태 꼬리표·점수 회색·
@@ -1116,11 +1089,11 @@ div.bd-nx{cursor:default}
 .a-fade{position:relative}
 .a-fade::after{content:'';position:absolute;top:0;right:calc(-1*var(--gr));bottom:0;width:32px;pointer-events:none;background:linear-gradient(to right,transparent,var(--bg))}
 .a-fade.a-end::after{opacity:0}
-/* 다크 주황 — 배경(--warn-bg)이 어두운 갈색이라 테두리(--warn-bd)로 모양을 지킴 · 판정 배지: 지금 검토(밝은 파랑 채움) ≥ 주의(갈색 바탕 + 주황 글자·테두리) */
+/* 다크 주황 — 배경(--warn-bg)이 어두운 갈색이라 테두리(--warn-bd)로 모양을 지킴 · 판정 배지: 지금 검토(파랑 채움 #3b6cf0 — 흰 글자 4.5:1 이상) ≥ 주의(갈색 바탕 + 주황 글자·테두리) */
 [data-theme="dark"] .vb.warn{box-shadow:inset 0 0 0 1.5px var(--warn-bd)}
 [data-theme="dark"] .mi .mr .wn,[data-theme="dark"] .st-late,[data-theme="dark"] .warnbar,[data-theme="dark"] .mbadge.up,[data-theme="dark"] .mbadge.late,
-[data-theme="dark"] .fpill.up,[data-theme="dark"] .nv-pill.down,[data-theme="dark"] .bd-pt.n{box-shadow:inset 0 0 0 1px var(--warn-bd)}
-[data-theme="dark"] .fxc.up,[data-theme="dark"] .bd-tile.warn{border-color:var(--warn-bd)}
+[data-theme="dark"] .fpill.up,[data-theme="dark"] .nv-pill.down,[data-theme="dark"] .bd-pt.n,[data-theme="dark"] .src-legend i.lg-wn{box-shadow:inset 0 0 0 1px var(--warn-bd)}
+[data-theme="dark"] .fxc.up{border-color:var(--warn-bd)}
 [data-theme="dark"] .sh-warn{border-left-color:var(--warn-bd)}
 /* 더보기 '화면 테마' 줄 — 자동 · 밝게 · 어둡게(.seg3)가 이름 아래 한 줄 */
 .mi.mi-thm{grid-template-columns:30px minmax(0,1fr);row-gap:8px;cursor:default}
@@ -1156,6 +1129,7 @@ div.bd-nx{cursor:default}
 #p-today .td-wl{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin:0 6px 0 8px}
 #p-today .td-names button{min-height:44px;padding:0 8px;font-size:var(--fs2);font-weight:700;color:var(--tx);text-decoration:underline;text-decoration-color:var(--line2);text-decoration-thickness:1px;text-underline-offset:5px}
 #p-today .td-names button:active{background:var(--fill);border-radius:8px}
+#p-today .td-names button .tg{margin-left:6px;vertical-align:1px}   /* 어제와 달라진 판정 꼬리표 */
 /* ① 끝 줄 '점검표 전체 보기 · 관망 n곳 · 판정 안 함 n곳' — 넓으면 한 줄, 좁으면 둘째 줄 */
 #p-today .dc1 .dc-more{min-height:48px}
 #p-today .dc1 .dc-mt{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:0 8px}
@@ -1170,6 +1144,7 @@ div.bd-nx{cursor:default}
 #p-today .td-fxt td:first-child .ds{display:flex;margin-top:2px}   /* 이전 값 꼬리표는 통화 이름 아래(칸이 넓어지지 않게) */
 #p-today .td-fxt tr:last-child td{border-bottom:0}
 #p-today .td-fxt small{margin-left:3px;font-size:var(--fs1);font-weight:400;color:var(--sub)}
+@media(min-width:760px){#p-today .td-fxt{width:auto;min-width:360px}#p-today .td-fxt th:not(:first-child),#p-today .td-fxt td:not(:first-child){padding-left:28px}}   /* PC·태블릿: 값·차이가 이름에서 멀어지지 않게 */
 /* ③ 일정 제목 굵게 · ④ 뉴스 제목 15px 보통 굵기 2줄(넘치면 …) · 정보 줄 ★ 회색 */
 #p-today .dc-ev .ev-tt .t{font-weight:700}
 #p-today .dc-news{padding:11px 0}
@@ -1182,6 +1157,7 @@ div.bd-nx{cursor:default}
 /* 머리: 제목 줄(제목 + 'n곳 판정 · m/d 기준' 한 줄)은 스크롤과 함께 올라가고 판정 필터·검색창만 위에 남음(top은 스크립트 brlStick) */
 #brHead{gap:8px;padding-bottom:10px}
 #brHead .brl-top{display:contents}
+#brHead:has(.brl-t :focus-visible){top:0!important}   /* 키보드 초점이 올라간 제목 줄((i) 단추)에 가면 머리를 펼침 — 화면 밖 단추로 문서 전체가 밀리지 않게 */
 #brHead .brl-tt{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:0 8px}
 #brHead .seg4{padding:3px}
 #brHead .seg4 button{font-size:var(--fs2)}
@@ -1206,8 +1182,9 @@ div.bd-nx{cursor:default}
 .brl-nm{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 6px;min-width:0}
 .brl-row .br-name{font-size:var(--fs3);line-height:1.3}
 .brl-sc b{font-size:var(--fs2);line-height:1.3;font-variant-numeric:tabular-nums}
-.brl-l2{display:flex;align-items:baseline;gap:6px;min-width:0;font-size:var(--fs1);line-height:1.45}
-.brl-why{flex:0 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--tx2)}
+.brl-l2{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 6px;min-width:0;font-size:var(--fs1);line-height:1.45}
+/* 이유는 최소 9em을 지킴 — 꼬리표가 2~3개면 이유 아래 줄로(이유가 0px로 줄지 않게) · 짧은 이유는 글자 폭만(꼬리표가 바로 뒤) */
+.brl-why{flex:1 1 0;min-width:min(9em,100%);max-width:max-content;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--tx2)}
 .brl-why.same{color:var(--sub)}
 .brl-l2 .ds{flex:none}
 @media(min-width:380px){.brl-l2{font-size:var(--fs2)}}
@@ -1294,11 +1271,11 @@ div.bd-nx{cursor:default}
 .mkn-cap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;margin:12px 0 0;font-size:var(--fs1);color:var(--sub);line-height:1.5}
 /* 기사 — 제목 15px 보통 굵기 · 정보 줄 13px 회색 '★★★ · 브랜드 · 매체 · 날짜' · 날짜 머리글 13px 굵게 */
 #mk-news .ndate{margin:16px 0 2px;font-size:var(--fs1);font-weight:700;color:var(--tx2)}
-#mk-news .nitem{padding:12px 0}
-#mk-news .nitem .nsum{font-size:var(--fs2);line-height:1.5}
-#mk-news .nitem .nsum a{font-weight:400}
-#mk-news .nitem .nmeta{margin-top:4px;font-size:var(--fs1);line-height:1.45}
-#mk-news .nitem .stars{color:var(--tx2);letter-spacing:-.05em}
+#mk-news .nitem,#detBody .nitem,.lg-pg .nitem{padding:12px 0}   /* 기업 상세·물류 뉴스 카드도 같은 모양(newsLineHtml) */
+:is(#mk-news,#detBody,.lg-pg) .nitem .nsum{font-size:var(--fs2);line-height:1.5}
+:is(#mk-news,#detBody,.lg-pg) .nitem .nsum a{font-weight:400}
+:is(#mk-news,#detBody,.lg-pg) .nitem .nmeta{margin-top:4px;font-size:var(--fs1);line-height:1.45}
+:is(#mk-news,#detBody,.lg-pg) .nitem .stars{color:var(--tx2);letter-spacing:-.05em}
 #mk-news .nitem .ntitle{margin-top:4px}
 .a-sep-market1{}
 .a-sep-market2{}
@@ -1319,6 +1296,7 @@ div.bd-nx{cursor:default}
 .pm-pg .pm-chips{flex-wrap:nowrap;gap:6px;margin:0;padding:2px var(--gr) 2px var(--gl);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;scroll-padding-inline:28px}
 .pm-pg .pm-chips::-webkit-scrollbar{display:none}
 .pm-pg .pm-chips .chip{flex:none}
+@media(min-width:760px){.pm-pg .pm-chips{flex-wrap:wrap;overflow:visible;padding:2px 0}.pm-fade{margin:10px 0 0}.pm-fade::before,.pm-fade::after{display:none}}   /* PC·태블릿 = 두 줄로 모두 보임(마우스 휠은 가로로 안 넘어감) */
 /* 금액 보기 = 화면 안 탭 3칸(잉크 밑줄 — 물류 구역 탭·시장 칩과 같은 모양) */
 .pm-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:8px 0 0;box-shadow:inset 0 -1px 0 var(--line)}
 .pm-tabs button{min-height:44px;padding:0 2px;font-size:var(--fs2);color:var(--sub);border-bottom:2px solid transparent;white-space:nowrap}
@@ -1407,7 +1385,7 @@ div.bd-nx{cursor:default}
 .lg-pg .lg-tabs+.lg-h2{margin-top:0;padding-top:0;border-top:0}
 /* 카드 머리 — 읽는 법 = 오른쪽 위 i 단추 + '읽는 법' 글자(lgTop · 펼친 설명은 제목 바로 아래) · 이전 값 = 회색 줄 + 주황 점(lgStl) */
 .lg-pg .card{position:relative}
-.lg-pg .card>h3.lg-hw{padding-right:66px}
+.lg-pg .card>h3.lg-hw{padding-right:88px}   /* 오른쪽 위 '읽는 법'(80px) + 틈 8px */
 .lg-pg .card>details.why{margin:0}
 .lg-pg .card>details.why>summary{position:absolute;top:5px;right:6px;gap:4px;padding:0 8px;color:var(--sub);font-size:var(--fs1)}
 .lg-pg .card>details.why>summary .why-ic{display:none}
@@ -2135,8 +2113,7 @@ function newsCard(key){
   let h=`<div class="card"><h3>최근 뉴스 <button type="button" class="go" onclick="goNews('${list.length&&nk?'k:'+esc(nk):'all'}')">뉴스 ›</button></h3>`;
   if(!list.length){ h+=`<div class="na">보관 기간 내 선별 뉴스 없음</div></div>`; return h; }
   list.forEach(it=>{
-    h+=`<div class="nitem"><div class="nsum"><span class="stars">${'★'.repeat(Math.max(1,Math.min(3,it.importance||1)))}</span> <a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
-      <div class="nmeta">${[it.source,newsDay(it)].filter(Boolean).map(esc).join(' · ')}</div></div>`;
+    h+=newsLineHtml(it);   // v33.28 시장 › 뉴스와 같은 모양(제목 15px · '★★ · 매체 · 날짜')
   });
   return h+`</div>`;
 }
@@ -2292,7 +2269,7 @@ const oldDs=i=>{ const e=oldInvOf(i); return e?ds(`${ym(e)} 결산`,'연간 결�
 const staleDs=d=>d?dsBad(`이전 값 ${mdOf(d)}`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 const FXTAIL=/\d+(\.\d+)?% (쌈|비쌈)$/;
 function fxCommon(M){
-  const ps=((M&&M.main)||[]).filter(r=>r.fx&&!r.fx.na).map(r=>r.fx.pt); if(!ps.length) return null;
+  const ps=((M&&M.main)||[]).filter(r=>r.fx&&!r.fx.na).map(r=>r.fx.pt); if(ps.length<2) return null;   // 한 곳뿐이면 '공통'이 아님(견줄 곳 없음)
   const dir=ps.every(p=>p>0)?1:ps.every(p=>p<0)?-1:0;
   return dir?{dir, lo:Math.min(...ps.map(Math.abs)), hi:Math.max(...ps.map(Math.abs)), n:ps.length}:null;
 }
@@ -2361,8 +2338,8 @@ function todayModel(){
       :{n:0,empty:'네이버 검색 자료 수집 전'};
     // v33.2 어제와 달라진 판정(판정 기록이 있을 때) — 계산이 실패해도 카드는 그대로
     // 한 줄(넘치면 …, 전체는 title) — 한 곳이면 바뀐 점수까지, 두 곳이면 판정만, 세 곳 이상이면 이름만 4곳까지(꼬리표·상세에 판정·점수) — 첫 화면에서 ②가 덜 밀리게.
-    // 지금 검토·주의로 바뀐 곳 먼저
-    let chg=null; try{ const C=chkHist(), pri=c=>(c.to===2||c.to===0)?0:1, L=C.list.slice().sort((a,c)=>pri(a)-pri(c)), k=L.length, mx=k>2?4:2;
+    // 주의로 바뀐 곳 → 지금 검토로 바뀐 곳 → 나머지(넘쳐 …로 잘려도 새 주의는 보이게)
+    let chg=null; try{ const C=chkHist(), pri=c=>c.to===0?0:c.to===2?1:2, L=C.list.slice().sort((a,c)=>pri(a)-pri(c)), k=L.length, mx=k>2?4:2;
       if(C.prev) chg={vs:chkLbl(C).vs, n:k, list:L.slice(0,mx).map(c=>k===1?chkChgTxt(c):k===2?`${c.name} ${lvT(c.from)} → ${lvT(c.to)}`:c.name), sep:k>2?'·':' · ', more:Math.max(0,k-mx), skip:C.skip.length,
         full:L.map(chkChgTxt).join(' · ')}; }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
     return {n:M.main.length, chg,
@@ -2435,11 +2412,11 @@ function todayModel(){
   return out;
 }
 function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 수집 상태 단추 하나 → 수집 상태
-  // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) — 지연 = 경고 '11:27 · 지연 n' · 일부 이전 값 = 회색 시계 '11:27 · 이전 값 n'(수집 상태 '일부 실패 n곳(이전 값)'과 같은 셈) · 모두 정상일 때만 파랑 체크 '11:27 갱신'
+  // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) — 지연 = 경고 '11:27 · 지연 n' · 일부 실패 = 회색 시계 '11:27 · 일부 실패 n'(이전 값 + 값 없음 — 수집 상태 '일부 실패 n곳'과 같은 셈·같은 말) · 모두 정상일 때만 파랑 체크 '11:27 갱신'
   const g=String(DATA.generated_at||''), gd=g.slice(0,10), st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0);
   const t=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)}`:'갱신 시각 없음';
-  const vis=late?`${t} · 지연 ${late}`:part?`${t} · 이전 값 ${part}`:(g?`${t} 갱신`:t);
-  const say=[late?`수집 지연 ${late}곳`:'',part?`일부 실패 ${part}곳 이전 값`:''].filter(Boolean).join(' · ')||'수집 정상';
+  const vis=late?`${t} · 지연 ${late}`:part?`${t} · 일부 실패 ${part}`:(g?`${t} 갱신`:t);
+  const say=[late?`수집 지연 ${late}곳`:'',part?`일부 실패 ${part}곳`:''].filter(Boolean).join(' · ')||'수집 정상';
   const date=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
   return `<div class="hd-row"><div class="hd-tt"><span class="hd-kick">${esc(date)}</span><h1>오늘 볼 것 4가지</h1></div>
     <button type="button" class="hd-pill${late?' late':part?' part':''}" id="tdStatus" data-go="more:status" aria-label="${esc(`${g?t+' 갱신':t}, ${say}, 수집 상태 보기`)}">${ic(late?'alert':part?'clock':'go',16)}<span>${esc(vis)}</span></button></div>`;
@@ -2458,7 +2435,7 @@ function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 
     +card('foot',0,'맺음 줄','',f=>f.c?`<button type="button" class="td-foot" data-go="more:status">${esc(f.c).replace(/(Claude 사용액 \S+)$/,'<span class="nw">$1</span>')}</button>`:'');
 }
 function tdHq(q){   // v33.28 ① 한 줄로 합친 브랜드(같은 본사·판정·이유) → 점검표를 그 본사 이름으로 검색한 화면(검색어는 점검표 검색창에 — 지우면 전체)
-  const i=document.getElementById('brSearch'); if(i) i.value=q; brSearch(q); go({tab:'brand'});
+  BR_Q_AUTO=q; const i=document.getElementById('brSearch'); if(i) i.value=q; brSearch(q); go({tab:'brand'});
 }
 function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지금 검토 n곳' 배지는 묶음 머리에 한 번 → 브랜드마다 한 줄(이름 + 짧은 이유 + 오른쪽 끝 매입 조건 점수 하나)
   // · 주의 = 누르는 이름만(줄바꿈돼도 왼쪽 맞춤) · 관망·판정 안 함 = 끝 줄 '점검표 전체 보기'의 개수 · 판정·점수는 chkModel 그대로(표시만)
@@ -2473,14 +2450,14 @@ function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지�
   // 줄 묶기 — 본사·판정·짧은 이유(fxCommon이면 환율 꼬리 뺌 — whyShort)·매입 점수·달라진 판정 꼬리표가 모두 같으면 한 줄('몽클레르 · 스톤아일랜드')
   const rowsOf=rs=>{ const out=[]; rs.forEach(r=>{ const w=whyShort(r,M), hq=chkHq(r), tg=chgTag(r.b.name), k=[hq,r.lv,w,r.buy,tg].join('|'), p=hq?out.find(x=>x.k===k):null;
     if(p) p.names.push(r.b.name); else out.push({k,names:[r.b.name],w,hq,tg,r}); }); return out; };
-  const gh=(lv,n)=>`<div class="td-gh">${vbadge(lv)}<span class="a-gn">${n}곳</span><span class="td-colh" aria-hidden="true">매입</span></div>`;
+  const gh=(lv,n)=>`<div class="td-gh" role="heading" aria-level="3">${vbadge(lv)}<span class="a-gn">${n}곳</span><span class="td-colh" aria-hidden="true">매입</span></div>`;
   const row=(x,hint)=>{ const many=x.names.length>1, v=x.r.buy;
     return `<button type="button" class="dc-row td-row" ${many?`data-hq="${esc(x.hq)}" onclick="tdHq(this.dataset.hq)"`:`data-go="brand:${esc(x.names[0])}"`}><span class="dc-rb">`
       +`<span class="td-l1"><span class="dc-nm">${esc(x.names.join(' · '))}</span>${many?`<span class="td-hq">본사 ${esc(x.hq)}</span>`:''}${x.tg}</span>`
       +`<span class="dc-why">${nb(esc(x.w))}${oldDs(x.r.inv)?' '+oldDs(x.r.inv):''}</span>${hint?`<span class="dc-hint">${esc(hint)}</span>`:''}</span>`
       +`<b class="td-sc ${v>0?'sc-p':v<0?'sc-n':'sc-z'}"><span class="sr">매입 조건 </span>${sg0(v)}</b>${ic('right',18,'s2 chev')}</button>`; };
   if(gos.length) h+=gh(2,gos.length)+rowsOf(gos).map(x=>row(x)).join('');
-  if(warn.length) h+=`<div class="td-names"><span class="td-wl">${vbadge(0)}<span class="a-gn">${warn.length}곳</span></span>${warn.map(r=>`<button type="button" data-go="brand:${esc(r.b.name)}">${esc(r.b.name)}</button>`).join('')}</div>`;
+  if(warn.length) h+=`<div class="td-names"><span class="td-wl" role="heading" aria-level="3">${vbadge(0)}<span class="a-gn">${warn.length}곳</span></span>${warn.map(r=>`<button type="button" data-go="brand:${esc(r.b.name)}">${esc(r.b.name)}<span class="sr"> — 주의</span>${chgTag(r.b.name)}</button>`).join('')}</div>`;
   if(!gos.length&&!warn.length&&hold.length){   // 지금 검토·주의가 없는 날 — 관망 앞 2곳(지금 검토까지 남은 매입 점수 · 수요 약함)
     const hint={}; (B.rows||[]).forEach(r=>{ hint[r.name]=r.hint; });
     h+=`<h2 class="dc-h td-none">오늘은 지금 검토·주의 없음</h2>`+gh(1,hold.length)+rowsOf(hold.slice(0,2)).map(x=>row(x,hint[x.names[0]])).join(''); }
@@ -3103,6 +3080,9 @@ const pubKr=p=>{ const t=new Date(p); if(isNaN(t)) return String(p).slice(0,16);
 const newsDay=it=>/^\d{4}-\d{2}-\d{2}$/.test(it.orig_date||'')?newsDateLbl(it.orig_date):it.pubDate?pubKr(it.pubDate):(it.first_seen?newsDateLbl(it.first_seen):'');   // 기사 줄 날짜 = 원문 날짜(v33.3, news_monitor가 원문 페이지에서 확인) → 구글 게재일 → 수집일 — 모든 화면 같게
 // v33.28 A안: 제목 = 15px 보통 굵기 한 덩어리 · 정보 줄 = 13px 회색 '★★★ · 브랜드 · 매체 · 날짜'(이름표 상자 없음) — 검색 결과(nsItemHtml)도 같은 모양
 const mknStars=n=>`<span class="stars" role="img" aria-label="중요도 ${n}">${'★'.repeat(n)}</span>`;
+// 기업 상세·물류 뉴스 카드 기사 한 건 — 제목 / '★★ · 매체 · 날짜'(시장 › 뉴스 newsItemHtml과 같은 모양, 브랜드 꼬리표만 없음)
+const newsLineHtml=it=>`<div class="nitem"><div class="nsum"><a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
+      <div class="nmeta">${mknStars(Math.max(1,Math.min(3,it.importance||1)))}${[it.source,newsDay(it)].filter(Boolean).map(t=>' · '+esc(t)).join('')}</div></div>`;
 function newsItemHtml(it,more){   // more = '더 보기'로 새로 보인 기사 표시(초점 옮길 곳)
   const n=Math.max(1,Math.min(3,it.importance||1));
   const tag=it.scope==="brand"?it.label:(it.label||it.key), day=newsDay(it);
@@ -3332,7 +3312,7 @@ function naverCardHtml(){
     <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b>${ups.length?`<br><b style="color:var(--up)">▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b style="color:var(--down)">▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
   shown.forEach(b=>{ h+=nvRowHtml(b,med); });
   if(rows.length>NV_TOP) h+=`<button type="button" class="nv-more" aria-expanded="${NV_ALL}" onclick="nvToggle()">${NV_ALL?`상위 ${NV_TOP}개만 보기 ${ic('up',16)}`:`전체 ${rows.length}개 보기 ${ic('down',16)}`}</button>`;
-  h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--accent-fill)"></i>중앙값보다 5%p 이상 좋음</span><span><i style="background:var(--warn-bg)"></i>5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span></div>
+  h+=`<div class="src-legend" style="margin-top:8px"><span><i style="background:var(--accent-fill)"></i>중앙값보다 5%p 이상 좋음</span><span><i class="lg-wn"></i>5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span></div>
     <div class="note" style="margin-top:6px">출처: ${esc(NAVER.source||'네이버 데이터랩')}</div>${why(`주간 검색 지수 · 규모 = 나이키 최근 4주를 100 · 전년 대비 = 최근 4주 vs 1년 전 같은 4주(지수 비율 = 실제 검색 횟수 비율) · 4주 vs 12주 = 최근 4주 vs 직전 12주(계절 영향 포함)<br>대부분이 같이 움직이면 네이버 검색 전반의 변화라 중앙값보다 나은지로 봄${NV_GRP==='global'?' · 브랜드 점검표 중앙값은 검색량 충분한 브랜드만':NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':NV_GRP==='eye'?' · 중앙값은 글로벌 아이웨어 + 국내 젠틀몬스터·블루엘리펀트끼리 · 명품은 선글라스·안경 검색어만':''}<br>규모 1 미만은 검색량 적음 표시·맨 아래 · 그래프: 최근 1년 실선, 그 전 1년 점선 · 누르면 브랜드 상세(수입·해외)·기업 상세 또는 그 브랜드 뉴스`)}</div>`;   // v33.26 접음
   return h;
 }
@@ -4197,8 +4177,7 @@ function lgNewsCard(){
   const list=newsDedupe(L,5);
   let h=`<div class="card"><h3>물류·운임 뉴스 <button type="button" class="go" onclick="goNews('i:logistics')">뉴스 ›</button></h3>`;
   if(!list.length) return h+'<div class="na">보관 기간 내 선별 뉴스 없음 — 매일 03:17 수집</div></div>';
-  list.forEach(it=>{ h+=`<div class="nitem"><div class="nsum"><span class="stars">${'★'.repeat(Math.max(1,Math.min(3,it.importance||1)))}</span> <a href="${esc(safeUrl(it.link))}" target="_blank" rel="noopener">${esc(it.summary||it.title)}</a></div>
-    <div class="nmeta">${[it.source,newsDay(it)].filter(Boolean).map(esc).join(' · ')}</div></div>`; });
+  list.forEach(it=>{ h+=newsLineHtml(it); });   // v33.28 시장 › 뉴스와 같은 모양
   return h+`</div>`;
 }
 function lgKpis(){   // 맨 위 6칸(v33.5 순서) — 수입 유럽→한국(바닷길·인천 항공) · 길목(호르무즈·수에즈 쪽 비율) · 정시율 · 수출 부산→중동
@@ -4771,6 +4750,7 @@ function brSetFilter(f){   // 필터 바꾸기 — 목록만 다시 그림(머�
 function brFilter(f){ if(!own(BR_NOTE,f)) return; brClearQ(); brSetFilter(f); scrollBox().scrollTo(0,0); }   // 판정 필터 단추 — 검색어 지우고 목록 맨 위로
 /* v33.15 브랜드 검색 — 이름·네이버 검색어(영문 등)·본사 이름·티커. 띄어쓰기·가운뎃점·하이픈 무시(new balance = newbalance) */
 let BR_Q='';
+let BR_Q_AUTO='';   // 오늘 ① 합친 줄(tdHq)이 넣은 검색어 — 하단 '브랜드' 탭을 다시 누르면 지움(직접 친 검색어는 그대로)
 const brNorm=v=>String(v||'').normalize('NFKD').replace(/\p{M}/gu,'').normalize('NFC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');   // 띄어쓰기·기호·악센트 무시(한글은 그대로)
 // 본사 영문 이름(브랜드 영문 검색어와 다른 곳만) · 검색 전용 별칭(네이버 검색어는 그대로 둠 — 키는 네이버 감시 브랜드 이름과 같게)
 const BR_HQ_EN={DECK:'deckers brands',AS:'amer sports',ONON:'on holding',WWW:'wolverine world wide',ZGN:'ermenegildo zegna group','0933.HK':'viva goods','MONC.MI':'moncler','7936.T':'asics'};
@@ -4803,7 +4783,7 @@ function brlCommon(M){   // 환율 공통 한 줄 — 판정 브랜드(환율 �
   const C=fxCommon(M); if(!C) return '';
   const g=C.dir>0?'+':'−', rg=C.lo===C.hi?`${g}${C.lo}`:`${g}${C.lo}~${g}${C.hi}`;
   const bs=[...new Set(M.main.filter(r=>r.fx&&!r.fx.na).map(r=>r.fx.basis==='avg'?'1년 평균':'1년 전'))];
-  return `<p class="brl-common">${ic('fx',16)}<span>환율 <b class="sc-g">${rg}</b>는 ${C.n<M.main.length?`환율 자료 있는 ${C.n}곳`:'전 브랜드'} 공통 — 모든 원산지 통화가 ${bs.length===1?bs[0]:'1년 평균·1년 전'}보다 ${C.dir>0?'쌈':'비쌈'}</span></p>`;
+  return `<p class="brl-common">${ic('fx',16)}<span>환율 <b class="sc-g">${rg}</b>${jo(rg,'은','는').slice(rg.length)} ${C.n<M.main.length?`환율 자료 있는 ${C.n}곳`:'전 브랜드'} 공통 — 모든 원산지 통화가 ${bs.length===1?bs[0]:'1년 평균·1년 전'}보다 ${C.dir>0?'쌈':'비쌈'}</span></p>`;
 }
 function brandBodyHtml(){
   const M=chkModel();
@@ -5070,7 +5050,8 @@ function pmSortPick(k){   // 고르면 표만 다시(prSet) — 키보드로 골
   prSet('sort',k);
   if(kb){ const b=document.querySelector('#prMx .pm-sortb'); if(b) try{ b.focus({preventScroll:true}); }catch(e){} }
 }
-document.addEventListener('click',e=>{ const m=document.getElementById('pmSortM'); if(m&&!m.hidden&&!(e.target&&e.target.closest&&e.target.closest('.pm-sort'))) pmSortTog(false); },true);
+document.addEventListener('click',e=>{ const m=document.getElementById('pmSortM'); if(m&&!m.hidden&&!(e.target&&e.target.closest&&e.target.closest('.pm-sort'))){
+  const vis=m.getClientRects().length; pmSortTog(false); if(vis){ e.preventDefault(); e.stopPropagation(); } } },true);   // 바깥을 누르면 닫기만(그 아래 표 줄·칩이 눌리지 않게 — 목록이 화면에 보일 때만 삼킴)
 document.addEventListener('keydown',e=>{ if(e.key!=='Escape') return; const m=document.getElementById('pmSortM'); if(!m||m.hidden) return;
   e.preventDefault(); e.stopPropagation(); pmSortTog(false); const b=document.querySelector('#prMx .pm-sortb'); if(b) try{ b.focus({preventScroll:true}); }catch(err){} },true);
 function prSumHtml(D){   // 요약 한 줄 + 출처 한 줄(#prSum — 브랜드·보기를 바꾸면 prSet이 다시 그림)
@@ -5180,7 +5161,8 @@ function brDetailHtml(d,bname){
   // 점수 칸 = 목록과 같은 색(+ 파랑 · − 짙은 주황 · 0 잉크 · ― 회색) · 누르면 그 근거 카드로 · 근거에 자료 상태 꼬리표가 있으면 이름 옆에 시계(실제 수집 실패는 주황 점)
   const cell=(id,lb)=>{ const e=E[id], v=scT(e), t=v==='―'?'na':e.tone==='p'?'p':e.tone==='n'?'n':'z', tg=(e&&e.tags)||'';
     const mk=!tg?'':/수집분|실패/.test(tg)?'<i class="bd-scd" aria-hidden="true"></i>':ic('clock',13);
-    return `<button type="button" class="bd-sc1" onclick="bdJump('ev-${id}')" aria-label="${esc(lb)} ${esc(v)} — 근거 보기"><span class="l">${esc(lb)}${mk}</span><b class="sc-${t}">${esc(v)}</b></button>`; };
+    const say=!tg?'':/수집분|실패/.test(tg)?' · 이전 값':' · 자료 상태 확인';
+    return `<button type="button" class="bd-sc1" onclick="bdJump('ev-${id}')" aria-label="${esc(lb)} ${esc(v)}${say} — 근거 보기"><span class="l">${esc(lb)}${mk}</span><b class="sc-${t}">${esc(v)}</b></button>`; };
   const ch=!!d.hist&&d.hist.indexOf('→')>=0;   // 어제와 달라진 판정이면 잉크 글
   let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>
     <h2 class="bd-head">${esc(d.head)}</h2><p class="bd-say">${nb(esc(d.say))}</p>${d.hist?`<p class="bd-chg${ch?' on':''}">${ic('clock',13)}<span>${esc(d.hist)}</span></p>`:''}`;
@@ -5189,6 +5171,10 @@ function brDetailHtml(d,bname){
     h+=`<div class="bd-strip" role="group" aria-label="점수">${cell('dem','수요')}${cell('inv','재고')}${cell('notes','발언')}${cell('fx','환율')}</div>`
       +`<p class="bd-eq">매입 조건 <b class="${bv>0?'sc-p':bv<0?'sc-n':'sc-tx'}">${esc(T.buy.v)}</b> = 재고 ${esc(scE(E.inv))} + 발언 ${esc(scE(E.notes))} + 환율 ${esc(scE(E.fx))}<span class="bd-eqc">&nbsp;· <span class="nw">${esc(T.buy.cap)}</span></span></p>`;   // 줄이 넘치면 기준 글만 다음 줄로('·'는 앞줄 끝)
   } else h+=`<div class="bd-strip two" role="group" aria-label="점수">${cell('dem','수요')}${cell('fx','환율')}</div>`;
+  // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 첫 화면(점수 줄 바로 아래) · 누르면 아래 '해외 정가 비교'로
+  let ps=null; try{ ps=bdPrSum(bname); }catch(e){ console.error('[브랜드 상세 · 해외 정가 한 줄] 셈 실패:',e); }
+  if(ps){ const near=Math.abs(ps.avg)<0.5;
+    h+=`<button type="button" class="bd-prl" onclick="bdJump('bdPrH')">${ic('globe',18)}<span class="t">해외 정가 · 한국이 ${near?'해외와 ':''}${prGapB(ps.avg)}</span><span class="s">상품 ${ps.nIt}개</span>${ic('right',18,'s2 chev')}</button>`; }
   h+=`</section>`;
   // 판단 근거 = 점수 큰 순(같으면 원래 순서) · 카드는 모두 펼침
   const evs=d.ev.map((e,i)=>({e,i,p:Math.abs(bdScN(e.score)||0)})).sort((a,c)=>(c.p-a.p)||(a.i-c.i)).map(o=>o.e);
@@ -5200,10 +5186,6 @@ function brDetailHtml(d,bname){
     h+=`</div>`;
   });
   h+=`</div></section>`;
-  // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 누르면 아래 '해외 정가 비교'로
-  let ps=null; try{ ps=bdPrSum(bname); }catch(e){ console.error('[브랜드 상세 · 해외 정가 한 줄] 셈 실패:',e); }
-  if(ps){ const near=Math.abs(ps.avg)<0.5;
-    h+=`<button type="button" class="bd-prl" onclick="bdJump('bdPrH')">${ic('globe',18)}<span class="t">해외 정가 · 한국이 ${near?'해외와 ':''}${prGapB(ps.avg)}</span><span class="s">상품 ${ps.nIt}개</span>${ic('right',18,'s2 chev')}</button>`; }
   h+=`<section class="bd-sec" aria-labelledby="bdNxH"><h2 id="bdNxH">다음 일정</h2>`;
   h+=d.next.length?`<div class="bd-next">${d.next.map(n=>{ const inner=`<span class="d">${esc(n.d)}</span><span class="ev-tt"><span class="t">${esc(n.title)}</span><span class="s">${esc(n.sub)}</span></span><span class="kind${n.kind==='세일'?' sale':''}">${n.kind}</span>`;
       return n.go?`<button type="button" class="bd-nx" data-go="${esc(n.go)}">${inner}</button>`:`<div class="bd-nx">${inner}</div>`; }).join('')}</div>`
@@ -5434,6 +5416,9 @@ function brlStick(){
   return off;
 }
 try{ const ro=new ResizeObserver(phSoon); ['tdHead','brHead'].forEach(id=>{ const e=document.getElementById(id); if(e) ro.observe(e); }); }catch(e){}
+// 문서 자체는 스크롤하지 않음(내용 창 #content만) — 화면 밖 초점·페이지 안 찾기 등으로 문서가 밀리면 되돌림(밀린 채 하단 탭이 화면 가운데 남지 않게) · 입력칸 자판은 그대로
+window.addEventListener('scroll',()=>{ const s=document.scrollingElement; if(!s||!(s.scrollTop||s.scrollLeft)) return;
+  const a=document.activeElement; if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return; s.scrollTo(0,0); },{passive:true});
 window.addEventListener('resize',phSoon);
 function renderBrand(st){
   if(BR_DAY&&BR_DAY!==kstToday()){ BR_SHOWN=null; safe(buildBrand,'브랜드 점검표','brandBody'); }   // v33.2 자정이 지나면 목록·상세를 다시(꼬리표 '어제'·'오늘' → 날짜)
@@ -5532,6 +5517,7 @@ function calDay(d){   // 오늘 ③ 여러 곳 실적 → 캘린더 그 날 골�
   (c.closest('.cal')||c).scrollIntoView({behavior:smoothB(),block:'start'});
 }
 function tabTap(t){   // 하단 탭 = 그 탭의 첫 화면(시장은 마지막으로 본 칩, 기업 칩이면 목록). 이미 첫 화면이면 맨 위로만
+  if(t==='brand'&&BR_Q_AUTO&&BR_Q===BR_Q_AUTO){ BR_Q_AUTO=''; const i=document.getElementById('brSearch'); if(i) i.value=''; brSearch(''); }   // 오늘 ①이 넣은 본사 검색은 탭을 다시 누르면 끝(점검표 전체)
   const r=normRoute(t==='market'?{tab:'market',chip:MK_CHIP}:{tab:t});
   if(scrKey(r)===scrKey(ROUTE)){ scrollBox().scrollTo({top:0,behavior:smoothB()}); return; }
   go(r);
