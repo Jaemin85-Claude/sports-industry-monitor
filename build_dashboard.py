@@ -1218,6 +1218,49 @@ div.bd-nx{cursor:default}
 /* ==== A-BRAND-DETAIL ====
    브랜드 상세(#brandDetail) 전용 규칙 — 이 아래에(다음 표식 전까지만)
    ==== */
+#brandDetail .bd{gap:16px}
+#brandDetail .bd h2{display:flex;align-items:baseline;gap:8px;font-size:var(--fs3)}
+#brandDetail .bd .bd-head{margin-top:2px;font-size:var(--fs4)}
+.bd-h2s{font-size:var(--fs1);font-weight:400;color:var(--sub)}
+/* 이유 문장 = 15px 잉크 본문(접지 않음) · 판정 기록 = 시계 + 회색(어제와 달라졌으면 잉크) */
+#brandDetail .bd-say{font-size:var(--fs2);line-height:1.6;color:var(--tx)}
+#brandDetail .bd-chg{display:flex;align-items:flex-start;gap:4px;color:var(--sub)}
+#brandDetail .bd-chg .ic{flex:none;margin-top:3px}
+#brandDetail .bd-chg.on{color:var(--tx);font-weight:600}
+/* 점수 4칸(판정 안 함 2칸) — 한 줄 띠 · 칸마다 누르면 그 근거로 */
+.bd-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:4px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.bd-strip.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bd-sc1{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:0;min-height:60px;padding:6px 2px;border-left:1px solid var(--line);text-align:center}
+.bd-sc1:first-child{border-left:0}
+.bd-sc1:active{background:var(--fill)}
+.bd-sc1 .l{display:inline-flex;align-items:center;gap:3px;font-size:var(--fs1);color:var(--sub);white-space:nowrap}
+.bd-sc1 .l .ic{width:13px;height:13px}
+.bd-scd{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--bad)}
+.bd-sc1 b{font-size:var(--fs4);line-height:1.2;font-variant-numeric:tabular-nums}
+.bd-sc1 b.sc-z{color:var(--tx);font-weight:700}
+.bd-sc1 b.sc-na{font-weight:400}
+/* 매입 조건 식 한 줄 */
+.bd-eq{margin:0;font-size:var(--fs1);color:var(--tx2);line-height:1.5;font-variant-numeric:tabular-nums}
+.bd-eq b{font-size:var(--fs2)}
+.bd-eqc{color:var(--sub)}
+/* 근거 카드 — 이름 15 잉크 굵게 · 값 17 · 보조 15 */
+#brandDetail .bd-ev{padding:14px 16px}
+#brandDetail .bd-ev-l{font-size:var(--fs2);font-weight:700;color:var(--tx)}
+#brandDetail .bd-ev-v{font-size:var(--fs3)}
+#brandDetail .bd-ev-x{font-size:var(--fs2)}
+#brandDetail .bd-ev,#brandDetail .bd-sec{scroll-margin-top:8px}
+.bd-flash{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);transition:outline .3s}
+.bd-sec.bd-flash{outline-offset:6px}
+/* 해외 정가 한 줄(48px) — 누르면 아래 '해외 정가 비교'로 */
+.bd-prl{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;padding:0 10px 0 12px;border-radius:12px;background:var(--fill);color:var(--tx);font-size:var(--fs2);text-align:left}
+.bd-prl:active{background:var(--line)}
+.bd-prl .t{flex:1;min-width:0}
+.bd-prl .s{font-size:var(--fs1);color:var(--sub);white-space:nowrap}
+.bd-prl .ic{flex:none}
+/* 다음 일정 · 뉴스 — 제목 15 보통 굵기 2줄 */
+#brandDetail .bd-nx .ev-tt .t{font-size:var(--fs2);font-weight:700}
+#brandDetail .bd-news .t{font-size:var(--fs2);font-weight:400;line-height:1.5;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+#brandDetail .bd-news .s .stars{color:var(--tx2);letter-spacing:-.05em}
 .a-sep-brdet1{}
 .a-sep-brdet2{}
 /* ==== A-MARKET ====
@@ -4865,33 +4908,71 @@ function morePriceHtml(){
   return h+why(PR_WHY+' '+LAND_WHY+' 칸 아래 % = 한국 정가가 그 나라보다 비싼지·싼지(착지원가 보기는 마진 = 1 − 착지원가 ÷ 한국 정가) · 회색 칸 = 원화로(착지원가 보기는 착지원가가) 가장 싼 곳 · 현지 정가 보기 = 할인 전 현지 통화 · 상품 = 브랜드 공식몰 대표 상품 · 행을 누르면 브랜드 상세. 위 칩으로 브랜드를 고르면 그 브랜드만, 전체는 브랜드별로 묶어 보여 줌(브랜드순 = 가나다순 · 비싼/싼 순 = 브랜드 평균으로 브랜드 순서를, 그 안에서 상품 평균으로 상품 순서를 정함). 평균 열 = 그 상품(묶음 줄은 그 브랜드) 나라별 차이의 단순 평균, 맨 위 평균 줄 = 그 나라 상품들의 단순 평균(나라마다 상품 수가 달라 나라끼리 견줄 때는 개수도 봄). — = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름), 값 없음 = 수집 실패(이전 값도 없음). 접속을 막는 몰(아디다스·뉴발란스·아식스·크록스 한국·어그 등)의 브랜드는 넣지 않음.');
 }
 
-/* ── v33 A안 S2: 브랜드 상세(A3) — 판정·한 문장 이유·타일 2칸 → 판단 근거 4장(판정 안 함 2장) → 다음 일정 → 최근 뉴스 → 본사 기업 상세 ── */
+/* ── v33 A안 S2 → v33.28 A안 다듬기: 브랜드 상세(A3) — 판정·제목·이유 문장(펼쳐 둠)·판정 기록 → 점수 4칸(판정 안 함 2칸) + 매입 조건 식 →
+   판단 근거(점수 큰 순 · 모두 펼침 — 대표 결정 '숫자는 접지 않음') → 해외 정가 한 줄(자료 있는 브랜드 · 누르면 아래 해외 정가 비교로) → 다음 일정 →
+   최근 뉴스 → 해외 정가 비교 → 본사 기업 상세 → 읽는 법 하나(판정 규칙 + 점수 설명) ── */
+const bdScN=s=>s===''||s==null?null:+String(s).replace('−','-').replace('+','');   // 점수 글('+1'·'−1'·'0'·'') → 수(없으면 null)
+function bdJump(id){   // 점수 칸·해외 정가 줄 → 그 근거 카드·해외 정가 비교로(고정 머리 밑에 숨지 않게 phSync 먼저) + 잠깐 테두리
+  const e=document.getElementById(id); if(!e) return;
+  const box=e.closest('.bd-ev,.bd-sec')||e;
+  if(box.classList.contains('bd-sec')&&!box.querySelector('.bd-prd[open]')){ const f=box.querySelector('.bd-prd'); if(f) f.open=true; }   // 상품 칸을 모두 접어 두었으면 첫 상품을 펼침
+  cancelAnimationFrame(SCROLL_RAF); SCROLL_RAF=0; phSync(); box.scrollIntoView({behavior:smoothB(),block:'start'});
+  box.classList.add('bd-flash'); setTimeout(()=>box.classList.remove('bd-flash'),1600);
+}
+function bdPrSum(bname){   // 해외 정가 한 줄 — 해외 정가 비교(prSecHtml) 맨 위 평균과 같은 셈 {avg, nIt} · 비교할 값이 없으면 null
+  const its=((PRICES&&PRICES.items)||[]).filter(it=>it.brand===bname); if(!its.length) return null;
+  const all=[]; let nIt=0; its.forEach(it=>{ const g=prRows(it).rows.filter(r=>r.gap!=null).map(r=>r.gap); if(g.length){ nIt++; all.push(...g); } });
+  const avg=prAvg(all); return avg==null?null:{avg, nIt};
+}
 function brDetailHtml(d,bname){
-  const T=d.tiles, judged=d.lv!=null;
+  const T=d.tiles, judged=d.lv!=null, E={};
+  d.ev.forEach(e=>{ E[e.id]=e; });
   const ptB=e=>`<span class="bd-pt${e.tone?' '+e.tone:''}">${e.score!==''?`<b>${esc(e.score)}</b>`:''}${esc(e.word)}</span>`;
   const SIGT={more:'할인 물량↑',less:'할인·공급↓',neutral:'중립'};
-  let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>${d.hist?`<p class="bd-chg">${esc(d.hist)}</p>`:''}
-    <h2 class="bd-head">${esc(d.head)}</h2>
-    <div class="bd-tiles"><div class="bd-tile"><span class="tl">국내 수요</span><span class="tv">${esc(T.dem.v)}</span><span class="tc">${nb(esc(T.dem.cap))}</span></div>
-    <div class="bd-tile${T.buy.ring?' '+T.buy.ring:''}"><span class="tl">매입 조건</span><span class="tv">${esc(T.buy.v)}</span><span class="tc">${nb(esc(T.buy.cap))}</span></div></div>${why(esc(d.say)+(judged?'<br>판정 = 국내 수요 + 매입 조건(본사 재고 + 본사 발언 + 환율) · 지금 검토 = 수요가 약하지 않고 매입 +2 이상 · 주의 = 수요가 약하고 매입 +1 이하, 또는 매입 −1 이하 · 나머지 관망 · 국내 수요는 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0)':''),'판정 이유')}</section>`;   // v33.25 이유 문장·판정 기준 접음
-  h+=`<section class="bd-sec" aria-labelledby="bdEvH"><h2 id="bdEvH">${judged?'판단 근거 4가지':'참고 근거 2가지'}</h2><div class="bd-evs">`;
-  d.ev.forEach(e=>{
-    h+=`<div class="bd-ev" data-ev="${e.id}"><div class="bd-ev-hd"><span class="bd-ev-l">${esc(e.label)}</span>${ptB(e)}</div><p class="bd-ev-v">${nb(esc(e.value))}${e.tags||''}</p>${e.sub?`<p class="bd-ev-x">${nb(esc(e.sub))}</p>`:''}`;
+  const scT=e=>(!e||e.score==='')?'―':e.score, scE=e=>(!e||e.score==='')?'없음':e.score;   // 자료 없음 — 점수 칸 ―, 매입 조건 식 '없음'(점수 0으로 셈)
+  // 점수 칸 = 목록과 같은 색(+ 파랑 · − 짙은 주황 · 0 잉크 · ― 회색) · 누르면 그 근거 카드로 · 근거에 자료 상태 꼬리표가 있으면 이름 옆에 시계(실제 수집 실패는 주황 점)
+  const cell=(id,lb)=>{ const e=E[id], v=scT(e), t=v==='―'?'na':e.tone==='p'?'p':e.tone==='n'?'n':'z', tg=(e&&e.tags)||'';
+    const mk=!tg?'':/수집분|실패/.test(tg)?'<i class="bd-scd" aria-hidden="true"></i>':ic('clock',13);
+    return `<button type="button" class="bd-sc1" onclick="bdJump('ev-${id}')" aria-label="${esc(lb)} ${esc(v)} — 근거 보기"><span class="l">${esc(lb)}${mk}</span><b class="sc-${t}">${esc(v)}</b></button>`; };
+  const ch=!!d.hist&&d.hist.indexOf('→')>=0;   // 어제와 달라진 판정이면 잉크 글
+  let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>
+    <h2 class="bd-head">${esc(d.head)}</h2><p class="bd-say">${nb(esc(d.say))}</p>${d.hist?`<p class="bd-chg${ch?' on':''}">${ic('clock',13)}<span>${esc(d.hist)}</span></p>`:''}`;
+  if(judged){
+    const bv=bdScN(T.buy.v);
+    h+=`<div class="bd-strip" role="group" aria-label="점수">${cell('dem','수요')}${cell('inv','재고')}${cell('notes','발언')}${cell('fx','환율')}</div>`
+      +`<p class="bd-eq">매입 조건 <b class="${bv>0?'sc-p':bv<0?'sc-n':'sc-tx'}">${esc(T.buy.v)}</b> = 재고 ${esc(scE(E.inv))} + 발언 ${esc(scE(E.notes))} + 환율 ${esc(scE(E.fx))}<span class="bd-eqc">&nbsp;· <span class="nw">${esc(T.buy.cap)}</span></span></p>`;   // 줄이 넘치면 기준 글만 다음 줄로('·'는 앞줄 끝)
+  } else h+=`<div class="bd-strip two" role="group" aria-label="점수">${cell('dem','수요')}${cell('fx','환율')}</div>`;
+  h+=`</section>`;
+  // 판단 근거 = 점수 큰 순(같으면 원래 순서) · 카드는 모두 펼침
+  const evs=d.ev.map((e,i)=>({e,i,p:Math.abs(bdScN(e.score)||0)})).sort((a,c)=>(c.p-a.p)||(a.i-c.i)).map(o=>o.e);
+  h+=`<section class="bd-sec" aria-labelledby="bdEvH"><h2 id="bdEvH">${judged?'판단 근거':'참고 근거'} <span class="bd-h2s">점수 큰 순</span></h2><div class="bd-evs">`;
+  evs.forEach(e=>{
+    h+=`<div class="bd-ev" id="ev-${e.id}" data-ev="${e.id}"><div class="bd-ev-hd"><span class="bd-ev-l">${esc(e.label)}</span>${ptB(e)}</div><p class="bd-ev-v">${nb(esc(e.value))}${e.tags||''}</p>${e.sub?`<p class="bd-ev-x">${nb(esc(e.sub))}</p>`:''}`;
     if(e.spark){ const S=e.spark; h+=`<div class="bd-sp"><span class="cap">최근 8주 검색 지수</span>${spark8(S.vals,S.wk)}<div class="ends"><span>첫 주(${nvWk(S.wk[0])}) ${S.vals[0].toFixed(1)}</span><b>마지막 주(${nvWk(S.wk[7])}) ${S.vals[7].toFixed(1)}</b></div></div>`; }
     if(e.list&&e.list.length) h+=`<div class="bdq">${e.list.map(q=>`<div class="bdq-row"><span class="bdq-t">${esc(MGMT_TOPIC[q.topic]||q.topic||'기타')}</span><div class="bdq-b">${esc(q.ko||'')}<span class="bdq-s${q.sig==='more'||q.sig==='less'?' '+q.sig:''}">${SIGT[q.sig]||'분류 전'}</span>${q.rg?`<span class="bdq-s">${esc(q.rg)}만 · 점수 제외</span>`:''}${q.quote?`<details><summary>원문</summary><q>${esc(q.quote)}</q></details>`:''}</div></div>`).join('')}</div>`;
     h+=`</div>`;
   });
-  h+=`</div>${why(d.ev.filter(e=>e.explain).map(e=>`<b>${esc(e.label)}</b> ${esc(e.explain)}`).join('<br>'),'점수 설명')}</section><section class="bd-sec" aria-labelledby="bdNxH"><h2 id="bdNxH">다음 일정</h2>`;
+  h+=`</div></section>`;
+  // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 누르면 아래 '해외 정가 비교'로
+  let ps=null; try{ ps=bdPrSum(bname); }catch(e){ console.error('[브랜드 상세 · 해외 정가 한 줄] 셈 실패:',e); }
+  if(ps){ const near=Math.abs(ps.avg)<0.5;
+    h+=`<button type="button" class="bd-prl" onclick="bdJump('bdPrH')">${ic('globe',18)}<span class="t">해외 정가 · 한국이 ${near?'해외와 ':''}${prGapB(ps.avg)}</span><span class="s">상품 ${ps.nIt}개</span>${ic('right',18,'s2 chev')}</button>`; }
+  h+=`<section class="bd-sec" aria-labelledby="bdNxH"><h2 id="bdNxH">다음 일정</h2>`;
   h+=d.next.length?`<div class="bd-next">${d.next.map(n=>{ const inner=`<span class="d">${esc(n.d)}</span><span class="ev-tt"><span class="t">${esc(n.title)}</span><span class="s">${esc(n.sub)}</span></span><span class="kind${n.kind==='세일'?' sale':''}">${n.kind}</span>`;
       return n.go?`<button type="button" class="bd-nx" data-go="${esc(n.go)}">${inner}</button>`:`<div class="bd-nx">${inner}</div>`; }).join('')}</div>`
     :`<p class="bd-none">본사 실적·통화 지역 세일 일정 없음</p>`;
   h+=`</section><section class="bd-sec" aria-labelledby="bdNwH"><h2 id="bdNwH">최근 뉴스</h2><div class="bd-nws">`;
-  h+=d.news.length?d.news.map(n=>`<a class="bd-news" href="${esc(safeUrl(n.link))}" target="_blank" rel="noopener"><span class="t">${esc(n.t)}</span><span class="s">${esc(n.meta)}</span></a>`).join('')
+  // 뉴스 = 제목(보통 굵기 · 2줄) + 별 · 날짜 · 매체
+  h+=d.news.length?d.news.map(n=>{ const m=String(n.meta||'').split(' · '), st=/^★+$/.test(m[m.length-1]||'')?m.pop():'';
+      return `<a class="bd-news" href="${esc(safeUrl(n.link))}" target="_blank" rel="noopener"><span class="t">${esc(n.t)}</span><span class="s">${st?`<span class="stars">${esc(st)}</span>${m.length?' · ':''}`:''}${esc(m.join(' · '))}</span></a>`; }).join('')
     :`<p class="bd-none">최근 14일 중요(★2 이상) 뉴스 없음</p>`;
   if(d.newsAll) h+=`<button type="button" class="bd-link" data-go="news:k:${esc(d.newsAll.key)}"><span class="tt"><span class="t">${esc(d.newsAll.label)} 뉴스 모두 보기</span><span class="s">시장 › 뉴스</span></span>${ic('right',20,'s2 chev')}</button>`;
   h+=`</div></section>`;
   h+=(()=>{ try{ return prSecHtml(bname); }catch(e){ console.error('[해외 정가] 그리기 실패:',e); return ''; } })();   // v33.14 해외 정가 비교(자료 있는 브랜드만 · 오류면 이 칸만 빠짐)
   if(d.hqLink) h+=`<button type="button" class="bd-hq" data-go="${esc(d.hqLink.go)}"><span class="tt"><span class="t">${esc(d.hqLink.title)}</span><span class="s">${esc(d.hqLink.sub)}</span></span>${ic('right',20,'s2 chev')}</button>`;
+  // 읽는 법 하나 — 판정 규칙(판정한 브랜드) + 근거별 점수 설명(카드 순서)
+  h+=why((judged?'판정 = 국내 수요 + 매입 조건(본사 재고 + 본사 발언 + 환율) · 지금 검토 = 수요가 약하지 않고 매입 +2 이상 · 주의 = 수요가 약하고 매입 +1 이하, 또는 매입 −1 이하 · 나머지 관망 · 국내 수요는 감시 브랜드 중앙값보다 10%p 이상 높으면 +1, 낮으면 −1(검색량이 적은 브랜드는 0) · 위 점수 칸을 누르면 그 근거로<br>':'')
+    +evs.filter(e=>e.explain).map(e=>`<b>${esc(e.label)}</b> ${esc(e.explain)}`).join('<br>'));
   return h+`</div>`;
 }
 function renderBrandDetail(name){   // #/brand/<이름> — 판정 9곳·판정 안 함 21곳 모두 같은 틀
