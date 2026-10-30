@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.28: (대표 지시 2026-10-30 '모바일에서 앱 화면 수정' · 결정 'A안으로') A안 다듬기 — 흰 종이·잉크·파랑 하나는 그대로, 휴대폰 6개 화면 정리 ·
+  기반: 글자 단계 13·15·17·22·28 · 고른 칩·탭은 잉크 채움 · 자료 상태 꼬리표는 회색(이전 값만 주황 점) · 표시용 꼬리표는 테두리 없는 회색 · 화면 테마 자동(기기 설정)·밝게·어둡게 ·
+  오늘 = 머리 상태 단추(갱신 시각 · 지연 n · 일부 실패 n → 수집 상태 — 맺음 줄은 Claude 사용액만) · ① 지금 검토를 매입 점수와 묶고 같은 본사는 한 줄(누르면 점검표에서 그 본사) ·
+  주의는 이름 줄(어제와 달라진 판정 꼬리표) · ② 환율 3열 표 · 브랜드 점검표 = 지금 검토 → 주의 → 관망 묶음(묶음 머리 고정) · 두 줄 행 · 모든 브랜드 환율 점수가 같으면
+  '환율 +n은 전 브랜드 공통'(회색) · 브랜드 상세 = 판정 문장 + 근거 4칸 띠(누르면 그 카드) + 매입 조건 식 + 해외 정가 한 줄, 근거 카드는 점수 큰 순(접지 않음) ·
+  시장 › 뉴스 = 검색·칩 한 줄 고정, 제목 15px + '★ · 매체 · 날짜'(기업 상세·브랜드 상세·물류 뉴스도) · 물류 = 수입·수출·공통 바로가기 탭 + 카드 오른쪽 위 ⓘ 읽는 법 ·
+  해외 정가 = 보기 탭(원화 환산·현지 정가·착지원가) + 정렬 메뉴(⇅) + 상품 칸에 한국 정가 · 가장 싼 곳 = 굵은 밑줄 · 검토 26건 반영(다크 파랑 대비 4.5:1 유지,
+  정렬 메뉴 바깥 누름은 닫기만 등) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
 v33.27: (대표 지시 2026-10-28 '대표 전용 페이지 없어도 됩니다. 영업 기밀에 해당하는 내용이 없습니다. 합쳐주세요') 물류 '우리 운임 vs 시장' 카드에
   비공개 페이지 내용을 합침 — 보기 6개(요약 · 연도별 물류비 지수 · 항공(유럽발) · 전쟁 전후 · 해상 · 포워더별) · 비공개 페이지 링크(LG_OURS_URL) 없앰 ·
   항공 숫자에 '유럽발' 표기(v33.25는 빠져 있었음) · 자료에 없는 보기(포워더·연도별 등)는 칩을 숨김 · 검토 반영 18건(비공개 페이지의 반영률·입항 척수·단위·덜 찬 기간 표기,
@@ -669,6 +677,7 @@ a.nmore{text-decoration:none}
 .fi-top{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
 .fi-big{font-size:var(--fs-lg)}
 .fi-gsum{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:8px}
+@media(max-width:340px){.fi-gsum{gap:2px}}   /* 320px에서 단추 폭 44px 이상(카드 안쪽 여백 16px) */
 .fi-gsum button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 1px;color:var(--tx);min-width:0;min-height:44px}
 .fi-gsum button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 .fi-gsum .l{display:block;font-size:var(--fs-2xs);line-height:1.3;color:var(--sub);word-break:keep-all;overflow-wrap:anywhere}   /* 좁으면 '손익·' / '성장' 두 줄(말줄임 대신) */
@@ -2506,7 +2515,7 @@ function homeChartHtml(){
   const cur=[],prev=[]; for(let m=1;m<=12;m++){const mm=String(m).padStart(2,'0'); cur.push(kr.values[yNow+mm]??null); prev.push(kr.values[yPrev+mm]??null);}
   const all=[...cur,...prev].filter(v=>v!=null); const mn=Math.min(...all), mx=Math.max(...all), rg=(mx-mn)||1;
   const hb=document.getElementById('mk-kr'), cw=hb?hb.clientWidth:0;
-  const W=HC_W=Math.max(280,Math.round((cw||370)-30)), H=144, L=10, R=10, T=8, B=24;   // 카드 안쪽 폭 = 그리는 폭(1배) → 글자 크기 그대로
+  const W=HC_W=Math.max(280,Math.round((cw||370)-34)), H=144, L=10, R=10, T=8, B=24;   // 카드 안쪽 폭 = 그리는 폭(1배) → 글자 크기 그대로
   const xs=i=>L+i*(W-L-R)/11, ys=v=>T+(H-T-B)-(v-mn)/rg*(H-T-B);
   const line=(arr,color,w)=>{const pts=arr.map((v,i)=>v==null?null:`${xs(i).toFixed(1)},${ys(v).toFixed(1)}`).filter(Boolean).join(' ');return `<polyline fill="none" stroke="${color}" stroke-width="${w}" stroke-linejoin="round" points="${pts}"/>`;};
   const lastIdx=cur.map((v,i)=>v!=null?i:-1).filter(i=>i>=0).pop();
@@ -4709,7 +4718,7 @@ function chkDetail(r){
              :{v:sg0(r.buy), cap:r.lv===2?'기준 +2 충족':r.buy<=-1?'주의 기준(−1 이하)':d.pt<0?(r.buy>=2?'+2 넘지만 수요 약함':'주의 기준 · 수요 약함'):`지금 검토까지 +${2-r.buy}`,
                ring:r.buy>=2?'acc':(r.buy<=-1?'warn':'')}},
     ev:judged?ev:[ev[0],ev[3]], next:nx,
-    news:chkNewsList(r.b,3).map(it=>({t:it.summary||it.title||'', link:it.link||'', meta:[newsDay(it), it.source, '★'.repeat(Math.max(1,Math.min(3,it.importance||1)))].filter(Boolean).join(' · ')})),
+    news:chkNewsList(r.b,3).map(it=>({t:it.summary||it.title||'', link:it.link||'', meta:['★'.repeat(Math.max(1,Math.min(3,it.importance||1))), it.source, newsDay(it)].filter(Boolean).join(' · ')})),
     newsAll:(r.b.news&&((NEWS&&NEWS.items)||[]).some(i=>i.scope==='brand'&&i.key===r.b.news))?{key:r.b.news, label:(sameKey.length?sameKey:[r.b.name]).join('·')}:null,   // 보관 뉴스 0건이면 단추 없음
     hqLink:r.x?{go:'co:'+r.x.ticker, title:`본사 ${hq} 기업 상세`, sub:'재무 · 지역·부문 매출'}:(ke?{go:'co:'+r.link, title:'국내 법인 상세', sub:'DART 연간 실적'}:null)};
 }
@@ -5191,8 +5200,8 @@ function brDetailHtml(d,bname){
       return n.go?`<button type="button" class="bd-nx" data-go="${esc(n.go)}">${inner}</button>`:`<div class="bd-nx">${inner}</div>`; }).join('')}</div>`
     :`<p class="bd-none">본사 실적·통화 지역 세일 일정 없음</p>`;
   h+=`</section><section class="bd-sec" aria-labelledby="bdNwH"><h2 id="bdNwH">최근 뉴스</h2><div class="bd-nws">`;
-  // 뉴스 = 제목(보통 굵기 · 2줄) + 별 · 날짜 · 매체
-  h+=d.news.length?d.news.map(n=>{ const m=String(n.meta||'').split(' · '), st=/^★+$/.test(m[m.length-1]||'')?m.pop():'';
+  // 뉴스 = 제목(보통 굵기 · 2줄) + 별 · 매체 · 날짜(시장 › 뉴스·기업 상세와 같은 순서)
+  h+=d.news.length?d.news.map(n=>{ const m=String(n.meta||'').split(' · '), st=/^★+$/.test(m[0]||'')?m.shift():'';
       return `<a class="bd-news" href="${esc(safeUrl(n.link))}" target="_blank" rel="noopener"><span class="t">${esc(n.t)}</span><span class="s">${st?`<span class="stars">${esc(st)}</span>${m.length?' · ':''}`:''}${esc(m.join(' · '))}</span></a>`; }).join('')
     :`<p class="bd-none">최근 14일 중요(★2 이상) 뉴스 없음</p>`;
   if(d.newsAll) h+=`<button type="button" class="bd-link" data-go="news:k:${esc(d.newsAll.key)}"><span class="tt"><span class="t">${esc(d.newsAll.label)} 뉴스 모두 보기</span><span class="s">시장 › 뉴스</span></span>${ic('right',20,'s2 chev')}</button>`;
