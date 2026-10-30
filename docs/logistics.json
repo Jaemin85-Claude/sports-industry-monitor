@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-30 19:16 KST",
+ "generated_at": "2026-10-31 07:59 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -5904,7 +5904,7 @@
    ]
   ],
   "latest": "2026-10-26",
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -6492,8 +6492,7 @@
      68.1,
      11.9
     ],
-    "last_date": "2026-10-25",
-    "stale_since": "2026-10-30"
+    "last_date": "2026-10-25"
    },
    {
     "id": "chokepoint4",
@@ -8236,10 +8235,11 @@
      87.7,
      20.2
     ],
-    "last_date": "2026-10-25"
+    "last_date": "2026-10-25",
+    "stale_since": "2026-10-30"
    }
   ],
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "해협 통과"
  },
  "ports": {
@@ -9990,7 +9990,8 @@
      0.9,
      0.1
     ],
-    "last_date": "2026-10-23"
+    "last_date": "2026-10-23",
+    "stale_since": "2026-10-30"
    },
    {
     "id": "Fujairah",
@@ -10575,7 +10576,7 @@
     "stale_since": "2026-10-30"
    }
   ],
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "항만 입항"
  },
  "hubs": {
@@ -17568,7 +17569,7 @@
     "stale_since": "2026-10-28"
    }
   ],
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17722,7 +17723,7 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "전 세계 정시율"
  },
  "vol_in": {
@@ -23130,7 +23131,7 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "관세청 국가별 수입 물동량"
  },
  "vol_out": {
@@ -28555,7 +28556,7 @@
     ]
    ]
   },
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "관세청 국가별 수출 물동량"
  },
  "busan_calls": {
@@ -34606,14 +34607,28 @@
      "VN": 1,
      "TW": 1
     },
-    877.7,
+    893.8,
     38
+   ],
+   [
+    "2026-10-30",
+    41,
+    {
+     "CN": 15,
+     "JP": 14,
+     "KR": 8,
+     "US": 2,
+     "TW": 1,
+     "KI": 1
+    },
+    1266.5,
+    40
    ]
   ],
   "from": "2025-10-01",
   "missing": 0,
   "stay_cap": 96,
-  "fetched": "2026-10-30",
+  "fetched": "2026-10-31",
   "label": "부산 입항 선박"
  },
  "status": {
@@ -34628,22 +34643,22 @@
    "관세청 해상 수입",
    "관세청 해상 수출",
    "관세청 항공 수입",
-   "해협 통과(호르무즈 해협)",
-   "항만 입항(부산·푸자이라)",
+   "해협 통과(희망봉)",
+   "항만 입항(부산·코르파칸·푸자이라)",
    "적출 거점 입항(홍콩·로테르담·앤트워프·상하이·싱가포르·닝보·선전·칭다오·LA/롱비치·포트클랑·함부르크)"
   ],
   "failed": []
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "41039223631",
+  "run": "41141392473",
   "tries": [
    {
     "n": 1,
-    "where": "20.106.x.x · Virginia · AS8075 Microsoft Corporation",
+    "where": "20.169.x.x · Arizona · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "10-30 19:24"
+    "at": "10-31 08:07"
    }
   ]
  }
