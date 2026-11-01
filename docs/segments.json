@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-27 11:07 KST",
+ "generated_at": "2026-11-02 05:49 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -405,124 +405,139 @@
    "error": null
   },
   "CROX": {
-   "accession": "0001334036-26-000050",
-   "source": "8-K 2026-07-30 croxq22026-pressrelease.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1334036/000133403626000050/croxq22026-pressrelease.htm",
+   "accession": "0001334036-26-000058",
+   "source": "8-K 2026-10-29 croxq32026-pressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1334036/000133403626000058/croxq32026-pressrelease.htm",
    "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "prev_period": "Q2 FY25 ended 2025-06-30",
+    "period": "Q3 FY26 ended 2026-09-30",
+    "prev_period": "Q3 FY25 ended 2025-09-30",
     "currency": "USD",
     "regions": [
      {
-      "name": "Crocs Brand - North America",
-      "revenue": 458.733,
-      "prev_revenue": 457.13,
-      "yoy_pct": 0.4
+      "name": "Crocs Brand North America",
+      "revenue": 438.369,
+      "prev_revenue": 447.705,
+      "yoy_pct": -2.1
      },
      {
-      "name": "Crocs Brand - International",
-      "revenue": 541.704,
-      "prev_revenue": 502.46,
-      "yoy_pct": 7.8
-     },
-     {
-      "name": "Crocs Brand - Total",
-      "revenue": 1000.437,
-      "prev_revenue": 959.59,
-      "yoy_pct": 4.3
-     },
-     {
-      "name": "HEYDUDE Brand - Total",
-      "revenue": 179.031,
-      "prev_revenue": 189.783,
-      "yoy_pct": -5.7
+      "name": "Crocs Brand International",
+      "revenue": 434.352,
+      "prev_revenue": 388.524,
+      "yoy_pct": 11.8
      }
     ],
     "channels": [
      {
       "name": "DTC - Crocs Brand",
-      "revenue": 558.938,
-      "prev_revenue": 494.911,
-      "yoy_pct": 12.9
+      "revenue": 510.356,
+      "prev_revenue": 471.873,
+      "yoy_pct": 8.2
      },
      {
       "name": "Wholesale - Crocs Brand",
-      "revenue": 441.499,
-      "prev_revenue": 464.679,
-      "yoy_pct": -5.0
+      "revenue": 362.365,
+      "prev_revenue": 364.356,
+      "yoy_pct": -0.5
      },
      {
       "name": "DTC - HEYDUDE Brand",
-      "revenue": 96.467,
-      "prev_revenue": 90.023,
-      "yoy_pct": 7.2
+      "revenue": 90.775,
+      "prev_revenue": 90.67,
+      "yoy_pct": 0.1
      },
      {
       "name": "Wholesale - HEYDUDE Brand",
-      "revenue": 82.564,
-      "prev_revenue": 99.76,
-      "yoy_pct": -17.2
+      "revenue": 79.087,
+      "prev_revenue": 69.402,
+      "yoy_pct": 14.0
      },
      {
       "name": "DTC - Total",
       "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": 12.0
+      "yoy_pct": 6.9
      },
      {
       "name": "Wholesale - Total",
       "revenue": null,
       "prev_revenue": null,
-      "yoy_pct": -7.2
+      "yoy_pct": 1.8
      }
     ],
     "mgmt_notes": [],
-    "notes": "지역별 세부 데이터는 크록스 브랜드에만 제공되며, 헤이듀드 브랜드의 매출 대부분은 북미에서 발생함. mgmt_notes 조건에 부합하는 문장 없음.",
-    "schema_v": 3
+    "notes": "재고·할인·채널 관련 경영진의 구체적 행동/계획/이유/전망 문장이 문서에 명시되지 않아 mgmt_notes는 빈 목록으로 처리함.",
+    "schema_v": 3,
+    "extracted_at": "2026-11-02 05:50"
    },
    "error": null
   },
   "VFC": {
-   "accession": "0000103379-26-000113",
-   "source": "8-K 2026-07-29 q12027earningspressrelease.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000113/q12027earningspressrelease.htm",
+   "accession": "0000103379-26-000134",
+   "source": "8-K 2026-10-28 q22027earningspressrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/103379/000010337926000134/q22027earningspressrelease.htm",
    "extract": {
-    "period": "Q1 FY27 ended June 27, 2026",
-    "prev_period": "Q1 FY26 ended June 2025",
+    "period": "Q2 FY27 ended 2026-09-26",
+    "prev_period": "Q2 FY26 ended 2025-09-27",
     "currency": "USD",
     "regions": [
      {
       "name": "Americas",
-      "revenue": null,
-      "prev_revenue": null,
-      "yoy_pct": -4.0
+      "revenue": 1322.4,
+      "prev_revenue": 1343.5,
+      "yoy_pct": -2.0
+     },
+     {
+      "name": "EMEA",
+      "revenue": 1011.8,
+      "prev_revenue": 1072.7,
+      "yoy_pct": -6.0
+     },
+     {
+      "name": "APAC",
+      "revenue": 361.0,
+      "prev_revenue": 386.6,
+      "yoy_pct": -7.0
+     },
+     {
+      "name": "International",
+      "revenue": 1561.5,
+      "prev_revenue": 1640.3,
+      "yoy_pct": -5.0
      }
     ],
     "channels": [
      {
       "name": "DTC",
-      "revenue": null,
-      "prev_revenue": null,
-      "yoy_pct": 2.0
+      "revenue": 915.2,
+      "prev_revenue": 909.9,
+      "yoy_pct": 1.0
      },
      {
       "name": "Wholesale",
-      "revenue": null,
-      "prev_revenue": null,
-      "yoy_pct": null
+      "revenue": 1779.9,
+      "prev_revenue": 1892.8,
+      "yoy_pct": -6.0
      }
     ],
     "mgmt_notes": [
      {
-      "topic": "channel",
-      "quote": "We expect Vans® Wholesale to improve significantly in the second half of the year.",
-      "ko": "반스 도매 채널이 하반기에 크게 개선될 것으로 기대",
+      "topic": "inventory",
+      "quote": "Net inventories up 7% vs. LY to support demand in H2'27",
+      "ko": "순재고 전년 대비 7% 증가, 하반기 수요 대응 목적",
       "sig": "more",
+      "scope": "global"
+     },
+     {
+      "topic": "channel",
+      "quote": "Vans® (9.8%) vs. LY; global DTC returned to growth, with Wholesale improvement expected in H2'27",
+      "ko": "Vans 글로벌 DTC 성장 전환, 도매 채널은 하반기 개선 기대",
+      "sig": "neutral",
       "scope": "global"
      }
     ],
-    "notes": "지역별·채널별 구체적 매출 금액은 문서에 명시되지 않았으며, 성장률(%)만 일부 제공됨. 세그먼트는 Outdoor/Active/All Other 기준으로 보고됨.",
-    "schema_v": 3
+    "notes": "지역별 매출 금액은 분기 기준으로 명시되었으며, Dickies 매각으로 인해 전년 비교 수치는 Dickies 포함 기준임.",
+    "schema_v": 3,
+    "extracted_at": "2026-11-02 05:50"
    },
    "error": null
   },
@@ -626,64 +641,79 @@
    "error": null
   },
   "COLM": {
-   "accession": "0001050797-26-000129",
-   "source": "8-K 2026-07-30 colmfy26q2exhibit991.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1050797/000105079726000129/colmfy26q2exhibit991.htm",
+   "accession": "0001050797-26-000148",
+   "source": "8-K 2026-10-29 colmfy26q3exhibit991.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1050797/000105079726000148/colmfy26q3exhibit991.htm",
    "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "prev_period": "Q2 FY25 ended 2025-06-30",
+    "period": "Q3 FY26 ended 2026-09-30",
+    "prev_period": "Q3 FY25 ended 2025-09-30",
     "currency": "USD",
     "regions": [
      {
       "name": "United States",
-      "revenue": 320.086,
-      "prev_revenue": 335.117,
-      "yoy_pct": -4.0
+      "revenue": 540.872,
+      "prev_revenue": 546.69,
+      "yoy_pct": -1.0
      },
      {
       "name": "Latin America and Asia Pacific",
-      "revenue": 125.933,
-      "prev_revenue": 112.333,
-      "yoy_pct": 12.0
+      "revenue": 159.453,
+      "prev_revenue": 143.358,
+      "yoy_pct": 11.0
      },
      {
       "name": "Europe, Middle East and Africa",
-      "revenue": 143.115,
-      "prev_revenue": 130.562,
-      "yoy_pct": 10.0
+      "revenue": 175.285,
+      "prev_revenue": 164.461,
+      "yoy_pct": 7.0
      },
      {
       "name": "Canada",
-      "revenue": 25.228,
-      "prev_revenue": 27.234,
-      "yoy_pct": -7.0
+      "revenue": 86.972,
+      "prev_revenue": 88.916,
+      "yoy_pct": -2.0
      }
     ],
     "channels": [
      {
       "name": "Wholesale",
-      "revenue": 318.353,
-      "prev_revenue": 317.218,
+      "revenue": 636.724,
+      "prev_revenue": 634.171,
       "yoy_pct": 0.0
      },
      {
       "name": "DTC",
-      "revenue": 296.009,
-      "prev_revenue": 288.028,
-      "yoy_pct": 3.0
+      "revenue": 325.858,
+      "prev_revenue": 309.254,
+      "yoy_pct": 5.0
      }
     ],
     "mgmt_notes": [
      {
-      "topic": "discount",
-      "quote": "Gross margin expansion primarily reflected an approximate 980 basis point benefit from the recovery of IEEPA tariffs, partially offset by unfavorable channel profitability resulting from increased promotional activity within DTC B&M.",
-      "ko": "IEEPA 관세 환급으로 총이익률 개선, DTC 오프라인 매장 프로모션 확대로 일부 상쇄",
-      "sig": "more",
+      "topic": "inventory",
+      "quote": "Inventory growth primarily reflected higher in-transit inventory from delayed Fall 2026 receipts and earlier production of Spring 2027 inventory.",
+      "ko": "재고 증가는 2026년 가을 입고 지연 및 2027년 봄 조기 생산에 따른 운송 중 재고 증가 반영",
+      "sig": "neutral",
+      "scope": "global"
+     },
+     {
+      "topic": "inventory",
+      "quote": "Inventory at quarter-end primarily consisted of current and future season product, with older season inventories representing a manageable portion of total inventory.",
+      "ko": "분기말 재고는 현재·미래 시즌 제품 위주이며, 구 시즌 재고 비중은 관리 가능한 수준",
+      "sig": "less",
+      "scope": "global"
+     },
+     {
+      "topic": "channel",
+      "quote": "Wholesale net sales are expected to grow in the mid-single-digit percent range for the first half of 2027, which reflects an increase of our Spring 2027 wholesale order book, and forecasted effects from reorders, replenishment orders and cancellations.",
+      "ko": "2027년 상반기 도매 매출은 2027년 봄 주문북 증가 및 재주문·보충·취소 효과 반영해 중간 한 자릿수 성장 전망",
+      "sig": "neutral",
       "scope": "global"
      }
     ],
-    "notes": "지역별·채널별 수치는 Q2 2026 단일 분기 기준이며, 반기(6개월) 수치도 문서에 별도 제공됨",
-    "schema_v": 3
+    "notes": "채널별 및 지역별 수치는 Q3 단일 분기 기준이며, 9개월 누계 수치도 문서에 별도 명시됨.",
+    "schema_v": 3,
+    "extracted_at": "2026-11-02 05:50"
    },
    "error": null
   },
@@ -949,6 +979,13 @@
    "out": 2394,
    "usd": 0.2582,
    "since": "2026-10-10"
+  },
+  "2026-11": {
+   "calls": 5,
+   "in": 33170,
+   "out": 1865,
+   "usd": 0.1275,
+   "since": "2026-11-02"
   }
  }
 }
