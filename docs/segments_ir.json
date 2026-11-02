@@ -1,195 +1,201 @@
 {
- "generated_at": "2026-10-27 11:06 KST",
+ "generated_at": "2026-11-01 05:42 KST",
  "items": {
   "ADS.DE": {
-   "accession": "Fact_Sheet_EN_q2_2026_twpk2u.pdf",
+   "accession": "Fact_Sheet_EN_q3_2026_gund7n.pdf",
    "source": "IR Fact Sheet (PDF)",
-   "url": "https://res.cloudinary.com/confirmed-web/image/upload/v1785388904/adidas-group/investors/financial-publications/2026/Q2/EN/Fact_Sheet_EN_q2_2026_twpk2u.pdf",
+   "url": "https://res.cloudinary.com/confirmed-web/image/upload/v1793255002/adidas-group/investors/financial-publications/2026/Q3/EN/Fact_Sheet_EN_q3_2026_gund7n.pdf",
    "error": null,
    "extract": {
     "schema_v": 2,
-    "period": "Q2 2026",
-    "prev_period": "Q2 2025",
+    "period": "Q3 2026",
+    "prev_period": "Q3 2025",
     "currency": "EUR",
     "unit": "millions",
     "regions": [
      {
       "name": "Europe",
-      "revenue": 2108.0,
-      "prev_revenue": 1997.0,
-      "yoy_pct": 5.558337506259381,
-      "cn_yoy_pct": 6.0
+      "revenue": 2236.0,
+      "prev_revenue": 2328.0,
+      "yoy_pct": -3.9518900343642582,
+      "cn_yoy_pct": -4.0
      },
      {
       "name": "North America",
-      "revenue": 1522.0,
-      "prev_revenue": 1339.0,
-      "yoy_pct": 13.666915608663178,
-      "cn_yoy_pct": 17.0
-     },
-     {
-      "name": "Greater China",
-      "revenue": 953.0,
-      "prev_revenue": 798.0,
-      "yoy_pct": 19.423558897243097,
-      "cn_yoy_pct": 15.0
-     },
-     {
-      "name": "Emerging Markets",
-      "revenue": 848.0,
-      "prev_revenue": 762.0,
-      "yoy_pct": 11.286089238845154,
+      "revenue": 1474.0,
+      "prev_revenue": 1298.0,
+      "yoy_pct": 13.559322033898313,
       "cn_yoy_pct": 12.0
      },
      {
+      "name": "Greater China",
+      "revenue": 1138.0,
+      "prev_revenue": 947.0,
+      "yoy_pct": 20.168954593453,
+      "cn_yoy_pct": 13.0
+     },
+     {
+      "name": "Emerging Markets",
+      "revenue": 1075.0,
+      "prev_revenue": 935.0,
+      "yoy_pct": 14.973262032085554,
+      "cn_yoy_pct": 15.0
+     },
+     {
       "name": "Latin America",
-      "revenue": 907.0,
-      "prev_revenue": 673.0,
-      "yoy_pct": 34.76968796433879,
-      "cn_yoy_pct": 28.0
+      "revenue": 928.0,
+      "prev_revenue": 720.0,
+      "yoy_pct": 28.888888888888896,
+      "cn_yoy_pct": 16.0
      },
      {
       "name": "Japan/South Korea",
-      "revenue": 376.0,
-      "prev_revenue": 355.0,
-      "yoy_pct": 5.915492957746471,
-      "cn_yoy_pct": 18.0
+      "revenue": 411.0,
+      "prev_revenue": 358.0,
+      "yoy_pct": 14.804469273743015,
+      "cn_yoy_pct": 19.0
      }
     ],
     "channels": [
      {
       "name": "Wholesale",
-      "revenue": 3825.0,
-      "prev_revenue": 3604.0,
-      "yoy_pct": 6.132075471698117,
-      "cn_yoy_pct": 6.0
+      "revenue": 4375.0,
+      "prev_revenue": 4191.0,
+      "yoy_pct": 4.390360295872098,
+      "cn_yoy_pct": 2.0
      },
      {
       "name": "Direct-to-Consumer (DTC)",
-      "revenue": 2909.0,
-      "prev_revenue": 2338.0,
-      "yoy_pct": 24.422583404619335,
-      "cn_yoy_pct": 25.0
+      "revenue": 2903.0,
+      "prev_revenue": 2417.0,
+      "yoy_pct": 20.10757136946628,
+      "cn_yoy_pct": 17.0
      }
     ],
     "sub_segments": [],
     "notes": "adidas Fact Sheet — Financial Highlights by Segment / Channels at a Glance",
     "mgmt_notes": [
      {
-      "topic": "discount",
-      "quote": "Gross margin in Greater China was up 1.7 percentage points to 56.3%, reflecting reduced discounting, a more favorable business mix, and lower sourcing costs.",
-      "ko": "중국 대륙에서 할인 축소와 유리한 제품 믹스로 매출총이익률이 1.7%p 상승함",
-      "at": "2026-10-26 14:34",
-      "sig": "less",
-      "scope": "region",
-      "region": "중화권"
+      "topic": "inventory",
+      "quote": "Yes, the footwear lifestyle business is currently challenging, mainly due to too much inventory and too much discounting in the marketplace, but we know this will soon normalize again.",
+      "ko": "라이프스타일 풋웨어 시장의 과잉 재고·과도한 할인이 현재 도전 요인이나 곧 정상화될 것으로 전망",
+      "at": "2026-11-01 05:41",
+      "sig": "more",
+      "scope": "global"
      }
     ],
-    "extracted_at": "2026-10-26 14:34"
+    "extracted_at": "2026-11-01 05:41"
    },
-   "fetched_at": "2026-10-10",
+   "fetched_at": "2026-11-01",
    "ir_ver": 3,
-   "doc_date": "2026-07-30",
-   "notes_url": "https://res.cloudinary.com/confirmed-web/image/upload/v1785388904/adidas-group/investors/financial-publications/2026/Q2/EN/H1_Report_2026_en_emhpcd.pdf"
+   "doc_date": "2026-10-29",
+   "notes_url": "https://res.cloudinary.com/confirmed-web/image/upload/v1793254983/adidas-group/investors/financial-publications/2026/Q3/EN/adidas_AG_Q3_2026_Results_EN_Final_g9q4fz.pdf"
   },
   "PUM.DE": {
-   "accession": "31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
+   "accession": "30-10-2026-puma-q3-2026-sales-performance-improves-sequentially-fy",
    "source": "IR 보도자료 (HTML)",
-   "url": "https://about.puma.com/en/newsroom/corporate-news/2026/31-07-2026-puma-q2-2026-reflects-reset-measures-and-softer-demand",
+   "url": "https://about.puma.com/en/newsroom/corporate-news/2026/30-10-2026-puma-q3-2026-sales-performance-improves-sequentially-fy",
    "error": null,
    "extract": {
     "schema_v": 2,
-    "period": "Q2 2026",
-    "prev_period": "Q2 2025",
+    "period": "Q3 2026",
+    "prev_period": "Q3 2025",
     "currency": "EUR",
     "unit": "millions",
     "regions": [
      {
       "name": "EMEA",
-      "revenue": 674.1,
-      "prev_revenue": 771.7,
-      "yoy_pct": -12.647401840093298,
-      "cn_yoy_pct": -12.9
+      "revenue": 801.2,
+      "prev_revenue": 910.6,
+      "yoy_pct": -12.014056665934547,
+      "cn_yoy_pct": -11.5
      },
      {
       "name": "Americas",
-      "revenue": 600.4,
-      "prev_revenue": 709.0,
-      "yoy_pct": -15.317348377997186,
-      "cn_yoy_pct": -15.4
-     },
-     {
-      "name": "Asia/Pacific",
-      "revenue": 416.0,
-      "prev_revenue": 390.5,
-      "yoy_pct": 6.530089628681179,
-      "cn_yoy_pct": 8.6
+      "revenue": 580.4,
+      "prev_revenue": 592.5,
+      "yoy_pct": -2.04219409282701,
+      "cn_yoy_pct": -8.1
      },
      {
       "name": "North America",
       "revenue": null,
       "prev_revenue": null,
       "yoy_pct": null,
-      "cn_yoy_pct": -16.7
+      "cn_yoy_pct": -17.2
      },
      {
       "name": "Latin America",
       "revenue": null,
       "prev_revenue": null,
       "yoy_pct": null,
-      "cn_yoy_pct": -13.8
+      "cn_yoy_pct": 1.4
+     },
+     {
+      "name": "Asia/Pacific",
+      "revenue": 394.6,
+      "prev_revenue": 367.1,
+      "yoy_pct": 7.491146826477801,
+      "cn_yoy_pct": 10.0
      },
      {
       "name": "Greater China",
       "revenue": null,
       "prev_revenue": null,
       "yoy_pct": null,
-      "cn_yoy_pct": 0.9
+      "cn_yoy_pct": 3.5
      }
     ],
     "channels": [
      {
       "name": "Wholesale",
-      "revenue": 1094.8,
-      "prev_revenue": null,
-      "yoy_pct": null,
-      "cn_yoy_pct": -14.0
+      "revenue": 1187.9,
+      "prev_revenue": 1300.1,
+      "yoy_pct": -8.630105376509489,
+      "cn_yoy_pct": -9.6
      },
      {
       "name": "Direct-to-Consumer",
-      "revenue": 595.8,
-      "prev_revenue": null,
-      "yoy_pct": null,
-      "cn_yoy_pct": 0.4
+      "revenue": 588.3,
+      "prev_revenue": 570.0,
+      "yoy_pct": 3.2105263157894637,
+      "cn_yoy_pct": 1.2
      }
     ],
     "sub_segments": [],
-    "notes": "Primary basis is currency-adjusted (ca); reported euro change stated only for total sales (-9.7%) and EMEA (-12.6%); prev_revenue for channels not explicitly stated for Q2 2025 standalone quarter.",
+    "notes": "Primary growth rates stated on currency-adjusted (ca) basis; reported euro change explicitly stated only for EMEA (-12.0%) and total sales (-5.0%)",
     "mgmt_notes": [
      {
-      "topic": "inventory",
-      "quote": "Inventories decreased 15.3% to € 1,821.1 million, mainly due to lower purchasing volumes; inventory clean-up is on track and normalisation expected by year-end 2026",
-      "ko": "재고가 15.3% 감소했으며, 재고 정리는 순조롭게 진행 중이고 2026년 말까지 정상화될 전망",
+      "topic": "channel",
+      "quote": "Wholesale declined 9.6% (ca) to € 1,187.9 million (Q3 2025: € 1,300.1 million) in the past quarter, mainly driven by the reduction of undesirable business with mass merchants and weaker demand from retail partners in EMEA and the Americas.",
+      "ko": "도매 채널에서 대형마트 등 바람직하지 않은 거래를 축소하고 EMEA·미주 파트너 수요 부진으로 매출 9.6% 감소",
+      "at": "2026-11-01 05:42",
       "sig": "less",
       "scope": "global"
      },
      {
       "topic": "channel",
-      "quote": "PUMA continued to reduce undesirable wholesale business, particularly in key regions such as North America and Europe, versus a Q2 2025 which still included a high share of mass merchant business.",
-      "ko": "PUMA는 북미와 유럽 등 주요 지역에서 불필요한 도매 비즈니스를 지속적으로 축소하고 있음",
+      "quote": "Sales in North America were down 17.2% (ca), mainly driven by weaker consumer demand and the reduction of undesirable business with mass merchants.",
+      "ko": "북미 매출 17.2% 감소, 소비자 수요 약화 및 대형마트 내 불필요한 거래 축소가 주요 원인",
+      "at": "2026-11-01 05:42",
       "sig": "less",
-      "scope": "global"
+      "scope": "region",
+      "region": "북미"
      },
      {
       "topic": "discount",
-      "quote": "Sales in e-commerce rose despite lower promotions, supported by additional marketplaces in APAC and growth in Greater China.",
-      "ko": "프로모션 축소에도 불구하고 APAC 마켓플레이스 확대와 중화권 성장에 힘입어 이커머스 매출 증가",
+      "quote": "E-commerce sales increased despite lower promotional activity, supported by strong growth in Running and HYROX across all regions as well as football products in Europe and the expansion of marketplaces in APAC.",
+      "ko": "프로모션 활동을 줄였음에도 이커머스 매출 증가, 러닝·HYROX·축구 제품 성장 및 APAC 마켓플레이스 확대가 견인",
+      "at": "2026-11-01 05:42",
       "sig": "less",
       "scope": "global"
      }
-    ]
+    ],
+    "extracted_at": "2026-11-01 05:42"
    },
-   "fetched_at": "2026-10-10",
+   "skip_url": null,
+   "doc_date": "2026-10-30",
+   "fetched_at": "2026-11-01",
    "ir_ver": 3
   },
   "7936.T": {
@@ -283,6 +289,13 @@
    "out": 732,
    "usd": 0.128,
    "since": "2026-10-10"
+  },
+  "2026-11": {
+   "calls": 4,
+   "in": 14561,
+   "out": 1406,
+   "usd": 0.0648,
+   "since": "2026-11-01"
   }
  }
 }
