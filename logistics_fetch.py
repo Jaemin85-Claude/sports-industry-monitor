@@ -8,7 +8,7 @@ v1.7: (대표 지시 2026-11-02 '점검 이상 확인해줘') PortWatch 항만·
       이 항만들은 행 질의가 받혀도 0행이라 v1.6이 '빈 응답(서버 오류)'으로 보고 실행마다 다시 받기 시간(약 180~240초)을 거의 다 씀 →
       ① 행 질의 전에 같은 층에 portid 조건만으로 건수를 먼저 물음(pw_count · returnCountOnly · (층, portid)마다 실행에 한 번 — PW_COUNT ·
          pw_get을 거쳐 시간 한도·PW_FLOOR·연결 안 됨·요청 제한·요청 수 규칙 그대로 · 건수 질의가 오류·시간 초과·모양 다름이면 그 항목은 v1.6대로
-         행 질의 — 건수는 한 실행 PW_CNT_TRIES번까지 물음)
+         행 질의 — 건수는 한 실행 PW_CNT_TRIES번까지 물음 · 한 실행에 건수를 PW_CNT_STOP번 못 받고 하나도 못 받았으면 그 실행은 건수 없이)
       ② 0건이면 행 질의 없이, 건수는 있는데 행 질의가 오류 없이 60행 미만이면 'PortWatch 원본에 자료 없음'(PwGap) — 그 실행에서 다시 묻지 않음
          (PW_GAP · 다시 받기 시간은 서버 오류 항목에) · 이전 값·stale_since·값 없음(failed_since) 규칙 그대로. 건수를 모르면 v1.6처럼
          60행 미만 = 빈 응답(PwBusy · 다시 받기)
@@ -157,6 +157,9 @@ PW_DUR = {}                    # v1.6 질의(층, 조건) → 이번 실행에�
 PW_COUNT = {}                  # v1.7 (층, portid) → 원본 전체 일별 값 건수(portid 조건만 · 색인 칸이라 0.2초) — 받은 건수만, 실행에 한 번(main이 비움)
 PW_CNT_BAD = {}                # v1.7 (층, portid) → 이번 실행에 건수 질의가 오류·시간 초과·모양 다름이었던 수(PW_CNT_TRIES번이면 더 묻지 않음 · main이 비움)
 PW_CNT_TRIES = 2               # v1.7 건수 질의를 한 실행에 (층, portid)마다 최대 몇 번 — 못 받으면 v1.6대로 행 질의만
+PW_CNT_STOP = 3                # v1.7 한 실행에 건수 질의를 이 수만큼 못 받고 하나도 못 받았으면 그 실행은 건수 없이(v1.6대로) —
+                               # 건수 질의도 행 질의처럼 느리게(약 13초) 막히면 항목마다 시간만 씀(11/02엔 34번 모두 0.2초)
+PW_CNT_RUN = [0, 0]            # v1.7 이번 실행 건수 질의 [받음, 못 받음](main이 비움)
 PW_GAP = {}                    # v1.7 질의(층, 조건) → 'PortWatch 원본에 자료 없음' 사유 — 이번 실행에서 다시 묻지 않음(main이 비움)
 PW_NCNT_L = {}                 # v1.7 층별 건수 질의 수(PW_NREQ_L에 들어 있음 — 층 '모두 못 받음' 판단은 행 질의 수로만 · main이 비움)
 PW_GAP_ROW = set()             # v1.7 행 질의가 오류 없이 60행 미만으로 답해 '원본에 자료 없음'이 된 층 — 층 '모두 못 받음' 판단에서 받은 답
@@ -658,7 +661,7 @@ def pw_count(layer, where):
     ck = (layer, p[0])
     if ck in PW_COUNT:
         return PW_COUNT[ck]
-    if PW_CNT_BAD.get(ck, 0) >= PW_CNT_TRIES:
+    if PW_CNT_BAD.get(ck, 0) >= PW_CNT_TRIES or (PW_CNT_RUN[1] >= PW_CNT_STOP and not PW_CNT_RUN[0]):
         return None
     n0 = PW_NREQ_L.get(layer, 0)
     try:
@@ -671,10 +674,14 @@ def pw_count(layer, where):
     except RuntimeError:   # 서버 오류·시간 초과·그 밖의 4xx·모양 다름 — 이 항목은 건수 없이(v1.6대로)
         if PW_NREQ_L.get(layer, 0) > n0:   # 실제로 물었을 때만 셈(PW_FLOOR·시간 한도로 묻지 않은 것은 빼고)
             PW_CNT_BAD[ck] = PW_CNT_BAD.get(ck, 0) + 1
+            PW_CNT_RUN[1] += 1
+            if PW_CNT_RUN[1] == PW_CNT_STOP and not PW_CNT_RUN[0]:
+                log(f"  PortWatch 건수 질의 {PW_CNT_STOP}번 모두 못 받음 — 이번 실행은 건수 없이 행 질의만(v1.6대로)")
         return None
     finally:
         PW_NCNT_L[layer] = PW_NCNT_L.get(layer, 0) + PW_NREQ_L.get(layer, 0) - n0
     PW_COUNT[ck] = n
+    PW_CNT_RUN[0] += 1
     return n
 
 
@@ -1677,6 +1684,7 @@ def main():
     PW_NREQ_L.clear()
     PW_COUNT.clear()
     PW_CNT_BAD.clear()
+    PW_CNT_RUN[:] = [0, 0]
     PW_GAP.clear()
     PW_NCNT_L.clear()
     PW_GAP_ROW.clear()
