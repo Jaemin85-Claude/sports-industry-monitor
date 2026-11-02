@@ -16,6 +16,9 @@ v1.9: (대표 지시 2026-11-02 '상하이도 매일 말고 한 번만 알리게
          처음 넘어오는 실행만: 지난 실행 날 이미 기준일을 넘은 이전 값·값 없음은 그 실행이 알린 것(v1.7은 모두 · v1.8은 그 밖을 매일)으로 기록하고
          조용히 — 11/05 뒤에 병합돼도 상하이를 다시 알리지 않음(pw_told_at). 다른 물류 자료(관세청·KCCI·정시율·물동량·부산 선박)·'PortWatch …
          질의 n번 모두 못 받음'·'절반 이상'·기준일 안의 연결 안 됨·요청 제한 '실패' 줄은 그대로
+      ⑤ (검토 반영) 알린 뒤 조용한 항목 줄은 연결 안 됨이면 오류 원문(ConnectionError: HTTPSConnectionPool …) 대신 'PortWatch 연결 안 됨'
+         (12:23 점검이 오류로 읽지 않게 — v1.3 갈래만 규칙) · 블록째 '이번 실행 모두 못 받음(…)'의 까닭은 그 실행을 그만둔 까닭(PW_DOWN '호르무즈
+         해협에서 연결 안 됨'·'요청 제한·권한 오류' · 그 층 PW_LAYER_STOP)을 먼저, 없으면 전처럼 '서버 오류'·'원본에 자료 없음'
 v1.8: (대표 지시 2026-11-02 '한 번만 알리게 바꿔주세요') v1.7은 PortWatch 원본에 자료 없는 8곳(부산·홍콩·앤트워프·싱가포르·닝보·LA/롱비치·
       포트클랑·함부르크)이 11/05부터 원본이 돌아올 때까지 매일 '실패' 줄 + '오래된 이전 값' 실패 표시(빨간 X → 12:23 점검 알림) →
       ① 알린 기록 logistics.json gap_told {"블록:항목": {"since": 이전 값(값 없음)이 시작된 날, "at": 알린 날}}(블록째 값 없음은 "블록:") — 다음 실행이
@@ -878,6 +881,7 @@ def pw_once(kind, iid, name, st):
         it = pw_item(layer, where(iid), fields, name)
     except Exception as e:
         st["err"], st["busy"], st["gap"] = str(e)[:150], isinstance(e, PwBusy), isinstance(e, PwGap)
+        st["down"] = isinstance(e, NetError) and e.__cause__ is not None   # v1.9 연결 안 됨 — err가 오류 원문(…Error · 조용한 줄엔 갈래만)
         if isinstance(e, PwStop) and e.layer:   # 그 층에 권한·토큰 필요 — 다른 층(해협 ↔ 항만)은 계속
             if e.layer not in PW_LAYER_STOP:
                 PW_LAYER_STOP[e.layer] = f"{name}에서 권한·토큰 오류({e.layer})"
@@ -993,7 +997,7 @@ def pw_retry(sts, prev_all):
             got += 1
             log(pw_line(names[k][i], st["res"]) + f" · {names[lk][li]}와 같은 질의")
         else:
-            st.update(err=src["err"], busy=src["busy"], gap=src.get("gap", False), n=max(st["n"], src["n"]))
+            st.update(err=src["err"], busy=src["busy"], gap=src.get("gap", False), down=src.get("down", False), n=max(st["n"], src["n"]))
     left = [i for k, i in mine if sts[k][i]["res"] is None]
     log(f"  PortWatch 다시 받기: 받음 {got}곳 · 못 받음 {len(left)}곳 · 요청 {PW_NREQ[0] - n0}번 · {time.monotonic() - t0:.0f}초"
         + (f" · 멈춤({stop})" if stop else "") + (f" · 오래 걸려 남은 시간에 못 끝낼 {slow}곳은 그만" if slow else ""))
@@ -1153,7 +1157,7 @@ def pw_block(kind, st_k, prev):
         if tk:   # v1.8 이미 알림(같은 이전 값 기간) — 12:23 점검이 다시 알리지 않게 '실패'·[WARN] 없이 · 실패 표시에서도 뺌(main)
             if st.get("gap"):
                 gap.append(name)
-            why = st["err"]
+            why = "PortWatch 연결 안 됨" if st.get("down") else st["err"]   # v1.9 오류 원문(…Error)은 12:23 점검이 오류로 읽어 갈래만
             if st.get("defer") and not st.get("gap"):   # 서버 오류로 끝까지 못 받음(원본 자료 없음으로 못 가린 날)
                 why += f" ({st['n']}번 시도)" if st["n"] else " (묻지 못함)"
             try:
@@ -1190,8 +1194,8 @@ def pw_block(kind, st_k, prev):
         qa = quiet + told_bad   # v1.8 이미 알린 값 없음 항목도 조용한 항목(빼면 v1.7과 같음)
         e = (PwKept if qa and len(quiet) == len(kept) and len(told_bad) == len(bad) else RuntimeError)(f"모두 실패({', '.join(bad + kept)})")
         qg = [x for x in qa if x in gap]   # v1.7 run_block 줄의 까닭 · 블록 gap(이전 값 블록에 이번 실행 기준으로)
-        e.why = ("PortWatch 원본에 자료 없음" if qg and len(qg) == len(qa) else
-                 "PortWatch 서버 오류·원본에 자료 없음" if qg else "PortWatch 서버 오류")
+        oth = f"PortWatch {PW_DOWN or PW_LAYER_STOP.get(layer) or '서버 오류'}"   # v1.9 그 실행을 그만둔 까닭(연결 안 됨·요청 제한·권한)이 먼저
+        e.why = ("PortWatch 원본에 자료 없음" if qg and len(qg) == len(qa) else f"{oth}·원본에 자료 없음" if qg else oth)
         e.gap = gap
         raise e
     blk = {"fields": fields, "items": out, "kept": kept, "failed": bad}
