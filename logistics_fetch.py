@@ -1,6 +1,25 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.7: (대표 지시 2026-11-02 '점검 이상 확인해줘') PortWatch 항만·거점 9곳이 10/28부터 계속 이전 값(11/05에 7일 기준을 넘어 매일 빨간 X 예정) —
+      원인: 항만 일별 표(Daily_Ports_Data)가 10/28 21:35 UTC에 다시 만들어지며 9곳이 빠짐. 11/02 GitHub 서버 시험(색인 칸 portid만으로 건수 —
+      34번 모두 0.2초 안에 받음): 부산 port1065·홍콩 port474·앤트워프 port57·싱가포르 port1201·닝보 port824·포트클랑 port960·함부르크 port446·
+      상하이 양산 port2027 = 0건, LA/롱비치 port664 = 1,716건이지만 2025년부터 0건, 나머지 항만 2,853건 · 해협 2,855건(2019-01-01~2026-10-23).
+      이 항만들은 행 질의가 받혀도 0행이라 v1.6이 '빈 응답(서버 오류)'으로 보고 실행마다 다시 받기 시간(약 180~240초)을 거의 다 씀 →
+      ① 행 질의 전에 같은 층에 portid 조건만으로 건수를 먼저 물음(pw_count · returnCountOnly · (층, portid)마다 실행에 한 번 — PW_COUNT ·
+         pw_get을 거쳐 시간 한도·PW_FLOOR·연결 안 됨·요청 제한·요청 수 규칙 그대로 · 건수 질의가 오류·시간 초과·모양 다름이면 그 항목은 v1.6대로
+         행 질의 — 건수는 한 실행 PW_CNT_TRIES번까지 물음)
+      ② 0건이면 행 질의 없이, 건수는 있는데 행 질의가 오류 없이 60행 미만이면 'PortWatch 원본에 자료 없음'(PwGap) — 그 실행에서 다시 묻지 않음
+         (PW_GAP · 다시 받기 시간은 서버 오류 항목에) · 이전 값·stale_since·값 없음(failed_since) 규칙 그대로. 건수를 모르면 v1.6처럼
+         60행 미만 = 빈 응답(PwBusy · 다시 받기)
+      ③ 로그(12:23 점검이 '실패'·[WARN] 줄로 알림): 이전 값이 기준일(7일) 안이면 블록 기록 때 한 번 '이번 실행 못 받음 — PortWatch 원본에 이 항만
+         자료 없음(port…) · 이전 값(m-d 받은 값)', 기준일을 넘었거나 이전 값이 없으면 '실패 — …' · 다시 받기 뒤 '  PortWatch 원본에 자료 없음 n곳: …' ·
+         기준일을 넘은 '오래된 이전 값' 실패 표시에 까닭('PortWatch 원본에 자료 없음: 홍콩·…' — 블록 gap 목록, 이번 실행 기준) · 블록 항목이 모두
+         이전 값이고 모두 7일 안(서버 오류·자료 없음)이면 v1.6처럼 '이번 실행 모두 못 받음' · 자료 없음 답은 서버가 받은 답이라 층 '모두 못 받음'
+         ([WARN] · PW_ALLBAD)에서 받은 것으로 셈(그 판단의 질의 수는 행 질의만 — 건수 질의는 뺌 PW_NCNT_L)
+      ④ 더하는 항만(상하이 port1188 + 양산 port2027 · 선전 옌톈 + 서커우)은 한쪽만 원본에 없으면 나머지 항만만으로(항목 partial: ["port2027"] ·
+         로그 '  상하이: port2027 PortWatch 원본에 자료 없음 — 나머지 항만(port1188)만 씀') · 모두 없으면 자료 없음 · 한쪽이 서버 오류면 v1.6처럼
+         다시 받기 · 원본에 다시 생기면 다음 실행부터 원래대로 더함(항목을 새로 만들어 partial 없음)
 v1.6: (대표 지시 2026-10-29 '1번부터 진행') IMF PortWatch가 10/28부터 질의를 자주 거절 — 10/29 아침 20곳 중 14곳 실패(400 'Cannot
       perform query'·'Invalid URL'·빈 응답(0행)·가끔 504). 브랜치 시험(10/29 GitHub 서버 · 질의 105번): 질의마다 약 60~70% 실패, 질의 모양
       (정렬 빼기·날짜 조건·최근 70일·건수만)을 바꿔도 같음, 같은 질의를 다시 하면 20~40% 받음(서버 쪽 문제 · 질의마다 거의 따로 실패) →
@@ -132,6 +151,11 @@ PW_ALLBAD_N = 25               # v1.6 한 층만 볼 때 기준 — 약 70~80% �
 PW_NREQ_L = {}                 # v1.6 층별 보낸 요청 수(main이 비움)
 PW_LAYER_KO = {"Daily_Chokepoints_Data": "해협", "Daily_Ports_Data": "항만·거점"}
 PW_DUR = {}                    # v1.6 질의(층, 조건) → 이번 실행에서 마지막으로 걸린 초 — 다시 받기에서 남은 시간에 못 끝낼 질의는 그만(main이 비움)
+PW_COUNT = {}                  # v1.7 (층, portid) → 원본 전체 일별 값 건수(portid 조건만 · 색인 칸이라 0.2초) — 받은 건수만, 실행에 한 번(main이 비움)
+PW_CNT_BAD = {}                # v1.7 (층, portid) → 이번 실행에 건수 질의가 오류·시간 초과·모양 다름이었던 수(PW_CNT_TRIES번이면 더 묻지 않음 · main이 비움)
+PW_CNT_TRIES = 2               # v1.7 건수 질의를 한 실행에 (층, portid)마다 최대 몇 번 — 못 받으면 v1.6대로 행 질의만
+PW_GAP = {}                    # v1.7 질의(층, 조건) → 'PortWatch 원본에 자료 없음' 사유 — 이번 실행에서 다시 묻지 않음(main이 비움)
+PW_NCNT_L = {}                 # v1.7 층별 건수 질의 수(PW_NREQ_L에 들어 있음 — 층 '모두 못 받음' 판단은 행 질의 수로만 · main이 비움)
 DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
                                # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
 DGK_AUTH = []                  # v1.2 인증키 오류가 난 자료 — 실행 끝에 바로 실패 표시(main이 비움)
@@ -263,6 +287,16 @@ class PwKept(RuntimeError):
 class PwBusy(RuntimeError):
     """v1.6 PortWatch 서버가 질의를 처리하지 못함(오류 응답 400 'Cannot perform query'·'Invalid URL' 등 · 빈 응답 · 5xx · 읽기 시간 초과) —
     연결은 되므로 남은 항목은 계속 묻고, 이 항목은 실행 끝에 다시(연결 안 됨 NetError와 구분)"""
+
+
+class PwGap(RuntimeError):
+    """v1.7 PortWatch 원본에 이 항만·해협 자료 없음 — 건수 질의(portid만)가 0건, 또는 건수는 있는데 행 질의가 오류 없이 60행 미만
+    (10/28 항만 표를 다시 만들며 9곳이 빠짐). 서버가 받은 답이라 그 실행에서 다시 묻지 않음(다시 받기 시간은 서버 오류 항목에) ·
+    이전 값 규칙은 그대로(7일 안이면 조용히, 넘으면 '오래된 이전 값' 실패 표시에 까닭). pid = 그 질의의 portid"""
+
+    def __init__(self, msg, pid=""):
+        super().__init__(msg)
+        self.pid = pid
 
 
 def time_left():
@@ -582,44 +616,99 @@ def pw_get(layer, params):
             raise
 
 
+def pw_json(r, layer):
+    """v1.7 PortWatch 응답 → JSON 사전(pw_rows_get에서 떼어 냄 — 건수 질의도 같은 규칙). JSON이 아님·모양 다름·오류 응답은 PwBusy,
+    오류 응답 403·429·498·499(요청 제한·권한 — 다시 해도 안 됨)는 PwStop(429는 실행 전체, 나머지는 그 층만)"""
+    try:
+        d = r.json()
+    except ValueError:
+        raise PwBusy(f"PortWatch 응답이 JSON이 아님(HTTP {r.status_code})") from None
+    if not isinstance(d, dict):
+        raise PwBusy("PortWatch 응답 형식이 다름")
+    if "error" in d:
+        er = d["error"]
+        if isinstance(er, dict) and er.get("code") in (403, 429, 498, 499):   # 요청 제한·권한(토큰) — 다시 해도 안 됨
+            raise PwStop(f"PortWatch 요청 제한·권한 오류({er.get('code')} '{str(er.get('message'))[:40]}')",
+                         "" if er.get("code") == 429 else layer)
+        raise PwBusy(f"PortWatch 오류 응답 {er.get('code')} '{str(er.get('message'))[:60]}'" if isinstance(er, dict)
+                     else f"PortWatch 오류 응답: {str(er)[:100]}")
+    return d
+
+
+def pw_pid(where):
+    """v1.7 질의 조건 "portid='X' AND year>=Y" → ('X', Y) · 다른 꼴이면 None(건수를 먼저 묻지 않음)"""
+    m = re.fullmatch(r"portid='([^']+)' AND year>=(\d{4})", where)
+    return (m.group(1), int(m.group(2))) if m else None
+
+
+def pw_count(layer, where):
+    """v1.7 행 질의 전에 portid 조건만으로 원본 건수(returnCountOnly — 색인 칸이라 0.2초 · 11/02 GitHub 서버 34번 모두 받음, 연도 조건을
+    넣은 건수 질의는 행 질의처럼 자주 400). (층, portid)마다 받은 건수는 실행 동안 PW_COUNT에. 오류·시간 초과·모양 다름이면 None
+    (그 항목은 v1.6대로 행 질의 — 한 실행 PW_CNT_TRIES번까지 다시 물음) · pw_get을 거쳐 시간 한도·PW_FLOOR·요청 수 규칙 그대로,
+    연결 안 됨(NetError)·요청 제한·권한(PwStop)은 그대로 올림(pw_once가 그 실행·그 층을 그만)"""
+    p = pw_pid(where)
+    if not p:
+        return None
+    ck = (layer, p[0])
+    if ck in PW_COUNT:
+        return PW_COUNT[ck]
+    if PW_CNT_BAD.get(ck, 0) >= PW_CNT_TRIES:
+        return None
+    n0 = PW_NREQ_L.get(layer, 0)
+    try:
+        d = pw_json(pw_get(layer, {"where": f"portid='{p[0]}'", "returnCountOnly": "true", "f": "json"}), layer)
+        n = d.get("count")
+        if isinstance(n, bool) or not isinstance(n, int) or n < 0:
+            raise PwBusy("PortWatch 건수 응답 모양이 다름")
+    except (PwStop, NetError):
+        raise
+    except RuntimeError:   # 서버 오류·시간 초과·그 밖의 4xx·모양 다름 — 이 항목은 건수 없이(v1.6대로)
+        if PW_NREQ_L.get(layer, 0) > n0:   # 실제로 물었을 때만 셈(PW_FLOOR·시간 한도로 묻지 않은 것은 빼고)
+            PW_CNT_BAD[ck] = PW_CNT_BAD.get(ck, 0) + 1
+        return None
+    finally:
+        PW_NCNT_L[layer] = PW_NCNT_L.get(layer, 0) + PW_NREQ_L.get(layer, 0) - n0
+    PW_COUNT[ck] = n
+    return n
+
+
 def pw_rows(layer, where, fields):
     """PortWatch 질의 — 1,000건씩 넘겨 받음. 날짜 오름차순. v1.6 오류 응답·빈 응답(60행 미만)은 PwBusy(10/28~ 서버가 질의를 자주 거절 —
-    다시 하면 받는 일이 많음) · 받은 질의는 이번 실행 동안 PW_ROWS에 두어 다시 묻지 않음(더하는 항만의 받은 쪽)"""
+    다시 하면 받는 일이 많음) · 받은 질의는 이번 실행 동안 PW_ROWS에 두어 다시 묻지 않음(더하는 항만의 받은 쪽).
+    v1.7 먼저 건수(pw_count) — 0건이면 행 질의 없이 PwGap · 원본에 자료 없음으로 본 질의는 PW_GAP에 두어 다시 묻지 않음"""
     key = (layer, where)
     if key in PW_ROWS:
         return PW_ROWS[key]
+    if key in PW_GAP:
+        raise PwGap(PW_GAP[key], (pw_pid(where) or ("",))[0])
+    n = pw_count(layer, where)
+    if n == 0:
+        pid = pw_pid(where)[0]
+        PW_GAP[key] = f"PortWatch 원본에 이 {'해협' if layer == 'Daily_Chokepoints_Data' else '항만'} 자료 없음({pid})"
+        raise PwGap(PW_GAP[key], pid)
     t0 = time.monotonic()
     try:
-        return pw_rows_get(layer, where, fields, key)
+        return pw_rows_get(layer, where, fields, key, n)
     finally:
         PW_DUR[key] = time.monotonic() - t0
 
 
-def pw_rows_get(layer, where, fields, key):
-    """pw_rows의 받기 — 받으면 PW_ROWS[key]에 둠"""
+def pw_rows_get(layer, where, fields, key, n_all=None):
+    """pw_rows의 받기 — 받으면 PW_ROWS[key]에 둠. n_all = 원본 전체 건수(pw_count · 모르면 None)"""
     out, off = [], 0
     while True:
-        r = pw_get(layer, {"where": where, "outFields": ",".join(fields), "orderByFields": "date ASC",
-                           "resultOffset": off, "resultRecordCount": 1000, "f": "json"})
-        try:
-            d = r.json()
-        except ValueError:
-            raise PwBusy(f"PortWatch 응답이 JSON이 아님(HTTP {r.status_code})") from None
-        if not isinstance(d, dict):
-            raise PwBusy("PortWatch 응답 형식이 다름")
-        if "error" in d:
-            er = d["error"]
-            if isinstance(er, dict) and er.get("code") in (403, 429, 498, 499):   # 요청 제한·권한(토큰) — 다시 해도 안 됨
-                raise PwStop(f"PortWatch 요청 제한·권한 오류({er.get('code')} '{str(er.get('message'))[:40]}')",
-                             "" if er.get("code") == 429 else layer)
-            raise PwBusy(f"PortWatch 오류 응답 {er.get('code')} '{str(er.get('message'))[:60]}'" if isinstance(er, dict)
-                         else f"PortWatch 오류 응답: {str(er)[:100]}")
+        d = pw_json(pw_get(layer, {"where": where, "outFields": ",".join(fields), "orderByFields": "date ASC",
+                                   "resultOffset": off, "resultRecordCount": 1000, "f": "json"}), layer)
         fs = d.get("features") or []
         out += [f.get("attributes") or {} for f in fs]
         if len(fs) < 1000 or off >= 9000:
             break
         off += 1000
     if len(out) < 60:   # 10/28~ 오류 대신 빈 응답(0행)도 자주 — 다시 하면 받음(1년 넘는 일별 값이라 정상이면 600행 넘음)
+        if n_all:   # v1.7 원본에 자료는 있는데 질의 기간(2025년부터)에 없음 — 오류 없이 받은 답(LA/롱비치 port664 1,716건 · 2025년부터 0건)
+            pid, y = pw_pid(where)
+            PW_GAP[key] = f"PortWatch 원본에 {y}년부터 일별 값 {len(out)}개뿐(전체 {n_all:,}개 · {pid})"
+            raise PwGap(PW_GAP[key], pid)
         raise PwBusy(f"PortWatch 빈 응답(일별 값 {len(out)}개)")
     PW_ROWS[key] = out
     return out
@@ -670,8 +759,21 @@ def pw_sum(parts, fields):
 
 
 def pw_item(layer, wheres, fields, label):
-    """wheres = 질의 조건 목록 — 둘 이상(상하이 + 양산 등)이면 같은 날 값을 더함"""
-    parts = [pw_rows(layer, w, ["date"] + fields) for w in wheres]
+    """wheres = 질의 조건 목록 — 둘 이상(상하이 + 양산 등)이면 같은 날 값을 더함.
+    v1.7 원본에 자료 없는 항만(PwGap)은 빼고 나머지만(항목 partial = 뺀 portid) — 모두 없으면 PwGap · 다른 오류는 v1.6처럼 바로 올림"""
+    parts, gaps, used = [], [], []
+    for w in wheres:
+        try:
+            parts.append(pw_rows(layer, w, ["date"] + fields))
+            used.append((pw_pid(w) or (w,))[0])
+        except PwGap as e:
+            gaps.append(e)
+    if not parts:   # 모두 원본에 없음
+        if len(gaps) == 1:
+            raise gaps[0]
+        zero = all("자료 없음(" in str(e) for e in gaps)   # 모두 0건 — '… 자료 없음(port1188·port2027)' 한 줄로
+        raise PwGap(f"{str(gaps[0]).split('(')[0]}({'·'.join(e.pid for e in gaps)})" if zero else " · ".join(map(str, gaps)),
+                    "·".join(e.pid for e in gaps))
     rows = parts[0] if len(parts) == 1 else pw_sum(parts, fields)
     if len(parts) > 1:   # 한 항만이 늦게 갱신되면 합은 그 날까지만 — 로그로 남김(30일 넘게 멈추면 아래 검사로 실패)
         ends = [max((pw_date(a.get("date")) for a in p), default=None) for p in parts]
@@ -682,8 +784,13 @@ def pw_item(layer, wheres, fields, label):
     last = max(pw_date(a.get("date")) for a in rows)
     if (today_kst() - last).days > 30:
         raise RuntimeError(f"{label}: 최신 날짜 {last} — 한 달 넘게 새 값 없음")
-    return {"weeks": weekly(rows, fields), "base": [period_avg(rows, f, BASE_FROM, BASE_TO) for f in fields],
-            "last_date": last.isoformat()}
+    it = {"weeks": weekly(rows, fields), "base": [period_avg(rows, f, BASE_FROM, BASE_TO) for f in fields],
+          "last_date": last.isoformat()}
+    if gaps:   # v1.7 일부만 원본에 없음 — 있는 항만만(다시 생기면 다음 실행부터 원래대로 더함 · 항목을 새로 만들어 partial 없음)
+        it["partial"] = [e.pid for e in gaps]
+        log(f"  {label}: {'·'.join(it['partial'])} PortWatch 원본에 자료 없음 — "
+            + ("나머지 항만만 더함" if len(parts) > 1 else f"나머지 항만({used[0]})만 씀"))
+    return it
 
 
 def pw_ids(i):
@@ -705,7 +812,8 @@ def pw_line(name, it):
 
 
 def pw_once(kind, iid, name, st):
-    """v1.6 항목 하나를 한 번 받음 — st = {"res": 받은 값, "err": 오류 글, "n": 시도 수, "busy": 서버 오류(다시 받을 만함)}.
+    """v1.6 항목 하나를 한 번 받음 — st = {"res": 받은 값, "err": 오류 글, "n": 시도 수, "busy": 서버 오류(다시 받을 만함),
+    "gap": v1.7 PortWatch 원본에 자료 없음(PwGap — 다시 묻지 않음)}.
     연결이 안 되면(NetError) 같은 서버라 이번 실행의 남은 PortWatch는 묻지 않음(PW_DOWN · 실행 시간을 다 쓴 때는 빼고) ·
     요청 제한·권한 오류(PwStop)도 그 실행은 그만([WARN] 한 줄)"""
     global PW_DOWN
@@ -716,7 +824,7 @@ def pw_once(kind, iid, name, st):
         st["n"] += 1
         it = pw_item(layer, where(iid), fields, name)
     except Exception as e:
-        st["err"], st["busy"] = str(e)[:150], isinstance(e, PwBusy)
+        st["err"], st["busy"], st["gap"] = str(e)[:150], isinstance(e, PwBusy), isinstance(e, PwGap)
         if isinstance(e, PwStop) and e.layer:   # 그 층에 권한·토큰 필요 — 다른 층(해협 ↔ 항만)은 계속
             if e.layer not in PW_LAYER_STOP:
                 PW_LAYER_STOP[e.layer] = f"{name}에서 권한·토큰 오류({e.layer})"
@@ -726,7 +834,7 @@ def pw_once(kind, iid, name, st):
             if isinstance(e, PwStop):
                 log(f"  [WARN] {e} — 이번 실행의 남은 PortWatch는 묻지 않음")
         return False
-    st.update(res=it, err="", busy=False)
+    st.update(res=it, err="", busy=False, gap=False)
     return True
 
 
@@ -745,7 +853,7 @@ def pw_first(kind, sts):
 
 def pw_first_items(kind, items, sts):
     for iid, name in items:
-        st = sts[kind][iid] = {"res": None, "err": "", "n": 0, "busy": False}
+        st = sts[kind][iid] = {"res": None, "err": "", "n": 0, "busy": False, "gap": False}
         if not PW_DOWN and time_left() < PW_RESERVE and not pw_cached(kind, iid):   # 뒤 자료 시간을 남김 — 이 항목은 실행 끝에
             st.update(err="뒤 자료 시간을 남기려고 처음에 묻지 않음", busy=True, defer=True)
             log(f"  {name}: 뒤 자료 시간을 남기려고 지금은 묻지 않음 — 실행 끝에 다시")
@@ -756,15 +864,16 @@ def pw_first_items(kind, items, sts):
         elif st["busy"]:
             st["defer"] = True
             log(f"  {name}: {st['err']} — 실행 끝에 다시")
-        else:
+        elif not st["gap"]:   # v1.7 원본에 자료 없음은 다시 묻지 않고, 줄은 pw_block이 한 번(이전 값 나이를 보고 조용히 또는 '실패')
             log(f"  {name}: 실패 — {st['err']}")
         time.sleep(0.5)
 
 
 def pw_cached(kind, iid):
-    """v1.6 이 항목의 질의를 이번 실행에서 모두 받아 둠(PW_ROWS — 제벨알리 = 두바이) — 요청 없이 값을 만들 수 있음"""
+    """v1.6 이 항목의 질의를 이번 실행에서 모두 받아 둠(PW_ROWS — 제벨알리 = 두바이) — 요청 없이 값을 만들 수 있음.
+    v1.7 원본에 자료 없다고 받은 질의(PW_GAP)도 받은 것(요청 없이 PwGap·나머지 항만만)"""
     layer, _, _, where = pw_spec(kind)
-    return all((layer, w) in PW_ROWS for w in where(iid))
+    return all((layer, w) in PW_ROWS or (layer, w) in PW_GAP for w in where(iid))
 
 
 def pw_since(prev, iid):
@@ -808,7 +917,8 @@ def pw_retry(sts, prev_all):
                 stop = PW_DOWN or "이번 실행 시간이 모자람"
                 break
             layer, _, _, where = pw_spec(k)
-            cost = sum(PW_DUR.get((layer, w), 15) for w in where(i) if (layer, w) not in PW_ROWS)   # 아직 안 물은 질의는 15초로 어림
+            cost = sum(PW_DUR.get((layer, w), 15) for w in where(i)   # 아직 안 물은 질의는 15초로 어림(v1.7 원본에 없는 질의는 묻지 않음)
+                       if (layer, w) not in PW_ROWS and (layer, w) not in PW_GAP)
             if time_left() < cost + 5:   # 남은 질의가 지난번만큼 걸리면 못 끝냄(상하이 약 60초) — 이번 실행은 이 항목 그만, 다른 항목 먼저
                 slow += 1
                 continue
@@ -829,16 +939,32 @@ def pw_retry(sts, prev_all):
             got += 1
             log(pw_line(names[k][i], st["res"]) + f" · {names[lk][li]}와 같은 질의")
         else:
-            st.update(err=src["err"], busy=src["busy"], n=max(st["n"], src["n"]))
+            st.update(err=src["err"], busy=src["busy"], gap=src.get("gap", False), n=max(st["n"], src["n"]))
     left = [i for k, i in mine if sts[k][i]["res"] is None]
     log(f"  PortWatch 다시 받기: 받음 {got}곳 · 못 받음 {len(left)}곳 · 요청 {PW_NREQ[0] - n0}번 · {time.monotonic() - t0:.0f}초"
         + (f" · 멈춤({stop})" if stop else "") + (f" · 오래 걸려 남은 시간에 못 끝낼 {slow}곳은 그만" if slow else ""))
 
 
+def pw_gap_note(sts):
+    """v1.7 다시 받기 뒤 한 줄 — 원본에 자료 없어 다시 묻지 않은 항목·일부 항만만 쓴 항목('실패'·[WARN] 없이 · 항목 줄은 pw_block이)"""
+    gp, part = [], []
+    for k in PW_KINDS:
+        nm = dict(pw_spec(k)[2])
+        for i, st in (sts.get(k) or {}).items():
+            if st["res"] is None and st.get("gap"):
+                gp.append(nm[i])
+            elif st["res"] is not None and st["res"].get("partial"):
+                part.append(f"{nm[i]}({'·'.join(st['res']['partial'])} 뺌)")
+    if gp or part:
+        log("  PortWatch 원본에 자료 없음" + (f" {len(gp)}곳(이번 실행은 다시 묻지 않음): {'·'.join(gp)}" if gp else "")
+            + ((" · " if gp else " — ") + f"일부 항만만 씀: {', '.join(part)}" if part else ""))
+
+
 def pw_quiet(kind, prev, iid, st):
     """v1.6 끝까지 못 받았어도 알릴 일이 아님 — 서버 오류(또는 처음에 묻지 못함)이고 이전 값이 기준일(STALE_ALERT · PortWatch 7일) 안.
-    12:23 점검이 '실패'·[WARN] 줄로 알리므로 이때는 그 낱말 없이 씀(기준일을 넘으면 '오래된 이전 값' 실패 표시가 따로 알림)"""
-    if PW_DOWN or pw_spec(kind)[0] in PW_ALLBAD | set(PW_LAYER_STOP) or not (st.get("busy") or st.get("n") == 0):
+    12:23 점검이 '실패'·[WARN] 줄로 알리므로 이때는 그 낱말 없이 씀(기준일을 넘으면 '오래된 이전 값' 실패 표시가 따로 알림).
+    v1.7 원본에 자료 없음(gap)은 서버가 받은 답이라 그 뒤 연결이 끊기거나 다른 층이 막혀도 이전 값 나이로만 가름"""
+    if not st.get("gap") and (PW_DOWN or pw_spec(kind)[0] in PW_ALLBAD | set(PW_LAYER_STOP) or not (st.get("busy") or st.get("n") == 0)):
         return False   # 연결 안 됨·요청 제한·권한·한 번도 못 받음은 v1.5처럼 '실패'(알림)
     d = pw_since(prev, iid)
     try:
@@ -849,24 +975,37 @@ def pw_quiet(kind, prev, iid, st):
 
 def pw_block(kind, st_k, prev):
     """v1.6 pw_first·pw_retry 결과 → 블록(못 받은 항목은 이전 값 + stale_since, 이전 값도 없으면 값 없음) — run_block이 실행 끝에 부름.
-    끝까지 서버 오류로 못 받은 항목은 여기서 '실패' 줄(처음 줄에는 '실행 끝에 다시'만 썼으므로)"""
+    끝까지 서버 오류로 못 받은 항목은 여기서 '실패' 줄(처음 줄에는 '실행 끝에 다시'만 썼으므로).
+    v1.7 원본에 자료 없는 항목(gap)도 줄은 여기서 한 번(이전 값이 7일 안이면 조용히) · 블록 gap = 그 이름 목록(이번 실행 기준 —
+    '오래된 이전 값' 실패 표시의 까닭 · 없으면 칸 없음) · 블록이 모두 이전 값이면 예외의 gap·why로 run_block에 넘김"""
     _, fields, items, _ = pw_spec(kind)
     items0 = (prev or {}).get("items")
     old = {x.get("id"): x for x in (items0 if isinstance(items0, list) else []) if isinstance(x, dict)}
-    out, bad, kept, quiet = [], [], [], []
+    out, bad, kept, quiet, gap = [], [], [], [], []
     layer = pw_spec(kind)[0]
+    lim = STALE_ALERT.get(kind, 7)
     for iid, name in items:
         st = st_k.get(iid) or {"res": None, "err": "받지 않음", "n": 0, "busy": False}
         if st["res"] is None and pw_cached(kind, iid):   # 같은 질의를 다른 항목이 받아 둠(제벨알리 = 두바이) — 요청 없이
             try:
-                st.update(res=pw_item(layer, pw_spec(kind)[3](iid), fields, name), err="", busy=False)
+                st.update(res=pw_item(layer, pw_spec(kind)[3](iid), fields, name), err="", busy=False, gap=False)
                 log(pw_line(name, st["res"]) + " · 받아 둔 같은 질의로")
+            except PwGap as e:   # v1.7 받아 둔 답이 '원본에 자료 없음'
+                st.update(err=str(e)[:150], busy=False, gap=True)
             except Exception:
                 pass
         if st["res"] is not None:
             out.append({"id": iid, "name": name, **st["res"]})
             continue
-        if st.get("defer"):   # 처음 줄에 '실행 끝에 다시'라고 쓴 항목 — 끝까지 못 받은 까닭(마지막 오류)
+        if st.get("gap"):   # v1.7 원본에 자료 없음 — 다시 묻지 않은 항목 · 줄은 여기서 한 번
+            gap.append(name)
+            since = pw_since(prev, iid)[5:10] if iid in old else ""
+            if iid in old and pw_quiet(kind, prev, iid, st):
+                quiet.append(name)
+                log(f"  {name}: 이번 실행 못 받음 — {st['err']} · 이전 값({since} 받은 값)")
+            else:
+                log(f"  {name}: 실패 — {st['err']} · " + (f"이전 값({since} 받은 값 · 기준 {lim}일 넘음)" if iid in old else "값 없음"))
+        elif st.get("defer"):   # 처음 줄에 '실행 끝에 다시'라고 쓴 항목 — 끝까지 못 받은 까닭(마지막 오류)
             tried = f"{st['n']}번 시도" if st["n"] else "묻지 못함"
             if iid in old and pw_quiet(kind, prev, iid, st):
                 quiet.append(name)
@@ -881,8 +1020,16 @@ def pw_block(kind, st_k, prev):
         else:
             bad.append(name)
     if not [x for x in out if not x.get("stale_since")]:
-        raise (PwKept if quiet and len(quiet) == len(kept) and not bad else RuntimeError)(f"모두 실패({', '.join(bad + kept)})")
-    return {"fields": fields, "items": out, "kept": kept, "failed": bad}
+        e = (PwKept if quiet and len(quiet) == len(kept) and not bad else RuntimeError)(f"모두 실패({', '.join(bad + kept)})")
+        qg = [x for x in quiet if x in gap]   # v1.7 run_block 줄의 까닭 · 블록 gap(이전 값 블록에 이번 실행 기준으로)
+        e.why = ("PortWatch 원본에 자료 없음" if qg and len(qg) == len(quiet) else
+                 "PortWatch 서버 오류·원본에 자료 없음" if qg else "PortWatch 서버 오류")
+        e.gap = gap
+        raise e
+    blk = {"fields": fields, "items": out, "kept": kept, "failed": bad}
+    if gap:
+        blk["gap"] = gap
+    return blk
 
 
 # ───────────────────────── ④ Sea-Intelligence 정시율 ─────────────────────────
@@ -1455,8 +1602,8 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False, head=Tr
             log(f"  {label}: {net_why(e)} — 다른 자료를 받은 뒤 한 번 더")   # v1.3 오류 원문(…Error)은 12:23 점검이 오류로 읽어 갈래만
             return False
         dgk_net = key in DGK_ALL and isinstance(e, NetError)
-        if isinstance(e, PwKept):   # v1.6 PortWatch 서버 오류 — 이전 값이 기준일 안이라 알릴 일이 아님
-            log(f"  {label}: 이번 실행 모두 못 받음(PortWatch 서버 오류) · 이전 값 유지")
+        if isinstance(e, PwKept):   # v1.6 PortWatch 서버 오류 — 이전 값이 기준일 안이라 알릴 일이 아님(v1.7 원본에 자료 없음도)
+            log(f"  {label}: 이번 실행 모두 못 받음({getattr(e, 'why', 'PortWatch 서버 오류')}) · 이전 값 유지")
         elif dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패'·오류 원문(…Error) 없이 갈래만
             log(f"  {label}: 공공데이터포털 {net_why(e)} — {NET_QUIET} · {'이전 값 유지' if prev else '값 없음'}")
         else:
@@ -1470,6 +1617,10 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False, head=Tr
             if "items" in blk and not isinstance(blk["items"], list):
                 blk["items"] = []   # 손상된 이전 값
             blk["stale_since"] = prev.get("stale_since") or prev.get("fetched") or today
+            if isinstance(getattr(e, "gap", None), list):   # v1.7 원본에 자료 없는 항목 — 이전 값 블록에도 이번 실행 기준으로
+                blk.pop("gap", None)
+                if e.gap:
+                    blk["gap"] = e.gap
             out[key] = blk
             status["kept"].append(label)
             if carry:   # 화면 '값 없음' 줄이 이 날도 보이게
@@ -1510,6 +1661,10 @@ def main():
     PW_LAYER_STOP.clear()
     PW_ALLBAD.clear()
     PW_NREQ_L.clear()
+    PW_COUNT.clear()
+    PW_CNT_BAD.clear()
+    PW_GAP.clear()
+    PW_NCNT_L.clear()
     PW_NREQ[0], PW_FLOOR[0] = 0, 0
     DGK_DOWN.clear()
     DGK_AUTH.clear()
@@ -1598,11 +1753,14 @@ def main():
             pw_retry(pw_st, prev_all)   # v1.6 PortWatch 서버 오류로 못 받은 항목 — 남은 시간 동안 다시
         except Exception as e:
             log(f"  [WARN] PortWatch 다시 받기 중 오류 — {str(e)[:150]}")
+        pw_gap_note(pw_st)   # v1.7 원본에 자료 없어 다시 묻지 않은 항목 — 조용한 한 줄
         if not PW_DOWN:   # 질의마다 따로 실패하면(약 70%) 하나도 못 받을 일은 드묾 — 층이 바뀌었거나 고장(처음 날부터 알림)
-            got = {k[0] for k in PW_ROWS}
-            whole = PW_NREQ[0] >= 10 and not PW_ROWS
-            for ly, n in sorted(PW_NREQ_L.items()):
-                if ly not in got and ly not in PW_LAYER_STOP and (whole or n >= PW_ALLBAD_N):
+            # v1.7 '원본에 자료 없음'(PW_GAP)도 서버가 받은 답 · 질의 수는 행 질의만(건수 질의 PW_NCNT_L은 뺌 — 0.2초에 거의 늘 받음)
+            got = {k[0] for k in PW_ROWS} | {k[0] for k in PW_GAP}
+            nrow = {ly: n - PW_NCNT_L.get(ly, 0) for ly, n in PW_NREQ_L.items()}
+            whole = sum(nrow.values()) >= 10 and not got
+            for ly, n in sorted(nrow.items()):
+                if n > 0 and ly not in got and ly not in PW_LAYER_STOP and (whole or n >= PW_ALLBAD_N):
                     PW_ALLBAD.add(ly)
                     log(f"  [WARN] PortWatch {PW_LAYER_KO.get(ly, ly)} 질의 {n}번 모두 못 받음 — 질의·주소가 바뀌었을 수 있음")
         for kind in PW_KINDS:
@@ -1693,23 +1851,33 @@ def main():
     def judged(key):   # 이번 차례가 기준일 경고를 셈하는 자료 — 다시 받기는 자기 자료만, 다음 차례로 넘긴 자료는 빼고
         return (not retry_keys or key in retry_keys) and key not in defer
 
+    def over(d, lim):   # 이 날부터 이전 값이 기준일을 넘음(날짜가 없으면 새로 받은 값)
+        n = days_since(d) if d else 0
+        return n is None or n > lim
+
+    def gaps(key):   # v1.7 PortWatch 원본에 자료 없는 항목 이름(블록 gap — 이번 실행 기준)
+        g = out[key].get("gap") if isinstance(out.get(key), dict) else None
+        return g if isinstance(g, list) else []
+
     old = []
     for key, blk in out.items():
         if key not in STALE_ALERT or not isinstance(blk, dict) or not judged(key):
             continue
-        its = blk.get("items")
-        ss = [blk.get("stale_since")] + [x.get("stale_since") for x in (its if isinstance(its, list) else []) if isinstance(x, dict)]
+        its = [x for x in (blk.get("items") if isinstance(blk.get("items"), list) else []) if isinstance(x, dict)]
+        ss = [blk.get("stale_since")] + [x.get("stale_since") for x in its]
         ss = sorted(str(x) for x in ss if x)
-        n = days_since(ss[0]) if ss else 0
-        if n is None or n > STALE_ALERT[key]:
-            old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {STALE_ALERT[key]}일)")
+        n, lim = (days_since(ss[0]) if ss else 0), STALE_ALERT[key]
+        if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께
+            why = [x.get("name") for x in its if x.get("name") in gaps(key) and over(x.get("stale_since") or blk.get("stale_since"), lim)]
+            old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {lim}일" + (f" · PortWatch 원본에 자료 없음: {'·'.join(why)}" if why else "") + ")")
     for k, d in sorted(fails[1].items()):
         key, _, item = k.partition(":")
         if not judged(key):
             continue
         n, lim = days_since(d), STALE_ALERT.get(key, 7)
         if n is None or n > lim:
-            old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일)")
+            old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일"
+                       + (" · PortWatch 원본에 자료 없음" if item and item in gaps(key) else "") + ")")
     if old:
         soft_fail("오래된 이전 값·값 없음: " + ", ".join(old))
 
