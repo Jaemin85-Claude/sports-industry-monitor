@@ -14,9 +14,12 @@ v1.7: (대표 지시 2026-11-02 '점검 이상 확인해줘') PortWatch 항만·
          60행 미만 = 빈 응답(PwBusy · 다시 받기)
       ③ 로그(12:23 점검이 '실패'·[WARN] 줄로 알림): 이전 값이 기준일(7일) 안이면 블록 기록 때 한 번 '이번 실행 못 받음 — PortWatch 원본에 이 항만
          자료 없음(port…) · 이전 값(m-d 받은 값)', 기준일을 넘었거나 이전 값이 없으면 '실패 — …' · 다시 받기 뒤 '  PortWatch 원본에 자료 없음 n곳: …' ·
-         기준일을 넘은 '오래된 이전 값' 실패 표시에 까닭('PortWatch 원본에 자료 없음: 홍콩·…' — 블록 gap 목록, 이번 실행 기준) · 블록 항목이 모두
-         이전 값이고 모두 7일 안(서버 오류·자료 없음)이면 v1.6처럼 '이번 실행 모두 못 받음' · 자료 없음 답은 서버가 받은 답이라 층 '모두 못 받음'
-         ([WARN] · PW_ALLBAD)에서 받은 것으로 셈(그 판단의 질의 수는 행 질의만 — 건수 질의는 뺌 PW_NCNT_L)
+         기준일을 넘은 '오래된 이전 값' 실패 표시에 까닭('PortWatch 원본에 자료 없음: 홍콩·…' — 블록 gap 목록, 이번 실행 기준 · 그 밖에 기준일을
+         넘은 항목은 ' · 그 밖 이전 값: 로테르담' · 이전 값이 아예 없는 블록의 '값 없음' 줄에도 — PW_BLK_GAP) · 블록 항목이 모두
+         이전 값이고 모두 7일 안(서버 오류·자료 없음)이면 v1.6처럼 '이번 실행 모두 못 받음' · 행 질의가 오류 없이 답한 자료 없음(LA/롱비치 —
+         PW_GAP_ROW)만 층 '모두 못 받음'([WARN] · PW_ALLBAD)에서 받은 것으로 셈(건수 0건은 행 질의를 안 해 받은 것으로 안 셈 — 행 질의가 모두
+         막히면 v1.6처럼 첫날 [WARN] · 그 판단의 질의 수는 행 질의만 — 건수 질의는 뺌 PW_NCNT_L) · 다시 받기 머리 줄이 없으면 자료 없음 줄 앞에
+         '[PortWatch 원본에 자료 없음]'(앞 자료 머리 밑에 붙지 않게)
       ④ 더하는 항만(상하이 port1188 + 양산 port2027 · 선전 옌톈 + 서커우)은 한쪽만 원본에 없으면 나머지 항만만으로(항목 partial: ["port2027"] ·
          로그 '  상하이: port2027 PortWatch 원본에 자료 없음 — 나머지 항만(port1188)만 씀') · 모두 없으면 자료 없음 · 한쪽이 서버 오류면 v1.6처럼
          다시 받기 · 원본에 다시 생기면 다음 실행부터 원래대로 더함(항목을 새로 만들어 partial 없음)
@@ -156,6 +159,9 @@ PW_CNT_BAD = {}                # v1.7 (층, portid) → 이번 실행에 건수 
 PW_CNT_TRIES = 2               # v1.7 건수 질의를 한 실행에 (층, portid)마다 최대 몇 번 — 못 받으면 v1.6대로 행 질의만
 PW_GAP = {}                    # v1.7 질의(층, 조건) → 'PortWatch 원본에 자료 없음' 사유 — 이번 실행에서 다시 묻지 않음(main이 비움)
 PW_NCNT_L = {}                 # v1.7 층별 건수 질의 수(PW_NREQ_L에 들어 있음 — 층 '모두 못 받음' 판단은 행 질의 수로만 · main이 비움)
+PW_GAP_ROW = set()             # v1.7 행 질의가 오류 없이 60행 미만으로 답해 '원본에 자료 없음'이 된 층 — 층 '모두 못 받음' 판단에서 받은 답
+                               # (건수 0건 답은 행 질의를 안 했으니 빼고 · main이 비움)
+PW_BLK_GAP = {}                # v1.7 이전 값도 없이 블록째 못 받은 PortWatch 블록 → 원본에 자료 없는 항목 이름 — '값 없음' 실패 표시의 까닭(main이 비움)
 DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
                                # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
 DGK_AUTH = []                  # v1.2 인증키 오류가 난 자료 — 실행 끝에 바로 실패 표시(main이 비움)
@@ -708,6 +714,7 @@ def pw_rows_get(layer, where, fields, key, n_all=None):
         if n_all:   # v1.7 원본에 자료는 있는데 질의 기간(2025년부터)에 없음 — 오류 없이 받은 답(LA/롱비치 port664 1,716건 · 2025년부터 0건)
             pid, y = pw_pid(where)
             PW_GAP[key] = f"PortWatch 원본에 {y}년부터 일별 값 {len(out)}개뿐(전체 {n_all:,}개 · {pid})"
+            PW_GAP_ROW.add(layer)   # 행 질의가 답함 — 층 '모두 못 받음' 판단에서 받은 답
             raise PwGap(PW_GAP[key], pid)
         raise PwBusy(f"PortWatch 빈 응답(일별 값 {len(out)}개)")
     PW_ROWS[key] = out
@@ -886,14 +893,15 @@ def pw_since(prev, iid):
 
 def pw_retry(sts, prev_all):
     """v1.6 처음에 서버 오류로 못 받은 PortWatch 항목만 — 다른 자료를 다 받은 뒤, 남은 시간 동안 다시(항목마다 한 실행 최대 PW_TRIES번 ·
-    값 없음 → 오래 이전 값인 것부터 한 바퀴씩 · 남은 시간이 PW_MIN_LEFT초보다 적으면 멈춤 · 연결이 끊기면 멈춤)"""
+    값 없음 → 오래 이전 값인 것부터 한 바퀴씩 · 남은 시간이 PW_MIN_LEFT초보다 적으면 멈춤 · 연결이 끊기면 멈춤).
+    v1.7 '[PortWatch 다시 받기]' 머리 줄을 썼으면 True(pw_gap_note가 머리 줄을 따로 쓸지)"""
     names = {k: dict(pw_spec(k)[2]) for k in sts}
     todo = [(k, i) for k in sts for i, st in sts[k].items() if st["res"] is None and st.get("defer")]
     if not todo:
-        return
+        return False
     if PW_DOWN:
         log(f"[PortWatch 다시 받기] 건너뜀 — {PW_DOWN}")
-        return
+        return True
     mine = list(todo)
     todo.sort(key=lambda x: pw_since(prev_all.get(x[0]), x[1]))
     lead, follow = {}, []   # 같은 질의(제벨알리 항만 = 두바이 거점)는 앞 항목만 묻고 결과를 나눔
@@ -943,10 +951,12 @@ def pw_retry(sts, prev_all):
     left = [i for k, i in mine if sts[k][i]["res"] is None]
     log(f"  PortWatch 다시 받기: 받음 {got}곳 · 못 받음 {len(left)}곳 · 요청 {PW_NREQ[0] - n0}번 · {time.monotonic() - t0:.0f}초"
         + (f" · 멈춤({stop})" if stop else "") + (f" · 오래 걸려 남은 시간에 못 끝낼 {slow}곳은 그만" if slow else ""))
+    return True
 
 
-def pw_gap_note(sts):
-    """v1.7 다시 받기 뒤 한 줄 — 원본에 자료 없어 다시 묻지 않은 항목·일부 항만만 쓴 항목('실패'·[WARN] 없이 · 항목 줄은 pw_block이)"""
+def pw_gap_note(sts, head=True):
+    """v1.7 다시 받기 뒤 한 줄 — 원본에 자료 없어 다시 묻지 않은 항목·일부 항만만 쓴 항목('실패'·[WARN] 없이 · 항목 줄은 pw_block이).
+    head = 다시 받기 머리 줄이 없었음 — 이 줄과 pw_block 항목 줄이 앞 자료(부산 입항 선박) 머리 밑에 붙지 않게 머리 줄을 씀"""
     gp, part = [], []
     for k in PW_KINDS:
         nm = dict(pw_spec(k)[2])
@@ -956,6 +966,8 @@ def pw_gap_note(sts):
             elif st["res"] is not None and st["res"].get("partial"):
                 part.append(f"{nm[i]}({'·'.join(st['res']['partial'])} 뺌)")
     if gp or part:
+        if head:
+            log("[PortWatch 원본에 자료 없음]")
         log("  PortWatch 원본에 자료 없음" + (f" {len(gp)}곳(이번 실행은 다시 묻지 않음): {'·'.join(gp)}" if gp else "")
             + ((" · " if gp else " — ") + f"일부 항만만 씀: {', '.join(part)}" if part else ""))
 
@@ -1628,6 +1640,8 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False, head=Tr
         else:
             status["failed"].append(label)
             fs_new[key] = fs_old.get(key) or today
+            if getattr(e, "gap", None):   # v1.7 원본에 자료 없는 항목 — 이전 값 블록이 없으니 '값 없음' 실패 표시의 까닭으로(main gaps)
+                PW_BLK_GAP[key] = list(e.gap)
         return True
     inner = blk.pop("kept", []) or []
     bad = blk.pop("failed", []) or []
@@ -1665,6 +1679,8 @@ def main():
     PW_CNT_BAD.clear()
     PW_GAP.clear()
     PW_NCNT_L.clear()
+    PW_GAP_ROW.clear()
+    PW_BLK_GAP.clear()
     PW_NREQ[0], PW_FLOOR[0] = 0, 0
     DGK_DOWN.clear()
     DGK_AUTH.clear()
@@ -1749,14 +1765,16 @@ def main():
             log(f"[다시 받기] 처음에 연결되지 않은 관세청 자료 {len(later)}개")
             for key in later:
                 run_block(key, *fns[key], prev_all, out, status, fails)
+        rh = False
         try:
-            pw_retry(pw_st, prev_all)   # v1.6 PortWatch 서버 오류로 못 받은 항목 — 남은 시간 동안 다시
+            rh = pw_retry(pw_st, prev_all)   # v1.6 PortWatch 서버 오류로 못 받은 항목 — 남은 시간 동안 다시
         except Exception as e:
             log(f"  [WARN] PortWatch 다시 받기 중 오류 — {str(e)[:150]}")
-        pw_gap_note(pw_st)   # v1.7 원본에 자료 없어 다시 묻지 않은 항목 — 조용한 한 줄
+        pw_gap_note(pw_st, head=not rh)   # v1.7 원본에 자료 없어 다시 묻지 않은 항목 — 조용한 한 줄
         if not PW_DOWN:   # 질의마다 따로 실패하면(약 70%) 하나도 못 받을 일은 드묾 — 층이 바뀌었거나 고장(처음 날부터 알림)
-            # v1.7 '원본에 자료 없음'(PW_GAP)도 서버가 받은 답 · 질의 수는 행 질의만(건수 질의 PW_NCNT_L은 뺌 — 0.2초에 거의 늘 받음)
-            got = {k[0] for k in PW_ROWS} | {k[0] for k in PW_GAP}
+            # v1.7 행 질의가 답한 '원본에 자료 없음'(PW_GAP_ROW)도 받은 답 — 건수 0건은 행 질의를 안 했으니 빼고(행 질의가 모두 막혀도 첫날 알림) ·
+            # 질의 수는 행 질의만(건수 질의 PW_NCNT_L은 뺌 — 0.2초에 거의 늘 받음)
+            got = {k[0] for k in PW_ROWS} | PW_GAP_ROW
             nrow = {ly: n - PW_NCNT_L.get(ly, 0) for ly, n in PW_NREQ_L.items()}
             whole = sum(nrow.values()) >= 10 and not got
             for ly, n in sorted(nrow.items()):
@@ -1855,8 +1873,8 @@ def main():
         n = days_since(d) if d else 0
         return n is None or n > lim
 
-    def gaps(key):   # v1.7 PortWatch 원본에 자료 없는 항목 이름(블록 gap — 이번 실행 기준)
-        g = out[key].get("gap") if isinstance(out.get(key), dict) else None
+    def gaps(key):   # v1.7 PortWatch 원본에 자료 없는 항목 이름(블록 gap — 이번 실행 기준 · 이전 값도 없이 블록째 못 받았으면 PW_BLK_GAP)
+        g = out[key].get("gap") if isinstance(out.get(key), dict) else PW_BLK_GAP.get(key)
         return g if isinstance(g, list) else []
 
     old = []
@@ -1867,17 +1885,22 @@ def main():
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in its]
         ss = sorted(str(x) for x in ss if x)
         n, lim = (days_since(ss[0]) if ss else 0), STALE_ALERT[key]
-        if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께
-            why = [x.get("name") for x in its if x.get("name") in gaps(key) and over(x.get("stale_since") or blk.get("stale_since"), lim)]
-            old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {lim}일" + (f" · PortWatch 원본에 자료 없음: {'·'.join(why)}" if why else "") + ")")
+        if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께 — 그 밖에 기준일을 넘은 항목도 이름을(까닭이 블록 전부로 읽히지 않게)
+            ov = [x.get("name") for x in its if over(x.get("stale_since") or blk.get("stale_since"), lim)]
+            why = [x for x in ov if x in gaps(key)]
+            etc = [str(x) for x in ov if x not in why]
+            old.append(f"{LABELS[key]}({ss[0]}부터 · 기준 {lim}일" + (f" · PortWatch 원본에 자료 없음: {'·'.join(why)}" if why else "")
+                       + (f" · 그 밖 이전 값: {'·'.join(etc)}" if why and etc else "") + ")")
     for k, d in sorted(fails[1].items()):
         key, _, item = k.partition(":")
         if not judged(key):
             continue
         n, lim = days_since(d), STALE_ALERT.get(key, 7)
         if n is None or n > lim:
+            g = [] if item else gaps(key)   # v1.7 블록째 값 없음 — 원본에 자료 없는 항목 이름을 함께(PW_BLK_GAP)
             old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일"
-                       + (" · PortWatch 원본에 자료 없음" if item and item in gaps(key) else "") + ")")
+                       + (" · PortWatch 원본에 자료 없음" if item and item in gaps(key) else
+                          f" · PortWatch 원본에 자료 없음: {'·'.join(g)}" if g else "") + ")")
     if old:
         soft_fail("오래된 이전 값·값 없음: " + ", ".join(old))
 
