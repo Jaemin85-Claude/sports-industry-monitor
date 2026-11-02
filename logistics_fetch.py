@@ -1,6 +1,24 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.9: (대표 지시 2026-11-02 '상하이도 매일 말고 한 번만 알리게 해주세요') v1.8은 원본 자료 없음만 한 번 알리고, 다른 까닭(상하이 — port1188
+      행 질의가 계속 400 'Cannot perform query'·'Invalid URL' · 10/28부터 이전 값)으로 7일을 넘은 PortWatch 항목은 11/05부터 매일 '실패' 줄 +
+      '오래된 이전 값' 실패 표시 → PortWatch(해협·항만·거점)의 오래된 이전 값·값 없음은 까닭(원본 자료 없음·서버 오류·시간 초과·연결 안 됨 등)과
+      상관없이 한 기간에 한 번만:
+      ① 알린 기록 gap_told(칸 이름은 그대로 — 뜻은 'PortWatch 오래된 이전 값·값 없음 알린 기록')에 7일을 넘어 알린 항목을 모두 기록 · 이전 값이
+         없는 항목은 첫날 '실패 … 값 없음' 줄(블록째는 [WARN] 줄)이 알림이라 그날 기록(원본 자료 없음이 아니어도 — 8일째 실패 표시 없음)
+      ② 기록이 있으면(같은 since) 까닭이 바뀌어도(400 → 원본 자료 없음 · 반대도) 값이 돌아올 때까지 조용히(항목 줄 '이번 실행 못 받음 — … ·
+         이전 값(10-28 받은 값 · 기준 7일 넘음 · 11-05에 알림)' — PW_TOLD · 알린 날은 v1.8처럼 '실패' 줄) — v1.8의 '매일 그 밖으로 알리던 항목이
+         원본 자료 없음이 되면 까닭과 함께 한 번 더'는 없앰 · 새 값을 받거나 since가 바뀌면 지움(새 기간은 다시 한 번)
+      ③ 실패 표시 문구: 원본 자료 없음은 'PortWatch 원본에 자료 없음: …', 그 밖은 '이전 값: 상하이'(원본 자료 없음과 섞이면 '그 밖 이전 값: …' —
+         전에는 그 밖만 있으면 이름이 없었음) · 이미 알린 항목은 빼고 '이미 알린 n곳 뺌'(까닭이 여럿이라 '원본 자료 없음' 낱말을 뺌)
+      ④ 기록 표시 logistics.json told_all: true(PortWatch를 판단한 실행이 씀 · 다시 받기 차례는 지난 값 그대로) — 표시가 없는 v1.8·v1.7 파일에서
+         처음 넘어오는 실행만: 지난 실행 날 이미 기준일을 넘은 이전 값·값 없음은 그 실행이 알린 것(v1.7은 모두 · v1.8은 그 밖을 매일)으로 기록하고
+         조용히 — 11/05 뒤에 병합돼도 상하이를 다시 알리지 않음(pw_told_at). 다른 물류 자료(관세청·KCCI·정시율·물동량·부산 선박)·'PortWatch …
+         질의 n번 모두 못 받음'·'절반 이상'·기준일 안의 연결 안 됨·요청 제한 '실패' 줄은 그대로
+      ⑤ (검토 반영) 알린 뒤 조용한 항목 줄은 연결 안 됨이면 오류 원문(ConnectionError: HTTPSConnectionPool …) 대신 'PortWatch 연결 안 됨'
+         (12:23 점검이 오류로 읽지 않게 — v1.3 갈래만 규칙) · 블록째 '이번 실행 모두 못 받음(…)'의 까닭은 그 실행을 그만둔 까닭(PW_DOWN '호르무즈
+         해협에서 연결 안 됨'·'요청 제한·권한 오류' · 그 층 PW_LAYER_STOP)을 먼저, 없으면 전처럼 '서버 오류'·'원본에 자료 없음'
 v1.8: (대표 지시 2026-11-02 '한 번만 알리게 바꿔주세요') v1.7은 PortWatch 원본에 자료 없는 8곳(부산·홍콩·앤트워프·싱가포르·닝보·LA/롱비치·
       포트클랑·함부르크)이 11/05부터 원본이 돌아올 때까지 매일 '실패' 줄 + '오래된 이전 값' 실패 표시(빨간 X → 12:23 점검 알림) →
       ① 알린 기록 logistics.json gap_told {"블록:항목": {"since": 이전 값(값 없음)이 시작된 날, "at": 알린 날}}(블록째 값 없음은 "블록:") — 다음 실행이
@@ -185,10 +203,10 @@ PW_NCNT_L = {}                 # v1.7 층별 건수 질의 수(PW_NREQ_L에 들�
 PW_GAP_ROW = set()             # v1.7 행 질의가 오류 없이 60행 미만으로 답해 '원본에 자료 없음'이 된 층 — 층 '모두 못 받음' 판단에서 받은 답
                                # (건수 0건 답은 행 질의를 안 했으니 빼고 · main이 비움)
 PW_BLK_GAP = {}                # v1.7 이전 값도 없이 블록째 못 받은 PortWatch 블록 → 원본에 자료 없는 항목 이름 — '값 없음' 실패 표시의 까닭(main이 비움)
-PW_TOLD = {}                   # v1.8 (블록, 항목 id) → (알린 날, 이전 값·값 없음이 시작된 날, 이번 실행 gap일 때만) — 지난 실행까지 이미 알린 항목
-                               # (logistics.json gap_told와 since가 같음 · 또는 v1.7 파일에서 처음 넘어올 때 지난 실행 때 이미 기준일을 넘음 —
-                               # pw_told_prev) · 이번 실행 항목 줄을
-                               # '실패'·[WARN] 없이(main이 채움 · pw_told로 읽음)
+PW_TOLD = {}                   # v1.8 (블록, 항목 id) → (알린 날, 이전 값·값 없음이 시작된 날) — 지난 실행까지 이미 알린 항목(logistics.json
+                               # gap_told와 since가 같음 · v1.9 까닭과 상관없이 · 기록 표시 없는 옛 파일이면 지난 실행이 이미 알린 것도 —
+                               # pw_told_prev) · 이번 실행 항목 줄을 '실패'·[WARN] 없이(main이 채움 · pw_told로 읽음)
+TOLD_ALL = "told_all"          # v1.9 logistics.json 기록 표시 — true면 gap_told가 까닭과 상관없이 알린 PortWatch 항목을 모두 담음(기록으로만 판단)
 DGK_DOWN = {}                  # v1.2 이번 실행에서 연결이 안 된 오픈 API 기관(주소의 기관 번호 1220000 관세청·1192000 해수부) → 처음 실패한 자료 —
                                # 같은 기관의 남은 자료는 기다리지 않음(기관이 다르면 계속 물음 · main이 비움)
 DGK_AUTH = []                  # v1.2 인증키 오류가 난 자료 — 실행 끝에 바로 실패 표시(main이 비움)
@@ -863,6 +881,7 @@ def pw_once(kind, iid, name, st):
         it = pw_item(layer, where(iid), fields, name)
     except Exception as e:
         st["err"], st["busy"], st["gap"] = str(e)[:150], isinstance(e, PwBusy), isinstance(e, PwGap)
+        st["down"] = isinstance(e, NetError) and e.__cause__ is not None   # v1.9 연결 안 됨 — err가 오류 원문(…Error · 조용한 줄엔 갈래만)
         if isinstance(e, PwStop) and e.layer:   # 그 층에 권한·토큰 필요 — 다른 층(해협 ↔ 항만)은 계속
             if e.layer not in PW_LAYER_STOP:
                 PW_LAYER_STOP[e.layer] = f"{name}에서 권한·토큰 오류({e.layer})"
@@ -902,7 +921,7 @@ def pw_first_items(kind, items, sts):
         elif st["busy"]:
             st["defer"] = True
             log(f"  {name}: {st['err']} — 실행 끝에 다시")
-        elif not st["gap"] and not pw_told(kind, iid, False):   # v1.7 원본에 자료 없음은 다시 묻지 않고, 줄은 pw_block이 한 번(이전 값 나이를 보고
+        elif not st["gap"] and not pw_told(kind, iid):   # v1.7 원본에 자료 없음은 다시 묻지 않고, 줄은 pw_block이 한 번(이전 값 나이를 보고
             log(f"  {name}: 실패 — {st['err']}")               # 조용히 또는 '실패') · v1.8 이미 알린 항목도 줄은 pw_block이 조용히
         time.sleep(0.5)
 
@@ -978,7 +997,7 @@ def pw_retry(sts, prev_all):
             got += 1
             log(pw_line(names[k][i], st["res"]) + f" · {names[lk][li]}와 같은 질의")
         else:
-            st.update(err=src["err"], busy=src["busy"], gap=src.get("gap", False), n=max(st["n"], src["n"]))
+            st.update(err=src["err"], busy=src["busy"], gap=src.get("gap", False), down=src.get("down", False), n=max(st["n"], src["n"]))
     left = [i for k, i in mine if sts[k][i]["res"] is None]
     log(f"  PortWatch 다시 받기: 받음 {got}곳 · 못 받음 {len(left)}곳 · 요청 {PW_NREQ[0] - n0}번 · {time.monotonic() - t0:.0f}초"
         + (f" · 멈춤({stop})" if stop else "") + (f" · 오래 걸려 남은 시간에 못 끝낼 {slow}곳은 그만" if slow else ""))
@@ -994,7 +1013,7 @@ def pw_gap_note(sts, head=True):
         for i, st in (sts.get(k) or {}).items():
             if st["res"] is None and st.get("gap"):
                 gp.append(nm[i])
-                nt += bool(pw_told(k, i, True))   # v1.8 그중 이미 알린 곳
+                nt += bool(pw_told(k, i))   # v1.8 그중 이미 알린 곳
             elif st["res"] is not None and st["res"].get("partial"):
                 part.append(f"{nm[i]}({'·'.join(st['res']['partial'])} 뺌)")
     if gp or part:
@@ -1006,7 +1025,8 @@ def pw_gap_note(sts, head=True):
 
 
 def gap_told_load(prev_all):
-    """v1.8 지난 실행의 gap_told — {"블록:항목": {"since": 날짜, "at": 날짜}} 모양이 맞는 것만(손상된 기록은 버림 — 다시 한 번 알릴 뿐)"""
+    """v1.8 지난 실행의 gap_told — {"블록:항목": {"since": 날짜, "at": 날짜}} 모양이 맞는 것만(손상된 기록은 버림 — 다시 한 번 알릴 뿐).
+    v1.9 뜻은 'PortWatch 오래된 이전 값·값 없음 알린 기록'(까닭과 상관없이 — 칸 이름은 그대로)"""
     g = prev_all.get("gap_told")
     if not isinstance(g, dict):
         return {}
@@ -1057,34 +1077,41 @@ def over_on(day, since, lim):
         return False
 
 
-def pw_told_prev(prev_all, fs_old, told0, seen0):
-    """v1.8 지난 실행까지 이미 알린 PortWatch 항목 → PW_TOLD (블록, id) → (알린 날, since, 이번 실행 gap일 때만) — 이번 실행 항목 줄을 조용히
-    쓸지(pw_told). since는 실패 표시와 같은 규칙: 이전 값 항목 = 항목 stale_since 또는 블록 stale_since, 이전 값이 없는 항목 = failed_since
-    (항목 또는 블록째). 알린 기록 칸(gap_told)이 없는 v1.7 파일에서 처음 넘어올 때만: 지난 실행 때 이미 기준일을 넘었으면 그 실행 실패 표시에
-    이름이 있었음('그 밖 이전 값' · v1.7 실행) — 지난 실행 gap(또는 gap_seen)이었으면 그대로, 아니면 이번 실행에 원본 자료 없음일 때만 알린 것으로.
-    v1.8 파일이면 gap_told로만(검토 반영 — 매일 '그 밖'으로 알리던 항목이 원본 자료 없음이 된 날 까닭 알림을 건너뛰지 않게)"""
+def told_pday(prev_all):
+    """v1.9 기록 표시(told_all)가 없는 옛 파일(v1.8·v1.7)이면 지난 실행 날(prev_run_day) — 그 실행이 이미 알린 항목을 기록으로 옮김 ·
+    v1.9 파일이면 None(기록으로만)"""
+    return None if prev_all.get(TOLD_ALL) is True else prev_run_day(prev_all)
+
+
+def pw_told_at(told0, pday, key, item, since):
+    """v1.9 이 PortWatch 항목('블록:항목' · 블록째 값 없음은 item '')을 since부터의 이 기간에 이미 알렸으면 알린 날, 아니면 '' — 까닭과
+    상관없이 기록(gap_told)으로. 옛 파일에서 처음 넘어올 때만(pday) 지난 실행 날 이미 기준일을 넘었으면 그 실행이 알린 것으로(v1.7은 모두 ·
+    v1.8은 원본 자료 없음이 아닌 것을 매일 알림 — v1.8이 알린 원본 자료 없음은 기록에 있음)"""
+    return gap_told_at(told0, key, item, since) or (pday.isoformat() if over_on(pday, since, STALE_ALERT.get(key, 7)) else "")
+
+
+def pw_told_prev(prev_all, fs_old, told0):
+    """v1.8 지난 실행까지 이미 알린 PortWatch 항목 → PW_TOLD (블록, id) → (알린 날, since) — 이번 실행 항목 줄을 조용히 쓸지(pw_told).
+    since는 실패 표시와 같은 규칙: 이전 값 항목 = 항목 stale_since 또는 블록 stale_since, 이전 값이 없는 항목 = failed_since
+    (항목 또는 블록째). v1.9 까닭과 상관없이 pw_told_at(기록 · 기록 표시 없는 옛 파일이면 지난 실행이 이미 알린 것도)"""
     out = {}
-    pday = prev_run_day(prev_all) if "gap_told" not in prev_all else None
+    pday = told_pday(prev_all)
     for kind in PW_KINDS:
         blk = prev_all.get(kind) if isinstance(prev_all.get(kind), dict) else None
         its = blk.get("items") if blk and isinstance(blk.get("items"), list) else []
         old = {x.get("id"): x for x in its if isinstance(x, dict)}
-        pg = blk.get("gap") if blk and isinstance(blk.get("gap"), list) else []
         for iid, name in pw_spec(kind)[2]:
             s = ((old[iid].get("stale_since") or blk.get("stale_since")) if iid in old else
                  fs_old.get(f"{kind}:{name}") or fs_old.get(kind))
-            at = gap_told_at(told0, kind, name, s)
+            at = pw_told_at(told0, pday, kind, name, s)
             if at:
-                out[(kind, iid)] = (at, str(s), False)
-            elif over_on(pday, s, STALE_ALERT.get(kind, 7)):
-                out[(kind, iid)] = (pday.isoformat(), str(s), name not in pg and seen0.get(f"{kind}:{name}") != str(s))
+                out[(kind, iid)] = (at, str(s))
     return out
 
 
-def pw_told(kind, iid, gap):
-    """v1.8 이 항목을 이미 알렸음(PW_TOLD) → (알린 날, since, …) 또는 None — gap = 이번 실행에 원본 자료 없음으로 가림"""
-    tk = PW_TOLD.get((kind, iid))
-    return tk if tk and (not tk[2] or gap) else None
+def pw_told(kind, iid):
+    """v1.8 이 항목을 이미 알렸음(PW_TOLD) → (알린 날, since) 또는 None"""
+    return PW_TOLD.get((kind, iid))
 
 
 def pw_quiet(kind, prev, iid, st):
@@ -1126,11 +1153,11 @@ def pw_block(kind, st_k, prev):
         if st["res"] is not None:
             out.append({"id": iid, "name": name, **st["res"]})
             continue
-        tk = pw_told(kind, iid, st.get("gap"))
+        tk = pw_told(kind, iid)
         if tk:   # v1.8 이미 알림(같은 이전 값 기간) — 12:23 점검이 다시 알리지 않게 '실패'·[WARN] 없이 · 실패 표시에서도 뺌(main)
             if st.get("gap"):
                 gap.append(name)
-            why = st["err"]
+            why = "PortWatch 연결 안 됨" if st.get("down") else st["err"]   # v1.9 오류 원문(…Error)은 12:23 점검이 오류로 읽어 갈래만
             if st.get("defer") and not st.get("gap"):   # 서버 오류로 끝까지 못 받음(원본 자료 없음으로 못 가린 날)
                 why += f" ({st['n']}번 시도)" if st["n"] else " (묻지 못함)"
             try:
@@ -1167,8 +1194,8 @@ def pw_block(kind, st_k, prev):
         qa = quiet + told_bad   # v1.8 이미 알린 값 없음 항목도 조용한 항목(빼면 v1.7과 같음)
         e = (PwKept if qa and len(quiet) == len(kept) and len(told_bad) == len(bad) else RuntimeError)(f"모두 실패({', '.join(bad + kept)})")
         qg = [x for x in qa if x in gap]   # v1.7 run_block 줄의 까닭 · 블록 gap(이전 값 블록에 이번 실행 기준으로)
-        e.why = ("PortWatch 원본에 자료 없음" if qg and len(qg) == len(qa) else
-                 "PortWatch 서버 오류·원본에 자료 없음" if qg else "PortWatch 서버 오류")
+        oth = f"PortWatch {PW_DOWN or PW_LAYER_STOP.get(layer) or '서버 오류'}"   # v1.9 그 실행을 그만둔 까닭(연결 안 됨·요청 제한·권한)이 먼저
+        e.why = ("PortWatch 원본에 자료 없음" if qg and len(qg) == len(qa) else f"{oth}·원본에 자료 없음" if qg else oth)
         e.gap = gap
         raise e
     blk = {"fields": fields, "items": out, "kept": kept, "failed": bad}
@@ -1856,9 +1883,9 @@ def main():
                  "" if since0 and since0 < today_kst().isoformat() else "서버를 바꿔도 안 됨 — 내일도 안 되면 알림")
     fs0 = prev_all.get("failed_since")
     fs_old = {k: v for k, v in fs0.items() if isinstance(v, str)} if isinstance(fs0, dict) else {}
-    told0 = gap_told_load(prev_all)   # v1.8 '원본에 자료 없음'을 이미 알린 PortWatch 항목(지난 실행 기록)
-    seen0 = gap_seen_load(prev_all)   # v1.8 이 이전 값 기간에 원본 자료 없음으로 가려진 적 있는 항목(지난 실행 기록)
-    PW_TOLD.update(pw_told_prev(prev_all, fs_old, told0, seen0))
+    told0 = gap_told_load(prev_all)   # v1.8 이미 알린 PortWatch 항목(지난 실행 기록 · v1.9 까닭과 상관없이)
+    seen0 = gap_seen_load(prev_all)   # v1.8 이 이전 값 기간에 원본 자료 없음으로 가려진 적 있는 항목(지난 실행 기록 — 실패 표시의 까닭)
+    PW_TOLD.update(pw_told_prev(prev_all, fs_old, told0))
     fails = (fs_old, {})
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "war_start": WAR_START,
            "base_period": [BASE_FROM, BASE_TO]}
@@ -1995,12 +2022,11 @@ def main():
     def gaps_ep(key):
         return set(gaps(key)) | {k.partition(":")[2] for k in seen if k.partition(":")[0] == key}
 
-    # v1.8 '오래된 이전 값·값 없음' 실패 표시(아래 끝에서 씀)를 저장 전에 셈 — 원본에 자료 없음은 한 번만 알리고 기록(gap_told)을 함께 저장.
-    # 기록은 지난 실행 것(told0)에서 이번 실행 since와 같은 것만 이어 감(새 값을 받음·항목이 없어짐·since가 바뀜 = 지움) · 판단하지 않는
-    # 자료(다시 받기 차례의 PortWatch)는 그대로 넘김
+    # v1.8 '오래된 이전 값·값 없음' 실패 표시(아래 끝에서 씀)를 저장 전에 셈 — v1.9 PortWatch는 까닭과 상관없이 한 기간에 한 번만 알리고
+    # 기록(gap_told)을 함께 저장. 기록은 지난 실행 것(told0)에서 이번 실행 since와 같은 것만 이어 감(새 값을 받음·항목이 없어짐·since가 바뀜 =
+    # 지움) · 판단하지 않는 자료(다시 받기 차례의 PortWatch)는 그대로 넘김
     td = today.isoformat()
-    # 알린 기록 칸이 없는 v1.7 파일에서 처음 넘어올 때만: 지난 실행 때 이미 기준일을 넘은 원본 자료 없음은 그 실행에 알림('그 밖'·v1.7) — 그날 알린 것으로
-    pday = prev_run_day(prev_all) if "gap_told" not in prev_all else None
+    pday = told_pday(prev_all)   # v1.9 기록 표시가 없는 옛 파일에서 처음 넘어올 때만 — 지난 실행이 이미 알린 항목(pw_told_at)
     told = {k: v for k, v in told0.items() if not judged(k.partition(":")[0])}
     old = []
     for key, blk in out.items():
@@ -2010,54 +2036,45 @@ def main():
         pw = key in PW_KINDS
         for x in its if pw else []:   # v1.8 이미 알린 항목 — 같은 이전 값 기간이면 기록을 이어 감
             s0 = x.get("stale_since") or blk.get("stale_since")
-            at = gap_told_at(told0, key, x.get("name"), s0)
+            at = pw_told_at(told0, pday, key, x.get("name"), s0)
             if at:
                 told[f"{key}:{x.get('name')}"] = {"since": str(s0), "at": at}
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in its]
         ss = sorted(str(x) for x in ss if x)
         n, lim = (days_since(ss[0]) if ss else 0), STALE_ALERT[key]
-        if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께 — 그 밖에 기준일을 넘은 항목도 이름을(까닭이 블록 전부로 읽히지 않게)
+        if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께 — v1.9 그 밖 항목도 늘 이름을(PortWatch)
             ov = [(x.get("name"), x.get("stale_since") or blk.get("stale_since")) for x in its
                   if over(x.get("stale_since") or blk.get("stale_since"), lim)]
-            hid = []
-            for nm, s0 in ov if pw else []:   # v1.8 이미 알림(기록 · 지난 실행 때 이미 기준일 넘음) — 빼고
-                if gap_told_at(told0, key, nm, s0):
-                    hid.append(nm)
-                elif nm in gaps_ep(key) and over_on(pday, s0, lim):
-                    hid.append(nm)
-                    told[f"{key}:{nm}"] = {"since": str(s0), "at": pday.isoformat()}
-            why = [nm for nm, _ in ov if nm in gaps_ep(key) and nm not in hid]
-            etc = [str(nm) for nm, _ in ov if nm not in why and nm not in hid]
-            for nm, s0 in ov:   # v1.8 오늘 처음 알리는 원본 자료 없음 — 기록
-                if pw and nm in why:
-                    told[f"{key}:{nm}"] = {"since": str(s0), "at": td}
+            hid = [nm for nm, _ in ov if pw and f"{key}:{nm}" in told]   # v1.9 이미 알림(까닭과 상관없이) — 빼고
+            why = [nm for nm, _ in ov if pw and nm not in hid and nm in gaps_ep(key)]
+            etc = [str(nm) for nm, _ in ov if pw and nm not in hid and nm not in why]
+            for nm, s0 in ov if pw else []:   # v1.9 오늘 알리는 항목 — 까닭과 상관없이 기록
+                told.setdefault(f"{key}:{nm}", {"since": str(s0), "at": td})
             if hid and not why and not etc:
-                continue   # v1.8 기준일을 넘은 항목이 모두 이미 알린 원본 자료 없음 — 이 블록은 알리지 않음
+                continue   # 기준일을 넘은 항목이 모두 이미 알림 — 이 블록은 알리지 않음
             first = sorted(str(s0) for nm, s0 in ov if nm not in hid)[0] if hid else ss[0]
             old.append(f"{LABELS[key]}({first}부터 · 기준 {lim}일" + (f" · PortWatch 원본에 자료 없음: {'·'.join(why)}" if why else "")
-                       + (f" · 그 밖 이전 값: {'·'.join(etc)}" if (why or hid) and etc else "")
-                       + (f" · 이미 알린 PortWatch 원본 자료 없음 {len(hid)}곳 뺌" if hid else "") + ")")
+                       + (f" · {'그 밖 ' if why else ''}이전 값: {'·'.join(etc)}" if etc else "")
+                       + (f" · 이미 알린 {len(hid)}곳 뺌" if hid else "") + ")")
     for k, d in sorted(fails[1].items()):
         key, _, item = k.partition(":")
         if not judged(key):
             continue
         n, lim = days_since(d), STALE_ALERT.get(key, 7)
         g = [] if item else gaps(key)   # v1.7 블록째 값 없음 — 원본에 자료 없는 항목 이름을 함께(PW_BLK_GAP)
-        if key in PW_KINDS:   # v1.8 값 없음 — 이미 알렸으면 빼고, 원본 자료 없음이면 기록(첫날 '실패 … 값 없음' 줄·[WARN]이 알림 —
-            whole = bool(g) and {nm for _, nm in pw_spec(key)[2]} <= set(g)   # 블록째는 모든 항목이 원본 자료 없음일 때만 · 기록 이름은 '블록:')
-            isgap = (item in gaps_ep(key)) if item else whole
-            at = gap_told_at(told0, key, item, d) or (isgap and over_on(pday, d, lim) and pday.isoformat())
+        if key in PW_KINDS:   # v1.9 값 없음 — 이미 알렸으면 빼고, 아니면 오늘 알림(첫날 '실패 … 값 없음' 줄 · 블록째는 [WARN] 줄 — 까닭과
+            at = pw_told_at(told0, pday, key, item, d)   # 상관없이)으로 기록(기록 이름은 '블록:항목' · 블록째는 '블록:')
+            told[f"{key}:{item}"] = {"since": d, "at": at or td}
             if at:
-                told[f"{key}:{item}"] = {"since": d, "at": at}
                 continue
-            if isgap:
-                told[f"{key}:{item}"] = {"since": d, "at": td}
         if n is None or n > lim:
             old.append(f"{LABELS.get(key, key)}{f'({item})' if item else ''} 값 없음({d}부터 · 기준 {lim}일"
                        + (" · PortWatch 원본에 자료 없음" if item and item in gaps_ep(key) else
                           f" · PortWatch 원본에 자료 없음: {'·'.join(g)}" if g else "") + ")")
     out["gap_told"] = told
     out["gap_seen"] = seen
+    if all(judged(k) for k in PW_KINDS) or prev_all.get(TOLD_ALL) is True:   # v1.9 기록 표시 — PortWatch를 판단한 실행이 씀(다시 받기 차례는 지난 값 그대로)
+        out[TOLD_ALL] = True
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     if retry:   # update.yml 다음 작업(새 서버)이 이 자료만 다시 받음 · 차례 기록도 넘김(한 줄 JSON)
