@@ -1,337 +1,267 @@
 [
  {
-  "t": "robots",
-  "hosts": [
-   "www.nike.com",
-   "www.kolonmall.com",
-   "dragondiffusion.com",
-   "brooksrunning.co.kr",
-   "brooksrunning.co.jp",
-   "www.oofos.co.kr",
-   "www.oofos.com"
+  "t": "pages",
+  "urls": [
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023DBR",
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023LGR",
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023WIN"
+  ],
+  "code_rx": "\\b8\\d{3}\\b",
+  "snip_rx": [
+   "(?i)juventus|유벤투스",
+   "(?i)\"productName\"\\s*:\\s*\"[^\"]{0,80}"
   ]
  },
  {
-  "t": "rxpage",
-  "urls": [
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/List/133010200000",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/List/133010020000"
-  ],
-  "rx": [
-   "/Product/([A-Z0-9]{10,24})",
-   "W2BA[A-Z]\\d{5}[A-Z]{3}",
-   "/List/(\\d{12})"
-  ],
-  "max": 120
- },
- {
   "t": "grep",
-  "rx": "/products/",
+  "rx": "^https://dragondiffusion\\.com/products/",
   "sites": {
    "DD-US": {
     "host": "dragondiffusion.com"
    }
   },
-  "show": 250,
+  "show": 300,
   "max_maps": 8,
   "per_host": 60
  },
  {
-  "t": "grep",
-  "rx": "/product/",
-  "sites": {
-   "BROOKS-KR": {
-    "host": "brooksrunning.co.kr"
-   }
-  },
-  "show": 300,
-  "max_maps": 8,
-  "per_host": 90
- },
- {
-  "t": "shopjson",
-  "key": "bjp",
-  "cc": "JP",
-  "sku_rx": "(BR[MW]\\d{4})",
+  "t": "pages",
   "urls": [
-   "https://brooksrunning.co.jp/products.json?limit=250&page=1",
-   "https://brooksrunning.co.jp/products.json?limit=250&page=2",
-   "https://brooksrunning.co.jp/products.json?limit=250&page=3"
-  ]
- },
- {
-  "t": "rxpage",
-  "urls": [
-   "https://www.oofos.co.kr/",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOmg",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOcandoo",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOahh",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOriginal",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=OOcloog",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=Sport",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=슬라이드",
-   "https://www.oofos.co.kr/goods/goods_search.php?keyword=샌들"
+   "https://brooksrunning.co.kr/",
+   "https://brooksrunning.co.kr/product/list.html?cate_no=23",
+   "https://brooksrunning.co.kr/product/list.html?cate_no=24",
+   "https://brooksrunning.co.kr/product/list.html?cate_no=25",
+   "https://brooksrunning.co.kr/product/list.html?cate_no=42"
   ],
-  "rx": [
-   "goodsNo=(\\d+)[\\s\\S]{0,500}?hgodo\\.com/th/([0-9A-Za-z]+_[A-Za-z]+|\\d{7})_",
-   "cateCd=(\\d+)",
-   "goodsNo=(\\d+)[\\s\\S]{0,900}?class=\"item_name\"[^>]*>\\s*([^<]{2,80})"
-  ],
-  "max": 80
- },
- {
-  "t": "shopjson",
-  "key": "oofus",
-  "cc": "US",
-  "sku_rx": "(\\d{4}[A-Z]{3,8})",
-  "urls": [
-   "https://www.oofos.com/products.json?limit=250&page=1",
-   "https://www.oofos.com/products.json?limit=250&page=2"
-  ]
+  "link_rx": "/product/[^\"'<>\\s]+/\\d+/",
+  "show": 150
  },
  {
   "t": "tryp",
   "prods": [
    {
-    "id": "nk-921826-101",
-    "brand": "나이키",
-    "name": "에어맥스 97",
-    "code": "921826-101",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000055",
+    "brand": "우포스",
+    "name": "2400",
+    "code": "2400",
+    "cc_code": {
+     "KR": "2400 Black",
+     "US": "2400BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000055",
+     "US": "https://www.oofos.com/products/mens-oocloog-plus-clog-black.json"
+    }
    },
    {
-    "id": "nk-604133-139",
-    "brand": "나이키",
-    "name": "에어맥스 플러스",
-    "code": "604133-139",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000140",
+    "brand": "우포스",
+    "name": "2400",
+    "code": "2400",
+    "cc_code": {
+     "KR": "2400 Black",
+     "US": "2400BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000140",
+     "US": "https://www.oofos.com/products/mens-oocloog-plus-clog-black.json"
+    }
    },
    {
-    "id": "nk-AH8050-002",
-    "brand": "나이키",
-    "name": "에어맥스 270",
-    "code": "AH8050-002",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000018",
+    "brand": "우포스",
+    "name": "5087",
+    "code": "5087",
+    "cc_code": {
+     "KR": "5087 Black",
+     "US": "5087BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000018",
+     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+    }
    },
    {
-    "id": "nk-CW4555-002",
-    "brand": "나이키",
-    "name": "에어맥스 SC",
-    "code": "CW4555-002",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000017",
+    "brand": "우포스",
+    "name": "5087",
+    "code": "5087",
+    "cc_code": {
+     "KR": "5087 Black",
+     "US": "5087BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000017",
+     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+    }
    },
    {
-    "id": "nk-FD2722-002",
-    "brand": "나이키",
-    "name": "페가수스 41",
-    "code": "FD2722-002",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000015",
+    "brand": "우포스",
+    "name": "5087",
+    "code": "5087",
+    "cc_code": {
+     "KR": "5087 Black",
+     "US": "5087BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000015",
+     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+    }
    },
    {
-    "id": "nk-FB2207-001",
-    "brand": "나이키",
-    "name": "레볼루션 7",
-    "code": "FB2207-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000053",
+    "brand": "우포스",
+    "name": "1700",
+    "code": "1700",
+    "cc_code": {
+     "KR": "1700 Black",
+     "US": "1700BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000053",
+     "US": "https://www.oofos.com/products/womens-ooyea-slide-sandal-black.json"
+    }
    },
    {
-    "id": "nk-DH2987-101",
-    "brand": "나이키",
-    "name": "코트 비전 로우",
-    "code": "DH2987-101",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000054",
+    "brand": "우포스",
+    "name": "1700",
+    "code": "1700",
+    "cc_code": {
+     "KR": "1700 Black",
+     "US": "1700BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000054",
+     "US": "https://www.oofos.com/products/womens-ooyea-slide-sandal-black.json"
+    }
    },
    {
-    "id": "nk-FD4116-001",
-    "brand": "나이키",
-    "name": "캄 슬라이드",
-    "code": "FD4116-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000148",
+    "brand": "우포스",
+    "name": "5286",
+    "code": "5286",
+    "cc_code": {
+     "KR": "5286 Black",
+     "US": "5286BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000148",
+     "US": "https://www.oofos.com/products/mens-oocoozie-thermo-mule-black.json"
+    }
    },
    {
-    "id": "nk-CN9675-002",
-    "brand": "나이키",
-    "name": "빅토리 원 슬라이드",
-    "code": "CN9675-002",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000147",
+    "brand": "우포스",
+    "name": "5286",
+    "code": "5286",
+    "cc_code": {
+     "KR": "5286 Black",
+     "US": "5286BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000147",
+     "US": "https://www.oofos.com/products/mens-oocoozie-thermo-mule-black.json"
+    }
    },
    {
-    "id": "nk-BV2654-010",
-    "brand": "나이키",
-    "name": "클럽 플리스 후디",
-    "code": "BV2654-010",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000146",
+    "brand": "우포스",
+    "name": "5388",
+    "code": "5388",
+    "cc_code": {
+     "KR": "5388 Black",
+     "US": "5388BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000146",
+     "US": "https://www.oofos.com/products/mens-roam-thermo-black.json"
+    }
    },
    {
-    "id": "nk-FB7921-010",
-    "brand": "나이키",
-    "name": "테크 플리스 윈드러너",
-    "code": "FB7921-010",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000145",
+    "brand": "우포스",
+    "name": "5388",
+    "code": "5388",
+    "cc_code": {
+     "KR": "5388 Black",
+     "US": "5388BLACK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000145",
+     "US": "https://www.oofos.com/products/mens-roam-thermo-black.json"
+    }
    },
    {
-    "id": "nk-DA6364-101",
-    "brand": "나이키",
-    "name": "블레이저 로우 77",
-    "code": "DA6364-101",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000014",
+    "brand": "우포스",
+    "name": "5088",
+    "code": "5088",
+    "cc_code": {
+     "KR": "5088 Chalk",
+     "US": "5088CHALK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000014",
+     "US": "https://www.oofos.com/products/mens-oomy-zen-chalk.json"
+    }
    },
    {
-    "id": "nk-432997-107",
-    "brand": "나이키",
-    "name": "킬샷 2",
-    "code": "432997-107",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000064",
+    "brand": "우포스",
+    "name": "1500",
+    "code": "1500",
+    "cc_code": {
+     "KR": "1500 Black",
+     "US": "1500BLK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000064",
+     "US": "https://www.oofos.com/products/mens-ooahh-sport-slide-sandal-tactical-green.json"
+    }
    },
    {
-    "id": "nk-FD0736-100",
-    "brand": "나이키",
-    "name": "V2K 런",
-    "code": "FD0736-100",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nk-CN0149-001",
-    "brand": "나이키",
-    "name": "P-6000",
-    "code": "CN0149-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
-   },
-   {
-    "id": "nk-DR2615-001",
-    "brand": "나이키",
-    "name": "인빈서블 3",
-    "code": "DR2615-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ]
+    "id": "oo-1000000063",
+    "brand": "우포스",
+    "name": "1500",
+    "code": "1500",
+    "cc_code": {
+     "KR": "1500 Black",
+     "US": "1500BLK"
+    },
+    "src": "page",
+    "hint": "oo",
+    "urls": {
+     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000063",
+     "US": "https://www.oofos.com/products/mens-ooahh-sport-slide-sandal-tactical-green.json"
+    }
    }
   ]
  }
