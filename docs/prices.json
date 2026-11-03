@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-03 11:22 KST",
+ "generated_at": "2026-11-03 14:31 KST",
  "fetched": "2026-11-03",
  "attempt": "2026-11-03",
- "cfg": "df9b2fa1d4cd",
+ "cfg": "e4ab40fb34df",
  "status": "ok",
  "items": [
   {
@@ -62,6 +62,15 @@
      "seen": "2026-11-03",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 2599.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 629.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html",
+     "obs": 629.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -153,6 +162,15 @@
      ],
      "sp": 2339.0,
      "sp_date": "2026-11-03"
+    },
+    "AE": {
+     "p": 599.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/dunk-low-retro-mens-shoe/NKDD1391-100.html",
+     "obs": 599.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -213,6 +231,15 @@
      "seen": "2026-11-03",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 2999.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 729.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/air-max-90-mens-shoe/NKCN8490-100.html",
+     "obs": 729.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -535,6 +562,15 @@
      "obs": 3699.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 849.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/zoom-vomero-5-mens-shoes/NKBV1358-003.html",
+     "obs": 849.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -597,6 +633,15 @@
      "obs": 3799.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 999.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/air-max-plus-mens-shoes/NK604133-139.html",
+     "obs": 999.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -614,15 +659,15 @@
      "obs": 119000.0,
      "obs_date": "2026-11-03",
      "sale": true,
-     "sp": 107100.0,
-     "sp_date": "2026-11-03",
      "sh": [
       [
        "2026-11-03",
        107100.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 107100.0,
+     "sp_date": "2026-11-03"
     },
     "US": {
      "p": 100.0,
@@ -666,6 +711,15 @@
      "seen": "2026-11-03",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 1999.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 479.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.nike.ae/en/killshot-2-leather-mens-shoes/NK432997-107.html",
+     "obs": 479.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -781,6 +835,24 @@
      ],
      "sp": 1539.3,
      "sp_date": "2026-11-03"
+    },
+    "AE": {
+     "p": 519.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/speedcat-og-sneakers-unisex/398846.html",
+     "obs": 519.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 259.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       259.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -879,6 +951,24 @@
      ],
      "sp": 5999.0,
      "sp_date": "2026-11-03"
+    },
+    "AE": {
+     "p": 449.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html",
+     "obs": 449.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 219.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       219.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -998,6 +1088,24 @@
      ],
      "sp": 999.6,
      "sp_date": "2026-11-03"
+    },
+    "AE": {
+     "p": 629.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/mostro-og-sneakers-unisex/397330.html",
+     "obs": 629.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 439.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       439.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -1069,6 +1177,24 @@
      "obs": 1999.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 419.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/suede-classic-sneakers-unisex/399781.html",
+     "obs": 419.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 289.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       289.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -1158,6 +1284,15 @@
      "obs": 4999.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 1249.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/deviate-nitrotm-elite-4-running-shoes-men/312127.html",
+     "obs": 1249.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1202,6 +1337,24 @@
      "obs": 1999.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 429.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html",
+     "obs": 429.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 299.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       299.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -1401,6 +1554,15 @@
      "obs": 19800.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 800.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloud-6",
+     "obs": 800.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1452,6 +1614,15 @@
      "seen": "2026-11-03",
      "url": "https://www.on.com/ja-jp/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 20900.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 800.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloudsurfer-2",
+     "obs": 800.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -1507,6 +1678,15 @@
      "obs": 23100.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 850.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloudtilt",
+     "obs": 850.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1558,6 +1738,15 @@
      "seen": "2026-11-03",
      "url": "https://www.on.com/ja-jp/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 20900.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 800.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/the-roger-advantage",
+     "obs": 800.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -1613,6 +1802,15 @@
      "obs": 22000.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 825.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloudnova-2",
+     "obs": 825.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1664,6 +1862,15 @@
      "seen": "2026-11-03",
      "url": "https://www.on.com/ja-jp/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 24200.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 950.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloudmonster-3",
+     "obs": 950.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -1719,6 +1926,15 @@
      "obs": 18700.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 800.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloudrunner-3",
+     "obs": 800.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1770,6 +1986,15 @@
      "seen": "2026-11-03",
      "url": "https://www.on.com/ja-jp/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 22000.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 800.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloud-x-5",
+     "obs": 800.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -1825,6 +2050,15 @@
      "obs": 22000.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 875.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://on.ae/products/cloud-6-waterproof",
+     "obs": 875.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -1859,7 +2093,9 @@
      "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333",
      "obs": 185.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
     },
     "DE": {
      "p": 200.0,
@@ -1868,7 +2104,9 @@
      "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     }
    }
   },
@@ -1894,7 +2132,9 @@
      "url": "https://www.salomon.com/en-us/product/xt-6-lg4239",
      "obs": 185.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "GB": {
      "p": 165.0,
@@ -1903,7 +2143,9 @@
      "url": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
      "obs": 165.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "DE": {
      "p": 180.0,
@@ -1912,7 +2154,9 @@
      "url": "https://www.salomon.com/de-de/product/xt-6-lg4239",
      "obs": 180.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     }
    }
   },
@@ -1938,7 +2182,9 @@
      "url": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
      "obs": 200.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "GB": {
      "p": 175.0,
@@ -1947,7 +2193,9 @@
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
      "obs": 175.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "DE": {
      "p": 190.0,
@@ -1956,7 +2204,9 @@
      "url": "https://www.salomon.com/de-de/product/xt-4-og-li3335",
      "obs": 190.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     }
    }
   },
@@ -1982,7 +2232,9 @@
      "url": "https://www.salomon.com/en-us/product/xt-6-expanse-lg9334",
      "obs": 165.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "GB": {
      "p": 150.0,
@@ -1991,7 +2243,9 @@
      "url": "https://www.salomon.com/en-gb/product/xt-6-expanse-lg9334",
      "obs": 150.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "DE": {
      "p": 165.0,
@@ -2000,7 +2254,9 @@
      "url": "https://www.salomon.com/de-de/product/xt-6-expanse-lg9334",
      "obs": 165.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     }
    }
   },
@@ -2026,7 +2282,9 @@
      "url": "https://www.salomon.com/en-us/product/xt-4-og-gore-tex-li8806",
      "obs": 220.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "GB": {
      "p": 195.0,
@@ -2035,7 +2293,9 @@
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-gore-tex-li8806",
      "obs": 195.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     },
     "DE": {
      "p": 210.0,
@@ -2044,7 +2304,9 @@
      "url": "https://www.salomon.com/de-de/product/xt-4-og-gore-tex-li8806",
      "obs": 210.0,
      "obs_date": "2026-10-30",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-10-30",
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
     }
    }
   },
@@ -2407,13 +2669,11 @@
     "KR": {
      "p": 785000.0,
      "cur": "KRW",
-     "seen": "2026-10-30",
+     "seen": "2026-11-03",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",
      "obs": 785000.0,
-     "obs_date": "2026-10-30",
-     "sale": false,
-     "stale_since": "2026-10-30",
-     "why": "ChunkedEncodingError: Response ended prematurely"
+     "obs_date": "2026-11-03",
+     "sale": false
     },
     "US": {
      "p": 584.0,
@@ -2449,11 +2709,11 @@
      "sale": false
     },
     "US": {
-     "p": 534.0,
+     "p": 535.0,
      "cur": "USD",
      "seen": "2026-11-03",
      "url": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag",
-     "obs": 534.0,
+     "obs": 535.0,
      "obs_date": "2026-11-03",
      "sale": false,
      "ph": [
@@ -2482,11 +2742,11 @@
      "sale": false
     },
     "US": {
-     "p": 429.0,
+     "p": 430.0,
      "cur": "USD",
      "seen": "2026-11-03",
      "url": "https://dragondiffusion.com/products/triple-jump-small-black-woven-leather-bag-handmade",
-     "obs": 429.0,
+     "obs": 430.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -2508,11 +2768,11 @@
      "sale": false
     },
     "US": {
-     "p": 429.0,
+     "p": 430.0,
      "cur": "USD",
      "seen": "2026-11-03",
      "url": "https://dragondiffusion.com/products/rosanna-black-woven-leather-bag-handmade",
-     "obs": 429.0,
+     "obs": 430.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -2979,6 +3239,15 @@
      "obs": 499.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 129.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html",
+     "obs": 129.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -3032,6 +3301,24 @@
      "obs": 699.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 179.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-001.html",
+     "obs": 179.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 99.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       99.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -3112,6 +3399,15 @@
      "obs": 1299.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 249.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html",
+     "obs": 249.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -3176,6 +3472,15 @@
        null
       ]
      ]
+    },
+    "AE": {
+     "p": 179.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/ua-tech/UA1328495-001.html",
+     "obs": 179.0,
+     "obs_date": "2026-11-03",
+     "sale": false
     }
    }
   },
@@ -3271,6 +3576,15 @@
      "seen": "2026-11-03",
      "url": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html",
      "obs": 499.0,
+     "obs_date": "2026-11-03",
+     "sale": false
+    },
+    "AE": {
+     "p": 129.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/mens-ua-sportstyle-left-chest-short-sleeve-shirt/UA1326799-001.html",
+     "obs": 129.0,
      "obs_date": "2026-11-03",
      "sale": false
     }
@@ -3370,6 +3684,24 @@
        839.4
       ]
      ]
+    },
+    "AE": {
+     "p": 299.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/mens-ua-essential-fleece-hoodie/UA1373880-012.html",
+     "obs": 299.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 179.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       179.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -3423,6 +3755,24 @@
      "obs": 599.0,
      "obs_date": "2026-11-03",
      "sale": false
+    },
+    "AE": {
+     "p": 149.0,
+     "cur": "AED",
+     "seen": "2026-11-03",
+     "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html",
+     "obs": 149.0,
+     "obs_date": "2026-11-03",
+     "sale": true,
+     "sp": 99.0,
+     "sp_date": "2026-11-03",
+     "sh": [
+      [
+       "2026-11-03",
+       99.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -3686,13 +4036,11 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-10-30",
+     "seen": "2026-11-03",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/",
      "obs": 179000.0,
-     "obs_date": "2026-10-30",
-     "sale": false,
-     "stale_since": "2026-10-30",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-11-03",
+     "sale": false
     },
     "US": {
      "p": 150.0,
@@ -3826,7 +4174,9 @@
      "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",
      "obs": 169000.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 19800.0,
@@ -3855,7 +4205,9 @@
      "url": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%ED%99%94%EC%9D%B4%ED%8A%B8-medium/864/",
      "obs": 169000.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 19800.0,
@@ -3886,7 +4238,7 @@
      "obs_date": "2026-10-30",
      "sale": false,
      "stale_since": "2026-10-30",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 26400.0,
@@ -3923,7 +4275,9 @@
       ]
      ],
      "sp": 174300.0,
-     "sp_date": "2026-11-03"
+     "sp_date": "2026-11-03",
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 29700.0,
@@ -3954,7 +4308,7 @@
      "obs_date": "2026-10-30",
      "sale": false,
      "stale_since": "2026-10-30",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 19800.0,
@@ -3992,7 +4346,9 @@
       ]
      ],
      "sp": 132300.0,
-     "sp_date": "2026-11-03"
+     "sp_date": "2026-11-03",
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 22000.0,
@@ -4030,7 +4386,9 @@
       ]
      ],
      "sp": 94500.0,
-     "sp_date": "2026-11-03"
+     "sp_date": "2026-11-03",
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 22000.0,
@@ -4077,7 +4435,9 @@
        139300.0,
        "base"
       ]
-     ]
+     ],
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 26400.0,
@@ -4106,7 +4466,9 @@
      "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/962/",
      "obs": 189000.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 24200.0,
@@ -4135,7 +4497,9 @@
      "url": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%BA%90%EC%8A%A4%EC%BA%90%EB%94%94%EC%95%84-20%EB%B8%94%EB%9E%99-medium/973/",
      "obs": 199000.0,
      "obs_date": "2026-11-03",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-03",
+     "why": "robots.txt 못 받음(ConnectionError) — 이 사이트 건너뜀"
     },
     "JP": {
      "p": 24200.0,
@@ -5572,14 +5936,14 @@
   "salomon-xt6base DE": "2026-11-03",
   "salomon-xt4og US": "2026-11-03",
   "salomon-xt4og GB": "2026-11-03",
-  "salomon-xt4og DE": "2026-10-30",
-  "salomon-xt6expanse US": "2026-10-30",
-  "salomon-xt6expanse GB": "2026-10-30",
-  "salomon-xt6expanse DE": "2026-10-30",
-  "salomon-xt4oggtx US": "2026-10-30",
-  "salomon-xt4oggtx GB": "2026-10-30",
-  "salomon-xt4oggtx DE": "2026-10-30"
+  "salomon-xt4og DE": "2026-11-03",
+  "salomon-xt6expanse US": "2026-11-03",
+  "salomon-xt6expanse GB": "2026-11-03",
+  "salomon-xt6expanse DE": "2026-11-03",
+  "salomon-xt4oggtx US": "2026-11-03",
+  "salomon-xt4oggtx GB": "2026-11-03",
+  "salomon-xt4oggtx DE": "2026-11-03"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함",
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "tried": "2026-11-03"
 }
