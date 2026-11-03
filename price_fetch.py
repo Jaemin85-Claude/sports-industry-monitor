@@ -10,7 +10,8 @@ v1.17: (대표 지시 2026-11-03 '두바이 추가해주세요') 나라에 두�
        곁 판매가가 JSON-LD 판매가와 같은 것 · 이 상품 GTM 상세(판매가 price · 정가 item_original_price)와 맞아야 함 · 할인 중인데 취소선 정가를 못 읽으면
        실패(할인가를 정가로 쓰지 않음) · 회원 전용 상품은 실패
     ③ on.ae(쇼피파이)는 할인 표시(compare_at_price) 없이 일부 색상 값만 내림 → SHOP_MODEL: 같은 모델(품번 앞 7자리) 다른 색상보다 낮으면 처음 값으로는
-       쓰지 않음(이전 값이 있으면 할인 가드가 정가를 지킴)
+       쓰지 않음(이전 값이 있으면 할인 가드가 정가를 지킴) · 상품 .json은 변형 250개까지만(클라우드 6·클라우드서퍼 2가 250개 — 비교는 응답에 온 색상끼리,
+       이 색상이 잘려 빠지면 '대응표 확인' 대신 '변형 250개에서 잘림')
     ④ 써코니·브룩스 두바이 몰(SVD)은 robots.txt까지 우리 봇에 405 차단 페이지(우회 안 함) · 아크테릭스·살로몬·닥터마틴·헌터·킨·드래곤디퓨전·우포스는
        UAE 공식 온라인몰 없음 · 나이키 블레이저·코르테즈·조던 1 로우 두바이는 사이트맵에 없는 재고 정리 페이지(할인가만 · 품절)라 뺌 ·
        푸마 디비에이트 나이트로 엘리트 트레일(JSON-LD 없음)·온 클라우드몬스터(옛 모델 재고 정리 — 모든 색상 같은 낮은 값)는 뺌
@@ -127,7 +128,8 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     (접속 시험 2026-10-21: 아디다스·뉴발란스·아식스·크록스 한국·에코·몽클레르·룰루레몬·랄프로렌·어그·스케쳐스 한국은 403/429라 넣지 않음).
     못 받으면 이전 값(stale_since = 마지막으로 받은 날) · 전에 받던 값이 '팔지 않음'으로 바뀌어도 실패로 셈 · 이전 값도 없으면 failed(값 없음, 처음 실패한 날).
     한 실행에서 절반 넘게 실패하거나, 한 값이 21일 넘게 이전 값·값 없음이면 실패 표시(soft_fail.txt).
-    나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM + (새 통화면) fetch_data FX를 함께 고친다.
+    나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM·LAND(lvat · 운임 출발지가 있으면 fcol — 없으면 '운임 없음')·_partial ccn +
+    weekly_digest CC_KO·CUR_SYM + (새 통화면) fetch_data FX·build_dashboard FX_LBL를 함께 고친다.
     (v1.17 나이키 상품 정보에 없는 나라는 MK 첫 칸을 None으로 두고 나이키 상품 urls에 그 나라 페이지 주소)
 """
 import collections, contextlib, datetime, hashlib, json, os, re, sys, threading, time, traceback, urllib.parse
@@ -160,6 +162,7 @@ CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)�
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
 SFRA_LIST = {"www.nike.ae": "NK", "www.underarmour.ae": "UA"}   # v1.17 두바이 SFCC(SFRA) 몰 → 이 상품 품번 표시(data-variation-group-id) 앞 글자 — sfra_list로 정가 확인
 SHOP_MODEL = {"on.ae": 7}   # v1.17 할인 표시 없이 일부 색상 값만 내리는 쇼피파이 몰 → 같은 모델로 볼 품번 앞 글자 수(온러닝 3MG1005… = 모델·성별)
+                            # 상품 .json은 변형 250개까지만 — 11/03 cloud-6·cloudsurfer-2가 250개에서 잘림(cloudmonster-3 243개) → 같은 모델 비교는 응답에 온 색상끼리만
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
 
@@ -197,7 +200,7 @@ NIKE_FEED = ("https://api.nike.com/product_feed/threads/v3/?filter=marketplace({
 DM = "https://www.drmartens.com"
 def _on(slug, ae=None):   # 온러닝 — 나라별 몰 주소(상품 주소 꼴이 같음) · v1.17 ae = 두바이 몰(on.ae — Seddiqi 운영 쇼피파이)의 모델 상품 .json(handle) — 변형 품번 '3MG10051043 M 7'
     u = {cc: f"https://www.on.com/{loc}/products/{slug}" for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}
-    if ae:
+    if ae:   # 모델 .json은 변형 250개까지만(11/03 cloud-6·cloudsurfer-2 = 250 — 이 색상이 잘려 빠지면 '변형 250개에서 잘림' · SHOP_MODEL 주석)
         u["AE"] = f"https://on.ae/products/{ae}.json"
     return u
 
@@ -1033,6 +1036,8 @@ def shopify_price(url, code, cur):
     if not vs and (code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", "")
                    or code.lower() in {str(t).strip().lower() for t in tags}):
         vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰 — 상품 주소(handle, 헌터 미국·영국)나 상품 태그(킨 미국·독일)에 품번
+    if not vs and len(p.get("variants") or []) >= 250:   # v1.17 쇼피파이 상품 .json은 변형 250개까지만 — 그 뒤 색상은 응답에 없음(대응표 문제가 아닐 수 있음)
+        raise RuntimeError("이 품번 변형이 응답에 없음 — 상품 .json이 변형 250개에서 잘림(쇼피파이 한도 · 이 색상이 뒤로 밀렸을 수 있음)")
     if not vs:
         raise RuntimeError("품번이 다른 상품(대응표 확인)")
     # 쇼피파이 마켓은 접속한 나라 통화로 보여 줄 수 있음(GitHub 서버가 멕시코면 페소) — 변형의 통화 표시가 다르면 실패(이전 값 유지)
