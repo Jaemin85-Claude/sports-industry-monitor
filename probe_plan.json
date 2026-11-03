@@ -2,262 +2,130 @@
  {
   "t": "pages",
   "urls": [
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023DBR",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023LGR",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26023WIN"
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-23%EB%B8%94%EB%9E%99-medium/784/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/962/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%BA%90%EC%8A%A4%EC%BA%90%EB%94%94%EC%95%84-20%EB%B8%94%EB%9E%99-medium/973/",
+   "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EB%B8%94%EB%9E%99-medium/965/",
+   "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A8-max-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/996/",
+   "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-23%EB%B8%94%EB%9E%99-medium/810/"
   ],
-  "code_rx": "\\b8\\d{3}\\b",
+  "code_rx": "1[12]0\\d{4}[A-Z0-9]{1,4}",
   "snip_rx": [
-   "(?i)juventus|유벤투스",
-   "(?i)\"productName\"\\s*:\\s*\"[^\"]{0,80}"
+   "prd_model[^<]{0,40}<[^<]{0,80}",
+   "class=\"price_custom[^<]{0,60}",
+   "class=\"product_price\">[^<]{0,40}"
   ]
- },
- {
-  "t": "grep",
-  "rx": "^https://dragondiffusion\\.com/products/",
-  "sites": {
-   "DD-US": {
-    "host": "dragondiffusion.com"
-   }
-  },
-  "show": 300,
-  "max_maps": 8,
-  "per_host": 60
- },
- {
-  "t": "pages",
-  "urls": [
-   "https://brooksrunning.co.kr/",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=23",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=24",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=25",
-   "https://brooksrunning.co.kr/product/list.html?cate_no=42"
-  ],
-  "link_rx": "/product/[^\"'<>\\s]+/\\d+/",
-  "show": 150
  },
  {
   "t": "tryp",
   "prods": [
    {
-    "id": "oo-1000000055",
-    "brand": "우포스",
-    "name": "2400",
-    "code": "2400",
+    "id": "brooks-glycerin23",
+    "brand": "브룩스",
+    "name": "글리세린 23(남성)",
+    "code": "1104761D",
     "cc_code": {
-     "KR": "2400 Black",
-     "US": "2400BLACK"
+     "JP": "BRM4763"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "글리세린 23",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000055",
-     "US": "https://www.oofos.com/products/mens-oocloog-plus-clog-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-23%EB%B8%94%EB%9E%99-medium/784/",
+     "JP": "https://brooksrunning.co.jp/products/brm4763-blk.json"
     }
    },
    {
-    "id": "oo-1000000140",
-    "brand": "우포스",
-    "name": "2400",
-    "code": "2400",
+    "id": "brooks-ghostmax4",
+    "brand": "브룩스",
+    "name": "고스트 맥스 4(남성)",
+    "code": "1104961D",
     "cc_code": {
-     "KR": "2400 Black",
-     "US": "2400BLACK"
+     "JP": "BRM4963"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "고스트 맥스 4",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000140",
-     "US": "https://www.oofos.com/products/mens-oocloog-plus-clog-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/962/",
+     "JP": "https://brooksrunning.co.jp/products/brm4963-blk.json"
     }
    },
    {
-    "id": "oo-1000000018",
-    "brand": "우포스",
-    "name": "5087",
-    "code": "5087",
+    "id": "brooks-cascadia20",
+    "brand": "브룩스",
+    "name": "캐스캐디아 20(남성)",
+    "code": "1104891D",
     "cc_code": {
-     "KR": "5087 Black",
-     "US": "5087BLACK"
+     "JP": "BMM4893"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "캐스캐디아 20",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000018",
-     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%BA%90%EC%8A%A4%EC%BA%90%EB%94%94%EC%95%84-20%EB%B8%94%EB%9E%99-medium/973/",
+     "JP": "https://brooksrunning.co.jp/products/bmm4893-gry.json"
     }
    },
    {
-    "id": "oo-1000000017",
-    "brand": "우포스",
-    "name": "5087",
-    "code": "5087",
+    "id": "brooks-ghostmax4w",
+    "brand": "브룩스",
+    "name": "고스트 맥스 4(여성)",
+    "code": "1204851B",
     "cc_code": {
-     "KR": "5087 Black",
-     "US": "5087BLACK"
+     "JP": "BRW4852"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "고스트 맥스 4",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000017",
-     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EB%B8%94%EB%9E%99-medium/965/",
+     "JP": "https://brooksrunning.co.jp/products/brw4852-blk.json"
     }
    },
    {
-    "id": "oo-1000000015",
-    "brand": "우포스",
-    "name": "5087",
-    "code": "5087",
+    "id": "brooks-hypmax4",
+    "brand": "브룩스",
+    "name": "하이페리온 MAX 4(남성)",
+    "code": "1104981D",
     "cc_code": {
-     "KR": "5087 Black",
-     "US": "5087BLACK"
+     "JP": "BRM4983"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "하이페리온 max 4",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000015",
-     "US": "https://www.oofos.com/products/mens-oomy-stride-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A8-max-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/996/",
+     "JP": "https://brooksrunning.co.jp/products/brm4983-or.json"
     }
    },
    {
-    "id": "oo-1000000053",
-    "brand": "우포스",
-    "name": "1700",
-    "code": "1700",
+    "id": "brooks-glycerin23w",
+    "brand": "브룩스",
+    "name": "글리세린 23(여성)",
+    "code": "1204651B",
     "cc_code": {
-     "KR": "1700 Black",
-     "US": "1700BLACK"
+     "JP": "BRW4652"
     },
     "src": "page",
-    "hint": "oo",
+    "hint": "글리세린 23",
+    "code_in_page": true,
     "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000053",
-     "US": "https://www.oofos.com/products/womens-ooyea-slide-sandal-black.json"
+     "KR": "https://brooksrunning.co.kr/product/%EC%97%AC%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-23%EB%B8%94%EB%9E%99-medium/810/",
+     "JP": "https://brooksrunning.co.jp/products/brw4652-blk.json"
     }
    },
    {
-    "id": "oo-1000000054",
-    "brand": "우포스",
-    "name": "1700",
-    "code": "1700",
-    "cc_code": {
-     "KR": "1700 Black",
-     "US": "1700BLACK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000054",
-     "US": "https://www.oofos.com/products/womens-ooyea-slide-sandal-black.json"
-    }
-   },
-   {
-    "id": "oo-1000000148",
-    "brand": "우포스",
-    "name": "5286",
-    "code": "5286",
-    "cc_code": {
-     "KR": "5286 Black",
-     "US": "5286BLACK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000148",
-     "US": "https://www.oofos.com/products/mens-oocoozie-thermo-mule-black.json"
-    }
-   },
-   {
-    "id": "oo-1000000147",
-    "brand": "우포스",
-    "name": "5286",
-    "code": "5286",
-    "cc_code": {
-     "KR": "5286 Black",
-     "US": "5286BLACK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000147",
-     "US": "https://www.oofos.com/products/mens-oocoozie-thermo-mule-black.json"
-    }
-   },
-   {
-    "id": "oo-1000000146",
-    "brand": "우포스",
-    "name": "5388",
-    "code": "5388",
-    "cc_code": {
-     "KR": "5388 Black",
-     "US": "5388BLACK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000146",
-     "US": "https://www.oofos.com/products/mens-roam-thermo-black.json"
-    }
-   },
-   {
-    "id": "oo-1000000145",
-    "brand": "우포스",
-    "name": "5388",
-    "code": "5388",
-    "cc_code": {
-     "KR": "5388 Black",
-     "US": "5388BLACK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000145",
-     "US": "https://www.oofos.com/products/mens-roam-thermo-black.json"
-    }
-   },
-   {
-    "id": "oo-1000000014",
-    "brand": "우포스",
-    "name": "5088",
-    "code": "5088",
-    "cc_code": {
-     "KR": "5088 Chalk",
-     "US": "5088CHALK"
-    },
-    "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000014",
-     "US": "https://www.oofos.com/products/mens-oomy-zen-chalk.json"
-    }
-   },
-   {
-    "id": "oo-1000000064",
+    "id": "oo-1500tg",
     "brand": "우포스",
     "name": "1500",
     "code": "1500",
     "cc_code": {
-     "KR": "1500 Black",
-     "US": "1500BLK"
+     "KR": "1500 Tactical Green",
+     "US": "1500TACGRN"
     },
     "src": "page",
-    "hint": "oo",
-    "urls": {
-     "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000064",
-     "US": "https://www.oofos.com/products/mens-ooahh-sport-slide-sandal-tactical-green.json"
-    }
-   },
-   {
-    "id": "oo-1000000063",
-    "brand": "우포스",
-    "name": "1500",
-    "code": "1500",
-    "cc_code": {
-     "KR": "1500 Black",
-     "US": "1500BLK"
-    },
-    "src": "page",
-    "hint": "oo",
+    "hint": "ooahh sport",
     "urls": {
      "KR": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000063",
      "US": "https://www.oofos.com/products/mens-ooahh-sport-slide-sandal-tactical-green.json"
