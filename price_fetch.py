@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.17: (대표 지시 2026-11-03 '두바이 추가해주세요') 나라에 두바이(AE · UAE 공식몰 · 디르함 AED · 부가세 5% 포함) — 같은 품번을 GitHub 서버에서 확인한
+    4개 브랜드 나이키 6 · 푸마 6 · 언더아머 7 · 온러닝 9(값 +28 → 상품 110개 · 값 458개 · 11/03 브랜치 시험).
+    ① 나이키 상품 정보(product_feed)에는 두바이가 없음(AE 정가 100000 자리표시 · 다른 품번은 결과 없음) → 나이키 상품에 나라별 페이지 주소 urls(AE = nike.ae
+       공식몰 · GMG 운영)를 두고 그 나라만 페이지로 읽음 — 묶음·다시 받기·값 없음 기록·할인 가드·크게 바뀜은 그 나라를 페이지 값처럼(_feed · ccs)
+    ② nike.ae·underarmour.ae(SFCC SFRA)는 취소선 정가가 글자 대신 content 칸이고 추천 상품 칸에도 취소선 정가가 있음 → SFRA_LIST(sfra_list): 이 상품
+       품번 표시(data-variation-group-id = NK·UA + 품번)를 확인하고, 이 상품 가격 칸(b-pdp__priceline 등 — 추천 상품 칸 product-tile은 뺌)의 취소선 정가 중
+       곁 판매가가 JSON-LD 판매가와 같은 것 · 이 상품 GTM 상세(판매가 price · 정가 item_original_price)와 맞아야 함 · 할인 중인데 취소선 정가를 못 읽으면
+       실패(할인가를 정가로 쓰지 않음) · 회원 전용 상품은 실패
+    ③ on.ae(쇼피파이)는 할인 표시(compare_at_price) 없이 일부 색상 값만 내림 → SHOP_MODEL: 같은 모델(품번 앞 7자리) 다른 색상보다 낮으면 처음 값으로는
+       쓰지 않음(이전 값이 있으면 할인 가드가 정가를 지킴) · 상품 .json은 변형 250개까지만(클라우드 6·클라우드서퍼 2가 250개 — 비교는 응답에 온 색상끼리,
+       이 색상이 잘려 빠지면 '대응표 확인' 대신 '변형 250개에서 잘림')
+    ④ 써코니·브룩스 두바이 몰(SVD)은 robots.txt까지 우리 봇에 405 차단 페이지(우회 안 함) · 아크테릭스·살로몬·닥터마틴·헌터·킨·드래곤디퓨전·우포스는
+       UAE 공식 온라인몰 없음 · 나이키 블레이저·코르테즈·조던 1 로우 두바이는 사이트맵에 없는 재고 정리 페이지(할인가만 · 품절)라 뺌 ·
+       푸마 디비에이트 나이트로 엘리트 트레일(JSON-LD 없음)·온 클라우드몬스터(옛 모델 재고 정리 — 모든 색상 같은 낮은 값)는 뺌
 v1.16: (SKU 늘리기 7차 11/03 — 주 1회 정기 차례 · 대표 상시 지시 2026-10-26) 나이키 에어맥스 플러스·킬샷 2 레더(6개 나라) · 브룩스 글리세린 23·
     고스트 맥스 4·캐스캐디아 20(남성 · 한국·일본) · 우포스 OOcloog+·OOmy Stride·OOahh Sport(한국·미국) — 상품 110개 · 값 430개(+24).
     브룩스 한국 robots.txt 사이트맵은 카페24 데모 사이트(ecudemo…)라 첫 화면·목록 상품 번호 → 상품 페이지 prd_model 품번 · 일본 트레일 모델 품번은
@@ -114,7 +128,9 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     (접속 시험 2026-10-21: 아디다스·뉴발란스·아식스·크록스 한국·에코·몽클레르·룰루레몬·랄프로렌·어그·스케쳐스 한국은 403/429라 넣지 않음).
     못 받으면 이전 값(stale_since = 마지막으로 받은 날) · 전에 받던 값이 '팔지 않음'으로 바뀌어도 실패로 셈 · 이전 값도 없으면 failed(값 없음, 처음 실패한 날).
     한 실행에서 절반 넘게 실패하거나, 한 값이 21일 넘게 이전 값·값 없음이면 실패 표시(soft_fail.txt).
-    나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM + (새 통화면) fetch_data FX를 함께 고친다.
+    나라를 늘리면 MK + build_dashboard PR_ORD·PR_CC·PR_SYM·LAND(lvat · 운임 출발지가 있으면 fcol — 없으면 '운임 없음')·_partial ccn +
+    weekly_digest CC_KO·CUR_SYM + (새 통화면) fetch_data FX·build_dashboard FX_LBL를 함께 고친다.
+    (v1.17 나이키 상품 정보에 없는 나라는 MK 첫 칸을 None으로 두고 나이키 상품 urls에 그 나라 페이지 주소)
 """
 import collections, contextlib, datetime, hashlib, json, os, re, sys, threading, time, traceback, urllib.parse
 from html import unescape
@@ -144,6 +160,9 @@ HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
+SFRA_LIST = {"www.nike.ae": "NK", "www.underarmour.ae": "UA"}   # v1.17 두바이 SFCC(SFRA) 몰 → 이 상품 품번 표시(data-variation-group-id) 앞 글자 — sfra_list로 정가 확인
+SHOP_MODEL = {"on.ae": 7}   # v1.17 할인 표시 없이 일부 색상 값만 내리는 쇼피파이 몰 → 같은 모델로 볼 품번 앞 글자 수(온러닝 3MG1005… = 모델·성별)
+                            # 상품 .json은 변형 250개까지만 — 11/03 cloud-6·cloudsurfer-2가 250개에서 잘림(cloudmonster-3 243개) → 같은 모델 비교는 응답에 온 색상끼리만
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
 
 
@@ -170,16 +189,20 @@ def note_sale(o, now, td, seen_off=False):
     else:
         o.pop("sh", None)
 
-# 나라 → (나이키 상품 정보 marketplace·language, 통화)
+# 나라 → (나이키 상품 정보 marketplace·language, 통화) — 나이키 상품 정보에 없는 나라는 None(나이키 상품 urls의 페이지로 읽음)
 MK = {"KR": ("KR", "ko", "KRW"), "US": ("US", "en", "USD"), "GB": ("GB", "en-GB", "GBP"), "DE": ("DE", "de", "EUR"),
-      "JP": ("JP", "ja", "JPY"), "MX": ("MX", "es-419", "MXN")}
+      "JP": ("JP", "ja", "JPY"), "MX": ("MX", "es-419", "MXN"),
+      "AE": (None, None, "AED")}   # v1.17 두바이(UAE 공식몰) — product_feed AE는 정가 100000 자리표시·다른 품번 결과 없음(11/03 시험)이라 nike.ae 페이지
 NIKE_FEED = ("https://api.nike.com/product_feed/threads/v3/?filter=marketplace({m})&filter=language({l})"
              "&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor({s})")
 
 # 대표 상품 — brand는 브랜드 점검표(네이버 감시 브랜드) 이름과 같게. urls 없는 나라는 그 브랜드 공식몰에서 받지 못하는 곳(시험 2026-10-21)
 DM = "https://www.drmartens.com"
-def _on(slug):   # 온러닝 — 나라별 몰 주소(상품 주소 꼴이 같음)
-    return {cc: f"https://www.on.com/{loc}/products/{slug}" for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}
+def _on(slug, ae=None):   # 온러닝 — 나라별 몰 주소(상품 주소 꼴이 같음) · v1.17 ae = 두바이 몰(on.ae — Seddiqi 운영 쇼피파이)의 모델 상품 .json(handle) — 변형 품번 '3MG10051043 M 7'
+    u = {cc: f"https://www.on.com/{loc}/products/{slug}" for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}
+    if ae:   # 모델 .json은 변형 250개까지만(11/03 cloud-6·cloudsurfer-2 = 250 — 이 색상이 잘려 빠지면 '변형 250개에서 잘림' · SHOP_MODEL 주석)
+        u["AE"] = f"https://on.ae/products/{ae}.json"
+    return u
 
 
 def _sal(kr, slug):   # 살로몬 — 한국 쇼피파이 상품(.json, 색상 품번) + 해외 모델 페이지(미국·영국·독일, 모델 기본가)
@@ -208,72 +231,88 @@ def _oofos(kr, h):   # 우포스 — 한국 LF 공식몰(고도몰) + 미국 쇼
 
 
 PRODUCTS = [
-    {"id": "nike-af1", "brand": "나이키", "name": "에어포스 1 '07", "code": "CW2288-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
-    {"id": "nike-dunk", "brand": "나이키", "name": "덩크 로우 레트로", "code": "DD1391-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
-    {"id": "nike-am90", "brand": "나이키", "name": "에어맥스 90", "code": "CN8490-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # 브라질은 나이키 직영이 아님(시험 2026-10-21 · 결과 없음)
+    # v1.17 나이키 두바이(AE)는 상품 정보(product_feed)에 없어 nike.ae 공식몰(GMG 운영 · SFCC) 페이지 — urls의 나라만 페이지로 읽음(sfra_list)
+    {"id": "nike-af1", "brand": "나이키", "name": "에어포스 1 '07", "code": "CW2288-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html"}},
+    {"id": "nike-dunk", "brand": "나이키", "name": "덩크 로우 레트로", "code": "DD1391-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/dunk-low-retro-mens-shoe/NKDD1391-100.html"}},
+    {"id": "nike-am90", "brand": "나이키", "name": "에어맥스 90", "code": "CN8490-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-max-90-mens-shoe/NKCN8490-100.html"}},   # 브라질은 나이키 직영이 아님(시험 2026-10-21 · 결과 없음)
+    # v1.17 블레이저 미드 '77·코르테즈·조던 1 로우 두바이(nike.ae)는 사이트맵에 없는 재고 정리 페이지(품절 · 할인가만 남음)라 뺌 — 곧 없어져 이전 값·21일 알림이 될 것
     {"id": "nike-blazer77", "brand": "나이키", "name": "블레이저 미드 '77 빈티지", "code": "BQ6806-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
     {"id": "nike-cortez", "brand": "나이키", "name": "코르테즈", "code": "DM4044-108", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
     {"id": "nike-aj1low", "brand": "나이키", "name": "에어 조던 1 로우", "code": "553558-161", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
-    {"id": "nike-vomero5", "brand": "나이키", "name": "줌 보메로 5", "code": "BV1358-003", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
-    # v1.16 SKU 7차 — 6개 나라 product_feed 모두 같은 styleColor(11/03 · 정가 fullPrice — 킬샷 한국만 판매가 107,100)
-    {"id": "nike-airmaxplus", "brand": "나이키", "name": "에어맥스 플러스", "code": "604133-139", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # White/Black/Cool Grey/White
-    {"id": "nike-killshot2", "brand": "나이키", "name": "킬샷 2 레더", "code": "432997-107", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # Sail/Gum Yellow/Midnight Navy
+    {"id": "nike-vomero5", "brand": "나이키", "name": "줌 보메로 5", "code": "BV1358-003", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/zoom-vomero-5-mens-shoes/NKBV1358-003.html"}},
+    # v1.16 SKU 7차 — 6개 나라 product_feed 모두 같은 styleColor(11/03 · 정가 fullPrice — 킬샷 한국만 판매가 107,100) · v1.17 두바이 = nike.ae 사이트맵 상품 페이지
+    {"id": "nike-airmaxplus", "brand": "나이키", "name": "에어맥스 플러스", "code": "604133-139", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-max-plus-mens-shoes/NK604133-139.html"}},   # White/Black/Cool Grey/White
+    {"id": "nike-killshot2", "brand": "나이키", "name": "킬샷 2 레더", "code": "432997-107", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/killshot-2-leather-mens-shoes/NK432997-107.html"}},   # Sail/Gum Yellow/Midnight Navy
+    # v1.17 푸마 두바이 = ae.puma.com(PUMA UAE 직영 · SFCC) — JSON-LD 품번 398846_xx · 할인 중이면 화면 데이터 c_listPrice(지금 page_price 그대로)
     {"id": "puma-speedcat", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
         "US": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
         "GB": "https://uk.puma.com/uk/en/pd/speedcat-og-sneakers-unisex/398846",
         "DE": "https://eu.puma.com/de/de/pd/speedcat-og-sneakers/398846",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/398846",
-        "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html"}},
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html",
+        "AE": "https://ae.puma.com/ae/en/pd/speedcat-og-sneakers-unisex/398846.html"}},
     {"id": "puma-palermo", "brand": "푸마", "name": "팔레르모", "code": "396463", "src": "page", "hint": "palermo", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
         "US": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
         "GB": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
         "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
-        "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22)
+        "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
+        "AE": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22)
     {"id": "puma-mostro", "brand": "푸마", "name": "모스트로 OG", "code": "397330", "src": "page", "hint": "mostro", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
         "US": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
         "GB": "https://uk.puma.com/uk/en/pd/mostro-og-sneakers-unisex/397330",
         "DE": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%A2%E3%82%B9%E3%83%88%E3%83%AD-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/397330",
-        "MX": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html"}},
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html",
+        "AE": "https://ae.puma.com/ae/en/pd/mostro-og-sneakers-unisex/397330.html"}},
     {"id": "puma-suede", "brand": "푸마", "name": "스웨이드 클래식", "code": "399781", "src": "page", "hint": "suede", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html",
         "US": "https://us.puma.com/us/en/pd/suede-classic-sneakers/399781",
         "GB": "https://uk.puma.com/uk/en/pd/suede-classic-sneakers-unisex/399781",
         "DE": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%82%A6%E3%82%A7%E3%83%BC%E3%83%89-%E3%82%AF%E3%83%A9%E3%82%B7%E3%83%83%E3%82%AF-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/399781",
-        "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html"}},
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html",
+        "AE": "https://ae.puma.com/ae/en/pd/suede-classic-sneakers-unisex/399781.html"}},
     {"id": "puma-dne4", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 4(남성)", "code": "312127", "src": "page", "hint": "deviate nitro elite 4", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-mens-road-running-shoes/312127",
         "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-4-running-shoes-men/312127",
         "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A1%E3%83%B3%E3%82%BA-%E3%83%87%E3%82%A3%E3%83%B4%E3%82%A3%E3%82%A8%E3%82%A4%E3%83%88-%E3%83%8B%E3%83%88%E3%83%AD-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88-4-%E3%83%A9%E3%83%B3%E3%83%8B%E3%83%B3%E3%82%B0%E3%82%B7%E3%83%A5%E3%83%BC%E3%82%BA/312127",
-        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html"}},   # 인헤일(401560) 대신 — 미국 몰은 전 색상 할인가(73.99달러)뿐이라 뺌(검토 반영 10/22)
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html",
+        "AE": "https://ae.puma.com/ae/en/pd/deviate-nitrotm-elite-4-running-shoes-men/312127.html"}},   # 인헤일(401560) 대신 — 미국 몰은 전 색상 할인가(73.99달러)뿐이라 뺌(검토 반영 10/22)
     {"id": "puma-speedcatgo", "brand": "푸마", "name": "스피드캣 GO(여성)", "code": "403589", "src": "page", "hint": "speedcat go", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
         "US": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
-        "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27)
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html",
+        "AE": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27)
     {"id": "puma-dnetrail", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 트레일(남성)", "code": "310034", "src": "page", "hint": "deviate nitro elite trail", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
-        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27)
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
         cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
-        for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},
-    {"id": "on-cloud6", "brand": "온러닝", "name": "클라우드 6", "code": "3MF10071200", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200")},
-    {"id": "on-cloudsurfer2", "brand": "온러닝", "name": "클라우드서퍼 2", "code": "3MF10121043", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043")},
-    {"id": "on-cloudtilt", "brand": "온러닝", "name": "클라우드틸트", "code": "3ME10101430", "src": "page", "hint": "cloudtilt", "urls": _on("cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430")},
-    {"id": "on-roger", "brand": "온러닝", "name": "더 로저 어드밴티지", "code": "3MF30641200", "src": "page", "hint": "roger", "urls": _on("the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200")},
-    {"id": "on-cloudnova2", "brand": "온러닝", "name": "클라우드노바 2", "code": "3ME30210108", "src": "page", "hint": "cloudnova", "urls": _on("cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108")},
+        for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},   # 두바이(on.ae)는 옛 모델 재고 정리(모든 색상 450디르함 · 정가 표시 없음)라 뺌
+    # v1.17 온러닝 두바이 = on.ae(Seddiqi 운영 쇼피파이 · 변형 품번 = 글로벌 품번 + 사이즈) — 모델 상품 .json에서 이 색상 품번 변형만(SHOP_MODEL)
+    {"id": "on-cloud6", "brand": "온러닝", "name": "클라우드 6", "code": "3MF10071200", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200", "cloud-6")},
+    {"id": "on-cloudsurfer2", "brand": "온러닝", "name": "클라우드서퍼 2", "code": "3MF10121043", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043", "cloudsurfer-2")},
+    {"id": "on-cloudtilt", "brand": "온러닝", "name": "클라우드틸트", "code": "3ME10101430", "src": "page", "hint": "cloudtilt", "urls": _on("cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430", "cloudtilt")},
+    {"id": "on-roger", "brand": "온러닝", "name": "더 로저 어드밴티지", "code": "3MF30641200", "src": "page", "hint": "roger", "urls": _on("the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200", "the-roger-advantage")},
+    {"id": "on-cloudnova2", "brand": "온러닝", "name": "클라우드노바 2", "code": "3ME30210108", "src": "page", "hint": "cloudnova", "urls": _on("cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108", "cloudnova-2")},
     # v1.14 SKU 5차 — 한국 몰 사이트맵(https://www.on.com/sitemap.xml → ko-kr 상품 · robots.txt에는 적혀 있지 않음)의 남성 신발 중 주요 모델 검정 · 5개 나라 같은 품번(10/28 GitHub 서버 확인)
-    {"id": "on-cloudmonster3", "brand": "온러닝", "name": "클라우드몬스터 3", "code": "3MG10051043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043")},
-    {"id": "on-cloudrunner3", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043")},
-    {"id": "on-cloudx5", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043")},
-    {"id": "on-cloud6wp", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043")},
+    {"id": "on-cloudmonster3", "brand": "온러닝", "name": "클라우드몬스터 3", "code": "3MG10051043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043", "cloudmonster-3")},
+    {"id": "on-cloudrunner3", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
+    {"id": "on-cloudx5", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043", "cloud-x-5")},
+    {"id": "on-cloud6wp", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043", "cloud-6-waterproof")},
     {"id": "salomon-xt6", "brand": "살로몬", "name": "XT-6 고어텍스", "code": "L47450600", "alt": ["LG9333"], "src": "page", "hint": "xt-6", "urls": {
         "KR": "https://salomon.co.kr/products/l47450600.json",
         "US": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
@@ -378,47 +417,55 @@ PRODUCTS = [
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
         "US": "https://hunterboots.com/products/womens-original-short-gloss-rain-boots-in-black-wfs1000rgl-hbl01.json",
         "GB": "https://hunterboots.co.uk/products/womens-original-short-gloss-wellington-boots-wfs1000rgl-blk.json"}},   # 일본 몰 사이트맵에 없음(10/27)
+    # v1.17 언더아머 두바이 = underarmour.ae(공식 중동 유통사 Athlocity · SFCC) — 색상 페이지 UA품번-색상(정가는 색상과 같음 · 11/03 확인) · sfra_list
     {"id": "ua-tech2", "brand": "언더아머", "name": "UA 테크 2.0 반팔", "code": "1326413", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
         "US": "https://www.underarmour.com/en-us/p/ua_tech_2.0_mens_short_sleeve/1326413.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-2.0-mens-short-sleeve/1326413.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-tech-2.0/1326413.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html"}},   # 일본은 수입사(DOME) 품번·사양이 달라 뺌
+        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html",
+        "AE": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html"}},   # 일본은 수입사(DOME) 품번·사양이 달라 뺌
     {"id": "ua-hg-mock", "brand": "언더아머", "name": "히트기어 컴프레션 모크 반팔", "code": "1372586", "src": "page", "hint": "heatgear", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EC%BB%B4%ED%94%84%EB%A0%88%EC%85%98/1372586.html",
         "US": "https://www.underarmour.com/en-us/p/heatgear_compression_mens_mock_short_sleeve/1372586.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-compression-mens-mock-short-sleeve/1372586.html",
         "DE": "https://www.underarmour.de/de-de/p/heatgear-compression/1372586.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear_compression/1372586.html"}},   # v1.6 히트기어 컴프레션 반팔 1361518·긴팔 1361524 대신(멕시코 몰에서 빠짐 — HTTP 410 · 10/26 사이트맵에 없음)
+        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear_compression/1372586.html",
+        "AE": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-001.html"}},   # v1.6 히트기어 컴프레션 반팔 1361518·긴팔 1361524 대신(멕시코 몰에서 빠짐 — HTTP 410 · 10/26 사이트맵에 없음)
     {"id": "ua-hustle6", "brand": "언더아머", "name": "허슬 6.0 백팩", "code": "1384672", "src": "page", "hint": "hustle", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%95%A1%EC%84%B8%EC%84%9C%EB%A6%AC/ua_%ED%97%88%EC%8A%AC_6.0/1384672.html",
         "US": "https://www.underarmour.com/en-us/p/ua_hustle_6.0_backpack/1384672.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-hustle-6.0-backpack/1384672.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-hustle-6.0/1384672.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_hustle_6.0/1384672.html"}},   # 5개 나라 같은 품번(GitHub 서버 시험 10/26 — 차지드 어서트 11은 한국·멕시코 robots.txt가 막음)
+        "MX": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_hustle_6.0/1384672.html",
+        "AE": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html"}},   # 5개 나라 같은 품번(GitHub 서버 시험 10/26 — 차지드 어서트 11은 한국·멕시코 robots.txt가 막음) · 두바이 -001(검정)은 품절·사이트맵에 없어 -002(JSON-LD 품번이 바코드라 이름 + 품번 표시로 확인)
     {"id": "ua-tech-hz", "brand": "언더아머", "name": "UA 테크 ½ 집", "code": "1328495", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
         "US": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
-        "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html"}},   # 멕시코 몰은 정가 없이 할인가(539.4페소)만 보여 뺌(시험 10/22)
+        "DE": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html",
+        "AE": "https://www.underarmour.ae/en/ua-tech/UA1328495-001.html"}},   # 멕시코 몰은 정가 없이 할인가(539.4페소)만 보여 뺌(시험 10/22)
     {"id": "ua-leftchest", "brand": "언더아머", "name": "레프트 체스트 로고 반팔", "code": "1326799", "src": "page", "hint": "left chest", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
         "US": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html"}},
+        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html",
+        "AE": "https://www.underarmour.ae/en/mens-ua-sportstyle-left-chest-short-sleeve-shirt/UA1326799-001.html"}},   # 두바이 -001·-100 정가 같음(11/03)
     {"id": "ua-icon-hoodie", "brand": "언더아머", "name": "아이콘 플리스 후디", "code": "1373880", "src": "page", "hint": "icon fleece", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EC%95%84%EC%9D%B4%EC%BD%98_%ED%94%8C%EB%A6%AC%EC%8A%A4/1373880.html",
         "US": "https://www.underarmour.com/en-us/p/ua_icon_fleece_mens_hoodie/1373880.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/ua-icon-fleece-mens-hoodie/1373880.html",
         "DE": "https://www.underarmour.de/de-de/p/ua-icon-fleece/1373880.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/sudadera_con_capucha_ua_icon_fleece_para_hombre/1373880.html"}},   # v1.7 SKU 늘리기 — 5개 나라 같은 품번(GitHub 서버 시험 10/26)
+        "MX": "https://www.underarmour.com.mx/es-mx/p/tops/sudadera_con_capucha_ua_icon_fleece_para_hombre/1373880.html",
+        "AE": "https://www.underarmour.ae/en/mens-ua-essential-fleece-hoodie/UA1373880-012.html"}},   # v1.7 SKU 늘리기 — 5개 나라 같은 품번(GitHub 서버 시험 10/26) · 두바이는 -001 없음 → -012(주소 이름만 essential · 품번·상품 이름 UA Icon Fleece 같음)
     {"id": "ua-hg-sleeveless", "brand": "언더아머", "name": "히트기어 모크 민소매", "code": "1361521", "src": "page", "hint": "heatgear", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EB%AA%A8%ED%81%AC/1361521.html",
         "US": "https://www.underarmour.com/en-us/p/heatgear_mock_mens_sleeveless/1361521.html",
         "GB": "https://www.underarmour.co.uk/en-gb/p/heatgear-mock-mens-sleeveless/1361521.html",
         "DE": "https://www.underarmour.de/de-de/p/heatgear-mock/1361521.html",
-        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html"}},
+        "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html",
+        "AE": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html"}},
     {"id": "saucony-ride19", "brand": "써코니", "name": "라이드 19(남성)", "code": "S21055", "src": "page", "hint": "라이드 19", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",   # 품번은 상품 정보 칸 '모델 S21055-172'
         "US": "https://www.saucony.com/en/ride-19/60823M.html",
@@ -790,6 +837,8 @@ def _micro(html, cur, codes):
 
 def nike_price(code, cc):
     m, l, cur = MK[cc]
+    if not m:   # v1.17 나이키 상품 정보에 없는 나라(두바이 — AE는 정가 100000 자리표시) — 나이키 상품 urls의 페이지로
+        raise RuntimeError("나이키 상품 정보에 이 나라 없음 — 상품 urls에 페이지 주소 필요")
     d = _json(get(NIKE_FEED.format(m=m, l=l, s=code)))
     objs = [o for o in d.get("objects") or [] if isinstance(o, dict)]
     if not objs:
@@ -923,6 +972,63 @@ def cafe24_list(html, sale):
     return lps.pop() if len(lps) == 1 else None
 
 
+SFRA_BOX = re.compile(r'b-pdp__priceline|product-detail__priceline|b-microproduct__price|product-tile')   # v1.17 가격 칸 표시 — 뒤 것(추천 상품 칸)은 이 상품 아님
+SFRA_STRIKE = re.compile(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*?content="([0-9][0-9.,]*)"')
+SFRA_SALES = re.compile(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*?content="([0-9][0-9.,]*)"', re.S)
+
+
+def sfra_list(html, code, pre, sale):
+    """v1.17 두바이 SFCC(SFRA) 몰(nike.ae·underarmour.ae) 정가 — 취소선 정가가 글자 대신 <span class="value" content="799.00">이고 추천 상품 칸에도 취소선이 있음.
+    ① 이 상품 품번: 상품 상세 칸(data-gtm-onload="pdpView" 태그)의 data-variation-group-id가 pre + 품번(나이키 NKCW2288-111 · 언더아머 UA1372586-001)
+    ② 이 상품 GTM 상세(data-gtm-enhance-commerce-details · ecommerce.detail) 판매가 price = JSON-LD 판매가(sale)
+    ③ 취소선 정가 = 바로 앞 가격 칸 표시가 이 상품 가격 칸(b-pdp__priceline·product-detail__priceline·b-microproduct__price — product-tile은 추천 상품)이고
+       같은 칸 판매가(sales content)가 sale인 것 · 한 가지 · 판매가보다 높고 5배 안 · GTM 정가 item_original_price와 같아야 함
+    ④ 취소선이 없으면 GTM 정가가 판매가와 같을 때만 판매가가 정가(할인 중인데 취소선 정가를 못 읽으면 실패 — 할인가를 정가로 쓰지 않음)"""
+    if re.search(r'data-producttype-memberonly="true"', html):
+        raise RuntimeError("회원 전용 상품 — 넣지 않음")
+    want, dets = (pre + code).upper(), {}
+    for m in re.finditer(r'data-variation-group-id="([^"]+)"', html):
+        e = html.find("<", m.end())
+        tag = html[html.rfind("<", 0, m.start()):e if e >= 0 else len(html)]   # 그 태그(속성 값에는 < 가 없음 — &lt;)
+        gm = re.search(r'data-gtm-enhance-commerce-details="([^"]*)"', tag)
+        if 'data-gtm-onload="pdpView"' not in tag or not gm:
+            continue   # 상품 상세 칸이 아님
+        try:
+            ps = ((json.loads(unescape(gm.group(1))).get("ecommerce") or {}).get("detail") or {}).get("products") or []
+        except (ValueError, AttributeError):
+            continue
+        if ps and isinstance(ps[0], dict):
+            dets[m.group(1).upper()] = ps[0]
+    if len(dets) != 1:
+        raise RuntimeError(f"이 상품 상세 칸(GTM 상세) {len(dets)}개 — 페이지 모양이 바뀜(정가 확인 안 됨)")
+    vg, d = dets.popitem()
+    if vg != want and not vg.startswith(want + "-"):
+        raise RuntimeError(f"품번 표시가 다름({vg}) — 다른 상품으로 바뀜(대응표 확인)")
+    gp, go = num(d.get("price")), num(d.get("item_original_price"))
+    if not sale or not gp or abs(gp - sale) > 0.01 or not go:
+        raise RuntimeError(f"판매가가 서로 다름(JSON-LD {sale} · GTM {d.get('price')}/{d.get('item_original_price')})")
+    lps = set()
+    for m in SFRA_STRIKE.finditer(html):
+        box = list(SFRA_BOX.finditer(html, max(0, m.start() - 1500), m.start()))
+        if not box or box[-1].group(0) == "product-tile":
+            continue   # 이 상품 가격 칸이 아님(추천 상품 칸 · 표시 없음)
+        nxt = SFRA_BOX.search(html, m.end())
+        sm = SFRA_SALES.search(html[box[-1].start():nxt.start() if nxt else m.end() + 1500])   # 같은 가격 칸 안 판매가(나이키는 취소선 뒤 · 언더아머는 앞)
+        lp, sv = num(m.group(1)), num(sm.group(1)) if sm else None
+        if lp and sv and abs(sv - sale) < 0.01 and sv < lp <= sv * 5:
+            lps.add(lp)
+    if len(lps) > 1:
+        raise RuntimeError(f"이 상품 취소선 정가가 여러 가지({', '.join(f'{x:g}' for x in sorted(lps))})")
+    if lps:
+        lp = lps.pop()
+        if abs(lp - go) > 0.01:
+            raise RuntimeError(f"취소선 정가 {lp:g} ≠ GTM 정가 {go:g}")
+        return lp
+    if go > sale * 1.005:
+        raise RuntimeError(f"할인가 {sale:g}만 읽힘(GTM 정가 {go:g} · 취소선 정가 칸을 못 찾음) — 할인가를 정가로 쓰지 않음")
+    return sale
+
+
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
@@ -930,6 +1036,8 @@ def shopify_price(url, code, cur):
     if not vs and (code.lower().replace("-", "") in str(p.get("handle", "")).lower().replace("-", "")
                    or code.lower() in {str(t).strip().lower() for t in tags}):
         vs = [v for v in p.get("variants") or [] if isinstance(v, dict)]   # 변형 품번이 바코드인 몰 — 상품 주소(handle, 헌터 미국·영국)나 상품 태그(킨 미국·독일)에 품번
+    if not vs and len(p.get("variants") or []) >= 250:   # v1.17 쇼피파이 상품 .json은 변형 250개까지만 — 그 뒤 색상은 응답에 없음(대응표 문제가 아닐 수 있음)
+        raise RuntimeError("이 품번 변형이 응답에 없음 — 상품 .json이 변형 250개에서 잘림(쇼피파이 한도 · 이 색상이 뒤로 밀렸을 수 있음)")
     if not vs:
         raise RuntimeError("품번이 다른 상품(대응표 확인)")
     # 쇼피파이 마켓은 접속한 나라 통화로 보여 줄 수 있음(GitHub 서버가 멕시코면 페소) — 변형의 통화 표시가 다르면 실패(이전 값 유지)
@@ -939,7 +1047,14 @@ def shopify_price(url, code, cur):
     full = max(max(num(v.get("price")) or 0, num(v.get("compare_at_price")) or 0) for v in vs)
     if not full:
         raise RuntimeError("가격 없음")
-    return full, {"cur_price": min(num(v.get("price")) or full for v in vs)}
+    extra = {"cur_price": min(num(v.get("price")) or full for v in vs)}
+    k = SHOP_MODEL.get(urllib.parse.urlsplit(url).netloc)
+    if k and not any(num(v.get("compare_at_price")) for v in vs):   # v1.17 할인 표시 없이 일부 색상 값만 내리는 몰(on.ae) — 같은 모델 다른 색상이 더 비싸면 정가 확인 안 됨
+        top = max([num(v.get("price")) or 0 for v in p.get("variants") or [] if isinstance(v, dict)
+                   and str(v.get("sku", "")).upper().startswith(code.upper()[:k])] or [0])
+        if top > full * 1.005:
+            extra["unsure"] = f"이 색상만 값이 낮음({full:g} · 같은 모델 다른 색상 {top:g} — 할인 표시 없는 할인으로 보임) — 처음 값으로 쓰지 않음"
+    return full, extra
 
 
 def godo_price(html, cur, code):
@@ -961,10 +1076,22 @@ def godo_price(html, cur, code):
     return max(fp or 0, sp or 0), {"cur_price": sp or fp}
 
 
+def _feed(prod, cc):
+    """v1.17 나이키 상품 정보(product_feed)로 받는 값 — 나이키 상품이라도 urls에 있는 나라(두바이)는 페이지로 읽음(페이지 값처럼 할인 가드·크게 바뀜)"""
+    return prod["src"] == "nike" and cc not in (prod.get("urls") or {})
+
+
+def ccs(prod):
+    """v1.17 상품이 받는 나라 — 나이키는 상품 정보 나라(cc) + 페이지 나라(urls), 그 밖은 urls"""
+    if prod["src"] == "nike":
+        return list(prod["cc"]) + [cc for cc in prod.get("urls") or {} if cc not in prod["cc"]]
+    return list(prod["urls"])
+
+
 def fetch_one(prod, cc):
     cur = MK[cc][2]
     code = (prod.get("cc_code") or {}).get(cc, prod["code"])   # 그 나라 수입사 품번이 따로 있으면(브룩스 일본)
-    if prod["src"] == "nike":
+    if _feed(prod, cc):
         return nike_price(prod["code"], cc), NIKE_FEED.format(m=MK[cc][0], l=MK[cc][1], s=prod["code"])
     url = prod["urls"].get(cc)
     if not url:
@@ -979,8 +1106,14 @@ def fetch_one(prod, cc):
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
         return godo_price(r.text, cur, code), url
-    full, extra = page_price(r.text, prod["hint"], cur, [code] + prod.get("alt", []))
-    if urllib.parse.urlsplit(url).netloc in CAFE24_LIST:   # v1.13 카페24 몰 소비자가 칸 — 할인 중이면 JSON-LD에 판매가만
+    full, extra = page_price(r.text, prod.get("hint") or code, cur, [code] + prod.get("alt", []))   # 나이키 상품은 hint 없음(품번으로만 찾음)
+    host = urllib.parse.urlsplit(url).netloc
+    if host in SFRA_LIST:   # v1.17 두바이 SFCC 몰 — 이 상품 품번 표시·GTM 상세로 확인한 취소선 정가(할인 중이면 JSON-LD는 판매가뿐)
+        if extra.get("cur_price") is None or abs(full - extra["cur_price"]) > 0.01:
+            raise RuntimeError(f"JSON-LD 가격이 여러 가지({full:g} · {extra.get('cur_price')})")
+        full = sfra_list(r.text, code, SFRA_LIST[host], extra["cur_price"])
+        extra["by"] = "품번"   # data-variation-group-id로 확인(JSON-LD 품번이 바코드인 언더아머 상품도)
+    if host in CAFE24_LIST:   # v1.13 카페24 몰 소비자가 칸 — 할인 중이면 JSON-LD에 판매가만
         lp = cafe24_list(r.text, full)
         if lp:
             full = lp
@@ -993,9 +1126,7 @@ def cfg_hash():
 
 def _hosts(p):
     """상품이 요청하는 사이트(나라마다 하나)"""
-    if p["src"] == "nike":
-        return [urllib.parse.urlsplit(NIKE_FEED).netloc] * len(p["cc"])
-    return [urllib.parse.urlsplit(u).netloc for u in p["urls"].values()]
+    return [urllib.parse.urlsplit(NIKE_FEED if _feed(p, cc) else p["urls"][cc]).netloc for cc in ccs(p)]   # v1.17 나이키 페이지 나라(두바이)는 그 사이트
 
 
 def build_lanes(products):
@@ -1031,7 +1162,7 @@ def build_lanes(products):
 
 def pace_map(products):
     """v1.12 사이트 → 플랫폼 묶음 — 쇼피파이 상품 .json 주소의 사이트 + PACE_EXTRA"""
-    pm = {urllib.parse.urlsplit(u).netloc: "shopify" for p in products if p["src"] != "nike" for u in p["urls"].values() if u.endswith(".json")}
+    pm = {urllib.parse.urlsplit(u).netloc: "shopify" for p in products for u in (p.get("urls") or {}).values() if u.endswith(".json")}
     pm.update(PACE_EXTRA)
     return pm
 
@@ -1064,7 +1195,7 @@ def main():
     codes = {p["id"]: p["code"] for p in PRODUCTS}
     # 품번이 바뀐 상품은 id가 같아도 다른 상품 — 이전 값·값 없음 기록을 쓰지 않음
     prev = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("code") == codes.get(it.get("id"))}
-    keys = {f"{p['id']} {cc}" for p in PRODUCTS for cc in (p["cc"] if p["src"] == "nike" else p["urls"])}
+    keys = {f"{p['id']} {cc}" for p in PRODUCTS for cc in ccs(p)}
     failed = {k: f for f in old.get("failed", []) if isinstance(f, dict) and (k := f"{f.get('id')} {f.get('cc')}") in keys
               and f.get("code", codes.get(f.get("id"))) == codes.get(f.get("id"))}   # 값 없음(이전 값도 없음) — 처음 실패한 날
     # v1.9 한도 사이트(HOST_CAP) 값마다 마지막으로 받으러 간 날(그 실행에서 사이트가 막혀 요청을 못 보낸 날 포함 — 그날 못 받은 것으로 셈) — 다시 받기에서 이번 주기에 아직 다시 받아 보지 않은 값을 먼저(한도로 미룬 날은 받으러 간 날이 아님)
@@ -1082,7 +1213,7 @@ def main():
             same = (pi.get("cc_code") or {}).get(cc) == (prod.get("cc_code") or {}).get(cc)
             return dict(pv.get(cc) or {}) if same and isinstance(pv.get(cc), dict) else {}
         def _capped(prod, cc):   # 한 실행 요청 한도가 있는 사이트(HOST_CAP)면 그 주소의 사이트
-            u = None if prod["src"] == "nike" else prod["urls"].get(cc)
+            u = None if _feed(prod, cc) else prod["urls"].get(cc)
             h = urllib.parse.urlsplit(u).netloc if u else ""
             return h if h in HOST_CAP else ""
         def _done(o):   # 다시 받기 — 이번 주기에 이미 받은 값(그대로 둠)
@@ -1095,7 +1226,7 @@ def main():
         if mode == "retry":
             for prod in PRODUCTS:
                 pi = prev.get(prod["id"]) or {}
-                for cc in (prod["cc"] if prod["src"] == "nike" else prod["urls"]):
+                for cc in ccs(prod):
                     h = _capped(prod, cc)
                     if h and _due(f"{prod['id']} {cc}") and not _done(_prev_o(pi, prod, cc)):
                         due_left[h] = due_left.get(h, 0) + 1
@@ -1126,6 +1257,8 @@ def main():
                 (full, extra), src_url = fetch_one(prod, cc)
                 if MK[cc][2] == "KRW" and full < 1000:   # 원화가 1,000원 아래면 단위가 다른 응답
                     raise RuntimeError(f"원화 값이 이상함({full:g})")
+                if extra.get("unsure") and not (o.get("p") and o.get("cur") == MK[cc][2]):   # v1.17 정가 확인 안 됨(on.ae 표시 없는 할인) — 이전 값이 있으면 아래 할인 가드
+                    raise RuntimeError(extra["unsure"])
             except Defer as e:   # v1.8 사이트 요청 한도 — 이전 값 그대로 두고 다음 실행에서(실패·이전 값 표시 아님)
                 n = {"defer": 1, "due_defer": int(due)}
                 log(f"  {key}: {'다음 실행에서' if mode == 'full' or due else '다음 주에'} 받음 — {e}")
@@ -1159,7 +1292,8 @@ def main():
             same = o.get("p") and o.get("cur") == cur
             hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
             seen_off = bool(same and (o.get("sh") or o.get("off_seen") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것 — 보류 전에 본 것은 off_seen으로 이어 감)
-            big = same and (full > o["p"] * JUMP or (prod["src"] == "nike" and full < o["p"] / JUMP))
+            feed = _feed(prod, cc)   # v1.17 나이키 상품 정보 정가(fullPrice)만 — 나이키 두바이 페이지 값은 다른 몰처럼
+            big = same and (full > o["p"] * JUMP or (feed and full < o["p"] / JUMP))
             if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
                 n["hold"] = 1; held = True
                 o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
@@ -1168,7 +1302,7 @@ def main():
                 if seen_off:
                     o["off_seen"] = True
                 note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
-            elif (same and not big and prod["src"] != "nike" and full < o["p"] * 0.995
+            elif (same and not big and not feed and full < o["p"] * 0.995
                   and _days(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
                 o.update(obs=full, obs_date=td, sale=True, url=src_url)
                 for k in ("stale_since", "why", "cand", "cand_date", "off_seen"): o.pop(k, None)
@@ -1194,7 +1328,7 @@ def main():
             c = _ctx()
             for prod in ln["prods"]:
                 pi = prev.get(prod["id"]) or {}
-                for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
+                for cc in ccs(prod):
                     if _STOP.is_set():
                         return False
                     c.buf = []
@@ -1247,7 +1381,7 @@ def main():
         for prod in PRODUCTS:   # PRODUCTS 순서로 합침
             pi = prev.get(prod["id"]) or {}
             m, b = {}, bt.setdefault(prod["brand"], [0, 0])
-            for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
+            for cc in ccs(prod):
                 key = f"{prod['id']} {cc}"
                 out = res.get(key)
                 if out is None:   # 묶음이 시간 안에 안 끝나 못 받은 값 — 시간 초과와 같게(이미 받은 값·한도 미룸은 예전 차례대로)
@@ -1307,7 +1441,7 @@ def main():
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
            "cfg": cfg if mode else old.get("cfg"),
            "status": "ok" if not stale else "kept", "items": items, "failed": list(failed.values()), "host_try": htry,
-           "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice · 미국은 판매세 별도, 그 밖은 부가세 포함"}
+           "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"}
     if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
     with open(OUT, "w", encoding="utf-8") as f:

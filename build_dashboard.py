@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.29: (대표 지시 2026-11-03 '두바이 추가해주세요') 해외 정가에 두바이 열(UAE 공식몰 · 디르함 AED — price_fetch v1.17 나이키·푸마·언더아머·온러닝 ·
+  fetch_data v4.20 달러 환율 ÷ 3.6725) — PR_ORD·PR_CC·PR_SYM·_partial ccn·FX_LBL · 착지원가는 현지 부가세 5%(LAND.lvat)만 넣고 항공 운임은 없음
+  (관세청 항공 수입 운임 파일에 중동 출발지가 없음 — 칸 '운임 없음' · 추천·가장 싼 곳은 운임을 넣은 나라끼리라 빠짐 · 비슷한 출발지로 대신하지 않음 ·
+  나라 평균·브랜드 줄도 운임 빼고 계산이라 그 열 머리 칸에 '운임 없음' 한 번 + 항공 운임 출처 줄 끝에 '두바이 운임 없음') ·
+  읽는 법(부가세 5% 포함 · 운임 자료 없음 · 나이키 두바이는 공식몰 페이지)·적용 환율 줄 문구
 v33.28: (대표 지시 2026-10-30 '모바일에서 앱 화면 수정' · 결정 'A안으로') A안 다듬기 — 흰 종이·잉크·파랑 하나는 그대로, 휴대폰 6개 화면 정리 ·
   기반: 글자 단계 13·15·17·22·28 · 고른 칩·탭은 잉크 채움 · 자료 상태 꼬리표는 회색(이전 값만 주황 점) · 표시용 꼬리표는 테두리 없는 회색 · 화면 테마 자동(기기 설정)·밝게·어둡게 ·
   오늘 = 머리 상태 단추(갱신 시각 · 지연 n · 일부 실패 n → 수집 상태 — 맺음 줄은 Claude 사용액만) · ① 지금 검토를 매입 점수와 묶고 같은 본사는 한 줄(누르면 점검표에서 그 본사) ·
@@ -3762,7 +3767,7 @@ function buildKR(){
 /* ── 더보기 (v31): 메뉴 · 환율 · 해외직구 · 수집 상태 ── */
 let MORE_VIEW=null, CB_CAT='fashion';
 const FX_ALERT=['JPY','EUR','USD'];
-const FX_LBL={JPY:'엔(100엔)',EUR:'유로',USD:'달러',GBP:'파운드',BRL:'브라질 헤알',CHF:'스위스 프랑',CNY:'위안',HKD:'홍콩 달러',SAR:'사우디 리얄'};
+const FX_LBL={JPY:'엔(100엔)',EUR:'유로',USD:'달러',GBP:'파운드',BRL:'브라질 헤알',CHF:'스위스 프랑',CNY:'위안',HKD:'홍콩 달러',SAR:'사우디 리얄',AED:'UAE 디르함'};
 const FX_SH={JPY:'엔',EUR:'유로',USD:'달러'};
 const fxMul=c=>c==='JPY'?100:1;
 const wonR=v=>Math.round(v).toLocaleString('ko-KR');
@@ -4852,9 +4857,10 @@ function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 �
 }
 /* ── v33.14 해외 정가 비교(브랜드 상세 하단) — docs/prices.json(price_fetch v1)의 대표 상품 정가(할인 전)를 오늘 환율로 원화 환산.
    한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈(+) 파랑 · 쌈(−) 짙은 주황 · 환율이 없는 통화는 그 나라 줄을 '환율 없음'
-   나라는 price_fetch MK와 같게(나라를 늘리면 PR_ORD·PR_CC·PR_SYM과 파이썬 _partial의 ccn도) ── */
-const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코'}, PR_ORD=['US','GB','DE','JP','MX'];
-const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$'};
+   나라는 price_fetch MK와 같게(나라를 늘리면 PR_ORD·PR_CC·PR_SYM·LAND(lvat · 운임 출발지가 있으면 fcol — 없으면 '운임 없음')와 파이썬 _partial의 ccn ·
+   weekly_digest CC_KO·CUR_SYM도 · 새 통화면 fetch_data FX·FX_LBL도) ── */
+const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코',AE:'두바이'}, PR_ORD=['US','GB','DE','JP','MX','AE'];   // v33.29 두바이 = UAE 공식몰(price_fetch v1.17)
+const PR_SYM={USD:'$',GBP:'£',EUR:'€',JPY:'¥',MXN:'MX$',AED:'AED '};
 const prLocal=(p,cur)=>cur==='KRW'?wonR(p)+'원':(PR_SYM[cur]||cur+' ')+(p>=1000||cur==='JPY'?Math.round(p).toLocaleString('ko-KR'):(+p).toFixed(p%1?2:0));
 const prFxA=cur=>{ const d=((DATA.fx||{})[cur]||{}).stale_since; return d?tagA(`이전 값(${mdOf(d)})`,`환율 ${d} 수집분 — 그 뒤 환율 수집 실패`):''; };
 const prGapTxt=g=>Math.abs(g)<0.5?'거의 같음':`${Math.abs(Math.round(g))}% ${g>0?'비쌈':'쌈'}`;
@@ -4890,8 +4896,9 @@ function prExTxt(o,who){   // 브랜드 상세 나라 줄 아래 전체 너비 �
   return a.join(' · ');
 }
 /* v33.23 착지원가(대표 지시 2026-10-26 6번) = (현지 가격[정가 또는 지금 할인가 · 현지 부가세 포함/환급] × 환율 + 항공 운임 원/kg × 1.5kg) × 1.13 × 1.10
-   항공 운임 = 관세청 항공 수입 운임 최근 달(logistics.json kcs_air_import) — 영국은 유럽연합, 멕시코는 미국 값으로 대신 */
-const LAND={duty:0.13, vat:0.10, kg:1.5, lvat:{US:0,GB:0.20,DE:0.19,JP:0.10,MX:0.16}, fcol:{US:'미국',GB:'유럽연합',DE:'유럽연합',JP:'일본',MX:'미국'}};
+   항공 운임 = 관세청 항공 수입 운임 최근 달(logistics.json kcs_air_import) — 영국은 유럽연합, 멕시코는 미국 값으로 대신
+   v33.29 두바이는 fcol 없음(관세청 파일에 중동 출발지가 없음 — 비슷한 출발지로 대신하지 않음) → 운임 빼고 계산 · 칸 '운임 없음' · 추천·가장 싼 곳에서 빠짐 */
+const LAND={duty:0.13, vat:0.10, kg:1.5, lvat:{US:0,GB:0.20,DE:0.19,JP:0.10,MX:0.16,AE:0.05}, fcol:{US:'미국',GB:'유럽연합',DE:'유럽연합',JP:'일본',MX:'미국'}};
 function landFreight(){   // {cc: 원/kg, ym: {cc: 기준 달}} — 열마다 가장 최근 값
   const a=LOGI&&LOGI.kcs_air_import, out={ym:{}};
   if(!a||!Array.isArray(a.rows)||!Array.isArray(a.cols)) return out;
@@ -4924,8 +4931,8 @@ function prFxHtml(curs){   // v33.15 적용 환율 줄(대표 지시 10/22) — 
     return `${jp?'100엔':(f.name||c)} ${v.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원${f.stale_since?`(${mdOf(f.stale_since)} 값 — 그 뒤 수집 실패)`:(!as1&&f.asof?`(${mdOf(f.asof)})`:'')}`; };
   return `<p class="bd-pr-src bd-pr-fx">적용 환율${as1?`(${mdOf(as1)} 종가)`:''} ${esc(curs.map(one).join(' · '))}</p>`;
 }
-const LAND_WHY='착지원가 보기 = 그 나라에서 사 와 한국에 들여올 때 대략의 원가: (현지 가격 × 적용 환율 + 항공 운임 kg당 × 1.5kg) × 관세 1.13 × 수입 부가세 1.10. 관세 13% = 신발·의류 기본세율(FTA 협정 세율은 원산지가 그 나라여야 해 베트남·중국 생산품은 대개 해당 없음 — 상품마다 다를 수 있음), 부가세는 (물건값 + 운임 + 관세)에. 항공 운임 = 관세청 항공 수입 운임(kg당, 최근 달 — 영국은 유럽연합, 멕시코는 미국 값으로 대신) · 1.5kg = 신발 한 켤레 박스 기준(옷은 더 가벼움). 현지 가격은 정가 기준 또는 지금 할인가(가장 싼 색상·사이즈) 기준, 현지 부가세(영국 20 · 독일 19 · 일본 10 · 멕시코 16%)는 포함 또는 수출 환급 가정으로 뺌(미국은 판매세 별도라 그대로). 마진 = 1 − 착지원가 ÷ 한국 정가(둘 다 부가세 포함) — 국내 배송·통관 수수료·카드·판매 수수료는 넣지 않음. 추천 = 착지원가가 가장 싼 나라(운임을 넣어 계산한 나라끼리 — 운임 자료가 없는 나라는 칸에 \'운임 없음\'). 지금 할인가 기준에서 \'할인가 미확인\' = 할인 중이지만 할인가를 아직 받지 못해 정가로 계산. 목표 마진은 이 기기(브라우저)에만 저장되고 저장소·대시보드 파일에는 들어가지 않음.';
-const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(브랜드 상세 나라 줄 아래에 그 값·확인한 날 — 표는 할인 전 정가 · 해외 정가는 주 1회 수집이라 그사이 바뀐 할인은 다음 수집 때) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(브랜드 상세에 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함.';
+const LAND_WHY='착지원가 보기 = 그 나라에서 사 와 한국에 들여올 때 대략의 원가: (현지 가격 × 적용 환율 + 항공 운임 kg당 × 1.5kg) × 관세 1.13 × 수입 부가세 1.10. 관세 13% = 신발·의류 기본세율(FTA 협정 세율은 원산지가 그 나라여야 해 베트남·중국 생산품은 대개 해당 없음 — 상품마다 다를 수 있음), 부가세는 (물건값 + 운임 + 관세)에. 항공 운임 = 관세청 항공 수입 운임(kg당, 최근 달 — 영국은 유럽연합, 멕시코는 미국 값으로 대신 · 두바이는 그 파일에 중동 출발지가 없어 운임 없음) · 1.5kg = 신발 한 켤레 박스 기준(옷은 더 가벼움). 현지 가격은 정가 기준 또는 지금 할인가(가장 싼 색상·사이즈) 기준, 현지 부가세(영국 20 · 독일 19 · 일본 10 · 멕시코 16 · 두바이 5%)는 포함 또는 수출 환급 가정으로 뺌(미국은 판매세 별도라 그대로). 마진 = 1 − 착지원가 ÷ 한국 정가(둘 다 부가세 포함) — 국내 배송·통관 수수료·카드·판매 수수료는 넣지 않음. 추천 = 착지원가가 가장 싼 나라(운임을 넣어 계산한 나라끼리 — 운임 자료가 없는 나라(두바이)는 칸·머리 칸에 \'운임 없음\'이고 추천·가장 싼 곳에서 빠짐 — 그 열의 나라 평균·브랜드 줄 마진도 운임을 빼고 계산해 다른 나라보다 높게 나옴). 지금 할인가 기준에서 \'할인가 미확인\' = 할인 중이지만 할인가를 아직 받지 못해 정가로 계산. 목표 마진은 이 기기(브라우저)에만 저장되고 저장소·대시보드 파일에는 들어가지 않음.';
+const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈(파랑) = 한국 정가가 더 높음, 쌈(주황) = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice — 두바이는 상품 정보에 없어 공식몰 페이지의 할인 전 가격), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(브랜드 상세 나라 줄 아래에 그 값·확인한 날 — 표는 할인 전 정가 · 해외 정가는 주 1회 수집이라 그사이 바뀐 할인은 다음 수집 때) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(브랜드 상세에 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함(두바이 = UAE 공식몰 · 부가세 5% · 디르함은 달러 고정 3.6725로 환산).';
 // v33.18 브랜드 상세 해외 정가 — 펼친 상품 칸(브랜드 → 상품 id 모음). 뒤로 와서 다시 그려도 같은 칸이 열려 있어 되살린 스크롤 위치가 맞음
 const PR_OPEN={};
 document.addEventListener('toggle',e=>{ const d=e.target; if(!d||!d.classList||!d.classList.contains('bd-prd')) return;
@@ -5040,7 +5047,8 @@ function pmSrcHtml(D){   // 출처 한 줄 — 쓴 통화만(나라 순서) · �
   if(D.land){   // 적용한 항공 운임(관세청 항공 수입 · kg당) — 출발지별 한 번 · 기준 달이 모두 같으면 끝에 한 번
     const F=D.F||{ym:{}}, seen=new Set(), cf=D.ccs.filter(cc=>F[cc]!=null&&!seen.has(LAND.fcol[cc])&&seen.add(LAND.fcol[cc]));
     const ym=[...new Set(cf.map(cc=>F.ym[cc]).filter(Boolean))], y1=ym.length===1;
-    h+=`<p class="pm-src">${cf.length?`항공 운임 kg당 ${esc(cf.map(cc=>`${LAND.fcol[cc]} ${wonR(F[cc])}원${!y1&&F.ym[cc]?`(${F.ym[cc].replace('-','.')})`:''}`).join(' · '))}${y1?` (${esc(ym[0].replace('-','.'))})`:''} × ${LAND.kg}kg`:'항공 운임 자료 없음 — 운임 빼고 계산'}</p>`;
+    const nf=cf.length?D.ccs.filter(cc=>F[cc]==null).map(cc=>PR_CC[cc]):[];   // v33.29 운임 자료가 없는 나라(두바이) — 그 열은 운임 빼고 계산
+    h+=`<p class="pm-src">${cf.length?`항공 운임 kg당 ${esc(cf.map(cc=>`${LAND.fcol[cc]} ${wonR(F[cc])}원${!y1&&F.ym[cc]?`(${F.ym[cc].replace('-','.')})`:''}`).join(' · '))}${y1?` (${esc(ym[0].replace('-','.'))})`:''} × ${LAND.kg}kg${nf.length?` · ${esc(nf.join(' · '))} 운임 없음(빼고 계산)`:''}`:'항공 운임 자료 없음 — 운임 빼고 계산'}</p>`;
   }
   return h;
 }
@@ -5098,11 +5106,12 @@ function prMxHtml(D){
     return `<tr tabindex="0" data-brand="${esc(x.it.brand)}"${land&&x.hit?' class="pm-hit"':''}><th scope="row"><span class="pm-nm">${esc(x.it.name)}</span>${x.it.code?`<span class="pm-sub">${esc(x.it.code)}</span>`:''}`
       +`<span class="pm-kr">한국 ${k?val(wonR(k.p),!land&&x.lo==='KR'):no(x,'KR')}</span>${k?staleDs(k.stale_since)+(land?'':pmChg(k))+prSaleA(k):''}</th>`
       +(land?`<td>${rec(x)}</td>`:'')+ccs.map(cc=>cell(x,cc)).join('')+(land?'':`<td>${x.avg==null?na:pmG(x.avg)}</td>`)+`</tr>`; };
+  const noFr=cc=>land&&D.F&&D.F[cc]==null&&ccs.some(c=>D.F[c]!=null);   // v33.29 운임 자료가 없는 열(두바이) — 나라 평균·브랜드 줄도 운임 빼고 계산이라 머리 칸에 한 번
   const fxBad=cc=>{ if(loc) return ''; const c=pmCur(D,cc), d=c&&(FXD[c]||{}).stale_since; return d?dsBad(`환율 ${mdOf(d)}`,`환율 ${d} 수집분 — 그 뒤 환율 수집 실패`):''; };   // 환율이 이전 값이면 그 나라 머리 칸에(원화 칸마다 붙이지 않음)
   let h=`<div id="prMx"><div class="pm-capr"><p class="pm-cap"><b class="pm-lok">굵은 밑줄</b> = ${land?'착지원가가 가장 싼 나라':'원화로 가장 싼 곳'}</p>${pmSortHtml(land)}</div>`
     +`<div class="pm-tw a-fade"><div class="tblwrap" tabindex="0" role="region" aria-label="${sel?esc(sel)+' ':''}상품별 나라 ${land?'착지원가':'정가'} 표 — 가로·세로로 넘겨 봄"><table class="pm-tbl">`
     +`<thead><tr><th scope="col"><span class="pm-h">상품</span>${ccs.length>1?`<span class="pm-more" aria-hidden="true">${ccs.length}개국 ›</span>`:''}</th>${land?'<th scope="col">추천</th>':''}`
-    +ccs.map(cc=>`<th scope="col">${PR_CC[cc]}${fxBad(cc)}</th>`).join('')+(land?'':'<th scope="col">평균</th>')+`</tr></thead>`;
+    +ccs.map(cc=>`<th scope="col">${PR_CC[cc]}${noFr(cc)?'<span class="pm-sale" title="운임 자료 없음 — 이 열(나라 평균·브랜드 줄 포함)은 항공 운임 빼고 계산">운임 없음</span>':''}${fxBad(cc)}</th>`).join('')+(land?'':'<th scope="col">평균</th>')+`</tr></thead>`;
   if(land){   // 맨 위 줄 = 나라별 평균 마진(상품 수 · 추천 수) · 추천 열 = 추천 나라 마진 평균
     const bms=L.map(x=>x.bm).filter(v=>v!=null), ab=prAvg(bms);
     h+=`<tbody><tr class="pm-avg"><th scope="row"><span class="pm-nm">${sel?esc(sel)+' 평균':'나라 평균'}</span><span class="pm-sub">마진</span></th><td>${ab==null?na:pmM(ab)+`<span class="pm-n">${bms.length}개</span>`}</td>`
@@ -5141,7 +5150,7 @@ function morePriceHtml(){
   h+=`<div id="prLand" class="pm-land"${L_?'':' hidden'}>${seg('lb',PR_LB,'착지원가 가격 기준',[['list','정가 기준'],['now','지금 할인가 기준']])}${seg('lv',PR_LV,'현지 부가세',[['in','현지 부가세 포함'],['out','현지 부가세 환급 가정']])}`
     +`<label class="pm-tgt">목표 마진 <input type="number" inputmode="decimal" min="0" max="90" step="1" placeholder="예: 30" value="${PR_TGT??''}" oninput="prTgt(this.value)" aria-label="목표 마진(%) — 이 기기에만 저장"> % <span class="na">이 기기에만 저장</span></label></div>`;
   h+=prMxHtml(D);
-  h+=why(PR_WHY+' '+LAND_WHY+' 한국 정가 = 상품 칸 이름 아래 · 나라 칸 아래 % = 한국 정가가 그 나라보다 비싼지·싼지(착지원가 보기는 마진 = 1 − 착지원가 ÷ 한국 정가) · 굵은 밑줄 = 원화로(착지원가 보기는 착지원가가) 가장 싼 곳(한국 포함 · 착지원가 보기는 해외끼리) · 현지 정가 보기 = 할인 전 현지 통화 · 위 출처 줄의 환율 = 적용 환율(원화 · 최근 종가 — $ 달러 · £ 파운드 · € 유로 · ¥100 = 100엔 · MX$ 멕시코 페소 · 이전 값이면 그 날짜, 그 나라 머리 칸에도) · 상품 = 브랜드 공식몰 대표 상품 · 행을 누르면 브랜드 상세. 위 칩으로 브랜드를 고르면 그 브랜드만, 전체는 브랜드별로 묶어 보여 줌(브랜드 줄 = 그 브랜드 상품들의 나라별 단순 평균). 정렬(⇅) = 브랜드순(가나다) · 한국 비싼 순 · 한국 싼 순 — 브랜드 평균으로 브랜드 순서를, 그 안에서 상품 평균으로 상품 순서를 정함(착지원가 보기는 추천 나라 마진 큰 순·작은 순). 평균 열 = 그 상품 나라별 차이의 단순 평균, 맨 위 평균 줄 = 그 나라 상품들의 단순 평균과 비교한 상품 수(나라마다 상품 수가 달라 나라끼리 견줄 때는 개수도 봄). 표는 상자 안에서 가로·세로로 넘김(첫 열·나라 머리 줄 고정 · 오른쪽 흐림 = 나라가 더 있음). — = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름), 값 없음 = 수집 실패(이전 값도 없음). 접속을 막는 몰(아디다스·뉴발란스·아식스·크록스 한국·어그 등)의 브랜드는 넣지 않음.');
+  h+=why(PR_WHY+' '+LAND_WHY+' 한국 정가 = 상품 칸 이름 아래 · 나라 칸 아래 % = 한국 정가가 그 나라보다 비싼지·싼지(착지원가 보기는 마진 = 1 − 착지원가 ÷ 한국 정가) · 굵은 밑줄 = 원화로(착지원가 보기는 착지원가가) 가장 싼 곳(한국 포함 · 착지원가 보기는 해외끼리) · 현지 정가 보기 = 할인 전 현지 통화 · 위 출처 줄의 환율 = 적용 환율(원화 · 최근 종가 — $ 달러 · £ 파운드 · € 유로 · ¥100 = 100엔 · MX$ 멕시코 페소 · AED UAE 디르함 · 이전 값이면 그 날짜, 그 나라 머리 칸에도) · 상품 = 브랜드 공식몰 대표 상품 · 행을 누르면 브랜드 상세. 위 칩으로 브랜드를 고르면 그 브랜드만, 전체는 브랜드별로 묶어 보여 줌(브랜드 줄 = 그 브랜드 상품들의 나라별 단순 평균). 정렬(⇅) = 브랜드순(가나다) · 한국 비싼 순 · 한국 싼 순 — 브랜드 평균으로 브랜드 순서를, 그 안에서 상품 평균으로 상품 순서를 정함(착지원가 보기는 추천 나라 마진 큰 순·작은 순). 평균 열 = 그 상품 나라별 차이의 단순 평균, 맨 위 평균 줄 = 그 나라 상품들의 단순 평균과 비교한 상품 수(나라마다 상품 수가 달라 나라끼리 견줄 때는 개수도 봄). 표는 상자 안에서 가로·세로로 넘김(첫 열·나라 머리 줄 고정 · 오른쪽 흐림 = 나라가 더 있음). — = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름), 값 없음 = 수집 실패(이전 값도 없음). 접속을 막는 몰(아디다스·뉴발란스·아식스·크록스 한국·어그 등)의 브랜드는 넣지 않음.');
   return h+`</div>`;
 }
 
@@ -5992,7 +6001,7 @@ def _partial(fn, d):
             notes.append("값 없음 " + ", ".join(bad))
         notes += _conn_note(d.get("dgk_conn"), "공공데이터포털")   # v33.10 logistics_fetch v1.3
     elif fn == "prices.json":   # v33.14 price_fetch v1 — 이전 값(stale_since)·값 없음(failed)인 상품·나라
-        ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코"}
+        ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코", "AE": "두바이"}
         kept = [f"{it.get('brand', '')} {it.get('name', '')} {ccn.get(cc, cc)}" for it in d.get("items") or [] if isinstance(it, dict)
                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since")]
         bad = [f"{f.get('brand', '')} {f.get('name', '')} {ccn.get(f.get('cc'), f.get('cc'))}" for f in d.get("failed") or [] if isinstance(f, dict)]
