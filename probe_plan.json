@@ -1,18 +1,11 @@
 [
- {"t": "aepage", "items": [
-   {"code": "1326413", "hint": "ua tech", "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html", "frag": true},
-   {"code": "1326413", "hint": "ua tech", "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-408.html"},
-   {"code": "1372586", "hint": "heatgear", "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-001.html"},
-   {"code": "1372586", "hint": "heatgear", "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-100.html"},
-   {"code": "1384672", "hint": "hustle", "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html"},
-   {"code": "1328495", "hint": "ua tech", "url": "https://www.underarmour.ae/en/ua-tech/UA1328495-001.html"},
-   {"code": "1326799", "hint": "left chest", "url": "https://www.underarmour.ae/en/mens-ua-sportstyle-left-chest-short-sleeve-shirt/UA1326799-001.html"},
-   {"code": "1326799", "hint": "left chest", "url": "https://www.underarmour.ae/en/ua-left-chest-logo/UA1326799-100.html"},
-   {"code": "1373880", "hint": "fleece", "url": "https://www.underarmour.ae/en/mens-ua-essential-fleece-hoodie/UA1373880-012.html"},
-   {"code": "1361521", "hint": "heatgear", "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html"},
-   {"code": "BQ6806-100", "hint": "blazer", "url": "https://www.nike.ae/en/blazer-mid-77-vintage-mens-shoes/NKBQ6806-100.html", "frag": true},
-   {"code": "DM4044-108", "hint": "cortez", "url": "https://www.nike.ae/en/cortez-leather-mens-shoes/NKDM4044-108.html"},
-   {"code": "553558-161", "hint": "air jordan 1 low", "url": "https://www.nike.ae/en/air-jordan-1-low-mens-shoes/NK553558-161.html"}]},
- {"t": "dump", "per_rx": 1, "pad": 300, "ld_chars": 3000, "ctx": ["c_listPrice"],
-  "urls": ["https://ae.puma.com/ae/en/pd/deviate-nitrotm-elite-4-running-shoes-men/312127.html", "https://ae.puma.com/ae/en/pd/deviate-nitro-elite-trail-running-shoes-men/310034.html"]}
+ {"t": "aescope", "items": [
+   {"code": "1361521", "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html", "frag_at": [0, 2, 3, 4], "pre": 1500, "post": 700},
+   {"code": "1372586", "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-100.html"},
+   {"code": "1384672", "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html", "frag_at": [0], "pre": 1500, "post": 700},
+   {"code": "1326413", "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html"},
+   {"code": "IF0670-002", "url": "https://www.nike.ae/en/air-max-90-mens-shoes/NKIF0670-002.html"},
+   {"code": "CW2288-111", "url": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html"}]},
+ {"t": "dump", "per_rx": 1, "pad": 600, "ld_chars": 200, "ctx": ["class=\"prices js-gtm-price"],
+  "urls": ["https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html", "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html"]}
 ]

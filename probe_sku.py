@@ -254,6 +254,41 @@ def shopstats(j):   # 쇼피파이 /products.json 쪽 — 할인 표시(compare_
                 diff.append({"h": p.get("handle"), "prices": prices[:6], "cmp": sorted({str(v.get("compare_at_price")) for v in vs})[:4]})
         out("SHOPSTATS", url=u, products=len(ps), variants=n_var, with_compare_at=n_cmp, multi_price=len(diff), sample=diff[: j.get("show", 25)])
 
+MARK = r'product-tile|c-product-tile|b-product-tile|recommend|einstein|carousel|b-pdp__priceline|product-detail__priceline|b-microproduct__price|data-gtm-onload="pdpView"|js-product-detail|quickview|minicart|set-item|bundle'
+def aescope(j):   # 취소선 정가가 어느 칸(이 상품 가격 칸 · 추천 상품 칸)에 있는지 + 이 상품 GTM 상세(data-gtm-enhance-commerce-details)
+    for it in j["items"]:
+        if left() < 60: out("TIMEOUT"); return
+        u, code = it["url"], it["code"]
+        try:
+            r = pf.get(u); h = r.content.decode("utf-8", "replace")
+        except Exception as e:
+            out("AEERR", url=u[-90:], err=f"{type(e).__name__}: {str(e)[:200]}"); continue
+        main = [m.start() for m in re.finditer(r'data-variation-group-id="', h)]
+        marks = {}
+        for m in re.finditer(MARK, h):
+            marks.setdefault(m.group(0), []).append(m.start())
+        rows = []
+        for m in re.finditer(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*?content="([0-9][0-9.,]*)"', h):
+            back = h[max(0, m.start() - 4000):m.start()]
+            near = [(x.group(0), m.start() - (max(0, m.start() - 4000) + x.start())) for x in re.finditer(MARK, back)][-3:]
+            k = h[max(0, m.start() - 600):m.start()].rfind('class="sales')
+            seg = h[max(0, m.start() - 600):m.start()][k:] if k >= 0 else h[m.end():m.end() + 900]
+            sm = re.search(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*?content="([0-9][0-9.,]*)"', seg, re.S)
+            rows.append({"at": m.start(), "lp": m.group(1), "sv": sm.group(1) if sm else None, "near": near})
+        det = []
+        for m in re.finditer(r'data-variation-group-id="([^"]+)"[^>]*?data-gtm-enhance-commerce-details="([^"]*)"', h, re.S):
+            try:
+                d = json.loads(html.unescape(m.group(2)))
+                prods = (((d.get("ecommerce") or {}).get("detail") or {}).get("products") or [])
+                det.append({"vg": m.group(1), "n": len(prods), "p0": {k: prods[0].get(k) for k in ("item_id", "item_variant_id", "price", "item_original_price", "discount", "item_name")} if prods else None})
+            except Exception as e:
+                det.append({"vg": m.group(1), "err": str(e)[:80], "raw": html.unescape(m.group(2))[:300]})
+        out("SCOPE", url=urllib.parse.unquote(u)[-80:], code=code, kb=len(h) // 1000, main=main[:3], first_marks={k: v[:4] for k, v in marks.items()}, strikes=rows[:12], detail=det[:2])
+        for k in it.get("frag_at", []):
+            if k < len(rows):
+                a = rows[k]["at"]
+                out("FRAGAT", url=u, i=k, body=h[max(0, a - it.get("pre", 1800)): a + it.get("post", 900)])
+
 def robots(j):   # 사이트의 robots.txt 사이트맵 줄
     for host in j["hosts"]:
         out("ROBOTS", host=host, sitemaps=sitemaps(host))
@@ -335,5 +370,5 @@ if __name__ == "__main__":
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
         {"codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson, "jsfollow": jsfollow, "rxpage": rxpage, "robots": robots,
-         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats}[j["t"]](j)
+         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats, "aescope": aescope}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
