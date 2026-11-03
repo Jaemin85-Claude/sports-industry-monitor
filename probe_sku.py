@@ -284,6 +284,11 @@ def aescope(j):   # 취소선 정가가 어느 칸(이 상품 가격 칸 · 추�
             except Exception as e:
                 det.append({"vg": m.group(1), "err": str(e)[:80], "raw": html.unescape(m.group(2))[:300]})
         out("SCOPE", url=urllib.parse.unquote(u)[-80:], code=code, kb=len(h) // 1000, main=main[:3], first_marks={k: v[:4] for k, v in marks.items()}, strikes=rows[:12], detail=det[:2])
+        if it.get("tag"):
+            for m in list(re.finditer(r'<div[^>]*?data-variation-group-id="[^"]*"[^>]*>', h, re.S))[:1]:
+                out("TAG", url=u, body=m.group(0)[:9000])
+            i = h.find('class="prices js-gtm-price')
+            out("MAINPRICE", url=u, body=h[max(0, i - 1500): i + 1800] if i >= 0 else None)
         for k in it.get("frag_at", []):
             if k < len(rows):
                 a = rows[k]["at"]

@@ -1,11 +1,10 @@
 [
  {"t": "aescope", "items": [
-   {"code": "1361521", "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html", "frag_at": [0, 2, 3, 4], "pre": 1500, "post": 700},
-   {"code": "1372586", "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-100.html"},
-   {"code": "1384672", "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html", "frag_at": [0], "pre": 1500, "post": 700},
-   {"code": "1326413", "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html"},
-   {"code": "IF0670-002", "url": "https://www.nike.ae/en/air-max-90-mens-shoes/NKIF0670-002.html"},
-   {"code": "CW2288-111", "url": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html"}]},
- {"t": "dump", "per_rx": 1, "pad": 600, "ld_chars": 200, "ctx": ["class=\"prices js-gtm-price"],
-  "urls": ["https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html", "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html"]}
+   {"code": "1361521", "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html", "tag": true, "frag_at": [1, 2, 3], "pre": 1800, "post": 900},
+   {"code": "1384672", "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html", "tag": true, "frag_at": [0], "pre": 1800, "post": 900},
+   {"code": "1326413", "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html", "tag": true},
+   {"code": "IF0670-002", "url": "https://www.nike.ae/en/air-max-90-mens-shoes/NKIF0670-002.html", "tag": true},
+   {"code": "CW2288-111", "url": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html", "tag": true}]},
+ {"t": "dump", "per_rx": 1, "pad": 500, "ld_chars": 6000, "ctx": ["c_listPrice", "Style:<!-- --> <!-- -->399781"],
+  "urls": ["https://ae.puma.com/ae/en/pd/suede-classic-sneakers-unisex/399781.html"]}
 ]
