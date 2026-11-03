@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.20: (대표 지시 2026-11-03 '두바이 추가해주세요') UAE 디르함(AED) 추가 — 해외 정가 비교(price_fetch v1.17)의 두바이 정가를 원화로 바꾸려고.
+      리얄과 같이 달러에 고정(1달러 = 3.6725디르함)이라 직접 조회 없이 달러 환율 ÷ 3.6725(값만 저장 · 1% 칸 알림 없음 · 달러가 이전 값이면 디르함도)
 v4.19: (대표 지시 2026-10-23 '1,2 진행') 야후가 새 분기를 늦게 올리면 SEC 공시(XBRL companyfacts)의 더 새 분기로 분기 매출·재고 칸을 채움
       (나이키 26.08 분기 — 10/1 발표·10-Q 제출 뒤에도 야후는 26.05까지 · 화면 '새 실적 반영 대기'). 미국 상장(티커에 '.' 없음)·재무 통화 USD,
       야후 최신 분기가 끝난 지 SEC_LAG(120)일 넘은 종목만 요청 · SEC 분기가 야후보다 45일 넘게 새로울 때만 바꿈. 매출 = 같은 태그의 3개월 값
@@ -168,8 +170,10 @@ FX = {
     "HKD": ["홍콩 달러", "HKDKRW=X"],
     "SAR": ["사우디 리얄", None],    # v4.12 직접 조회 안 함(SARKRW=X 매일 404) — 달러 환율 ÷ 3.75
     "MXN": ["멕시코 페소", "MXNKRW=X"],   # v4.17 해외 정가(price_fetch) 멕시코 정가 원화 환산용
+    "AED": ["UAE 디르함", None],   # v4.20 해외 정가 두바이 정가 원화 환산용 — 직접 조회 안 함, 달러 환율 ÷ 3.6725
 }
 SAR_PEG = 3.75   # 1달러 = 3.75리얄(고정)
+PEG = {"SAR": SAR_PEG, "AED": 3.6725}   # v4.20 달러 고정 통화 → 1달러당 그 통화(1달러 = 3.6725디르함)
 # 1% 칸 알림 대상(v4.9) — 헤알 등은 값만 표시
 FX_ALERT = ["JPY", "EUR", "USD"]
 FX_AVG = ["GBP", "CHF"]   # v4.14 1년 평균 대비만(1% 칸 알림 없음) — 브랜드 점검표 원산지 통화 · v4.15 스위스 프랑(온러닝) 추가
@@ -712,12 +716,12 @@ def fetch_fx(prev_fx=None, prev_date=None):
     원화 직접 쌍이 비거나 이력이 1년이 안 되면 달러 경유(현지통화→달러 × 달러→원화)로 계산.
     v4.12: 수집 실패한 통화는 이전 data.json 값(1% 칸 알림 목록 포함)을 이어 쓰고 stale_since 표시
     — 알림 first_seen이 끊기지 않아 다음 날 같은 알림이 다시 나가지 않음. 감시 통화는 값을 받았어도 1% 칸 계산이
-    예외·자료 부족이면 실패로 보고 같은 방식(이전 값이 있을 때). 리얄은 직접 조회 없이 달러 ÷ 3.75"""
+    예외·자료 부족이면 실패로 보고 같은 방식(이전 값이 있을 때). 리얄은 직접 조회 없이 달러 ÷ 3.75 · v4.20 디르함은 달러 ÷ 3.6725"""
     prev_fx = prev_fx or {}
     out = {}
     usd = None
     for code, (name, tk) in FX.items():
-        if tk is None:      # 리얄: 아래에서 달러로 계산
+        if tk is None:      # 리얄·디르함: 아래에서 달러로 계산
             continue
         p_code = prev_fx.get(code) or {}
         try:
@@ -797,15 +801,16 @@ def fetch_fx(prev_fx=None, prev_date=None):
         if tk is not None and code not in out:
             keep_prev(code)
     u = out.get("USD") or {}
-    if u.get("rate"):
-        out["SAR"] = {"name": FX["SAR"][0], "rate": round(u["rate"] / SAR_PEG, 4),
-                      "yago": round(u["yago"] / SAR_PEG, 4) if u.get("yago") else None,
-                      "chg_pct": u.get("chg_pct"), "asof": u.get("asof"), "via": f"달러 고정 {SAR_PEG}"}
-        if u.get("stale_since"):     # 달러가 이전 값이면 리얄도 이전 값
-            out["SAR"]["stale_since"] = u["stale_since"]
-        print(f"  환율 SAR: {out['SAR']['rate']:,.2f}원 · 달러 고정 {SAR_PEG}으로 계산", flush=True)
-    else:
-        keep_prev("SAR")
+    for code, peg in PEG.items():   # v4.20 리얄·디르함 — 달러 환율 ÷ 고정 비율
+        if u.get("rate"):
+            out[code] = {"name": FX[code][0], "rate": round(u["rate"] / peg, 4),
+                         "yago": round(u["yago"] / peg, 4) if u.get("yago") else None,
+                         "chg_pct": u.get("chg_pct"), "asof": u.get("asof"), "via": f"달러 고정 {peg}"}
+            if u.get("stale_since"):     # 달러가 이전 값이면 리얄·디르함도 이전 값
+                out[code]["stale_since"] = u["stale_since"]
+            print(f"  환율 {code}: {out[code]['rate']:,.2f}원 · 달러 고정 {peg}으로 계산", flush=True)
+        else:
+            keep_prev(code)
     return {c: out[c] for c in FX if c in out}      # 순서는 FX 표 그대로
 
 

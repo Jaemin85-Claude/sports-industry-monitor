@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.16: (대표 지시 2026-11-03 '두바이 추가해주세요') '■ 해외 정가 변동'에 두바이(UAE 공식몰 · price_fetch v1.17) — 나라 이름 CC_KO·통화 표시 CUR_SYM(AED)
 v1.15: (대표 지시 2026-10-27 'A') '이번 주 새 본사 발언' 줄에 한 지역 이야기면 '중화권만(점수 제외)'(build_dashboard v33.24 — 판정 점수에서 뺌) ·
       판정 규칙 판(CHK_RULE)이 바뀐 주에는 '판정 기록은 m/d부터' 대신 '판정 규칙이 바뀌어(…) 그 전 기록과는 비교하지 않음'
 v1.14: (대표 지시 2026-10-26 '추천 순서대로' 5번 — 블프 전) '■ 해외 정가 변동' — 지난 7일 정가 변동(price_fetch v1.5 ph)·할인 시작·할인가
@@ -554,8 +555,8 @@ def inventory_warnings(data, kr, today=None, krf=None):
     return out, skipped
 
 
-CC_KO = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코"}
-CUR_SYM = {"KRW": "원", "USD": "$", "GBP": "£", "EUR": "€", "JPY": "¥", "MXN": "MX$"}
+CC_KO = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코", "AE": "두바이"}   # v1.16 두바이
+CUR_SYM = {"KRW": "원", "USD": "$", "GBP": "£", "EUR": "€", "JPY": "¥", "MXN": "MX$", "AED": "AED "}
 
 
 def _money(v, cur):

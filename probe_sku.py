@@ -131,15 +131,19 @@ def shopjson(j):   # 쇼피파이 몰 /products.json 쪽마다 → 상품 이름
             if j.get("show", True):
                 print("SP", json.dumps({"h": pr.get("handle"), "t": (pr.get("title") or "")[:60], "c": codes8[:3], "p": [vs[0].get("price"), vs[0].get("compare_at_price")] if vs else None,
                                         "ty": pr.get("product_type")}, ensure_ascii=False), flush=True)
-def tryp(j):   # 완성된 상품 정의(PRODUCTS 모양)로 나라별 정가 읽기 시험
-    for prod in j["prods"]:
-        for cc in (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])):
+def tryp(j):   # 완성된 상품 정의(PRODUCTS 모양)로 나라별 정가 읽기 시험 — "ids"면 이 브랜치 price_fetch의 PRODUCTS 그대로(나라는 "only" 또는 pf.ccs)
+    byid = {p["id"]: p for p in pf.PRODUCTS}
+    jobs = [(p, None) for p in j.get("prods", [])] + [(byid[i], it.get("only")) for it in j.get("ids", []) for i in it["ids"]]
+    for prod, only in jobs:
+        for cc in (only or (pf.ccs(prod) if hasattr(pf, "ccs") else (prod["cc"] if prod["src"] == "nike" else list(prod["urls"])))):
+            if cc not in pf.ccs(prod) if hasattr(pf, "ccs") else False: continue
             if left() < 30: out("TIMEOUT"); return
+            t = time.time()
             try:
                 (full, extra), src = pf.fetch_one(prod, cc)
-                out("OK", id=prod["id"], cc=cc, full=full, cur=pf.MK[cc][2], extra=extra)
+                out("OK", id=prod["id"], cc=cc, full=full, cur=pf.MK[cc][2], extra=extra, t=round(time.time() - t, 1), src=src[-80:])
             except Exception as e:
-                out("FAIL", id=prod["id"], cc=cc, err=f"{type(e).__name__}: {str(e)[:200]}")
+                out("FAIL", id=prod["id"], cc=cc, err=f"{type(e).__name__}: {str(e)[:200]}", t=round(time.time() - t, 1))
 def try_codes(j):   # 후보 품번을 나라별 주소로 price_fetch에 넣어 정가 읽기 시험
     cs = CODES.get(j.get("key", "x"), {})
     for cand in j["cands"]:
