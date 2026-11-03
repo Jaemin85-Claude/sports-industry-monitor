@@ -222,9 +222,11 @@ def aepage(j):   # 두바이 SFCC 상품 페이지(나이키·언더아머): pri
         orig = sorted(set(re.findall(r'item_original_price&quot;:([0-9.]+)', h)))[:5]
         style = re.findall(r'Style(?: #)?:\s*([A-Z0-9-]+)', h)
         member = re.findall(r'data-producttype-memberonly="([a-z]+)"', h)[:2]
+        avail = [a.rsplit("/", 1)[-1] for a in re.findall(r'"availability":"([^"]+)"', h)[:2]]
+        sold = bool(re.search(r'availability__out-of-stock|Sold out|Out of stock', h))
         vg = re.findall(r'data-variation-group-id="([^"]+)"', h)[:3]
         out("AE", url=urllib.parse.unquote(u)[-90:], final=r.url[-90:], status=r.status_code, code=code, kb=len(h) // 1000, chal=chal(h), pf=pp, ld_offers=offers[:4],
-            strike=sorted(lps), pairs=pairs[:4], gtm=gtm, orig=orig, style=sorted(set(style))[:6], code_in_style=code in style, member=member, vg=vg)
+            strike=sorted(lps), pairs=pairs[:4], gtm=gtm, orig=orig, style=sorted(set(style))[:6], code_in_style=code in style, member=member, vg=vg, avail=avail, sold=sold)
         if it.get("frag"):
             lds = [b for b in ld_blocks(h) if '"Product"' in b]
             i = h.find('class="prices'); 
