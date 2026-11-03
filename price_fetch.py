@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.16: (SKU 늘리기 7차 11/03 — 주 1회 정기 차례 · 대표 상시 지시 2026-10-26) 나이키 에어맥스 플러스·킬샷 2 레더(6개 나라) · 브룩스 글리세린 23·
+    고스트 맥스 4·캐스캐디아 20(남성 · 한국·일본) · 우포스 OOcloog+·OOmy Stride·OOahh Sport(한국·미국) — 상품 110개 · 값 430개(+24).
+    브룩스 한국 robots.txt 사이트맵은 카페24 데모 사이트(ecudemo…)라 첫 화면·목록 상품 번호 → 상품 페이지 prd_model 품번 · 일본 트레일 모델 품번은
+    BMM…(캐스캐디아 20 BMM4893 · 로드는 BRM…) · 우포스 OOahh Sport 블랙은 미국 몰에 FootJoy 콜라보뿐이라 두 몰에 다 있는 택티컬 그린 ·
+    드래곤디퓨전 새 모델(유벤투스백 W2BAS26023)은 글로벌 몰 사이트맵에 없어 이번엔 없음
 v1.15: (SKU 늘리기 6차 10/29 — 대표 '네 1번부터 진행해주세요') 아크테릭스 노반 LD 4 GTX·사일렌 2·크래그·컨실 트렉 부츠·노반 재킷(남성 · 5개 나라 같은 품번)
     — 상품 102개 · 값 406개(+25). 한국 몰은 목록 화면이 스크립트로 그려져 상품 번호가 페이지에 없음 → 공개 기획전 페이지(arcteryx.co.kr/lp)의
     상품 이미지 주소 products/{상품 번호}/S26_X0000{모델}에서 상품 번호를 찾아 상품 페이지 Model(KR) 품번으로 확인(몰 내부 API는 쓰지 않음) ·
@@ -210,6 +215,9 @@ PRODUCTS = [
     {"id": "nike-cortez", "brand": "나이키", "name": "코르테즈", "code": "DM4044-108", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
     {"id": "nike-aj1low", "brand": "나이키", "name": "에어 조던 1 로우", "code": "553558-161", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
     {"id": "nike-vomero5", "brand": "나이키", "name": "줌 보메로 5", "code": "BV1358-003", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
+    # v1.16 SKU 7차 — 6개 나라 product_feed 모두 같은 styleColor(11/03 · 정가 fullPrice — 킬샷 한국만 판매가 107,100)
+    {"id": "nike-airmaxplus", "brand": "나이키", "name": "에어맥스 플러스", "code": "604133-139", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # White/Black/Cool Grey/White
+    {"id": "nike-killshot2", "brand": "나이키", "name": "킬샷 2 레더", "code": "432997-107", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # Sail/Gum Yellow/Midnight Navy
     {"id": "puma-speedcat", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
         "US": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
@@ -466,6 +474,16 @@ PRODUCTS = [
     {"id": "brooks-hyperion3", "brand": "브룩스", "name": "하이페리온 3(남성)", "code": "1104651D", "cc_code": {"JP": "BRM4653"}, "src": "page", "hint": "하이페리온 3", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%ED%95%98%EC%9D%B4%ED%8E%98%EB%A6%AC%EC%98%A8-3%EC%98%A4%EC%9D%B4%EC%8A%A4%ED%84%B0-medium/583/",
         "JP": "https://brooksrunning.co.jp/products/brm4653-gry.json"}},
+    # v1.16 SKU 7차 — 한국 robots.txt 사이트맵은 카페24 데모 사이트(ecudemo…)라 첫 화면·목록에서 상품 번호 → 상품 페이지 prd_model 품번 · 일본 products.json 정가(compare_at 없음)
+    {"id": "brooks-glycerin23", "brand": "브룩스", "name": "글리세린 23(남성)", "code": "1104761D", "cc_code": {"JP": "BRM4763"}, "src": "page", "hint": "글리세린 23", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B8%80%EB%A6%AC%EC%84%B8%EB%A6%B0-23%EB%B8%94%EB%9E%99-medium/784/",   # prd_model 1104761D020 · 블프 판매가 139,300 → 소비자가 칸 199,000(11/03)
+        "JP": "https://brooksrunning.co.jp/products/brm4763-blk.json"}},
+    {"id": "brooks-ghostmax4", "brand": "브룩스", "name": "고스트 맥스 4(남성)", "code": "1104961D", "cc_code": {"JP": "BRM4963"}, "src": "page", "hint": "고스트 맥스 4", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-%EB%A7%A5%EC%8A%A4-4%EA%B7%B8%EB%A0%88%EC%9D%B4-medium/962/",   # 남성 보통 폭 검정이 없어 그레이(1104961D015 · 같은 품번 · 색과 상관없이 같은 값)
+        "JP": "https://brooksrunning.co.jp/products/brm4963-blk.json"}},
+    {"id": "brooks-cascadia20", "brand": "브룩스", "name": "캐스캐디아 20(남성)", "code": "1104891D", "cc_code": {"JP": "BMM4893"}, "src": "page", "hint": "캐스캐디아 20", "code_in_page": True, "urls": {
+        "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EC%BA%90%EC%8A%A4%EC%BA%90%EB%94%94%EC%95%84-20%EB%B8%94%EB%9E%99-medium/973/",   # prd_model 1104891D027
+        "JP": "https://brooksrunning.co.jp/products/bmm4893-gry.json"}},   # 일본 트레일 모델 품번은 BMM…(로드 BRM…) · 일본은 검정이 없어 그레이
     # v1.4 아크테릭스 — 한국은 시즌 상품 페이지마다 한국 품번(cc_code KR, 페이지 Model(KR))이 따로 · JSON-LD 판매가 + 화면 데이터 정가(retail_price)
     {"id": "arc-atomhoody", "brand": "아크테릭스", "name": "아톰 후디(남성)", "code": "X000009556", "cc_code": {"KR": "AJQSM09556"}, "src": "page", "hint": "atom hoody",
      "urls": _arc("686241", "atom-hoody-9556", "atom-hoody-m")},
@@ -530,6 +548,13 @@ PRODUCTS = [
      "urls": _oofos("1000000087", "mens-sandal-ooriginal-sport-graphite")},
     {"id": "oofos-sportflex", "brand": "우포스", "name": "OOahh Sport Flex 슬라이드(매트 블랙)", "code": "1550", "cc_code": {"KR": "1550 Black Matte", "US": "1550MATBLK"}, "src": "page", "hint": "sport flex",
      "urls": _oofos("1000000031", "mens-ooahh-sport-flex-black-matte")},
+    # v1.16 SKU 7차 — 한국 상품 번호 ↔ Article No. 확인(11/03): 1000000140 = 2400 Chalk · 17·15 = 5087 White Black·White(다른 색이라 안 씀)
+    {"id": "oofos-oocloogplus", "brand": "우포스", "name": "OOcloog+ 클로그(블랙)", "code": "2400", "cc_code": {"KR": "2400 Black", "US": "2400BLACK"}, "src": "page", "hint": "oocloog",
+     "urls": _oofos("1000000055", "mens-oocloog-plus-clog-black")},
+    {"id": "oofos-oomystride", "brand": "우포스", "name": "OOmy Stride 운동화(블랙)", "code": "5087", "cc_code": {"KR": "5087 Black", "US": "5087BLACK"}, "src": "page", "hint": "oomy stride",
+     "urls": _oofos("1000000018", "mens-oomy-stride-black")},
+    {"id": "oofos-ooahhsport", "brand": "우포스", "name": "OOahh Sport 슬라이드(택티컬 그린)", "code": "1500", "cc_code": {"KR": "1500 Tactical Green", "US": "1500TACGRN"}, "src": "page", "hint": "ooahh sport",
+     "urls": _oofos("1000000063", "mens-ooahh-sport-slide-sandal-tactical-green")},   # 블랙은 한국 1500 Black Matrix(64) ↔ 미국 FootJoy 콜라보뿐이라 두 몰 모두 있는 택티컬 그린
 ]
 
 
