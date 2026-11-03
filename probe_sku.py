@@ -259,6 +259,11 @@ def shopprod(j):   # 쇼피파이 상품 .json — 변형 품번·바코드·가
             tags=(p.get("tags") if isinstance(p.get("tags"), str) else ",".join(p.get("tags") or []))[:600], n_var=len(vs),
             var=[{k: v.get(k) for k in ("sku", "barcode", "price", "compare_at_price", "price_currency", "title", "option1", "option2")} for v in vs[:6]],
             opts=[(o.get("name"), (o.get("values") or [])[:8]) for o in p.get("options") or []], codes=body_codes)
+        for w in j.get("want", []):
+            m = [v for v in vs if w.lower() in str(v.get("sku", "")).lower()]
+            if m:
+                out("WANT", url=u[-60:], code=w, n=len(m), prices=sorted({v.get("price") for v in m}), cmp=sorted({str(v.get("compare_at_price")) for v in m}),
+                    curs=sorted({str(v.get("price_currency")) for v in m}), titles=[v.get("title") for v in m[:3]], skus=[v.get("sku") for v in m[:3]], avail=sum(1 for v in m if v.get("available")))
 if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
