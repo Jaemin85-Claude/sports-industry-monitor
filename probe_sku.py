@@ -192,6 +192,66 @@ def rxpage(j):   # 페이지를 받아 정규식(들)에 맞는 글을 모두(�
                 v = [html.unescape(x or "")[:120] for x in v] if isinstance(v, tuple) else html.unescape(v)[:200]
                 if v not in hits: hits.append(v)
             out("RX", url=urllib.parse.unquote(u)[-100:], status=r.status_code, kb=len(h) // 1000, rx=rx[:40], n=len(hits), hits=hits[: j.get("max", 80)])
+def ae_list(h, offers):   # 시험: SFRA 취소선 정가 — <span class="value" content="799.00"> (글자 대신 content 속성) · 곁 판매가 칸이 이 상품 판매가와 같을 때만
+    lps, pairs = set(), []
+    for m in re.finditer(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*?content="([0-9][0-9.,]*)"', h):
+        back = h[max(0, m.start() - 600):m.start()]; k = back.rfind('class="sales')
+        seg = back[k:] if k >= 0 else h[m.end():m.end() + 900]
+        sm = re.search(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*?content="([0-9][0-9.,]*)"', seg, re.S)
+        lp, sv = pf.num(m.group(1)), pf.num(sm.group(1)) if sm else None
+        pairs.append((lp, sv, "back" if k >= 0 else "fwd"))
+        if lp and sv and any(abs(sv - o) < 0.01 for o in offers) and sv <= lp <= sv * 5:
+            lps.add(lp)
+    return lps, pairs
+def aepage(j):   # 두바이 SFCC 상품 페이지(나이키·언더아머): price_fetch 읽기 + 취소선 정가(content) 시험 + 품번 표시 + 시험용 원문 조각
+    for it in j["items"]:
+        if left() < 60: out("TIMEOUT"); return
+        u, code = it["url"], it["code"]
+        try:
+            r = pf.get(u); h = r.content.decode("utf-8", "replace")
+        except Exception as e:
+            out("AEERR", url=u[-90:], code=code, err=f"{type(e).__name__}: {str(e)[:200]}"); continue
+        try:
+            full, extra = pf.page_price(h, it.get("hint", ""), "AED", [code])
+            pp = {"full": full, **extra}
+        except Exception as e:
+            pp = {"err": f"{type(e).__name__}: {str(e)[:160]}"}
+        offers = [pf.num(x) for x in re.findall(r'"priceCurrency":"AED","price":"?([0-9.]+)', h)]
+        lps, pairs = ae_list(h, [o for o in offers if o])
+        gtm = re.findall(r'data-gtm-event-label="([^"]*\|\|[^"]*(?:price|Price)[^"]*)"', h)[:3]
+        orig = sorted(set(re.findall(r'item_original_price&quot;:([0-9.]+)', h)))[:5]
+        style = re.findall(r'Style(?: #)?:\s*([A-Z0-9-]+)', h)
+        member = re.findall(r'data-producttype-memberonly="([a-z]+)"', h)[:2]
+        vg = re.findall(r'data-variation-group-id="([^"]+)"', h)[:3]
+        out("AE", url=urllib.parse.unquote(u)[-90:], final=r.url[-90:], status=r.status_code, code=code, kb=len(h) // 1000, chal=chal(h), pf=pp, ld_offers=offers[:4],
+            strike=sorted(lps), pairs=pairs[:4], gtm=gtm, orig=orig, style=sorted(set(style))[:6], code_in_style=code in style, member=member, vg=vg)
+        if it.get("frag"):
+            lds = [b for b in ld_blocks(h) if '"Product"' in b]
+            i = h.find('class="prices'); 
+            out("FRAG", url=u, code=code, ld=lds[0][:4000] if lds else None,
+                price=h[max(0, i - 200): i + 2400] if i >= 0 else None,
+                style=[h[max(0, m.start() - 250): m.end() + 120] for m in list(re.finditer(r'Style(?: #)?:\s*' + re.escape(code.split("-")[0]), h))[:1]],
+                pid=[h[max(0, m.start() - 300): m.end() + 500] for m in list(re.finditer(r'data-variation-group-id=', h))[:1]])
+def shopstats(j):   # 쇼피파이 /products.json 쪽 — 할인 표시(compare_at_price) 쓰는지 · 같은 모델 색상별 가격 차이
+    for u in j["urls"]:
+        if left() < 60: out("TIMEOUT"); return
+        try:
+            d = pf.get(u).json()
+        except Exception as e:
+            out("SHOPERR", url=u, err=f"{type(e).__name__}: {str(e)[:160]}"); continue
+        ps = d.get("products") or []
+        n_cmp = n_var = 0; diff = []
+        for p in ps:
+            vs = p.get("variants") or []; n_var += len(vs)
+            n_cmp += sum(1 for v in vs if pf.num(v.get("compare_at_price")) and pf.num(v.get("compare_at_price")) > (pf.num(v.get("price")) or 0))
+            by = {}
+            for v in vs:
+                by.setdefault(str(v.get("sku", ""))[:11], set()).add(v.get("price"))
+            prices = sorted({pf.num(x) for xs in by.values() for x in xs if pf.num(x)})
+            if len(prices) > 1:
+                diff.append({"h": p.get("handle"), "prices": prices[:6], "cmp": sorted({str(v.get("compare_at_price")) for v in vs})[:4]})
+        out("SHOPSTATS", url=u, products=len(ps), variants=n_var, with_compare_at=n_cmp, multi_price=len(diff), sample=diff[: j.get("show", 25)])
+
 def robots(j):   # 사이트의 robots.txt 사이트맵 줄
     for host in j["hosts"]:
         out("ROBOTS", host=host, sitemaps=sitemaps(host))
@@ -259,6 +319,10 @@ def shopprod(j):   # 쇼피파이 상품 .json — 변형 품번·바코드·가
             tags=(p.get("tags") if isinstance(p.get("tags"), str) else ",".join(p.get("tags") or []))[:600], n_var=len(vs),
             var=[{k: v.get(k) for k in ("sku", "barcode", "price", "compare_at_price", "price_currency", "title", "option1", "option2")} for v in vs[:6]],
             opts=[(o.get("name"), (o.get("values") or [])[:8]) for o in p.get("options") or []], codes=body_codes)
+        if j.get("raw"):
+            q = dict(p); q.pop("body_html", None); q.pop("images", None); q.pop("image", None); q.pop("media", None)
+            q["variants"] = [v for v in vs if any(w.lower() in str(v.get("sku", "")).lower() for w in j.get("want", []))][:3] + vs[:2]
+            out("SHOPRAW", url=u, json=json.dumps({"product": q}, ensure_ascii=False)[:6000])
         for w in j.get("want", []):
             m = [v for v in vs if w.lower() in str(v.get("sku", "")).lower()]
             if m:
@@ -269,5 +333,5 @@ if __name__ == "__main__":
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
         {"codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson, "jsfollow": jsfollow, "rxpage": rxpage, "robots": robots,
-         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod}[j["t"]](j)
+         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
