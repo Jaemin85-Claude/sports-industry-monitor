@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-04 09:06 KST",
+ "generated_at": "2026-11-05 09:29 KST",
  "fetched": "2026-11-03",
  "attempt": "2026-11-03",
  "cfg": "e4ab40fb34df",
@@ -2218,7 +2218,7 @@
      "obs_date": "2026-10-30",
      "sale": false,
      "stale_since": "2026-10-30",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
     },
     "GB": {
      "p": 150.0,
@@ -5921,13 +5921,12 @@
   "salomon-xt4og US": "2026-11-04",
   "salomon-xt4og GB": "2026-11-04",
   "salomon-xt4og DE": "2026-11-04",
-  "salomon-xt6expanse US": "2026-11-03",
-  "salomon-xt6expanse GB": "2026-11-03",
-  "salomon-xt6expanse DE": "2026-11-03",
-  "salomon-xt4oggtx US": "2026-11-03",
-  "salomon-xt4oggtx GB": "2026-11-03",
-  "salomon-xt4oggtx DE": "2026-11-03"
+  "salomon-xt6expanse US": "2026-11-05",
+  "salomon-xt6expanse GB": "2026-11-05",
+  "salomon-xt6expanse DE": "2026-11-05",
+  "salomon-xt4oggtx US": "2026-11-05",
+  "salomon-xt4oggtx GB": "2026-11-05",
+  "salomon-xt4oggtx DE": "2026-11-05"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
- "tried": "2026-11-04"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"
 }
