@@ -5,7 +5,7 @@ name: check-files
 #  (2026-10 추가) ⑤ 워크플로우 YAML 읽기·예약(cron) 형식 ⑥ 패키지 설치 후 모든 스크립트 불러오기
 #  ⑦ 화면 실제로 만들어 보기(build_dashboard) + 화면 뼈대 표식(id) + 화면 스크립트 문법 검사(node --check)
 #     표식(2026-10 A안 v33): 오늘 todayCard·statusWarn · 브랜드 brandBody · 시장 mkChips·newsBody·kpis
-#  (2026-11-06 개편 P0) ⑧ 화면 자동 점검 — 만든 화면을 휴대폰 크기(390×844) 브라우저로 화면 주소 19곳 열기(시계는 자료 시각에 고정):
+#  (2026-11-06 개편 P0) ⑧ 화면 자동 점검 — 만든 화면을 휴대폰 크기(390×844) 브라우저로 화면 주소 21곳 열기(시계는 자료 시각에 고정):
 #     스크립트 오류 · 화면이 스스로 잡은 그리기 실패(콘솔 '… 실패'·'그리지 못했습니다') · 본문 상자 글자가 하한 밑이면 실패 ·
 #     가로 넘침·오늘 글자 예산(전체 800)은 경고 · 화면 파일 gzip 600KB 넘으면 실패(550KB 경고)
 on:
@@ -214,7 +214,8 @@ jobs:
           const routes = [['', 'todayCard', 200], ['#/brand', 'brandBody', 200], ['#/market/news', 'newsBody', 100], ['#/market/cal', 'mk-cal', 150],
             ['#/market/sig', 'sigBody', 200], ['#/market/co', 'coTbl', 500], ['#/market/kr', 'krBody', 200], ['#/market/map', 'mapBody', 60],
             ['#/more', 'moreBody', 100], ['#/more/peer', 'moreBody', 150], ['#/more/fb', 'moreBody', 300], ['#/more/fx', 'moreBody', 200],
-            ['#/more/logi', 'moreBody', 500], ['#/more/price', 'moreBody', 1000], ['#/more/cb', 'moreBody', 100], ['#/more/status', 'moreBody', 300]];
+            ['#/more/logi', 'moreBody', 500], ['#/more/price', 'moreBody', 1000], ['#/more/cb', 'moreBody', 100], ['#/more/status', 'moreBody', 300],
+            ['#/more/price?base=now&land=1', 'moreBody', 1000], ['#/more/price?v=card&sort=hi', 'moreBody', 1000]];   // v2026-11-06 개편 P1: 해외 정가 착지·카드 보기
           let T = null;
           try {
             const g = JSON.parse(fs.readFileSync(path.join(path.dirname(HTML), 'data.json'), 'utf8')).generated_at || '';
