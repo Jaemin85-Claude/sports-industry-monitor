@@ -15,8 +15,9 @@ on:
 permissions:
   contents: write
 
-concurrency:   # v2026-11-06 개편 P0: 같은 워크플로우가 겹치면 뒤 실행은 앞 실행이 끝날 때까지 대기(같은 파일 커밋 충돌 방지 · 브랜치 실행은 따로)
-  group: ${{ github.workflow }}-${{ github.ref }}
+concurrency:   # v2026-11-06 개편 P0: 같은 워크플로우가 겹치면 뒤 실행은 앞 실행이 끝날 때까지 대기(같은 파일 커밋 충돌 방지 · 브랜치 실행은 따로 ·
+               # 저장 안 하는 진단 실행(only)은 따로 — 기다리던 정기 실행을 밀어내지 않게)
+  group: ${{ github.workflow }}-${{ github.ref }}${{ inputs.only && '-diag' || '' }}
   cancel-in-progress: false
 
 jobs:
@@ -40,11 +41,14 @@ jobs:
           git config user.email "actions@github.com"
           git add docs/segments.json
           git commit -m "update segments $(date -u +%F)" || echo "no changes"
-          for i in 1 2 3; do   # v2026-11-06 개편 P0: 다른 워크플로우가 막 푸시해 밀렸으면 다시 받아 3번까지
-            git pull --rebase origin main || { git rebase --abort 2>/dev/null; echo "::error::main과 같은 파일이 충돌 — 커밋 못 함"; exit 1; }
-            if git push; then break; fi
-            if [ "$i" = 3 ]; then echo "::error::푸시 3번 실패"; exit 1; fi
-            echo "푸시 밀림 $i번째 — $((i*10))초 뒤 다시"; sleep $((i*10))
+          for i in 1 2 3; do   # v2026-11-06 개편 P0: 푸시가 밀렸거나(다른 워크플로우가 막 푸시) main을 못 받았으면 3번까지 · 같은 파일 충돌은 바로 멈춤
+            if git pull --rebase origin main; then
+              if git push; then break; fi; why="푸시 밀림"
+            elif [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+              git rebase --abort || true; echo "::error::main과 같은 파일이 충돌 — 커밋 못 함"; exit 1
+            else why="main 받기 실패"; fi
+            if [ "$i" = 3 ]; then echo "::error::$why — 3번 모두 실패"; exit 1; fi
+            echo "$why $i번째 — $((i*10))초 뒤 다시"; sleep $((i*10))
           done
       - name: Check partial failures
         # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
