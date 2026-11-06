@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:   # v2026-11-06 개편 P0: 같은 워크플로우가 겹치면 뒤 실행은 앞 실행이 끝날 때까지 대기(같은 파일 커밋 충돌 방지 · 브랜치 실행은 따로)
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -53,8 +57,12 @@ jobs:
           git add docs/news.json
           if [ -f docs/news_archive.json ]; then git add docs/news_archive.json; fi
           git commit -m "update news $(date -u +%F)" || echo "no changes"
-          git pull --rebase origin main
-          git push
+          for i in 1 2 3; do   # v2026-11-06 개편 P0: 다른 워크플로우가 막 푸시해 밀렸으면 다시 받아 3번까지
+            git pull --rebase origin main || { git rebase --abort 2>/dev/null; echo "::error::main과 같은 파일이 충돌 — 커밋 못 함"; exit 1; }
+            if git push; then break; fi
+            if [ "$i" = 3 ]; then echo "::error::푸시 3번 실패"; exit 1; fi
+            echo "푸시 밀림 $i번째 — $((i*10))초 뒤 다시"; sleep $((i*10))
+          done
       - name: Check partial failures
         # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
         # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
