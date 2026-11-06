@@ -7,7 +7,7 @@ name: check-files
 #     표식(2026-10 A안 v33): 오늘 todayCard·statusWarn · 브랜드 brandBody · 시장 mkChips·newsBody·kpis
 #  (2026-11-06 개편 P0) ⑧ 화면 자동 점검 — 만든 화면을 휴대폰 크기(390×844) 브라우저로 화면 주소 19곳 열기(시계는 자료 시각에 고정):
 #     스크립트 오류 · 화면이 스스로 잡은 그리기 실패(콘솔 '… 실패'·'그리지 못했습니다') · 본문 상자 글자가 하한 밑이면 실패 ·
-#     가로 넘침·오늘 글자 예산(전체 800·첫 화면 320)은 경고 · 화면 파일 gzip 600KB 넘으면 실패(550KB 경고)
+#     가로 넘침·오늘 글자 예산(전체 800)은 경고 · 화면 파일 gzip 600KB 넘으면 실패(550KB 경고)
 on:
   pull_request:
     branches: [main]
@@ -251,7 +251,8 @@ jobs:
               console.log(`  ${label.padEnd(26)} 글자 ${String(m.len).padStart(6)} · 본문 ${String(m.body).padStart(6)} · ${Date.now() - t0}ms`);
               return p;
             }
-            // 오늘 — 글자 예산(경고만): 전체 800 · 첫 화면 320(하단 탭 제외, 공백 제외, 접힌 읽는 법 제외) — 2026-10-19·10-27 대표 지시 '텍스트 최소화'
+            // 오늘 — 글자 예산(경고만): 전체 800(하단 탭 제외, 공백 제외, 접힌 읽는 법 제외) — 2026-10-19·10-27 대표 지시 '텍스트 최소화'
+            // 첫 화면 글자는 기록만 — 러너는 IBM Plex 대신 대체 글꼴로 그려 줄 높이가 달라짐(11/06 같은 화면: 휴대폰 글꼴 306 · 러너 365)
             const p0 = await visit('', '오늘', 'todayCard', 200);
             const extra = [];
             if (p0) {
@@ -271,9 +272,8 @@ jobs:
                 try { pb = PRICES.items[0].brand; } catch (e) {}
                 return { all, first, brand, tick, pb };
               });
-              console.log(`  오늘 글자: 전체 ${t.all} · 첫 화면 ${t.first} (예산 800 · 320)`);
+              console.log(`  오늘 글자: 전체 ${t.all}(예산 800) · 첫 화면 ${t.first}(대체 글꼴 기준 · 기록만)`);
               if (t.all > 800) add(warns, `오늘 글자 ${t.all}자 — 예산 800자 넘음`);
-              if (t.first > 320) add(warns, `오늘 첫 화면 글자 ${t.first}자 — 예산 320자 넘음`);
               if (t.brand) extra.push(['#/brand/' + encodeURIComponent(t.brand), '브랜드 상세 ' + t.brand, 'brDetBody', 150]); else add(errs, '판정 브랜드를 못 찾음(chkModel)', '오늘');
               if (t.pb && t.pb !== t.brand) extra.push(['#/brand/' + encodeURIComponent(t.pb), '브랜드 상세 ' + t.pb, 'brDetBody', 300]);   // 해외 정가 비교가 있는 브랜드
               if (t.tick) extra.push(['#/market/co/' + encodeURIComponent(t.tick), '기업 상세 ' + t.tick, 'detBody', 300]); else add(errs, '기업 목록을 못 찾음(DATA.items)', '오늘');
