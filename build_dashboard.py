@@ -5,7 +5,7 @@ v33.31: (대표 결정 2026-11-06 개편 P2 · Q4 나) 오늘 글 줄이기(시�
   오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(오늘 ① — 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
   머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로 — 다른 워크플로우만 늦으면 조치 필요가 먼저) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
   (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 — KeyError 같은 예외 이름은 그대로 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
-  파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크 · 시장 › 국내 검색 관심도 알약은 색 대신 '상위·하위' — ▲▼는 음수 옆에서 '올랐다'로 읽혀 안 씀) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
+  파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크 · 캘린더 실적 7일 안 점·유통사 비교 '중앙값보다 나은 지표' 점은 잉크 · 시장 › 국내 검색 관심도 알약은 색 대신 '상위·하위' — ▲▼는 음수 옆에서 '올랐다'로 읽혀 안 씀) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
 v33.30: (대표 결정 2026-11-06 개편 P1 · Q3 가 · Q4 나) 더보기 › 해외 정가 다시 만들기 — 시안 3(v3): 표 상자 안 넘김 없이 화면 한 번 넘김(나라 머리 줄은 머리 아래 고정 · phSync --ch 뺌) ·
   값 = 원화 만원 소수 한 자리(390·360px에 6개 나라) · 브랜드 묶음 줄(판정 배지 — 누르면 브랜드 상세) · 단추 한 줄(정가|할인가 · 착지 · 표|카드) + 기준 줄 + 설정 패널(정렬 · 현지 부가세 · 목표 마진 pm_target) ·
   굵은 밑줄 = 가장 쌈(한국과 0.5% 안이면 한국) · 진한 글자 = 한국보다 싼 나라, 회색 = 같거나 비쌈 · 착지 마진 = 1 − 착지 ÷ 한국에서 지금 팔리는 가격(정가 보기도 — 한국도 할인 중이면 할인가 · '단순 차익 · 수수료 전') ·
@@ -581,7 +581,7 @@ table.nowrap th,table.nowrap td{white-space:nowrap;padding-left:3px;padding-righ
 .rk-v2 small{font-size:var(--fs-2xs);color:var(--sub)}
 .wm-tog{display:flex;align-items:center;gap:4px;min-height:44px;margin-top:2px;color:var(--accent);font-size:var(--fs-sm);font-weight:600}
 .cal-dot{display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted);margin-right:5px;vertical-align:1px}
-.cal-dot.on{background:var(--accent);border-color:var(--accent)}
+.cal-dot.on{background:var(--tx);border-color:var(--tx)}   /* v33.31 Q4 나 — 자료 상태 점은 잉크(파랑은 누르는 곳·지금 검토·점수 칸) */
 /* 본사 발언 */
 .mn-row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line)}.mn-row:first-of-type{border-top:0}
 .mn-t{flex:none;font-size:var(--fs-2xs);font-weight:600;border-radius:6px;padding:0 6px;background:var(--fill);color:var(--sub)}
@@ -705,12 +705,12 @@ a.nmore{text-decoration:none}
 .fi-gsum{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:8px}
 @media(max-width:340px){.fi-gsum{gap:2px}}   /* 320px에서 단추 폭 44px 이상(카드 안쪽 여백 16px) */
 .fi-gsum button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:5px 1px;color:var(--tx);min-width:0;min-height:44px}
-.fi-gsum button.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.fi-gsum button.on{border-color:var(--tx);box-shadow:inset 0 0 0 1px var(--tx)}   /* v33.31 고른 묶음 = 잉크 테두리(A안 고른 칩·탭 잉크) */
 .fi-gsum .l{display:block;font-size:var(--fs-2xs);line-height:1.3;color:var(--sub);word-break:keep-all;overflow-wrap:anywhere}   /* 좁으면 '손익·' / '성장' 두 줄(말줄임 대신) */
 .fi-gsum .v{display:block;font-size:var(--fs-sm);font-weight:700}
 .fi-dots{display:flex;justify-content:center;gap:2px;margin-top:2px}
 .fi-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
-.fi-dots i.b{background:var(--accent)}
+.fi-dots i.b{background:var(--tx)}   /* v33.31 Q4 나 — 중앙값보다 나은 지표 점 잉크 */
 .fi-dots i.x{background:transparent;border:1px solid var(--line)}
 .fi-seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--barbg);border-radius:10px;padding:3px}
 .fi-seg button{min-height:44px;border-radius:8px;color:var(--sub);font-size:var(--fs-sm);font-weight:600;padding:0 2px;white-space:nowrap}
@@ -2644,7 +2644,7 @@ function rkRow(r,valHtml){
   const n=nmSplit(r.name), sub=[NM_KO[n.brand]||n.brand,r.group,r.basis].filter(Boolean).map(esc).join(' · ');
   return `<button type="button" class="rk" onclick="goDetail('${r.key}')"><span class="rk-n">${r.logo}<span class="rk-t"><span class="rk-m">${esc(n.main)}</span><span class="rk-s">${sub}${staleTag(r.stale)}${failTag(r.key)}${pendTag(r.pend)}</span></span></span>${valHtml}</button>`;
 }
-const calDot=dn=>`<i class="cal-dot${dn<=7?' on':''}" aria-hidden="true"></i>`;   // v33 실적 7일 안 = 파란 점(옛 빨간·흰 원 이모지)
+const calDot=dn=>`<i class="cal-dot${dn<=7?' on':''}" aria-hidden="true"></i>`;   // v33 실적 7일 안 = 채운 점(옛 빨간·흰 원 이모지 · v33.31 잉크)
 function warnTog(b){   // 재고 경고 '전체 보기(N곳)' ↔ '접기'
   const m=document.getElementById('warnMore'); if(!m) return; m.hidden=!m.hidden; const o=!m.hidden;
   b.setAttribute('aria-expanded',o?'true':'false'); b.innerHTML=`<span>${o?'접기':`전체 보기(${b.dataset.n}곳)`}</span>${ic(o?'up':'down',16)}`;
@@ -3087,7 +3087,7 @@ function saleEvents(y){
 }
 const saleAll=today=>[-1,0,1].flatMap(k=>saleEvents(today.getFullYear()+k));
 const md2=d=>`${d.getMonth()+1}/${d.getDate()}`;
-const CAL_HOW='달력 날짜를 누르면 그날 발표·세일 · 연한 파랑 칸 = 세일 기간 · 굵은 글자 = 세일 시작 · 파란 점 = 7일 안 실적 · 일정 없는 종목 = 미확인';   // v33.25 시장 › 캘린더 읽는 법
+const CAL_HOW='달력 날짜를 누르면 그날 발표·세일 · 연한 파랑 칸 = 세일 기간 · 굵은 글자 = 세일 시작 · 검은 점 = 7일 안 실적 · 일정 없는 종목 = 미확인';   // v33.25 시장 › 캘린더 읽는 법
 function buildCal(){
   const today=kstMid();   // v33 한국 날짜 기준(기기 시간대 무관 — 오늘 ③과 같은 날)
   const SALES=saleAll(today), dayKey=ymdL;
