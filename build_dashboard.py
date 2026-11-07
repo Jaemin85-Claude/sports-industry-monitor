@@ -2,10 +2,10 @@
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.31: (대표 결정 2026-11-06 개편 P2 · Q4 나) 오늘 글 줄이기(시안 1 A — 대표가 고른 카드 4장 그대로): ① 어제와 달라진 판정 줄은 감김(두 줄까지 · …로 자르지 않음 · 환율만 바뀐 판정은 회색 '· 환율만' · 누르면 그 브랜드) · '22곳 판정' 뺌 ·
-  오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(브랜드 목록도) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
-  머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
-  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점 · STATUS.act — 주소 질의·키 모양 글자 가림) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
-  파랑 = 누르는 곳·지금 검토·점수 칸, 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
+  오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(오늘 ① — 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
+  머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로 — 다른 워크플로우만 늦으면 조치 필요가 먼저) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
+  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
+  파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
 v33.30: (대표 결정 2026-11-06 개편 P1 · Q3 가 · Q4 나) 더보기 › 해외 정가 다시 만들기 — 시안 3(v3): 표 상자 안 넘김 없이 화면 한 번 넘김(나라 머리 줄은 머리 아래 고정 · phSync --ch 뺌) ·
   값 = 원화 만원 소수 한 자리(390·360px에 6개 나라) · 브랜드 묶음 줄(판정 배지 — 누르면 브랜드 상세) · 단추 한 줄(정가|할인가 · 착지 · 표|카드) + 기준 줄 + 설정 패널(정렬 · 현지 부가세 · 목표 마진 pm_target) ·
   굵은 밑줄 = 가장 쌈(한국과 0.5% 안이면 한국) · 진한 글자 = 한국보다 싼 나라, 회색 = 같거나 비쌈 · 착지 마진 = 1 − 착지 ÷ 한국에서 지금 팔리는 가격(정가 보기도 — 한국도 할인 중이면 할인가 · '단순 차익 · 수수료 전') ·
@@ -347,7 +347,7 @@ TEMPLATE = r"""<!DOCTYPE html>
  --bad:#9a3412;--warn-bg:#f6ad72;--warn-fg:#5a1f08;--hold-bd:#6b7280;--hold-fg:#374151;
  --pos:var(--accent);--neg:var(--bad);--up:var(--accent);--down:var(--bad);
  --barbg:var(--fill);--accent-prev:#b2c6ff;--chart-prev:#9ca3af;--s-naver:var(--accent);--s-shoe:#9a3412;--s-apparel:#6b7280;
- --lv2-bg:#0043FF;--lv2-fg:#ffffff;--lv1-bg:#becfff;--lv1-fg:#0b1a4a;--lv0-bg:#e9edf5;--lv0-fg:#374151;
+ --lv2-bg:#0043FF;--lv2-fg:#ffffff;--lv1-bg:#becfff;--lv1-fg:#111111;--lv0-bg:#e9edf5;--lv0-fg:#374151;
  --lv2-map:#0043FF;--lv1-map:#90adff;--lv0-map:#c3cfe9;--lv2-ring:#0043FF;--lv1-ring:#799dff;--lv0-ring:#b9c4de;
  --map-sea:#f9fbfe;--map-land:#e8ebf0;--map-kr:#111111;
  --fs1:13px;--fs2:15px;--fs3:17px;--fs4:22px;--fs5:28px;--r:14px;--warn-bd:transparent;
@@ -746,7 +746,7 @@ a.nmore{text-decoration:none}
 .fi-def dt{color:var(--sub)}
 .fi-def dd{margin:0}
 /* 비교 카드 순위 배지·막대 */
-.pg-badge{display:inline-block;padding:0 6px;border-radius:999px;background:var(--fill);color:var(--tx);font-size:var(--fs-2xs);font-weight:700;line-height:1.5;margin:1px 2px 1px 0}
+.pg-badge{display:inline-block;padding:0 6px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line2);color:var(--tx);font-size:var(--fs-2xs);font-weight:700;line-height:1.5;margin:1px 2px 1px 0}
 .pg-rk{display:block;font-size:var(--fs-2xs);color:var(--sub)}
 .pg-bars{display:flex;flex-direction:column;gap:2px}
 .pg-row{display:grid;grid-template-columns:96px minmax(0,1fr) minmax(56px,auto);align-items:center;gap:8px;min-height:44px;cursor:pointer;font-size:var(--fs-sm)}
@@ -1660,6 +1660,7 @@ function wfSwap(now){
     if(sc>.1){ de.classList.remove('wf'); WF_DEFER=1; try{ performance.mark('wf-defer',{detail:sc}); }catch(e){} return; }
   }catch(e){}
   WF_DEFER=0; de.classList.add('wf'); try{ performance.mark('wf',{detail:sc}); }catch(e){}
+  try{ chgFit(); }catch(e){}   // v33.31 오늘 ① 달라진 판정 줄 — 바뀐 글꼴 너비로 두 줄 맞춤
   try{ if(document.getElementById('pmChips')){ pmSoon(); if(PM_JUMP&&!WF_TOUCH&&ROUTE.tab==='more'&&ROUTE.view==='price') pmScrollOpen(); } }catch(e){}   // v33.30 해외 정가 — 바뀐 글꼴 너비로 고른 칩을 다시 가운데로 · 주소로 연 펼친 줄이 밀렸으면 다시 그 줄로(만지기 전만)
 }
 function webFontLoad(){
@@ -2129,7 +2130,7 @@ function statusCard(){
     const dd=r.ts?Math.round((new Date(kstToday()+'T00:00:00Z')-new Date(r.ts.slice(0,10)+'T00:00:00Z'))/86400000):null;   // 한국 날짜 차(24시간 안이라도 날짜가 다르면 '어제')
     const ageTxt=dd==null||isNaN(dd)?'':(dd<=0?'오늘':dd===1?'어제':`${dd}일 전`);
     h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
-      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref"><span class="stl" style="margin-left:0">이전 값 ${r.failed}곳</span></div>`:''}${(r.notes||[]).length?`<div class="ref" style="white-space:normal">${(r.notes||[]).map(esc).join(' · ')}</div>`:''}</td></tr>`;
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref"><span class="stl" style="margin-left:0">이전 값 ${r.failed}곳</span></div>`:''}${(r.notes||[]).length?`<div class="ref" style="white-space:normal">${(r.notes||[]).map((t,i)=>esc(i||!r.failed?t:String(t).replace(/^이전 값 /,''))).join(' · ')}</div>`:''}</td></tr>`;   // v33.31 바로 위 '이전 값 n곳'과 같은 말 되풀이 안 함
   });
   h+=`</table>`+why(`지연 = 주기보다 오래 갱신되지 않음(열람 시점 기준) → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 이전 값 n곳 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음' · 조치 필요 = 맨 위 칸(이번 갱신을 빨간 X로 만든 줄)`);   // v33.25 접음(상태·실패 표시는 표에 그대로)
   // v33.2 판정 기록 비교에서 뺀 브랜드 — 화면 판정과 기록(파이썬)이 다르거나 기록 모양이 틀림 → 판정 규칙 두 곳(build_dashboard JS·파이썬) 확인
@@ -2226,9 +2227,10 @@ const perKo=p=>{ p=String(p||'').trim(); let m=p.match(/^Q([1-4])\s+FY\s?(\d{2}|
 const smoothB=()=>{ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'; }catch(e){ return 'smooth'; } };
 /* v33.31 (개편 P2 · Q4 나) 숫자·글 색은 tone() 하나로 — 표·목록·카드의 숫자는 잉크(둘레 색을 물려받음 — 보조 줄 안이면 회색), 방향은 부호(+ −)·▲▼·'쌈/비쌈' 글로.
    파랑 글자 = 누르는 곳·지금 검토 배지·점수 칸만, 주황 = 경고(주의·이전 값·조치 필요·수집 지연·자료 경고 글)만. 그래프·지도·달력 칸의 색은 그대로
-   tone('num') = ''(잉크) · tone('sub') = 'na'(회색) · tone('warn') = 'tw'(주황 경고 글) · tone('score',v) = 'sc-p'|'sc-n'|'sc-z'|'sc-na'(점수 칸 — 판정 신호라 색 그대로)
+   숫자에는 색 클래스를 붙이지 않음(잉크 — 보조 줄 .na·small 안이면 회색을 물려받음) · tone('warn') = 'tw'(주황 경고 글) ·
+   tone('score',v[,z]) = 'sc-p'|'sc-n'|'sc-na'(v 없음)|0이면 z(기본 'sc-z') — 점수 칸(오늘 ①·브랜드 목록·브랜드 상세 점수 띠·매입 조건 식·근거 카드)은 판정 신호라 색 그대로, 모두 이 함수로
    옛 + 파랑(pos) / − 짙은 주황(neg)·재고 반대색·환율 fxC·물류 lgC는 없앰 · 부호는 그대로(보이는 자리에서 0이면 부호 없음 · 음수는 '−' U+2212) */
-const tone=(k,v)=>k==='score'?(v==null?'sc-na':v>0?'sc-p':v<0?'sc-n':'sc-z'):k==='warn'?'tw':k==='sub'?'na':'';
+const tone=(k,v,z)=>k==='score'?(v==null?'sc-na':v>0?'sc-p':v<0?'sc-n':(z||'sc-z')):k==='warn'?'tw':'';
 const sgnPct=(v,d)=>{ const r=+v.toFixed(d); return [r>0?1:r<0?-1:0, Math.abs(r).toFixed(d)+'%']; };
 const fmt=(v,d=1,sign=false)=>{
   if(v===null||v===undefined) return '<span class="na">―</span>';
@@ -2336,7 +2338,8 @@ const oldInvA=i=>{ const e=oldInvOf(i); return e?tagA(`결산 ${ym(e)} · 오래
 /* ── v33.28 A안 다듬기 바탕 — 여러 화면이 함께 쓰는 도움 함수(화면 담당은 다시 만들지 말고 이것을 씀 · CSS는 스타일 'A안 다듬기 바탕') ──
    ds(글, 설명)     자료 상태 꼬리표 = 회색 글 + 시계(테두리 없음) — 오래된 결산·새 실적 대기처럼 '알아 둘 것'(실패 아님)
    dsBad(글, 설명)  실제 수집 실패(이전 값·값 없음)만 = 회색 글 + 작은 주황 점
-   oldDs(i)         chkInv 결과 i의 연간 결산 재고가 9개월 넘으면 ds("결산 '25.12 · 오래된 자료") — oldInvOf와 같은 기준, 점수는 그대로(v33.31 글로 보이게 — 휴대폰은 title이 안 보임)
+   oldDs(i[,full])  chkInv 결과 i의 연간 결산 재고가 9개월 넘으면 ds("'25.12 결산") — oldInvOf와 같은 기준, 점수는 그대로 ·
+                    full이면 ds("결산 '25.12 · 오래된 자료")(v33.31 오늘 ① — 휴대폰은 title이 안 보여 글로 · 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로)
    staleDs(d)       stale_since 날짜 d → dsBad('이전 값 10/28')(d 없으면 '')
    fxCommon(M)      chkModel() 결과 M의 판정 브랜드 환율 점수가 모두 같은 부호면 {dir: 1(유리)|−1, lo, hi(점수 크기 범위), n(브랜드 수)}, 아니면 null —
                     환율이 브랜드를 가르지 못하는 날은 목록·오늘에서 환율 점수를 회색(.sc-g)으로 · 공통 한 줄로
@@ -2346,7 +2349,7 @@ const oldInvA=i=>{ const e=oldInvOf(i); return e?tagA(`결산 ${ym(e)} · 오래
    아이콘 ic('clock') · ic('sort') 추가 · 판정 규칙(chkModel·chk_verdicts)은 그대로 */
 const ds=(t,title)=>`<span class="ds"${title?` title="${esc(title)}"`:''}>${ic('clock',13)}${esc(t)}</span>`;
 const dsBad=(t,title)=>`<span class="ds bad"${title?` title="${esc(title)}"`:''}><i aria-hidden="true"></i>${esc(t)}</span>`;
-const oldDs=i=>{ const e=oldInvOf(i); return e?ds(`결산 ${ym(e)} · 오래된 자료`,'연간 결산 재고가 9개월 넘게 지남 — 다음 연간 결산 발표 때 바뀜 · 점수는 그대로'):''; };
+const oldDs=(i,full)=>{ const e=oldInvOf(i); return e?ds(full?`결산 ${ym(e)} · 오래된 자료`:`${ym(e)} 결산`,'연간 결산 재고가 9개월 넘게 지남 — 다음 연간 결산 발표 때 바뀜 · 점수는 그대로'):''; };
 const staleDs=d=>d?dsBad(`이전 값 ${mdOf(d)}`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 const FXTAIL=/\d+(\.\d+)?% (쌈|비쌈)$/;
 function fxCommon(M){
@@ -2420,18 +2423,20 @@ function todayModel(){
     // v33.2 어제와 달라진 판정(판정 기록이 있을 때) — 계산이 실패해도 카드는 그대로
     // v33.31 누르는 줄(감김 · 두 줄까지 — …로 자르지 않음): 머리 + 브랜드마다 '이름 판정 → 판정 · 바뀐 근거'(환율만 바뀐 판정은 회색 '· 환율만') —
     // 줄 전체가 CHG_MAX자(13px 두 줄 · 320px 폭까지)를 넘으면 근거를 빼고, 그래도 넘으면 이름만(4곳까지 + 외 n곳) · 전체는 title·화면 읽기 이름 · 한 곳이면 그 브랜드, 여럿이면 점검표
+    // 단계 opts(근거 포함 → 근거 뺌 → 이름 4·3·2·1곳)를 다 넘기고 at = 글자 수로 고른 단계 — 그린 뒤 chgFit이 실제 줄 수로 더 줄임(긴 이름은 한 덩어리라 글자 수 어림이 못 잡음)
     // 주의로 바뀐 곳 → 지금 검토로 바뀐 곳 → 나머지
     let chg=null; try{ const C=chkHist(), pri=c=>c.to===0?0:c.to===2?1:2, L=C.list.slice().sort((a,c)=>pri(a)-pri(c)), k=L.length;
       if(C.prev){ const vs=chkLbl(C).vs, head=`${vs} 달라진 판정${k>1?` ${k}곳`:''}`, CHG_MAX=40;
         const fxOnly=c=>c.from!=null&&c.why.length>0&&c.why.every(w=>w.startsWith('환율'));
         const sfx=c=>c.from==null?'':fxOnly(c)?' · 환율만':c.why.length?' · '+c.why.map(w=>w.split(NB)[0]).join('·'):'';
         const its=(f,n)=>L.slice(0,n).map(c=>({t:f(c), fx:fxOnly(c)}));
-        const fit=(a,sep,more)=>(head+' · '+a.map(x=>x.t).join(sep)+(more?` 외 ${more}곳`:'')).length<=CHG_MAX;
-        let items=[], sep=' · ', more=0;
+        const fit=o=>(head+' · '+o.items.map(x=>x.t).join(o.sep)+(o.more?` 외 ${o.more}곳`:'')).length<=CHG_MAX;
+        const opts=[];
         if(k){ const l1=its(c=>`${c.name} ${lvT(c.from)} → ${lvT(c.to)}${sfx(c)}`,k), l2=its(c=>`${c.name} ${lvT(c.from)} → ${lvT(c.to)}`,k);
-          if(fit(l1,sep,0)) items=l1; else if(fit(l2,sep,0)) items=l2;
-          else { sep='·'; let mx=Math.min(4,k); while(mx>1&&!fit(its(c=>c.name,mx),sep,k-mx)) mx--; items=its(c=>c.name,mx); more=k-mx; } }
-        chg={vs, head, n:k, items, sep, more, go:k===1?'brand:'+L[0].name:'brand-all', skip:C.skip.length, full:L.map(chkChgTxt).join(' · ')}; } }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
+          opts.push({items:l1,sep:' · ',more:0}); if(l2.some((x,j)=>x.t!==l1[j].t)) opts.push({items:l2,sep:' · ',more:0});
+          for(let mx=Math.min(4,k); mx>=1; mx--) opts.push({items:its(c=>c.name,mx),sep:'·',more:k-mx}); }
+        let at=opts.findIndex(fit); if(at<0) at=Math.max(0,opts.length-1);
+        chg={vs, head, n:k, opts, at, go:k===1?'brand:'+L[0].name:'brand-all', skip:C.skip.length, full:L.map(chkChgTxt).join(' · ')}; } }catch(e){ console.error('[오늘 볼 것 · 판정 기록] 비교 실패:',e); }
     return {n:M.main.length, chg,
       head:pick.length?`지금 검토 ${gos.length}곳 · 주의 ${warn.length}곳`:`오늘은 지금 검토·주의 없음 · 관망 ${hold.length}곳`,
       rows:(pick.length?pick.slice(0,4):hold.slice(0,2)).map(r=>({name:r.b.name, lv:r.lv, why:chkWhy(r).short, old:oldInvA(r.inv),
@@ -2503,14 +2508,16 @@ function todayModel(){
 }
 function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 수집 상태 단추 하나 → 수집 상태
   // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) · v33.31(개편 P2) 평소 = 회색 시계 '11:27 갱신'(이전 값은 자료 상태라 단추에 안 셈 — 수집 상태 '이전 값 n') ·
-  // 수집 지연 = 주황 경고 '11:27 · 지연 n'(그대로 — 지연이면 조치 필요 줄도 옛 실행 것이라 지연이 먼저) · 마지막 update-dashboard 실행을 빨간 X로 만든 줄(STATUS.act)이 있으면 주황 점 '11:27 · 조치 필요 n'
+  // 마지막 update-dashboard 실행을 빨간 X로 만든 줄(STATUS.act)이 있으면 주황 점 '11:27 · 조치 필요 n' · 수집 지연 = 주황 경고 '11:27 · 지연 n'(그대로) —
+  // 이 화면을 만든 실행(data.json)이 늦으면 조치 필요 줄도 옛 실행 것이라 지연이 먼저, 다른 워크플로우만 늦으면 조치 필요가 먼저(지연은 맨 위 띠·화면 읽기 이름에)
   const g=String(DATA.generated_at||''), gd=g.slice(0,10), st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0), act=actN();
+  const selfLate=st.some(r=>r.late&&r.file==='data.json'), lateW=late&&(selfLate||!act);
   const t=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)}`:'갱신 시각 없음';
-  const vis=late?`${t} · 지연 ${late}`:act?`${t} · 조치 필요 ${act}`:(g?`${t} 갱신`:t);
+  const vis=lateW?`${t} · 지연 ${late}`:act?`${t} · 조치 필요 ${act}`:(g?`${t} 갱신`:t);
   const say=[late?`수집 지연 ${late}곳`:'',act?`조치 필요 ${act}건`:'',part?`이전 값 ${part}`:''].filter(Boolean).join(' · ')||'수집 정상';
   const date=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
   return `<div class="hd-row"><div class="hd-tt"><span class="hd-kick">${esc(date)}</span><h1>오늘 볼 것 4가지</h1></div>
-    <button type="button" class="hd-pill ${late?'late':act?'act':'ok'}" id="tdStatus" data-go="more:status" aria-label="${esc(`${g?t+' 갱신':t}, ${say}, 수집 상태 보기`)}">${late?ic('alert',16):act?'<span class="a-dot" aria-hidden="true"></span>':ic('clock',16)}<span>${esc(vis)}</span></button></div>`;
+    <button type="button" class="hd-pill ${lateW?'late':act?'act':'ok'}" id="tdStatus" data-go="more:status" aria-label="${esc(`${g?t+' 갱신':t}, ${say}, 수집 상태 보기`)}">${lateW?ic('alert',16):act?'<span class="a-dot" aria-hidden="true"></span>':ic('clock',16)}<span>${esc(vis)}</span></button></div>`;
 }
 const dcNo=n=>`<span class="dc-no" aria-hidden="true">${n}</span>`;
 const dcHd=(n,t,meta,dest)=>`<h2 class="dc-hh"><button type="button" class="dc-hd" data-go="${dest}">${dcNo(n)}<span class="dc-t">${esc(t)}</span><span class="dc-meta">${esc(meta)}</span>${ic('right',16,'s2 chev')}</button></h2>`;   // 카드 머리 = 해당 화면으로(결정 D10)
@@ -2528,6 +2535,15 @@ function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 
 function tdHq(q){   // v33.28 ① 한 줄로 합친 브랜드(같은 본사·판정·이유) → 점검표를 그 본사 이름으로 검색한 화면(검색어는 점검표 검색창에 — 지우면 전체)
   BR_Q_AUTO=q; const i=document.getElementById('brSearch'); if(i) i.value=q; brSearch(q); go({tab:'brand'});
 }
+// v33.31 '어제와 달라진 판정' 줄 글(머리 + 단계 o) — 이름만 단계는 '·' 뒤에서 줄을 바꿀 수 있게(<wbr> · 이름 안은 keep-all 그대로)
+const chgSpan=(G,o)=>`<b>${esc(G.head)}</b> · ${o.items.map(x=>x.fx?`<span class="chg-fx">${esc(x.t)}</span>`:esc(x.t)).join(o.sep==='·'?'·<wbr>':esc(o.sep))}${o.more?` 외 ${o.more}곳`:''}`;
+let TD_CHG=null;   // 마지막으로 그린 오늘 ①의 달라진 판정(chgFit이 씀)
+function chgFit(){   // v33.31 그린 너비·글꼴에서 두 줄을 넘으면 한 단계씩 짧은 글로(글자 수로 고른 단계부터 다시 — 글꼴이 바뀌어 넓어지면 되돌아감) · 숨은 화면이면 그대로(오늘을 열 때 다시 그림)
+  const G=TD_CHG, sp=G&&document.querySelector('#todayCard .dc-chg>span'); if(!sp||!sp.getClientRects().length) return;
+  const lh=parseFloat(getComputedStyle(sp).lineHeight)||19.5, over=()=>sp.getBoundingClientRect().height>lh*2.5;
+  let i=G.at; sp.innerHTML=chgSpan(G,G.opts[i]);
+  while(over()&&i<G.opts.length-1) sp.innerHTML=chgSpan(G,G.opts[++i]);
+}
 function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지금 검토 n곳' 배지는 묶음 머리에 한 번 → 브랜드마다 한 줄(이름 + 짧은 이유 + 오른쪽 끝 매입 조건 점수 하나)
   // · 주의 = 누르는 이름만(줄바꿈돼도 왼쪽 맞춤) · 관망·판정 안 함 = 끝 줄 '점검표 전체 보기'의 개수 · 판정·점수는 chkModel 그대로(표시만)
   const G=B.chg, same=G&&!G.n&&!G.skip;   // v33.2 판정 기록 비교 — 바뀐 곳이 있으면 머리 아래 한 줄, 없으면 머리 끝에 '어제와 같음'
@@ -2537,7 +2553,8 @@ function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지�
   if(B.empty) return h+`<h2 class="dc-h">${esc(B.empty)}</h2>${B.emptySub?`<p class="dc-p">${esc(B.emptySub)}</p>`:''}${B.more?more(B.more):''}</section>`;
   const M=chkModel(), gos=M.main.filter(r=>r.lv===2), warn=M.main.filter(r=>r.lv===0), hold=M.main.filter(r=>r.lv===1);
   // v33.31 달라진 판정 = 누르는 줄(두 줄까지 감김 — 글 길이는 todayModel이 맞춤 · 환율만 바뀐 판정은 회색)
-  if(G&&G.n) h+=`<button type="button" class="dc-chg" data-go="${esc(G.go)}" title="${esc(G.full)}" aria-label="${esc(`${G.head}: ${G.full}, 브랜드 보기`)}"><span><b>${esc(G.head)}</b> · ${G.items.map(x=>x.fx?`<span class="chg-fx">${esc(x.t)}</span>`:esc(x.t)).join(esc(G.sep))}${G.more?` 외 ${G.more}곳`:''}</span>${ic('right',16,'s2 chev')}</button>`;
+  TD_CHG=G&&G.n?G:null;
+  if(G&&G.n) h+=`<button type="button" class="dc-chg" data-go="${esc(G.go)}" title="${esc(G.full)}" aria-label="${esc(`${G.head}: ${G.full}, 브랜드 보기`)}"><span>${chgSpan(G,G.opts[G.at])}</span>${ic('right',16,'s2 chev')}</button>`;
   // 줄 묶기 — 본사·판정·짧은 이유(fxCommon이면 환율 꼬리 뺌 — whyShort)·매입 점수·달라진 판정 꼬리표가 모두 같으면 한 줄('몽클레르 · 스톤아일랜드')
   const rowsOf=rs=>{ const out=[]; rs.forEach(r=>{ const w=whyShort(r,M), hq=chkHq(r), tg=chgTag(r.b.name), k=[hq,r.lv,w,r.buy,tg].join('|'), p=hq?out.find(x=>x.k===k):null;
     if(p) p.names.push(r.b.name); else out.push({k,names:[r.b.name],w,hq,tg,r}); }); return out; };
@@ -2545,7 +2562,7 @@ function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지�
   const row=(x,hint)=>{ const many=x.names.length>1, v=x.r.buy;
     return `<button type="button" class="dc-row td-row" ${many?`data-hq="${esc(x.hq)}" onclick="tdHq(this.dataset.hq)"`:`data-go="brand:${esc(x.names[0])}"`}><span class="dc-rb">`
       +`<span class="td-l1"><span class="dc-nm">${esc(x.names.join(' · '))}</span>${many?`<span class="td-hq">본사 ${esc(x.hq)}</span>`:''}${x.tg}</span>`
-      +`<span class="dc-why">${nb(esc(x.w))}</span>${oldDs(x.r.inv)?`<span class="td-st">${oldDs(x.r.inv)}</span>`:''}${hint?`<span class="dc-hint">${esc(hint)}</span>`:''}</span>`
+      +`<span class="dc-why">${nb(esc(x.w))}</span>${oldDs(x.r.inv)?`<span class="td-st">${oldDs(x.r.inv,1)}</span>`:''}${hint?`<span class="dc-hint">${esc(hint)}</span>`:''}</span>`
       +`<b class="td-sc ${tone('score',v)}"><span class="sr">매입 조건 </span>${sg0(v)}</b>${ic('right',18,'s2 chev')}</button>`; };
   if(gos.length) h+=gh(2,gos.length)+rowsOf(gos).map(x=>row(x)).join('');
   if(warn.length) h+=`<div class="td-names"><span class="td-wl" role="heading" aria-level="3">${vbadge(0)}<span class="a-gn">${warn.length}곳</span></span>${warn.map(r=>`<button type="button" data-go="brand:${esc(r.b.name)}">${esc(r.b.name)}<span class="sr"> — 주의</span>${chgTag(r.b.name)}</button>`).join('')}</div>`;
@@ -2636,6 +2653,7 @@ function buildToday(){   // v33 S2: 오늘을 열 때마다 다시 그림(지연
   paint('tdHead',todayHeadHtml,'오늘 머리');
   safe(statusWarn,'수집 지연 띠','statusWarn');
   paint('todayCard',()=>todayHtml(todayModel()),'오늘 볼 것');
+  try{ chgFit(); }catch(e){ console.error('[오늘 볼 것 · 달라진 판정 줄 맞춤] 실패:',e); }   // 줄이 넘쳐도 카드는 그대로
 }
 function buildSig(){
   const rows=rows_all();
@@ -4473,8 +4491,8 @@ function moreMenuHtml(){   // v33 S2: 머리 '더보기' + 메뉴 줄 5개(선 �
       return `<b>한국 ${prGapTxt(A.avg)}</b><br>평균 · 상품 ${A.nIt}개`; }))}
     ${row('cb','globe','해외직구','나라별 직구 · 분기',sv('해외직구',()=>{ const CB=KR&&KR.cross_border; return CB&&CB.last?`<b>${cbPrdS(CB.last)}</b><br>최근 자료`:'수집 전'; }))}
     ${row('status','pulse','수집 상태','갱신 · 지연'+sv('Claude 사용액',claudeMonthTxt,''),sv('수집 상태',()=>{ const st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0), act=actN();
-      // v33.31 주황 알약 = 조치 필요(빨간 X 줄)·지연만 · 그 밖 못 받은 항목은 회색 '이전 값 n'(자료 상태)
-      return [act?`<span class="wn">조치 필요 ${act}</span>`:'',late?`<span class="wn">지연 ${late}</span>`:''].filter(Boolean).join('<br>')||(part?`<span class="na">이전 값 ${part}</span>`:'<b>정상</b>'); }))}
+      // v33.31 주황 알약 = 조치 필요(빨간 X 줄)만 · 지연은 회색 글 + 주황 점(오늘 맨 위 지연 띠가 경고) · 그 밖 못 받은 항목은 회색 '이전 값 n'(자료 상태)
+      return [act?`<span class="wn">조치 필요 ${act}</span>`:'',late?`<span class="stl">지연 ${late}</span>`:''].filter(Boolean).join('<br>')||(part?`<span class="na">이전 값 ${part}</span>`:'<b>정상</b>'); }))}
     ${themeRowHtml()}
   </nav>`;   // v33.25 운영 메모 문장 뺌(CLAUDE.md에 있음)
 }
@@ -4701,10 +4719,10 @@ function chkWhy(r){
   }
   return {head, short:short.filter(Boolean).join(' · '), say};
 }
-/* 브랜드 행 점수 4칸(수요·재고·발언·환율) — tone p 유리 · n 불리 · z 보통 · na 자료 없음 */
+/* 브랜드 행 점수 4칸(수요·재고·발언·환율) — cls = tone('score') sc-p 유리 · sc-n 불리 · sc-z 보통 · sc-na 자료 없음(v33.31 색은 tone() 한 곳) */
 function chkCells(r){
   return [['수요',r.dem],['재고',r.inv],['발언',r.notes],['환율',r.fx]].map(([k,o])=>({k, v:(!o||o.na)?'―':(o.pt?sgn(o.pt):'0'),
-    tone:(!o||o.na)?'na':(o.pt>0?'p':(o.pt<0?'n':'z'))}));
+    cls:tone('score',(!o||o.na)?null:o.pt)}));
 }
 const chkHq=r=>r.x?nmSplit(r.x.name).main:'';   // '데커스(HOKA)' → '데커스'
 const chkCurKo=r=>CHK_CUR_NOTE[r.b.name]||((DATA.fx||{})[r.cur]||{}).name||r.cur||'통화 미지정';
@@ -4723,7 +4741,7 @@ function chkDetail(r){
       +(x.na?'':`${d.rel!=null?',':''} ${jo(x.name,'은','는')} ${base}보다 ${p1(x.v)}% ${x.v<0?'쌉':'비쌉'}니다.`)).replace(/고$/,'습니다.')};
   const sib=nvAll().filter(b=>b.group==='global'&&r.x&&b.link===r.x.ticker).map(b=>b.name);
   const word=(o,a,b)=>o.na?'자료 없음':(o.pt>0?a:(o.pt<0?b:'보통'));
-  const tone=o=>o.na?'':(o.pt>0?'p':(o.pt<0?'n':''));
+  const ptTone=o=>o.na?'':({'sc-p':'p','sc-n':'n'})[tone('score',o.pt)]||'';   // 근거 카드 점수(.bd-pt.p/.n) — v33.31 색 기준은 tone() 한 곳(이름이 겹치지 않게 ptTone)
   const today=kstMid();
   const s8=(r.b.s||[]).slice(-8), wk=((NAVER&&NAVER.weeks)||[]).slice(-8);
   const sparkOk=s8.length===8&&wk.length===8&&s8.every(v=>typeof v==='number'&&isFinite(v));
@@ -4731,7 +4749,7 @@ function chkDetail(r){
   const annInv=!i.na&&i.q===false;   // v33.22 재고 근거가 연간 결산끼리(분기 매출 없음) — 반기·분기 발표로는 재고 점수가 안 바뀜
   const unc=n.list.length&&n.u===n.list.length;
   const ev=[
-    {id:'dem', label:'국내 수요', score:d.na?'':sg0(d.pt), tone:tone(d), word:d.low?'보통(검색량 적음)':word(d,'강함','약함'),
+    {id:'dem', label:'국내 수요', score:d.na?'':sg0(d.pt), tone:ptTone(d), word:d.low?'보통(검색량 적음)':word(d,'강함','약함'),
       value:d.yoy!=null?`네이버 검색 전년 대비 ${pctU(d.yoy)}`:'네이버 검색 자료 없음', tags:staleA(r.b.stale_since),
       sub:(d.yoy==null||d.low||d.rel==null)?'':`중앙값 ${pctU(d.med)} 대비 ${ppp(d.rel)}${d.trend!=null?` · 최근 4주 ${pctU(d.trend)}(직전 12주 대비)`:''}`,   // v33.25 숫자만 보이고 설명(explain)은 '점수 설명'으로
       explain:d.yoy==null?'이 브랜드의 네이버 검색 자료가 없어 점수에 넣지 않았습니다.'
@@ -4741,7 +4759,7 @@ function chkDetail(r){
           :`감시 브랜드 중앙값(${pctU(d.med)})보다 ${p1(d.rel)}%p ${d.rel>=0?'높':'낮'}${d.pt===0?'지만 ±10%p 안이라 보통으로 봅니다.':(d.pt>0?'아 +1입니다.':'아 −1입니다.')}`)
           +(d.trend!=null?' 최근 4주 변화는 계절 영향 포함.':''),
       spark:sparkOk?{vals:s8, wk}:null},
-    {id:'inv', label:'본사 재고', score:i.na?'':sg0(i.pt), tone:tone(i), word:word(i,'유리','불리'),
+    {id:'inv', label:'본사 재고', score:i.na?'':sg0(i.pt), tone:ptTone(i), word:word(i,'유리','불리'),
       value:i.na?'같은 기간 재고·매출 자료 없음':`재고 압력 ${ppp(i.P)}`,
       tags:(i.na?'':staleA(i.stale)+pendA(i.pend))+oldInvA(i),
       sub:i.na?'':`재고 ${pctU(i.inv)} vs 매출 ${pctU(i.rev)}(${i.lbl})`,
@@ -4750,7 +4768,7 @@ function chkDetail(r){
           +(i.pt===0?'재고·매출 증가율 차이가 5%p 이상이어야 신호로 봅니다.':i.pt>0?'재고가 매출보다 5%p 넘게 빨리 늘어 할인·처분 물량이 나올 수 있습니다.':'재고가 매출보다 5%p 넘게 덜 늘어 처분 물량이 적을 수 있습니다.')
           +(sib.length>1?` 본사 전체 기준(${sib.join('·')} = ${hq}).`:'')
           +(i.pend?` 본사가 ${mdTxt(i.pend.end)} 끝난 분기 실적을 냈지만 야후 미반영 — 이전 분기 값입니다.`:'')},
-    {id:'notes', label:'본사 발언', score:n.na?'':sg0(n.pt), tone:tone(n), word:unc?'분류 전':word(n,'유리','불리'),
+    {id:'notes', label:'본사 발언', score:n.na?'':sg0(n.pt), tone:ptTone(n), word:unc?'분류 전':word(n,'유리','불리'),
       value:n.none?'발언 자료 없음':!n.list.length?'재고·할인·유통 관련 발언 없음'
         :(unc?`발언 ${n.list.length}건 · 신호 분류 전`:`${n.rg?'회사 전체 ':''}할인 물량↑ ${n.m}건 · 할인·공급↓ ${n.l}건${n.z?` · 중립 ${n.z}건`:''}${n.rg?` · 한 지역 ${n.rg}건 제외`:''}${n.u?` · 분류 전 ${n.u}건`:''}`),
       sub:n.per?`${n.per}${n.tag?' · '+n.tag:''}`:'',
@@ -4763,7 +4781,7 @@ function chkDetail(r){
           +(n.rg?` 한 지역 이야기${n.rgn&&n.rgn.length?`(${n.rgn.join(', ')})`:''} ${n.rg}건은 점수에서 뺐습니다.`:'')
           +(n.u?` 분류 전 ${n.u}건은 다음 추출 때 반영합니다.`:''),
       list:(n.list||[]).map(q=>({sig:q.sig||null, topic:q.topic, ko:q.ko, quote:q.quote, rg:q.scope==='region'?(q.region||'한 지역'):null}))},   // v33.24 한 지역 꼬리표
-    {id:'fx', label:`원산지 통화 · ${x.name||curKo||'미지정'}`, score:x.na?'':sg0(x.pt), tone:tone(x), word:word(x,'유리','불리'),
+    {id:'fx', label:`원산지 통화 · ${x.name||curKo||'미지정'}`, score:x.na?'':sg0(x.pt), tone:ptTone(x), word:word(x,'유리','불리'),
       value:(x.na||x.rate==null)?'환율 자료 없음':`${fxNm} ${wonR(x.rate*x.mul)}원 · ${base}보다 ${p1(x.v)}% ${x.v<0?'쌈':'비쌈'}`, tags:x.na?'':staleA(x.stale),
       sub:!x.na&&x.basis==='avg'&&x.chg!=null?`1년 전보다 ${p1(x.chg)}% ${x.chg<0?'쌈':'비쌈'}`:'',
       explain:x.na?'원산지 통화 환율이 없어 점수에 넣지 않았습니다.'
@@ -4909,7 +4927,7 @@ function brRowHtml(r,i,a){   // v33.28 두 줄 행: 이름(+ 달라진 판정) +
   // a·i = 같은 묶음 안 행들(map) — 바로 위 행과 본사·이유가 같으면 '위와 같음 · 본사 X'(꼬리표도 같은 본사 것이라 뺌)
   const M=chkModel(), C=fxCommon(M), hq=chkHq(r), w=whyShort(r,M), p=a&&i>0?a[i-1]:null;
   const same=!!(p&&hq&&chkHq(p)===hq&&whyShort(p,M)===w);
-  const cells=chkCells(r).map((c,j)=>`<b class="sc-${c.tone}${j===3&&C&&c.tone!=='na'?' sc-g':''}"><span class="sr">${c.k} </span>${c.v}</b>`).join('');
+  const cells=chkCells(r).map((c,j)=>`<b class="${c.cls}${j===3&&C&&c.cls!=='sc-na'?' sc-g':''}"><span class="sr">${c.k} </span>${c.v}</b>`).join('');
   const tags=same?'':staleDs(r.x&&r.x.stale_since)
     +(r.inv&&r.inv.pend?ds('새 실적 대기',`${r.inv.pend.src} 공시 ${r.inv.pend.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'')+oldDs(r.inv);
   return `<button type="button" class="br-row brl-row" data-brand="${esc(r.b.name)}"><span class="brl-l1"><span class="brl-nm"><span class="br-name">${esc(r.b.name)}</span>${chgTag(r.b.name)}</span><span class="brl-sc">${cells}</span></span>`
@@ -4929,7 +4947,7 @@ function brRestHtml(M,srch){   // 판정 안 함(본사 재고·발언 자료 �
     +`<div class="br-rest-in">${rows}${curTxt?`<p class="br-rest-cur">${esc(curTxt)}</p>`:''}</div></details>`;
 }
 /* ── v33.14 해외 정가 비교(브랜드 상세 하단) — docs/prices.json(price_fetch v1)의 대표 상품 정가(할인 전)를 오늘 환율로 원화 환산.
-   한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈(+) 파랑 · 쌈(−) 짙은 주황 · 환율이 없는 통화는 그 나라 줄을 '환율 없음'
+   한국은 = 한국 정가 ÷ (현지 정가 × 환율) − 1 · 비쌈·쌈은 글로(숫자 잉크 · v33.31 Q4 나) · 환율이 없는 통화는 그 나라 줄을 '환율 없음'
    나라는 price_fetch MK와 같게(나라를 늘리면 PR_ORD·PR_CC·PR_SYM·LAND(lvat · 운임 출발지가 있으면 fcol — 없으면 '운임 없음')와 파이썬 _partial의 ccn ·
    weekly_digest CC_KO·CUR_SYM도 · 새 통화면 fetch_data FX·FX_LBL도) ── */
 const PR_CC={US:'미국',GB:'영국',DE:'독일',JP:'일본',MX:'멕시코',AE:'두바이'}, PR_ORD=['US','GB','DE','JP','MX','AE'];   // v33.29 두바이 = UAE 공식몰(price_fetch v1.17)
@@ -5360,17 +5378,17 @@ function brDetailHtml(d,bname){
   const SIGT={more:'할인 물량↑',less:'할인·공급↓',neutral:'중립'};
   const scT=e=>(!e||e.score==='')?'―':e.score, scE=e=>(!e||e.score==='')?'없음':e.score;   // 자료 없음 — 점수 칸 ―, 매입 조건 식 '없음'(점수 0으로 셈)
   // 점수 칸 = 목록과 같은 색(+ 파랑 · − 짙은 주황 · 0 잉크 · ― 회색) · 누르면 그 근거 카드로 · 근거에 자료 상태 꼬리표가 있으면 이름 옆에 시계(실제 수집 실패는 주황 점)
-  const cell=(id,lb)=>{ const e=E[id], v=scT(e), t=v==='―'?'na':e.tone==='p'?'p':e.tone==='n'?'n':'z', tg=(e&&e.tags)||'';
+  const cell=(id,lb)=>{ const e=E[id], v=scT(e), t=tone('score',v==='―'?null:bdScN(e.score)), tg=(e&&e.tags)||'';
     const mk=!tg?'':/수집분|실패/.test(tg)?'<i class="bd-scd" aria-hidden="true"></i>':ic('clock',13);
     const say=!tg?'':/수집분|실패/.test(tg)?' · 이전 값':' · 자료 상태 확인';
-    return `<button type="button" class="bd-sc1" onclick="bdJump('ev-${id}')" aria-label="${esc(lb)} ${esc(v)}${say} — 근거 보기"><span class="l">${esc(lb)}${mk}</span><b class="sc-${t}">${esc(v)}</b></button>`; };
+    return `<button type="button" class="bd-sc1" onclick="bdJump('ev-${id}')" aria-label="${esc(lb)} ${esc(v)}${say} — 근거 보기"><span class="l">${esc(lb)}${mk}</span><b class="${t}">${esc(v)}</b></button>`; };
   const ch=!!d.hist&&d.hist.indexOf('→')>=0;   // 어제와 달라진 판정이면 잉크 글
   let h=`<div class="bd"><section class="bd-top" aria-label="판정"><div class="bd-vr">${vbadge(d.lv,true)}<span class="bd-meta">${esc(d.meta)}</span></div>
     <h2 class="bd-head">${esc(d.head)}</h2><p class="bd-say">${nb(esc(d.say))}</p>${d.hist?`<p class="bd-chg${ch?' on':''}">${ic('clock',13)}<span>${esc(d.hist)}</span></p>`:''}`;
   if(judged){
     const bv=bdScN(T.buy.v);
     h+=`<div class="bd-strip" role="group" aria-label="점수">${cell('dem','수요')}${cell('inv','재고')}${cell('notes','발언')}${cell('fx','환율')}</div>`
-      +`<p class="bd-eq">매입 조건 <b class="${bv>0?'sc-p':bv<0?'sc-n':'sc-tx'}">${esc(T.buy.v)}</b> = 재고 ${esc(scE(E.inv))} + 발언 ${esc(scE(E.notes))} + 환율 ${esc(scE(E.fx))}<span class="bd-eqc">&nbsp;· <span class="nw">${esc(T.buy.cap)}</span></span></p>`;   // 줄이 넘치면 기준 글만 다음 줄로('·'는 앞줄 끝)
+      +`<p class="bd-eq">매입 조건 <b class="${tone('score',bv||0,'sc-tx')}">${esc(T.buy.v)}</b> = 재고 ${esc(scE(E.inv))} + 발언 ${esc(scE(E.notes))} + 환율 ${esc(scE(E.fx))}<span class="bd-eqc">&nbsp;· <span class="nw">${esc(T.buy.cap)}</span></span></p>`;   // 줄이 넘치면 기준 글만 다음 줄로('·'는 앞줄 끝)
   } else h+=`<div class="bd-strip two" role="group" aria-label="점수">${cell('dem','수요')}${cell('fx','환율')}</div>`;
   // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 첫 화면(점수 줄 바로 아래) · 누르면 아래 '해외 정가 비교'로
   let ps=null; try{ ps=bdPrSum(bname); }catch(e){ console.error('[브랜드 상세 · 해외 정가 한 줄] 셈 실패:',e); }
@@ -6264,8 +6282,11 @@ ACT_SRC = {"logistics_fetch": "물류", "price_fetch": "해외 정가", "naver_t
 
 def _act_clean(s):
     s = re.sub(r"[\x00-\x08\x0b-\x1f\x7f]", " ", str(s))
+    s = re.sub(r"[\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]", "", s)          # 보이지 않는 글자(방향 바꿈 등) 뺌
+    s = re.sub(r"(https?://)[^/\s@]+@", r"\1", s)                              # 주소 안 사용자:비밀번호@ 뺌
     s = re.sub(r"(https?://[^\s?#]+)[?#]\S*", r"\1", s)                       # 주소 질의·조각(키가 들어갈 수 있음) 뺌
-    s = re.sub(r"(?i)\b(service_?key|api_?key|crtfc_key|access_?token|token|secret|password|key)\s*[=:]\s*\S+", r"\1=…", s)
+    # 키 이름 = key·token·secret·password·auth가 든 낱말(DATA_GO_KR_API_KEY·X-NCP-APIGW-API-KEY-ID·client_secret·"serviceKey" 등 — _·-로 이어져도) → 값 가림
+    s = re.sub(r'(?i)([A-Za-z0-9_.-]*(?:key|token|secret|passw(?:or)?d|credential|auth(?:orization)?)[A-Za-z0-9_-]*)"?\s*[=:]\s*"?(?:Bearer\s+)?[^\s",}]+', r"\1=…", s)
     s = re.sub(r"[A-Za-z0-9+/%_=-]{32,}", lambda m: "…" if re.search(r"\d", m.group()) and re.search(r"[A-Za-z]", m.group()) else m.group(), s)   # 긴 키 모양(글자+숫자 32자 이상)
     s = re.sub(r"\s+", " ", s).strip()
     return s if len(s) <= ACT_LEN else s[:ACT_LEN].rstrip() + "…"
@@ -6451,23 +6472,12 @@ def main():
         hist = {**hist, "verdicts": cv[-VERDICT_EMBED:], "verdicts_start": rs[0]["date"] if rs else None}
     def js(v):   # v33 내장 데이터 — 뉴스 요약 등에 '</script'·'<!--'가 들어와도 화면 스크립트가 끊기지 않게(JSON 안에서는 같은 글자: \/ = /, \u0021 = !)
         return json.dumps(v, ensure_ascii=False).replace("</", "<\\/").replace("<!--", "<\\u0021--")
-    html = (TEMPLATE
-            .replace("__DATA__", js(data))
-            .replace("__SEGS__", js(segs))
-            .replace("__NEWS__", js(news))
-            .replace("__KR__", js(kr))
-            .replace("__NAVER__", js(naver))
-            .replace("__HIST__", js(hist))
-            .replace("__KRD__", js(krd))
-            .replace("__SEGS_IR__", js(segs_ir))
-            .replace("__STATUS__", js(collect_status()))
-            .replace("__WMAP__", js(wmap))
-            .replace("__LOGI__", js(logi))
-            .replace("__PRICES__", js(prices))
-            .replace("__OURS__", js(ours))
-            .replace("__CHK_CUR__", js(CHK_CUR))
-            .replace("__CHK_RULE__", str(CHK_RULE))
-            .replace("__CHK_SIG__", json.dumps(sig)))
+    # v33.31 자리표시를 한 번에 채움 — 앞에서 넣은 값(뉴스 요약·soft_fail 줄 등)에 '__WMAP__' 같은 글자가 있어도 다시 바꾸지 않게(차례로 replace하면 내장 JSON이 깨져 화면 전체가 안 뜸)
+    subs = {"__DATA__": js(data), "__SEGS__": js(segs), "__NEWS__": js(news), "__KR__": js(kr), "__NAVER__": js(naver),
+            "__HIST__": js(hist), "__KRD__": js(krd), "__SEGS_IR__": js(segs_ir), "__STATUS__": js(collect_status()),
+            "__WMAP__": js(wmap), "__LOGI__": js(logi), "__PRICES__": js(prices), "__OURS__": js(ours),
+            "__CHK_CUR__": js(CHK_CUR), "__CHK_RULE__": str(CHK_RULE), "__CHK_SIG__": json.dumps(sig)}
+    html = re.sub("|".join(re.escape(k) for k in sorted(subs, key=len, reverse=True)), lambda m: subs[m.group(0)], TEMPLATE)
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("saved docs/index.html")
