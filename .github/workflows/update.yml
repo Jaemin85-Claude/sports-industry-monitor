@@ -34,6 +34,7 @@ jobs:
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}   # v2026-10-20 연결 오류로 못 받은 공공데이터포털 자료 → 아래 dgk-retry가 새 서버에서
       conn_tries: ${{ steps.logi.outputs.conn_tries }}
+      soft_fail: ${{ steps.sf.outputs.lines }}   # v2026-11-07 개편 P2: 이 작업의 실패 표시 줄 → 다시 받기 작업이 화면을 다시 만들 때 '조치 필요'에 함께
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -87,7 +88,13 @@ jobs:
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
-        run: python build_dashboard.py
+        run: python build_dashboard.py   # v2026-11-07 개편 P2(build_dashboard v33.31): ./soft_fail.txt 줄 → 화면 머리 '조치 필요 n' · 수집 상태 맨 위 칸
+      - name: Pass alert lines on
+        # v2026-11-07 개편 P2: soft_fail.txt(실패 표시 줄)를 다음 작업에 넘김 — 다시 받기 작업은 새 서버(빈 폴더)라 앞 작업 줄이 없음
+        id: sf
+        if: ${{ !cancelled() }}
+        run: |
+          { echo 'lines<<SF_EOF_p2'; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Commit dashboard
         run: |
           git config user.name "github-actions"
@@ -123,6 +130,7 @@ jobs:
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}
       conn_tries: ${{ steps.logi.outputs.conn_tries }}
+      soft_fail: ${{ steps.sf.outputs.lines }}   # v2026-11-07 개편 P2: 1차 + 이 작업의 실패 표시 줄 → 3/3 작업 화면 '조치 필요'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -149,7 +157,16 @@ jobs:
         run: |
           echo "logistics_fetch: 물류 자료 다시 받기(2/3) 실패(이전 값 유지)" >> soft_fail.txt
       - name: Build dashboard
+        env:
+          SOFT_FAIL_PREV: ${{ needs.run.outputs.soft_fail }}   # 앞 작업(1차)의 실패 표시 줄 — 화면 '조치 필요'에 함께(이 작업의 빨간 X 판단에는 안 넣음)
         run: python build_dashboard.py
+      - name: Pass alert lines on
+        id: sf
+        if: ${{ !cancelled() }}
+        env:
+          SOFT_FAIL_PREV: ${{ needs.run.outputs.soft_fail }}
+        run: |
+          { echo 'lines<<SF_EOF_p2'; printf '%s\n' "$SOFT_FAIL_PREV"; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Commit dashboard
         run: |
           git config user.name "github-actions"
@@ -209,6 +226,8 @@ jobs:
         run: |
           echo "logistics_fetch: 물류 자료 다시 받기(3/3) 실패(이전 값 유지)" >> soft_fail.txt
       - name: Build dashboard
+        env:
+          SOFT_FAIL_PREV: ${{ needs.dgk-retry-1.outputs.soft_fail }}   # 1차 + 2/3 작업의 실패 표시 줄 — 화면 '조치 필요'에 함께(이 작업의 빨간 X 판단에는 안 넣음)
         run: python build_dashboard.py
       - name: Commit dashboard
         run: |
