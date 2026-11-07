@@ -4,7 +4,7 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.31: (대표 결정 2026-11-06 개편 P2 · Q4 나) 오늘 글 줄이기(시안 1 A — 대표가 고른 카드 4장 그대로): ① 어제와 달라진 판정 줄은 감김(두 줄까지 · …로 자르지 않음 · 환율만 바뀐 판정은 회색 '· 환율만' · 누르면 그 브랜드) · '22곳 판정' 뺌 ·
   오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(오늘 ① — 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
   머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로 — 다른 워크플로우만 늦으면 조치 필요가 먼저) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
-  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 — KeyError 같은 예외 이름은 그대로 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
+  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 — KeyError 같은 예외 이름은 그대로 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '못 받음 n'(수집 상태·메뉴 — 물류 맺음 줄은 '이전 값 n · 값 없음 n') · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
   파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크 · 캘린더 실적 7일 안 점·유통사 비교 '중앙값보다 나은 지표' 점은 잉크 · 시장 › 국내 검색 관심도 알약은 색 대신 '상위·하위' — ▲▼는 음수 옆에서 '올랐다'로 읽혀 안 씀) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
 v33.30: (대표 결정 2026-11-06 개편 P1 · Q3 가 · Q4 나) 더보기 › 해외 정가 다시 만들기 — 시안 3(v3): 표 상자 안 넘김 없이 화면 한 번 넘김(나라 머리 줄은 머리 아래 고정 · phSync --ch 뺌) ·
   값 = 원화 만원 소수 한 자리(390·360px에 6개 나라) · 브랜드 묶음 줄(판정 배지 — 누르면 브랜드 상세) · 단추 한 줄(정가|할인가 · 착지 · 표|카드) + 기준 줄 + 설정 패널(정렬 · 현지 부가세 · 목표 마진 pm_target) ·
@@ -2130,9 +2130,9 @@ function statusCard(){
     const dd=r.ts?Math.round((new Date(kstToday()+'T00:00:00Z')-new Date(r.ts.slice(0,10)+'T00:00:00Z'))/86400000):null;   // 한국 날짜 차(24시간 안이라도 날짜가 다르면 '어제')
     const ageTxt=dd==null||isNaN(dd)?'':(dd<=0?'오늘':dd===1?'어제':`${dd}일 전`);
     h+=`<tr><td>${esc(r.label)}<div class="ref">${esc(r.wf)}</div></td><td>${when}<div class="ref">${ageTxt}</div></td><td>${esc(r.cadence)}</td>
-      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref"><span class="stl" style="margin-left:0">이전 값 ${r.failed}곳</span></div>`:''}${(r.notes||[]).length?`<div class="ref" style="white-space:normal">${(r.notes||[]).map((t,i)=>esc(i||!r.failed?t:String(t).replace(/^이전 값 /,''))).join(' · ')}</div>`:''}</td></tr>`;   // v33.31 바로 위 '이전 값 n곳'과 같은 말 되풀이 안 함
+      <td>${r.late?'<span class="st-late">● 지연</span>':'<span class="st-ok">● 정상</span>'}${r.failed?`<div class="ref"><span class="stl" style="margin-left:0">못 받음 ${r.failed}곳</span></div>`:''}${(r.notes||[]).length?`<div class="ref" style="white-space:normal">${(r.notes||[]).map(t=>esc(t)).join(' · ')}</div>`:''}</td></tr>`;   // v33.31 '일부 실패' → 회색 '못 받음 n곳'(이전 값·값 없음·뉴스 선별 실패 등을 함께 셈 — 무엇인지는 아래 설명)
   });
-  h+=`</table>`+why(`지연 = 주기보다 오래 갱신되지 않음(열람 시점 기준) → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 이전 값 n곳 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음' · 조치 필요 = 맨 위 칸(이번 갱신을 빨간 X로 만든 줄)`);   // v33.25 접음(상태·실패 표시는 표에 그대로)
+  h+=`</table>`+why(`지연 = 주기보다 오래 갱신되지 않음(열람 시점 기준) → GitHub Actions에서 해당 워크플로우 실행 기록 확인 · 못 받음 n곳 = 그날 못 받은 항목 — 이전 값이 있으면 그대로 보여 줌(해당 종목·환율에 '이전 값(날짜)' 표시), 없으면 '값 없음' · 조치 필요 = 맨 위 칸(이번 갱신을 빨간 X로 만든 줄)`);   // v33.25 접음(상태·실패 표시는 표에 그대로)
   // v33.2 판정 기록 비교에서 뺀 브랜드 — 화면 판정과 기록(파이썬)이 다르거나 기록 모양이 틀림 → 판정 규칙 두 곳(build_dashboard JS·파이썬) 확인
   try{ const sk=chkHist().skip; if(sk.length) h+=`<div class="note"><span class="stl" style="margin-left:0">판정 기록 비교 제외 ${sk.length}곳</span> ${esc(sk.join(', '))} — 화면 판정과 기록이 다르거나 기록 모양이 틀려 '어제와 달라진 판정'에서 뺌(판정 규칙 두 곳 확인 필요)</div>`; }catch(e){ console.error('[수집 상태 · 판정 기록] 확인 실패:',e); }
   h+=`</div>`;
@@ -2507,14 +2507,14 @@ function todayModel(){
   return out;
 }
 function todayHeadHtml(){   // 머리: 보는 날짜 · '오늘 볼 것 4가지' · 수집 상태 단추 하나 → 수집 상태
-  // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) · v33.31(개편 P2) 평소 = 회색 시계 '11:27 갱신'(이전 값은 자료 상태라 단추에 안 셈 — 수집 상태 '이전 값 n') ·
+  // v33.28 상태는 이 단추 하나(맺음 줄에서 뺌) · v33.31(개편 P2) 평소 = 회색 시계 '11:27 갱신'(못 받은 항목은 자료 상태라 단추에 안 셈 — 수집 상태 '못 받음 n') ·
   // 마지막 update-dashboard 실행을 빨간 X로 만든 줄(STATUS.act)이 있으면 주황 점 '11:27 · 조치 필요 n' · 수집 지연 = 주황 경고 '11:27 · 지연 n'(그대로) —
   // 이 화면을 만든 실행(data.json)이 늦으면 조치 필요 줄도 옛 실행 것이라 지연이 먼저, 다른 워크플로우만 늦으면 조치 필요가 먼저(지연은 맨 위 띠·화면 읽기 이름에)
   const g=String(DATA.generated_at||''), gd=g.slice(0,10), st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0), act=actN();
   const selfLate=st.some(r=>r.late&&r.file==='data.json'), lateW=late&&(selfLate||!act);
   const t=g?`${gd!==kstToday()?mdTxt(gd)+' ':''}${g.slice(11,16)}`:'갱신 시각 없음';
   const vis=lateW?`${t} · 지연 ${late}`:act?`${t} · 조치 필요 ${act}`:(g?`${t} 갱신`:t);
-  const say=[late?`수집 지연 ${late}곳`:'',act?`조치 필요 ${act}건`:'',part?`이전 값 ${part}`:''].filter(Boolean).join(' · ')||'수집 정상';
+  const say=[late?`수집 지연 ${late}곳`:'',act?`조치 필요 ${act}건`:'',part?`못 받음 ${part}`:''].filter(Boolean).join(' · ')||'수집 정상';
   const date=new Date().toLocaleDateString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',weekday:'long'});
   return `<div class="hd-row"><div class="hd-tt"><span class="hd-kick">${esc(date)}</span><h1>오늘 볼 것 4가지</h1></div>
     <button type="button" class="hd-pill ${lateW?'late':act?'act':'ok'}" id="tdStatus" data-go="more:status" aria-label="${esc(`${g?t+' 갱신':t}, ${say}, 수집 상태 보기`)}">${lateW?ic('alert',16):act?'<span class="a-dot" aria-hidden="true"></span>':ic('clock',16)}<span>${esc(vis)}</span></button></div>`;
@@ -4432,7 +4432,8 @@ function moreLogiHtml(){
   const dtr=Array.isArray(dc.tries)?dc.tries.filter(t=>t&&typeof t==='object'&&!Array.isArray(t)):[], dn=dtr.length, dall=dn>0&&dtr.every(t=>t.blocked===true);
   const dIn=[dall?(dn>1?'GitHub 서버 '+dn+'대 모두 막힘':'GitHub 서버에서 막힘'):(dn?'GitHub 서버 '+dn+'대에서 시도':''),typeof dc.since==='string'&&dc.since?esc(dc.since)+'부터':''].filter(Boolean).join(' · ');
   const dcTxt=(Array.isArray(dc.keys)&&dc.keys.length)?` — 공공데이터포털 연결 ${dall?'안 됨':'오류'}${dIn?'('+dIn+')':''}`:'';
-  if(bad.length) h+=`<div class="note"><span class="stl" style="margin-left:0">이전 값 ${bad.length}</span> ${esc(bad.join(', '))}${dcTxt}</div>`;   // v33.9 실패 표시는 접지 않음
+  const kp=st.kept||[], fl=st.failed||[], bl=(t,a)=>a.length?`<span class="stl" style="margin-left:0">${t} ${a.length}</span> ${esc(a.join(', '))}`:'';
+  if(bad.length) h+=`<div class="note">${[bl('이전 값',kp),bl('값 없음',fl)].filter(Boolean).join(' · ')}${dcTxt}</div>`;   // v33.9 실패 표시는 접지 않음 · v33.31 이전 값·값 없음 나눔
   h+=`<div class="note">출처: 관세청 · 해양수산부 · 한국해양진흥공사 KCCI · IMF PortWatch · Sea-Intelligence</div>`;   // v33.9 출처 한 줄은 보이게
   h+=why('관세청 수출입 운송비용(공공데이터포털 · 공공누리 1유형) · 관세청 국가별 입항·출항 물동량 · 해양수산부 선박입출항(공공데이터포털 오픈 API · 이용허락 제한 없음) · 한국해양진흥공사 KCCI · IMF PortWatch(UN Global Platform AIS) · Sea-Intelligence GLP 보도자료 · 매일 update-dashboard에서 받음','출처 자세히');
   return h+guide+'</div>';
@@ -4493,8 +4494,8 @@ function moreMenuHtml(){   // v33 S2: 머리 '더보기' + 메뉴 줄 5개(선 �
       return `<b>한국 ${prGapTxt(A.avg)}</b><br>평균 · 상품 ${A.nIt}개`; }))}
     ${row('cb','globe','해외직구','나라별 직구 · 분기',sv('해외직구',()=>{ const CB=KR&&KR.cross_border; return CB&&CB.last?`<b>${cbPrdS(CB.last)}</b><br>최근 자료`:'수집 전'; }))}
     ${row('status','pulse','수집 상태','갱신 · 지연'+sv('Claude 사용액',claudeMonthTxt,''),sv('수집 상태',()=>{ const st=statusRows(), late=st.filter(r=>r.late).length, part=st.reduce((a,r)=>a+(r.failed||0),0), act=actN();
-      // v33.31 주황 알약 = 조치 필요(빨간 X 줄)만 · 지연은 회색 글 + 주황 점(오늘 맨 위 지연 띠가 경고) · 그 밖 못 받은 항목은 회색 '이전 값 n'(자료 상태)
-      return [act?`<span class="wn">조치 필요 ${act}</span>`:'',late?`<span class="stl">지연 ${late}</span>`:''].filter(Boolean).join('<br>')||(part?`<span class="na">이전 값 ${part}</span>`:'<b>정상</b>'); }))}
+      // v33.31 주황 알약 = 조치 필요(빨간 X 줄)만 · 지연은 회색 글 + 주황 점(오늘 맨 위 지연 띠가 경고) · 그 밖 못 받은 항목은 회색 '못 받음 n'(자료 상태 — 이전 값·값 없음 함께)
+      return [act?`<span class="wn">조치 필요 ${act}</span>`:'',late?`<span class="stl">지연 ${late}</span>`:''].filter(Boolean).join('<br>')||(part?`<span class="na">못 받음 ${part}</span>`:'<b>정상</b>'); }))}
     ${themeRowHtml()}
   </nav>`;   // v33.25 운영 메모 문장 뺌(CLAUDE.md에 있음)
 }
