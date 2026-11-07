@@ -5,6 +5,9 @@ name: check-files
 #  (2026-10 추가) ⑤ 워크플로우 YAML 읽기·예약(cron) 형식 ⑥ 패키지 설치 후 모든 스크립트 불러오기
 #  ⑦ 화면 실제로 만들어 보기(build_dashboard) + 화면 뼈대 표식(id) + 화면 스크립트 문법 검사(node --check)
 #     표식(2026-10 A안 v33): 오늘 todayCard·statusWarn · 브랜드 brandBody · 시장 mkChips·newsBody·kpis
+#  (2026-11-06 개편 P0) ⑧ 화면 자동 점검 — 만든 화면을 휴대폰 크기(390×844) 브라우저로 화면 주소 19곳 열기(시계는 자료 시각에 고정):
+#     스크립트 오류 · 화면이 스스로 잡은 그리기 실패(콘솔 '… 실패'·'그리지 못했습니다') · 본문 상자 글자가 하한 밑이면 실패 ·
+#     가로 넘침·오늘 글자 예산(전체 800)은 경고 · 화면 파일 gzip 600KB 넘으면 실패(550KB 경고)
 on:
   pull_request:
     branches: [main]
@@ -24,7 +27,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15   # v2026-11-06 화면 자동 점검(브라우저) 추가
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -178,3 +181,113 @@ jobs:
           print(f"index.html {len(h):,}자 · 스크립트 {j - i - 8:,}자")
           PY
           node --check /tmp/page.js && echo "화면 스크립트 문법 통과"
+      - name: Check page size
+        run: |
+          python - <<'PY'
+          import gzip, sys
+          raw = open("docs/index.html", "rb").read()
+          gz = len(gzip.compress(raw, 9))
+          print(f"화면 파일 {len(raw)/1024:,.0f}KB · gzip {gz/1024:,.0f}KB (예산 600KB · 경고 550KB)")
+          if gz > 600 * 1024:
+              print(f"::error::화면 파일 gzip {gz/1024:,.0f}KB — 600KB 넘음(휴대폰 첫 화면이 느려짐 · 큰 자료는 따로 받기)"); sys.exit(1)
+          if gz > 550 * 1024:
+              print(f"::warning::화면 파일 gzip {gz/1024:,.0f}KB — 550KB 넘음")
+          PY
+      - name: Check pages in a phone-size browser
+        # v2026-11-06 개편 P0: 화면 주소마다 열어 스크립트 오류·빈 화면을 잡음(외부 요청은 막고 파일만 — 네트워크에 흔들리지 않게)
+        run: |
+          npm i --no-save --no-audit --no-fund --prefix /tmp/pw playwright-core@1.63.0 > /tmp/pw.log 2>&1 || { cat /tmp/pw.log; exit 1; }
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then /tmp/pw/node_modules/.bin/playwright-core install chromium; fi
+          cat > /tmp/smoke.js <<'JS'
+          // 화면 자동 점검(check-files ⑧ · 2026-11-06 개편 P0) — 빌드한 docs/index.html을 휴대폰 크기로 열어 화면 주소마다
+          // ① 스크립트 오류(pageerror) ② 화면이 스스로 잡은 그리기 실패(console.error '… 실패' · '그리지 못했습니다' 표시 .boot-err)
+          // ③ 본문이 그려졌는지(주소마다 본문 상자 글자 하한 — 2026-11-06 빌드의 약 20~30%)를 보고 실패, 가로 넘침·오늘 글자 예산은 경고만.
+          // 외부 요청(글꼴·아이콘)은 막고 파일만 읽음 · 화면 시계는 자료 시각(data.json generated_at)에 고정 — 결과가 네트워크·실행 시각에 흔들리지 않게.
+          const { chromium } = require(process.env.PW_MOD || 'playwright-core');
+          const fs = require('fs'), path = require('path');
+          const HTML = path.resolve(process.argv[2] || 'docs/index.html'), FILE = 'file://' + HTML;
+          const EXE = process.env.CHROME || undefined;
+          const errs = new Map(), warns = new Map();   // 같은 문구는 한 번만(숨은 화면은 시작할 때 모두 그려져 주소마다 되풀이됨) — 문구 → 주소들
+          const add = (M, msg, where) => { if (!M.has(msg)) M.set(msg, []); if (where && !M.get(msg).includes(where)) M.get(msg).push(where); };
+          // [주소, 본문 상자 id, 글자 하한(공백 제외)]
+          const routes = [['', 'todayCard', 200], ['#/brand', 'brandBody', 200], ['#/market/news', 'newsBody', 100], ['#/market/cal', 'mk-cal', 150],
+            ['#/market/sig', 'sigBody', 200], ['#/market/co', 'coTbl', 500], ['#/market/kr', 'krBody', 200], ['#/market/map', 'mapBody', 60],
+            ['#/more', 'moreBody', 100], ['#/more/peer', 'moreBody', 150], ['#/more/fb', 'moreBody', 300], ['#/more/fx', 'moreBody', 200],
+            ['#/more/logi', 'moreBody', 500], ['#/more/price', 'moreBody', 1000], ['#/more/cb', 'moreBody', 100], ['#/more/status', 'moreBody', 300]];
+          let T = null;
+          try {
+            const g = JSON.parse(fs.readFileSync(path.join(path.dirname(HTML), 'data.json'), 'utf8')).generated_at || '';
+            const m = /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/.exec(g);
+            if (m) { T = new Date(`${m[1]}T${m[2].padStart(5, '0')}:00+09:00`); if (isNaN(T)) T = null; }
+          } catch (e) {}
+          (async () => {
+            const b = await chromium.launch(EXE ? { executablePath: EXE } : {});
+            const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
+            await ctx.route('**/*', r => { const u = r.request().url(); (u.startsWith('file:') || u.startsWith('data:')) ? r.continue() : r.abort(); });
+            if (T) { await ctx.clock.setFixedTime(T); console.log(`  화면 시각 고정: ${T.toISOString()} (자료 시각)`); }
+            async function visit(hash, label, bodyId, min) {
+              const p = await ctx.newPage();
+              p.on('pageerror', e => add(errs, '스크립트 오류 — ' + String(e && e.message || e).slice(0, 200), label));
+              p.on('console', m => {
+                if (m.type() !== 'error') return; const t = m.text().split('\n')[0];
+                if (/^Failed to load resource/.test(t)) return;   // 막아 둔 외부 요청
+                if (/^\[판정 기록\] 화면 판정과 기록이 다르/.test(t)) add(warns, t.slice(0, 160), label);   // 자료에 따라 나는 경고(수집 상태 '판정 기록 비교 제외')
+                else add(errs, '그리기 실패(콘솔) — ' + t.slice(0, 160), label);
+              });
+              const t0 = Date.now();
+              try { await p.goto(FILE + hash, { waitUntil: 'load', timeout: 60000 }); await p.waitForTimeout(400); }
+              catch (e) { add(errs, '열기 실패 — ' + String(e.message).slice(0, 160), label); await p.close(); return null; }
+              const m = await p.evaluate(id => {
+                const box = document.getElementById('content') || document.body, el = id && document.getElementById(id);
+                const L = x => x ? (x.innerText || '').replace(/\s+/g, '').length : -1;
+                return { len: L(box), body: L(el), boot: [...new Set([...document.querySelectorAll('#content .boot-err')].map(x => x.dataset.n || '?'))],
+                  sw: Math.max(box.scrollWidth, document.documentElement.scrollWidth), cw: box.clientWidth };
+              }, bodyId);
+              m.boot.forEach(n => add(errs, `화면 안 '그리지 못했습니다' — ${n}`, label));
+              if (m.len < 40) add(errs, `화면이 비어 있음(글자 ${m.len})`, label);
+              if (bodyId && m.body < min) add(errs, `본문(#${bodyId}) 글자 ${m.body} < 하한 ${min}`, label);
+              if (m.sw > m.cw + 1) add(warns, `가로 넘침 ${m.sw}px > ${m.cw}px`, label);
+              console.log(`  ${label.padEnd(26)} 글자 ${String(m.len).padStart(6)} · 본문 ${String(m.body).padStart(6)} · ${Date.now() - t0}ms`);
+              return p;
+            }
+            // 오늘 — 글자 예산(경고만): 전체 800(하단 탭 제외, 공백 제외, 접힌 읽는 법 제외) — 2026-10-19·10-27 대표 지시 '텍스트 최소화'
+            // 첫 화면 글자는 기록만 — 러너는 IBM Plex 대신 대체 글꼴로 그려 줄 높이가 달라짐(11/06 같은 화면: 휴대폰 글꼴 306 · 러너 365)
+            const p0 = await visit('', '오늘', 'todayCard', 200);
+            const extra = [];
+            if (p0) {
+              const t = await p0.evaluate(() => {
+                const box = document.getElementById('content') || document.body, H = innerHeight;
+                const nav = document.querySelector('nav.tabs'); const navTop = nav ? nav.getBoundingClientRect().top : H;
+                let all = 0, first = 0; const w = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+                while (w.nextNode()) {
+                  const n = w.currentNode, s = n.textContent.replace(/\s+/g, ''); if (!s) continue;
+                  const el = n.parentElement; if (!el || !el.offsetParent && getComputedStyle(el).position !== 'fixed') continue;
+                  if (el.closest('details:not([open])') && !el.closest('summary')) continue;
+                  all += s.length; const r = el.getBoundingClientRect(); if (r.top < Math.min(H, navTop) && r.bottom > 0) first += s.length;
+                }
+                let brand = null, tick = null, pb = null;
+                try { const M = chkModel(); brand = (M.main[0] || M.rest[0]).b.name; } catch (e) {}
+                try { tick = DATA.items[0].ticker; } catch (e) {}
+                try { pb = PRICES.items[0].brand; } catch (e) {}
+                return { all, first, brand, tick, pb };
+              });
+              console.log(`  오늘 글자: 전체 ${t.all}(예산 800) · 첫 화면 ${t.first}(대체 글꼴 기준 · 기록만)`);
+              if (t.all > 800) add(warns, `오늘 글자 ${t.all}자 — 예산 800자 넘음`);
+              if (t.brand) extra.push(['#/brand/' + encodeURIComponent(t.brand), '브랜드 상세 ' + t.brand, 'brDetBody', 150]); else add(errs, '판정 브랜드를 못 찾음(chkModel)', '오늘');
+              if (t.pb && t.pb !== t.brand) extra.push(['#/brand/' + encodeURIComponent(t.pb), '브랜드 상세 ' + t.pb, 'brDetBody', 300]);   // 해외 정가 비교가 있는 브랜드
+              if (t.tick) extra.push(['#/market/co/' + encodeURIComponent(t.tick), '기업 상세 ' + t.tick, 'detBody', 300]); else add(errs, '기업 목록을 못 찾음(DATA.items)', '오늘');
+              await p0.close();
+            }
+            for (const [r, id, min] of routes.slice(1)) { const p = await visit(r, r, id, min); if (p) await p.close(); }
+            for (const [r, l, id, min] of extra) { const p = await visit(r, l, id, min); if (p) await p.close(); }
+            await b.close();
+            const fmt = (msg, w) => msg + (w.length ? ` (${w.length > 3 ? w.slice(0, 3).join(', ') + ` 외 ${w.length - 3}곳` : w.join(', ')})` : '');
+            warns.forEach((w, msg) => console.log(`::warning::${fmt(msg, w)}`));
+            errs.forEach((w, msg) => console.log(`::error::${fmt(msg, w)}`));
+            const n = routes.length + extra.length;
+            console.log(errs.size ? `화면 점검 실패 ${errs.size}건` : `화면 점검 통과: ${n}개 화면 · 경고 ${warns.size}건`);
+            process.exit(errs.size ? 1 : 0);
+          })().catch(e => { console.log(`::error::화면 점검 실행 오류 — ${e.message}`); process.exit(1); });
+          JS
+          PW_MOD=/tmp/pw/node_modules/playwright-core CHROME="$CHROME" node /tmp/smoke.js docs/index.html
