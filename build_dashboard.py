@@ -4,8 +4,8 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.31: (대표 결정 2026-11-06 개편 P2 · Q4 나) 오늘 글 줄이기(시안 1 A — 대표가 고른 카드 4장 그대로): ① 어제와 달라진 판정 줄은 감김(두 줄까지 · …로 자르지 않음 · 환율만 바뀐 판정은 회색 '· 환율만' · 누르면 그 브랜드) · '22곳 판정' 뺌 ·
   오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(오늘 ① — 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
   머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로 — 다른 워크플로우만 늦으면 조치 필요가 먼저) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
-  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
-  파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
+  (수집 상태 맨 위 '조치 필요' 칸 · 더보기 탭 주황 점(메뉴 주황 알약도 조치 필요만) · STATUS.act — 주소 질의·사용자 정보·키 이름(_·- 포함)의 값·키 모양 글자 가림 — KeyError 같은 예외 이름은 그대로 · 자리표시는 한 번에 채움) · '일부 실패 n' → 회색 '이전 값 n' · 숫자 색 Q4 나 전 화면(tone() 하나 — 숫자는 잉크·회색,
+  파랑 = 누르는 곳·지금 검토·점수 칸(점수 칸 색도 tone('score')), 주황 = 경고만 · .pos/.neg·fxC·lgC 없앰 · 소싱 지도 '보통' 칸 글자 잉크 · 시장 › 국내 검색 관심도 알약은 색 대신 '상위·하위' — ▲▼는 음수 옆에서 '올랐다'로 읽혀 안 씀) — 판정 규칙(chkModel·chk_verdicts)은 그대로(CHK_RULE 그대로)
 v33.30: (대표 결정 2026-11-06 개편 P1 · Q3 가 · Q4 나) 더보기 › 해외 정가 다시 만들기 — 시안 3(v3): 표 상자 안 넘김 없이 화면 한 번 넘김(나라 머리 줄은 머리 아래 고정 · phSync --ch 뺌) ·
   값 = 원화 만원 소수 한 자리(390·360px에 6개 나라) · 브랜드 묶음 줄(판정 배지 — 누르면 브랜드 상세) · 단추 한 줄(정가|할인가 · 착지 · 표|카드) + 기준 줄 + 설정 패널(정렬 · 현지 부가세 · 목표 마진 pm_target) ·
   굵은 밑줄 = 가장 쌈(한국과 0.5% 안이면 한국) · 진한 글자 = 한국보다 싼 나라, 회색 = 같거나 비쌈 · 착지 마진 = 1 − 착지 ÷ 한국에서 지금 팔리는 가격(정가 보기도 — 한국도 할인 중이면 할인가 · '단순 차익 · 수수료 전') ·
@@ -2544,6 +2544,8 @@ function chgFit(){   // v33.31 그린 너비·글꼴에서 두 줄을 넘으면 
   let i=G.at; sp.innerHTML=chgSpan(G,G.opts[i]);
   while(over()&&i<G.opts.length-1) sp.innerHTML=chgSpan(G,G.opts[++i]);
 }
+let CHG_RAF=0;   // 너비가 바뀌면(휴대폰 가로·세로 · 창 크기) 두 줄 맞춤을 다시 — chgFit은 글자 수 단계부터 다시 셈
+window.addEventListener('resize',()=>{ if(TD_CHG&&!CHG_RAF) CHG_RAF=requestAnimationFrame(()=>{ CHG_RAF=0; try{ chgFit(); }catch(e){} }); });
 function tdBuyHtml(B){   // ① 매입 검토 — v33.28 판정별 묶음: '지금 검토 n곳' 배지는 묶음 머리에 한 번 → 브랜드마다 한 줄(이름 + 짧은 이유 + 오른쪽 끝 매입 조건 점수 하나)
   // · 주의 = 누르는 이름만(줄바꿈돼도 왼쪽 맞춤) · 관망·판정 안 함 = 끝 줄 '점검표 전체 보기'의 개수 · 판정·점수는 chkModel 그대로(표시만)
   const G=B.chg, same=G&&!G.n&&!G.skip;   // v33.2 판정 기록 비교 — 바뀐 곳이 있으면 머리 아래 한 줄, 없으면 머리 끝에 '어제와 같음'
@@ -3375,7 +3377,7 @@ function nvMed(g=NV_GRP){
   return n?(n%2?ys[(n-1)/2]:(ys[n/2-1]+ys[n/2])/2):null;
 }
 const nvRel=(y,med)=>(y==null||med==null)?'mid':(y-med>=5?'up':(y-med<=-5?'down':'mid'));
-const nvGl=(y,med)=>({up:'▲ ',down:'▼ '})[nvRel(y,med)]||'';   // v33.31 Q4 나 — 알약 색 대신 앞 ▲▼(중앙값보다 5%p 넘게 좋음·나쁨)
+const nvGl=(y,med)=>({up:'상위 · ',down:'하위 · '})[nvRel(y,med)]||'';   // v33.31 Q4 나 — 알약 색 대신 앞 글 '상위·하위'(중앙값보다 5%p 넘게 좋음·나쁨 — ▲▼는 음수 옆에서 '올랐다'로 읽혀 안 씀)
 const nvWk=d=>d?(+d.slice(5,7))+'/'+(+d.slice(8,10)):'';
 const nvSc=v=>v==null?'―':(v>=10?v.toFixed(0):v.toFixed(1));
 /* 최근 52주(실선) vs 그 전 52주(점선), 같은 축 */
@@ -3420,7 +3422,7 @@ function naverCardHtml(){
     <div class="nv-sum"><b>전년 대비 중앙값 ${med!=null?pp(med):'―'}</b>${ups.length?`<br><b>▲ 상대 증가</b> ${ups.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}${downs.length?`<br><b>▼ 상대 감소</b> ${downs.map(b=>`${esc(b.name)} ${pp(b.yoy)}`).join(' · ')}`:''}</div>`;
   shown.forEach(b=>{ h+=nvRowHtml(b,med); });
   if(rows.length>NV_TOP) h+=`<button type="button" class="nv-more" aria-expanded="${NV_ALL}" onclick="nvToggle()">${NV_ALL?`상위 ${NV_TOP}개만 보기 ${ic('up',16)}`:`전체 ${rows.length}개 보기 ${ic('down',16)}`}</button>`;
-  h+=`<div class="src-legend" style="margin-top:8px"><span>▲ 중앙값보다 5%p 이상 좋음 · ▼ 5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span></div>
+  h+=`<div class="src-legend" style="margin-top:8px"><span>상위 = 전년 대비가 중앙값보다 5%p 이상 좋음 · 하위 = 5%p 이상 나쁨</span><span><i style="background:var(--sub);opacity:.55"></i>막대 = 규모</span></div>
     <div class="note" style="margin-top:6px">출처: ${esc(NAVER.source||'네이버 데이터랩')}</div>${why(`주간 검색 지수 · 규모 = 나이키 최근 4주를 100 · 전년 대비 = 최근 4주 vs 1년 전 같은 4주(지수 비율 = 실제 검색 횟수 비율) · 4주 vs 12주 = 최근 4주 vs 직전 12주(계절 영향 포함)<br>대부분이 같이 움직이면 네이버 검색 전반의 변화라 중앙값보다 나은지로 봄${NV_GRP==='global'?' · 브랜드 점검표 중앙값은 검색량 충분한 브랜드만':NV_GRP==='kr'?' · 중앙값은 국내 패션 브랜드끼리':NV_GRP==='eye'?' · 중앙값은 글로벌 아이웨어 + 국내 젠틀몬스터·블루엘리펀트끼리 · 명품은 선글라스·안경 검색어만':''}<br>규모 1 미만은 검색량 적음 표시·맨 아래 · 그래프: 최근 1년 실선, 그 전 1년 점선 · 누르면 브랜드 상세(수입·해외)·기업 상세 또는 그 브랜드 뉴스`)}</div>`;   // v33.26 접음
   return h;
 }
@@ -6286,7 +6288,9 @@ def _act_clean(s):
     s = re.sub(r"(https?://)[^/\s@]+@", r"\1", s)                              # 주소 안 사용자:비밀번호@ 뺌
     s = re.sub(r"(https?://[^\s?#]+)[?#]\S*", r"\1", s)                       # 주소 질의·조각(키가 들어갈 수 있음) 뺌
     # 키 이름 = key·token·secret·password·auth가 든 낱말(DATA_GO_KR_API_KEY·X-NCP-APIGW-API-KEY-ID·client_secret·"serviceKey" 등 — _·-로 이어져도) → 값 가림
-    s = re.sub(r'(?i)([A-Za-z0-9_.-]*(?:key|token|secret|passw(?:or)?d|credential|auth(?:orization)?)[A-Za-z0-9_-]*)"?\s*[=:]\s*"?(?:Bearer\s+)?[^\s",}]+', r"\1=…", s)
+    # 파이썬 예외 이름(KeyError·TokenError·AuthenticationError 등 …Error·…Exception·…Warning)은 키 이름이 아님 — 뒤 글(빠진 키 이름 등)을 그대로 둠
+    s = re.sub(r'(?i)([A-Za-z0-9_.-]*(?:key|token|secret|passw(?:or)?d|credential|auth(?:orization)?)[A-Za-z0-9_-]*)"?\s*[=:]\s*"?(?:Bearer\s+)?[^\s",}]+',
+               lambda m: m.group(0) if re.search(r"(?:Error|Exception|Warning)$", m.group(1)) else m.group(1) + "=…", s)
     s = re.sub(r"[A-Za-z0-9+/%_=-]{32,}", lambda m: "…" if re.search(r"\d", m.group()) and re.search(r"[A-Za-z]", m.group()) else m.group(), s)   # 긴 키 모양(글자+숫자 32자 이상)
     s = re.sub(r"\s+", " ", s).strip()
     return s if len(s) <= ACT_LEN else s[:ACT_LEN].rstrip() + "…"
