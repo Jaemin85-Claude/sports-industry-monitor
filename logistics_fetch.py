@@ -1,6 +1,22 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.10: (대표 지시 2026-11-09 '관세청 한 번만') 관세청 운송비용 파일 3개가 10/29부터 화면에서 내려받기 번호(FILE_…)를 못 찾아 이전 값(공공데이터포털
+      활용신청 전) → 11/09부터 매일 '오래된 이전 값' 실패 표시(빨간 X · 머리 단추 '조치 필요' · 12:23 점검 알림)였고 그 전에도 매일 [WARN] 줄 →
+      관세청 자료(ONCE_KEYS = 운송비용 파일 3 · 국가별 물동량 2)는 PortWatch(v1.9)처럼 한 기간에 한 번만:
+      ① 이전 값이 기준일(10일) 안이면 항목 줄을 '[WARN] … 실패' 대신 '이번 실행 못 받음 — … · 이전 값(10-29 받은 값 · 기준 10일 안)'(오류 원문의
+         …Error·'실패' 낱말은 '오류'·'못 받음'으로 — 12:23 점검이 매일 읽지 않게)
+      ② 기준일을 넘는 날 한 번 '[WARN] … 실패' 줄 + '오래된 이전 값' 실패 표시 → 알린 기록 gap_told {"블록:": {"since", "at"}}(PortWatch와 같은 칸 ·
+         항목 없이 '블록:') — 그 뒤 같은 since면 값이 돌아올 때까지 조용히('… · 이전 값(10-29 받은 값 · 기준 10일 넘음 · 11-09에 알림)' · 실패 표시에서 뺌)
+      ③ 이전 값도 없는 값 없음은 첫날 '[WARN] … 실패 … 값 없음' 줄이 알림 — 그날 기록, 그 뒤 조용히(PortWatch와 같게 기준일 넘는 날 실패 표시 없음) ·
+         기록은 그 줄을 실제로 쓴 날만(ONCE_WARNED — 막힌 첫날 조용한 연결 오류 줄(NET_QUIET)인 날은 기록 안 함 → 다음 실패 날 [WARN] 줄 · 검토 반영)
+      ④ '절반 이상'(8개 중 4개) 셈에서 기록이 있는(이미 알렸거나 오늘 알리는) 관세청 자료는 뺌(분모 8 그대로 — 연결 시험에서 막힌 파일과 같게) ·
+         그 실패 표시 끝에 '이미 알린 관세청 자료 n개 뺌'
+      ⑤ 기록 표시 logistics.json told_customs: true — 표시가 없는 v1.9 파일에서 처음 넘어오는 실행만 지난 실행 날 이미 기준일을 넘은 것은 그 실행이
+         알린 것으로(11/09 아침 실행이 알림 → 병합 뒤 실행부터 조용히) · 새 값을 받거나 since가 바뀌면 기록을 지움(새 기간은 다시 한 번) ·
+         표시는 늘 쓰고, 이 차례가 판단하지 않는 관세청 자료(다시 받기로 넘김)는 옛 파일 추정분까지 기록으로 넘김 — 다시 받기 차례는 기록으로만(검토 반영)
+      그대로: 공공데이터포털 연결 오류 줄·'연결 안 됨 n일째'·인증키 오류(바로 실패 표시)·KCCI·정시율·부산 입항 선박·PortWatch 규칙 · 화면(물류 맺음 줄
+      '이전 값 3' · 수집 상태 '못 받음 n곳')은 그대로
 v1.9: (대표 지시 2026-11-02 '상하이도 매일 말고 한 번만 알리게 해주세요') v1.8은 원본 자료 없음만 한 번 알리고, 다른 까닭(상하이 — port1188
       행 질의가 계속 400 'Cannot perform query'·'Invalid URL' · 10/28부터 이전 값)으로 7일을 넘은 PortWatch 항목은 11/05부터 매일 '실패' 줄 +
       '오래된 이전 값' 실패 표시 → PortWatch(해협·항만·거점)의 오래된 이전 값·값 없음은 까닭(원본 자료 없음·서버 오류·시간 초과·연결 안 됨 등)과
@@ -231,6 +247,10 @@ LABELS = {**{k: n for k, _, n, _ in KCS}, "kcci": "KCCI 부산발 운임", "chok
           "vol_in": "관세청 국가별 수입 물동량", "vol_out": "관세청 국가별 수출 물동량", "busan_calls": "부산 입항 선박"}   # 블록 키 → 이름(저장 순서)
 DGK_BLOCKS = ("vol_in", "vol_out", "busan_calls")   # v1.2 공공데이터포털 오픈 API 자료 — 한 실행 '절반 이상' 실패 기준에서 뺌(기준일로만 경고)
 DGK_ALL = tuple(k for k, *_ in KCS) + DGK_BLOCKS    # v1.3 공공데이터포털 자료 전부(파일 3 + API 3) — 연결 오류면 새 서버에서 다시 받는 대상
+ONCE_KEYS = tuple(k for k, *_ in KCS) + ("vol_in", "vol_out")   # v1.10 관세청 자료(운송비용 파일 3 · 국가별 물동량 2) — 오래된 이전 값·값 없음은 한 기간에 한 번만 알림
+TOLD_CUSTOMS = "told_customs"  # v1.10 logistics.json 기록 표시 — true면 gap_told에 알린 관세청 자료가 모두 담김(없는 옛 파일이면 지난 실행 날 이미 기준일을 넘은 것은 알린 것으로)
+ONCE_TOLD = {}                 # v1.10 관세청 자료 블록 → (알린 날, since) — 지난 실행까지 이미 알린 것(main이 채움 · run_block이 항목 줄을 조용히)
+ONCE_WARNED = set()            # v1.10 이번 실행에 '[WARN] … 실패' 줄을 실제로 쓴 관세청 자료(값 없음 기록은 알린 날만 — 조용한 연결 오류 날은 기록 안 함 · main이 비움)
 DGK_HOSTS = ("www.data.go.kr", "apis.data.go.kr")   # v1.3 시작할 때 연결만 시험하는 주소(파일 · 오픈 API)
 DGK_BLOCKED = {}               # v1.3 이번 서버에서 연결 시험에 실패한 주소 → 사유(그 주소의 자료는 기다리지 않고 바로 NetError · main이 비움)
 NETFAIL = []                   # v1.3 이번 실행에서 연결 오류(NetError)로 못 받은 공공데이터포털 자료 키 — 새 서버에서 다시 받을 대상(main이 비움)
@@ -1109,6 +1129,49 @@ def pw_told_prev(prev_all, fs_old, told0):
     return out
 
 
+def customs_pday(prev_all):
+    """v1.10 관세청 기록 표시(told_customs)가 없는 옛 파일(v1.9 이하)이면 지난 실행 날 — 그 실행이 이미 알린(기준일을 넘은) 것을 기록으로 옮김"""
+    return None if prev_all.get(TOLD_CUSTOMS) is True else prev_run_day(prev_all)
+
+
+def customs_told_prev(prev_all, fs_old, told0):
+    """v1.10 지난 실행까지 이미 알린 관세청 자료 → {블록: (알린 날, since)} — since는 실패 표시와 같은 규칙(이전 값 = 블록 stale_since,
+    이전 값이 없으면 failed_since) · 기록(gap_told '블록:') 또는 옛 파일에서 처음 넘어올 때 지난 실행 날 이미 기준일을 넘었으면(pw_told_at)"""
+    out, pday = {}, customs_pday(prev_all)
+    for key in ONCE_KEYS:
+        blk = prev_all.get(key) if isinstance(prev_all.get(key), dict) else None
+        s = blk.get("stale_since") if blk else fs_old.get(key)
+        at = pw_told_at(told0, pday, key, "", s) if s else ""
+        if at:
+            out[key] = (at, str(s))
+    return out
+
+
+def calm(e):
+    """v1.10 조용한 줄에 쓰는 오류 글 — 12:23 점검이 읽는 낱말(…Error·ERROR·FATAL·Traceback·'실패')을 뺀 갈래만"""
+    t = re.sub(r"[A-Za-z_]*(?:Error|Exception|ERROR|FATAL|Traceback)[A-Za-z0-9_]*:?", "오류", str(e)[:200])
+    for w in ("Error", "ERROR", "FATAL", "Traceback"):   # 낱말 사이에 붙은 것까지(…Error503·Errors 등) — 남김없이
+        t = t.replace(w, "오류")
+    return t.replace("실패", "못 받음").strip() or "오류"
+
+
+def customs_quiet(key, prev, fs_old):
+    """v1.10 관세청 자료를 이번에 못 받았을 때 알릴 일이 아니면 조용한 꼬리 글, 알릴 날이면 '' — ① 이전 값이 기준일 안 ② 같은 기간에 이미
+    알림(ONCE_TOLD — 이전 값·값 없음). 날짜를 못 읽으면 알림('')"""
+    lim, t = STALE_ALERT.get(key, 10), ONCE_TOLD.get(key)
+    if prev:
+        s = str(prev.get("stale_since") or prev.get("fetched") or today_kst().isoformat())
+        if t and t[1] == s:
+            return f"이전 값({s[5:10]} 받은 값 · 기준 {lim}일 넘음 · {t[0][5:10]}에 알림)"
+        try:
+            n = (today_kst() - datetime.date.fromisoformat(s[:10])).days
+        except ValueError:
+            return ""
+        return f"이전 값({s[5:10]} 받은 값 · 기준 {lim}일 안)" if n <= lim else ""
+    s = fs_old.get(key)
+    return f"값 없음({s[5:10]}부터 · {t[0][5:10]}에 알림)" if s and t and t[1] == s else ""
+
+
 def pw_told(kind, iid):
     """v1.8 이 항목을 이미 알렸음(PW_TOLD) → (알린 날, since) 또는 None"""
     return PW_TOLD.get((kind, iid))
@@ -1778,8 +1841,13 @@ def run_block(key, label, fn, prev_all, out, status, fails, defer=False, head=Tr
             log(f"  {label}: 이번 실행 모두 못 받음({getattr(e, 'why', 'PortWatch 서버 오류')}) · {'이전 값 유지' if prev else '값 없음'}")
         elif dgk_net and NET_QUIET:   # v1.3 알릴 때가 아님(다시 받기가 남음·막힌 첫날) — [WARN]·'실패'·오류 원문(…Error) 없이 갈래만
             log(f"  {label}: 공공데이터포털 {net_why(e)} — {NET_QUIET} · {'이전 값 유지' if prev else '값 없음'}")
+        elif key in ONCE_KEYS and not dgk_net and not str(e).startswith("인증키 오류") and customs_quiet(key, prev, fs_old):
+            # v1.10 관세청 자료 — 기준일 안이거나 이 기간에 이미 알림: '실패'·[WARN] 없이(알리는 날·연결 오류·인증키 오류는 그대로)
+            log(f"  {label}: 이번 실행 못 받음 — {calm(e)} · {customs_quiet(key, prev, fs_old)}")
         else:
             log(f"  [WARN] {label} 실패 — {str(e)[:200]}" + (" · 이전 값 유지" if prev else " · 값 없음"))
+            if key in ONCE_KEYS:
+                ONCE_WARNED.add(key)   # v1.10 값 없음은 이 줄이 알림 — 이 날만 기록
         if dgk_net and key not in NETFAIL:
             NETFAIL.append(key)   # v1.3 새 서버에서 다시 받을 대상
         carry = {k: v for k, v in fs_old.items() if k.startswith(key + ":")}   # 값 없는 해협·항만 항목 — 처음 실패한 날 유지
@@ -1843,6 +1911,8 @@ def main():
     PW_GAP_ROW.clear()
     PW_BLK_GAP.clear()
     PW_TOLD.clear()
+    ONCE_TOLD.clear()
+    ONCE_WARNED.clear()
     PW_NREQ[0], PW_FLOOR[0] = 0, 0
     DGK_DOWN.clear()
     DGK_AUTH.clear()
@@ -1886,6 +1956,7 @@ def main():
     told0 = gap_told_load(prev_all)   # v1.8 이미 알린 PortWatch 항목(지난 실행 기록 · v1.9 까닭과 상관없이)
     seen0 = gap_seen_load(prev_all)   # v1.8 이 이전 값 기간에 원본 자료 없음으로 가려진 적 있는 항목(지난 실행 기록 — 실패 표시의 까닭)
     PW_TOLD.update(pw_told_prev(prev_all, fs_old, told0))
+    ONCE_TOLD.update(customs_told_prev(prev_all, fs_old, told0))   # v1.10 이미 알린 관세청 자료(지난 실행 기록 · 옛 파일이면 지난 실행 날 기준)
     fails = (fs_old, {})
     out = {"generated_at": datetime.datetime.now(KST).strftime("%Y-%m-%d %H:%M KST"), "war_start": WAR_START,
            "base_period": [BASE_FROM, BASE_TO]}
@@ -2027,7 +2098,11 @@ def main():
     # 지움) · 판단하지 않는 자료(다시 받기 차례의 PortWatch)는 그대로 넘김
     td = today.isoformat()
     pday = told_pday(prev_all)   # v1.9 기록 표시가 없는 옛 파일에서 처음 넘어올 때만 — 지난 실행이 이미 알린 항목(pw_told_at)
+    cpday = customs_pday(prev_all)   # v1.10 관세청 기록 표시가 없는 옛 파일에서 처음 넘어올 때만
     told = {k: v for k, v in told0.items() if not judged(k.partition(":")[0])}
+    for k, (at0, s0) in ONCE_TOLD.items():   # v1.10 이 차례가 판단하지 않는 관세청 자료(다시 받기로 넘김) — 옛 파일 추정분까지 기록으로 넘김(다시 받기 차례는 기록으로만)
+        if not judged(k):
+            told.setdefault(f"{k}:", {"since": s0, "at": at0})
     old = []
     for key, blk in out.items():
         if key not in STALE_ALERT or not isinstance(blk, dict) or not judged(key):
@@ -2042,6 +2117,14 @@ def main():
         ss = [blk.get("stale_since")] + [x.get("stale_since") for x in its]
         ss = sorted(str(x) for x in ss if x)
         n, lim = (days_since(ss[0]) if ss else 0), STALE_ALERT[key]
+        if key in ONCE_KEYS and blk.get("stale_since"):   # v1.10 관세청 자료 — 같은 이전 값 기간에 이미 알렸으면 기록만 이어 가고 알리지 않음
+            s0 = str(blk["stale_since"])
+            at = pw_told_at(told0, cpday, key, "", s0)
+            if at:
+                told[f"{key}:"] = {"since": s0, "at": at}
+                continue
+            if n is None or n > lim:   # 오늘 알림 — 기록
+                told[f"{key}:"] = {"since": s0, "at": td}
         if n is None or n > lim:   # v1.7 기준일을 넘은 항목이 원본에 자료 없는 항목이면 까닭을 함께 — v1.9 그 밖 항목도 늘 이름을(PortWatch)
             ov = [(x.get("name"), x.get("stale_since") or blk.get("stale_since")) for x in its
                   if over(x.get("stale_since") or blk.get("stale_since"), lim)]
@@ -2062,9 +2145,12 @@ def main():
             continue
         n, lim = days_since(d), STALE_ALERT.get(key, 7)
         g = [] if item else gaps(key)   # v1.7 블록째 값 없음 — 원본에 자료 없는 항목 이름을 함께(PW_BLK_GAP)
-        if key in PW_KINDS:   # v1.9 값 없음 — 이미 알렸으면 빼고, 아니면 오늘 알림(첫날 '실패 … 값 없음' 줄 · 블록째는 [WARN] 줄 — 까닭과
-            at = pw_told_at(told0, pday, key, item, d)   # 상관없이)으로 기록(기록 이름은 '블록:항목' · 블록째는 '블록:')
-            told[f"{key}:{item}"] = {"since": d, "at": at or td}
+        if key in PW_KINDS or (key in ONCE_KEYS and not item):   # v1.9 값 없음 — 이미 알렸으면 빼고, 아니면 오늘 알림(첫날 '실패 … 값 없음' 줄 ·
+            at = pw_told_at(told0, cpday if key in ONCE_KEYS else pday, key, item, d)   # 블록째는 [WARN] 줄 — 까닭과 상관없이)으로 기록(기록 이름은
+            # '블록:항목' · 블록째는 '블록:') · v1.10 관세청 자료도 같게(블록째 '블록:') — 다만 오늘 [WARN] 줄을 실제로 썼거나 아래 실패 표시로
+            # 알리는 날만(조용한 연결 오류 날 — NET_QUIET — 은 기록 안 함: 다음 실패 날 [WARN] 줄이 알림)
+            if at or key in PW_KINDS or key in ONCE_WARNED or n is None or n > lim:
+                told[f"{key}:{item}"] = {"since": d, "at": at or td}
             if at:
                 continue
         if n is None or n > lim:
@@ -2075,6 +2161,7 @@ def main():
     out["gap_seen"] = seen
     if all(judged(k) for k in PW_KINDS) or prev_all.get(TOLD_ALL) is True:   # v1.9 기록 표시 — PortWatch를 판단한 실행이 씀(다시 받기 차례는 지난 값 그대로)
         out[TOLD_ALL] = True
+    out[TOLD_CUSTOMS] = True   # v1.10 관세청 기록 표시 — 판단하지 않은 관세청 자료도 위에서 기록(옛 파일 추정분 포함)을 넘기므로 늘 씀
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
     if retry:   # update.yml 다음 작업(새 서버)이 이 자료만 다시 받음 · 차례 기록도 넘김(한 줄 JSON)
@@ -2100,13 +2187,18 @@ def main():
         # v1.3 이 서버가 연결 시험에서 막혀 못 받은 관세청 파일은 뺌(연결 알림이 따로 · 분모는 8 그대로) — 5xx·요청 중 오류는 셈
         base = [LABELS[k] for k in LABELS if k not in DGK_BLOCKS]
         skip = {LABELS[k] for k in net if k not in DGK_BLOCKS} if urlsplit(KCS_PAGE).hostname in DGK_BLOCKED else set()
+        known = {LABELS[k] for k in ONCE_KEYS if f"{k}:" in told and k not in DGK_BLOCKS}   # v1.10 기록이 있는 관세청 자료(이미 알렸거나 오늘 '오래된 이전 값'으로 알림)
+        skip |= known
         whole = [x for x in status["kept"] + status["failed"] if "(" not in x]
         n_all, n_bad = len(base), len([x for x in whole if x in base and x not in skip])
         if n_bad * 2 >= n_all:   # 8개 중 4개 이상(v1의 7개 중 '절반 넘게'와 같은 4개)
             bad_all = status["kept"] + status["failed"]
             extra = [x for x in bad_all if x.split("(")[0] not in base or x in skip]   # 기준 밖 — 따로 적음
-            soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(x for x in bad_all if x not in extra)
-                      + (f" (기준 밖 공공데이터포털도 못 받음: {', '.join(extra)})" if extra else ""))
+            extra = [x for x in extra if x not in known]   # v1.10 이미 알린 관세청 자료는 이름 대신 개수만
+            nk = len([x for x in bad_all if x in known])
+            soft_fail(f"물류 자료 {n_all}개 중 {n_bad}개 못 받음 — " + ", ".join(x for x in bad_all if x not in extra and x not in known)
+                      + (f" (기준 밖 공공데이터포털도 못 받음: {', '.join(extra)})" if extra else "")
+                      + (f" · 이미 알린 관세청 자료 {nk}개 뺌" if nk else ""))
     if DGK_NOKEY:   # v1.2 키가 이 단계에 안 넘어옴 — 저장소 설정 문제(포털 문제 아님)
         soft_fail(f"공공데이터포털 인증키 없음 — GitHub Secrets {DGK_KEY_ENV} 등록과 update.yml 물류 단계 env 줄 확인")
     elif DGK_AUTH:   # v1.2 인증키 오류는 기다려도 안 풀림 — 바로 알림(공공데이터포털 마이페이지에서 활용신청·기간 확인)
