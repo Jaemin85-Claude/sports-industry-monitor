@@ -1,72 +1,44 @@
 [
  {
-  "t": "pages",
-  "urls": [
-   "https://www.saucony.com/DE/de_DE/endorphin-speed-6/61331M.html",
-   "https://www.saucony.com/en/endorphin-speed-6/61331M.html",
-   "https://www.saucony.com/UK/en_GB/endorphin-speed-6/61331M.html",
-   "https://www.saucony.com/en/endorphin-speed-5/60307M.html"
-  ],
-  "code_rx": "S2\\d{4,5}-\\d{2,3}",
-  "snip_rx": [
-   "data-stock-number",
-   "itemprop=\\\"price\\\"",
-   "price-standard",
-   "(?i)sold out|nicht verfügbar"
-  ]
- },
- {
-  "t": "robotsraw",
-  "max": 3000,
-  "hosts": [
-   "saucony.co.kr"
-  ]
- },
- {
-  "t": "grep",
-  "max_maps": 10,
-  "per_host": 80,
-  "show": 30,
-  "rx": "스피드.?6|speed.?6|엔돌핀",
-  "sites": {
-   "KR": {
-    "host": "saucony.co.kr"
-   }
-  }
- },
- {
   "t": "codes",
-  "key": "ua",
+  "key": "puma",
   "base": "KR",
-  "rx": "/p/(?:[^/]+/)*?(\\d{7})\\.html$",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
   "sites": {
    "KR": {
-    "host": "www.underarmour.co.kr",
-    "path": "/ko-kr/"
+    "host": "kr.puma.com",
+    "path": "/kr/ko/"
    },
    "US": {
-    "host": "www.underarmour.com",
-    "path": "/en-us/"
+    "host": "us.puma.com",
+    "path": "/us/en/"
    },
    "GB": {
-    "host": "www.underarmour.co.uk",
-    "path": "/en-gb/"
+    "host": "uk.puma.com",
+    "path": "/uk/en/"
    },
    "DE": {
-    "host": "www.underarmour.de",
-    "path": "/de-de/"
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "kid_pref": [
+     "/urls/de/"
+    ]
+   },
+   "JP": {
+    "host": "jp.puma.com",
+    "path": "/jp/ja/"
    },
    "MX": {
-    "host": "www.underarmour.com.mx",
-    "path": "/es-mx/"
+    "host": "mx.puma.com",
+    "path": "/mx/es/"
    }
   },
   "targets": [
-   "1326413",
-   "1372586"
+   "398846",
+   "396463"
   ],
-  "max_maps": 30,
-  "per_host": 95,
-  "show": 80
+  "max_maps": 60,
+  "per_host": 110,
+  "show": 120
  }
 ]
