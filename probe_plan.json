@@ -1,83 +1,55 @@
 [
  {
+  "t": "pages",
+  "urls": [
+   "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
+   "https://kr.puma.com/kr/ko/pd/shibui-cat/385296.html",
+   "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%EB%A0%88%EB%8D%94%3Cbr%3Epalermo-lth/396464.html"
+  ],
+  "code_rx": "\\b(629796|385296|396464)[_-]\\d{2}\\b"
+ },
+ {
   "t": "codes",
-  "key": "ua",
+  "key": "puma",
   "base": "KR",
-  "rx": "/p/(?:[^/]+/)*?(\\d{7})\\.html$",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
   "sites": {
    "KR": {
-    "host": "www.underarmour.co.kr",
-    "path": "/ko-kr/"
+    "host": "kr.puma.com",
+    "path": "/kr/ko/"
    },
    "US": {
-    "host": "www.underarmour.com",
-    "path": "/en-us/"
+    "host": "us.puma.com",
+    "path": "/us/en/"
    },
    "GB": {
-    "host": "www.underarmour.co.uk",
-    "path": "/en-gb/"
+    "host": "uk.puma.com",
+    "path": "/uk/en/"
    },
    "DE": {
-    "host": "www.underarmour.de",
-    "path": "/de-de/"
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "kid_pref": [
+     "/urls/de/"
+    ]
    },
    "MX": {
-    "host": "www.underarmour.com.mx",
-    "path": "/es-mx/"
+    "host": "mx.puma.com",
+    "path": "/mx/es/"
+   },
+   "AE": {
+    "host": "ae.puma.com",
+    "path": "/ae/en/"
    }
   },
   "targets": [
-   "1379517",
-   "1379525",
-   "1369224",
-   "1385837",
-   "3027341",
-   "6001585"
+   "629796",
+   "385296",
+   "396464",
+   "310468"
   ],
-  "max_maps": 30,
-  "per_host": 95,
+  "max_maps": 60,
+  "per_host": 110,
   "show": 0
- },
- {
-  "t": "grep",
-  "max_maps": 4,
-  "per_host": 80,
-  "show": 40,
-  "rx": "UA(1379517|1379525|1369224|1385837|3027341|6001585)-\\d{3}\\.html",
-  "sites": {
-   "AE": {
-    "host": "www.underarmour.ae",
-    "start": [
-     "https://www.underarmour.ae/en/sitemap_0-product.xml"
-    ]
-   }
-  }
- },
- {
-  "t": "grep",
-  "max_maps": 10,
-  "per_host": 80,
-  "show": 40,
-  "rx": "스피드-6|speed-6|S101825",
-  "sites": {
-   "KR": {
-    "host": "saucony.co.kr"
-   }
-  }
- },
- {
-  "t": "dump",
-  "head": 0,
-  "per_rx": 8,
-  "pad": 120,
-  "ld_chars": 0,
-  "max_ld": 0,
-  "ctx": [
-   "https?://[a-z0-9.-]*brooks[a-z0-9.-]*\\.[a-z.]+[^\"' <]*",
-   "공식몰|온라인몰|스토어"
-  ],
-  "urls": [
-   "https://litt.ly/brooksrunning"
-  ]
  }
 ]
