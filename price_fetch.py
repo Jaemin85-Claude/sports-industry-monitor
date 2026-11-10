@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.18: (SKU 8차 · 정기 차례 11/10 · 대표 상시 지시 2026-10-26) 상품이 적은 브랜드부터 — 푸마 T7 올웨이즈 온 숏 트랙 자켓(여성 629796 · 6개 나라) ·
+    언더아머 언디나이어블 5.0 더플백 라지(1369224)·UA 레인 6(3027341 · 각 6개 나라) · 나이키 코트 비전 로우 넥스트 네이처(DH2987-101 · 7개 나라)
+    → 상품 114개 · 값 481개(+25 · 써코니 영국·독일 −2 · 11/10 GitHub 서버에서 25개 모두 정가 읽기 확인) · 써코니 엔돌핀 스피드 5: 영국·독일 몰에서 빠짐(10/30부터 HTTP 404 —
+    유럽은 엔돌핀 스피드 6 S101825로 바뀌었고 한국 몰엔 아직 6이 없음) → 영국·독일 뺌, 한국 화이트/검 페이지가 전 사이즈 품절로 가격 칸이 비어
+    화이트/크림슨(220 · 219,000원)으로 · 브룩스 한국(brooksrunning.co.kr)은 11/03부터 GitHub 서버에서 열리지 않음(443 연결 거부 · 80은
+    brookssports.co.kr 빈 페이지로 넘김 — 몰 쪽 문제로 보임, 공식 링크 페이지는 그대로 이 주소) — 코드는 그대로(이전 값 유지)
 v1.17: (대표 지시 2026-11-03 '두바이 추가해주세요') 나라에 두바이(AE · UAE 공식몰 · 디르함 AED · 부가세 5% 포함) — 같은 품번을 GitHub 서버에서 확인한
     4개 브랜드 나이키 6 · 푸마 6 · 언더아머 7 · 온러닝 9(값 +28 → 상품 110개 · 값 458개 · 11/03 브랜치 시험).
     ① 나이키 상품 정보(product_feed)에는 두바이가 없음(AE 정가 100000 자리표시 · 다른 품번은 결과 없음) → 나이키 상품에 나라별 페이지 주소 urls(AE = nike.ae
@@ -249,6 +255,8 @@ PRODUCTS = [
      "urls": {"AE": "https://www.nike.ae/en/air-max-plus-mens-shoes/NK604133-139.html"}},   # White/Black/Cool Grey/White
     {"id": "nike-killshot2", "brand": "나이키", "name": "킬샷 2 레더", "code": "432997-107", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
      "urls": {"AE": "https://www.nike.ae/en/killshot-2-leather-mens-shoes/NK432997-107.html"}},   # Sail/Gum Yellow/Midnight Navy
+    {"id": "nike-courtvisionlo", "brand": "나이키", "name": "코트 비전 로우 넥스트 네이처", "code": "DH2987-101", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/court-vision-low-next-nature-mens-shoes/NKDH2987-101.html"}},   # v1.18 White/Black-White · 11/10 한국·일본 할인 중(정가 fullPrice)
     # v1.17 푸마 두바이 = ae.puma.com(PUMA UAE 직영 · SFCC) — JSON-LD 품번 398846_xx · 할인 중이면 화면 데이터 c_listPrice(지금 page_price 그대로)
     {"id": "puma-speedcat", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
@@ -299,6 +307,13 @@ PRODUCTS = [
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
         "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03)
+    {"id": "puma-t7track", "brand": "푸마", "name": "T7 올웨이즈 온 숏 트랙 자켓(여성)", "code": "629796", "src": "page", "hint": "t7", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
+        "US": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
+        "GB": "https://uk.puma.com/uk/en/pd/t7-always-on-short-track-jacket-women/629796",
+        "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
+        "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
+        "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"}},   # v1.18 일본 몰 사이트맵에 없음 · 11/10 한국·미국·영국·독일 할인 중(정가는 이 상품 취소선 정가)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
         cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
         for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},   # 두바이(on.ae)는 옛 모델 재고 정리(모든 색상 450디르함 · 정가 표시 없음)라 뺌
@@ -466,16 +481,28 @@ PRODUCTS = [
         "DE": "https://www.underarmour.de/de-de/p/heatgear-mock/1361521.html",
         "MX": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html",
         "AE": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html"}},
+    {"id": "ua-undeniable-l", "brand": "언더아머", "name": "언디나이어블 5.0 더플백 라지", "code": "1369224", "src": "page", "hint": "undeniable", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EA%B0%80%EB%B0%A9/ua_%EC%96%B8%EB%94%94%EB%82%98%EC%9D%B4%EC%96%B4%EB%B8%94_5.0_%EB%9D%BC%EC%A7%80/1369224.html",
+        "US": "https://www.underarmour.com/en-us/p/ua_undeniable_5.0_large_duffle_bag/1369224.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/ua-undeniable-5.0-large-duffle-bag/1369224.html",
+        "DE": "https://www.underarmour.de/de-de/p/ua-undeniable-5.0-large/1369224.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_undeniable_5.0_grande/1369224.html",
+        "AE": "https://www.underarmour.ae/en/ua-undeniable-5.0-large-duffle-bag/UA1369224-001.html"}},   # v1.18 일본은 수입사 품번·사양이 달라 뺌(다른 언더아머와 같음) · 11/10 두바이 할인 중
+    {"id": "ua-reign6", "brand": "언더아머", "name": "UA 레인 6 트레이닝화(남성)", "code": "3027341", "src": "page", "hint": "reign", "urls": {
+        "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%8B%A0%EB%B0%9C/ua_%EB%A0%88%EC%9D%B8_6/3027341.html",
+        "US": "https://www.underarmour.com/en-us/p/ua_reign_6_mens_training_shoes/3027341.html",
+        "GB": "https://www.underarmour.co.uk/en-gb/p/ua-reign-6-mens-training-shoes/3027341.html",
+        "DE": "https://www.underarmour.de/de-de/p/ua-reign-6/3027341.html",
+        "MX": "https://www.underarmour.com.mx/es-mx/p/entrenamiento/tenis_de_entrenamiento_ua_tribase_reign_6_para_hombre/3027341.html",
+        "AE": "https://www.underarmour.ae/en/ua-reign-6/UA3027341-001.html"}},   # v1.18 · 11/10 영국·독일·두바이 할인 중
     {"id": "saucony-ride19", "brand": "써코니", "name": "라이드 19(남성)", "code": "S21055", "src": "page", "hint": "라이드 19", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",   # 품번은 상품 정보 칸 '모델 S21055-172'
         "US": "https://www.saucony.com/en/ride-19/60823M.html",
         "GB": "https://www.saucony.com/UK/en_GB/ride-19/60823M.html",
         "DE": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html"}},   # 해마다 새 모델(라이드 20 등)이 나오면 품번·주소를 바꿈
     {"id": "saucony-endspeed5", "brand": "써코니", "name": "엔돌핀 스피드 5(남성)", "code": "S21007", "src": "page", "hint": "엔돌핀 스피드 5", "code_in_page": True, "urls": {
-        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
-        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
-        "GB": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",
-        "DE": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html"}},
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",   # v1.18 화이트/검(164)은 전 사이즈 품절로 JSON-LD 가격 없음
+        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html"}},   # v1.18 영국·독일 몰은 10/30부터 404(유럽은 엔돌핀 스피드 6 S101825 — 한국 몰에 6이 들어오면 품번·주소를 6으로)
     {"id": "saucony-endpro5", "brand": "써코니", "name": "엔돌핀 프로 5(남성)", "code": "S21064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
         "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100",   # 색상 없는 주소는 10/23부터 JSON-LD 없는 페이지
