@@ -1,81 +1,90 @@
 # -*- coding: utf-8 -*-
-# 임시 시험(병합하지 않음) — 11/10 대표 '추천 순서대로': ① 푸마 일본 403 ② 온러닝 한국·일본 가격 정보 없음 ③ 관세청 운송비용 화면 FILE_ 번호
-# 우리 봇 이름 그대로 · robots.txt 확인 · 차단 우회 없음(사이트당 요청 몇 번만)
-import gzip, html, json, re, sys, time, urllib.parse
+# 임시 시험 2(병합하지 않음) — ② 온러닝 한국·일본에서 빠진 색상 대신 쓸 색상(5개 나라 같은 품번) · ③ 관세청 운송비용 공식 오픈 API(파일데이터 자동변환) 명세·키 승인 여부
+# 우리 봇 이름 · robots.txt 확인(price_fetch.get) · 인증키는 출력하지 않음(dgk_mask)
+import gzip, html, json, os, re, sys, time, urllib.parse
 import requests
 import price_fetch as pf
 import logistics_fetch as lf
-def out(k, **kw): print(k, json.dumps(kw, ensure_ascii=False)[:4000], flush=True)
+def out(k, **kw): print(k, lf.dgk_mask(json.dumps(kw, ensure_ascii=False))[:4000], flush=True)
 def body(r):
     c = r.content
     if c[:2] == b"\x1f\x8b":
         try: c = gzip.decompress(c)
         except Exception: pass
     return c.decode("utf-8", "replace")
-CHAL = [("cf", r"cf-chl|challenge-platform|Just a moment|cf-ray"), ("akamai", r"Access Denied|errors\.edgesuite|_abck|bm-verify|Reference&#32;&#35;"),
-        ("px", r"px-captcha|perimeterx|_pxAppId"), ("datadome", r"datadome|captcha-delivery"), ("captcha", r"captcha|robot"), ("incap", r"_Incapsula_Resource|incap_ses")]
-KEEP = ("server", "content-type", "location", "x-cache", "cf-ray", "x-akamai-transformed", "akamai-grn", "x-served-by", "via", "x-amz-cf-id", "retry-after", "x-datadome", "x-iinfo")
-def raw(url, redir=False):
-    ok, why = pf.robots_ok(url)
-    if not ok:
-        out("ROBOTS_NO", url=url[:120], why=why); return None
-    try:
-        r = requests.get(url, headers=pf.HDR, timeout=(10, 25), allow_redirects=redir)
-    except Exception as e:
-        out("RAWERR", url=url[:120], err=repr(e)[:200]); return None
-    t = body(r)
-    out("RAW", url=url[:120], final=r.url[:140], st=r.status_code, hist=[h.status_code for h in r.history], len=len(t),
-        hdr={k: v[:120] for k, v in r.headers.items() if k.lower() in KEEP}, cookies=sorted(r.cookies.keys())[:12],
-        chal=[k for k, rx in CHAL if re.search(rx, t, re.I)], title=(re.search(r"(?is)<title>(.*?)</title>", t) or [None, ""])[1][:120].strip(),
-        head=re.sub(r"\s+", " ", re.sub(r"(?is)<script.*?</script>|<style.*?</style>", " ", t))[:500] if r.status_code >= 400 else "")
-    return r, t
-lf.RUNNER = lf.runner_where(); out("RUNNER", where=lf.RUNNER)
-P = {p["id"]: p for p in pf.PRODUCTS}
-def one(pid, cc):
-    try:
-        v = pf.fetch_one(P[pid], cc); out("FETCH_OK", id=pid, cc=cc, v=str(v)[:300])
-    except Exception as e:
-        out("FETCH_ERR", id=pid, cc=cc, err=f"{type(e).__name__}: {e}"[:300])
+T0 = time.time()
+# ② 온러닝 사이트맵
+LOC = ("ko-kr", "ja-jp", "en-us", "en-gb", "de-de")
+MODELS = ("cloudmonster-61", "cloudnova-2-3me3021", "cloudnova-2-3wd3020", "cloudmonster-1-m")
+try:
+    r = pf.get("https://www.on.com/sitemap.xml"); t = body(r)
+    kids = [html.unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", t)]
+    out("ON_INDEX", n=len(kids), sample=[k[-70:] for k in kids[:40]])
+except Exception as e:
+    out("ON_INDEX_ERR", err=str(e)[:200]); kids = []
+found = {}
+for loc in LOC:
+    cand = [k for k in kids if loc in k.lower() and "product" in k.lower() and "listing" not in k.lower()]
+    out("ON_MAPS", loc=loc, n=len(cand), maps=[c[-80:] for c in cand[:8]])
+    for sm in cand[:6]:
+        if time.time() - T0 > 600: break
+        try:
+            r = pf.get(sm); t = body(r)
+        except Exception as e:
+            out("ON_SM_ERR", loc=loc, sm=sm[-80:], err=str(e)[:150]); continue
+        locs = [html.unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", t)]
+        if "<sitemapindex" in t[:3000]:
+            out("ON_SUBINDEX", loc=loc, n=len(locs), kids=[x[-80:] for x in locs[:10]])
+            for sub in [x for x in locs if "product" in x.lower()][:4]:
+                try:
+                    t2 = body(pf.get(sub)); locs += [html.unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", t2)]
+                except Exception as e:
+                    out("ON_SM_ERR", loc=loc, sm=sub[-80:], err=str(e)[:150])
+        for u in locs:
+            for m in ("cloudmonster", "cloudnova"):
+                if f"/products/{m}" in u and f"/{loc}/" in u:
+                    found.setdefault(loc, set()).add(urllib.parse.urlsplit(u).path)
+    out("ON_FOUND", loc=loc, n=len(found.get(loc, ())), paths=sorted(found.get(loc, ()))[:80])
+# 교집합(모델 폴더 + 품번이 같은 것)
+def key(p):
+    m = re.search(r"/products/([^/]+)/(mens|womens|unisex)/[^/]*?-([0-9A-Z.]{6,})$", p)
+    return (m.group(1), m.group(2), m.group(3)) if m else None
+sets = {loc: {key(p) for p in found.get(loc, ()) if key(p)} for loc in LOC}
+allk = set.intersection(*[s for s in sets.values()]) if all(sets.values()) else set()
+out("ON_COMMON5", n=len(allk), v=sorted(allk)[:60])
+kr_jp = (sets.get("ko-kr") or set()) & (sets.get("ja-jp") or set())
+out("ON_KRJP", n=len(kr_jp), v=sorted(kr_jp)[:60])
+# on.ae 쇼피파이(두바이) — cloudnova-2 변형 품번
+try:
+    r = pf.get("https://on.ae/products/cloudnova-2.json"); j = r.json()
+    skus = sorted({(v.get("sku") or "")[:11] for v in j["product"]["variants"]})
+    out("ON_AE", n=len(j["product"]["variants"]), skus=skus[:40])
+except Exception as e:
+    out("ON_AE_ERR", err=str(e)[:200])
 
-# ① 푸마 일본
-out("SEC", s="puma-jp")
-raw("https://jp.puma.com/robots.txt"); time.sleep(3)
-raw("https://jp.puma.com/jp/ja", redir=True); time.sleep(3)
-raw(P["puma-speedcat"]["urls"]["JP"]); time.sleep(3)
-raw(P["puma-speedcat"]["urls"]["KR"])   # 비교(되는 몰)
-time.sleep(3); one("puma-dne4", "JP")
-
-# ② 온러닝
-out("SEC", s="on")
-for pid, cc in (("on-cloudmonster", "KR"), ("on-cloudnova2", "KR"), ("on-cloudnova2", "JP"), ("on-cloud6", "KR"), ("on-cloudmonster", "US")):
-    time.sleep(2); one(pid, cc)
-for pid, cc in (("on-cloudmonster", "KR"), ("on-cloudnova2", "KR"), ("on-cloudnova2", "JP"), ("on-cloud6", "KR")):
+# ③ 관세청 공식 오픈 API(파일데이터 자동변환)
+out("SEC", s="kcs-api")
+key = os.environ.get("DATA_GO_KR_API_KEY", "").strip(); out("KEY", present=bool(key), has_pct="%" in key, n=len(key))
+for ds in ("15116806", "15116850", "15116807"):
+    try:
+        r = requests.get("https://infuser.odcloud.kr/oas/docs", params={"namespace": f"{ds}/v1"}, headers=lf.UA, timeout=(10, 30))
+        out("OAS", ds=ds, st=r.status_code, ct=r.headers.get("content-type", "")[:60], len=len(r.text))
+        d = r.json()
+        paths = d.get("paths") or {}
+        rows = []
+        for pth, v in paths.items():
+            g = v.get("get") or {}
+            rows.append({"path": pth, "summary": (g.get("summary") or "")[:80], "desc": (g.get("description") or "")[:80],
+                         "params": [p.get("name") for p in g.get("parameters", [])][:8]})
+        out("OAS_PATHS", ds=ds, host=d.get("host"), base=d.get("basePath"), servers=d.get("servers"), n=len(rows), rows=rows[:12],
+            sec=list((d.get("securityDefinitions") or (d.get("components") or {}).get("securitySchemes") or {}).keys()))
+        if key and rows:
+            last = sorted(rows, key=lambda x: x["summary"])[-1]["path"]
+            base = "https://api.odcloud.kr/api"
+            r2 = requests.get(base + last, params={"page": 1, "perPage": 3, "serviceKey": key}, headers=lf.UA, timeout=(10, 30))
+            t2 = r2.text
+            out("API", ds=ds, path=last, st=r2.status_code, body=t2[:900])
+    except Exception as e:
+        out("OAS_ERR", ds=ds, err=lf.dgk_mask(f"{type(e).__name__}: {e}")[:300])
     time.sleep(2)
-    got = raw(P[pid]["urls"][cc], redir=True)
-    if not got: continue
-    r, t = got; code = P[pid]["code"]
-    ld = re.findall(r'(?is)<script[^>]+application/ld\+json[^>]*>(.*?)</script>', t)
-    out("ON_PAGE", id=pid, cc=cc, final=r.url[:140], ld_n=len(ld), ld_types=[(re.findall(r'"@type"\s*:\s*"(\w+)"', x) or ["?"])[:4] for x in ld][:6],
-        code_n=t.count(code), next_data="__NEXT_DATA__" in t, soldout=bool(re.search(r"sold out|품절|販売終了|在庫切れ|no longer available|판매 종료", t, re.I)),
-        prices=re.findall(r'"(?:price|amount|centAmount|value)"\s*:\s*"?[\d.]+', t)[:8],
-        canon=(re.search(r'<link[^>]+rel="canonical"[^>]+href="([^"]+)"', t) or [None, ""])[1][:140],
-        links=sorted(set(re.findall(r'/products/[a-z0-9\-]+/mens/[a-z0-9\-]+-' + re.escape(code.split(".")[0] if "." in code else code[:7]) + r'[\w.]*', t)))[:8])
-
-# ③ 관세청 운송비용 화면
-out("SEC", s="kcs")
-out("TCP", ok=lf.tcp_ok("www.data.go.kr"))
-for ds in ("15116806", "15116807"):
-    try:
-        r = lf.http(lf.KCS_PAGE.format(ds), tries=1); t = r.text
-    except Exception as e:
-        out("KCS_ERR", ds=ds, err=f"{type(e).__name__}: {e}"[:300]); continue
-    out("KCS_PAGE", ds=ds, st=r.status_code, final=r.url[:140], len=len(t), title=(re.search(r"(?is)<title>(.*?)</title>", t) or [None, ""])[1][:160].strip(),
-        file_ids=sorted(set(re.findall(r"FILE_\d{6,}", t)))[:6], meta=lf.kcs_page_meta(t))
-    for kw in ("다운로드", "fileDown", "Down(", "down(", "atchFileId", "publicDataDetailPk", "uddi:", "활용신청", "로그인", "fileDetailSn", "selectFileDataDownload", "data-"):
-        idx = [m.start() for m in re.finditer(re.escape(kw), t)][:4]
-        for i in idx:
-            out("KCS_SNIP", ds=ds, kw=kw, s=re.sub(r"\s+", " ", t[max(0, i - 160): i + 240]))
-    out("KCS_ONCLICK", ds=ds, v=sorted(set(re.findall(r'onclick="([^"]{0,200})"', t)))[:30])
-    out("KCS_SCRIPTS", ds=ds, v=sorted(set(re.findall(r'<script[^>]+src="([^"]+)"', t)))[:30])
-    time.sleep(2)
-out("DONE")
+out("DONE", sec=int(time.time() - T0))

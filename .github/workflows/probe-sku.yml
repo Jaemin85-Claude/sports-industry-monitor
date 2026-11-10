@@ -23,4 +23,6 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - name: Probe
+        env:
+          DATA_GO_KR_API_KEY: ${{ secrets.DATA_GO_KR_API_KEY }}
         run: python probe_sku.py probe_plan.json
