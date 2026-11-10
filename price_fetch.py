@@ -3,10 +3,10 @@
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
 v1.20: (대표 지시 2026-11-11 '추천 순서대로' — 블프 전 해외 정가 빈칸 줄이기) ① 푸마 일본(jp.puma.com)이 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 ·
     11/11 GitHub 서버 확인 — 우회하지 않음) → PAUSED에 넣음(why '일본 공식몰이 자동 접속을 막음' · 화면 '접속 막음 · 11/03 값' · 21일 알림 안 냄 · 요청 안 함 —
-    주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434)·남성 클라우드노바 2(3ME30210108)가 11/10부터 한국·일본 몰에서
+    주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434 — 한국)·남성 클라우드노바 2(3ME30210108 — 한국·일본)가 11/10부터 그 나라 몰에서
     빠져 상품 주소가 목록(/shop)으로 넘어감('JSON-LD 없음'으로 보였음) → 클라우드몬스터 1(3MF30740553 · 한국·미국·영국·독일 — 일본 몰에 없음) · 클라우드몬스터 1
     워터프루프(3MG10701043 · 5개 나라 · id on-cloudmonster1wp) — 11/11 나라별 상품 사이트맵(https://www.on.com/{loc}/products.xml)·정가 읽기 확인 · 상품 114개 · 값 479개 ·
-    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐')
+    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐') · 다른 상품 페이지(주소에 이 품번 없음)로 넘어가도 실패
 v1.19: (대표 확인 2026-11-10 '브룩스 한국 공식몰은 리뉴얼 중 — 접속은 되는데 조회되는 정보가 없음' · 결정 '리뉴얼 표시 + 알림 끔') 수집을 잠시 멈추는
     사이트 PAUSED {사이트: {since, why}} — 그 사이트 값은 요청하지 않고(robots.txt도 안 받음) 이전 값을 그대로 두며 값에 표시 paused = 까닭
     (화면 '리뉴얼 중 · 11/3 값' — build_dashboard v33.32) · 받은 값·못 받은 값 셈('절반 넘게'·브랜드 통째)과 21일 알림에서 뺌 · 이전 값도 없으면
@@ -329,7 +329,7 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
         "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
         "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"}},   # v1.18 일본 몰 사이트맵에 없음 · 11/10 한국·미국·영국·독일 할인 중(정가는 이 상품 취소선 정가)
-    # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국·일본 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
+    # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감 · 일본은 재고 정리 할인 중) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
     # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
         cc: u for cc, u in _on("cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553").items() if cc != "JP"}},
@@ -1153,8 +1153,12 @@ def fetch_one(prod, cc):
     loc = urllib.parse.urlsplit(url).path.split("/")[1]
     if prod["id"].startswith("on-") and loc not in urllib.parse.urlsplit(r.url).path:   # 온: 그 나라 몰이 없으면 다른 나라로 넘김
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
-    if prod["id"].startswith("on-") and "/products/" not in urllib.parse.urlsplit(r.url).path:   # v1.20 그 나라 몰에서 빠진 색상은 목록(/shop)으로 넘어감(11/10 한국·일본)
-        raise RuntimeError(f"상품 페이지가 목록({urllib.parse.urlsplit(r.url).path})으로 넘어감 — 그 나라 몰에서 빠짐(다른 색상·새 모델로 바꿈)")
+    if prod["id"].startswith("on-"):   # v1.20 그 나라 몰에서 빠진 색상은 목록(/shop)으로 넘어감(11/10 한국·일본) — 다른 상품 페이지로 넘어가도 이름으로 엉뚱한 값을 읽지 않게
+        fp = urllib.parse.urlsplit(r.url).path
+        if "/products/" not in fp:
+            raise RuntimeError(f"상품 페이지가 목록({fp})으로 넘어감 — 그 나라 몰에서 빠짐(다른 색상·새 모델로 바꿈)")
+        if code.lower() not in fp.lower():
+            raise RuntimeError(f"다른 상품 페이지({fp[-60:]})로 넘어감 — 주소에 품번({code}) 없음")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인

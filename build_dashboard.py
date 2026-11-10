@@ -5241,7 +5241,7 @@ function pmCardHtml(x){   // 카드 하나 — 한국 원 · 나라 3칸 × 2줄
   const stl=PR_ORD.filter(cc=>x.c[cc]&&prStale(x.c[cc].o)), stK=prStale(x.kr);
   if(x.kr&&x.kr.paused) tg.push(`한국 ${esc(prPz(x.kr))} · ${mdTxt(x.kr.stale_since)} 값`);   // v33.32 수집 멈춤(회색 · 점 없음)
   const pzc=PR_ORD.filter(cc=>x.c[cc]&&x.c[cc].o.paused);   // v33.33 해외 나라 수집 멈춤(푸마 일본 접속 막음)
-  if(pzc.length) tg.push(`${pzc.map(cc=>PR_CC[cc]).join('·')} ${esc(prPz(x.c[pzc[0]].o))} · ${mdTxt(x.c[pzc[0]].o.stale_since)} 값`);
+  pzc.forEach(cc=>tg.push(`${PR_CC[cc]} ${esc(prPz(x.c[cc].o))} · ${mdTxt(x.c[cc].o.stale_since)} 값`));   // 나라마다(까닭·날짜가 다를 수 있음)
   if(stl.length||stK) tg.push(`<span class="a-dot" aria-hidden="true"></span>이전 값 ${mdTxt(stK?x.kr.stale_since:x.c[stl[0]].o.stale_since)} ${[stK?'한국':'',...stl.map(cc=>PR_CC[cc])].filter(Boolean).join('·')}`);
   return `<li class="pm-pc${op?' open':''}" data-id="${id}"><button type="button" class="pm-pcb" id="pmc-${id}" aria-expanded="${op}"${op?` aria-controls="pmx-${id}"`:''} aria-label="${esc(pmAria(x))}"${strip?` aria-describedby="pms-${id}"`:''}>`
     +`<span class="nm">${esc(N.main)}</span><span class="rt">${rt}</span>${N.brand?`<span class="vr">${esc(N.brand)}</span>`:''}<span class="kr num">${pmKrHtml(x,true)}</span>`
