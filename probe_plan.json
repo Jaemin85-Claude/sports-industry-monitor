@@ -1,0 +1,162 @@
+[
+ {
+  "t": "net",
+  "hosts": [
+   "brooksrunning.co.kr",
+   "www.brooksrunning.co.kr",
+   "saucony.co.kr",
+   "brooksrunning.co.jp"
+  ]
+ },
+ {
+  "t": "robotsraw",
+  "max": 3000,
+  "hosts": [
+   "www.saucony.com"
+  ]
+ },
+ {
+  "t": "dump",
+  "per_rx": 2,
+  "pad": 200,
+  "ld_chars": 400,
+  "max_ld": 2,
+  "ctx": [
+   "60307M|S21007"
+  ],
+  "urls": [
+   "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",
+   "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html"
+  ]
+ },
+ {
+  "t": "grep",
+  "max_maps": 14,
+  "per_host": 100,
+  "show": 25,
+  "rx": "endorphin-speed-5|endorphin-speed",
+  "sites": {
+   "uk": {
+    "host": "www.saucony.com",
+    "kid_pref": [
+     "en_gb",
+     "/uk/",
+     "uk_"
+    ]
+   },
+   "de": {
+    "host": "www.saucony.com",
+    "kid_pref": [
+     "de_de",
+     "/de/",
+     "de_"
+    ]
+   }
+  }
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "nike-courtvisionlo",
+    "brand": "나이키",
+    "name": "코트 비전 로우",
+    "code": "DH2987-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-calmslide",
+    "brand": "나이키",
+    "name": "캄 슬라이드",
+    "code": "FD4116-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-victoryone",
+    "brand": "나이키",
+    "name": "빅토리 원 슬라이드",
+    "code": "CN9675-002",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-blazerlo77",
+    "brand": "나이키",
+    "name": "블레이저 로우 77",
+    "code": "DA6364-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   },
+   {
+    "id": "nike-v2krun",
+    "brand": "나이키",
+    "name": "V2K 런",
+    "code": "FD0736-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ]
+   }
+  ]
+ },
+ {
+  "t": "grep",
+  "max_maps": 2,
+  "per_host": 60,
+  "show": 20,
+  "rx": "NK(DH2987-101|FD4116-001|CN9675-002|DA6364-101|FD0736-100|FB2207-001)\\.html",
+  "sites": {
+   "nike": {
+    "host": "www.nike.ae",
+    "start": [
+     "https://www.nike.ae/en/sitemap_0-product.xml"
+    ]
+   }
+  }
+ },
+ {
+  "t": "shopjson",
+  "key": "oofos",
+  "cc": "US",
+  "sku_rx": "(\\d{4}[A-Z]{2,})",
+  "show": true,
+  "urls": [
+   "https://www.oofos.com/products.json?limit=250&page=1"
+  ]
+ }
+]
