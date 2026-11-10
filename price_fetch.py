@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.20: (대표 지시 2026-11-11 '추천 순서대로' — 블프 전 해외 정가 빈칸 줄이기) ① 푸마 일본(jp.puma.com)이 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 ·
+    11/11 GitHub 서버 확인 — 우회하지 않음) → PAUSED에 넣음(why '일본 공식몰이 자동 접속을 막음' · 화면 '접속 막음 · 11/03 값' · 21일 알림 안 냄 · 요청 안 함 —
+    주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434)·남성 클라우드노바 2(3ME30210108)가 11/10부터 한국·일본 몰에서
+    빠져 상품 주소가 목록(/shop)으로 넘어감('JSON-LD 없음'으로 보였음) → 클라우드몬스터 1(3MF30740553 · 한국·미국·영국·독일 — 일본 몰에 없음) · 클라우드몬스터 1
+    워터프루프(3MG10701043 · 5개 나라 · id on-cloudmonster1wp) — 11/11 나라별 상품 사이트맵(https://www.on.com/{loc}/products.xml)·정가 읽기 확인 · 상품 114개 · 값 479개 ·
+    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐')
 v1.19: (대표 확인 2026-11-10 '브룩스 한국 공식몰은 리뉴얼 중 — 접속은 되는데 조회되는 정보가 없음' · 결정 '리뉴얼 표시 + 알림 끔') 수집을 잠시 멈추는
     사이트 PAUSED {사이트: {since, why}} — 그 사이트 값은 요청하지 않고(robots.txt도 안 받음) 이전 값을 그대로 두며 값에 표시 paused = 까닭
     (화면 '리뉴얼 중 · 11/3 값' — build_dashboard v33.32) · 받은 값·못 받은 값 셈('절반 넘게'·브랜드 통째)과 21일 알림에서 뺌 · 이전 값도 없으면
@@ -323,15 +329,18 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
         "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
         "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"}},   # v1.18 일본 몰 사이트맵에 없음 · 11/10 한국·미국·영국·독일 할인 중(정가는 이 상품 취소선 정가)
-    {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
-        cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
-        for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},   # 두바이(on.ae)는 옛 모델 재고 정리(모든 색상 450디르함 · 정가 표시 없음)라 뺌
+    # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국·일본 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
+    # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
+    {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
+        cc: u for cc, u in _on("cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553").items() if cc != "JP"}},
     # v1.17 온러닝 두바이 = on.ae(Seddiqi 운영 쇼피파이 · 변형 품번 = 글로벌 품번 + 사이즈) — 모델 상품 .json에서 이 색상 품번 변형만(SHOP_MODEL)
     {"id": "on-cloud6", "brand": "온러닝", "name": "클라우드 6", "code": "3MF10071200", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200", "cloud-6")},
     {"id": "on-cloudsurfer2", "brand": "온러닝", "name": "클라우드서퍼 2", "code": "3MF10121043", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043", "cloudsurfer-2")},
     {"id": "on-cloudtilt", "brand": "온러닝", "name": "클라우드틸트", "code": "3ME10101430", "src": "page", "hint": "cloudtilt", "urls": _on("cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430", "cloudtilt")},
     {"id": "on-roger", "brand": "온러닝", "name": "더 로저 어드밴티지", "code": "3MF30641200", "src": "page", "hint": "roger", "urls": _on("the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200", "the-roger-advantage")},
-    {"id": "on-cloudnova2", "brand": "온러닝", "name": "클라우드노바 2", "code": "3ME30210108", "src": "page", "hint": "cloudnova", "urls": _on("cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108", "cloudnova-2")},
+    # v1.20 남성 클라우드노바 2(3ME3021)는 11/10부터 한국·일본 몰에서 모델째 빠짐 → 5개 나라 몰에 같은 품번이 있는 클라우드몬스터 1 워터프루프 블랙(11/11 정가 읽기 확인 ·
+    # 두바이 on.ae에는 이 모델 없음 — HTTP 404)
+    {"id": "on-cloudmonster1wp", "brand": "온러닝", "name": "클라우드몬스터 1 워터프루프", "code": "3MG10701043", "src": "page", "hint": "cloudmonster", "urls": _on("cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043")},
     # v1.14 SKU 5차 — 한국 몰 사이트맵(https://www.on.com/sitemap.xml → ko-kr 상품 · robots.txt에는 적혀 있지 않음)의 남성 신발 중 주요 모델 검정 · 5개 나라 같은 품번(10/28 GitHub 서버 확인)
     {"id": "on-cloudmonster3", "brand": "온러닝", "name": "클라우드몬스터 3", "code": "3MG10051043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043", "cloudmonster-3")},
     {"id": "on-cloudrunner3", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
