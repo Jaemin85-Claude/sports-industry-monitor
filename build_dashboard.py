@@ -4,6 +4,7 @@ sports-industry-monitor — 단일 HTML 대시보드 빌드
 v33.32: (대표 확인 2026-11-10 '브룩스 한국 공식몰 리뉴얼 중' · 결정 '리뉴얼 표시 + 알림 끔' · price_fetch v1.19 PAUSED) 수집을 잠시 멈춘 사이트 값(prices.json m.paused)은
   '이전 값'(주황 점) 대신 회색 시계 꼬리표 '리뉴얼 중 · 11/03 값'(브랜드 상세 한국 정가·표 · 해외 정가 한국 줄 '리뉴얼 중'·펼친 줄·카드) · 해외 정가 요약의 '이전 값 n칸'·
   브랜드 상세 접힌 칸 '이전 값 n곳'·수집 상태 '해외 정가' 못 받음 수에서 뺌 — 수집 상태 설명에 '수집 멈춤 n건 — 한국 공식몰 리뉴얼 중(브룩스 한국)' · prStale·prStA
+  멈춘 값의 옛 할인가(11/03 블프)는 '한국에서 지금 팔리는 가격'으로 안 씀(prSale — prSp null · 착지 마진·본전 매입가는 정가로 · 할인 꼬리표 안 씀).
 v33.31: (대표 결정 2026-11-06 개편 P2 · Q4 나) 오늘 글 줄이기(시안 1 A — 대표가 고른 카드 4장 그대로): ① 어제와 달라진 판정 줄은 감김(두 줄까지 · …로 자르지 않음 · 환율만 바뀐 판정은 회색 '· 환율만' · 누르면 그 브랜드) · '22곳 판정' 뺌 ·
   오래된 결산 꼬리표를 글로 '결산 '25.12 · 오래된 자료'(오늘 ① — 브랜드 목록은 두 줄 행이라 짧은 꼬리표 그대로) · ② '1년 전보다'·'모든 원산지 통화가 쌈' 줄 뺌, 알림 줄 '새 환율 알림 없음 · 마지막 m/d' · ③ 일정 한 줄씩(칩·남은 날 뺌 · '예상' 그대로) ·
   머리 상태 단추 = 평소 회색 'hh:mm 갱신' · 수집 지연 '지연 n'(그대로 — 다른 워크플로우만 늦으면 조치 필요가 먼저) · 이번 update-dashboard 실행을 빨간 X로 만든 줄(soft_fail.txt · 다시 받기 작업은 앞 작업 줄 SOFT_FAIL_PREV)이 있을 때만 주황 점 '조치 필요 n'
@@ -1082,8 +1083,8 @@ div.bd-nx{cursor:default}
 .ds{display:inline-flex;align-items:center;gap:3px;font-size:var(--fs1);font-weight:400;color:var(--sub);white-space:nowrap;vertical-align:baseline}
 .ds .ic{width:13px;height:13px;vertical-align:-2px}
 .ds.bad i,.a-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--bad);flex:none;margin-right:2px}
-.a-dot{margin:0 0 1px 6px;vertical-align:middle}
-.pm-pz{color:var(--sub);font-weight:400;font-size:13px;margin-left:4px;white-space:nowrap}   /* v33.32 수집을 잠시 멈춘 값(리뉴얼 중) — 회색 글, 주황 점 아님 */   /* 글 없이 점 하나(줄 이름 뒤 — title·aria-label에 사유) */
+.a-dot{margin:0 0 1px 6px;vertical-align:middle}   /* 글 없이 점 하나(줄 이름 뒤 — title·aria-label에 사유) */
+.pm-pz{color:var(--sub);font-weight:400;font-size:13px;margin-left:4px;white-space:nowrap}   /* v33.32 수집을 잠시 멈춘 값(리뉴얼 중) — 회색 글, 주황 점 아님 */
 /* 옛 꼬리표도 같은 말 — .tg·.wait-b = 시계 · 실제 수집 실패(.stl, 설명에 '실패'·'수집분'이 있는 .tg) = 주황 점 · .tg.chg(달라진 판정)·.tg.nt(정가 변동 등 상태 아님) = 표시 없음 */
 .tg::before,.wait-b::before{content:'';display:inline-block;width:12px;height:12px;margin:0 3px -1px 0;background:currentColor;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6.2'/%3E%3Cpath d='M8 4.8V8l2.3 1.5'/%3E%3C/svg%3E") center/contain no-repeat;
@@ -4976,10 +4977,11 @@ function prRows(it){   // 한 상품의 나라별 줄 — {kr, rows:[{cc, o, krw
 const prMiss=id=>((PRICES&&PRICES.missing||{})[id]||[]).filter(cc=>cc==='KR'||PR_CC[cc]);   // 값 없음(수집 실패 · 이전 값도 없음) 나라
 const prAvg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 /* v33.23 할인가·정가 변동(price_fetch v1.5 sp·sp_date·ph) — 할인 n% = 지금 가장 싼 색상·사이즈 ÷ 정가 − 1 */
-const prSp=o=>o&&o.sale&&o.sp&&o.p&&o.sp<o.p?o.sp:null;   // 확인된 할인가(화면 정가보다 낮을 때만)
+const prSale=o=>!!(o&&o.sale&&!o.paused);   // v33.32 할인 중(수집을 잠시 멈춘 값의 옛 할인은 안 봄 — 리뉴얼 전 11/03 블프 할인가를 '지금 팔리는 가격'으로 쓰지 않음)
+const prSp=o=>prSale(o)&&o.sp&&o.p&&o.sp<o.p?o.sp:null;   // 확인된 할인가(화면 정가보다 낮을 때만)
 const prOff=o=>{ const sp=prSp(o); return sp?Math.round((sp/o.p-1)*100):null; };   // 할인율 %(정수 · 할인가를 모르면 null) — v33.30 브랜드 상세 꼬리표·해외 정가 화면이 함께 씀
 function prSaleA(o,tag,cls){
-  if(!o||!o.sale) return '';
+  if(!prSale(o)) return '';
   const sp=prSp(o), off=prOff(o);
   const t=off!=null&&off<0?`할인 −${-off}%`:'할인 중';
   const ti=sp?`지금 가장 싼 색상·사이즈 ${prLocal(sp,o.cur)}${o.sp_date?`(${mdOf(o.sp_date)} 확인)`:''} — 표는 할인 전 정가`:'지금 할인 중인 색상·사이즈가 있음 — 표는 할인 전 정가';
@@ -5046,7 +5048,7 @@ function prSecHtml(bname){
     // 접힌 칸도 수집 실패 표시는 머리 줄에(화면 규칙 '수집 실패 표시는 접지 않음') — 해외 이전 값 n곳 · 값 없음 n곳
     const nSt=fold?rows.filter(r=>prStale(r.o)).length:0, missN=miss.map(cc=>cc==='KR'?'한국':PR_CC[cc]);
     const bad=fold?(nSt?' '+tagA(`이전 값 ${nSt}곳`,'해외 정가 일부가 이전 수집분 — 펼치면 나라별 날짜'):'')+(miss.length?' '+tagA(`값 없음 ${miss.length}곳`,`수집 실패: ${missN.join('·')}`):''):'';
-    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${prStA(kr)}${prChgA(kr)}${kr.sale?' · '+prSaleA(kr,'span','nw'):''}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
+    const hd=`<span class="t">${esc(it.name)}</span><span class="s">${esc(it.code)}${kr?` · 한국 <b>${wonR(kr.p)}원</b>${prStA(kr)}${prChgA(kr)}${prSale(kr)?' · '+prSaleA(kr,'span','nw'):''}`:' · 한국 정가 없음'}${fold&&ga!=null?` · <span class="nw">평균 ${prGapB(ga)}</span>`:''}${bad}</span>`;
     const op=PR_OPEN[bname];
     h+=fold?`<details class="bd-pr bd-prd" data-br="${esc(bname)}" data-pid="${esc(it.id)}"${(op?op.has(it.id):!ix)?' open':''}><summary><span class="bd-pr-hd">${hd}</span>${ic('down',20,'s2 chev')}</summary>`:`<div class="bd-pr"><div class="bd-pr-hd">${hd}</div>`;
     if(kr&&rows.length){
@@ -5117,7 +5119,7 @@ function pmRow(it,F){   // 한 상품의 지금 기준 값 — 한국 krP(표 �
   P.rows.forEach(r=>{ const cc=r.cc, o=r.o, sp=prSp(o), val=now?krwOf(sp||o.p,o.cur):r.krw;
     const g=now?(kr&&val?(krNow/val-1)*100:null):r.gap, fr=F[cc]!=null?F[cc]*LAND.kg:null;
     const landed=pmLand.fwd(now?(sp||o.p):o.p,o.cur,cc,fr), m=kr&&landed!=null?(1-landed/krNow)*100:null;   // Q3 가: 착지 마진은 정가 보기도 한국에서 지금 팔리는 가격으로 나눔(한국도 할인 중이면 할인가)
-    c[cc]={o,sp,off:prOff(o),unk:!!o.sale&&!sp,val,g,fr,landed,m}; });
+    c[cc]={o,sp,off:prOff(o),unk:prSale(o)&&!sp,val,g,fr,landed,m}; });
   let lo=null, best=null;
   const e=Object.entries(c).filter(([,x])=>x.val!=null);
   if(e.length&&(krP!=null||e.length>1)){ const b=e.reduce((a,b)=>b[1].val<a[1].val?b:a); lo=krP!=null&&(krP/b[1].val-1)*100<0.5?'KR':b[0]; }   // 한국과 0.5% 안이면 한국에 밑줄
@@ -5232,7 +5234,7 @@ function pmCardHtml(x){   // 카드 하나 — 한국 원 · 나라 3칸 × 2줄
     if(L) return `<span><i>${PR_CC[cc]}</i> ${c.fr!=null&&c.m!=null?`<span class="${pmMCls(x,cc)}">${pmPct(c.m)}%</span>`:`<span class="pm-gry">${c.fr==null?'운임 없음':'–'}</span>`}</span>`;
     return `<span><i>${PR_CC[cc]}</i> ${c.val!=null?`<span class="${pmGCls(c.g)}${x.lo===cc?' pm-u':''}">${pmMan(c.val)}</span>`:'<span class="pm-gry">–</span>'}</span>`; }).join('');
   const tg=[];
-  if(!now){ const s=[x.kr&&x.krOff?`한국 ${pmPct(x.krOff)}%`:(x.kr&&x.kr.sale?'한국 할인':''),...PR_ORD.filter(cc=>x.c[cc]&&x.c[cc].o.sale).map(cc=>x.c[cc].sp?`${PR_CC[cc]} ${pmPct(x.c[cc].off)}%`:`${PR_CC[cc]} 할인`)].filter(Boolean);
+  if(!now){ const s=[x.kr&&x.krOff?`한국 ${pmPct(x.krOff)}%`:(prSale(x.kr)?'한국 할인':''),...PR_ORD.filter(cc=>x.c[cc]&&prSale(x.c[cc].o)).map(cc=>x.c[cc].sp?`${PR_CC[cc]} ${pmPct(x.c[cc].off)}%`:`${PR_CC[cc]} 할인`)].filter(Boolean);
     if(s.length) tg.push('할인 중 '+s.join(' · ')); }
   const stl=PR_ORD.filter(cc=>x.c[cc]&&prStale(x.c[cc].o)), stK=prStale(x.kr);
   if(x.kr&&x.kr.paused) tg.push(`한국 ${esc(prPz(x.kr))} · ${mdTxt(x.kr.stale_since)} 값`);   // v33.32 수집 멈춤(회색 · 점 없음)

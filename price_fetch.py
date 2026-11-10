@@ -5,7 +5,7 @@ v1.19: (대표 확인 2026-11-10 '브룩스 한국 공식몰은 리뉴얼 중 �
     사이트 PAUSED {사이트: {since, why}} — 그 사이트 값은 요청하지 않고(robots.txt도 안 받음) 이전 값을 그대로 두며 값에 표시 paused = 까닭
     (화면 '리뉴얼 중 · 11/3 값' — build_dashboard v33.32) · 받은 값·못 받은 값 셈('절반 넘게'·브랜드 통째)과 21일 알림에서 뺌 · 이전 값도 없으면
     값 없음 기록(failed)도 지움(알림 안 냄) · 로그 '건너뜀 — 한국 공식몰 리뉴얼 중(수집 멈춤 · 11-03부터) · 이전 값(11-03 받은 값)'('실패'·[WARN] 없음) ·
-    표시는 실행마다 지금 PAUSED로 다시 매김(받지 않는 날도) — PAUSED에서 빼면 다음 받는 날부터 예전처럼 받고 알림도 예전대로 ·
+    표시는 실행마다 지금 PAUSED로 다시 매김(받지 않는 날도) — PAUSED에서 빼면 그 값은 다음 실행에서 바로 다시 받고(주 1회를 기다리지 않음 · 다시 받기) 알림도 예전대로 ·
     지금 brooksrunning.co.kr(11/03부터 GitHub 서버에서 443 연결 거부 — 리뉴얼). 리뉴얼이 끝나면 주 1회 SKU 차례에서 새 주소·상품 번호로 다시 연결하고 PAUSED에서 뺌
 v1.18: (SKU 8차 · 정기 차례 11/10 · 대표 상시 지시 2026-10-26) 상품이 적은 브랜드부터 — 푸마 T7 올웨이즈 온 숏 트랙 자켓(여성 629796 · 6개 나라) ·
     언더아머 언디나이어블 5.0 더플백 라지(1369224)·UA 레인 6(3027341 · 각 6개 나라) · 나이키 코트 비전 로우 넥스트 네이처(DH2987-101 · 7개 나라)
@@ -1233,6 +1233,13 @@ def main():
         mode = "retry"   # 지난 실행에서 못 받은 값만 다시
     else:
         mode = None
+    if not mode:   # v1.19 PAUSED에서 뺀 사이트(지난 실행까지 표시 paused) — 다음 전체 받기를 기다리지 않고 그 값을 바로 다시 받기로(받기 전에 21일 알림이 먼저 나지 않게)
+        _bp = {p["id"]: p for p in PRODUCTS}
+        unp = [f"{it.get('id')} {cc}" for it in old.get("items", []) if isinstance(it, dict) and it.get("id") in _bp
+               for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused") and not paused_of(_bp[it["id"]], cc)]
+        if unp:
+            mode = "retry"
+            log(f"해외 정가: 수집 멈춤을 푼 값 {len(unp)}건 — 바로 다시 받기({', '.join(unp[:5])}{' …' if len(unp) > 5 else ''})")
     codes = {p["id"]: p["code"] for p in PRODUCTS}
     # 품번이 바뀐 상품은 id가 같아도 다른 상품 — 이전 값·값 없음 기록을 쓰지 않음
     prev = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("code") == codes.get(it.get("id"))}
@@ -1490,6 +1497,7 @@ def main():
             pz = paused_of(prod, cc) if prod else None
             if pz:
                 o["paused"] = pz["why"]; n_pause += 1
+                o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td)   # 받지 않은 날(주 1회 건너뜀)에도 화면 'm/d 값' 날짜가 비지 않게
             else:
                 o.pop("paused", None)
     failed = {k: f for k, f in failed.items() if not (byid.get(f.get("id")) and paused_of(byid[f["id"]], f.get("cc")))}   # 멈춘 사이트의 값 없음 기록은 지움

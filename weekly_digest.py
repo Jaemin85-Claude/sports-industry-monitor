@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.17: (대표 확인 2026-11-10 '브룩스 한국 공식몰 리뉴얼 중' · price_fetch v1.19 PAUSED) '■ 해외 정가 변동'의 '지금 할인 중 n건'에서 수집을 잠시 멈춘 값(paused — 리뉴얼 전 11/03 할인)은 뺌.
 v1.16: (대표 지시 2026-11-03 '두바이 추가해주세요') '■ 해외 정가 변동'에 두바이(UAE 공식몰 · price_fetch v1.17) — 나라 이름 CC_KO·통화 표시 CUR_SYM(AED)
 v1.15: (대표 지시 2026-10-27 'A') '이번 주 새 본사 발언' 줄에 한 지역 이야기면 '중화권만(점수 제외)'(build_dashboard v33.24 — 판정 점수에서 뺌) ·
       판정 규칙 판(CHK_RULE)이 바뀐 주에는 '판정 기록은 m/d부터' 대신 '판정 규칙이 바뀌어(…) 그 전 기록과는 비교하지 않음'
@@ -588,7 +589,7 @@ def price_changes(prices, today, old=None, upto=None, n=8):
             if not isinstance(o, dict) or not o.get("cur"):
                 continue
             cur, place = o["cur"], CC_KO.get(cc, cc)
-            if o.get("sale"):
+            if o.get("sale") and not o.get("paused"):   # v1.17 수집을 잠시 멈춘 값(price_fetch v1.19 paused)의 옛 할인은 셈에서 뺌
                 on += 1
             new = lambda k, x: (str(x[0]) >= start and (it.get("id"), cc, k, json.dumps(x)) not in seen
                                 and (until is None or (it.get("id"), cc, k, json.dumps(x)) in until))
