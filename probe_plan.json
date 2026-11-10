@@ -1,30 +1,55 @@
 [
  {
-  "t": "grep",
-  "max_maps": 10,
-  "per_host": 80,
-  "show": 40,
-  "rx": "남성-엔돌핀-스피드-5",
-  "sites": {
-   "KR": {
-    "host": "saucony.co.kr"
+  "t": "tryp",
+  "prods": [
+   {
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(남성)",
+    "code": "S21007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "id": "saucony-es5-403",
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-triple-black/403/"
+    }
+   },
+   {
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(남성)",
+    "code": "S21007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "id": "saucony-es5-220",
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/"
+    }
+   },
+   {
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(남성)",
+    "code": "S21007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "id": "saucony-es5-326",
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitenightsky/326/"
+    }
+   },
+   {
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(남성)",
+    "code": "S21007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "id": "saucony-es5-404",
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-cadetgunmetal/404/"
+    }
    }
-  }
- },
- {
-  "t": "dump",
-  "head": 0,
-  "per_rx": 4,
-  "pad": 250,
-  "ld_chars": 800,
-  "max_ld": 2,
-  "ctx": [
-   "S21007",
-   "품절|sold ?out|SOLD",
-   "product_price|price_custom"
-  ],
-  "urls": [
-   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/"
   ]
  }
 ]
