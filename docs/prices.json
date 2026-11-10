@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-10 11:11 KST",
+ "generated_at": "2026-11-10 11:38 KST",
  "fetched": "2026-11-10",
  "attempt": "2026-11-10",
- "cfg": "e4ab40fb34df",
+ "cfg": "2021b4ac5c78",
  "status": "ok",
  "items": [
   {
@@ -737,6 +737,95 @@
    }
   },
   {
+   "id": "nike-courtvisionlo",
+   "brand": "나이키",
+   "name": "코트 비전 로우 넥스트 네이처",
+   "code": "DH2987-101",
+   "m": {
+    "KR": {
+     "p": 99000.0,
+     "cur": "KRW",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 99000.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 84100.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       84100.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 85.0,
+     "cur": "USD",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 85.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "GB": {
+     "p": 74.99,
+     "cur": "GBP",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 74.99,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "DE": {
+     "p": 79.99,
+     "cur": "EUR",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 79.99,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 8800.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 7499.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       7499.0,
+       "base"
+      ]
+     ]
+    },
+    "MX": {
+     "p": 1799.0,
+     "cur": "MXN",
+     "seen": "2026-11-10",
+     "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
+     "obs": 1799.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "AE": {
+     "p": 429.0,
+     "cur": "AED",
+     "seen": "2026-11-10",
+     "url": "https://www.nike.ae/en/court-vision-low-next-nature-mens-shoes/NKDH2987-101.html",
+     "obs": 429.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "puma-speedcat",
    "brand": "푸마",
    "name": "스피드캣 OG",
@@ -1347,14 +1436,14 @@
      "obs": 119000.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 95200.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        95200.0
       ]
-     ]
+     ],
+     "sp": 95200.0,
+     "sp_date": "2026-11-10"
     },
     "US": {
      "p": 90.0,
@@ -1453,6 +1542,104 @@
      "seen": "2026-11-10",
      "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034",
      "obs": 229.95,
+     "obs_date": "2026-11-10",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "puma-t7track",
+   "brand": "푸마",
+   "name": "T7 올웨이즈 온 숏 트랙 자켓(여성)",
+   "code": "629796",
+   "m": {
+    "KR": {
+     "p": 99000.0,
+     "cur": "KRW",
+     "seen": "2026-11-10",
+     "url": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
+     "obs": 99000.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 49500.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       49500.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 70.0,
+     "cur": "USD",
+     "seen": "2026-11-10",
+     "url": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
+     "obs": 70.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 41.99,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       41.99,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 55.0,
+     "cur": "GBP",
+     "seen": "2026-11-10",
+     "url": "https://uk.puma.com/uk/en/pd/t7-always-on-short-track-jacket-women/629796",
+     "obs": 55.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 28.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       28.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 69.95,
+     "cur": "EUR",
+     "seen": "2026-11-10",
+     "url": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
+     "obs": 69.95,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 28.95,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       28.95,
+       "base"
+      ]
+     ]
+    },
+    "MX": {
+     "p": 1199.0,
+     "cur": "MXN",
+     "seen": "2026-11-10",
+     "url": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
+     "obs": 1199.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "AE": {
+     "p": 329.0,
+     "cur": "AED",
+     "seen": "2026-11-10",
+     "url": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html",
+     "obs": 329.0,
      "obs_date": "2026-11-10",
      "sale": false
     }
@@ -2509,14 +2696,14 @@
      "obs": 289000.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 245650.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        245650.0
       ]
-     ]
+     ],
+     "sp": 245650.0,
+     "sp_date": "2026-11-10"
     },
     "US": {
      "p": 180.0,
@@ -2587,14 +2774,14 @@
      "obs": 239000.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 215100.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        215100.0
       ]
-     ]
+     ],
+     "sp": 215100.0,
+     "sp_date": "2026-11-10"
     },
     "US": {
      "p": 160.0,
@@ -2630,14 +2817,14 @@
      "obs": 229000.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 183200.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        183200.0
       ]
-     ]
+     ],
+     "sp": 183200.0,
+     "sp_date": "2026-11-10"
     },
     "US": {
      "p": 150.0,
@@ -3358,14 +3545,14 @@
      "obs": 129.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 77.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        77.0
       ]
-     ]
+     ],
+     "sp": 77.0,
+     "sp_date": "2026-11-10"
     }
    }
   },
@@ -3530,14 +3717,14 @@
      "obs": 249.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 149.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        149.0
       ]
-     ]
+     ],
+     "sp": 149.0,
+     "sp_date": "2026-11-10"
     }
    }
   },
@@ -3611,14 +3798,14 @@
      "obs": 179.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 107.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        107.0
       ]
-     ]
+     ],
+     "sp": 107.0,
+     "sp_date": "2026-11-10"
     }
    }
   },
@@ -3725,14 +3912,14 @@
      "obs": 129.0,
      "obs_date": "2026-11-10",
      "sale": true,
-     "sp": 77.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        77.0
       ]
-     ]
+     ],
+     "sp": 77.0,
+     "sp_date": "2026-11-10"
     }
    }
   },
@@ -3931,6 +4118,166 @@
    }
   },
   {
+   "id": "ua-undeniable-l",
+   "brand": "언더아머",
+   "name": "언디나이어블 5.0 더플백 라지",
+   "code": "1369224",
+   "m": {
+    "KR": {
+     "p": 79000.0,
+     "cur": "KRW",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EA%B0%80%EB%B0%A9/ua_%EC%96%B8%EB%94%94%EB%82%98%EC%9D%B4%EC%96%B4%EB%B8%94_5.0_%EB%9D%BC%EC%A7%80/1369224.html",
+     "obs": 79000.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "US": {
+     "p": 60.0,
+     "cur": "USD",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.com/en-us/p/ua_undeniable_5.0_large_duffle_bag/1369224.html",
+     "obs": 60.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "GB": {
+     "p": 45.0,
+     "cur": "GBP",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-undeniable-5.0-large-duffle-bag/1369224.html",
+     "obs": 45.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "DE": {
+     "p": 50.0,
+     "cur": "EUR",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.de/de-de/p/ua-undeniable-5.0-large/1369224.html",
+     "obs": 50.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "MX": {
+     "p": 1299.0,
+     "cur": "MXN",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_undeniable_5.0_grande/1369224.html",
+     "obs": 1299.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "AE": {
+     "p": 229.0,
+     "cur": "AED",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.ae/en/ua-undeniable-5.0-large-duffle-bag/UA1369224-001.html",
+     "obs": 229.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 137.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       137.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "ua-reign6",
+   "brand": "언더아머",
+   "name": "UA 레인 6 트레이닝화(남성)",
+   "code": "3027341",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%8B%A0%EB%B0%9C/ua_%EB%A0%88%EC%9D%B8_6/3027341.html",
+     "obs": 169000.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "US": {
+     "p": 140.0,
+     "cur": "USD",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.com/en-us/p/ua_reign_6_mens_training_shoes/3027341.html",
+     "obs": 140.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "GB": {
+     "p": 125.0,
+     "cur": "GBP",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.co.uk/en-gb/p/ua-reign-6-mens-training-shoes/3027341.html",
+     "obs": 125.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 87.97,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       87.97,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 140.0,
+     "cur": "EUR",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.de/de-de/p/ua-reign-6/3027341.html",
+     "obs": 140.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 97.97,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       97.97,
+       "base"
+      ]
+     ]
+    },
+    "MX": {
+     "p": 2999.0,
+     "cur": "MXN",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.com.mx/es-mx/p/entrenamiento/tenis_de_entrenamiento_ua_tribase_reign_6_para_hombre/3027341.html",
+     "obs": 2999.0,
+     "obs_date": "2026-11-10",
+     "sale": false
+    },
+    "AE": {
+     "p": 599.0,
+     "cur": "AED",
+     "seen": "2026-11-10",
+     "url": "https://www.underarmour.ae/en/ua-reign-6/UA3027341-001.html",
+     "obs": 599.0,
+     "obs_date": "2026-11-10",
+     "sale": true,
+     "sp": 359.0,
+     "sp_date": "2026-11-10",
+     "sh": [
+      [
+       "2026-11-10",
+       359.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "saucony-ride19",
    "brand": "써코니",
    "name": "라이드 19(남성)",
@@ -4005,13 +4352,11 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-03",
-     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitegum/164/",
+     "seen": "2026-11-10",
+     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",
      "obs": 219000.0,
-     "obs_date": "2026-11-03",
-     "sale": false,
-     "stale_since": "2026-11-03",
-     "why": "KRW 가격 없음"
+     "obs_date": "2026-11-10",
+     "sale": false
     },
     "US": {
      "p": 175.0,
@@ -4030,50 +4375,6 @@
      ],
      "sp": 129.95,
      "sp_date": "2026-11-10"
-    },
-    "GB": {
-     "p": 180.0,
-     "cur": "GBP",
-     "seen": "2026-10-30",
-     "url": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",
-     "obs": 180.0,
-     "obs_date": "2026-10-30",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       141.5,
-       "base"
-      ],
-      [
-       "2026-10-28",
-       144.0
-      ]
-     ],
-     "sp": 144.0,
-     "sp_date": "2026-10-30",
-     "stale_since": "2026-10-30",
-     "why": "HTTP 404"
-    },
-    "DE": {
-     "p": 200.0,
-     "cur": "EUR",
-     "seen": "2026-10-30",
-     "url": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html",
-     "obs": 200.0,
-     "obs_date": "2026-10-30",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       160.0,
-       "base"
-      ]
-     ],
-     "sp": 160.0,
-     "sp_date": "2026-10-30",
-     "stale_since": "2026-10-30",
-     "why": "HTTP 404"
     }
    }
   },
@@ -4086,13 +4387,11 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-03",
+     "seen": "2026-11-10",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
      "obs": 299000.0,
-     "obs_date": "2026-11-03",
-     "sale": false,
-     "stale_since": "2026-11-03",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-11-10",
+     "sale": false
     },
     "US": {
      "p": 240.0,
