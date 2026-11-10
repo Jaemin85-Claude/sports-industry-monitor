@@ -1,55 +1,87 @@
 [
  {
-  "t": "pages",
-  "urls": [
-   "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
-   "https://kr.puma.com/kr/ko/pd/shibui-cat/385296.html",
-   "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%EB%A0%88%EB%8D%94%3Cbr%3Epalermo-lth/396464.html"
-  ],
-  "code_rx": "\\b(629796|385296|396464)[_-]\\d{2}\\b"
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "puma-t7track",
+    "brand": "푸마",
+    "name": "T7 올웨이즈 온 숏 트랙 자켓(여성)",
+    "code": "629796",
+    "src": "page",
+    "hint": "t7",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
+     "US": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
+     "GB": "https://uk.puma.com/uk/en/pd/t7-always-on-short-track-jacket-women/629796",
+     "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
+     "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
+     "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"
+    }
+   },
+   {
+    "id": "ua-undeniable-l",
+    "brand": "언더아머",
+    "name": "언디나이어블 5.0 더플백 라지",
+    "code": "1369224",
+    "src": "page",
+    "hint": "undeniable",
+    "urls": {
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EA%B0%80%EB%B0%A9/ua_%EC%96%B8%EB%94%94%EB%82%98%EC%9D%B4%EC%96%B4%EB%B8%94_5.0_%EB%9D%BC%EC%A7%80/1369224.html",
+     "US": "https://www.underarmour.com/en-us/p/ua_undeniable_5.0_large_duffle_bag/1369224.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-undeniable-5.0-large-duffle-bag/1369224.html",
+     "DE": "https://www.underarmour.de/de-de/p/ua-undeniable-5.0-large/1369224.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_undeniable_5.0_grande/1369224.html",
+     "AE": "https://www.underarmour.ae/en/ua-undeniable-5.0-large-duffle-bag/UA1369224-001.html"
+    }
+   },
+   {
+    "id": "ua-reign6",
+    "brand": "언더아머",
+    "name": "UA 레인 6 트레이닝화(남성)",
+    "code": "3027341",
+    "src": "page",
+    "hint": "reign",
+    "urls": {
+     "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%8B%A0%EB%B0%9C/ua_%EB%A0%88%EC%9D%B8_6/3027341.html",
+     "US": "https://www.underarmour.com/en-us/p/ua_reign_6_mens_training_shoes/3027341.html",
+     "GB": "https://www.underarmour.co.uk/en-gb/p/ua-reign-6-mens-training-shoes/3027341.html",
+     "DE": "https://www.underarmour.de/de-de/p/ua-reign-6/3027341.html",
+     "MX": "https://www.underarmour.com.mx/es-mx/p/entrenamiento/tenis_de_entrenamiento_ua_tribase_reign_6_para_hombre/3027341.html",
+     "AE": "https://www.underarmour.ae/en/ua-reign-6/UA3027341-001.html"
+    }
+   },
+   {
+    "id": "nike-courtvisionlo",
+    "brand": "나이키",
+    "name": "코트 비전 로우 넥스트 네이처",
+    "code": "DH2987-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {
+     "AE": "https://www.nike.ae/en/court-vision-low-next-nature-mens-shoes/NKDH2987-101.html"
+    }
+   }
+  ]
  },
  {
-  "t": "codes",
-  "key": "puma",
-  "base": "KR",
-  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
-  "sites": {
-   "KR": {
-    "host": "kr.puma.com",
-    "path": "/kr/ko/"
-   },
-   "US": {
-    "host": "us.puma.com",
-    "path": "/us/en/"
-   },
-   "GB": {
-    "host": "uk.puma.com",
-    "path": "/uk/en/"
-   },
-   "DE": {
-    "host": "eu.puma.com",
-    "path": "/de/de/",
-    "kid_pref": [
-     "/urls/de/"
+  "t": "tryp",
+  "ids": [
+   {
+    "ids": [
+     "saucony-endspeed5"
+    ],
+    "only": [
+     "KR",
+     "US"
     ]
-   },
-   "MX": {
-    "host": "mx.puma.com",
-    "path": "/mx/es/"
-   },
-   "AE": {
-    "host": "ae.puma.com",
-    "path": "/ae/en/"
    }
-  },
-  "targets": [
-   "629796",
-   "385296",
-   "396464",
-   "310468"
-  ],
-  "max_maps": 60,
-  "per_host": 110,
-  "show": 0
+  ]
  }
 ]
