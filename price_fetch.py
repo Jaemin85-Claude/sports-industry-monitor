@@ -170,7 +170,8 @@ HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
-PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식몰 리뉴얼 중"}}   # v1.19 수집을 잠시 멈춘 사이트(대표 확인 2026-11-10) —
+PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식몰 리뉴얼 중"},   # v1.19 수집을 잠시 멈춘 사이트(대표 확인 2026-11-10) —
+          "jp.puma.com": {"since": "2026-11-10", "why": "일본 공식몰이 자동 접속을 막음"}}   # v1.20 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 · 11/11 GitHub 서버 확인) — 우회하지 않음
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
@@ -1143,6 +1144,8 @@ def fetch_one(prod, cc):
     loc = urllib.parse.urlsplit(url).path.split("/")[1]
     if prod["id"].startswith("on-") and loc not in urllib.parse.urlsplit(r.url).path:   # 온: 그 나라 몰이 없으면 다른 나라로 넘김
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
+    if prod["id"].startswith("on-") and "/products/" not in urllib.parse.urlsplit(r.url).path:   # v1.20 그 나라 몰에서 빠진 색상은 목록(/shop)으로 넘어감(11/10 한국·일본)
+        raise RuntimeError(f"상품 페이지가 목록({urllib.parse.urlsplit(r.url).path})으로 넘어감 — 그 나라 몰에서 빠짐(다른 색상·새 모델로 바꿈)")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인

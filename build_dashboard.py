@@ -2339,7 +2339,7 @@ const tagA=(t,title,c)=>`<span class="tg${c?' '+c:''}"${title?` title="${esc(tit
 const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 // v33.32 해외 정가 — 수집을 잠시 멈춘 사이트 값(paused · price_fetch v1.19 PAUSED)은 수집 실패가 아님: 이전 값 셈에서 빼고 회색 시계 꼬리표
 const prStale=o=>!!(o&&o.stale_since&&!o.paused);
-const prPz=o=>String(o&&o.paused||'').replace(/^한국 공식몰 /,'');
+const prPz=o=>{ const w=String(o&&o.paused||''); return /막음/.test(w)?'접속 막음':w.replace(/^\S+ 공식몰 /,''); };   // v33.33 짧은 꼬리표 — '리뉴얼 중' · '접속 막음'(일본 공식몰이 자동 접속을 막음)
 const prStA=o=>o&&o.paused?tagA(`${prPz(o)} · ${mdOf(o.stale_since)} 값`,`${o.paused} — 수집을 잠시 멈춤(이전 값 그대로 · 알림 안 함)`):staleA(o&&o.stale_since);
 const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
 // v33.22 연간 결산 재고가 9개월 넘음(chkInv 결과 i) → 그 결산일 — 표시만, 점수 그대로(결정 D14) · 브랜드 상세·목록·오늘 ①이 같이 씀
@@ -5238,6 +5238,8 @@ function pmCardHtml(x){   // 카드 하나 — 한국 원 · 나라 3칸 × 2줄
     if(s.length) tg.push('할인 중 '+s.join(' · ')); }
   const stl=PR_ORD.filter(cc=>x.c[cc]&&prStale(x.c[cc].o)), stK=prStale(x.kr);
   if(x.kr&&x.kr.paused) tg.push(`한국 ${esc(prPz(x.kr))} · ${mdTxt(x.kr.stale_since)} 값`);   // v33.32 수집 멈춤(회색 · 점 없음)
+  const pzc=PR_ORD.filter(cc=>x.c[cc]&&x.c[cc].o.paused);   // v33.33 해외 나라 수집 멈춤(푸마 일본 접속 막음)
+  if(pzc.length) tg.push(`${pzc.map(cc=>PR_CC[cc]).join('·')} ${esc(prPz(x.c[pzc[0]].o))} · ${mdTxt(x.c[pzc[0]].o.stale_since)} 값`);
   if(stl.length||stK) tg.push(`<span class="a-dot" aria-hidden="true"></span>이전 값 ${mdTxt(stK?x.kr.stale_since:x.c[stl[0]].o.stale_since)} ${[stK?'한국':'',...stl.map(cc=>PR_CC[cc])].filter(Boolean).join('·')}`);
   return `<li class="pm-pc${op?' open':''}" data-id="${id}"><button type="button" class="pm-pcb" id="pmc-${id}" aria-expanded="${op}"${op?` aria-controls="pmx-${id}"`:''} aria-label="${esc(pmAria(x))}"${strip?` aria-describedby="pms-${id}"`:''}>`
     +`<span class="nm">${esc(N.main)}</span><span class="rt">${rt}</span>${N.brand?`<span class="vr">${esc(N.brand)}</span>`:''}<span class="kr num">${pmKrHtml(x,true)}</span>`
