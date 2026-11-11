@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.20: (대표 지시 2026-11-11 '추천 순서대로' — 블프 전 해외 정가 빈칸 줄이기) ① 푸마 일본(jp.puma.com)이 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 ·
+    11/11 GitHub 서버 확인 — 우회하지 않음) → PAUSED에 넣음(why '일본 공식몰이 자동 접속을 막음' · 화면 '접속 막음 · 11/03 값' · 21일 알림 안 냄 · 요청 안 함 —
+    주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434 — 한국)·남성 클라우드노바 2(3ME30210108 — 한국·일본)가 11/10부터 그 나라 몰에서
+    빠져 상품 주소가 목록(/shop)으로 넘어감('JSON-LD 없음'으로 보였음) → 클라우드몬스터 1(3MF30740553 · 한국·미국·영국·독일 — 일본 몰에 없음) · 클라우드몬스터 1
+    워터프루프(3MG10701043 · 5개 나라 · id on-cloudmonster1wp) — 11/11 나라별 상품 사이트맵(https://www.on.com/{loc}/products.xml)·정가 읽기 확인 · 상품 114개 · 값 479개 ·
+    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐') · 다른 모델 페이지로 넘어가도 실패(같은 모델 다른 색상은 예전처럼 —
+    11/11 브랜치 실행: 클라우드틸트 한국·로저 일본이 다른 색상으로 넘어감 · 정가는 모델마다 같음)
 v1.19: (대표 확인 2026-11-10 '브룩스 한국 공식몰은 리뉴얼 중 — 접속은 되는데 조회되는 정보가 없음' · 결정 '리뉴얼 표시 + 알림 끔') 수집을 잠시 멈추는
     사이트 PAUSED {사이트: {since, why}} — 그 사이트 값은 요청하지 않고(robots.txt도 안 받음) 이전 값을 그대로 두며 값에 표시 paused = 까닭
     (화면 '리뉴얼 중 · 11/3 값' — build_dashboard v33.32) · 받은 값·못 받은 값 셈('절반 넘게'·브랜드 통째)과 21일 알림에서 뺌 · 이전 값도 없으면
@@ -170,7 +177,8 @@ HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
-PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식몰 리뉴얼 중"}}   # v1.19 수집을 잠시 멈춘 사이트(대표 확인 2026-11-10) —
+PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식몰 리뉴얼 중"},   # v1.19 수집을 잠시 멈춘 사이트(대표 확인 2026-11-10) —
+          "jp.puma.com": {"since": "2026-11-10", "why": "일본 공식몰이 자동 접속을 막음"}}   # v1.20 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 · 11/11 GitHub 서버 확인) — 우회하지 않음
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
@@ -322,15 +330,18 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
         "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
         "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"}},   # v1.18 일본 몰 사이트맵에 없음 · 11/10 한국·미국·영국·독일 할인 중(정가는 이 상품 취소선 정가)
-    {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터", "code": "61.98434", "src": "page", "hint": "cloudmonster", "urls": {
-        cc: f"https://www.on.com/{loc}/products/cloudmonster-61/mens/all-white-shoes-61.98434"
-        for cc, loc in (("KR", "ko-kr"), ("US", "en-us"), ("GB", "en-gb"), ("DE", "de-de"), ("JP", "ja-jp"))}},   # 두바이(on.ae)는 옛 모델 재고 정리(모든 색상 450디르함 · 정가 표시 없음)라 뺌
+    # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감 · 일본은 재고 정리 할인 중) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
+    # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
+    {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
+        cc: u for cc, u in _on("cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553").items() if cc != "JP"}},
     # v1.17 온러닝 두바이 = on.ae(Seddiqi 운영 쇼피파이 · 변형 품번 = 글로벌 품번 + 사이즈) — 모델 상품 .json에서 이 색상 품번 변형만(SHOP_MODEL)
     {"id": "on-cloud6", "brand": "온러닝", "name": "클라우드 6", "code": "3MF10071200", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200", "cloud-6")},
     {"id": "on-cloudsurfer2", "brand": "온러닝", "name": "클라우드서퍼 2", "code": "3MF10121043", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043", "cloudsurfer-2")},
     {"id": "on-cloudtilt", "brand": "온러닝", "name": "클라우드틸트", "code": "3ME10101430", "src": "page", "hint": "cloudtilt", "urls": _on("cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430", "cloudtilt")},
     {"id": "on-roger", "brand": "온러닝", "name": "더 로저 어드밴티지", "code": "3MF30641200", "src": "page", "hint": "roger", "urls": _on("the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200", "the-roger-advantage")},
-    {"id": "on-cloudnova2", "brand": "온러닝", "name": "클라우드노바 2", "code": "3ME30210108", "src": "page", "hint": "cloudnova", "urls": _on("cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108", "cloudnova-2")},
+    # v1.20 남성 클라우드노바 2(3ME3021)는 11/10부터 한국·일본 몰에서 모델째 빠짐 → 5개 나라 몰에 같은 품번이 있는 클라우드몬스터 1 워터프루프 블랙(11/11 정가 읽기 확인 ·
+    # 두바이 on.ae에는 이 모델 없음 — HTTP 404)
+    {"id": "on-cloudmonster1wp", "brand": "온러닝", "name": "클라우드몬스터 1 워터프루프", "code": "3MG10701043", "src": "page", "hint": "cloudmonster", "urls": _on("cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043")},
     # v1.14 SKU 5차 — 한국 몰 사이트맵(https://www.on.com/sitemap.xml → ko-kr 상품 · robots.txt에는 적혀 있지 않음)의 남성 신발 중 주요 모델 검정 · 5개 나라 같은 품번(10/28 GitHub 서버 확인)
     {"id": "on-cloudmonster3", "brand": "온러닝", "name": "클라우드몬스터 3", "code": "3MG10051043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043", "cloudmonster-3")},
     {"id": "on-cloudrunner3", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
@@ -1143,6 +1154,13 @@ def fetch_one(prod, cc):
     loc = urllib.parse.urlsplit(url).path.split("/")[1]
     if prod["id"].startswith("on-") and loc not in urllib.parse.urlsplit(r.url).path:   # 온: 그 나라 몰이 없으면 다른 나라로 넘김
         raise Skip(f"다른 나라 몰로 넘어감({urllib.parse.urlsplit(r.url).path.split('/')[1]})")
+    if prod["id"].startswith("on-"):   # v1.20 그 나라 몰에서 빠진 색상은 목록(/shop)으로 넘어감(11/10 한국·일본) — 다른 상품 페이지로 넘어가도 이름으로 엉뚱한 값을 읽지 않게
+        fp = urllib.parse.urlsplit(r.url).path
+        if "/products/" not in fp:
+            raise RuntimeError(f"상품 페이지가 목록({fp})으로 넘어감 — 그 나라 몰에서 빠짐(다른 색상·새 모델로 바꿈)")
+        mod = lambda pth: pth.split("/products/", 1)[1].split("/", 1)[0] if "/products/" in pth else ""
+        if mod(fp) != mod(urllib.parse.urlsplit(url).path):   # 같은 모델 다른 색상으로 넘어간 것은 예전처럼(온러닝 정가는 모델마다 같음 — 이름으로 찾음)
+            raise RuntimeError(f"다른 모델 페이지({mod(fp)})로 넘어감 — 이 상품({mod(urllib.parse.urlsplit(url).path)})이 그 나라 몰에서 빠짐")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인

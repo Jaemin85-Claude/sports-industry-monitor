@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.11: (대표 지시 2026-11-11 '추천 순서대로' 3번) 관세청 운송비용 파일 3개 — 공공데이터포털 화면 개편(KRDS · 10/29 무렵)으로 화면에 내려받기 번호(FILE_…)가 없고
+      내려받기는 화면 스크립트 함수(fileDetailObj.fn_fileDataDown)로만 됨 → 화면 내부 스크립트는 쓰지 않고 공식 오픈 API(파일데이터 자동변환 — 명세
+      https://infuser.odcloud.kr/oas/docs?namespace={번호}/v1 · 키 없이 읽힘, 자료 https://api.odcloud.kr/api/{번호}/v1/uddi:… · 인증키 DATA_GO_KR_API_KEY)로 받음(kcs_api_csv —
+      명세에서 가장 최근 파일 경로·칸 순서 → 1,000행씩 전부 → CSV로 바꿔 parse_kcs_csv 검사 그대로 · 기간 '202609'·'2026.09'도 '2026-09'로) · 화면에 번호가 다시 생기면 예전처럼 파일 ·
+      로그 끝 '· 오픈 API' · 블록 via(file/api). 11/11 GitHub 서버 시험: 명세 3개 모두 읽힘(칸 = 기간·미국·유럽연합·중국·일본·베트남 — 해상은 미국서부·미국동부) ·
+      자료 요청은 HTTP 401 '등록되지 않은 인증키' → 데이터마다 활용신청 필요(15116806 해상 수입 · 15116850 해상 수출 · 15116807 항공 수입) — 그동안은
+      '오픈 API 활용신청 필요(등록되지 않은 인증키) — …' 줄(‘인증키 오류’로 시작하지 않아 v1.10 관세청 한 번만 알림 그대로 · 11/09에 이미 알림). 받아 둔 값은 9월분(파일 20260930 ·
+      차기 등록 예정 11/18 — 10월분부터 못 받음)
 v1.10: (대표 지시 2026-11-09 '관세청 한 번만') 관세청 운송비용 파일 3개가 10/29부터 화면에서 내려받기 번호(FILE_…)를 못 찾아 이전 값(공공데이터포털
       활용신청 전) → 11/09부터 매일 '오래된 이전 값' 실패 표시(빨간 X · 머리 단추 '조치 필요' · 12:23 점검 알림)였고 그 전에도 매일 [WARN] 줄 →
       관세청 자료(ONCE_KEYS = 운송비용 파일 3 · 국가별 물동량 2)는 PortWatch(v1.9)처럼 한 기간에 한 번만:
@@ -241,6 +249,8 @@ KCS = [  # (블록 키, 데이터 번호, 이름, 단위)
 ]
 KCS_PAGE = "https://www.data.go.kr/data/{}/fileData.do"
 KCS_DOWN = "https://www.data.go.kr/cmm/cmm/fileDownload.do?atchFileId={}&fileDetailSn=1&insertDataPrcus=N"
+KCS_API_DOC = "https://infuser.odcloud.kr/oas/docs"   # v1.11 공식 오픈 API(파일데이터 자동변환) 명세 — 키 없이 읽힘 · namespace = {데이터 번호}/v1
+KCS_API = "https://api.odcloud.kr/api{}"               # v1.11 명세의 경로(/{번호}/v1/uddi:…) — 인증키(serviceKey) 필요 · 데이터마다 공공데이터포털 활용신청
 
 LABELS = {**{k: n for k, _, n, _ in KCS}, "kcci": "KCCI 부산발 운임", "choke": "해협 통과", "ports": "항만 입항",
           "hubs": "적출 거점 입항", "glp": "전 세계 정시율",
@@ -526,22 +536,83 @@ def parse_kcs_csv(raw):
     return cols, out
 
 
+def kcs_api_csv(ds):
+    """v1.11 공식 오픈 API(파일데이터 자동변환)로 받은 표 → CSV 바이트(parse_kcs_csv로 같은 검사) · 명세 날짜(YYYY-MM-DD 또는 None).
+    명세(키 없이 읽힘)에서 가장 최근 파일의 경로·칸 순서를 읽고, 인증키(DATA_GO_KR_API_KEY)로 전부(1,000행씩) 받음.
+    키가 이 데이터에 등록 안 됐으면(HTTP 401 '등록되지 않은 인증키') '활용신청 필요' — '인증키 오류'로 시작하지 않게(관세청 한 번만 알림 v1.10 그대로)"""
+    doc = http(KCS_API_DOC, params={"namespace": f"{ds}/v1"}, tries=1).json()
+    paths = []
+    for pth, v in (doc.get("paths") or {}).items():
+        g = (v or {}).get("get") or {}
+        m = re.search(r"_(\d{8})\b", g.get("summary") or "")
+        ref = (((g.get("responses") or {}).get("200") or {}).get("schema") or {}).get("$ref", "")
+        paths.append((m.group(1) if m else "", pth, ref))
+    if not paths:
+        raise RuntimeError("오픈 API 명세에 경로 없음")
+    fd, pth, ref = max(paths)
+    api = (doc.get("definitions") or {}).get(ref.rsplit("/", 1)[-1]) or {}
+    model = (((api.get("properties") or {}).get("data") or {}).get("items") or {}).get("$ref", "")
+    props = list(((doc.get("definitions") or {}).get(model.rsplit("/", 1)[-1]) or {}).get("properties") or {})
+    if "기간" not in props or len(props) < 4:
+        raise RuntimeError(f"오픈 API 명세의 칸이 다름: {props[:8]}")
+    cols = [c for c in props if c != "기간"]
+    key = os.environ.get(DGK_KEY_ENV, "").strip()
+    if not key:
+        raise RuntimeError(f"화면에 내려받기 번호(FILE_…)가 없어 오픈 API로 받아야 함 — 인증키 없음(GitHub Secrets {DGK_KEY_ENV}를 물류 단계에)")
+    data, page = [], 1
+    while True:
+        try:
+            r = http(KCS_API.format(pth), params={"page": page, "perPage": 1000, "returnType": "JSON", "serviceKey": key},
+                     timeout=(15, 60), mask=dgk_mask)
+        except NetError:   # 연결 오류·5xx·시간 초과는 그대로(새 서버에서 다시 받기 · 오류 글의 주소 uddi에 '401'이 있어도 활용신청으로 읽지 않게)
+            raise
+        except RuntimeError as e:   # 4xx — http()가 'HTTP 401 {…}'로 시작하는 글을 만듦
+            if re.match(r"HTTP 401\b", str(e)) or "등록되지 않은" in str(e):
+                raise RuntimeError(f"오픈 API 활용신청 필요(등록되지 않은 인증키) — 공공데이터포털 {ds} 활용신청 · 화면에 내려받기 번호(FILE_…) 없음") from None
+            raise
+        j = r.json()
+        if not isinstance(j, dict) or ("data" not in j and j.get("code") is not None):   # 200이어도 오류 본문({code:-4, msg})이면
+            msg = str((j or {}).get("msg") if isinstance(j, dict) else j)[:80]
+            if "등록되지 않은" in msg:
+                raise RuntimeError(f"오픈 API 활용신청 필요(등록되지 않은 인증키) — 공공데이터포털 {ds} 활용신청 · 화면에 내려받기 번호(FILE_…) 없음")
+            raise RuntimeError(f"오픈 API 응답 오류 {dgk_mask(msg)}")
+        got = j.get("data") or []
+        data += got
+        if not got or len(data) >= int(j.get("totalCount") or 0) or page >= 20:
+            break
+        page += 1
+    if len(data) < int(j.get("totalCount") or 0):
+        raise RuntimeError(f"오픈 API 행이 모자람({len(data)}/{j.get('totalCount')})")
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["기간"] + cols)
+    for d in data:
+        m = re.match(r"\s*(\d{4})\D?(\d{1,2})\b", str(d.get("기간") or ""))   # '2026-09'·'202609'·'2026.09' → '2026-09'
+        w.writerow([f"{m.group(1)}-{int(m.group(2)):02d}" if m else str(d.get("기간") or "")]
+                   + ["" if d.get(c) is None else str(d.get(c)) for c in cols])
+    return buf.getvalue().encode("utf-8"), (f"{fd[:4]}-{fd[4:6]}-{fd[6:]}" if fd else None)
+
+
 def fetch_kcs_one(ds, name, unit):
     if urlsplit(KCS_PAGE).hostname in DGK_BLOCKED:   # v1.3 이 서버에서 연결 시험 실패 — 기다리지 않음(새 서버에서 다시 받기)
         raise NetError(DGK_BLOCKED[urlsplit(KCS_PAGE).hostname])
     page = http(KCS_PAGE.format(ds), tries=1).text   # 연결이 안 되면 바로 넘김 — 실행 끝에 한 번 더(main)
     fid, fdate, mod, nxt = kcs_page_meta(page)
-    if not fid:
-        raise RuntimeError("화면에서 내려받기 번호(FILE_…)를 못 찾음")
-    raw = http(KCS_DOWN.format(fid), timeout=(15, 60)).content
+    via = "file"
+    if fid:
+        raw = http(KCS_DOWN.format(fid), timeout=(15, 60)).content
+    else:   # v1.11 2026-10 화면 개편(KRDS)으로 내려받기 번호가 화면에 없음 → 공식 오픈 API(파일데이터 자동변환)
+        raw, adate = kcs_api_csv(ds)
+        fdate, via = adate or fdate, "api"   # 실제로 받은 파일(명세)의 날짜 — 화면 제목이 먼저 새 파일로 바뀌어도
     cols, rows = parse_kcs_csv(raw)
     last = rows[-1]
     gap = (today_kst() - datetime.date.fromisoformat(last[0] + "-01")).days
     if gap > 100:   # 9월 자료는 10월 중순에 올라옴 — 석 달 넘게 새 달이 없으면 파일 갱신이 멈춘 것
         raise RuntimeError(f"마지막 달이 {last[0]} — {gap}일째 새 달 없음")
-    log(f"  {name}: {len(rows)}달 · {rows[0][0]}~{last[0]} · {' · '.join(f'{c} {v:,}' for c, v in zip(cols, last[1:]) if v is not None)} ({unit})")
+    log(f"  {name}: {len(rows)}달 · {rows[0][0]}~{last[0]} · {' · '.join(f'{c} {v:,}' for c, v in zip(cols, last[1:]) if v is not None)} ({unit})"
+        + (" · 오픈 API" if via == "api" else ""))
     return {"name": name, "unit": unit, "dataset": ds, "cols": cols, "rows": rows,
-            "file_date": fdate, "updated": mod, "next": nxt}
+            "file_date": fdate, "updated": mod, "next": nxt, "via": via}
 
 
 # ───────────────────────── ② KCCI ─────────────────────────
