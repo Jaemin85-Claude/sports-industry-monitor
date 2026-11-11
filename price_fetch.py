@@ -6,7 +6,8 @@ v1.20: (대표 지시 2026-11-11 '추천 순서대로' — 블프 전 해외 정
     주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434 — 한국)·남성 클라우드노바 2(3ME30210108 — 한국·일본)가 11/10부터 그 나라 몰에서
     빠져 상품 주소가 목록(/shop)으로 넘어감('JSON-LD 없음'으로 보였음) → 클라우드몬스터 1(3MF30740553 · 한국·미국·영국·독일 — 일본 몰에 없음) · 클라우드몬스터 1
     워터프루프(3MG10701043 · 5개 나라 · id on-cloudmonster1wp) — 11/11 나라별 상품 사이트맵(https://www.on.com/{loc}/products.xml)·정가 읽기 확인 · 상품 114개 · 값 479개 ·
-    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐') · 다른 상품 페이지(주소에 이 품번 없음)로 넘어가도 실패
+    온러닝 상품 주소가 목록으로 넘어가면 까닭을 바로 적음('상품 페이지가 목록(/ko-kr/shop)으로 넘어감 — 그 나라 몰에서 빠짐') · 다른 모델 페이지로 넘어가도 실패(같은 모델 다른 색상은 예전처럼 —
+    11/11 브랜치 실행: 클라우드틸트 한국·로저 일본이 다른 색상으로 넘어감 · 정가는 모델마다 같음)
 v1.19: (대표 확인 2026-11-10 '브룩스 한국 공식몰은 리뉴얼 중 — 접속은 되는데 조회되는 정보가 없음' · 결정 '리뉴얼 표시 + 알림 끔') 수집을 잠시 멈추는
     사이트 PAUSED {사이트: {since, why}} — 그 사이트 값은 요청하지 않고(robots.txt도 안 받음) 이전 값을 그대로 두며 값에 표시 paused = 까닭
     (화면 '리뉴얼 중 · 11/3 값' — build_dashboard v33.32) · 받은 값·못 받은 값 셈('절반 넘게'·브랜드 통째)과 21일 알림에서 뺌 · 이전 값도 없으면
@@ -1157,8 +1158,9 @@ def fetch_one(prod, cc):
         fp = urllib.parse.urlsplit(r.url).path
         if "/products/" not in fp:
             raise RuntimeError(f"상품 페이지가 목록({fp})으로 넘어감 — 그 나라 몰에서 빠짐(다른 색상·새 모델로 바꿈)")
-        if code.lower() not in fp.lower():
-            raise RuntimeError(f"다른 상품 페이지({fp[-60:]})로 넘어감 — 주소에 품번({code}) 없음")
+        mod = lambda pth: pth.split("/products/", 1)[1].split("/", 1)[0] if "/products/" in pth else ""
+        if mod(fp) != mod(urllib.parse.urlsplit(url).path):   # 같은 모델 다른 색상으로 넘어간 것은 예전처럼(온러닝 정가는 모델마다 같음 — 이름으로 찾음)
+            raise RuntimeError(f"다른 모델 페이지({mod(fp)})로 넘어감 — 이 상품({mod(urllib.parse.urlsplit(url).path)})이 그 나라 몰에서 빠짐")
     if prod.get("code_in_page") and code.lower() not in r.text.lower():   # 품번이 JSON-LD 밖에만 있는 몰 — 페이지에 품번이 없으면 다른 상품
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
