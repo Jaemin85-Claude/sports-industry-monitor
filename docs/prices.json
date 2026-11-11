@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-11 09:05 KST",
- "fetched": "2026-11-10",
- "attempt": "2026-11-10",
- "cfg": "2021b4ac5c78",
+ "generated_at": "2026-11-11 10:26 KST",
+ "fetched": "2026-11-11",
+ "attempt": "2026-11-11",
+ "cfg": "605f6ec947cf",
  "status": "ok",
  "items": [
   {
@@ -14,64 +14,64 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 149000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 115.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 115.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 109.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 109.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 119.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 119.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 16500.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 2599.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 2599.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 649.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/air-force-1-07-mens-shoes/NKCW2288-111.html",
      "obs": 649.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "ph": [
       [
@@ -92,19 +92,19 @@
     "KR": {
      "p": 139000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 139000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 120.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 120.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -114,33 +114,33 @@
       ]
      ],
      "sp": 92.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 109.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 109.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 119.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 119.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 15400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -150,15 +150,15 @@
       ]
      ],
      "sp": 10799.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 2599.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 2599.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -168,15 +168,15 @@
       ]
      ],
      "sp": 2339.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "AE": {
      "p": 599.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/dunk-low-retro-mens-shoe/NKDD1391-100.html",
      "obs": 599.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -190,64 +190,64 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 159000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 135.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 135.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 134.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 134.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 149.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 149.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 16500.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 2999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 2999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 729.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/air-max-90-mens-shoe/NKCN8490-100.html",
      "obs": 729.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -261,19 +261,19 @@
     "KR": {
      "p": 129000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 129000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 105.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 105.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -283,15 +283,15 @@
       ]
      ],
      "sp": 82.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 89.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 89.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -301,15 +301,15 @@
       ]
      ],
      "sp": 44.99,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 99.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 99.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -319,15 +319,15 @@
       ]
      ],
      "sp": 49.99,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "JP": {
      "p": 15730.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 15730.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -337,15 +337,15 @@
       ]
      ],
      "sp": 13299.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 2499.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 2499.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -359,19 +359,19 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 95.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 95.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -381,33 +381,33 @@
       ]
      ],
      "sp": 76.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 89.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 89.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 99.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 99.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 13860.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 13860.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -417,15 +417,15 @@
       ]
      ],
      "sp": 11799.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 2199.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 2199.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -439,46 +439,46 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 149000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 115.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 115.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 119.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 119.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 129.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 129.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 16500.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -488,15 +488,15 @@
       ]
      ],
      "sp": 11499.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 2999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 2999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -510,7 +510,7 @@
       ]
      ],
      "sp": 2099.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -523,64 +523,64 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 199000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 170.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 144.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 144.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 159.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 159.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 23760.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 23760.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 3699.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 3699.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 849.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/zoom-vomero-5-mens-shoes/NKBV1358-003.html",
      "obs": 849.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -594,64 +594,64 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 229000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 190.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 174.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 174.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 189.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 189.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 23100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 3799.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 3799.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 999.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/air-max-plus-mens-shoes/NK604133-139.html",
      "obs": 999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -665,10 +665,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -678,60 +678,60 @@
       ]
      ],
      "sp": 107100.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 100.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 84.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 84.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 94.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 94.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 14080.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 14080.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 1999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 1999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 479.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/killshot-2-leather-mens-shoes/NK432997-107.html",
      "obs": 479.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -745,82 +745,82 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 99000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 84100.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        84100.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 84100.0,
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 85.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(US)&filter=language(en)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 85.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 74.99,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(GB)&filter=language(en-GB)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 74.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 79.99,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(DE)&filter=language(de)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 79.99,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 8800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 7499.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        7499.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 7499.0,
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 1799.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(MX)&filter=language(es-419)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 1799.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 429.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.nike.ae/en/court-vision-low-next-nature-mens-shoes/NKDH2987-101.html",
      "obs": 429.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -834,19 +834,19 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
      "obs": 149000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 100.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/speedcat-og-sneakers/398846",
      "obs": 100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -856,15 +856,15 @@
       ]
      ],
      "sp": 49.99,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 90.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/speedcat-og-sneakers-unisex/398846",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -874,15 +874,15 @@
       ]
      ],
      "sp": 45.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 109.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/speedcat-og-sneakers/398846",
      "obs": 109.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -904,7 +904,7 @@
       ]
      ],
      "sp": 50.95,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "JP": {
      "p": 15400.0,
@@ -915,16 +915,17 @@
      "obs_date": "2026-11-03",
      "sale": false,
      "stale_since": "2026-11-03",
-     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
+     "why": "HTTP 403(접속 차단 — 우회하지 않음)",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 2199.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-og/398846.html",
      "obs": 2199.0,
-     "obs_date": "2026-11-10",
-     "sale": true,
+     "obs_date": "2026-11-11",
+     "sale": false,
      "sh": [
       [
        "2026-10-26",
@@ -937,18 +938,20 @@
       [
        "2026-10-30",
        1539.3
+      ],
+      [
+       "2026-11-11",
+       null
       ]
-     ],
-     "sp": 1539.3,
-     "sp_date": "2026-11-10"
+     ]
     },
     "AE": {
      "p": 519.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/speedcat-og-sneakers-unisex/398846.html",
      "obs": 519.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -973,10 +976,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -993,10 +996,10 @@
     "US": {
      "p": 90.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/palermo-sneakers/396463",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1006,15 +1009,15 @@
       ]
      ],
      "sp": 35.99,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 75.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
      "obs": 75.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1024,15 +1027,15 @@
       ]
      ],
      "sp": 30.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 89.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
      "obs": 89.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1042,7 +1045,7 @@
       ]
      ],
      "sp": 45.95,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "JP": {
      "p": 14850.0,
@@ -1062,15 +1065,16 @@
      "sp": 5999.0,
      "sp_date": "2026-11-03",
      "stale_since": "2026-11-03",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "AE": {
      "p": 449.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html",
      "obs": 449.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1080,7 +1084,7 @@
       ]
      ],
      "sp": 219.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -1093,10 +1097,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
      "obs": 179000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -1113,10 +1117,10 @@
     "US": {
      "p": 120.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
      "obs": 120.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1138,15 +1142,15 @@
       ]
      ],
      "sp": 81.99,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 115.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/mostro-og-sneakers-unisex/397330",
      "obs": 115.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1156,15 +1160,15 @@
       ]
      ],
      "sp": 29.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 129.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
      "obs": 129.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1174,7 +1178,7 @@
       ]
      ],
      "sp": 39.95,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "JP": {
      "p": 15400.0,
@@ -1185,33 +1189,38 @@
      "obs_date": "2026-11-03",
      "sale": false,
      "stale_since": "2026-11-03",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 2499.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/tenis-mostro-og/397330.html",
      "obs": 2499.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
        "2026-10-26",
        999.6,
        "base"
+      ],
+      [
+       "2026-11-11",
+       1249.5
       ]
      ],
-     "sp": 999.6,
-     "sp_date": "2026-11-10"
+     "sp": 1249.5,
+     "sp_date": "2026-11-11"
     },
     "AE": {
      "p": 629.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/mostro-og-sneakers-unisex/397330.html",
      "obs": 629.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1221,7 +1230,7 @@
       ]
      ],
      "sp": 439.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -1234,28 +1243,28 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 90.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/suede-classic-sneakers/399781",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 75.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/suede-classic-sneakers-unisex/399781",
      "obs": 75.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1265,15 +1274,15 @@
       ]
      ],
      "sp": 70.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 89.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/suede-classic-sneakers-unisex/399781",
      "obs": 89.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
@@ -1285,24 +1294,25 @@
      "obs_date": "2026-11-03",
      "sale": false,
      "stale_since": "2026-11-03",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 1999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/tenis-suede-classic/399781.html",
      "obs": 1999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 419.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/suede-classic-sneakers-unisex/399781.html",
      "obs": 419.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1312,7 +1322,7 @@
       ]
      ],
      "sp": 289.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -1325,10 +1335,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
      "obs": 289000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1342,24 +1352,24 @@
       ]
      ],
      "sp": 208080.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 250.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-mens-road-running-shoes/312127",
      "obs": 250.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 210.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-4-running-shoes-men/312127",
      "obs": 210.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1369,15 +1379,15 @@
       ]
      ],
      "sp": 147.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 249.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-4-laufschuhe-herren/312127",
      "obs": 249.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1387,7 +1397,7 @@
       ]
      ],
      "sp": 200.95,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "JP": {
      "p": 29700.0,
@@ -1398,24 +1408,33 @@
      "obs_date": "2026-11-03",
      "sale": false,
      "stale_since": "2026-11-03",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 4999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-elite-4-para-hombre/312127.html",
      "obs": 4999.0,
-     "obs_date": "2026-11-10",
-     "sale": false
+     "obs_date": "2026-11-11",
+     "sale": true,
+     "sp": 3499.3,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       3499.3
+      ]
+     ]
     },
     "AE": {
      "p": 1249.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/deviate-nitrotm-elite-4-running-shoes-men/312127.html",
      "obs": 1249.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -1429,10 +1448,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1441,15 +1460,15 @@
       ]
      ],
      "sp": 95200.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 90.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
@@ -1461,24 +1480,33 @@
      "obs_date": "2026-11-03",
      "sale": false,
      "stale_since": "2026-11-03",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 1999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html",
      "obs": 1999.0,
-     "obs_date": "2026-11-10",
-     "sale": false
+     "obs_date": "2026-11-11",
+     "sale": true,
+     "sp": 1199.4,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       1199.4
+      ]
+     ]
     },
     "AE": {
      "p": 429.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html",
      "obs": 429.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1488,7 +1516,7 @@
       ]
      ],
      "sp": 299.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -1501,10 +1529,10 @@
     "KR": {
      "p": 329000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
      "obs": 329000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1514,15 +1542,15 @@
       ]
      ],
      "sp": 230300.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 250.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
      "obs": 250.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -1532,15 +1560,15 @@
       ]
      ],
      "sp": 230.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 229.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034",
      "obs": 229.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -1554,195 +1582,152 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
      "obs": 99000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 49500.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        49500.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 49500.0,
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 70.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
      "obs": 70.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 41.99,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        41.99,
        "base"
       ]
-     ]
+     ],
+     "sp": 41.99,
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 55.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://uk.puma.com/uk/en/pd/t7-always-on-short-track-jacket-women/629796",
      "obs": 55.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 28.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        28.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 28.0,
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 69.95,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
      "obs": 69.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 28.95,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        28.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 28.95,
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 1199.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
      "obs": 1199.0,
-     "obs_date": "2026-11-10",
-     "sale": false
+     "obs_date": "2026-11-11",
+     "sale": true,
+     "sp": 839.3,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       839.3
+      ]
+     ]
     },
     "AE": {
      "p": 329.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html",
      "obs": 329.0,
-     "obs_date": "2026-11-10",
-     "sale": false
+     "obs_date": "2026-11-11",
+     "sale": true,
+     "sp": 199.0,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       199.0
+      ]
+     ]
     }
    }
   },
   {
    "id": "on-cloudmonster",
    "brand": "온러닝",
-   "name": "클라우드몬스터",
-   "code": "61.98434",
+   "name": "클라우드몬스터 1",
+   "code": "3MF30740553",
    "m": {
     "KR": {
-     "p": 209000.0,
+     "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-03",
-     "url": "https://www.on.com/ko-kr/products/cloudmonster-61/mens/all-white-shoes-61.98434",
-     "obs": 209000.0,
-     "obs_date": "2026-11-03",
-     "sale": false,
-     "stale_since": "2026-11-03",
-     "why": "상품 가격 데이터(JSON-LD) 없음"
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "obs": 219000.0,
+     "obs_date": "2026-11-11",
+     "sale": false
     },
     "US": {
-     "p": 170.0,
+     "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/en-us/products/cloudmonster-61/mens/all-white-shoes-61.98434",
-     "obs": 170.0,
-     "obs_date": "2026-11-10",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       135.0,
-       "base"
-      ]
-     ],
-     "sp": 135.0,
-     "sp_date": "2026-11-10"
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/en-us/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "obs": 180.0,
+     "obs_date": "2026-11-11",
+     "sale": false
     },
     "GB": {
      "p": 160.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/en-gb/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/en-gb/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       110.0,
-       "base"
-      ],
-      [
-       "2026-10-27",
-       95.0
-      ]
-     ],
-     "sp": 95.0,
-     "sp_date": "2026-11-10"
+     "obs_date": "2026-11-11",
+     "sale": false
     },
     "DE": {
      "p": 180.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/de-de/products/cloudmonster-61/mens/all-white-shoes-61.98434",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/de-de/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       125.0,
-       "base"
-      ],
-      [
-       "2026-11-10",
-       105.0
-      ]
-     ],
-     "sp": 105.0,
-     "sp_date": "2026-11-10"
-    },
-    "JP": {
-     "p": 23100.0,
-     "cur": "JPY",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/ja-jp/products/cloudmonster-61/mens/all-white-shoes-61.98434",
-     "obs": 23100.0,
-     "obs_date": "2026-11-10",
-     "sale": true,
-     "sh": [
-      [
-       "2026-10-26",
-       16170.0,
-       "base"
-      ],
-      [
-       "2026-11-10",
-       13860.0
-      ]
-     ],
-     "sp": 13860.0,
-     "sp_date": "2026-11-10"
+     "obs_date": "2026-11-11",
+     "sale": false
     }
    }
   },
@@ -1755,55 +1740,55 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 199000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 19800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 800.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloud-6",
      "obs": 800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -1817,55 +1802,55 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 199000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 170.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 20900.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 800.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloudsurfer-2",
      "obs": 800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -1879,55 +1864,55 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 219000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 170.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 170.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 23100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 850.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloudtilt",
      "obs": 850.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -1941,121 +1926,108 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 199000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 20900.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 800.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/the-roger-advantage",
      "obs": 800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
   },
   {
-   "id": "on-cloudnova2",
+   "id": "on-cloudmonster1wp",
    "brand": "온러닝",
-   "name": "클라우드노바 2",
-   "code": "3ME30210108",
+   "name": "클라우드몬스터 1 워터프루프",
+   "code": "3MG10701043",
    "m": {
     "KR": {
-     "p": 209000.0,
+     "p": 249000.0,
      "cur": "KRW",
-     "seen": "2026-11-03",
-     "url": "https://www.on.com/ko-kr/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
-     "obs": 209000.0,
-     "obs_date": "2026-11-03",
-     "sale": false,
-     "stale_since": "2026-11-03",
-     "why": "상품 가격 데이터(JSON-LD) 없음"
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "obs": 249000.0,
+     "obs_date": "2026-11-11",
+     "sale": false
     },
     "US": {
-     "p": 170.0,
+     "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/en-us/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
-     "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/en-us/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "obs": 200.0,
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
-     "p": 150.0,
+     "p": 180.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/en-gb/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
-     "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/en-gb/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "obs": 180.0,
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
-     "p": 170.0,
+     "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
-     "url": "https://www.on.com/de-de/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
-     "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/de-de/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "obs": 200.0,
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
-     "p": 22000.0,
+     "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-03",
-     "url": "https://www.on.com/ja-jp/products/cloudnova-2-3me3021/mens/all-white-shoes-3ME30210108",
-     "obs": 22000.0,
-     "obs_date": "2026-11-03",
-     "sale": false,
-     "stale_since": "2026-11-03",
-     "why": "상품 가격 데이터(JSON-LD) 없음"
-    },
-    "AE": {
-     "p": 825.0,
-     "cur": "AED",
-     "seen": "2026-11-10",
-     "url": "https://on.ae/products/cloudnova-2",
-     "obs": 825.0,
-     "obs_date": "2026-11-10",
+     "seen": "2026-11-11",
+     "url": "https://www.on.com/ja-jp/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "obs": 27500.0,
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2069,55 +2041,55 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 229000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 190.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 180.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 24200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 950.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloudmonster-3",
      "obs": 950.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2131,55 +2103,55 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 199000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 18700.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 800.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloudrunner-3",
      "obs": 800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2193,55 +2165,55 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 150.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 170.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 22000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 800.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloud-x-5",
      "obs": 800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2255,55 +2227,55 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ko-kr/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 219000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-us/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 160.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/en-gb/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 180.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/de-de/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.on.com/ja-jp/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 22000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 875.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://on.ae/products/cloud-6-waterproof",
      "obs": 875.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2317,37 +2289,37 @@
     "KR": {
      "p": 295000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://salomon.co.kr/products/l47450600",
      "obs": 295000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 185.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333",
      "obs": 185.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2361,37 +2333,37 @@
     "KR": {
      "p": 280000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://salomon.co.kr/products/l41086600",
      "obs": 280000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 185.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-us/product/xt-6-lg4239",
      "obs": 185.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 165.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
      "obs": 165.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 180.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/de-de/product/xt-6-lg4239",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2405,28 +2377,28 @@
     "KR": {
      "p": 290000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://salomon.co.kr/products/l47132900",
      "obs": 290000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 175.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
      "obs": 175.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
@@ -2449,10 +2421,10 @@
     "KR": {
      "p": 240000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://salomon.co.kr/products/l41741300",
      "obs": 240000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -2493,10 +2465,10 @@
     "KR": {
      "p": 320000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://salomon.co.kr/products/l49210800",
      "obs": 320000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -2537,28 +2509,28 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/boots-1461-black-smooth",
      "obs": 229000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/1461-smooth-leather-oxford-shoes-black/p/11838002",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 145.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/1461-smooth-leather-oxford-shoes-black/p/11838002",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2572,28 +2544,28 @@
     "KR": {
      "p": 309000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/boots-jadon-black-15265001",
      "obs": 309000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 210.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/jadon-smooth-leather-platform-boots-black/p/15265001",
      "obs": 210.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 200.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/jadon-smooth-leather-platform-boots-black/p/15265001",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2607,28 +2579,28 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/boots-1460-cherry-red-11822600",
      "obs": 279000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 170.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/1460-smooth-leather-lace-up-boots-cherry-red/p/11822600",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2642,28 +2614,28 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/boots-2976ys-black-smooth",
      "obs": 279000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/2976-smooth-leather-chelsea-boots-black/p/22227001",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 170.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/2976-smooth-leather-chelsea-boots-black/p/22227001",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2677,10 +2649,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/boots-1460-bex-black-smooth",
      "obs": 289000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -2689,24 +2661,24 @@
       ]
      ],
      "sp": 245650.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/1460-bex-smooth-leather-lace-up-boots-black/p/25345001",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 190.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/1460-bex-smooth-leather-lace-up-boots-black/p/25345001",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2720,28 +2692,28 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/1460-mofalse",
      "obs": 279000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 170.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/1460-mono-smooth-leather-lace-up-boots-black/p/14353001",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2755,10 +2727,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/adeurian",
      "obs": 239000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -2767,24 +2739,24 @@
       ]
      ],
      "sp": 215100.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/adrian-smooth-leather-tassel-loafers-black/p/14573001",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 155.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/adrian-smooth-leather-tassel-loafers-black/p/14573001",
      "obs": 155.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2798,10 +2770,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/shoes-8065-maryjane-black-smooth-12916001",
      "obs": 229000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -2810,24 +2782,24 @@
       ]
      ],
      "sp": 183200.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 150.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 145.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/8065-smooth-leather-mary-jane-shoes-black/p/12916001",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2841,28 +2813,28 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/singkeulreeo",
      "obs": 299000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 220.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/sinclair-womens-leather-platform-boots-black-milled-nappa/p/22564001",
      "obs": 220.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 200.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/sinclair-soft-leather-platform-boots-black/p/22564001",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2876,28 +2848,28 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001",
      "obs": 229000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/us/en/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 145.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.drmartens.com/uk/en_gb/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -2911,19 +2883,19 @@
     "KR": {
      "p": 785000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",
      "obs": 785000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
-     "p": 609.0,
+     "p": 606.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 609.0,
-     "obs_date": "2026-11-10",
+     "obs": 606.0,
+     "obs_date": "2026-11-11",
      "sale": false,
      "ph": [
       [
@@ -2949,10 +2921,10 @@
     "KR": {
      "p": 745000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX",
      "obs": 745000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -2960,9 +2932,9 @@
      "cur": "USD",
      "seen": "2026-11-10",
      "url": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag",
-     "obs": 588.0,
-     "obs_date": "2026-11-10",
-     "sale": false,
+     "obs": 585.0,
+     "obs_date": "2026-11-11",
+     "sale": true,
      "ph": [
       [
        "2026-10-30",
@@ -2973,6 +2945,14 @@
        "2026-11-10",
        535.0,
        588.0
+      ]
+     ],
+     "sp": 585.0,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       585.0
       ]
      ]
     }
@@ -2987,19 +2967,19 @@
     "KR": {
      "p": 560000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26029BKX",
      "obs": 560000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
-     "p": 440.0,
+     "p": 438.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://dragondiffusion.com/products/triple-jump-small-black-woven-leather-bag-handmade",
-     "obs": 440.0,
-     "obs_date": "2026-11-10",
+     "obs": 438.0,
+     "obs_date": "2026-11-11",
      "sale": false,
      "ph": [
       [
@@ -3020,19 +3000,19 @@
     "KR": {
      "p": 530000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26024BKX",
      "obs": 530000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
-     "p": 458.0,
+     "p": 456.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://dragondiffusion.com/products/rosanna-black-woven-leather-bag-handmade",
-     "obs": 458.0,
-     "obs_date": "2026-11-10",
+     "obs": 456.0,
+     "obs_date": "2026-11-11",
      "sale": false,
      "ph": [
       [
@@ -3053,10 +3033,10 @@
     "KR": {
      "p": 745000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR",
      "obs": 745000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -3064,14 +3044,22 @@
      "cur": "USD",
      "seen": "2026-11-10",
      "url": "https://dragondiffusion.com/products/ars-tote-dark-brown-woven-leather-bag",
-     "obs": 557.0,
-     "obs_date": "2026-11-10",
-     "sale": false,
+     "obs": 554.0,
+     "obs_date": "2026-11-11",
+     "sale": true,
      "ph": [
       [
        "2026-10-30",
        552.0,
        555.0
+      ]
+     ],
+     "sp": 554.0,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       554.0
       ]
      ]
     }
@@ -3086,10 +3074,10 @@
     "KR": {
      "p": 830000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26030DBR",
      "obs": 830000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -3097,9 +3085,9 @@
      "cur": "USD",
      "seen": "2026-11-10",
      "url": "https://dragondiffusion.com/products/nantucket-big-dark-brown-woven-leather-bag-handmade",
-     "obs": 576.0,
-     "obs_date": "2026-11-10",
-     "sale": false,
+     "obs": 573.0,
+     "obs_date": "2026-11-11",
+     "sale": true,
      "ph": [
       [
        "2026-10-30",
@@ -3110,6 +3098,14 @@
        "2026-11-10",
        573.0,
        576.0
+      ]
+     ],
+     "sp": 573.0,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       573.0
       ]
      ]
     }
@@ -3124,10 +3120,10 @@
     "KR": {
      "p": 450000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26028DBR",
      "obs": 450000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
@@ -3135,9 +3131,9 @@
      "cur": "USD",
      "seen": "2026-11-10",
      "url": "https://dragondiffusion.com/products/chunky-fellini-pochette-dark-brown-woven-leather-pochette-handmade",
-     "obs": 304.0,
-     "obs_date": "2026-11-10",
-     "sale": false,
+     "obs": 302.0,
+     "obs_date": "2026-11-11",
+     "sale": true,
      "ph": [
       [
        "2026-10-30",
@@ -3148,6 +3144,14 @@
        "2026-11-10",
        290.0,
        304.0
+      ]
+     ],
+     "sp": 302.0,
+     "sp_date": "2026-11-11",
+     "sh": [
+      [
+       "2026-11-11",
+       302.0
       ]
      ]
     }
@@ -3162,37 +3166,37 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 190.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-original-tall-rain-boots-in-black-wft1000rma-hbl01",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 125.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-original-tall-wellington-boots-wft1000rma-blk",
      "obs": 125.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 26950.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.jp/products/wft1000rma-blk",
      "obs": 26950.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3206,37 +3210,37 @@
     "KR": {
      "p": 195000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507742896066BK01",
      "obs": 195000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-original-short-rain-boots-in-black-wfs1000rma-hbl01",
      "obs": 165.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 110.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-original-short-boot-wfs1000rma-blk",
      "obs": 110.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 25300.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.jp/products/wfs1000rma-blk",
      "obs": 25300.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3250,37 +3254,37 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508641433091BK01",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 140.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-play-tall-rain-boots-in-black-wft2007rma-hbl01",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 105.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-play-tall-wellington-boots-wft2007rma-blk",
      "obs": 105.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 17600.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.jp/products/wft2007rma-blk",
      "obs": 17600.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3294,28 +3298,28 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01",
      "obs": 189000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 155.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-original-chelsea-boots-in-black-wfs2078rma-hbl01",
      "obs": 155.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 90.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-original-chelsea-boots-wfs2078rma-blk",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3329,28 +3333,28 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01",
      "obs": 149000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 125.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-play-short-rain-boots-in-black-wfs2020rma-hbl01",
      "obs": 125.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 90.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-play-short-wellington-boots-wfs2020rma-blk",
      "obs": 90.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3364,28 +3368,28 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508619617098BK01",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 190.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-original-tall-gloss-rain-boots-in-black-wft1000rgl-hbl01",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 130.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-original-tall-gloss-wellington-boots-wft1000rgl-blk",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "ph": [
       [
@@ -3398,10 +3402,10 @@
     "JP": {
      "p": 26950.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.jp/products/wft1000rgl-blk",
      "obs": 26950.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3415,28 +3419,28 @@
     "KR": {
      "p": 195000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
      "obs": 195000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.com/products/womens-original-short-gloss-rain-boots-in-black-wfs1000rgl-hbl01",
      "obs": 165.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 115.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://hunterboots.co.uk/products/womens-original-short-gloss-wellington-boots-wfs1000rgl-blk",
      "obs": 115.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -3450,19 +3454,19 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
      "obs": 39000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 28.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_tech_2.0_mens_short_sleeve/1326413.html",
      "obs": 28.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3472,15 +3476,15 @@
       ]
      ],
      "sp": 16.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 27.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-tech-2.0-mens-short-sleeve/1326413.html",
      "obs": 27.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -3497,10 +3501,10 @@
     "DE": {
      "p": 30.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-tech-2.0/1326413.html",
      "obs": 30.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -3517,19 +3521,19 @@
     "MX": {
      "p": 499.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/tops/ua_tech_2.0/1326413.html",
      "obs": 499.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 129.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/ua-tech-2.0/UA1326413-001.html",
      "obs": 129.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3538,7 +3542,7 @@
       ]
      ],
      "sp": 77.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -3551,55 +3555,55 @@
     "KR": {
      "p": 45000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EC%BB%B4%ED%94%84%EB%A0%88%EC%85%98/1372586.html",
      "obs": 45000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 35.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/heatgear_compression_mens_mock_short_sleeve/1372586.html",
      "obs": 35.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 32.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/heatgear-compression-mens-mock-short-sleeve/1372586.html",
      "obs": 32.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 35.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/heatgear-compression/1372586.html",
      "obs": 35.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 699.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/heatgear_compression/1372586.html",
      "obs": 699.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 179.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/mens-heatgearreg-compression-mock-short-sleeve/UA1372586-001.html",
      "obs": 179.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3613,7 +3617,7 @@
       ]
      ],
      "sp": 107.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -3626,19 +3630,19 @@
     "KR": {
      "p": 79000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%95%A1%EC%84%B8%EC%84%9C%EB%A6%AC/ua_%ED%97%88%EC%8A%AC_6.0/1384672.html",
      "obs": 79000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 60.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_hustle_6.0_backpack/1384672.html",
      "obs": 60.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3648,15 +3652,15 @@
       ]
      ],
      "sp": 53.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 50.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-hustle-6.0-backpack/1384672.html",
      "obs": 50.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3666,15 +3670,15 @@
       ]
      ],
      "sp": 34.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 55.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-hustle-6.0/1384672.html",
      "obs": 55.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3684,24 +3688,24 @@
       ]
      ],
      "sp": 27.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 1299.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_hustle_6.0/1384672.html",
      "obs": 1299.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 249.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/ua-hustle-6.0/UA1384672-002.html",
      "obs": 249.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3710,7 +3714,7 @@
       ]
      ],
      "sp": 149.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -3723,28 +3727,28 @@
     "KR": {
      "p": 55000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech/1328495.html",
      "obs": 55000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 50.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_tech_mens_1-2_zip_long_sleeve/1328495.html",
      "obs": 50.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 40.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-tech-mens-1-2-zip-long-sleeve/1328495.html",
      "obs": 40.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3754,15 +3758,15 @@
       ]
      ],
      "sp": 23.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 45.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-tech/1328495.html",
      "obs": 45.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false,
      "sh": [
       [
@@ -3779,10 +3783,10 @@
     "AE": {
      "p": 179.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/ua-tech/UA1328495-001.html",
      "obs": 179.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3791,7 +3795,7 @@
       ]
      ],
      "sp": 107.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -3804,10 +3808,10 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EB%A0%88%ED%94%84%ED%8A%B8_%EC%B2%B4%EC%8A%A4%ED%8A%B8_%EB%A1%9C%EA%B3%A0/1326799.html",
      "obs": 39000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3817,15 +3821,15 @@
       ]
      ],
      "sp": 27300.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 28.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_left_chest_logo_mens_short_sleeve/1326799.html",
      "obs": 28.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3838,16 +3842,16 @@
        22.97
       ]
      ],
-     "sp": 22.97,
-     "sp_date": "2026-11-10"
+     "sp": 22.99,
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 25.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-left-chest-logo-mens-short-sleeve/1326799.html",
      "obs": 25.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3861,15 +3865,15 @@
       ]
      ],
      "sp": 17.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 28.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-left-chest-logo/1326799.html",
      "obs": 28.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3879,24 +3883,24 @@
       ]
      ],
      "sp": 17.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 499.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/tops/ua_left_chest_logo/1326799.html",
      "obs": 499.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 129.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/mens-ua-sportstyle-left-chest-short-sleeve-shirt/UA1326799-001.html",
      "obs": 129.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3905,7 +3909,7 @@
       ]
      ],
      "sp": 77.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -3918,10 +3922,10 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_%EC%95%84%EC%9D%B4%EC%BD%98_%ED%94%8C%EB%A6%AC%EC%8A%A4/1373880.html",
      "obs": 89000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3931,15 +3935,15 @@
       ]
      ],
      "sp": 62300.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "US": {
      "p": 65.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_icon_fleece_mens_hoodie/1373880.html",
      "obs": 65.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3949,15 +3953,15 @@
       ]
      ],
      "sp": 41.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "GB": {
      "p": 60.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-icon-fleece-mens-hoodie/1373880.html",
      "obs": 60.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3967,15 +3971,15 @@
       ]
      ],
      "sp": 29.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 70.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-icon-fleece/1373880.html",
      "obs": 70.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -3985,7 +3989,7 @@
       ]
      ],
      "sp": 41.97,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 1399.0,
@@ -3993,10 +3997,10 @@
      "seen": "2026-10-30",
      "url": "https://www.underarmour.com.mx/es-mx/p/tops/sudadera_con_capucha_ua_icon_fleece_para_hombre/1373880.html",
      "obs": 839.4,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sp": 839.4,
-     "sp_date": "2026-11-10",
+     "sp_date": "2026-11-11",
      "sh": [
       [
        "2026-11-03",
@@ -4007,10 +4011,10 @@
     "AE": {
      "p": 299.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/mens-ua-essential-fleece-hoodie/UA1373880-012.html",
      "obs": 299.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4024,7 +4028,7 @@
       ]
      ],
      "sp": 129.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4037,55 +4041,55 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/heatgear_%EB%AA%A8%ED%81%AC/1361521.html",
      "obs": 39000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 35.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/heatgear_mock_mens_sleeveless/1361521.html",
      "obs": 35.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 32.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/heatgear-mock-mens-sleeveless/1361521.html",
      "obs": 32.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 35.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/heatgear-mock/1361521.html",
      "obs": 35.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 599.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/house_of_baselayer/playera_de_cuello_alto_sin_mangas_heatgear_para_hombre/1361521.html",
      "obs": 599.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 149.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/heatgearreg-mock/UA1361521-001.html",
      "obs": 149.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4099,7 +4103,7 @@
       ]
      ],
      "sp": 89.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4112,65 +4116,65 @@
     "KR": {
      "p": 79000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EA%B0%80%EB%B0%A9/ua_%EC%96%B8%EB%94%94%EB%82%98%EC%9D%B4%EC%96%B4%EB%B8%94_5.0_%EB%9D%BC%EC%A7%80/1369224.html",
      "obs": 79000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 60.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_undeniable_5.0_large_duffle_bag/1369224.html",
      "obs": 60.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 45.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-undeniable-5.0-large-duffle-bag/1369224.html",
      "obs": 45.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 50.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-undeniable-5.0-large/1369224.html",
      "obs": 50.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "MX": {
      "p": 1299.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/mochilas_y_bolsos/ua_undeniable_5.0_grande/1369224.html",
      "obs": 1299.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 229.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/ua-undeniable-5.0-large-duffle-bag/UA1369224-001.html",
      "obs": 229.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 137.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        137.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 137.0,
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4183,83 +4187,83 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.kr/ko-kr/p/%EC%8B%A0%EB%B0%9C/ua_%EB%A0%88%EC%9D%B8_6/3027341.html",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 140.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com/en-us/p/ua_reign_6_mens_training_shoes/3027341.html",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 125.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.co.uk/en-gb/p/ua-reign-6-mens-training-shoes/3027341.html",
      "obs": 125.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 87.97,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        87.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 87.97,
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 140.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.de/de-de/p/ua-reign-6/3027341.html",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 97.97,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        97.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 97.97,
+     "sp_date": "2026-11-11"
     },
     "MX": {
      "p": 2999.0,
      "cur": "MXN",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.com.mx/es-mx/p/entrenamiento/tenis_de_entrenamiento_ua_tribase_reign_6_para_hombre/3027341.html",
      "obs": 2999.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "AE": {
      "p": 599.0,
      "cur": "AED",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.underarmour.ae/en/ua-reign-6/UA3027341-001.html",
      "obs": 599.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
-     "sp": 359.0,
-     "sp_date": "2026-11-10",
      "sh": [
       [
        "2026-11-10",
        359.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 359.0,
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4272,28 +4276,28 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",
      "obs": 179000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 145.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/ride-19/60823M.html",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/UK/en_GB/ride-19/60823M.html",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4307,15 +4311,15 @@
       ]
      ],
      "sp": 112.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4325,7 +4329,7 @@
       ]
      ],
      "sp": 128.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4342,15 +4346,17 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",
      "obs": 219000.0,
      "obs_date": "2026-11-10",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-10",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 175.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
      "obs": 175.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4360,7 +4366,7 @@
       ]
      ],
      "sp": 129.95,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4373,28 +4379,28 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
      "obs": 299000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 240.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100",
      "obs": 240.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 250.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60803M.html",
      "obs": 250.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4404,15 +4410,15 @@
       ]
      ],
      "sp": 200.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 270.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60803M.html",
      "obs": 270.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4422,7 +4428,7 @@
       ]
      ],
      "sp": 216.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4435,37 +4441,37 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 170.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/triumph-24/61229M.html",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 170.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/UK/en_GB/triumph-24/61229M.html",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 190.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/DE/de_DE/triumph-24/61229M.html",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -4479,28 +4485,28 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/",
      "obs": 179000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 150.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/guide-19/60838M.html",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/UK/en_GB/guide-19/60838M.html",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4513,15 +4519,15 @@
       ]
      ],
      "sp": 112.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/DE/de_DE/guide-19/60838M.html",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4530,7 +4536,7 @@
       ]
      ],
      "sp": 128.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    }
   },
@@ -4543,37 +4549,37 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/535/",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 170.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/hurricane-26/61249M.html",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 170.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/UK/en_GB/hurricane-26/61249M.html",
      "obs": 170.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 190.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html",
      "obs": 190.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -4587,19 +4593,19 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
      "obs": 159000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 130.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.saucony.com/en/kinvara-16/60309M.html",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -4625,10 +4631,10 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4933-b-b",
      "obs": 19800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4657,10 +4663,10 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brw4822-blk",
      "obs": 19800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4689,10 +4695,10 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm5033-blk-w",
      "obs": 26400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4729,10 +4735,10 @@
     "JP": {
      "p": 29700.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4793-b-b",
      "obs": 29700.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4761,10 +4767,10 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4973-blu",
      "obs": 19800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4802,10 +4808,10 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4543-dgry",
      "obs": 22000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4843,10 +4849,10 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4653-gry",
      "obs": 22000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": true,
      "sh": [
       [
@@ -4856,7 +4862,7 @@
       ]
      ],
      "sp": 17600.0,
-     "sp_date": "2026-11-10"
+     "sp_date": "2026-11-11"
     }
    },
    "cc_code": {
@@ -4893,10 +4899,10 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4763-blk",
      "obs": 26400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4925,10 +4931,10 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/brm4963-blk",
      "obs": 24200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4957,10 +4963,10 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://brooksrunning.co.jp/products/bmm4893-gry",
      "obs": 24200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -4977,46 +4983,46 @@
     "KR": {
      "p": 480000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686241",
      "obs": 480000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 300.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/atom-hoody-9556",
      "obs": 300.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 260.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/atom-hoody-9556",
      "obs": 260.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 280.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/atom-hoody-9556",
      "obs": 280.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 49500.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/atom-hoody-m",
      "obs": 49500.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5033,46 +5039,46 @@
     "KR": {
      "p": 430000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/685690",
      "obs": 430000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 280.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/atom-jacket-9561",
      "obs": 280.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 240.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/atom-jacket-9561",
      "obs": 240.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 260.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/atom-jacket-9561",
      "obs": 260.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 47300.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/atom-jacket-m",
      "obs": 47300.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5089,46 +5095,46 @@
     "KR": {
      "p": 330000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686323",
      "obs": 330000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/gamma-pant-0481",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 180.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/gamma-pant-0481",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/gamma-pant-0481",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 33000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/gamma-pant-m",
      "obs": 33000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5145,46 +5151,46 @@
     "KR": {
      "p": 310000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686259",
      "obs": 310000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/squamish-hoody-0276",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 180.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/squamish-hoody-0276",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/squamish-hoody-0276",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 33000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/squamish-hoody-m",
      "obs": 33000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5201,46 +5207,46 @@
     "KR": {
      "p": 690000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686764",
      "obs": 690000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 400.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/cerium-hoody-0521",
      "obs": 400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 350.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/cerium-hoody-0521",
      "obs": 350.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 400.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/cerium-hoody-0521",
      "obs": 400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 68200.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/cerium-hoody-m",
      "obs": 68200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5257,37 +5263,37 @@
     "KR": {
      "p": 290000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686432",
      "obs": 290000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 160.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mantis-26-backpack-0643",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 140.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mantis-26-backpack-0643",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mantis-26-backpack-0643",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5304,46 +5310,46 @@
     "KR": {
      "p": 350000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686729",
      "obs": 350000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/norvan-ld-4-gtx-shoe-0397",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 180.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/norvan-ld-4-gtx-shoe-0397",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/norvan-ld-4-gtx-shoe-0397",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 34100.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/norvan-ld-4-gtx-m",
      "obs": 34100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5360,46 +5366,46 @@
     "KR": {
      "p": 380000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686215",
      "obs": 380000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 220.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/sylan-2-shoe-0155",
      "obs": 220.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 200.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/sylan-2-shoe-0155",
      "obs": 200.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 220.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/sylan-2-shoe-0155",
      "obs": 220.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 37400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/sylan-2-m",
      "obs": 37400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5416,46 +5422,46 @@
     "KR": {
      "p": 250000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686681",
      "obs": 250000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 140.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/kragg-shoe-0078",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 130.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/kragg-shoe-0078",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 140.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/kragg-shoe-0078",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/kragg-m",
      "obs": 22000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5472,46 +5478,46 @@
     "KR": {
      "p": 490000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686731",
      "obs": 490000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 280.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/konseal-trek-boot-0504",
      "obs": 280.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 260.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/konseal-trek-boot-0504",
      "obs": 260.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 280.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/konseal-trek-boot-0504",
      "obs": 280.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 44000.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/konseal-trek-m",
      "obs": 44000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5528,46 +5534,46 @@
     "KR": {
      "p": 710000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.co.kr/products/view/686750",
      "obs": 710000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 450.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/us/en/shop/mens/norvan-jacket-9571",
      "obs": 450.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 400.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/gb/en/shop/mens/norvan-jacket-9571",
      "obs": 400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 450.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.com/de/en/shop/mens/norvan-jacket-9571",
      "obs": 450.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 75900.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://arcteryx.jp/products/norvan-jacket-m",
      "obs": 75900.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -5584,46 +5590,46 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000673",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 130.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-newport-h2-triple-black",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 110.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-newport-h2-triple-black",
      "obs": 110.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 125.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-newport-h2-triple-black",
      "obs": 125.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-newport-h2-triple-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5637,46 +5643,46 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000679",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 130.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-newport-h2-black",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 110.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-newport-h2-black",
      "obs": 110.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 125.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-newport-h2-black",
      "obs": 125.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-newport-h2-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5690,46 +5696,46 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000653",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 150.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-uneek-monochrome-black-black",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 110.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-uneek-black-black",
      "obs": 110.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 120.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-uneek-monochrome-black-black",
      "obs": 120.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-uneek-monochrome-black-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5743,46 +5749,46 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000996",
      "obs": 209000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 145.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-jasper-iii-black-black",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 130.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-jasper-iii-black-black",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 140.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-jasper-iii-black-black",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-iii-black-black",
      "obs": 19800.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5796,46 +5802,46 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000580",
      "obs": 239000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 180.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-targhee-iv-waterproof-triple-black",
      "obs": 180.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 145.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-targhee-iv-waterproof-triple-black",
      "obs": 145.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 160.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-targhee-iv-waterproof-triple-black",
      "obs": 160.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-targhee-iv-waterproof-triple-black",
      "obs": 23100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5849,37 +5855,37 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000804",
      "obs": 169000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 140.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-jasper-hairy-black-black",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 130.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-jasper-hairy-black-black",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 140.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-jasper-hairy-black-black",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5893,46 +5899,46 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001043",
      "obs": 149000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 110.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-howser-iii-slide-black-quilted",
      "obs": 110.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 80.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-howser-iii-slide-black-quilted",
      "obs": 80.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 100.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-howser-iii-slide-black-quilted",
      "obs": 100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 11550.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-howser-iii-slide-black-quilted",
      "obs": 11550.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5946,46 +5952,46 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000868",
      "obs": 239000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 150.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-uneek-trekker-black-keen-maple",
      "obs": 150.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 130.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-uneek-trekker-black-keen-maple",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 140.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-uneek-trekker-black-keen-maple",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-uneek-trekker-black-keen-maple",
      "obs": 20900.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -5999,46 +6005,46 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001054",
      "obs": 219000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 140.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-a86-triple-black",
      "obs": 140.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "GB": {
      "p": 120.0,
      "cur": "GBP",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.co.uk/products/mens-a86-triple-black",
      "obs": 120.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "DE": {
      "p": 130.0,
      "cur": "EUR",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.de/en/products/mens-a86-triple-black",
      "obs": 130.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-a86-triple-black",
      "obs": 18700.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -6052,28 +6058,28 @@
     "KR": {
      "p": 269000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000945",
      "obs": 269000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 165.0,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.com/products/mens-jasper-zionic-waterproof-black-black",
      "obs": 165.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-zionic-waterproof-black-black",
      "obs": 23100.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    }
@@ -6087,19 +6093,19 @@
     "KR": {
      "p": 69000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000050",
      "obs": 69000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 59.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-original-sandal-black",
      "obs": 59.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6117,19 +6123,19 @@
     "KR": {
      "p": 69000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000084",
      "obs": 69000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 59.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-sandal-ooahh-slide-black",
      "obs": 59.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6147,19 +6153,19 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000159",
      "obs": 89000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 79.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-oocloog-clog-black",
      "obs": 79.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6177,19 +6183,19 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000062",
      "obs": 99000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 69.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-ooriginal-plus-sandal-black",
      "obs": 69.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6207,19 +6213,19 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000058",
      "obs": 99000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 69.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-ooahh-plus-slide-sandal-black",
      "obs": 69.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6237,19 +6243,19 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000087",
      "obs": 89000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 69.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-sandal-ooriginal-sport-graphite",
      "obs": 69.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6267,19 +6273,19 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000031",
      "obs": 109000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 79.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-ooahh-sport-flex-black-matte",
      "obs": 79.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6297,19 +6303,19 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000055",
      "obs": 119000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 89.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-oocloog-plus-clog-black",
      "obs": 89.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6327,19 +6333,19 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000018",
      "obs": 179000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 119.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-oomy-stride-black",
      "obs": 119.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6357,19 +6363,19 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000063",
      "obs": 89000.0,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     },
     "US": {
      "p": 69.95,
      "cur": "USD",
-     "seen": "2026-11-10",
+     "seen": "2026-11-11",
      "url": "https://www.oofos.com/products/mens-ooahh-sport-slide-sandal-tactical-green",
      "obs": 69.95,
-     "obs_date": "2026-11-10",
+     "obs_date": "2026-11-11",
      "sale": false
     }
    },
@@ -6381,14 +6387,14 @@
  ],
  "failed": [],
  "host_try": {
-  "salomon-xt6 US": "2026-11-10",
-  "salomon-xt6 GB": "2026-11-10",
-  "salomon-xt6 DE": "2026-11-10",
-  "salomon-xt6base US": "2026-11-10",
-  "salomon-xt6base GB": "2026-11-10",
-  "salomon-xt6base DE": "2026-11-10",
-  "salomon-xt4og US": "2026-11-10",
-  "salomon-xt4og GB": "2026-11-10",
+  "salomon-xt6 US": "2026-11-11",
+  "salomon-xt6 GB": "2026-11-11",
+  "salomon-xt6 DE": "2026-11-11",
+  "salomon-xt6base US": "2026-11-11",
+  "salomon-xt6base GB": "2026-11-11",
+  "salomon-xt6base DE": "2026-11-11",
+  "salomon-xt4og US": "2026-11-11",
+  "salomon-xt4og GB": "2026-11-11",
   "salomon-xt4og DE": "2026-11-10",
   "salomon-xt6expanse US": "2026-11-10",
   "salomon-xt6expanse GB": "2026-11-10",
@@ -6397,5 +6403,6 @@
   "salomon-xt4oggtx GB": "2026-11-10",
   "salomon-xt4oggtx DE": "2026-11-10"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
+ "tried": "2026-11-11"
 }
