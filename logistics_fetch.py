@@ -564,11 +564,18 @@ def kcs_api_csv(ds):
         try:
             r = http(KCS_API.format(pth), params={"page": page, "perPage": 1000, "returnType": "JSON", "serviceKey": key},
                      timeout=(15, 60), mask=dgk_mask)
-        except RuntimeError as e:   # 4xx(연결 오류·5xx는 NetError로 그대로 — 새 서버에서 다시 받기)
-            if "401" in str(e) or "등록되지 않은" in str(e):
+        except NetError:   # 연결 오류·5xx·시간 초과는 그대로(새 서버에서 다시 받기 · 오류 글의 주소 uddi에 '401'이 있어도 활용신청으로 읽지 않게)
+            raise
+        except RuntimeError as e:   # 4xx — http()가 'HTTP 401 {…}'로 시작하는 글을 만듦
+            if re.match(r"HTTP 401\b", str(e)) or "등록되지 않은" in str(e):
                 raise RuntimeError(f"오픈 API 활용신청 필요(등록되지 않은 인증키) — 공공데이터포털 {ds} 활용신청 · 화면에 내려받기 번호(FILE_…) 없음") from None
             raise
         j = r.json()
+        if not isinstance(j, dict) or ("data" not in j and j.get("code") is not None):   # 200이어도 오류 본문({code:-4, msg})이면
+            msg = str((j or {}).get("msg") if isinstance(j, dict) else j)[:80]
+            if "등록되지 않은" in msg:
+                raise RuntimeError(f"오픈 API 활용신청 필요(등록되지 않은 인증키) — 공공데이터포털 {ds} 활용신청 · 화면에 내려받기 번호(FILE_…) 없음")
+            raise RuntimeError(f"오픈 API 응답 오류 {dgk_mask(msg)}")
         got = j.get("data") or []
         data += got
         if not got or len(data) >= int(j.get("totalCount") or 0) or page >= 20:
@@ -596,7 +603,7 @@ def fetch_kcs_one(ds, name, unit):
         raw = http(KCS_DOWN.format(fid), timeout=(15, 60)).content
     else:   # v1.11 2026-10 화면 개편(KRDS)으로 내려받기 번호가 화면에 없음 → 공식 오픈 API(파일데이터 자동변환)
         raw, adate = kcs_api_csv(ds)
-        fdate, via = fdate or adate, "api"
+        fdate, via = adate or fdate, "api"   # 실제로 받은 파일(명세)의 날짜 — 화면 제목이 먼저 새 파일로 바뀌어도
     cols, rows = parse_kcs_csv(raw)
     last = rows[-1]
     gap = (today_kst() - datetime.date.fromisoformat(last[0] + "-01")).days
