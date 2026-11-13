@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12 10:32 KST",
+ "generated_at": "2026-11-13 09:20 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -5938,7 +5938,7 @@
    ]
   ],
   "latest": "2026-11-09",
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8320,7 +8320,7 @@
     "last_date": "2026-11-08"
    }
   ],
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "해협 통과"
  },
  "ports": {
@@ -10702,7 +10702,7 @@
     "last_date": "2026-11-06"
    }
   ],
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "항만 입항"
  },
  "hubs": {
@@ -17828,7 +17828,7 @@
     "last_date": "2026-11-06"
    }
   ],
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -17982,7 +17982,7 @@
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "전 세계 정시율"
  },
  "vol_in": {
@@ -23256,7 +23256,7 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "관세청 국가별 수입 물동량"
  },
  "vol_out": {
@@ -28530,24 +28530,11 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "관세청 국가별 수출 물동량"
  },
  "busan_calls": {
   "days": [
-   [
-    "2025-10-07",
-    30,
-    {
-     "JP": 13,
-     "CN": 11,
-     "KR": 3,
-     "US": 2,
-     "VN": 1
-    },
-    856.1,
-    30
-   ],
    [
     "2025-10-08",
     36,
@@ -34676,7 +34663,7 @@
      "PH": 1,
      "MH": 1
     },
-    834.0,
+    835.4,
     31
    ],
    [
@@ -34690,14 +34677,28 @@
      "SG": 1,
      "RU": 1
     },
-    1087.4,
+    1098.7,
     40
+   ],
+   [
+    "2026-11-12",
+    29,
+    {
+     "CN": 12,
+     "JP": 8,
+     "KR": 4,
+     "RU": 3,
+     "AU": 1,
+     "PH": 1
+    },
+    625.2,
+    27
    ]
   ],
-  "from": "2025-10-07",
+  "from": "2025-10-08",
   "missing": 0,
   "stay_cap": 96,
-  "fetched": "2026-11-12",
+  "fetched": "2026-11-13",
   "label": "부산 입항 선박"
  },
  "status": {
@@ -34720,14 +34721,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "43134892462",
+  "run": "43335903087",
   "tries": [
    {
     "n": 1,
-    "where": "20.115.x.x · Virginia · AS8075 Microsoft Corporation",
+    "where": "135.119.x.x · Iowa · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-12 10:33"
+    "at": "11-13 09:21"
    }
   ]
  },
