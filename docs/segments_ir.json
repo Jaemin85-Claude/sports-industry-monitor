@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-08 06:05 KST",
+ "generated_at": "2026-11-15 06:42 KST",
  "items": {
   "ADS.DE": {
    "accession": "Fact_Sheet_EN_q3_2026_gund7n.pdf",
@@ -199,87 +199,87 @@
    "ir_ver": 3
   },
   "7936.T": {
-   "accession": "Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the",
+   "accession": "Consolidated%20Financial%20Statements%20For%20the%20Third%20Quarter%20and%20the%",
    "source": "IR 결산단신 (PDF)",
-   "url": "https://assets.asics.com/system/libraries/4215/Consolidated%20Financial%20Statements%20For%20the%20Second%20Quarter%20and%20the%20Six%20Months%20Ended%20June%2030,%202026%20%28Japan%20GAAP%29.pdf",
+   "url": "https://assets.asics.com/system/libraries/4265/Consolidated%20Financial%20Statements%20For%20the%20Third%20Quarter%20and%20the%20Nine%20Months%20Ended%20September%2030,%202026%20%28Japan%20GAAP%29.pdf",
    "error": null,
    "extract": {
     "schema_v": 2,
-    "period": "6M 2026 (1~6월 누적)",
-    "prev_period": "6M 2025",
+    "period": "9M 2026 (1~9월 누적)",
+    "prev_period": "9M 2025",
     "currency": "JPY",
     "unit": "millions",
     "regions": [
      {
       "name": "Japan",
-      "revenue": 90310,
-      "prev_revenue": 75730,
-      "yoy_pct": 19.252607949293534,
+      "revenue": 140984,
+      "prev_revenue": 117495,
+      "yoy_pct": 19.991488999531892,
       "cn_yoy_pct": null
      },
      {
       "name": "North America",
-      "revenue": 94696,
-      "prev_revenue": 73914,
-      "yoy_pct": 28.1,
-      "cn_yoy_pct": 19.6
+      "revenue": 141167,
+      "prev_revenue": 112473,
+      "yoy_pct": 25.5,
+      "cn_yoy_pct": 17.0
      },
      {
       "name": "Europe",
-      "revenue": 166600,
-      "prev_revenue": 113769,
-      "yoy_pct": 46.4,
-      "cn_yoy_pct": 29.7
+      "revenue": 245657,
+      "prev_revenue": 178934,
+      "yoy_pct": 37.3,
+      "cn_yoy_pct": 24.2
      },
      {
       "name": "Greater China",
-      "revenue": 81043,
-      "prev_revenue": 61966,
-      "yoy_pct": 30.786237614175516,
-      "cn_yoy_pct": 17.6
+      "revenue": 119143,
+      "prev_revenue": 92755,
+      "yoy_pct": 28.44914020807503,
+      "cn_yoy_pct": 15.1
      },
      {
       "name": "Oceania",
-      "revenue": 28964,
-      "prev_revenue": 21447,
-      "yoy_pct": 35.0,
-      "cn_yoy_pct": 15.3
+      "revenue": 46071,
+      "prev_revenue": 34662,
+      "yoy_pct": 32.9,
+      "cn_yoy_pct": 13.8
      },
      {
       "name": "Southeast and South Asia",
-      "revenue": 31492,
-      "prev_revenue": 23514,
-      "yoy_pct": 33.9,
-      "cn_yoy_pct": 25.9
+      "revenue": 49444,
+      "prev_revenue": 38301,
+      "yoy_pct": 29.1,
+      "cn_yoy_pct": 22.5
      },
      {
       "name": "Others (South America, Korea, etc.)",
-      "revenue": 32269,
-      "prev_revenue": 24698,
-      "yoy_pct": 30.7,
-      "cn_yoy_pct": 17.5
+      "revenue": 50170,
+      "prev_revenue": 39288,
+      "yoy_pct": 27.7,
+      "cn_yoy_pct": 14.5
      }
     ],
     "channels": [],
     "sub_segments": [],
-    "notes": "Figures are external sales only (Sales to customers), excluding inter-segment sales, as explicitly stated in the segment information table. Unit is millions of yen as shown in the document. Japan 6M 2026 sales to customers: ¥90,310M (inter-segment ¥15,784M; total ¥106,094M). Japan 6M 2025 sales to customers: ¥75,730M (inter-segment ¥23,532M; total ¥99,263M). Greater China 6M 2026 sales to customers: ¥81,043M (inter-segment ¥5M; total ¥81,048M). Greater China 6M 2025 sales to customers: ¥61,966M (inter-segment ¥65M; total ¥62,032M). Others 6M 2026 sales to customers: ¥32,269M (inter-segment ¥1M; total ¥32,271M). YoY % for Japan and Greater China not separately stated for external-only sales in the summary table (summary table shows total sales growth); North America, Europe, Oceania, Southeast and South Asia, and Others YoY % figures are from the summary reportable segment table which reflects total sales (equal to external sales for those segments as inter-segment is zero or negligible). · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함",
+    "notes": "Figures are external sales only (Sales to customers), excluding intersegment sales, as explicitly stated in the reportable segment table. Unit shown in the source document is millions of yen. Japan 9M 2025 external sales: ¥117,495M (intersegment ¥34,599M; total ¥152,095M). Japan 9M 2026 external sales: ¥140,984M (intersegment ¥15,880M; total ¥156,864M). Greater China 9M 2025 external sales: ¥92,755M (intersegment ¥209M; total ¥92,965M). Greater China 9M 2026 external sales: ¥119,143M (intersegment ¥5M; total ¥119,149M). Others 9M 2025 external sales: ¥39,288M; 9M 2026: ¥50,170M. YoY% for Japan and Greater China not separately stated for external-only sales; overall segment net sales YoY% figures in the narrative (3.1%, 28.2%) refer to total segment sales including intersegment. · 누적 기준(Japan GAAP 결산단신) · 한국은 Others에 포함",
     "mgmt_notes": [
      {
       "topic": "channel",
-      "quote": "EC sales increased +13.7% YoY, growth in all regions excluding North America which experiences strategic business downsizing.",
-      "ko": "북미는 전략적 사업 축소로 EC 매출 감소, 여타 지역은 성장 유지",
-      "at": "2026-10-26 14:34",
+      "quote": "EC sales increased +15.8% YoY, with growth across all regions excluding North America, where strategic business optimization was implemented.",
+      "ko": "북미는 전략적 사업 최적화 시행으로 EC 채널 구조 조정, 제외 시 성장률 +23.9%",
+      "at": "2026-11-15 06:42",
       "sig": "less",
       "scope": "region",
       "region": "북미"
      }
     ],
-    "extracted_at": "2026-10-26 14:34"
+    "extracted_at": "2026-11-15 06:42"
    },
-   "fetched_at": "2026-10-10",
+   "fetched_at": "2026-11-15",
    "ir_ver": 3,
-   "doc_date": "2026-08-21",
-   "notes_url": "https://assets.asics.com/system/libraries/4225/Consolidated%20Financial%20Summary%20For%20The%20Second%20Quarter%20and%20The%20Six%20Months%20Ended%20June%2030,%202026%ef%bc%88with%20script%ef%bc%89.pdf"
+   "doc_date": "2026-11-12",
+   "notes_url": "https://assets.asics.com/system/libraries/4268/Consolidated%20Financial%20Summary%20For%20The%20Third%20Quarter%20and%20The%20Nine%20Months%20Ended%20September%2030,%202026%20%281%29.pdf"
   }
  },
  "claude_usage": {
@@ -291,10 +291,10 @@
    "since": "2026-10-10"
   },
   "2026-11": {
-   "calls": 4,
-   "in": 14561,
-   "out": 1406,
-   "usd": 0.0648,
+   "calls": 8,
+   "in": 53499,
+   "out": 3194,
+   "usd": 0.2084,
    "since": "2026-11-01"
   }
  }
