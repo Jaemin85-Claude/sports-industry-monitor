@@ -1,90 +1,69 @@
 [
  {
-  "t": "codes",
-  "key": "puma",
-  "base": "KR",
-  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
-  "sites": {
-   "KR": {
-    "host": "kr.puma.com",
-    "path": "/kr/ko/"
-   },
-   "US": {
-    "host": "us.puma.com",
-    "path": "/us/en/"
-   },
-   "GB": {
-    "host": "uk.puma.com",
-    "path": "/uk/en/"
-   },
-   "DE": {
-    "host": "eu.puma.com",
-    "path": "/de/de/",
-    "kid_pref": [
-     "/urls/de/"
-    ]
-   },
-   "MX": {
-    "host": "mx.puma.com",
-    "path": "/mx/es/"
-   },
-   "AE": {
-    "host": "ae.puma.com",
-    "path": "/ae/en/"
-   }
-  },
-  "max_maps": 60,
-  "per_host": 110,
-  "show": 0
+  "t": "pages",
+  "urls": [
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071605",
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071600"
+  ],
+  "code_rx": "[WM]F[TS]\\d{4}[A-Z]{3}[A-Z]{0,3}",
+  "show": 0,
+  "snip_rx": [
+   "WFS2200RMABLK",
+   "MFS9000RMABLK",
+   "MFT9000RMABLK",
+   "MFS9116RMABLK",
+   "WFS3020RMABLK",
+   "WFS2201RMABLK",
+   "WFT2299RMABLK",
+   "WFS2299RMABLK",
+   "WFT1000RMANVY"
+  ]
  },
  {
-  "t": "try",
-  "key": "puma",
-  "brand": "푸마",
-  "ccs": [
-   "KR",
-   "US",
-   "GB",
-   "DE",
-   "MX",
-   "AE"
+  "t": "dump",
+  "head": 0,
+  "per_rx": 2,
+  "pad": 200,
+  "ld_chars": 900,
+  "max_ld": 1,
+  "ctx": [
+   "S2\\d{4}-\\d{2,3}|S1\\d{5}-\\d{2,3}",
+   "price_custom"
   ],
-  "cands": [
-   {
-    "code": "310468",
-    "name": "디비에이트 나이트로 엘리트 트레일(여성)",
-    "hint": "deviate nitro elite trail"
-   },
-   {
-    "code": "401744",
-    "name": "팔레르모 프리미엄",
-    "hint": "palermo premium"
-   },
-   {
-    "code": "310109",
-    "name": "포에버런 나이트로 2",
-    "hint": "foreverrun nitro 2"
-   },
-   {
-    "code": "401683",
-    "name": "킹 인도어",
-    "hint": "king indoor"
-   },
-   {
-    "code": "399028",
-    "name": "이지 라이더 빈티지",
-    "hint": "easy rider vintage"
-   },
-   {
-    "code": "385296",
-    "name": "시부이 캣",
-    "hint": "shibui cat"
-   },
-   {
-    "code": "396464",
-    "name": "팔레르모 레더",
-    "hint": "palermo leather"
-   }
+  "urls": [
+   "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%97%94%EB%8F%8C%ED%95%80-%EC%97%98%EB%A6%AC%ED%8A%B8-2-whitecrimson/184/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%91%EC%86%8C%EB%8D%94%EC%8A%A4-%EC%9A%B8%ED%8A%B8%EB%9D%BC-4-kodiakwine/139/",
+   "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%EC%98%B4%EB%8B%88-9-blacksilver/160/",
+   "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-23-whitecloud/161/"
   ]
+ },
+ {
+  "t": "grep",
+  "max_maps": 14,
+  "per_host": 120,
+  "show": 60,
+  "rx": "endorphin-elite-2|endorphin-azura|endorphin-trainer|xodus-ultra-4|omni-9|triumph-23",
+  "sites": {
+   "US": {
+    "host": "www.saucony.com",
+    "start": [
+     "https://www.saucony.com/sitemap_index.xml"
+    ]
+   },
+   "uk": {
+    "host": "www.saucony.com",
+    "start": [
+     "https://www.saucony.com/UK/en_GB/sitemap_index.xml"
+    ]
+   },
+   "de": {
+    "host": "www.saucony.com",
+    "start": [
+     "https://www.saucony.com/DE/de_DE/sitemap_index.xml"
+    ]
+   }
+  }
  }
 ]
