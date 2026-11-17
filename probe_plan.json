@@ -1,44 +1,90 @@
 [
  {
-  "t": "pages",
-  "urls": [
-   "https://www.kolonmall.com/Brands/HUNTER/List/133010071605",
-   "https://www.kolonmall.com/Brands/HUNTER/List/133010071600",
-   "https://www.kolonmall.com/Brands/HUNTER",
-   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION"
-  ],
-  "link_rx": "/Product/[A-Z0-9]{12,24}",
-  "code_rx": "(?:W2BAS\\d{5}[A-Z]{3}|[WM]F[TS]\\d{4}[A-Z]{3}[A-Z]{0,3})",
-  "show": 120
- },
- {
-  "t": "grep",
-  "rx": "[wm]f[ts]\\d{4}[a-z]{3}",
-  "sites": {
-   "US": {
-    "host": "hunterboots.com"
-   },
-   "GB": {
-    "host": "hunterboots.co.uk"
-   },
-   "JP": {
-    "host": "hunterboots.co.jp"
-   }
-  },
-  "show": 150,
-  "max_maps": 12,
-  "per_host": 90
- },
- {
-  "t": "grep",
-  "max_maps": 10,
-  "per_host": 80,
-  "show": 150,
-  "rx": "/product/",
+  "t": "codes",
+  "key": "puma",
+  "base": "KR",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
   "sites": {
    "KR": {
-    "host": "saucony.co.kr"
+    "host": "kr.puma.com",
+    "path": "/kr/ko/"
+   },
+   "US": {
+    "host": "us.puma.com",
+    "path": "/us/en/"
+   },
+   "GB": {
+    "host": "uk.puma.com",
+    "path": "/uk/en/"
+   },
+   "DE": {
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "kid_pref": [
+     "/urls/de/"
+    ]
+   },
+   "MX": {
+    "host": "mx.puma.com",
+    "path": "/mx/es/"
+   },
+   "AE": {
+    "host": "ae.puma.com",
+    "path": "/ae/en/"
    }
-  }
+  },
+  "max_maps": 60,
+  "per_host": 110,
+  "show": 0
+ },
+ {
+  "t": "try",
+  "key": "puma",
+  "brand": "푸마",
+  "ccs": [
+   "KR",
+   "US",
+   "GB",
+   "DE",
+   "MX",
+   "AE"
+  ],
+  "cands": [
+   {
+    "code": "310468",
+    "name": "디비에이트 나이트로 엘리트 트레일(여성)",
+    "hint": "deviate nitro elite trail"
+   },
+   {
+    "code": "401744",
+    "name": "팔레르모 프리미엄",
+    "hint": "palermo premium"
+   },
+   {
+    "code": "310109",
+    "name": "포에버런 나이트로 2",
+    "hint": "foreverrun nitro 2"
+   },
+   {
+    "code": "401683",
+    "name": "킹 인도어",
+    "hint": "king indoor"
+   },
+   {
+    "code": "399028",
+    "name": "이지 라이더 빈티지",
+    "hint": "easy rider vintage"
+   },
+   {
+    "code": "385296",
+    "name": "시부이 캣",
+    "hint": "shibui cat"
+   },
+   {
+    "code": "396464",
+    "name": "팔레르모 레더",
+    "hint": "palermo leather"
+   }
+  ]
  }
 ]

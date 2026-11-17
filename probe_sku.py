@@ -97,7 +97,7 @@ def pages(j):   # 페이지를 받아 제목·JSON-LD 이름·가격·품번 후
         og = re.search(r'<meta[^>]+property="og:title"[^>]+content="([^"]*)"', h)
         names = re.findall(r'"name"\s*:\s*"([^"]{4,120})"', h)[:6]
         prices = re.findall(r'"price"\s*:\s*"?([0-9.,]+)', h)[:6]
-        codes = sorted(set(re.findall(j.get("code_rx", r"$^"), h)))[:20]
+        codes = sorted(set(re.findall(j.get("code_rx", r"$^"), h)))[:200]
         links = []
         if j.get("link_rx"):
             for m in re.finditer(j["link_rx"], h):
@@ -151,7 +151,7 @@ def try_codes(j):   # 후보 품번을 나라별 주소로 price_fetch에 넣어
         urls = {cc: u for cc, u in urls.items() if u}
         prod = {"id": "try-" + code, "brand": j.get("brand", ""), "name": cand.get("name", code), "code": code, "src": "page",
                 "hint": cand.get("hint", ""), "urls": urls}
-        out("TRY", code=code, urls={cc: urllib.parse.unquote(u)[-110:] for cc, u in urls.items()}, missing=[cc for cc in j["ccs"] if cc not in urls])
+        out("TRY", code=code, urls=urls, missing=[cc for cc in j["ccs"] if cc not in urls])
         for cc in urls:
             if left() < 30: out("TIMEOUT"); return
             try:
