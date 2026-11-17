@@ -1,22 +1,27 @@
 [
  {
-  "t": "pwdiag",
-  "gap": 3,
-  "head": 900,
+  "t": "pwlist",
+  "rx": "chokepoint|port|daily|transit",
   "urls": [
    "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services?f=json",
-   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer?f=json",
-   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
-   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Ports_Data/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json",
-   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0/query?where=year%3E%3D2026&outFields=portid,date,n_total&resultRecordCount=3&f=json",
-   "https://www.arcgis.com/sharing/rest/search?q=title%3ADaily_Chokepoints_Data&f=json&num=10",
-   "https://www.arcgis.com/sharing/rest/search?q=orgid%3AweJ1QsnbMYJlCHdG%20Daily&f=json&num=30",
-   "https://www.arcgis.com/sharing/rest/search?q=PortWatch%20Daily%20Ports&f=json&num=20",
-   "https://portwatch.imf.org/robots.txt",
-   "https://portwatch.imf.org/",
-   "https://portwatch.imf.org/api/search/v1/collections/dataset/items?q=Daily&limit=20",
-   "https://hub.arcgis.com/api/search/v1/collections/dataset/items?q=Daily_Chokepoints_Data&limit=10",
-   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Ports_Data/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"
+   "https://www.arcgis.com/sharing/rest/search?q=owner%3AIMF-portwatch_imf_dataviz&f=json&num=100&sortField=modified&sortOrder=desc",
+   "https://www.arcgis.com/sharing/rest/search?q=owner%3AIMF-portwatch_imf_dataviz&f=json&num=100&start=101&sortField=modified&sortOrder=desc",
+   {
+    "u": "https://portwatch.imf.org/api/search/v1/collections/dataset/items?q=chokepoint&limit=50",
+    "gap": 3
+   },
+   {
+    "u": "https://portwatch.imf.org/api/search/v1/collections/dataset/items?q=port%20activity&limit=50",
+    "gap": 65
+   }
+  ]
+ },
+ {
+  "t": "pwdiag",
+  "gap": 3,
+  "head": 500,
+  "urls": [
+   "https://services9.arcgis.com/weJ1QsnbMYJlCHdG/arcgis/rest/services/Daily_Chokepoints_Data/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json"
   ]
  }
 ]

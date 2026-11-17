@@ -143,6 +143,31 @@ def pwdiag(j):   # PortWatch 진단(11/17 429 → 499 Token Required): logistics
                 head=r.text[:j.get("head", 700)])
         except Exception as e:
             out("PWERR", url=u[:220], err=f"{type(e).__name__}: {str(e)[:200]}")
+def pwlist(j):   # PortWatch 진단 2: JSON 목록에서 이름·제목·주소·공개 범위만(정규식에 맞는 것) — 서비스 목록 · ArcGIS 검색 · Hub 검색
+    UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"}
+    rx = re.compile(j.get("rx", "."), re.I)
+    for k, it in enumerate(j["urls"]):
+        u, gap = (it, 3) if isinstance(it, str) else (it["u"], it.get("gap", 3))
+        if k: time.sleep(gap)
+        try:
+            r = requests.get(u, headers=UA, timeout=40)
+            d = r.json()
+        except Exception as e:
+            out("PWERR", url=u[:200], err=f"{type(e).__name__}: {str(e)[:200]}"); continue
+        rows = []
+        for x in d.get("services") or []:
+            rows.append({"name": x.get("name"), "type": x.get("type")})
+        for x in d.get("results") or []:
+            rows.append({"title": x.get("title"), "id": x.get("id"), "type": x.get("type"), "access": x.get("access"), "url": x.get("url"),
+                         "modified": time.strftime("%Y-%m-%d", time.gmtime((x.get("modified") or 0) / 1000)), "snippet": (x.get("snippet") or "")[:120]})
+        for f in d.get("features") or []:
+            x = f.get("properties") or {}
+            rows.append({"title": x.get("title"), "id": x.get("id"), "type": x.get("type"), "access": x.get("access"), "url": x.get("url"),
+                         "modified": time.strftime("%Y-%m-%d", time.gmtime((x.get("modified") or 0) / 1000)), "snippet": (x.get("snippet") or "")[:120]})
+        hit = [x for x in rows if rx.search(json.dumps(x, ensure_ascii=False))]
+        out("PWLIST", url=u[:200], code=r.status_code, total=d.get("total", d.get("numberMatched")), n=len(rows), hits=len(hit))
+        for x in hit[:80]:
+            out("  ROW", **x)
 def tryp(j):   # 완성된 상품 정의(PRODUCTS 모양)로 나라별 정가 읽기 시험 — "ids"면 이 브랜치 price_fetch의 PRODUCTS 그대로(나라는 "only" 또는 pf.ccs)
     byid = {p["id"]: p for p in pf.PRODUCTS}
     jobs = [(p, None) for p in j.get("prods", [])] + [(byid[i], it.get("only")) for it in j.get("ids", []) for i in it["ids"]]
@@ -455,5 +480,5 @@ if __name__ == "__main__":
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
         {"net": net, "codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson, "jsfollow": jsfollow, "rxpage": rxpage, "robots": robots,
-         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats, "aescope": aescope, "hunterkr": hunterkr, "pwdiag": pwdiag}[j["t"]](j)
+         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats, "aescope": aescope, "hunterkr": hunterkr, "pwdiag": pwdiag, "pwlist": pwlist}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
