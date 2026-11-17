@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-17 11:29 KST",
+ "generated_at": "2026-11-17 12:40 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -35007,14 +35007,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "44003067299",
+  "run": "44011557661",
   "tries": [
    {
     "n": 1,
-    "where": "68.154.x.x · Virginia · AS8075 Microsoft Corporation",
+    "where": "20.57.x.x · Virginia · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-17 11:30"
+    "at": "11-17 12:41"
    }
   ]
  },
