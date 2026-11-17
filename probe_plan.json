@@ -1,60 +1,44 @@
 [
  {
-  "t": "net",
-  "hosts": [
-   "brooksrunning.co.kr",
-   "jp.puma.com"
-  ]
- },
- {
-  "t": "dump",
-  "head": 0,
-  "per_rx": 1,
-  "pad": 100,
-  "ld_chars": 600,
-  "max_ld": 1,
-  "ctx": [],
+  "t": "pages",
   "urls": [
-   "https://brooksrunning.co.kr/product/a/664/",
-   "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-og-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/398846"
-  ]
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071605",
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071600",
+   "https://www.kolonmall.com/Brands/HUNTER",
+   "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION"
+  ],
+  "link_rx": "/Product/[A-Z0-9]{12,24}",
+  "code_rx": "(?:W2BAS\\d{5}[A-Z]{3}|[WM]F[TS]\\d{4}[A-Z]{3}[A-Z]{0,3})",
+  "show": 120
  },
  {
-  "t": "codes",
-  "key": "puma",
-  "base": "KR",
-  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
+  "t": "grep",
+  "rx": "[wm]f[ts]\\d{4}[a-z]{3}",
   "sites": {
-   "KR": {
-    "host": "kr.puma.com",
-    "path": "/kr/ko/"
-   },
    "US": {
-    "host": "us.puma.com",
-    "path": "/us/en/"
+    "host": "hunterboots.com"
    },
    "GB": {
-    "host": "uk.puma.com",
-    "path": "/uk/en/"
+    "host": "hunterboots.co.uk"
    },
-   "DE": {
-    "host": "eu.puma.com",
-    "path": "/de/de/",
-    "kid_pref": [
-     "/urls/de/"
-    ]
-   },
-   "MX": {
-    "host": "mx.puma.com",
-    "path": "/mx/es/"
-   },
-   "AE": {
-    "host": "ae.puma.com",
-    "path": "/ae/en/"
+   "JP": {
+    "host": "hunterboots.co.jp"
    }
   },
-  "max_maps": 60,
-  "per_host": 110,
-  "show": 80
+  "show": 150,
+  "max_maps": 12,
+  "per_host": 90
+ },
+ {
+  "t": "grep",
+  "max_maps": 10,
+  "per_host": 80,
+  "show": 150,
+  "rx": "/product/",
+  "sites": {
+   "KR": {
+    "host": "saucony.co.kr"
+   }
+  }
  }
 ]
