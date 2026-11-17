@@ -1,89 +1,18 @@
 [
  {
   "t": "tryp",
-  "prods": [
+  "ids": [
    {
-    "id": "saucony-azura",
-    "brand": "써코니",
-    "name": "엔돌핀 아주라(남성)",
-    "code": "S21070",
-    "src": "page",
-    "hint": "엔돌핀 아주라",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
-     "US": "https://www.saucony.com/en/endorphin-azura/60807M.html?dwvar_60807M_color=S21070-172",
-     "GB": "https://www.saucony.com/UK/en_GB/endorphin-azura/60807M.html",
-     "DE": "https://www.saucony.com/DE/de_DE/endorphin-azura/60807M.html"
-    }
-   },
-   {
-    "id": "saucony-endtrainer",
-    "brand": "써코니",
-    "name": "엔돌핀 트레이너(남성)",
-    "code": "S20996",
-    "src": "page",
-    "hint": "엔돌핀 트레이너",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
-     "US": "https://www.saucony.com/en/endorphin-trainer/59961M.html?dwvar_59961M_color=S20996-110",
-     "GB": "https://www.saucony.com/UK/en_GB/endorphin-trainer/59961M.html",
-     "DE": "https://www.saucony.com/DE/de_DE/endorphin-trainer/59961M.html"
-    }
-   },
-   {
-    "id": "saucony-xodus4",
-    "brand": "써코니",
-    "name": "엑소더스 울트라 4(남성)",
-    "code": "S21032",
-    "src": "page",
-    "hint": "엑소더스 울트라 4",
-    "code_in_page": true,
-    "urls": {
-     "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%91%EC%86%8C%EB%8D%94%EC%8A%A4-%EC%9A%B8%ED%8A%B8%EB%9D%BC-4-kodiakwine/139/",
-     "US": "https://www.saucony.com/en/xodus-ultra-4/60330M.html?dwvar_60330M_color=S21032-245",
-     "GB": "https://www.saucony.com/UK/en_GB/xodus-ultra-4/60330M.html",
-     "DE": "https://www.saucony.com/DE/de_DE/xodus-ultra-4/60330M.html"
-    }
-   }
-  ]
- },
- {
-  "t": "hunterkr",
-  "lists": [
-   "https://www.kolonmall.com/Brands/HUNTER/List/133010071605"
-  ],
-  "targets": [
-   "WFS2200RMABLK",
-   "WFT2235RMABLK",
-   "WFT2108WWUBLK"
-  ],
-  "prods": [
-   {
-    "full": "WFS2200RMABLK",
-    "code": "WFS2200RMA",
-    "name": "리파인드 슬림핏 숏(여성)",
-    "urls": {
-     "GB": "https://hunterboots.co.uk/products/womens-refined-slim-fit-short-wellington-boots-wfs2200rma-blk.json",
-     "JP": "https://hunterboots.co.jp/products/wfs2200rma-blk.json"
-    }
-   },
-   {
-    "full": "WFT2235RMABLK",
-    "code": "WFT2235RMA",
-    "name": "플레이 비건 시어링 인슐레이티드 톨(여성)",
-    "urls": {
-     "GB": "https://hunterboots.co.uk/products/womens-play-vegan-shearling-insulated-tall-wellington-boots-wft2235rma-blk.json"
-    }
-   },
-   {
-    "full": "WFT2108WWUBLK",
-    "code": "WFT2108WWU",
-    "name": "인트레피드 톨 스노 부츠(여성)",
-    "urls": {
-     "GB": "https://hunterboots.co.uk/products/womens-intrepid-tall-snow-boot-wft2108wwu-blk.json"
-    }
+    "ids": [
+     "puma-dnetrailw",
+     "puma-foreverrun2",
+     "puma-kingindoor",
+     "hunter-refinedshort",
+     "hunter-veganshearling",
+     "hunter-intrepidtall",
+     "saucony-azura",
+     "saucony-endtrainer"
+    ]
    }
   ]
  }

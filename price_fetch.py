@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.21: (SKU 9차 · 정기 차례 11/17 · 대표 상시 지시 2026-10-26) 상품이 적은 브랜드부터 — 푸마 디비에이트 나이트로 엘리트 트레일 여성(310468 · 한국·미국·독일·멕시코)·
+    포에버런 나이트로 2(310109 · 한국·미국·독일·두바이)·킹 인도어(401683 · 한국·미국·멕시코·두바이) · 헌터 리파인드 슬림핏 숏(WFS2200RMA · 한국·영국·일본)·플레이 비건 시어링
+    인슐레이티드 톨(WFT2235RMA)·인트레피드 톨 스노 부츠(WFT2108WWU · 각 한국·영국) · 써코니 엔돌핀 아주라(S21070 · 한국·미국·영국·독일)·엔돌핀 트레이너(S20996 · 한국·영국·독일)
+    → 상품 122개 · 값 505개(+26 · 11/17 GitHub 서버에서 모두 정가 읽기 확인) · 멈춘 사이트 그대로: 브룩스 한국(443 연결 거부 — 80은 brookssports.co.kr로 넘김)·푸마 일본(robots.txt까지
+    Cloudflare 봇 확인 화면 403) · 푸마 팔레르모 프리미엄·이지 라이더 빈티지·시부이 캣·팔레르모 레더는 한국 페이지 404라 뺌 · 써코니 엑소더스 울트라 4는 한국 몰 가격 없음(품절) ·
+    헌터 코오롱몰 상품 번호는 목록 화면에서 품번 바로 앞 /Product/K… (상품 이름 끝 품번으로 정가 읽기에서 다시 확인)
 v1.20: (대표 지시 2026-11-11 '추천 순서대로' — 블프 전 해외 정가 빈칸 줄이기) ① 푸마 일본(jp.puma.com)이 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 ·
     11/11 GitHub 서버 확인 — 우회하지 않음) → PAUSED에 넣음(why '일본 공식몰이 자동 접속을 막음' · 화면 '접속 막음 · 11/03 값' · 21일 알림 안 냄 · 요청 안 함 —
     주 1회 SKU 차례에서 우리 봇으로 다시 열렸는지 확인하고 열리면 뺌) ② 온러닝: 옛 클라우드몬스터(61.98434 — 한국)·남성 클라우드노바 2(3ME30210108 — 한국·일본)가 11/10부터 그 나라 몰에서
@@ -330,6 +336,22 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/t7-always-on-kurze-trainingsjacke-damen/629796",
         "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-mujer/629796.html",
         "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-jacket-women/629796.html"}},   # v1.18 일본 몰 사이트맵에 없음 · 11/10 한국·미국·영국·독일 할인 중(정가는 이 상품 취소선 정가)
+    # v1.21 SKU 9차(정기 차례 11/17) — 한국 사이트맵 666개 중 해외 몰에 같은 품번이 있는 것(11/17 GitHub 서버 정가 읽기 확인 · 일본 몰은 접속 막음이라 뺌)
+    {"id": "puma-dnetrailw", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 트레일(여성)", "code": "310468", "src": "page", "hint": "deviate nitro elite trail", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Edeviate-nitro-elite-trail-wn/310468.html",
+        "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-womens-trail-running-shoes/310468",
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-damen/310468",
+        "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"}},   # 영국 몰은 상품 가격 데이터(JSON-LD) 없음 · 두바이 몰에 없음(11/17)
+    {"id": "puma-foreverrun2", "brand": "푸마", "name": "포에버런 나이트로 2(남성)", "code": "310109", "src": "page", "hint": "foreverrun nitro 2", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Eforeverrun-nitro-2/310109.html",
+        "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-mens-road-running-shoes/310109",
+        "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-herren/310109",
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-men/310109.html"}},   # 영국·멕시코 몰에 없음(11/17 사이트맵) · 11/17 한국·미국·독일·두바이 할인 중(정가는 취소선 정가)
+    {"id": "puma-kingindoor", "brand": "푸마", "name": "킹 인도어", "code": "401683", "src": "page", "hint": "king indoor", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%ED%82%B9-%EC%9D%B8%EB%8F%84%EC%96%B4-%3Cbr%3Eking-indoor/401683.html",
+        "US": "https://us.puma.com/us/en/pd/king-indoor-sneakers/401683",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-king-indoor/401683.html",
+        "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵)
     # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감 · 일본은 재고 정리 할인 중) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
     # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
     {"id": "on-cloudmonster", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
@@ -451,6 +473,17 @@ PRODUCTS = [
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
         "US": "https://hunterboots.com/products/womens-original-short-gloss-rain-boots-in-black-wfs1000rgl-hbl01.json",
         "GB": "https://hunterboots.co.uk/products/womens-original-short-gloss-wellington-boots-wfs1000rgl-blk.json"}},   # 일본 몰 사이트맵에 없음(10/27)
+    # v1.21 SKU 9차 — 코오롱몰 헌터 목록 화면의 품번(상품 이름 끝) ∩ 영국·일본 쇼피파이(11/17 정가 읽기 확인 · 미국 몰에 없음)
+    {"id": "hunter-refinedshort", "brand": "헌터", "name": "리파인드 슬림핏 숏(여성)", "code": "WFS2200RMA", "src": "page", "hint": "wfs2200rmablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507760063021BK01",
+        "GB": "https://hunterboots.co.uk/products/womens-refined-slim-fit-short-wellington-boots-wfs2200rma-blk.json",
+        "JP": "https://hunterboots.co.jp/products/wfs2200rma-blk.json"}},
+    {"id": "hunter-veganshearling", "brand": "헌터", "name": "플레이 비건 시어링 인슐레이티드 톨(여성)", "code": "WFT2235RMA", "src": "page", "hint": "wft2235rmablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084797358063BK01",
+        "GB": "https://hunterboots.co.uk/products/womens-play-vegan-shearling-insulated-tall-wellington-boots-wft2235rma-blk.json"}},   # 일본 몰 사이트맵에 없음(11/17)
+    {"id": "hunter-intrepidtall", "brand": "헌터", "name": "인트레피드 톨 스노 부츠(여성)", "code": "WFT2108WWU", "src": "page", "hint": "wft2108wwublk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508591697023BK01",
+        "GB": "https://hunterboots.co.uk/products/womens-intrepid-tall-snow-boot-wft2108wwu-blk.json"}},   # 일본 몰 사이트맵에 없음(11/17)
     # v1.17 언더아머 두바이 = underarmour.ae(공식 중동 유통사 Athlocity · SFCC) — 색상 페이지 UA품번-색상(정가는 색상과 같음 · 11/03 확인) · sfra_list
     {"id": "ua-tech2", "brand": "언더아머", "name": "UA 테크 2.0 반팔", "code": "1326413", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
@@ -545,6 +578,16 @@ PRODUCTS = [
     {"id": "saucony-kinvara16", "brand": "써코니", "name": "킨바라 16(남성)", "code": "S21020", "src": "page", "hint": "킨바라 16", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
         "US": "https://www.saucony.com/en/kinvara-16/60309M.html"}},   # 영국·독일 몰 같은 주소는 다른 색상 품번(S101468)만 있어 뺌(시험 10/22)
+    # v1.21 SKU 9차 — 한국 몰 상품 화면의 품번(상품 설명 그림 이름 SAUCONY29S…-색상) ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/17 정가 읽기 확인)
+    {"id": "saucony-azura", "brand": "써코니", "name": "엔돌핀 아주라(남성)", "code": "S21070", "src": "page", "hint": "엔돌핀 아주라", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
+        "US": "https://www.saucony.com/en/endorphin-azura/60807M.html?dwvar_60807M_color=S21070-172",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-azura/60807M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-azura/60807M.html"}},
+    {"id": "saucony-endtrainer", "brand": "써코니", "name": "엔돌핀 트레이너(남성)", "code": "S20996", "src": "page", "hint": "엔돌핀 트레이너", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-trainer/59961M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-trainer/59961M.html"}},   # 미국 몰 같은 주소 HTTP 404(11/17) · 엑소더스 울트라 4는 한국 몰 가격 없음(품절)이라 뺌
     {"id": "brooks-ghost18", "brand": "브룩스", "name": "고스트 18(남성)", "code": "1104931D", "cc_code": {"JP": "BRM4933"}, "src": "page", "hint": "고스트 18", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",   # 품번은 prd_model 칸(1104931D020)
         "JP": "https://brooksrunning.co.jp/products/brm4933-b-b.json"}},   # 일본 수입사 품번 BRM4933 = 고스트 18 남성 보통 폭 · 미국·유럽 몰은 403(넣지 않음)
