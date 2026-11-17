@@ -410,10 +410,38 @@ def shopprod(j):   # 쇼피파이 상품 .json — 변형 품번·바코드·가
             if m:
                 out("WANT", url=u[-60:], code=w, n=len(m), prices=sorted({v.get("price") for v in m}), cmp=sorted({str(v.get("compare_at_price")) for v in m}),
                     curs=sorted({str(v.get("price_currency")) for v in m}), titles=[v.get("title") for v in m[:3]], skus=[v.get("sku") for v in m[:3]], avail=sum(1 for v in m if v.get("available")))
+
+def hunterkr(j):   # SKU 9차: 코오롱몰 헌터 목록 화면에서 품번 바로 앞 상품 번호(/Product/K…) 찾기 → 상품 정의로 정가 읽기
+    found = {}
+    for u in j["lists"]:
+        try:
+            h = pf.get(u).text
+        except Exception as e:
+            out("PAGEERR", url=u, err=str(e)[:160]); continue
+        for code in j["targets"]:
+            for m in re.finditer(code, h):
+                back = h[max(0, m.start() - j.get("back", 4000)):m.start()]
+                ks = re.findall(r"/Product/(K\d{16}[A-Z]{2}\d{2})", back)
+                fwd = re.findall(r"/Product/(K\d{16}[A-Z]{2}\d{2})", h[m.end():m.end() + 1500])
+                out("HKR", code=code, back=ks[-2:], fwd=fwd[:2])
+                if ks and code not in found: found[code] = ks[-1]
+    for c in j["prods"]:
+        k = found.get(c["full"])
+        if not k:
+            out("HKR_MISS", code=c["full"]); continue
+        prod = {"id": "try-" + c["full"], "brand": "헌터", "name": c["name"], "code": c["code"], "src": "page", "hint": c["full"].lower(),
+                "urls": {"KR": f"https://www.kolonmall.com/Brands/HUNTER/Product/{k}", **c["urls"]}}
+        out("HPROD", prod=prod)
+        for cc in prod["urls"]:
+            try:
+                (full, extra), src = pf.fetch_one(prod, cc)
+                out("OK", id=prod["id"], cc=cc, full=full, cur=pf.MK[cc][2], extra=extra)
+            except Exception as e:
+                out("FAIL", id=prod["id"], cc=cc, err=f"{type(e).__name__}: {str(e)[:200]}")
 if __name__ == "__main__":
     pf.log = lambda m: print("  log:", m, flush=True)
     for j in json.load(open(sys.argv[1])):
         if left() < 30: print("시간 제한 — 남은 작업 건너뜀"); break
         {"net": net, "codes": codes, "try": try_codes, "grep": grep, "pages": pages, "tryp": tryp, "shopjson": shopjson, "jsfollow": jsfollow, "rxpage": rxpage, "robots": robots,
-         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats, "aescope": aescope}[j["t"]](j)
+         "robotsraw": robotsraw, "nikefeed": nikefeed, "dump": dump, "shopprod": shopprod, "aepage": aepage, "shopstats": shopstats, "aescope": aescope, "hunterkr": hunterkr}[j["t"]](j)
     print(f"끝 {int(time.time()-T0)}초")
