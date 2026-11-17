@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.22: (11/17 update-dashboard — 언더아머 한국·영국·독일 27건 '가격 데이터 없음') 원인 = 세 몰이 11/17부터 상품 페이지 대신 봇 확인 화면('Client Challenge' · HTTP 200 · 3KB ·
+    11/17 GitHub 서버 확인 — 우회하지 않음) → ① PAUSED에 넣음(why '한국/영국/독일 공식몰이 자동 접속을 막음' · 화면 '접속 막음 · 11/11 값' · 21일 알림 안 냄 · 주 1회 SKU 차례에서 다시 열렸는지 확인 —
+    v1.20 푸마 일본과 같은 처리 · 미국·멕시코·두바이 몰은 그대로) ② HTTP 200 봇 확인 화면 알아보기(_challenge — HTML 30KB 밑 + 'Client Challenge'·'Just a moment...' 같은 제목이나
+    /_fs-ch-·challenges.cloudflare.com·captcha-delivery·px-captcha 표식) → 403처럼 그 실행에서 그 사이트에 더 요청 안 함 · 까닭 '봇 확인 화면(접속 차단 — 우회하지 않음)'(전에는 'JSON-LD 없음')
 v1.21: (SKU 9차 · 정기 차례 11/17 · 대표 상시 지시 2026-10-26) 상품이 적은 브랜드부터 — 푸마 디비에이트 나이트로 엘리트 트레일 여성(310468 · 한국·미국·독일·멕시코)·
     포에버런 나이트로 2(310109 · 한국·미국·독일·두바이)·킹 인도어(401683 · 한국·미국·멕시코·두바이) · 헌터 리파인드 슬림핏 숏(WFS2200RMA · 한국·영국·일본)·플레이 비건 시어링
     인슐레이티드 톨(WFT2235RMA)·인트레피드 톨 스노 부츠(WFT2108WWU · 각 한국·영국) · 써코니 엔돌핀 아주라(S21070 · 한국·미국·영국·독일)·엔돌핀 트레이너(S20996 · 한국·영국·독일)
@@ -184,7 +188,11 @@ HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
 JUMP = 1.5          # 배 — 정가가 이만큼 넘게 바뀌면 다음 확인 때 같아야 반영
 PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식몰 리뉴얼 중"},   # v1.19 수집을 잠시 멈춘 사이트(대표 확인 2026-11-10) —
-          "jp.puma.com": {"since": "2026-11-10", "why": "일본 공식몰이 자동 접속을 막음"}}   # v1.20 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 · 11/11 GitHub 서버 확인) — 우회하지 않음
+          "jp.puma.com": {"since": "2026-11-10", "why": "일본 공식몰이 자동 접속을 막음"},   # v1.20 11/10부터 robots.txt까지 Cloudflare 봇 확인 화면(HTTP 403 · 11/11 GitHub 서버 확인) — 우회하지 않음
+          # v1.22 언더아머 한국·영국·독일 몰이 11/17부터 상품 페이지 대신 봇 확인 화면('Client Challenge' · HTTP 200 · 3KB — 11/17 GitHub 서버 확인) — 우회하지 않음 · 미국·멕시코·두바이 몰은 그대로
+          "www.underarmour.co.kr": {"since": "2026-11-17", "why": "한국 공식몰이 자동 접속을 막음"},
+          "www.underarmour.co.uk": {"since": "2026-11-17", "why": "영국 공식몰이 자동 접속을 막음"},
+          "www.underarmour.de": {"since": "2026-11-17", "why": "독일 공식몰이 자동 접속을 막음"}}
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
@@ -811,6 +819,20 @@ def robots_ok(url):
 _S = _MAIN.sess   # 넘겨짐 사이 쿠키를 이어 주려고(예전 allow_redirects=True와 같게) · v1.12 묶음마다 세션(_Ctx.sess)
 
 
+CHALLENGE = re.compile(r"(?is)<title[^>]*>\s*(?:Client Challenge|Just a moment\.\.\.|Attention Required|Access Denied|Pardon Our Interruption)\s*</title>"
+                       r"|/_fs-ch-|challenges\.cloudflare\.com|captcha-delivery\.com|px-captcha")
+
+
+def _challenge(r):
+    """v1.22 응답이 봇 확인 화면인지 — HTML이고 작으며(30KB 밑) 확인 화면 제목·표식이 있을 때만(큰 상품 페이지 본문의 낱말에 걸리지 않게)"""
+    h = getattr(r, "headers", None) or {}
+    body = getattr(r, "content", None)
+    ct = (h.get("Content-Type") or "").lower()
+    if (ct and "html" not in ct) or body is None or len(body) > 30000:
+        return False
+    return bool(CHALLENGE.search(getattr(r, "text", "") or ""))
+
+
 def get(url, hops=5):
     """주소 → 응답. 넘겨짐(3xx)은 직접 따라가며 매번 막힘·robots.txt를 먼저 확인(막힌 주소는 요청하지 않음).
     v1.12 그 사이트 자물쇠 안에서 확인·기다림·요청(같은 사이트는 묶음과 상관없이 한 번에 한 요청) — 기다림 = 묶음 안 GAP과
@@ -868,6 +890,9 @@ def get(url, hops=5):
                     raise RuntimeError(pre + f"HTTP {r.status_code}(접속 차단 — 우회하지 않음)")
                 if r.status_code >= 400:
                     raise RuntimeError(pre + f"HTTP {r.status_code}")
+                if _challenge(r):   # v1.22 HTTP 200인데 봇 확인 화면(언더아머 한국·영국·독일 11/17 'Client Challenge') — 403처럼 그 실행에서 더 요청 안 함
+                    _BLOCKED.add(host)
+                    raise RuntimeError(pre + "봇 확인 화면(접속 차단 — 우회하지 않음)")
                 return r
         try:
             loc = loc.encode("latin1").decode("utf-8")   # requests와 같게 UTF-8 주소 되살림
