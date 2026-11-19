@@ -652,7 +652,7 @@ tr.cx td{background:var(--barbg);padding:10px 8px;text-align:left}
 .cl>span:first-child{min-width:0}
 .sl-row{padding:8px 0;border-bottom:1px solid var(--line)}
 button.sl-row{display:block;width:100%;min-height:44px;text-align:left;color:inherit}   /* v33.35 세일 줄 = 해외 정가 매입 후보 순위로 */
-button.sl-row .t1>span:last-child{display:inline-flex;align-items:center;gap:2px}
+button.sl-row .t1>span:first-child{word-break:keep-all;overflow-wrap:break-word}
 .sl-row:last-child{border-bottom:0}
 .sl-row .t1{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-base)}
 .sl-row .t1>span:first-child{min-width:0}.sl-row .t1>span:last-child{flex:none;white-space:nowrap}
@@ -977,7 +977,7 @@ div.dc-hd{cursor:default}
 .dc-news:first-child{border-top:0}
 .dc-news .t{font-size:15px;font-weight:600;line-height:1.5}.dc-news .s{font-size:13px;color:var(--sub)}
 .dc-xmore{display:flex;align-items:center;width:100%;min-height:44px;border-top:1px solid var(--line);font-size:13px;color:var(--accent)}
-.dc-peer{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:0 0 12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.dc-peer{word-break:keep-all;overflow-wrap:break-word;display:flex;align-items:center;gap:12px;width:100%;min-height:60px;margin:0 0 12px;padding:10px 12px 10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
 .dc-peer .tt,.bd-hq .tt,.bd-link .tt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
 .dc-peer .s,.bd-hq .s,.bd-link .s{font-size:13px;color:var(--sub)}
 .dc-peer .t,.bd-hq .t,.bd-link .t{font-size:15px;font-weight:600}
@@ -1259,7 +1259,7 @@ div.bd-nx{cursor:default}
 #brandDetail .bd-ev,#brandDetail .bd-sec{scroll-margin-top:8px}
 .bd-flash{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r);transition:outline .3s}
 .bd-sec.bd-flash{outline-offset:6px}
-/* 해외 정가 한 줄(48px) — 누르면 아래 '해외 정가 비교'로 */
+/* 해외 정가 한 줄(48px) — 누르면 그 브랜드 착지 보기(v33.35 · 착지 후보가 없으면 아래 '해외 정가 비교'로) */
 .bd-prl{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;padding:0 10px 0 12px;border-radius:12px;background:var(--fill);color:var(--tx);font-size:var(--fs2);text-align:left}
 .bd-prl:active{background:var(--line)}
 .bd-prl .t{flex:1;min-width:0}
@@ -1428,7 +1428,7 @@ table.pm-ct{width:100%;border-collapse:collapse;font-size:var(--fs1)}
 .pm-inp{display:flex;align-items:center;gap:8px;font-size:var(--fs1);color:var(--sub)}
 .pm-inp input{width:84px;height:44px;padding:0 12px;border:0;border-radius:10px;box-shadow:inset 0 0 0 1.5px var(--muted);background:var(--card);color:var(--tx);font-size:var(--fs3);font-weight:700;text-align:right}
 .pm-fix{margin-top:12px;font-size:var(--fs1);color:var(--sub);line-height:1.5}
-.td-fxt td small{display:block;font-size:var(--fs1);font-weight:400;color:var(--sub)}   /* v33.35 1년 최저·최고 */
+#p-today .td-fxt small.fx-edge{display:block;margin-left:0}   /* v33.35 1년 최저·최고(원화 아래 · '(1년 전)'은 그대로 옆에) */
 .pm-rk{display:inline-block;min-width:1.4em;margin-right:4px;font-size:var(--fs1);font-weight:700;color:var(--sub)}   /* v33.35 매입 후보 순위 번호 */
 .pm-be small{margin-left:1px;font-weight:400;color:var(--sub)}
 .pm-dp{margin-left:1px;font-size:.75em;font-weight:400;color:var(--sub)}   /* v33.34 40% 이상 할인 표시(추천 제외) */
@@ -2561,7 +2561,7 @@ function todayHtml(m){   // 카드마다 따로 그림 — 계산·그리기가 
     return n?`<section class="dc" aria-label="${esc(t)}">${dcHd(n,t,'',dest)}<div class="dc-in">${bootErr(t)}</div></section>`:'';
   };
   return card('buy',1,'매입 검토','brand-all',tdBuyHtml)+card('fx',2,'환율 타이밍','more:fx',tdFxHtml)+card('events',3,'다가오는 일정','mk:cal',tdEvHtml)+card('news',4,'중요 뉴스','news:all',tdNewsHtml)
-    +card('arb',0,'해외 할인 차익','',a=>`<button type="button" class="dc-peer" data-go="more:price?base=now&land=1&sort=rank"><span class="tt"><span class="s">해외 할인 차익 · 착지</span><span class="t">들여오면 남는 상품 ${a.n}/${a.tot}${a.top?` · 1위 ${esc(a.top)}`:''}</span></span>${ic('right',20,'s2 chev')}</button>`)   // v33.35 대표 결정 2026-11-19 '나'
+    +card('arb',0,'해외 할인 차익','',a=>`<button type="button" class="dc-peer" data-go="more:price?base=now&land=1&sort=rank"><span class="tt"><span class="s">해외 할인 차익${a.top?` · 1위 ${esc(a.top)}`:''}</span><span class="t">들여오면 남는 상품 ${a.n}/${a.tot}</span></span>${ic('right',20,'s2 chev')}</button>`)   // v33.35 대표 결정 2026-11-19 '나'
     +card('peer',0,'트렉시 위치','',p=>`<button type="button" class="dc-peer" data-go="more:peer"><span class="tt"><span class="s">${esc(p.sub)}</span><span class="t">${esc(p.main)}</span></span>${ic('right',20,'s2 chev')}</button>`)
     // v33.28 맺음 줄 = Claude 사용액만(갱신 시각·수집 상태는 머리 단추 하나 — 같은 말을 두 번 쓰지 않음)
     +card('foot',0,'맺음 줄','',f=>f.c?`<button type="button" class="td-foot" data-go="more:status">${esc(f.c).replace(/(Claude 사용액 \S+)$/,'<span class="nw">$1</span>')}</button>`:'');
@@ -2619,7 +2619,7 @@ function tdFxHtml(F){   // ② 환율 타이밍 — v33.28 큰 숫자 한 줄 + 
   if(!C&&H.brands) h+=`<p class="dc-s">${esc(H.brands)}</p>`;
   if(F.rows.length){ const b0=sh(F.rows[0].diff).b||'1년 평균';
     h+=`<table class="td-fxt"><thead><tr><th scope="col">통화</th><th scope="col">원화</th><th scope="col">${esc(b0)} 대비</th></tr></thead><tbody>${F.rows.map(o=>{ const s=sh(o.diff);
-      return `<tr><td>${esc(o.name)}${staleDs(o.stale)}</td><td class="tn">${esc(o.value)}${o.edge?`<small>${esc(o.edge)}</small>`:''}</td><td class="tn">${s.v}${s.b&&s.b!==b0?`<small>(${esc(s.b)})</small>`:''}</td></tr>`; }).join('')}</tbody></table>`; }
+      return `<tr><td>${esc(o.name)}${staleDs(o.stale)}</td><td class="tn">${esc(o.value)}${o.edge?`<small class="fx-edge">${esc(o.edge)}</small>`:''}</td><td class="tn">${s.v}${s.b&&s.b!==b0?`<small>(${esc(s.b)})</small>`:''}</td></tr>`; }).join('')}</tbody></table>`; }
   const dy=A.day?esc(A.day)+' ':'';   // 오늘이 아닐 때만 날짜
   h+=A.n===1?`<p class="fx-al">${dy}새 환율 알림 · <b>${esc(A.list[0])}</b></p>`
     :A.n?`<p class="fx-al">${dy}새 환율 알림 ${A.n}건</p>${A.list.map(t=>`<p class="fx-ai">${esc(t)}</p>`).join('')}`
@@ -3150,7 +3150,7 @@ function buildCal(){
   document.getElementById('calList').innerHTML=evs.length?evs.map(r=>`<button type="button" class="cl" data-go="co:${esc(r.key)}"><span>${calDot(r.dn)}${r.logo}${esc(r.name)}</span><span class="nw">${r.d.getMonth()+1}/${r.d.getDate()} <span class="na">D-${r.dn}</span></span></button>`).join(''):'<div class="na">90일 이내 확인된 일정 없음(미확인 포함)</div>';
   const lim=addD(today,150), up=SALES.filter(e=>e.e>=today&&e.s<=lim).sort((a,b)=>a.s-b.s);
   document.getElementById('saleList').innerHTML=up.length?up.map(e=>{const live=e.s<=today, dn=Math.round(((live?e.e:e.s)-today)/86400000);
-    return `<button type="button" class="sl-row" data-go="more:price?base=now&land=1&sort=rank" aria-label="${esc(e.nm)} — 해외 정가 매입 후보 순위 보기"><div class="t1"><span>${esc(e.nm)}<span class="sl-k">${e.k}</span></span><span>${md2(e.s)}${+e.e!==+e.s?'~'+md2(e.e):''} <span class="${live?'sl-live':'na'}">${live?'진행 중 · '+(dn>0?dn+'일 남음':'오늘 끝'):'D-'+dn}</span>${ic('right',16,'s2')}</span></div></button>`;}).join('')   // v33.35 누르면 해외 정가 매입 후보 순위
+    return `<button type="button" class="sl-row" data-go="more:price?base=now&land=1&sort=rank"><div class="t1"><span>${esc(e.nm)}<span class="sl-k">${e.k}</span></span><span>${md2(e.s)}${+e.e!==+e.s?'~'+md2(e.e):''} <span class="${live?'sl-live':'na'}">${live?'진행 중 · '+(dn>0?dn+'일 남음':'오늘 끝'):'D-'+dn}</span></span></div><span class="sr"> — 해외 정가 매입 후보 순위 보기</span></button>`;}).join('')   // v33.35 누르면 해외 정가 매입 후보 순위
     +why(up.map(e=>`${esc(e.nm)}: ${esc(e.note)}`).join('<br>')+'<br>확정 = 법정·고정 규칙 · 예상 = 해마다 주최 측 발표(지난해 기준) · 직구 배송·통관 1~3주 감안<br>'+CAL_HOW)
     :'<div class="na">150일 이내 세일 없음</div>'+why(CAL_HOW);   // v33.25 줄마다 설명·각주·달력 범례 → 읽는 법 하나
 }
@@ -3957,7 +3957,7 @@ function moreHead(t,sub){   // v33 S2: 더보기 하위 화면 머리 = '‹ 바
 }
 function fxLandHtml(){   // v33.35 통화마다 '그 나라 정가로 들여오면 남는 상품'(착지 · 정가 — 한국 가격 멈춤·수집 멈춘 값 뺌) 지금 환율 n · 1년 평균 환율이면 m
   if(!PRICES||!(PRICES.items||[]).length) return '';
-  const F=landFreight(), fee=PR_FEE||0, FXD=DATA.fx||{}, rows=PRICES.items.map(it=>pmRow(it,F,{base:'list',land:true})).filter(x=>x.kr&&!x.krPz);
+  const F=landFreight(), fee=PR_FEE||0, FXD=DATA.fx||{}, rows=PRICES.items.map(it=>pmRow(it,F,{base:'list',land:true,vat:'in'})).filter(x=>x.kr&&!x.krPz);
   const out=[]; ['USD','GBP','EUR','JPY'].forEach(cur=>{ const f=FXD[cur]||{}, r=+f.rate, a=+f.avg1y; if(!(r>0)) return;
     const ccs=PR_ORD.filter(cc=>rows.some(x=>x.c[cc]&&x.c[cc].o.cur===cur&&x.c[cc].fr!=null)); if(!ccs.length) return;
     let n=0, na=0; rows.forEach(x=>{ const cs=ccs.map(cc=>x.c[cc]).filter(c=>c&&c.fr!=null&&c.m!=null&&!c.o.paused);
@@ -5153,16 +5153,16 @@ const PM_WHY='정가 = 할인 전 가격(공식몰 정가 표기 · 나이키는
   +'미국 가격은 판매세 별도, 그 밖은 부가세 포함(두바이 5% · 디르함은 달러 고정 3.6725로 환산). 접속을 막는 공식몰은 우회하지 않음.';
 /* 착지(원) = (현지 가격[수출 환급 가정이면 현지 부가세를 뺌] × 환율 + 운임 원) × 관세·수입 부가세 — fwd = 착지, inv = 착지가 won(한국 가격 × (1 − 목표))이 되는 현지 가격(현지 부가세 포함 표시가 · 환율이 없으면 null) */
 const pmLand={
-  fwd:(v,cur,cc,fr,K)=>{ const k=krwOf(PM_VAT==='out'?v/(1+(LAND.lvat[cc]||0)):v,cur); return k==null?null:(k+(fr||0))*K; },
+  fwd:(v,cur,cc,fr,K,vat)=>{ const k=krwOf((vat||PM_VAT)==='out'?v/(1+(LAND.lvat[cc]||0)):v,cur); return k==null?null:(k+(fr||0))*K; },   // v33.35 vat = 'in'·'out'(없으면 화면 설정 PM_VAT)
   inv:(won,cur,cc,fr,K)=>{ const r=+((DATA.fx||{})[cur]||{}).rate; return r>0?(won/K-(fr||0))/r*(PM_VAT==='out'?1+(LAND.lvat[cc]||0):1):null; }};
-function pmRow(it,F,O){   // v33.35 O = {base, land} — 화면 조건 대신(매입 후보 pmCand · 환율 화면)   // 한 상품의 지금 기준 값 — 한국 krP(표 비교: 정가 또는 지금 판매가) · krNow(한국에서 지금 팔리는 가격 — 착지 마진·본전 매입가는 늘 이것) · 나라별 {o, sp 할인가, off 할인율, unk 할인가 미확인, val 원화, g 한국은 %, fr 운임 원, landed 착지 원, m 마진 %}
+function pmRow(it,F,O){   // v33.35 O = {base, land, vat} — 화면 조건 대신(매입 후보 pmCand · 환율 화면 — 현지 부가세는 늘 포함 'in')   // 한 상품의 지금 기준 값 — 한국 krP(표 비교: 정가 또는 지금 판매가) · krNow(한국에서 지금 팔리는 가격 — 착지 마진·본전 매입가는 늘 이것) · 나라별 {o, sp 할인가, off 할인율, unk 할인가 미확인, val 원화, g 한국은 %, fr 운임 원, landed 착지 원, m 마진 %}
   const now=(O&&O.base||PM.base)==='now', land=O&&O.land!=null?O.land:PM.land, P=prRows(it), kr=P.kr;   // 정가끼리 원화·한국은 % = 브랜드 상세·더보기 메뉴 줄과 같은 prRows
   const krSp=kr?prSp(kr):null, krNow=kr?(krSp||kr.p):null, krP=kr?(now?krNow:kr.p):null, krOff=kr?prOff(kr):null;
   const L=landCat(it), K=pmKOf(L.duty), fee=PR_FEE||0, krPz=!!(kr&&kr.paused);   // v33.34 분류별 무게·관세 · 판매 수수료 · 한국 가격 수집 멈춤(옛 값 — 그사이 한국 할인을 모름)
   const c={};
   P.rows.forEach(r=>{ const cc=r.cc, o=r.o, sp=prSp(o), val=now?krwOf(sp||o.p,o.cur):r.krw;
     const g=now?(kr&&val?(krNow/val-1)*100:null):r.gap, fr=F[cc]!=null?F[cc]*L.kg:null;
-    const landed=pmLand.fwd(now?(sp||o.p):o.p,o.cur,cc,fr,K), m=kr&&landed!=null?(1-landed/krNow)*100-fee:null;   // Q3 가: 착지 마진은 정가 보기도 한국에서 지금 팔리는 가격으로 나눔(한국도 할인 중이면 할인가) · v33.34 수수료 %p를 뺌
+    const landed=pmLand.fwd(now?(sp||o.p):o.p,o.cur,cc,fr,K,O&&O.vat), m=kr&&landed!=null?(1-landed/krNow)*100-fee:null;   // Q3 가: 착지 마진은 정가 보기도 한국에서 지금 팔리는 가격으로 나눔(한국도 할인 중이면 할인가) · v33.34 수수료 %p를 뺌
     const off=prOff(o), deep=now&&!!sp&&off!=null&&-off>=LAND.deep;   // v33.34 할인가 보기의 40% 이상 할인 = 일부 색상·사이즈일 수 있음
     c[cc]={o,sp,off,unk:prSale(o)&&!sp,val,g,fr,landed,m,deep,kw:landed==null?null:landed/K-(fr||0)}; });   // kw = 현지 가격의 원화 몫(본전 환율·환율 바꿔 셈)
   let lo=null, best=null;
@@ -5182,7 +5182,7 @@ const PM_NR={kr:'한국 가격 멈춤',deep:'40% 이상 할인만',pz:'수집 �
 const pmMCls=(x,cc)=>x.rec&&x.rec.cc===cc?'pm-ink pm-u':x.c[cc].m>=0?'pm-ink':'pm-gry';   // 착지 마진 글자 — 추천 = 굵은 밑줄 · 0% 이상 잉크 · 미만 회색
 const pmGCls=g=>g==null||g>0?'pm-ink':'pm-gry';   // 원화 글자 — 한국보다 쌈(또는 한국 값 없음) 잉크 · 같거나 비쌈 회색
 function pmAria(x){   // 줄·카드 단추 이름(화면 읽기) — 상품 · 한국 가격 · 가장 쌈 또는 추천
-  const n=x.it.name; if(!x.kr) return n+', 한국 가격 없음';
+  const n=(PM.sort==='rank'?x.it.brand+' ':'')+x.it.name; if(!x.kr) return n+', 한국 가격 없음';   // v33.35 순위 보기는 묶음 머리가 없어 브랜드도
   const v=PM.land?x.krNow:x.krP, off=(PM.land||PM.base==='now')&&x.krOff?` (할인 ${pmPct(x.krOff)}%)`:'';
   const t=PM.land?(x.rec?`, 추천 ${PR_CC[x.rec.cc]} 마진 ${pmPct(x.rec.m)}%`:x.nr?`, ${PM_NR[x.nr]} — 추천 없음`:', 추천 없음'):(x.lo?`, 가장 쌈 ${x.lo==='KR'?'한국':PR_CC[x.lo]}`:'');
   return `${n}, 한국 ${wonR(v)}원${off}${t}`;
@@ -5191,7 +5191,8 @@ function pmGroups(){   // 고른 브랜드 · 정렬로 묶음 — 늘 브랜드
   const F=landFreight(), rows=((PRICES&&PRICES.items)||[]).map((it,i)=>Object.assign(pmRow(it,F),{i})).filter(x=>!PM.br||x.it.brand===PM.br);
   const G=[...new Set(rows.map(x=>x.it.brand))].sort((a,b)=>a.localeCompare(b,'ko')).map(b=>({b,xs:rows.filter(x=>x.it.brand===b)}));
   if(PM.sort==='rank'){ const xs=rows.slice().sort((a,b)=>(a.key==null)-(b.key==null)||(a.key==null?0:b.key-a.key)||a.i-b.i);   // v33.35 매입 후보 순위 — 묶음 하나 · 값 없는 것은 뒤로
-    xs.forEach((x,j)=>{ x.rk=x.key==null?0:j+1; }); return {F,G:[{b:'',xs}],rows,lv:pmLV()}; }
+    xs.forEach((x,j)=>{ x.rk=x.key==null?0:j+1; }); const G=[]; for(let j=0;j<xs.length;j+=20) G.push({b:'',xs:xs.slice(j,j+20)});   // 20줄 묶음(머리 없음) — pmBodyFill이 첫 화면 몫부터 나눠 그림
+    return {F,G:G.length?G:[{b:'',xs}],rows,lv:pmLV()}; }
   if(PM.sort!=='brand'){ const hi=PM.sort==='hi', cmp=(a,b)=>(a==null)-(b==null)||(a==null?0:hi?b-a:a-b);
     G.forEach(g=>{ g.key=prAvg(g.xs.map(x=>x.key).filter(v=>v!=null)); g.xs.sort((a,b)=>cmp(a.key,b.key)||a.i-b.i); });
     G.sort((a,b)=>cmp(a.key,b.key)||a.b.localeCompare(b.b,'ko')); }
@@ -5199,7 +5200,7 @@ function pmGroups(){   // 고른 브랜드 · 정렬로 묶음 — 늘 브랜드
 }
 function pmCand(br){   // v33.35 매입 후보 = 할인가·착지 추천이 있는 상품(마진 큰 순) · nList = 정가로도 남는 상품 · br = 그 브랜드만
   const F=landFreight(), its=((PRICES&&PRICES.items)||[]).filter(it=>!br||it.brand===br);
-  const now=its.map(it=>pmRow(it,F,{base:'now',land:true})), lst=new Set(its.filter(it=>pmRow(it,F,{base:'list',land:true}).rec).map(it=>it.id));
+  const now=its.map(it=>pmRow(it,F,{base:'now',land:true,vat:'in'})), lst=new Set(its.filter(it=>pmRow(it,F,{base:'list',land:true,vat:'in'}).rec).map(it=>it.id));   // 해외 정가 화면의 '수출 환급 가정'은 따르지 않음
   const bs=now.filter(x=>x.best&&!x.krPz), rec=bs.filter(x=>x.rec).sort((a,b)=>b.rec.m-a.rec.m);
   return {n:bs.length, rec, nList:rec.filter(x=>lst.has(x.it.id)).length, pz:now.filter(x=>x.best&&x.krPz).length, its:its.length};
 }
@@ -5217,7 +5218,7 @@ function pmSumHtml(D){   // 요약 한 줄(+ 받은 날 · 이전 값 n칸 → �
       if(dp) tl.push(`40% 이상 할인 때만 ${dp}`);
       const pzo=bs.filter(x=>x.nr==='pz').length; if(pzo) tl.push(`수집 멈춘 값만 ${pzo}`);   // 남는 나라가 수집을 멈춘 나라(옛 값)뿐
       if(pz) tl.push(`한국 가격 멈춤 ${pz} 제외`);
-      t=`<p class="t num">${pre}${PR_FEE?`수수료 ${esc(String(PR_FEE))}% 빼고 남는`:'착지가 한국 판매가보다 낮은'} 상품 ${bs.filter(x=>x.rec).length}/${bs.length}${tl.map((v,i)=>` <span class="n">${i?'· ':''}${v}</span>`).join('')}</p>`; }   // Q3 가: 정가 보기도 한국 판매가와 견줌
+      t=`<p class="t num">${pre}${PR_FEE?`수수료 ${esc(String(PR_FEE))}% 빼고 남는`:'착지가 한국 판매가보다 낮은'} 상품 ${bs.filter(x=>x.rec).length}/${bs.length}${tl.map((v,i)=>` <span class="n">${v}${i<tl.length-1?' ·':''}</span>`).join('')}</p>`; }   // Q3 가: 정가 보기도 한국 판매가와 견줌
   } else { const g=X.flatMap(x=>Object.values(x.c).map(c=>c.g).filter(v=>v!=null)), a=prAvg(g);
     t=a==null?`<p class="t">${pre}비교할 해외 가격 없음</p>`
       :`<p class="t num">${pre}한국 ${now?'판매가':'정가'}, 해외${Math.abs(a)<0.5?'와':'보다'} 평균 ${prGapTxt(a)} <span class="n">${g.length}칸 비교</span></p>`; }
@@ -5317,7 +5318,7 @@ function pmCardHtml(x){   // 카드 하나 — 한국 원 · 나라 3칸 × 2줄
   const pzc=PR_ORD.filter(cc=>x.c[cc]&&x.c[cc].o.paused);   // v33.33 해외 나라 수집 멈춤(푸마 일본 접속 막음)
   pzc.forEach(cc=>tg.push(`${PR_CC[cc]} ${esc(prPz(x.c[cc].o))} · ${mdTxt(x.c[cc].o.stale_since)} 값`));   // 나라마다(까닭·날짜가 다를 수 있음)
   if(stl.length||stK) tg.push(`<span class="a-dot" aria-hidden="true"></span>이전 값 ${mdTxt(stK?x.kr.stale_since:x.c[stl[0]].o.stale_since)} ${[stK?'한국':'',...stl.map(cc=>PR_CC[cc])].filter(Boolean).join('·')}`);
-  return `<li class="pm-pc${op?' open':''}" data-id="${id}"><button type="button" class="pm-pcb" id="pmc-${id}" aria-expanded="${op}"${op?` aria-controls="pmx-${id}"`:''} aria-label="${esc(pmAria(x))}"${strip?` aria-describedby="pms-${id}"`:''}>`
+  return `<li class="pm-pc${op?' open':''}" data-id="${id}"><button type="button" class="pm-pcb" id="pmc-${id}" aria-expanded="${op}"${op?` aria-controls="pmx-${id}"`:''} aria-label="${esc((x.rk?x.rk+'위, ':'')+pmAria(x))}"${strip?` aria-describedby="pms-${id}"`:''}>`
     +`<span class="nm">${x.rk?`<span class="pm-rk">${x.rk}</span>`:''}${esc(N.main)}</span><span class="rt">${rt}</span>${vr?`<span class="vr">${esc(vr)}</span>`:''}<span class="kr num">${pmKrHtml(x,true)}</span>`
     +`<span class="pm-strip" id="pms-${id}">${strip}</span>${tg.length?`<span class="tg2 num">${tg.join(' · ')}</span>`:''}</button>${op?pmXpHtml(x,'pmx-'+id):''}</li>`;
 }
@@ -5489,7 +5490,7 @@ function brDetailHtml(d,bname){
     h+=`<div class="bd-strip" role="group" aria-label="점수">${cell('dem','수요')}${cell('inv','재고')}${cell('notes','발언')}${cell('fx','환율')}</div>`
       +`<p class="bd-eq">매입 조건 <b class="${tone('score',bv||0,'sc-tx')}">${esc(T.buy.v)}</b> = 재고 ${esc(scE(E.inv))} + 발언 ${esc(scE(E.notes))} + 환율 ${esc(scE(E.fx))}<span class="bd-eqc">&nbsp;· <span class="nw">${esc(T.buy.cap)}</span></span></p>`;   // 줄이 넘치면 기준 글만 다음 줄로('·'는 앞줄 끝)
   } else h+=`<div class="bd-strip two" role="group" aria-label="점수">${cell('dem','수요')}${cell('fx','환율')}</div>`;
-  // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 첫 화면(점수 줄 바로 아래) · 누르면 아래 '해외 정가 비교'로
+  // 해외 정가 한 줄(비교할 값이 있는 브랜드만) — 첫 화면(점수 줄 바로 아래) · v33.35 착지 후보가 있으면 '들여오면 남는 상품 n/m' → 그 브랜드 착지 보기, 없으면 정가 평균 → 아래 '해외 정가 비교'로
   let ps=null, pc=null; try{ ps=bdPrSum(bname); pc=ps?pmCand(bname):null; }catch(e){ console.error('[브랜드 상세 · 해외 정가 한 줄] 셈 실패:',e); }
   if(pc&&(pc.n||pc.pz)){ const t=pc.rec[0];   // v33.35 착지 기준(할인가 · 수수료는 이 기기 설정) — 누르면 그 브랜드 착지 보기
     h+=`<button type="button" class="bd-prl" data-go="more:price?br=${encodeURIComponent(bname)}&base=now&land=1">${ic('globe',18)}<span class="t">${pc.n?`들여오면 남는 상품 <b>${pc.rec.length}/${pc.n}</b>`:'한국 가격 수집 멈춤'}</span><span class="s">${t?`최고 ${PR_CC[t.rec.cc]} ${pmPct(t.rec.m)}%`:pc.n?'착지 · 할인가':`착지 비교 제외 ${pc.pz}개`}</span>${ic('right',18,'s2 chev')}</button>`; }
@@ -5904,7 +5905,7 @@ function goKey(k){
   if(k==='brand-all'){ const had=!!BR_Q; brClearQ(); if(BR_FILTER!=='all'||had) brSetFilter('all'); return go({tab:'brand'}); }   // v33.15 검색어도 지움   // 오늘 '점검표 전체 보기' — 전에 고른 필터를 '전체'로(스크롤은 go가 맨 위로)
   if(k.startsWith('brand:')) return openBrand(k.slice(6));
   if(k.startsWith('co:')) return goDetail(k.slice(3));
-  if(k==='more:price') return go({tab:'more',view:'price'});   // v33.16·30 메뉴 줄로 새로 열면 기본 보기(뒤로 돌아오면 그 기록의 조건)
+  if(k==='more:price') return go({tab:'more',view:'price'});   // v33.16·30 기본 보기(옛 바로가기 · v33.35부터 메뉴 줄은 more:price?base=now&land=1&sort=rank — 매입 후보 순위)
   if(k.startsWith('more:price:')) return go({tab:'more',view:'price',br:k.slice(11)});   // v33.30 브랜드 상세 바로가기 = 그 브랜드로
   if(k.startsWith('more:price?')) return go(routeOfHash('#/more/price?'+k.slice(11)));   // v33.30 조건을 붙인 바로가기(예: more:price?base=now&land=1&sort=hi)
   if(k.startsWith('more:')) return goMore(k.slice(5));
