@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-19 10:14 KST",
+ "generated_at": "2026-11-19 18:25 KST",
  "fetched": "2026-11-17",
  "attempt": "2026-11-17",
  "cfg": "5a864ecc03a3",
@@ -81,7 +81,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-dunk",
@@ -183,7 +184,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-am90",
@@ -254,7 +256,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-blazer77",
@@ -360,7 +363,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-cortez",
@@ -450,7 +454,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-aj1low",
@@ -538,7 +543,8 @@
      "sp": 1499.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-vomero5",
@@ -617,7 +623,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-airmaxplus",
@@ -688,7 +695,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-killshot2",
@@ -768,7 +776,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "nike-courtvisionlo",
@@ -865,7 +874,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-speedcat",
@@ -1011,7 +1021,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-palermo",
@@ -1132,7 +1143,8 @@
      "sp": 219.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-mostro",
@@ -1286,7 +1298,8 @@
      "sp": 179.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-suede",
@@ -1378,7 +1391,8 @@
      "sp": 289.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-dne4",
@@ -1491,7 +1505,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-speedcatgo",
@@ -1576,7 +1591,8 @@
      "sp": 299.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-dnetrail",
@@ -1629,7 +1645,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-t7track",
@@ -1745,7 +1762,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "puma-dnetrailw",
@@ -1816,7 +1834,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-foreverrun2",
@@ -1896,7 +1915,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "puma-kingindoor",
@@ -1967,7 +1987,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudmonster",
@@ -2011,7 +2032,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloud6",
@@ -2073,7 +2095,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudsurfer2",
@@ -2135,7 +2158,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudtilt",
@@ -2197,7 +2221,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-roger",
@@ -2259,7 +2284,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudmonster1wp",
@@ -2312,7 +2338,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudmonster3",
@@ -2374,7 +2401,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudrunner3",
@@ -2436,7 +2464,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloudx5",
@@ -2498,7 +2527,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "on-cloud6wp",
@@ -2560,7 +2590,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "salomon-xt6",
@@ -2604,7 +2635,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "salomon-xt6base",
@@ -2648,7 +2680,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "salomon-xt4og",
@@ -2692,7 +2725,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "salomon-xt6expanse",
@@ -2736,7 +2770,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "salomon-xt4oggtx",
@@ -2780,7 +2815,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "drm-1461",
@@ -2815,7 +2851,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "drm-jadon",
@@ -2850,7 +2887,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-1460cr",
@@ -2885,7 +2923,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-2976",
@@ -2920,7 +2959,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-1460bex",
@@ -2963,7 +3003,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-1460mono",
@@ -2998,7 +3039,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-adrian",
@@ -3041,7 +3083,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "drm-8065",
@@ -3084,7 +3127,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "drm-sinclair",
@@ -3119,7 +3163,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "drm-1461mono",
@@ -3154,7 +3199,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "dd-santacroce",
@@ -3208,7 +3254,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-santamaria",
@@ -3258,7 +3305,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-triplejump",
@@ -3307,7 +3355,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-rosanna",
@@ -3348,7 +3397,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-ars",
@@ -3401,7 +3451,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-nantucket",
@@ -3459,7 +3510,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "dd-chunkyfellini",
@@ -3517,7 +3569,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "hunter-origtall",
@@ -3561,7 +3614,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-origshort",
@@ -3605,7 +3659,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-playtall",
@@ -3649,7 +3704,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-chelsea",
@@ -3684,7 +3740,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-playshort",
@@ -3719,7 +3776,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-glosstall",
@@ -3770,7 +3828,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-glossshort",
@@ -3805,7 +3864,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-refinedshort",
@@ -3840,7 +3900,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-veganshearling",
@@ -3875,7 +3936,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "hunter-intrepidtall",
@@ -3910,7 +3972,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "ua-tech2",
@@ -4028,7 +4091,8 @@
      "sp": 79.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "top"
   },
   {
    "id": "ua-hg-mock",
@@ -4116,7 +4180,8 @@
      "sp": 99.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "top"
   },
   {
    "id": "ua-hustle6",
@@ -4236,7 +4301,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "ua-tech-hz",
@@ -4338,7 +4404,8 @@
      "sp": 109.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "ua-leftchest",
@@ -4469,7 +4536,8 @@
      "sp": 79.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "top"
   },
   {
    "id": "ua-icon-hoodie",
@@ -4603,7 +4671,8 @@
      "sp": 129.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "ua-hg-sleeveless",
@@ -4691,7 +4760,8 @@
      "sp": 99.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "top"
   },
   {
    "id": "ua-undeniable-l",
@@ -4791,7 +4861,8 @@
      "sp": 139.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "ua-reign6",
@@ -4891,7 +4962,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-ride19",
@@ -4957,7 +5029,8 @@
      "sp": 128.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-endspeed5",
@@ -4996,7 +5069,8 @@
      "sp": 115.95,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-endpro5",
@@ -5058,7 +5132,8 @@
      "sp": 216.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-triumph24",
@@ -5102,7 +5177,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-guide19",
@@ -5168,7 +5244,8 @@
      "sp": 128.0,
      "sp_date": "2026-11-17"
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-hurricane26",
@@ -5212,7 +5289,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-kinvara16",
@@ -5238,7 +5316,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-azura",
@@ -5300,7 +5379,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "saucony-endtrainer",
@@ -5353,7 +5433,8 @@
       ]
      ]
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-ghost18",
@@ -5385,7 +5466,8 @@
    },
    "cc_code": {
     "JP": "BRM4933"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-ghost18w",
@@ -5417,7 +5499,8 @@
    },
    "cc_code": {
     "JP": "BRW4822"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-glycgts23",
@@ -5457,7 +5540,8 @@
    },
    "cc_code": {
     "JP": "BRM5033"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-glycmax2",
@@ -5505,7 +5589,8 @@
    },
    "cc_code": {
     "JP": "BRM4793"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-ghostamp",
@@ -5537,7 +5622,8 @@
    },
    "cc_code": {
     "JP": "BRM4973"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-gts25",
@@ -5580,7 +5666,8 @@
    },
    "cc_code": {
     "JP": "BRM4543"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-hyperion3",
@@ -5630,7 +5717,8 @@
    },
    "cc_code": {
     "JP": "BRM4653"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-glycerin23",
@@ -5679,7 +5767,8 @@
    },
    "cc_code": {
     "JP": "BRM4763"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-ghostmax4",
@@ -5711,7 +5800,8 @@
    },
    "cc_code": {
     "JP": "BRM4963"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-cascadia20",
@@ -5743,7 +5833,8 @@
    },
    "cc_code": {
     "JP": "BMM4893"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "arc-atomhoody",
@@ -5799,7 +5890,8 @@
    },
    "cc_code": {
     "KR": "AJQSM09556"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "arc-atomjacket",
@@ -5855,7 +5947,8 @@
    },
    "cc_code": {
     "KR": "AJPFM09561"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "arc-gammapant",
@@ -5911,7 +6004,8 @@
    },
    "cc_code": {
     "KR": "APQSM10481"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "arc-squamish",
@@ -5967,7 +6061,8 @@
    },
    "cc_code": {
     "KR": "AJQSM10276"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "arc-cerium",
@@ -6023,7 +6118,8 @@
    },
    "cc_code": {
     "KR": "AJQFM10521"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "arc-mantis26",
@@ -6070,7 +6166,8 @@
    },
    "cc_code": {
     "KR": "ABQSU10643"
-   }
+   },
+   "cat": "bag"
   },
   {
    "id": "arc-norvanld4gtx",
@@ -6126,7 +6223,8 @@
    },
    "cc_code": {
     "KR": "AFQFM10397"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "arc-sylan2",
@@ -6182,7 +6280,8 @@
    },
    "cc_code": {
     "KR": "AFQSM10155"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "arc-kragg",
@@ -6238,7 +6337,8 @@
    },
    "cc_code": {
     "KR": "AFQFM10078"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "arc-konsealtrek",
@@ -6294,7 +6394,8 @@
    },
    "cc_code": {
     "KR": "AFQFM10504"
-   }
+   },
+   "cat": "boot"
   },
   {
    "id": "arc-norvanjacket",
@@ -6350,7 +6451,8 @@
    },
    "cc_code": {
     "KR": "AJQFM09571"
-   }
+   },
+   "cat": "wear"
   },
   {
    "id": "keen-newporth2",
@@ -6403,7 +6505,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "keen-newporth2b",
@@ -6456,7 +6559,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "keen-uneek",
@@ -6509,7 +6613,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "keen-jasper3",
@@ -6570,7 +6675,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "keen-targhee4",
@@ -6623,7 +6729,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "keen-jasper",
@@ -6667,7 +6774,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "keen-howser3",
@@ -6728,7 +6836,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "keen-uneektrek",
@@ -6781,7 +6890,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "keen-a86",
@@ -6842,7 +6952,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "keen-jzwp",
@@ -6877,7 +6988,8 @@
      "obs_date": "2026-11-17",
      "sale": false
     }
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "oofos-ooriginal",
@@ -6907,7 +7019,8 @@
    "cc_code": {
     "KR": "1000 Black",
     "US": "1000BLK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-ooahh",
@@ -6937,7 +7050,8 @@
    "cc_code": {
     "KR": "1100 Black",
     "US": "1100BLK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-oocloog",
@@ -6967,7 +7081,8 @@
    "cc_code": {
     "KR": "1200 Black",
     "US": "1200BLK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-ooriginalplus",
@@ -6997,7 +7112,8 @@
    "cc_code": {
     "KR": "2000 Black",
     "US": "2000BLACK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-ooahhplus",
@@ -7027,7 +7143,8 @@
    "cc_code": {
     "KR": "2200 Black",
     "US": "2200BLACK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-ooriginalsport",
@@ -7065,7 +7182,8 @@
    "cc_code": {
     "KR": "1001 Graphite",
     "US": "1001GRPH"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-sportflex",
@@ -7095,7 +7213,8 @@
    "cc_code": {
     "KR": "1550 Black Matte",
     "US": "1550MATBLK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-oocloogplus",
@@ -7125,7 +7244,8 @@
    "cc_code": {
     "KR": "2400 Black",
     "US": "2400BLACK"
-   }
+   },
+   "cat": "sandal"
   },
   {
    "id": "oofos-oomystride",
@@ -7155,7 +7275,8 @@
    "cc_code": {
     "KR": "5087 Black",
     "US": "5087BLACK"
-   }
+   },
+   "cat": "shoe"
   },
   {
    "id": "oofos-ooahhsport",
@@ -7185,7 +7306,8 @@
    "cc_code": {
     "KR": "1500 Tactical Green",
     "US": "1500TACGRN"
-   }
+   },
+   "cat": "sandal"
   }
  ],
  "failed": [],
