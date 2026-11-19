@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.23: (대표 결정 2026-11-19 '추천대로' — 개편 A1 · build_dashboard v33.34) 상품마다 분류 cat(신발 shoe · 부츠 boot · 샌들·슬리퍼 sandal · 반팔·민소매 top ·
+v1.23: (대표 결정 2026-11-19 '추천대로' — 개편 A1 · build_dashboard v33.34) 상품마다 분류 cat(신발 shoe · 부츠 boot · 샌들류 sandal · 반팔·민소매 top ·
     옷 wear · 가방 bag)을 PRODUCTS에 넣고 prices.json 상품에 함께 저장(받지 않는 날도 지금 PRODUCTS 것으로) — 화면 착지가 분류별 무게·관세(가방 8%)로 계산 ·
     분류가 없거나 모르는 이름이면 불러오기에서 멈춤(새 상품은 cat 필수) · cfg_hash는 cat을 빼고 셈(분류만 바꾼 날 전체를 다시 받지 않음)
 v1.22: (11/17 update-dashboard — 언더아머 한국·영국·독일 27건 '가격 데이터 없음') 원인 = 세 몰이 11/17부터 상품 페이지 대신 봇 확인 화면('Client Challenge' · HTTP 200 · 3KB ·
@@ -661,7 +661,7 @@ PRODUCTS = [
      "urls": _keen("1000000673", "mens-newport-h2-triple-black")},
     {"id": "keen-newporth2b", "cat": "sandal", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 블랙)", "code": "1001907", "src": "page", "hint": "newport h2",
      "urls": _keen("1000000679", "mens-newport-h2-black")},
-    {"id": "keen-uneek", "cat": "shoe", "brand": "킨(KEEN)", "name": "유니크(남성 · 블랙)", "code": "1014097", "src": "page", "hint": "uneek",
+    {"id": "keen-uneek", "cat": "sandal", "brand": "킨(KEEN)", "name": "유니크(남성 · 블랙)", "code": "1014097", "src": "page", "hint": "uneek",
      "urls": _keen("1000000653", "mens-uneek-monochrome-black-black", gb="mens-uneek-black-black")},
     {"id": "keen-jasper3", "cat": "shoe", "brand": "킨(KEEN)", "name": "재스퍼 III(남성 · 블랙)", "code": "1032681", "src": "page", "hint": "jasper iii",
      "urls": _keen("1000000996", "mens-jasper-iii-black-black")},
@@ -704,7 +704,7 @@ PRODUCTS = [
      "urls": _oofos("1000000063", "mens-ooahh-sport-slide-sandal-tactical-green")},   # 블랙은 한국 1500 Black Matrix(64) ↔ 미국 FootJoy 콜라보뿐이라 두 몰 모두 있는 택티컬 그린
 ]
 # v1.23 분류 cat(화면 착지 무게·관세 — build_dashboard LAND.cat과 같은 이름) — 새 상품은 반드시 넣음(빠지면 불러오기에서 멈춤 → check-files 실패)
-CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들·슬리퍼·클로그 · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
+CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들류(샌들·슬리퍼·클로그 · 킨 유니크 포함) · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
 _badcat = [p["id"] for p in PRODUCTS if p.get("cat") not in CATS]
 assert not _badcat, f"PRODUCTS 분류(cat) 없음·모름: {_badcat}"
 
