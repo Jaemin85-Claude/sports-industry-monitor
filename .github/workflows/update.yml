@@ -300,21 +300,43 @@ jobs:
           SF_R2: ${{ needs.dgk-retry-2.outputs.soft_fail }}
         run: |
           python3 - <<'PY'
-          import datetime, json, os, re, subprocess, time
+          import datetime, json, os, re, time, urllib.error, urllib.request
           R, RID, ATT = os.environ["GITHUB_REPOSITORY"], os.environ["GITHUB_RUN_ID"], os.environ.get("GITHUB_RUN_ATTEMPT", "1")
           REF = os.environ.get("GITHUB_REF_NAME", "")
           KST = datetime.timezone(datetime.timedelta(hours=9))
           MAX, W = 30, 220   # 요약 전체 줄 수 · 한 줄 글자 수
+          UA = {"User-Agent": "sports-industry-monitor"}
 
-          ERR = {}   # 마지막 실패 사유(경로 → gh 오류 첫 줄)
+          class _NoRedir(urllib.request.HTTPRedirectHandler):   # 로그는 저장소 밖 주소로 넘겨줌 — 넘겨진 주소에는 토큰을 보내지 않게 직접 따라감
+              def redirect_request(self, *a, **k):
+                  return None
+
+          _OPEN = urllib.request.build_opener(_NoRedir)
+          ERR = {}   # 마지막 실패 사유(경로 → 오류 한 줄)
 
           def gh(path, raw=False, tries=3, wait=8):
-              args = ["gh", "api", path] + (["-H", "Accept: application/vnd.github.raw"] if raw else [])
+              """GitHub API(이 실행의 GITHUB_TOKEN) — gh CLI는 로그의 색 코드를 보면 출력을 거부해(브랜치 시험 11/20) 표준 라이브러리로.
+              다시 시도는 404(막 끝난 작업의 로그가 아직 안 올라옴)·5xx·연결 오류일 때만"""
+              h = {**UA, "X-GitHub-Api-Version": "2022-11-28", "Accept": "application/vnd.github.raw" if raw else "application/vnd.github+json"}
+              if os.environ.get("GH_TOKEN"):
+                  h["Authorization"] = f"Bearer {os.environ['GH_TOKEN']}"
               for i in range(tries):
-                  p = subprocess.run(args, capture_output=True, text=True)
-                  if p.returncode == 0:
-                      return p.stdout
-                  ERR[path] = ((p.stderr or p.stdout or "").strip().splitlines() or ["?"])[-1][:80]
+                  try:
+                      try:
+                          with _OPEN.open(urllib.request.Request("https://api.github.com/" + path, headers=h), timeout=60) as r:
+                              return r.read().decode("utf-8", "replace")
+                      except urllib.error.HTTPError as e:
+                          loc = e.headers.get("Location") if e.code in (301, 302, 303, 307, 308) else None
+                          if not loc:
+                              raise
+                          with urllib.request.urlopen(urllib.request.Request(loc, headers=UA), timeout=60) as r:
+                              return r.read().decode("utf-8", "replace")
+                  except urllib.error.HTTPError as e:
+                      ERR[path] = f"HTTP {e.code}"
+                      if e.code != 404 and e.code < 500:
+                          return None
+                  except Exception as e:
+                      ERR[path] = f"{type(e).__name__}: {str(e)[:60]}"
                   if i < tries - 1:
                       time.sleep(wait)
               return None
@@ -357,7 +379,7 @@ jobs:
               for j in jobs:
                   if j.get("conclusion") == "skipped":
                       continue
-                  # 막 끝난 작업의 로그는 보관이 끝나야 받을 수 있음(브랜치 시험 11/20: 끝나고 30초 안에는 못 받음) — 15초 간격으로 3분까지
+                  # 막 끝난 작업의 로그가 아직 안 올라왔으면(404) 15초 간격으로 3분까지
                   lp = f"repos/{R}/actions/jobs/{j['id']}/logs"
                   txt = gh(lp, tries=13, wait=15)
                   if txt is None:
