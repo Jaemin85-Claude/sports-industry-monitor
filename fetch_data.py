@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 1 데이터 수집 (v4)
+v4.21: (대표 결정 2026-11-19 '추천대로' 개편 B — 가짜 경고 줄이기) 멕시코 페소는 원화 직접 쌍(MXNKRW=X)을 조회하지 않고 바로 달러 경유
+      (MXNUSD=X × 달러 — 직접 쌍은 야후가 주지 않아 매일 'HTTP Error 404 … Quote not found' 줄만 남기고 결국 달러 경유로 계산하던 것 · FX_CROSS)
 v4.20: (대표 지시 2026-11-03 '두바이 추가해주세요') UAE 디르함(AED) 추가 — 해외 정가 비교(price_fetch v1.17)의 두바이 정가를 원화로 바꾸려고.
       리얄과 같이 달러에 고정(1달러 = 3.6725디르함)이라 직접 조회 없이 달러 환율 ÷ 3.6725(값만 저장 · 1% 칸 알림 없음 · 달러가 이전 값이면 디르함도)
 v4.19: (대표 지시 2026-10-23 '1,2 진행') 야후가 새 분기를 늦게 올리면 SEC 공시(XBRL companyfacts)의 더 새 분기로 분기 매출·재고 칸을 채움
@@ -169,11 +171,13 @@ FX = {
     "CNY": ["위안", "CNYKRW=X"],
     "HKD": ["홍콩 달러", "HKDKRW=X"],
     "SAR": ["사우디 리얄", None],    # v4.12 직접 조회 안 함(SARKRW=X 매일 404) — 달러 환율 ÷ 3.75
-    "MXN": ["멕시코 페소", "MXNKRW=X"],   # v4.17 해외 정가(price_fetch) 멕시코 정가 원화 환산용
+    "MXN": ["멕시코 페소", "MXNKRW=X"],   # v4.17 해외 정가(price_fetch) 멕시코 정가 원화 환산용 · v4.21 직접 쌍은 조회 안 함(FX_CROSS)
     "AED": ["UAE 디르함", None],   # v4.20 해외 정가 두바이 정가 원화 환산용 — 직접 조회 안 함, 달러 환율 ÷ 3.6725
 }
 SAR_PEG = 3.75   # 1달러 = 3.75리얄(고정)
 PEG = {"SAR": SAR_PEG, "AED": 3.6725}   # v4.20 달러 고정 통화 → 1달러당 그 통화(1달러 = 3.6725디르함)
+# v4.21 원화 직접 쌍을 야후가 주지 않는 통화(매일 'HTTP Error 404 … Quote not found' 로그) — 직접 조회 없이 바로 달러 경유(MXNUSD=X × 달러)
+FX_CROSS = {"MXN"}
 # 1% 칸 알림 대상(v4.9) — 헤알 등은 값만 표시
 FX_ALERT = ["JPY", "EUR", "USD"]
 FX_AVG = ["GBP", "CHF"]   # v4.14 1년 평균 대비만(1% 칸 알림 없음) — 브랜드 점검표 원산지 통화 · v4.15 스위스 프랑(온러닝) 추가
@@ -725,7 +729,7 @@ def fetch_fx(prev_fx=None, prev_date=None):
             continue
         p_code = prev_fx.get(code) or {}
         try:
-            s = _fx_series(tk)
+            s = None if code in FX_CROSS else _fx_series(tk)   # v4.21 직접 쌍이 없는 통화는 아래 달러 경유로 바로
             via = None
             has_s = s is not None and not s.empty
             if code != "USD" and (not has_s or _year_ago(s) is None):

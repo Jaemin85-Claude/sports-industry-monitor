@@ -88,13 +88,8 @@ jobs:
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
+        id: build
         run: python build_dashboard.py   # v2026-11-07 개편 P2(build_dashboard v33.31): ./soft_fail.txt 줄 → 화면 머리 '조치 필요 n' · 수집 상태 맨 위 칸
-      - name: Pass alert lines on
-        # v2026-11-07 개편 P2: soft_fail.txt(실패 표시 줄)를 다음 작업에 넘김 — 다시 받기 작업은 새 서버(빈 폴더)라 앞 작업 줄이 없음
-        id: sf
-        if: ${{ !cancelled() }}
-        run: |
-          { echo 'lines<<SF_EOF_p2'; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Commit dashboard
         run: |
           git config user.name "github-actions"
@@ -110,6 +105,36 @@ jobs:
             if [ "$i" = 3 ]; then echo "::error::$why — 3번 모두 실패"; exit 1; fi
             echo "$why $i번째 — $((i*10))초 뒤 다시"; sleep $((i*10))
           done
+      - name: Check pages in a phone-size browser
+        # v2026-11-20 개편 B(대표 결정 2026-11-19 '추천대로'): 매일 만든 화면도 휴대폰 크기 브라우저로 자동 점검 — check.yml의 같은 이름 단계 스크립트를
+        # 그대로 읽어 돌림(점검 주소 목록은 check.yml 한 곳 · 그 단계 이름을 바꾸면 여기도). 저장·커밋을 마친 뒤 돌아 커밋을 늦추지 않음 ·
+        # 실패하면 아래 줄로 빨간 X(이 줄은 이미 만든 오늘 화면의 '조치 필요'에는 안 들어가고 빨간 X·점검 요약으로만 알림 · 다시 받기 작업이 돌면 그 화면에)
+        id: smoke
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}   # 화면을 안 만든 날은 건너뜀
+        continue-on-error: true
+        timeout-minutes: 8
+        run: |
+          pip install -q pyyaml
+          python - <<'PY'
+          import os, subprocess, sys, yaml
+          # 화면을 만든 커밋의 check.yml(커밋 단계의 rebase로 작업 폴더가 그사이 병합된 PR 판으로 바뀌어도 오늘 화면과 같은 판으로 점검)
+          d = yaml.safe_load(subprocess.check_output(["git", "show", os.environ["GITHUB_SHA"] + ":.github/workflows/check.yml"]).decode("utf-8"))
+          st = [s for s in d["jobs"]["check"]["steps"] if s.get("name") == "Check pages in a phone-size browser"]
+          if not st or not st[0].get("run"):
+              print("::error::check.yml에서 'Check pages in a phone-size browser' 단계를 못 찾음 — 단계 이름 확인"); sys.exit(1)
+          open("/tmp/smoke_step.sh", "w", encoding="utf-8").write(st[0]["run"])
+          PY
+          bash -e /tmp/smoke_step.sh
+      - name: Note page check failure
+        if: ${{ !cancelled() && steps.smoke.outcome == 'failure' }}
+        run: |
+          echo "화면 자동 점검: 오늘 만든 화면에서 오류 — 로그 '화면 점검' 줄 확인(화면·자료는 그대로 저장함)" >> soft_fail.txt
+      - name: Pass alert lines on
+        # v2026-11-07 개편 P2: soft_fail.txt(실패 표시 줄)를 다음 작업에 넘김 — 다시 받기 작업은 새 서버(빈 폴더)라 앞 작업 줄이 없음
+        id: sf
+        if: ${{ !cancelled() }}
+        run: |
+          { echo 'lines<<SF_EOF_p2'; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Check partial failures
         # v2026-10: 수집 스크립트가 '이전 값 유지' 같은 심각한 부분 실패를 soft_fail.txt에 남기면, 저장·커밋은 마친 뒤
         # 여기서 빨간 X로 끝내 12:23 점검이 알림을 보내게 함
@@ -200,6 +225,7 @@ jobs:
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}
       conn_tries: ${{ steps.logi.outputs.conn_tries }}
+      soft_fail: ${{ steps.sf.outputs.lines }}   # v2026-11-20 개편 B: 이 작업의 실패 표시 줄 → 마지막 작업 summary(점검 요약)
     steps:
       - uses: actions/checkout@v7
         with:
@@ -229,6 +255,12 @@ jobs:
         env:
           SOFT_FAIL_PREV: ${{ needs.dgk-retry-1.outputs.soft_fail }}   # 1차 + 2/3 작업의 실패 표시 줄 — 화면 '조치 필요'에 함께(이 작업의 빨간 X 판단에는 안 넣음)
         run: python build_dashboard.py
+      - name: Pass alert lines on
+        # v2026-11-20 개편 B: 이 작업(3/3)의 실패 표시 줄만 → 마지막 작업 summary(점검 요약 — 앞 작업 줄은 그 작업 출력으로 따로 받음)
+        id: sf
+        if: ${{ !cancelled() }}
+        run: |
+          { echo 'lines<<SF_EOF_p2'; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Commit dashboard
         run: |
           git config user.name "github-actions"
@@ -251,3 +283,207 @@ jobs:
             echo "부분 실패 $(wc -l < soft_fail.txt)건 — 데이터는 이전 값으로 저장함"
             exit 1
           fi
+
+  summary:
+    # v2026-11-20 개편 B(대표 결정 2026-11-19 '추천대로'): 실행 끝 '점검 요약'(30줄 안) — 13:23 점검 루틴이 이 작업 로그 끝(50줄)만 읽음.
+    #   앞 작업(run · 다시 받기 2개)이 다 끝난 뒤 그 작업들의 로그를 GitHub API로 읽어 빨간 X 사유 · [WARN]·'실패 —' 줄 · 단계별 걸린 시간 ·
+    #   화면 점검 · 수집 결과 · 환율 알림을 모음(같은 줄은 한 번) · 저장·커밋 없음 · 요약을 못 만들어도 이 작업은 성공으로 끝남(실행 결과는 앞 작업대로)
+    needs: [run, dgk-retry-1, dgk-retry-2]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12   # 작업마다 로그를 3분까지 기다림(다시 받기까지 돌면 3개)
+    permissions:
+      actions: read
+      contents: read
+    steps:
+      - name: Check summary
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SF_RUN: ${{ needs.run.outputs.soft_fail }}            # 로그를 못 받아도 빨간 X 사유는 남게(작업 출력으로 넘긴 실패 표시 줄)
+          SF_R1: ${{ needs.dgk-retry-1.outputs.soft_fail }}
+          SF_R2: ${{ needs.dgk-retry-2.outputs.soft_fail }}
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, re, time, urllib.error, urllib.request
+          R, RID, ATT = os.environ["GITHUB_REPOSITORY"], os.environ["GITHUB_RUN_ID"], os.environ.get("GITHUB_RUN_ATTEMPT", "1")
+          REF = os.environ.get("GITHUB_REF_NAME", "")
+          KST = datetime.timezone(datetime.timedelta(hours=9))
+          MAX, W = 30, 220   # 요약 전체 줄 수 · 한 줄 글자 수
+          UA = {"User-Agent": "sports-industry-monitor"}
+
+          class _NoRedir(urllib.request.HTTPRedirectHandler):   # 로그는 저장소 밖 주소로 넘겨줌 — 넘겨진 주소에는 토큰을 보내지 않게 직접 따라감
+              def redirect_request(self, *a, **k):
+                  return None
+
+          _OPEN = urllib.request.build_opener(_NoRedir)
+          ERR = {}   # 마지막 실패 사유(경로 → 오류 한 줄)
+          T0, DEADLINE = time.time(), 8 * 60   # 다시 시도는 이 작업 시작 8분까지(작업 12분 제한 안에 요약을 꼭 찍게)
+
+          def gh(path, raw=False, tries=3, wait=8):
+              """GitHub API(이 실행의 GITHUB_TOKEN) — gh CLI는 로그의 색 코드를 보면 출력을 거부해(브랜치 시험 11/20) 표준 라이브러리로.
+              다시 시도는 404(막 끝난 작업의 로그가 아직 안 올라옴)·5xx·연결 오류일 때만"""
+              h = {**UA, "X-GitHub-Api-Version": "2022-11-28", "Accept": "application/vnd.github.raw" if raw else "application/vnd.github+json"}
+              if os.environ.get("GH_TOKEN"):
+                  h["Authorization"] = f"Bearer {os.environ['GH_TOKEN']}"
+              for i in range(tries):
+                  try:
+                      try:
+                          with _OPEN.open(urllib.request.Request("https://api.github.com/" + path, headers=h), timeout=30) as r:
+                              return r.read().decode("utf-8", "replace")
+                      except urllib.error.HTTPError as e:
+                          loc = e.headers.get("Location") if e.code in (301, 302, 303, 307, 308) else None
+                          if not loc:
+                              raise
+                          with urllib.request.urlopen(urllib.request.Request(loc, headers=UA), timeout=30) as r:
+                              return r.read().decode("utf-8", "replace")
+                  except urllib.error.HTTPError as e:
+                      ERR[path] = f"HTTP {e.code}"
+                      if e.code != 404 and e.code < 500:
+                          return None
+                  except Exception as e:
+                      ERR[path] = f"{type(e).__name__}: {str(e)[:60]}"
+                  if i == tries - 1 or time.time() - T0 + wait > DEADLINE:
+                      break
+                  time.sleep(wait)
+              return None
+
+          def dur(a, b):
+              try:
+                  s = int((datetime.datetime.fromisoformat(b.replace("Z", "+00:00")) - datetime.datetime.fromisoformat(a.replace("Z", "+00:00"))).total_seconds())
+                  return f"{max(s, 0) // 60}:{max(s, 0) % 60:02d}"
+              except Exception:
+                  return "?"
+
+          cut = lambda s: s if len(s) <= W else s[:W - 1] + "…"
+          JN = {"run": "갱신", "dgk-retry-1": "다시 받기 2/3", "dgk-retry-2": "다시 받기 3/3"}
+          ST = {"Fetch data": "수집", "Naver search trend": "네이버", "Logistics data": "물류", "Overseas list prices": "해외 정가",
+                "Append history snapshot": "히스토리", "Build dashboard": "화면", "Check pages in a phone-size browser": "화면 점검", "Commit dashboard": "커밋"}
+          PY_LBL = {"fetch_data.py": "수집", "naver_trend.py": "네이버", "logistics_fetch.py": "물류", "price_fetch.py": "해외 정가",
+                    "history_append.py": "히스토리", "build_dashboard.py": "화면"}
+          CONC = {"success": "성공", "failure": "빨간 X", "skipped": "건너뜀", "cancelled": "취소", "timed_out": "시간 초과"}
+          TSP = re.compile(r"^﻿?\d{4}-\d\d-\d\dT[\d:.]+Z ?")
+          # 찾는 줄은 옛 점검 루틴과 같게('[WARN]'·'실패'·'None%'·'ERROR' + 오류 원문) — 조용히 지나가게 만든 줄('이번 실행 못 받음 — …')에는 이 낱말이 없음
+          BAD = re.compile(r"\[WARN\]|실패|Traceback|FATAL|\bERROR\b|\b\w+Error: |None%")
+          SKIP = re.compile(r"Process completed with exit code|478560\.KS|^부분 실패 \d+건 — ")   # 알려진 정상(블랙야크 .KS → .KQ 재시도) · 빨간 X 사유 개수 줄
+          INFO = [re.compile(p) for p in (r"^\s*수집 결과", r"^해외 정가: ", r"PortWatch 다시 받기:", r"^판정 기록 \d", r"^화면 점검 (통과|실패)")]
+          prio = lambda t: (0 if re.search(r"Traceback|FATAL|\b\w+Error: |\bERROR\b|^오류: ", t) else 1 if "[WARN]" in t
+                            else 3 if t.startswith("경고: ") else 2)   # 오류 원문 → [WARN] → '실패' 줄 → 경고(가로 넘침 등)
+          core = lambda s: re.sub(r"^(\[[^\]]+\] )?[\w.]+: ", "", s).strip()   # '[다시 받기 2/3] '·'logistics_fetch: ' 뗀 알림 글
+          # 해외 정가 값 하나씩의 '못 받음 — ConnectionError …'는 다음 날 그 값만 다시 받는 설계(첫날 알림 없음) — 알릴 것은 price_fetch가 [WARN]·실패 표시로 따로 찍음
+          PF_ITEM = re.compile(r"^\s+\S+ [A-Z]{2}: (못 받음|건너뜀|다음 (실행에서|주에) 받음) — ")
+          NOTE_OK = re.compile(r"\[판정 기록\]")   # ::warning 가운데 이상으로 볼 것(화면 판정 ≠ 기록) — 나머지(오늘 글자 예산·가로 넘침)는 '참고 경고'(check.yml에서도 경고만)
+          L = [f"=== 점검 요약 · update-dashboard · {datetime.datetime.now(KST):%Y-%m-%d %H:%M} KST · {REF} · 실행 {RID} ==="]
+          try:
+              jp = f"repos/{R}/actions/runs/{RID}/attempts/{ATT}/jobs?per_page=50"
+              jobs = [j for j in json.loads(gh(jp) or '{"jobs": []}').get("jobs", []) if j.get("name") in JN]
+              jobs.sort(key=lambda j: list(JN).index(j["name"]))
+              if not any(j["name"] == "run" for j in jobs):   # 작업 목록을 못 받음 — '이상 없음'처럼 보이지 않게(작업 출력의 빨간 X 사유·환율 줄은 아래에서 그대로)
+                  L.append(f"점검 요약 실패: 작업 목록을 못 받음({ERR.get(jp, '응답에 run 작업 없음')}) — 예전처럼 실패 단계 로그를 볼 것")
+              jobs and L.append("결과: " + " · ".join(f"{JN[j['name']]} {CONC.get(j.get('conclusion'), j.get('conclusion') or j.get('status'))}"
+                                            + ("" if j.get("conclusion") == "skipped" else f" {dur(j.get('started_at') or '', j.get('completed_at') or '')}")
+                                            for j in jobs))
+              run = next((j for j in jobs if j["name"] == "run"), None)
+              if run:
+                  st = [f"{ST[s['name']]} {dur(s.get('started_at') or '', s.get('completed_at') or '')}" + ("(실패)" if s.get("conclusion") == "failure" else "")
+                        for s in run.get("steps", []) if s.get("name") in ST and s.get("conclusion") != "skipped"]
+                  L.append("단계(분:초): " + " · ".join(st))
+              red, warn, info, note, seen, nolog = [], [], [], [], set(), []
+              for j in jobs:
+                  if j.get("conclusion") == "skipped":
+                      continue
+                  # 막 끝난 작업의 로그가 아직 안 올라왔으면(404) 15초 간격으로 3분까지
+                  lp = f"repos/{R}/actions/jobs/{j['id']}/logs"
+                  txt = gh(lp, tries=13, wait=15)
+                  if txt is None:
+                      nolog.append(f"{JN[j['name']]}({ERR.get(lp, '?')})"); continue
+                  cur, tb = "", False
+                  for raw in txt.splitlines():
+                      if "\x1b[36;1m" in raw:   # 단계 스크립트 본문을 보여 주는 줄(실제 출력 아님)
+                          continue
+                      ln = re.sub(r"\x1b\[[0-9;]*m", "", TSP.sub("", raw)).rstrip()
+                      m = re.match(r"^##\[group\]Run python3? (\S+\.py)", ln)
+                      if m:
+                          cur = PY_LBL.get(m.group(1), "")
+                      if not ln.strip() or ln.startswith("##[group]") or ln.startswith("##[endgroup]") or SKIP.search(ln):
+                          continue
+                      pre = "" if j["name"] == "run" else f"[{JN[j['name']]}] "
+                      if tb and not ln[:1].isspace() and not ln.startswith("Traceback"):   # Traceback 다음 첫 줄 = 예외 원문(…Error가 아닌 예외도)
+                          tb = False
+                          if not ln.startswith("##[") and not BAD.search(ln) and ("오류: " + ln.strip()) not in seen:
+                              seen.add("오류: " + ln.strip()); warn.append((pre, "오류: " + ln.strip()))
+                      if "Traceback (most recent call last)" in ln:
+                          tb = True
+                      if cur == "해외 정가" and PF_ITEM.search(ln) and "[WARN]" not in ln:
+                          continue
+                      if ln.startswith("##[warning]") and not NOTE_OK.search(ln):
+                          t = ln[11:].strip()
+                          if t and t not in seen:
+                              seen.add(t); note.append(pre + t)
+                          continue
+                      if ln.startswith("##[error]"):
+                          t = ln[9:].strip()
+                          if t and t not in seen:
+                              seen.add(t); red.append(pre + t)
+                      elif ln.startswith("##[warning]") or BAD.search(ln):
+                          t = ln.replace("##[warning]", "경고: ").strip()
+                          if t not in seen:
+                              seen.add(t); warn.append((pre, t))
+                      elif any(p.search(ln) for p in INFO):
+                          info.append(pre + (f"{cur}: " if cur and ln.lstrip().startswith("수집 결과") else "") + ln.strip())
+              for t in "\n".join(os.environ.get(k, "") for k in ("SF_RUN", "SF_R1", "SF_R2")).splitlines():   # 작업 출력의 실패 표시 줄(로그와 같은 글이면 한 번)
+                  t = t.strip()
+                  if t and t not in seen:
+                      seen.add(t); red.append(t)
+              # 빨간 X 사유에 이미 있는 줄은 뺌 · 숫자만 다른 줄(관세청 파일 1·2·3 …)은 한 줄로 묶어 '같은 꼴 n줄' · 오류 원문부터
+              grp, red_msgs = {}, {core(r) for r in red if core(r)}
+              for p, t in warn:
+                  m = re.match(r"^실패 표시: (.*)$", t)   # 스크립트가 찍은 '실패 표시: 글'은 빨간 X 사유 '스크립트: 글'과 같은 알림
+                  if (m and m.group(1).strip() in red_msgs) or any((rr := r.split("] ", 1)[-1]) and (t in r or rr in t) for r in red):
+                      continue
+                  k = (p, re.sub(r"\d[\d,.:%-]*", "#", t))
+                  if k in grp:
+                      grp[k][2] += 1
+                  else:
+                      grp[k] = [p, t, 1]
+              warn = [p + t + (f" (같은 꼴 {n}줄)" if n > 1 else "") for p, t, n in sorted(grp.values(), key=lambda g: prio(g[1]))]
+              dp = f"repos/{R}/contents/docs/data.json?ref={REF}"
+              raw_d = gh(dp, raw=True)
+              if raw_d is None:
+                  fx = f"환율 알림: 확인 못 함(data.json {ERR.get(dp, '?')})"
+              else:
+                  try:
+                      d = json.loads(raw_d)
+                      p = d.get("fx_push") or {}
+                      body_fx = " / ".join((p.get("text") or "").splitlines()[1:3])   # 첫 줄은 늘 '💱 매입 환율 알림' 머리
+                      fx = f"data.json {str(d.get('generated_at') or '?')[:16]} · 환율 알림 " + (f"{p.get('date')} — {body_fx}" if p.get("date") else "없음")
+                  except Exception as e:
+                      fx = f"환율 알림: 확인 못 함(data.json {type(e).__name__})"
+              body = []
+              if red:
+                  body.append(f"빨간 X 사유 {len(red)}줄:"); body += [" - " + r for r in red]
+              if warn:
+                  body.append(f"경고·실패 줄 {len(warn)}개(같은 줄은 한 번):"); body += [" - " + w for w in warn]
+              if not red and not warn:
+                  body.append("빨간 X 사유·경고·실패 줄 없음")
+              if note:
+                  info.insert(0, f"참고 경고 {len(note)}개(알림 아님): " + " · ".join(note))
+              avail = MAX - len(L) - 2 - (1 if nolog else 0)   # 2 = 환율 줄 + 끝 줄 — 빨간 X·경고 줄 먼저, 정보 줄은 남는 자리(적어도 4줄)
+              info = info[:min(len(info), max(4, avail - len(body)))]
+              room = avail - len(info)
+              if len(body) > room:
+                  more = len(body) - (room - 1)
+                  body = body[:room - 1] + [f" … 외 {more}줄 — 이 실행의 작업 로그에서 '[WARN]'·'실패' 검색"]
+              L += body + info + [fx]
+              if nolog:
+                  L.append("로그를 못 받은 작업: " + " · ".join(nolog) + " — 단계 결과만 봄")
+          except Exception as e:
+              L.append(f"점검 요약 실패: {type(e).__name__}: {str(e)[:150]} — 예전처럼 실패 단계 로그를 볼 것")
+          L.append("=== 점검 요약 끝 ===")
+          out = "\n".join(cut(x) for x in L)
+          print(out)
+          try:
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+                  f.write("```\n" + out + "\n```\n")
+          except Exception:
+              pass
+          PY
