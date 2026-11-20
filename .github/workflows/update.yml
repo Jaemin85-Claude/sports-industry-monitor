@@ -221,6 +221,7 @@ jobs:
     outputs:
       retry_keys: ${{ steps.logi.outputs.retry_keys }}
       conn_tries: ${{ steps.logi.outputs.conn_tries }}
+      soft_fail: ${{ steps.sf.outputs.lines }}   # v2026-11-20 개편 B: 이 작업의 실패 표시 줄 → 마지막 작업 summary(점검 요약)
     steps:
       - uses: actions/checkout@v7
         with:
@@ -250,6 +251,12 @@ jobs:
         env:
           SOFT_FAIL_PREV: ${{ needs.dgk-retry-1.outputs.soft_fail }}   # 1차 + 2/3 작업의 실패 표시 줄 — 화면 '조치 필요'에 함께(이 작업의 빨간 X 판단에는 안 넣음)
         run: python build_dashboard.py
+      - name: Pass alert lines on
+        # v2026-11-20 개편 B: 이 작업(3/3)의 실패 표시 줄만 → 마지막 작업 summary(점검 요약 — 앞 작업 줄은 그 작업 출력으로 따로 받음)
+        id: sf
+        if: ${{ !cancelled() }}
+        run: |
+          { echo 'lines<<SF_EOF_p2'; if [ -s soft_fail.txt ]; then cat soft_fail.txt; echo; fi; echo 'SF_EOF_p2'; } >> "$GITHUB_OUTPUT"
       - name: Commit dashboard
         run: |
           git config user.name "github-actions"
@@ -280,7 +287,7 @@ jobs:
     needs: [run, dgk-retry-1, dgk-retry-2]
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 12   # 작업마다 로그를 3분까지 기다림(다시 받기까지 돌면 3개)
     permissions:
       actions: read
       contents: read
@@ -288,6 +295,9 @@ jobs:
       - name: Check summary
         env:
           GH_TOKEN: ${{ github.token }}
+          SF_RUN: ${{ needs.run.outputs.soft_fail }}            # 로그를 못 받아도 빨간 X 사유는 남게(작업 출력으로 넘긴 실패 표시 줄)
+          SF_R1: ${{ needs.dgk-retry-1.outputs.soft_fail }}
+          SF_R2: ${{ needs.dgk-retry-2.outputs.soft_fail }}
         run: |
           python3 - <<'PY'
           import datetime, json, os, re, subprocess, time
@@ -296,13 +306,17 @@ jobs:
           KST = datetime.timezone(datetime.timedelta(hours=9))
           MAX, W = 30, 220   # 요약 전체 줄 수 · 한 줄 글자 수
 
-          def gh(path, raw=False):
+          ERR = {}   # 마지막 실패 사유(경로 → gh 오류 첫 줄)
+
+          def gh(path, raw=False, tries=3, wait=8):
               args = ["gh", "api", path] + (["-H", "Accept: application/vnd.github.raw"] if raw else [])
-              for _ in range(3):   # 막 끝난 작업의 로그가 늦게 올라올 때가 있어 8초 쉬고 3번까지
+              for i in range(tries):
                   p = subprocess.run(args, capture_output=True, text=True)
                   if p.returncode == 0:
                       return p.stdout
-                  time.sleep(8)
+                  ERR[path] = ((p.stderr or p.stdout or "").strip().splitlines() or ["?"])[-1][:80]
+                  if i < tries - 1:
+                      time.sleep(wait)
               return None
 
           def dur(a, b):
@@ -343,9 +357,11 @@ jobs:
               for j in jobs:
                   if j.get("conclusion") == "skipped":
                       continue
-                  txt = gh(f"repos/{R}/actions/jobs/{j['id']}/logs")
+                  # 막 끝난 작업의 로그는 보관이 끝나야 받을 수 있음(브랜치 시험 11/20: 끝나고 30초 안에는 못 받음) — 15초 간격으로 3분까지
+                  lp = f"repos/{R}/actions/jobs/{j['id']}/logs"
+                  txt = gh(lp, tries=13, wait=15)
                   if txt is None:
-                      nolog.append(JN[j["name"]]); continue
+                      nolog.append(f"{JN[j['name']]}({ERR.get(lp, '?')})"); continue
                   cur = ""
                   for raw in txt.splitlines():
                       if "\x1b[36;1m" in raw:   # 단계 스크립트 본문을 보여 주는 줄(실제 출력 아님)
@@ -367,6 +383,10 @@ jobs:
                               seen.add(t); warn.append((pre, t))
                       elif any(p.search(ln) for p in INFO):
                           info.append(pre + (f"{cur}: " if cur and ln.lstrip().startswith("수집 결과") else "") + ln.strip())
+              for t in "\n".join(os.environ.get(k, "") for k in ("SF_RUN", "SF_R1", "SF_R2")).splitlines():   # 작업 출력의 실패 표시 줄(로그와 같은 글이면 한 번)
+                  t = t.strip()
+                  if t and t not in seen:
+                      seen.add(t); red.append(t)
               # 빨간 X 사유에 이미 있는 줄은 뺌 · 숫자만 다른 줄(관세청 파일 1·2·3 …)은 한 줄로 묶어 '같은 꼴 n줄' · 오류 원문부터
               grp = {}
               for p, t in warn:
