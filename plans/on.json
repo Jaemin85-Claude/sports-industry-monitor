@@ -1,0 +1,49 @@
+[
+ {
+  "t": "codes",
+  "key": "on",
+  "base": "KR",
+  "rx": "-(\\d[A-Z]{2}\\d{8})$",
+  "sites": {
+   "KR": {
+    "host": "www.on.com",
+    "path": "/ko-kr/",
+    "start": [
+     "https://www.on.com/ko-kr/products.xml"
+    ]
+   },
+   "US": {
+    "host": "www.on.com",
+    "path": "/en-us/",
+    "start": [
+     "https://www.on.com/en-us/products.xml"
+    ]
+   },
+   "GB": {
+    "host": "www.on.com",
+    "path": "/en-gb/",
+    "start": [
+     "https://www.on.com/en-gb/products.xml"
+    ]
+   },
+   "DE": {
+    "host": "www.on.com",
+    "path": "/de-de/",
+    "start": [
+     "https://www.on.com/de-de/products.xml"
+    ]
+   },
+   "JP": {
+    "host": "www.on.com",
+    "path": "/ja-jp/",
+    "start": [
+     "https://www.on.com/ja-jp/products.xml"
+    ]
+   }
+  },
+  "targets": [],
+  "max_maps": 10,
+  "per_host": 150,
+  "show": 200
+ }
+]

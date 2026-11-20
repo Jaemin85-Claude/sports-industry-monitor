@@ -1,0 +1,44 @@
+[
+ {
+  "t": "codes",
+  "key": "puma",
+  "base": "KR",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
+  "sites": {
+   "KR": {
+    "host": "kr.puma.com",
+    "path": "/kr/ko/"
+   },
+   "US": {
+    "host": "us.puma.com",
+    "path": "/us/en/"
+   },
+   "GB": {
+    "host": "uk.puma.com",
+    "path": "/uk/en/"
+   },
+   "DE": {
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "kid_pref": [
+     "/urls/de/"
+    ]
+   },
+   "MX": {
+    "host": "mx.puma.com",
+    "path": "/mx/es/"
+   },
+   "AE": {
+    "host": "ae.puma.com",
+    "path": "/ae/en/"
+   }
+  },
+  "targets": [
+   "312942",
+   "406357"
+  ],
+  "max_maps": 60,
+  "per_host": 150,
+  "show": 160
+ }
+]

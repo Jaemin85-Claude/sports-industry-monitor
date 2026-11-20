@@ -1,0 +1,54 @@
+[
+ {
+  "t": "shopjson",
+  "key": "drm",
+  "cc": "KR",
+  "urls": [
+   "https://www.drmartens.co.kr/products.json?limit=250&page=1",
+   "https://www.drmartens.co.kr/products.json?limit=250&page=2",
+   "https://www.drmartens.co.kr/products.json?limit=250&page=3",
+   "https://www.drmartens.co.kr/products.json?limit=250&page=4"
+  ],
+  "show": true
+ },
+ {
+  "t": "codes",
+  "key": "drm",
+  "base": "KR",
+  "rx": "/p/(\\d{8})$",
+  "sites": {
+   "KR": {
+    "preset": true,
+    "host": "www.drmartens.co.kr"
+   },
+   "US": {
+    "host": "www.drmartens.com",
+    "path": "/us/en/",
+    "kid_pref": [
+     "/us/",
+     "en_us",
+     "us_en",
+     "-us"
+    ]
+   },
+   "GB": {
+    "host": "www.drmartens.com",
+    "path": "/uk/en_gb/",
+    "kid_pref": [
+     "/uk/",
+     "en_gb",
+     "gb_en",
+     "-gb"
+    ]
+   }
+  },
+  "targets": [
+   "14852001",
+   "15695001",
+   "25567001"
+  ],
+  "max_maps": 40,
+  "per_host": 150,
+  "show": 150
+ }
+]

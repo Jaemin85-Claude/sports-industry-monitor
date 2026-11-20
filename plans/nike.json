@@ -1,0 +1,206 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "try-FD4116-001",
+    "brand": "나이키",
+    "name": "캄 슬라이드",
+    "code": "FD4116-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "sandal"
+   },
+   {
+    "id": "try-CN9675-002",
+    "brand": "나이키",
+    "name": "빅토리 원 슬라이드",
+    "code": "CN9675-002",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "sandal"
+   },
+   {
+    "id": "try-DA6364-101",
+    "brand": "나이키",
+    "name": "블레이저 로우 77 빈티지",
+    "code": "DA6364-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-FD0736-100",
+    "brand": "나이키",
+    "name": "V2K 런",
+    "code": "FD0736-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-DD1391-100",
+    "brand": "나이키",
+    "name": "덩크 로우 레트로",
+    "code": "DD1391-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-CN8490-100",
+    "brand": "나이키",
+    "name": "에어맥스 90",
+    "code": "CN8490-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-921826-101",
+    "brand": "나이키",
+    "name": "에어맥스 97",
+    "code": "921826-101",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-AH8050-002",
+    "brand": "나이키",
+    "name": "에어맥스 270",
+    "code": "AH8050-002",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-FB2207-001",
+    "brand": "나이키",
+    "name": "레볼루션 7",
+    "code": "FB2207-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-CW4555-002",
+    "brand": "나이키",
+    "name": "에어맥스 SC",
+    "code": "CW4555-002",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-343880-090",
+    "brand": "나이키",
+    "name": "베나시 JDI 슬라이드",
+    "code": "343880-090",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "sandal"
+   }
+  ]
+ },
+ {
+  "t": "grep",
+  "rx": "NK(FD4116-001|CN9675-002|DA6364-101|FD0736-100|DD1391-100|CN8490-100|921826-101|AH8050-002|FB2207-001|CW4555-002|343880-090)",
+  "sites": {
+   "AE": {
+    "host": "www.nike.ae"
+   }
+  },
+  "max_maps": 40,
+  "per_host": 240,
+  "show": 40
+ }
+]
