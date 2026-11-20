@@ -88,6 +88,7 @@ jobs:
       - name: Append history snapshot
         run: python history_append.py
       - name: Build dashboard
+        id: build
         run: python build_dashboard.py   # v2026-11-07 개편 P2(build_dashboard v33.31): ./soft_fail.txt 줄 → 화면 머리 '조치 필요 n' · 수집 상태 맨 위 칸
       - name: Commit dashboard
         run: |
@@ -109,14 +110,15 @@ jobs:
         # 그대로 읽어 돌림(점검 주소 목록은 check.yml 한 곳 · 그 단계 이름을 바꾸면 여기도). 저장·커밋을 마친 뒤 돌아 커밋을 늦추지 않음 ·
         # 실패하면 아래 줄로 빨간 X(이 줄은 이미 만든 오늘 화면의 '조치 필요'에는 안 들어가고 빨간 X·점검 요약으로만 알림 · 다시 받기 작업이 돌면 그 화면에)
         id: smoke
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}   # 화면을 안 만든 날은 건너뜀
         continue-on-error: true
         timeout-minutes: 8
         run: |
           pip install -q pyyaml
           python - <<'PY'
-          import sys, yaml
-          d = yaml.safe_load(open(".github/workflows/check.yml", encoding="utf-8"))
+          import os, subprocess, sys, yaml
+          # 화면을 만든 커밋의 check.yml(커밋 단계의 rebase로 작업 폴더가 그사이 병합된 PR 판으로 바뀌어도 오늘 화면과 같은 판으로 점검)
+          d = yaml.safe_load(subprocess.check_output(["git", "show", os.environ["GITHUB_SHA"] + ":.github/workflows/check.yml"]).decode("utf-8"))
           st = [s for s in d["jobs"]["check"]["steps"] if s.get("name") == "Check pages in a phone-size browser"]
           if not st or not st[0].get("run"):
               print("::error::check.yml에서 'Check pages in a phone-size browser' 단계를 못 찾음 — 단계 이름 확인"); sys.exit(1)
@@ -367,6 +369,9 @@ jobs:
           prio = lambda t: (0 if re.search(r"Traceback|FATAL|\b\w+Error: |\bERROR\b|^오류: ", t) else 1 if "[WARN]" in t
                             else 3 if t.startswith("경고: ") else 2)   # 오류 원문 → [WARN] → '실패' 줄 → 경고(가로 넘침 등)
           core = lambda s: re.sub(r"^(\[[^\]]+\] )?[\w.]+: ", "", s).strip()   # '[다시 받기 2/3] '·'logistics_fetch: ' 뗀 알림 글
+          # 해외 정가 값 하나씩의 '못 받음 — ConnectionError …'는 다음 날 그 값만 다시 받는 설계(첫날 알림 없음) — 알릴 것은 price_fetch가 [WARN]·실패 표시로 따로 찍음
+          PF_ITEM = re.compile(r"^\s+\S+ [A-Z]{2}: (못 받음|건너뜀|다음 (실행에서|주에) 받음) — ")
+          NOTE_OK = re.compile(r"\[판정 기록\]")   # ::warning 가운데 이상으로 볼 것(화면 판정 ≠ 기록) — 나머지(오늘 글자 예산·가로 넘침)는 '참고 경고'(check.yml에서도 경고만)
           L = [f"=== 점검 요약 · update-dashboard · {datetime.datetime.now(KST):%Y-%m-%d %H:%M} KST · {REF} · 실행 {RID} ==="]
           try:
               jp = f"repos/{R}/actions/runs/{RID}/attempts/{ATT}/jobs?per_page=50"
@@ -382,7 +387,7 @@ jobs:
                   st = [f"{ST[s['name']]} {dur(s.get('started_at') or '', s.get('completed_at') or '')}" + ("(실패)" if s.get("conclusion") == "failure" else "")
                         for s in run.get("steps", []) if s.get("name") in ST and s.get("conclusion") != "skipped"]
                   L.append("단계(분:초): " + " · ".join(st))
-              red, warn, info, seen, nolog = [], [], [], set(), []
+              red, warn, info, note, seen, nolog = [], [], [], [], set(), []
               for j in jobs:
                   if j.get("conclusion") == "skipped":
                       continue
@@ -408,6 +413,13 @@ jobs:
                               seen.add("오류: " + ln.strip()); warn.append((pre, "오류: " + ln.strip()))
                       if "Traceback (most recent call last)" in ln:
                           tb = True
+                      if cur == "해외 정가" and PF_ITEM.search(ln) and "[WARN]" not in ln:
+                          continue
+                      if ln.startswith("##[warning]") and not NOTE_OK.search(ln):
+                          t = ln[11:].strip()
+                          if t and t not in seen:
+                              seen.add(t); note.append(pre + t)
+                          continue
                       if ln.startswith("##[error]"):
                           t = ln[9:].strip()
                           if t and t not in seen:
@@ -453,6 +465,8 @@ jobs:
                   body.append(f"경고·실패 줄 {len(warn)}개(같은 줄은 한 번):"); body += [" - " + w for w in warn]
               if not red and not warn:
                   body.append("빨간 X 사유·경고·실패 줄 없음")
+              if note:
+                  info.insert(0, f"참고 경고 {len(note)}개(알림 아님): " + " · ".join(note))
               avail = MAX - len(L) - 2 - (1 if nolog else 0)   # 2 = 환율 줄 + 끝 줄 — 빨간 X·경고 줄 먼저, 정보 줄은 남는 자리(적어도 4줄)
               info = info[:min(len(info), max(4, avail - len(body)))]
               room = avail - len(info)
