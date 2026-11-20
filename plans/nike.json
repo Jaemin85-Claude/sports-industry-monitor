@@ -3,9 +3,9 @@
   "t": "tryp",
   "prods": [
    {
-    "id": "try-FD4116-001",
+    "id": "try-FD4116-001-AE",
     "brand": "나이키",
-    "name": "캄 슬라이드",
+    "name": "FD4116-001",
     "code": "FD4116-001",
     "src": "nike",
     "cc": [
@@ -16,13 +16,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
-    "cat": "sandal"
+    "urls": {
+     "AE": "https://www.nike.ae/en/calm-mens-slides/NKFD4116-001.html"
+    },
+    "cat": "shoe"
    },
    {
-    "id": "try-CN9675-002",
+    "id": "try-CN9675-002-AE",
     "brand": "나이키",
-    "name": "빅토리 원 슬라이드",
+    "name": "CN9675-002",
     "code": "CN9675-002",
     "src": "nike",
     "cc": [
@@ -33,47 +35,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
-    "cat": "sandal"
-   },
-   {
-    "id": "try-DA6364-101",
-    "brand": "나이키",
-    "name": "블레이저 로우 77 빈티지",
-    "code": "DA6364-101",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ],
-    "urls": {},
+    "urls": {
+     "AE": "https://www.nike.ae/en/victori-one-mens-slides/NKCN9675-002.html"
+    },
     "cat": "shoe"
    },
    {
-    "id": "try-FD0736-100",
+    "id": "try-DD1391-100-AE",
     "brand": "나이키",
-    "name": "V2K 런",
-    "code": "FD0736-100",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ],
-    "urls": {},
-    "cat": "shoe"
-   },
-   {
-    "id": "try-DD1391-100",
-    "brand": "나이키",
-    "name": "덩크 로우 레트로",
+    "name": "DD1391-100",
     "code": "DD1391-100",
     "src": "nike",
     "cc": [
@@ -84,13 +54,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
+    "urls": {
+     "AE": "https://www.nike.ae/en/dunk-low-retro-mens-shoe/NKDD1391-100.html"
+    },
     "cat": "shoe"
    },
    {
-    "id": "try-CN8490-100",
+    "id": "try-CN8490-100-AE",
     "brand": "나이키",
-    "name": "에어맥스 90",
+    "name": "CN8490-100",
     "code": "CN8490-100",
     "src": "nike",
     "cc": [
@@ -101,13 +73,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
+    "urls": {
+     "AE": "https://www.nike.ae/en/air-max-90-mens-shoe/NKCN8490-100.html"
+    },
     "cat": "shoe"
    },
    {
-    "id": "try-921826-101",
+    "id": "try-921826-101-AE",
     "brand": "나이키",
-    "name": "에어맥스 97",
+    "name": "921826-101",
     "code": "921826-101",
     "src": "nike",
     "cc": [
@@ -118,47 +92,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
+    "urls": {
+     "AE": "https://www.nike.ae/en/air-max-97-mens-shoes/NK921826-101.html"
+    },
     "cat": "shoe"
    },
    {
-    "id": "try-AH8050-002",
+    "id": "try-CW4555-002-AE",
     "brand": "나이키",
-    "name": "에어맥스 270",
-    "code": "AH8050-002",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ],
-    "urls": {},
-    "cat": "shoe"
-   },
-   {
-    "id": "try-FB2207-001",
-    "brand": "나이키",
-    "name": "레볼루션 7",
-    "code": "FB2207-001",
-    "src": "nike",
-    "cc": [
-     "KR",
-     "US",
-     "GB",
-     "DE",
-     "JP",
-     "MX"
-    ],
-    "urls": {},
-    "cat": "shoe"
-   },
-   {
-    "id": "try-CW4555-002",
-    "brand": "나이키",
-    "name": "에어맥스 SC",
+    "name": "CW4555-002",
     "code": "CW4555-002",
     "src": "nike",
     "cc": [
@@ -169,13 +111,15 @@
      "JP",
      "MX"
     ],
-    "urls": {},
+    "urls": {
+     "AE": "https://www.nike.ae/en/air-max-sc-mens-shoes/NKCW4555-002.html"
+    },
     "cat": "shoe"
    },
    {
-    "id": "try-343880-090",
+    "id": "try-343880-090-AE",
     "brand": "나이키",
-    "name": "베나시 JDI 슬라이드",
+    "name": "343880-090",
     "code": "343880-090",
     "src": "nike",
     "cc": [
@@ -186,21 +130,11 @@
      "JP",
      "MX"
     ],
-    "urls": {},
-    "cat": "sandal"
+    "urls": {
+     "AE": "https://www.nike.ae/en/benassi-jdi-mens-slide/NK343880-090.html"
+    },
+    "cat": "shoe"
    }
   ]
- },
- {
-  "t": "grep",
-  "rx": "NK(FD4116-001|CN9675-002|DA6364-101|FD0736-100|DD1391-100|CN8490-100|921826-101|AH8050-002|FB2207-001|CW4555-002|343880-090)",
-  "sites": {
-   "AE": {
-    "host": "www.nike.ae"
-   }
-  },
-  "max_maps": 40,
-  "per_host": 240,
-  "show": 40
  }
 ]

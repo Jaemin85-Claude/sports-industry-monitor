@@ -6,10 +6,9 @@
   "urls": [
    "https://www.drmartens.co.kr/products.json?limit=250&page=1",
    "https://www.drmartens.co.kr/products.json?limit=250&page=2",
-   "https://www.drmartens.co.kr/products.json?limit=250&page=3",
-   "https://www.drmartens.co.kr/products.json?limit=250&page=4"
+   "https://www.drmartens.co.kr/products.json?limit=250&page=3"
   ],
-  "show": true
+  "show": false
  },
  {
   "t": "codes",
@@ -43,12 +42,81 @@
    }
   },
   "targets": [
+   "24687001",
+   "21084001",
+   "27147001",
+   "16054001",
+   "11849001",
+   "25567001",
    "14852001",
    "15695001",
-   "25567001"
+   "26205001",
+   "22524001"
   ],
   "max_maps": 40,
   "per_host": 150,
-  "show": 150
+  "show": 0
+ },
+ {
+  "t": "try",
+  "key": "drm",
+  "brand": "닥터마틴",
+  "ccs": [
+   "KR",
+   "US",
+   "GB"
+  ],
+  "cands": [
+   {
+    "code": "24687001",
+    "name": "2976 쿼드",
+    "hint": ""
+   },
+   {
+    "code": "21084001",
+    "name": "1461 벡스",
+    "hint": ""
+   },
+   {
+    "code": "27147001",
+    "name": "오드릭 슈즈",
+    "hint": ""
+   },
+   {
+    "code": "16054001",
+    "name": "처치 부츠",
+    "hint": ""
+   },
+   {
+    "code": "11849001",
+    "name": "8053 나파",
+    "hint": ""
+   },
+   {
+    "code": "25567001",
+    "name": "1461 쿼드 레트로",
+    "hint": ""
+   },
+   {
+    "code": "14852001",
+    "name": "폴리 메리제인",
+    "hint": ""
+   },
+   {
+    "code": "15695001",
+    "name": "그리폰 샌들",
+    "hint": ""
+   },
+   {
+    "code": "26205001",
+    "name": "2976 벡스",
+    "hint": ""
+   },
+   {
+    "code": "22524001",
+    "name": "1490 버지니아",
+    "hint": ""
+   }
+  ]
  }
 ]
