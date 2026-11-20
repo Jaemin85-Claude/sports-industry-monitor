@@ -14,7 +14,7 @@
 
 | 워크플로우 파일 | 이름 | 실행하는 코드 | 만드는 파일 | 자동 실행(KST) |
 |---|---|---|---|---|
-| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → logistics_fetch.py → price_fetch.py → history_append.py → build_dashboard.py | `docs/` (data·naver_trend·logistics·prices·history·index.html) | 매일 04:17 |
+| `update.yml` | update-dashboard | fetch_data.py → naver_trend.py → logistics_fetch.py → price_fetch.py → history_append.py → build_dashboard.py → 화면 자동 점검 → (마지막 작업 summary) 점검 요약 | `docs/` (data·naver_trend·logistics·prices·history·index.html) | 매일 04:17 |
 | `news.yml` | update-news | news_monitor.py | `docs/news.json`, `docs/news_archive.json` | 매일 03:17 |
 | `segments.yml` | extract-segments | extract_segments.py | `docs/segments.json` | 매주 월 01:47 |
 | `ir.yml` | update-ir | ir_fetch.py | `docs/segments_ir.json` | 매주 일 02:47 |
@@ -49,6 +49,9 @@
   '[판정 기록] 화면 판정과 기록이 다르…'는 경고(::warning::) · 오늘 첫 화면 글자는 기록만(러너는 대체 글꼴이라 휴대폰보다 많이 잡힘 — 11/06 306 → 365) ·
   화면 파일 gzip 600KB 넘으면 실패(550KB 경고).
   새 화면 주소를 만들면 check.yml 점검 목록(routes — 주소 · 본문 상자 id · 글자 하한)에 함께 넣는다.
+  매일 갱신도 같은 점검(2026-11-20 개편 B · 대표 결정 2026-11-19 '추천대로'): update-dashboard가 화면을 만든 뒤 check.yml의 'Check pages in a phone-size browser'
+  단계 스크립트를 그대로 읽어 돌림(점검 주소 목록은 check.yml 한 곳 — 그 단계 이름을 바꾸면 update.yml도 · 약 30초) — 실패하면 soft_fail '화면 자동 점검: 오늘 만든 화면에서 오류'
+  → 빨간 X(화면·자료는 그대로 저장 · 블프처럼 자료가 한꺼번에 바뀐 날 화면이 깨지면 13:23 점검이 알림).
 
 ## 파일 식별표 (반영·수정 전 반드시 확인)
 
@@ -108,7 +111,7 @@
    - **하나씩 차례로**: 실행 → 끝날 때까지 기다림 → 다음 실행. 실행 전 진행 중인 워크플로우가 없는지 확인.
 7. 로그 핵심 줄만 뽑는다.
    - 공통: `saved`, `ERROR`, `FATAL`, `Traceback`, `실패`, `Error:`, `실패 표시`
-   - update-dashboard: `수집 결과`, `재시도`, `비어 있음`, `환율`, `병합`, `판정 기록`, `해외 정가`, `PortWatch 다시 받기`, 그리고 대표가 지정한 줄
+   - update-dashboard: 마지막 작업 summary의 '점검 요약'(2026-11-20 개편 B)부터 보고, 더 필요하면 `수집 결과`, `재시도`, `비어 있음`, `환율`, `병합`, `판정 기록`, `해외 정가`, `PortWatch 다시 받기`, 그리고 대표가 지정한 줄
    - update-news: `수집`, `신규`
 8. 보고:
    - 반영·수정한 파일과 버전, PR 링크
@@ -345,7 +348,7 @@
   SFCC형 몰이 가격인하 중이면 JSON-LD에 판매가만 있어 이 상품 가격 칸의 취소선 정가(strike-through list — 곁 판매가 칸이 이 상품 판매가와 같고 정가가 한 가지일 때만 · 판매가의 5배 안, v1.3 — 10/22 팔레르모 119,000 → 35,700원).
   할인 가드: 저장된 정가보다 낮게 보이면 120일 동안 정가를 지킴(나이키 fullPrice는 정가 자체라 가드 없음). 정가가 1.5배 넘게 오르면(나이키는 내려도) 다음 확인 때
   비슷해야(10% 안) 반영. 화면 = 한국 정가 ÷ (현지 정가 × 그날 환율) − 1(비쌈·쌈은 글로 — 숫자는 검정 · 관세·수입 부가세·운임 안 넣은 단순 비교) · 미국은 판매세 별도,
-  그 밖은 부가세 포함(두바이 5%). 멕시코 페소는 fetch_data v4.17 FX(MXN) · UAE 디르함(AED)은 fetch_data v4.20 달러 환율 ÷ 3.6725(직접 조회 없음 · 리얄과 같은 방식). 봇 차단은 우회하지 않음(우리 봇 이름 sports-industry-monitor · robots.txt RFC 9309로 확인 —
+  그 밖은 부가세 포함(두바이 5%). 멕시코 페소는 fetch_data v4.17 FX(MXN — v4.21부터 원화 직접 쌍 조회 없이 바로 달러 경유 FX_CROSS · 직접 쌍은 야후가 주지 않아 매일 404였음) · UAE 디르함(AED)은 fetch_data v4.20 달러 환율 ÷ 3.6725(직접 조회 없음 · 리얄과 같은 방식). 봇 차단은 우회하지 않음(우리 봇 이름 sports-industry-monitor · robots.txt RFC 9309로 확인 —
   robots.txt가 서버 오류·연결 안 됨이면 그 사이트 건너뜀 — 예외: robots.txt를 두지 않는 API 주소는 같은 회사 대표 사이트 robots.txt를 따름(price_fetch ROBOTS_ALT ·
   api.nike.com은 상품 정보 경로 밖 모든 주소가 Akamai '503 DNS failure'라 www.nike.com robots.txt, 10/21 확인) · 403/429(v1.12부터 430도 · v1.22부터 HTTP 200 봇 확인 화면도 — HTML 30KB 밑 + 'Client Challenge'·'Just a moment...' 같은 제목이나 /_fs-ch-·captcha-delivery 같은 표식, 까닭 '봇 확인 화면(접속 차단 — 우회하지 않음)')를 받으면 그 실행에서 그 사이트에 더 요청 안 함(살로몬 해외는 같은 사이트 요청 간격 8초 — HOST_GAP · 간격과 상관없이 한 실행 10번째 요청에서 403이라
   v1.8부터 한 실행 8건까지만(HOST_CAP) — 나머지는 이전 값 그대로 두고 다음 날 다시 받기로 미룸(Defer · 실패·'이전 값' 표시 아님 · 2026-10-26 대표 지시 '살로몬 차단 점검') ·
@@ -393,6 +396,11 @@
   ② 해당 화면(시장의 해당 칩·브랜드 상세 등) 하단에 추가할지 대표에게 먼저 물어보고 정한다(2026-10-05 대표 지시 · 하단 탭은 2026-10 A안 이후 4개 고정).
 - 매일 13:23(KST — 2026-11-19 대표 결정 '다': GitHub 예약 지연이 길어져 12:23에서 옮김 · 11/17 정기 갱신이 11:31에 끝남) 점검 전용 세션('스포츠 산업 모니터 점검', Sonnet)의 루틴('스포츠 산업 모니터 일일 점검')이
   최근 실행 결과·데이터 갱신을 확인하고, 이상이 있을 때만 대표 휴대폰으로 알림을 보낸다.
+  점검 요약(2026-11-20 개편 B): update-dashboard는 마지막 작업 summary가 앞 작업(run·다시 받기 2개)이 끝난 뒤 그 로그를 GitHub API로 읽어
+  '=== 점검 요약 …' ~ '=== 점검 요약 끝 ===' 30줄 안(결과·단계별 걸린 시간 · 빨간 X 사유(::error 줄) · 경고·실패 줄([WARN]·'실패 —'·'실패 표시'·Traceback·…Error: ·
+  ::warning — 숫자만 다른 줄은 '같은 꼴 n줄' · 오류 원문부터) · 수집 결과·해외 정가·판정 기록·화면 점검 줄 · data.json 시각·환율 알림)을 찍고 실행 화면(Summary)에도 남김 —
+  점검 루틴은 update-dashboard 로그를 이 작업 끝 50줄만 읽음(전에는 로그 끝 150줄이라 물류 [WARN]을 놓친 날이 있었음 · 11/17). 요약이 없거나 '점검 요약 실패'면 예전처럼 실패 단계 로그.
+  요약 작업은 저장·커밋 없이 늘 성공으로 끝남(실행 결과는 앞 작업대로) · 알려진 정상 줄(블랙야크 478560.KS)은 뺌.
   같은 점검에서 `docs/data.json`의 `fx_push`(오늘 새로 생긴 환율 1% 칸 알림, fetch_data가 만든 문구)가 있으면
   그 문구를 그대로 휴대폰 알림으로 보낸다(엔·유로·달러, 1년 평균 대비 1% 선을 새로 넘은 날).
   실패 로그에 Anthropic 'credit balance'(잔액 부족)가 있으면 이상 알림과 따로 '💳 크레딧 부족 — 충전 필요' 알림을 보낸다(2026-10-06).

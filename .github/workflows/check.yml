@@ -195,6 +195,8 @@ jobs:
           PY
       - name: Check pages in a phone-size browser
         # v2026-11-06 개편 P0: 화면 주소마다 열어 스크립트 오류·빈 화면을 잡음(외부 요청은 막고 파일만 — 네트워크에 흔들리지 않게)
+        # v2026-11-20 개편 B: update.yml이 이 단계를 이름으로 찾아 같은 스크립트를 매일 돌림 — 단계 이름을 바꾸면 update.yml도 함께
+        #   (이 run 블록은 홀로 돌아야 함 — 앞 단계 파일·변수에 기대지 않게)
         run: |
           npm i --no-save --no-audit --no-fund --prefix /tmp/pw playwright-core@1.63.0 > /tmp/pw.log 2>&1 || { cat /tmp/pw.log; exit 1; }
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
