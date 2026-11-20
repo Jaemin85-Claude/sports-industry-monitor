@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.24: (대표 지시 2026-11-20 '브랜드당 MSRP 20개' · 결정 '검색만'(Firecrawl은 후보 주소 찾기만 · 정가는 우리 봇) · '블프 전 1차 + 이후 주 1회 차례')
+    1차 29개 상품(값 약 140개): 나이키 +7(17) · 온러닝 +10(20) · 닥터마틴 +6(16) · 푸마 +2(13) — 나라별 몰 사이트맵(robots.txt에 적힌 것)·나이키 product_feed로
+    한국과 같은 글로벌 품번 → GitHub 서버에서 정가 읽기 확인(11/20) · 닥터마틴 미국 몰은 블프 할인가가 정가로 읽혀(한국 정가 ÷ 미국 값이 지금 상품의 1.4배) 처치만 넣고
+    나머지 미국 값은 블프 뒤에 · 아크테릭스·써코니·살로몬은 다음 차례(검색 결과에 품번이 드물고 살로몬 해외는 한 실행 8건)
 v1.23: (대표 결정 2026-11-19 '추천대로' — 개편 A1 · build_dashboard v33.34) 상품마다 분류 cat(신발 shoe · 부츠 boot · 샌들류 sandal · 반팔·민소매 top ·
     옷 wear · 가방 bag)을 PRODUCTS에 넣고 prices.json 상품에 함께 저장(받지 않는 날도 지금 PRODUCTS 것으로) — 화면 착지가 분류별 무게·관세(가방 8%)로 계산 ·
     분류가 없거나 모르는 이름이면 불러오기에서 멈춤(새 상품은 cat 필수) · cfg_hash는 cat을 빼고 셈(분류만 바꾼 날 전체를 다시 받지 않음)
@@ -290,6 +294,19 @@ PRODUCTS = [
      "urls": {"AE": "https://www.nike.ae/en/killshot-2-leather-mens-shoes/NK432997-107.html"}},   # Sail/Gum Yellow/Midnight Navy
     {"id": "nike-courtvisionlo", "cat": "shoe", "brand": "나이키", "name": "코트 비전 로우 넥스트 네이처", "code": "DH2987-101", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
      "urls": {"AE": "https://www.nike.ae/en/court-vision-low-next-nature-mens-shoes/NKDH2987-101.html"}},   # v1.18 White/Black-White · 11/10 한국·일본 할인 중(정가 fullPrice)
+    # v1.24 해외 정가 브랜드당 20개 1차(대표 결정 2026-11-20 '검색만' · '블프 전 1차') — product_feed styleColor로 나라별 정가 fullPrice 읽기 확인(11/20 GitHub 서버) ·
+    # 두바이 = nike.ae 사이트맵에 같은 품번 상품 페이지가 있는 것만(블레이저 로우 77·V2K 런은 없음 · 베나시는 페이지에 가격 데이터(JSON-LD) 없음)
+    {"id": "nike-calm", "cat": "sandal", "brand": "나이키", "name": "캄 슬라이드", "code": "FD4116-001", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/calm-mens-slides/NKFD4116-001.html"}},   # Black/Black
+    {"id": "nike-victorione", "cat": "sandal", "brand": "나이키", "name": "빅토리 원 슬라이드", "code": "CN9675-002", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/victori-one-mens-slides/NKCN9675-002.html"}},   # Black/White-Black
+    {"id": "nike-blazerlo77", "cat": "shoe", "brand": "나이키", "name": "블레이저 로우 77 빈티지", "code": "DA6364-101", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # 11/20 멕시코 빼고 할인 중(정가 fullPrice)
+    {"id": "nike-v2krun", "cat": "shoe", "brand": "나이키", "name": "V2K 런", "code": "FD0736-100", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
+    {"id": "nike-airmax97", "cat": "shoe", "brand": "나이키", "name": "에어맥스 97", "code": "921826-101", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-max-97-mens-shoes/NK921826-101.html"}},
+    {"id": "nike-airmaxsc", "cat": "shoe", "brand": "나이키", "name": "에어맥스 SC", "code": "CW4555-002", "src": "nike", "cc": ["KR", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-max-sc-mens-shoes/NKCW4555-002.html"}},   # 미국 나이키에서 팔지 않음(11/20)
+    {"id": "nike-benassi", "cat": "sandal", "brand": "나이키", "name": "베나시 JDI 슬라이드", "code": "343880-090", "src": "nike", "cc": ["KR", "US", "JP", "MX"]},   # 영국·독일 나이키에서 팔지 않음 · 두바이 페이지는 가격 데이터 없음(11/20)
     # v1.17 푸마 두바이 = ae.puma.com(PUMA UAE 직영 · SFCC) — JSON-LD 품번 398846_xx · 할인 중이면 화면 데이터 c_listPrice(지금 page_price 그대로)
     {"id": "puma-speedcat", "cat": "shoe", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
@@ -363,6 +380,20 @@ PRODUCTS = [
         "US": "https://us.puma.com/us/en/pd/king-indoor-sneakers/401683",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-king-indoor/401683.html",
         "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵)
+    # v1.24 1차(11/20) — 한국 사이트맵 666개 중 해외 3개 나라 이상에 같은 품번이 있는 새 성인 상품은 이 둘뿐(나머지는 아동·한국 페이지 404 상품) ·
+    # 포에버런 나이트로 3은 한국 사이트맵에 아직 없지만 한국 몰 상품 페이지가 열려 정가 읽기 확인(Firecrawl 검색으로 주소 찾음)
+    {"id": "puma-foreverrun2w", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 2(여성)", "code": "310471", "src": "page", "hint": "foreverrun nitro 2", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Eforeverrun-nitro-2-wn/310471.html",
+        "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-womens-road-running-shoes/310471",
+        "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-damen/310471",
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-women/310471.html"}},   # 영국·멕시코 몰에 없음 · 11/20 네 나라 모두 할인 중(정가는 취소선 정가)
+    {"id": "puma-foreverrun3", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 3(남성)", "code": "312942", "src": "page", "hint": "foreverrun nitro 3", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-3-%3Cbr%3Eforeverrun-nitro-3/312942.html",
+        "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-3-mens-road-running-shoes/312942",
+        "GB": "https://uk.puma.com/uk/en/pd/foreverrun-nitro%E2%84%A2-3-running-shoes-men/312942",
+        "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-3-laufschuhe-herren/312942",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-foreverrun-nitrotm-3-para-hombre/312942.html",
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-3-running-shoes-men/312942.html"}},
     # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감 · 일본은 재고 정리 할인 중) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
     # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
     {"id": "on-cloudmonster", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
@@ -380,6 +411,17 @@ PRODUCTS = [
     {"id": "on-cloudrunner3", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
     {"id": "on-cloudx5", "cat": "shoe", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043", "cloud-x-5")},
     {"id": "on-cloud6wp", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043", "cloud-6-waterproof")},
+    # v1.24 1차(11/20) — 나라별 상품 사이트맵({loc}/products.xml) 5개 나라 같은 품번 신발 중 주요 모델 · 정가 읽기 확인(GitHub 서버) · 두바이(on.ae)는 다음 차례에
+    {"id": "on-cloud6coast", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 코스트", "code": "3MF10030080", "src": "page", "hint": "cloud 6 coast", "urls": _on("cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080")},
+    {"id": "on-cloudzone", "cat": "shoe", "brand": "온러닝", "name": "클라우드존", "code": "3MF10080106", "src": "page", "hint": "cloudzone", "urls": _on("cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106")},
+    {"id": "on-cloudrocklowwp", "cat": "shoe", "brand": "온러닝", "name": "클라우드록 로우 워터프루프", "code": "3MF10251043", "src": "page", "hint": "cloudrock", "urls": _on("cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043")},
+    {"id": "on-cloudultra3", "cat": "shoe", "brand": "온러닝", "name": "클라우드울트라 3", "code": "3MF30231043", "src": "page", "hint": "cloudultra", "urls": _on("cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043")},
+    {"id": "on-cloudboommax", "cat": "shoe", "brand": "온러닝", "name": "클라우드붐 맥스", "code": "3MF30310462", "src": "page", "hint": "cloudboom", "urls": _on("cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462")},
+    {"id": "on-cloudsurfernext", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 넥스트", "code": "3ME30021200", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200")},
+    {"id": "on-cloudsurfermax", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 맥스", "code": "3MF30431200", "src": "page", "hint": "cloudsurfer max", "urls": _on("cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200")},
+    {"id": "on-cloud6w", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6(여성)", "code": "3WF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-3wf1006/womens/black-black-shoes-3WF10061043")},
+    {"id": "on-cloudmonster3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 3(여성)", "code": "3WG10031043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043")},
+    {"id": "on-cloudrunner3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3(여성)", "code": "3WG10051043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043")},
     {"id": "salomon-xt6", "cat": "shoe", "brand": "살로몬", "name": "XT-6 고어텍스", "code": "L47450600", "alt": ["LG9333"], "src": "page", "hint": "xt-6", "urls": {
         "KR": "https://salomon.co.kr/products/l47450600.json",
         "US": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
@@ -431,6 +473,28 @@ PRODUCTS = [
         "KR": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001.json",
         "US": f"{DM}/us/en/1461-mono-smooth-leather-oxford-shoes-black/p/14345001",
         "GB": f"{DM}/uk/en_gb/1461-mono-smooth-leather-oxford-shoes-black/p/14345001"}},
+    # v1.24 1차(11/20) — 한국 쇼피파이 /products.json 품번 앞 8자리 ∩ 미국·영국 사이트맵 /p/품번 289개 중 주요 모델 · 정가 읽기 확인(GitHub 서버) ·
+    # 11/20 미국 몰은 블프 할인 중이라 많은 상품이 할인가로 읽힘(한국 정가 ÷ 미국 값이 지금 상품들 1,360~1,550 → 이 상품들 1,950~2,180) — 첫 값이 정가로 저장되지 않게
+    # 처치 말고는 미국을 블프 뒤에 넣음 · 영국 값도 할인으로 보이는 8053·2976 벡스·오드릭·그리폰은 뺌
+    {"id": "drm-2976quad", "cat": "boot", "brand": "닥터마틴", "name": "2976 쿼드", "code": "24687001", "src": "page", "hint": "2976", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/boots-2976-quad-black-polished-smooth.json",
+        "GB": f"{DM}/uk/en_gb/2976-quad-smooth-leather-platform-chelsea-boots-black/p/24687001"}},
+    {"id": "drm-1461bex", "cat": "shoe", "brand": "닥터마틴", "name": "1461 벡스", "code": "21084001", "src": "page", "hint": "1461", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/shoes-1461-bex-black-smooth.json",
+        "GB": f"{DM}/uk/en_gb/1461-bex-smooth-leather-oxford-shoes-black/p/21084001"}},
+    {"id": "drm-1461quad", "cat": "shoe", "brand": "닥터마틴", "name": "1461 쿼드 레트로", "code": "25567001", "src": "page", "hint": "1461", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/shoes-1461-quad-retro-25567001.json",
+        "GB": f"{DM}/uk/en_gb/1461-quad-smooth-leather-platform-shoes-black/p/25567001"}},
+    {"id": "drm-polley", "cat": "shoe", "brand": "닥터마틴", "name": "폴리 메리제인", "code": "14852001", "src": "page", "hint": "polley", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/14852001.json",
+        "GB": f"{DM}/uk/en_gb/polley-smooth-leather-mary-jane-shoes-black/p/14852001"}},
+    {"id": "drm-1490", "cat": "boot", "brand": "닥터마틴", "name": "1490 버지니아", "code": "22524001", "src": "page", "hint": "1490", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/core-1490-black-virgina.json",
+        "GB": f"{DM}/uk/en_gb/1490-virginia-leather-high-boots-black/p/22524001"}},
+    {"id": "drm-church", "cat": "boot", "brand": "닥터마틴", "name": "처치 몽키 부츠", "code": "16054001", "src": "page", "hint": "church", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/boots-church-black-16054001.json",
+        "US": f"{DM}/us/en/church-vintage-monkey-boots-black/p/16054001",
+        "GB": f"{DM}/uk/en_gb/church-vintage-smooth-leather-monkey-boots-black/p/16054001"}},
     {"id": "dd-santacroce", "cat": "bag", "brand": "드래곤디퓨전", "name": "산타크로체 빅 백", "code": "8892", "alt": ["W2BAS26025DBR"], "src": "page", "hint": "santa croce", "urls": {
         "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",   # 코오롱몰(공식 수입) 자체 품번
         "US": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade"}},   # 글로벌 몰 1곳 — 접속한 나라 통화(미국 서버 → 달러), 달러가 아니면 실패
