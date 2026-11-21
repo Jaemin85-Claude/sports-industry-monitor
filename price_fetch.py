@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.27: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — SKU 4차) 상품 248 → 273 · 값 1,066 → 1,173: 판정 브랜드 첫 해외 정가 3곳 + 빈 나라 채우기 ·
+    크록스 15(한국·미국·영국·일본·독일 — 같은 Next.js 몰 CROCS · 새 읽는 법 crocs_list: 화면 데이터에서 productId가 '품번-'인 이 상품 변형의 retailPrice 최고값 = 정가 ·
+    지금 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 최저(JSON-LD는 블프 판매가뿐 — 클래식 클로그 미국 $30 · 정가 $49.99 · 품절 변형의 자리표시 가격 한국 10,000원은 뺌) ·
+    멕시코 crocs.com.mx는 공식몰 근거 없고 정가·할인가를 못 가려 뺌 · 두바이 crocsgulf 403) · 오니츠카타이거 5(한국·영국·독일 — 마젠토 몰 OT_LIST · JSON-LD 없음 →
+    ot_price: dataLayer view_item originalPrice · price_info regular_price · 가격 칸 oldPrice 중 이 품번 것 · 일본(주소 밑줄 표기)·미국은 다음 차례) · 미즈노 5(한국 kor.mizuno.com
+    카페24 · 일본 · 미국 — 한국 블프 판매가는 CAFE24_ID_LIST 소비자가 칸(cafe24_id_list) · 미국 빅커머스 할인 중이면 BIGC_LIST 할인 전 칸(bigc_list) · 라이더 29는 새 모델 30이
+    나와 뺌) · 빈 나라: 온러닝 두바이 9 · 푸마 매그맥스 나이트로 2 영국 · 써코니 엔돌핀 스피드 5 영국·독일(11/21 다시 열림) — 새 읽는 법은 모두 이 상품 칸이 확실하지 않으면
+    실패(할인가·다른 상품 값을 정가로 저장하지 않음 · 브랜드마다 독립 검토 2개 · 블프 비율 검사 — 그 브랜드 나라별 가운데값 1.25배 안).
 v1.26: (대표 2026-11-21 '지금 추가 수집 해볼까요?' — 브랜드당 20개 3차 · 블프 영향 적은 곳 위주) 상품 225 → 248 · 값 921 → 1,066: 버버리 4 → 17(트렌치 헤리티지
     켄싱턴·첼시·워털루·혹스턴 · 캐시미어 스카프 5 · 스몰 체크 토트·시티 체크 클립 메신저 백 · 해링턴·퀼팅 재킷) + 나라를 한국·미국·영국 → 독일(de · 주소 독일어)·일본(jp)·
     두바이(ae)까지(기존 4개도 · 멕시코 mx.burberry.com은 DNS에 없음) · 톰브라운 12 → 20(여성 롱 카디건·미니스커트·스포츠코트(일본 뺌 — 블프 검사)·로퍼 · 윙팁 부츠 ·
@@ -129,7 +137,7 @@ v1.4: (대표 지시 2026-10-22 '스포츠 브랜드는 모두 추가하고 싶�
     ④ 한 실행 최대 11 → 13분(update.yml 해외 정가 단계 13 → 15분 · 작업 32 → 34분).
     ⑤ 넣지 못한 브랜드(접속 시험·조사 10/21~23): 아디다스·뉴발란스·아식스·오니츠카타이거·룰루레몬·오클리(봇 차단 403/429) ·
        크록스·스케쳐스(한국 몰 차단) · 호카(한국 공식 온라인몰 없음) · 미즈노(한국 공식몰에 현재 모델 없음) · 노르다·CEP(한국 공식몰 없음) ·
-       안다르(한국몰 상품 페이지에 자체 품번이 없어 일본 공식몰 상품과 같은지 확인 불가).
+       안다르(한국몰 상품 페이지에 자체 품번이 없어 일본 공식몰 상품과 같은지 확인 불가). → v1.27(11/21) 크록스·오니츠카타이거·미즈노는 다시 열려 넣음.
 v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 227개 —
     나라별로 같은 품번을 GitHub 서버에서 확인한 것만 · 그 나라 몰에 없거나 품번·사양이 다르거나 할인가가 정가로 보이면 그 나라는 뺌, 이유는 상품 줄 주석).
     ① SFCC형 몰(푸마 한국 등)이 가격인하 중이면 JSON-LD에 판매가만 있어, 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로 —
@@ -1304,6 +1312,193 @@ PRODUCTS = [
         "AE": "https://ae.burberry.com/nylon-quilted-jacket-p81270131"}},
     # 가방·재킷: 나라별 사이트맵에서 같은 p 번호(나라마다 첫 상품이 한국과 같음) · 독일 몰 주소는 독일어(Tasche·Jacke)라 이번 찾기에서 못 찾아 독일 뺌(다음 차례) ·
     # 나이트·락킹 호스·쉴드·체스·스닙·페그·B 클립 백·트렌치 토트·박스 스니커즈·하이랜드 부츠는 한국 사이트맵에 없음(이 이름 주소 0건)
+    # 크록스 SKU 4차(11/21) — +15
+    # 크록스(SKU 4차 11/21 · 판정 브랜드 첫 해외 정가 · 감시 브랜드 '크록스' · CHK_CUR USD): 나라별 공식몰 www.crocs.co.kr·www.crocs.com·www.crocs.co.uk·www.crocs.co.jp·www.crocs.de
+    # (같은 Next.js 몰 · CROCS · 독일 = 유로) · 읽기 = v1.27 crocs_list(화면 데이터의 이 상품 변형 retailPrice = 정가 · JSON-LD는 지금 판매가뿐) · 한국·일본 첫 화면·사이트맵 +
+    # 미국·영국·독일 사이트맵의 같은 품번 → GitHub 서버 정가 읽기 확인(crocs6 · 11/21) · 주소 slug는 사이트맵·첫 화면 정식 주소(크록스 몰은 slug와 상관없이 품번으로 열림) ·
+    # 분류 sandal(클로그·슬라이드·플립 — 모두 성인 · 206750은 여성)
+    # 블프 검사: 세일 중인 10001의 지금 값 < 정가(미국 $30 < $49.99 · 영국 £29.99 < £49.99 · 일본 ￥3,850 < ￥7,700 · 독일 €32.99 < €54.99) — retailPrice가 세일가를 따라가지 않음 ·
+    #   한국 정가 ÷ (현지 정가 × 11/20 환율) 이번 차례 가운데값(에코 뺀 뒤) 미국 1.06 · 영국 0.79 · 일본 1.12 · 독일 0.91 — 넣은 값 모두 1/1.25~1.25배 안(가장 큼 샬레 미국·독일 1.23배 · 가장 작음 크록밴드 플립 영국 0.83배)
+    # 멕시코 뺌: crocs.com.mx(쇼피파이 'Crocs México')는 미국 몰 나라 선택에 없고(영국·EU·독일·프랑스·네덜란드·일본·한국·호주·캐나다만) 운영 회사 표기 없음(© 줄·개인정보 처리방침에 회사 이름 없음 ·
+    #   '공식'은 설명 글뿐) · 상품이 색상별 주소(classic-clog-4 …)이고 compare_at_price가 빈칸(블프 중 정가·세일가 구분 안 됨) · 확인한 2개(크록밴드 1,599·에코 1,799페소) 모두 주문 가능 변형 0 — 공식몰 근거 부족
+    # 두바이 뺌: www.crocs.ae → en-ae.crocsgulf.com robots.txt부터 HTTP 403(접속 차단 — 우회하지 않음)
+    # 한국 10001: crocs6 '정가 69900가 지금 값 10000의 5배 넘음' — 품절 변형(orderable false · ats 0)의 자리표시 "price":10000(dump 확인) · 주문 가능 변형만 보는 읽기 고침 뒤 브랜치 실행에서 다시 확인
+    {"id": "crocs-classic", "cat": "sandal", "brand": "크록스", "name": "클래식 클로그", "code": "10001", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-clog/10001.html",
+        "US": "https://www.crocs.com/p/classic-clog/10001.html",
+        "GB": "https://www.crocs.co.uk/p/classic-clog/10001.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic/10001.html",
+        "DE": "https://www.crocs.de/p/classic-clog/10001.html"}},
+    {"id": "crocs-classic-lined", "cat": "sandal", "brand": "크록스", "name": "클래식 라인드 클로그", "code": "203591", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-lined-clog/203591.html",
+        "US": "https://www.crocs.com/p/classic-lined-clog/203591.html",
+        "GB": "https://www.crocs.co.uk/p/classic-lined-clog/203591.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic-lined-clog/203591.html",
+        "DE": "https://www.crocs.de/p/classic-lined-clog/203591.html"}},
+    # JP 뺌: 일본 화면 데이터에 10126 변형 없음(crocs5 'JPY 가격 없음'도 — 일본 몰에서 안 팖)
+    {"id": "crocs-baya", "cat": "sandal", "brand": "크록스", "name": "바야 클로그", "code": "10126", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/baya-clog/10126.html",
+        "US": "https://www.crocs.com/p/baya-clog/10126.html",
+        "GB": "https://www.crocs.co.uk/p/baya-clog/10126.html",
+        "DE": "https://www.crocs.de/p/baya-clog/10126.html"}},
+    # 한국 205969: crocs6 '정가 84900가 지금 값 14900의 5배 넘음' — 10001과 같은 품절 변형 값 · 읽기 고침 뒤 브랜치 실행에서 다시 확인(그때도 실패면 한국 뺌)
+    {"id": "crocs-baya-lined", "cat": "sandal", "brand": "크록스", "name": "바야 라인드 클로그", "code": "205969", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/baya-lined-clog/205969.html",
+        "US": "https://www.crocs.com/p/baya-lined-clog/205969.html",
+        "GB": "https://www.crocs.co.uk/p/baya-lined-clog/205969.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-baya-lined-clog/205969.html",
+        "DE": "https://www.crocs.de/p/baya-lined-clog/205969.html"}},
+    # 한국 첫 화면 classic-unfurgettable-vegan-suede-clog · 미국·영국·독일 사이트맵 unfurgettable-clog · 일본 첫 화면 classic-unfurgettable-sueded-clog
+    {"id": "crocs-unfurgettable", "cat": "sandal", "brand": "크록스", "name": "언퍼게터블 클로그", "code": "212106", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-unfurgettable-vegan-suede-clog/212106.html",
+        "US": "https://www.crocs.com/p/unfurgettable-clog/212106.html",
+        "GB": "https://www.crocs.co.uk/p/unfurgettable-clog/212106.html",
+        "JP": "https://www.crocs.co.jp/p/classic-unfurgettable-sueded-clog/212106.html",
+        "DE": "https://www.crocs.de/p/unfurgettable-clog/212106.html"}},
+    {"id": "crocs-unfurgettable-plat", "cat": "sandal", "brand": "크록스", "name": "언퍼게터블 플랫폼 클로그", "code": "214108", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/unfurgettable-platform-clog/214108.html",
+        "US": "https://www.crocs.com/p/unfurgettable-platform-clog/214108.html",
+        "GB": "https://www.crocs.co.uk/p/unfurgettable-platform-clog/214108.html",
+        "JP": "https://www.crocs.co.jp/p/unfurgettable-platform-clog/214108.html",
+        "DE": "https://www.crocs.de/p/unfurgettable-platform-clog/214108.html"}},
+    {"id": "crocs-crocband", "cat": "sandal", "brand": "크록스", "name": "크록밴드 클로그", "code": "11016", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/crocband-clog/11016.html",
+        "US": "https://www.crocs.com/p/crocband-clog/11016.html",
+        "GB": "https://www.crocs.co.uk/p/crocband-clog/11016.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-crocband/11016.html",
+        "DE": "https://www.crocs.de/p/crocband-clog/11016.html"}},
+    # 미국·영국·독일 정식 주소 women-s-classic-platform-clog · 일본 crocs-classic-platform-clog-w
+    {"id": "crocs-classic-plat", "cat": "sandal", "brand": "크록스", "name": "클래식 플랫폼 클로그(여성)", "code": "206750", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-platform-clog/206750.html",
+        "US": "https://www.crocs.com/p/women-s-classic-platform-clog/206750.html",
+        "GB": "https://www.crocs.co.uk/p/women-s-classic-platform-clog/206750.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic-platform-clog-w/206750.html",
+        "DE": "https://www.crocs.de/p/women-s-classic-platform-clog/206750.html"}},
+    # 한국 첫 화면 · 한국 정가가 높은 편(나라별 비율 가운데값의 1.02~1.23배 — 1.25배 안) · 한국·영국·일본·독일은 할인 아님
+    {"id": "crocs-chalet", "cat": "sandal", "brand": "크록스", "name": "샬레 클로그", "code": "214955", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/chalet-clog/214955.html",
+        "US": "https://www.crocs.com/p/chalet-clog/214955.html",
+        "GB": "https://www.crocs.co.uk/p/chalet-clog/214955.html",
+        "JP": "https://www.crocs.co.jp/p/chalet-clog/214955.html",
+        "DE": "https://www.crocs.de/p/chalet-clog/214955.html"}},
+    # US 뺌: 미국 읽기 시간 초과(crocs6 1번 — 다음 차례에 다시) · 라인드(겨울) 상품이라 봄에 몰에서 빠지면 21일 뒤 실패 표시
+    {"id": "crocs-bae-lined", "cat": "sandal", "brand": "크록스", "name": "배 라인드 클로그", "code": "211753", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/bae-lined-clog/211753.html",
+        "GB": "https://www.crocs.co.uk/p/bae-lined-clog/211753.html",
+        "JP": "https://www.crocs.co.jp/p/bae-lined-clog/211753.html",
+        "DE": "https://www.crocs.de/p/bae-lined-clog/211753.html"}},
+    {"id": "crocs-crafted", "cat": "sandal", "brand": "크록스", "name": "클래식 크래프티드 클로그", "code": "211354", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-crafted-clog/211354.html",
+        "US": "https://www.crocs.com/p/classic-crafted-clog/211354.html",
+        "GB": "https://www.crocs.co.uk/p/classic-crafted-clog/211354.html",
+        "JP": "https://www.crocs.co.jp/p/classic-crafted-clog/211354.html",
+        "DE": "https://www.crocs.de/p/classic-crafted-clog/211354.html"}},
+    # US 뺌: 'USD 판매 가격 없음'(주문 가능 변형 없음 — 미국 몰에서 안 팖)
+    {"id": "crocs-bayaband", "cat": "sandal", "brand": "크록스", "name": "바야밴드 클로그", "code": "205089", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/bayaband-clog/205089.html",
+        "GB": "https://www.crocs.co.uk/p/bayaband-clog/205089.html",
+        "JP": "https://www.crocs.co.jp/p/bayaband-clog/205089.html",
+        "DE": "https://www.crocs.de/p/bayaband-clog/205089.html"}},
+    # US 없음: 미국 사이트맵에 없어 시험 안 함 · JP 뺌: 'JPY 판매 가격 없음'(일본 몰에서 안 팖)
+    {"id": "crocs-allterrain", "cat": "sandal", "brand": "크록스", "name": "올 터레인 클로그", "code": "206340", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/all-terrain-clog/206340.html",
+        "GB": "https://www.crocs.co.uk/p/all-terrain-clog/206340.html",
+        "DE": "https://www.crocs.de/p/all-terrain-clog/206340.html"}},
+    # US 없음: 미국 사이트맵에 없어 시험 안 함 · JP 뺌: 'JPY 판매 가격 없음'(일본 몰에서 안 팖)
+    {"id": "crocs-crocband-flip", "cat": "sandal", "brand": "크록스", "name": "크록밴드 플립", "code": "11033", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/crocband-flip/11033.html",
+        "GB": "https://www.crocs.co.uk/p/crocband-flip/11033.html",
+        "DE": "https://www.crocs.de/p/crocband-flip/11033.html"}},
+    # 한국·미국만 시험(crocs6) — 영국·독일 사이트맵에도 같은 품번(mellow-recovery-slide/208392)이 있어 다음 차례에 · 멜로우 2 슬라이드는 사이트맵에 없음(옛 모델 아님)
+    {"id": "crocs-mellow-slide", "cat": "sandal", "brand": "크록스", "name": "멜로우 리커버리 슬라이드", "code": "208392", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/mellow-recovery-slide/208392.html",
+        "US": "https://www.crocs.com/p/mellow-recovery-slide/208392.html"}},
+    # 뺌: 에코 클로그(207937 — 나가는 모델: 후속 에코 II 212810이 미국·영국·독일 사이트맵에 있고(crocs6) 미국 몰은 207937 변형이 이미 없음 · 한국 몰에도 에코 II(crocs5 /p/ii/212810) ·
+    #   나라마다 정가의 40~50%로 정리 중(한국 37,900/94,900 · 영국·독일 35/69.99 · 일본 4,620/11,550) — 다음 차례에 에코 II 212810으로)
+    # 뺌: 멜로우 리커버리 클로그(208493 — 한국만 OK · 일본 변형 없음 · 미국·영국·독일 사이트맵에 없음 — 그 나라는 멜로우 2 리커버리 클로그 214289로 바뀜)
+    # 뺌: 라이트라이드 360 클로그(206708 — 한국만 OK · 일본 변형 없음 · 미국·영국·독일 사이트맵에 없음)
+    # 뺌: 클래식 코지 슬리퍼(209386 — 한국 'KRW 판매 가격 없음')·클래식 퍼즈 스커프(212143)·클래식 카페 슬리퍼(213622 — 한국 화면 데이터에 변형 없음) — 한국 몰에서 안 팖(해외는 정가 읽기 OK)
+    # 뺌: 클래식 슬라이드 2.0(짐작 품번 209401 — 한국 '판매 가격 없음' · 미국 변형 없음)
+    # 오니츠카타이거 SKU 4차(11/21) — +5
+    # 오니츠카타이거(새 브랜드 · 10/21 접속 시험 때 막혔던 곳 → 11/21 다시 열림): 공식몰 www.onitsukatiger.com 한 곳(마젠토 · 나라는 경로 — 한국 /kr/ko-kr/product/{이름}/{품번 소문자.점} ·
+    # 영국 /gb/en-gb·독일 /de/de-de/{이름}/p/{품번 소문자-대시}.html) · JSON-LD가 없어(한국) ot_price(v1.27)로 읽음 — 품번 표기(점·대시)는 ot_price가 맞춰 봐 cc_code 필요 없음 ·
+    # 한국 = 11/21 GitHub 서버 onitsuka6 정가 읽기 OK(how 'dataLayer·price_info' — dataLayer view_item originalPrice = price_info regular_price · og 가격 같음) ·
+    # 영국·독일 = 나라 사이트맵(각 품번 1,034개)에서 같은 품번 주소 → 같은 실행 정가 읽기 OK(how 'price_info' — 유럽 dataLayer는 지금 가격만이라 price_info regular_price가 정가) ·
+    # 유럽 페이지 모양은 영국 덤프 2개(1182A677.001 · 1182A676.002)로 확인: 장바구니 폼 안 <input name="product" value="210738"> = 가격 칸 data-product-id 210738 ·
+    # 할인 아님 = 가격 칸 normal-price에 finalPrice 하나뿐(oldPrice 칸 없음) · price_info regular_price 160 = final_price 160 · special_price null · item_sale_product "No" · og 160.00 GBP
+    # 블프 검사(11/21): 5개 모두 지금 가격 = 정가(cur_price = full · 한국·영국·독일) · 한국 정가 ÷ (현지 정가 × 11/20 환율) 나라별 가운데값 영국 0.75·독일 0.82 —
+    # 모든 값이 가운데값의 0.96~1.09배(1.25배·1/1.25배 안) · 묶음 시간: 한 호스트라 한 묶음에서 차례로 값 15개 × 약 9초 ≈ 135초(가장 긴 묶음 438초 안)
+    # 일본: 일본 사이트맵(/jp/media/sitemap/sitemap.xml · 품번 2,141개)은 주소 꼴이 /jp/ja-jp/product/{이름}/{품번 소문자_밑줄}.html이라 이번 시험(점·대시 표기)에서 주소를 못 찾음 —
+    #   한국 꼴 주소(/jp/ja-jp/product/…/1183c102.001)는 HTTP 404(onitsuka5) → 밑줄 표기로 다음 차례에 시험(일본 첫 화면에 1183C102_751·1183A592_200·1183C015_200 등 있음)
+    # 미국: 미국 사이트맵 없음(짐작 주소 5개 404·0개) · 첫 화면에 상품 링크·품번 없음 → 다음 차례 · 멕시코·두바이: 같은 도메인 공식 온라인몰 없음(사이트맵 색인 41개에 mx·ae 없음)
+    # 뺌: 멕시코 66 1183C102.751·1183C102.100 — 블랙·화이트(.001)와 같은 모델·같은 한국 정가(196,000원 · 영국 £150 · 독일 €160)
+    # 뺌: 멕시코 66 SD VIN 1183C015.200 — .207과 같은 모델·같은 한국 정가(250,000원 · 영국 £195 · 독일 €210 · 영국 주소 이름이 mexico-66-sd로 다름)
+    # 뺌: 멕시코 66 슬립온(1183C742.250)·멕시코 66 TGRS 1182A745.250·모아지 CO(1183B555.022)·멕시코 66 PF 사보(1183C815.100)·묵릭 부츠(1183C830.200) — 한국 OK이나
+    #   영국·독일 사이트맵에 같은 품번 없음(해외 값 없음)
+    # 뺌: 멕시코 66 TGRS 여성 1182A677.001(230,000원 · £160 · €170 · 정가 읽기는 깨끗함) — 영국 JSON-LD 설명 'AW25 glitter pack' = 지난 시즌 테마 묶음 색
+    #   (대표·스테디셀러 아님 · 블프·아웃렛으로 먼저 빠지고 몰에서 내려가면 21일 알림) · 비율도 브랜드 최고(영국 가운데값의 1.10배·독일 1.12배) — 묶음 아닌 색(1182A745 등)이 영국·독일 사이트맵에 생기면 다음 차례에
+    {"id": "ot-mexico66", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66(블랙·화이트)", "code": "1183C102.001", "src": "page", "hint": "mexico 66", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66/p/1183c102-001.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66/p/1183c102-001.html"}},   # 196,000원 · £150 · €160
+    {"id": "ot-mexico66sd", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66 SD", "code": "1183A592.200", "src": "page", "hint": "mexico 66 sd", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd/1183a592.200",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66-sd/p/1183a592-200.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66-sd/p/1183a592-200.html"}},   # 220,000원 · £170 · €190
+    {"id": "ot-mexico66sdvin", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66 SD VIN", "code": "1183C015.207", "src": "page", "hint": "mexico 66 sd vin", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd-vin/1183c015.207",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66-sd-vin/p/1183c015-207.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66-sd-vin/p/1183c015-207.html"}},   # 250,000원 · £195 · €210 · 영국·독일 첫 화면에 1183C015_207 그림(onitsuka5)
+    {"id": "ot-taichiog", "cat": "shoe", "brand": "오니츠카타이거", "name": "타이치 OG(화이트·블랙)", "code": "1183C759.100", "src": "page", "hint": "tai-chi og", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tai-chi-og/1183c759.100",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/tai-chi-og/p/1183c759-100.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/tai-chi-og/p/1183c759-100.html"}},   # 200,000원 · £140 · €160
+    {"id": "ot-tokuten", "cat": "shoe", "brand": "오니츠카타이거", "name": "토쿠텐", "code": "1183C429.250", "src": "page", "hint": "tokuten", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tokuten/1183c429.250",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/tokuten/p/1183c429-250.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/tokuten/p/1183c429-250.html"}},   # 210,000원 · £160 · €175
+    # 미즈노 SKU 4차(11/21) — +5
+    # 미즈노(SKU 4차 11/21 · 판정 브랜드 첫 해외 정가 · 감시 브랜드 '미즈노' · CHK_CUR JPY): 한국 kor.mizuno.com(카페24) · 일본 jpn.mizuno.com · 미국 usa.mizuno.com(빅커머스)
+    # 읽기: 한국 = JSON-LD sku가 카페24 번호라 이름(hint) + 페이지 '모델' 칸 글로벌 품번(code_in_page) · 블프 판매가면 v1.27 cafe24_id_list(소비자가 칸 span_product_price_custom
+    #   ↔ 판매가 칸 span_product_price_text — mizuno6 dump 인스파이어 22: 소비자가 <strike>169,000원</strike> · 판매가 135,200원, 같은 칸 3번 모두 같은 값) ·
+    #   일본 = 모델 페이지 /ec/disp/attgrp/{품번}/(색상·사이즈 상품 페이지로 넘어감 · JSON-LD ProductGroup = 품번 · 색상별 가격 중 높은 값) ·
+    #   미국 = 자체 스타일 번호(JSON-LD sku → cc_code US) · 할인 중이면 v1.27 bigc_list(할인 전 칸 data-product-non-sale-price-without-tax · 할인 없으면 빈 칸) ·
+    #   같은 모델·성별·보통 폭으로 대응(미국 2E·SW·공용 Noir·Lo·한정 색은 다른 스타일 번호라 뺌)
+    # 블프 검사(mizuno6 · GitHub 서버 11/21 · 11/20 환율): 한국 할인 3개(인스파이어 22·스카이 9·리벨리온 프로 3)는 full = 소비자가 · cur_price = 판매가(135,200·151,200·181,300) ·
+    #   미국 할인 중 인스파이어 22 $129.95 < 정가 $150 · 스카이 9 $149.95 < $180 · 리벨리온 프로 3 $160 < $250(2E 페이지 할인 전 칸도 같은 $150·$180) ·
+    #   일본 할인 칸: 라이더 30·인스파이어 22·스카이 9는 비어 있음(표시가 = 세금 별도 × 1.1) · 네오 비스타 3·리벨리온 프로 3은 '会員価格'(회원가 ¥16,940·¥14,850 표시) —
+    #   JSON-LD 가격 24,200·16,940 / 29,700·14,850에서 낮은 값이 정확히 30%·50% 할인이고 읽은 값은 높은 통상가(mizuno5와 같음) → 정가로 넣음(스카이 9 JSON-LD 13,860 = 다른 색상 30% 할인도 같음)
+    #   한국 정가 ÷ (현지 정가 × 환율) 가운데값 미국 0.82 · 일본 1.14 — 넣은 값 모두 가운데값의 1.10배 안(기준 1.25배) · 한국이 일본 대비 0.91 밑인 값 없음(판매가를 정가로 읽은 값 없음)
+    {"id": "mizuno-waverider30", "cat": "shoe", "brand": "미즈노", "name": "웨이브 라이더 30(남성)", "code": "J1GM2620", "cc_code": {"US": "411621"}, "src": "page", "hint": "wave rider 30", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-rider-30/12026/",   # 모델 J1GM2620 · 소비자가 = 판매가 179,000(할인 없음)
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2620/",   # ¥18,700(세금 별도 ¥17,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-rider-30-mens/"}},   # 남성 보통 폭 411621 · $150(할인 전 칸 빔)
+    {"id": "mizuno-neovista3", "cat": "shoe", "brand": "미즈노", "name": "네오 비스타 3(남성)", "code": "J1GM2610", "cc_code": {"US": "411619"}, "src": "page", "hint": "neo vista 3", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/mizuno-neo-vista-3/12065/",   # 모델 J1GM2610 · 소비자가 = 판매가 219,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2610/",   # 통상가 ¥24,200(회원가 ¥16,940 = 30% 할인 — 위 블프 검사)
+        "US": "https://usa.mizuno.com/running-mizuno-neo-vista-3-mens/"}},   # 남성 411619 · $200(할인 전 칸 빔) · 공용 Noir 411629는 다른 상품
+    {"id": "mizuno-inspire22", "cat": "shoe", "brand": "미즈노", "name": "웨이브 인스파이어 22(남성)", "code": "J1GC2644", "cc_code": {"US": "411557"}, "src": "page", "hint": "wave inspire 22", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-inspire-22/11361/",   # 모델 J1GC2644 · 블프 판매가 135,200 → 소비자가 칸 169,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2644/",   # ¥16,500(세금 별도 ¥15,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-inspire-22-mens"}},   # 남성 보통 폭 411557 · 블프 $129.95 → 할인 전 칸 $150
+    {"id": "mizuno-wavesky9", "cat": "shoe", "brand": "미즈노", "name": "웨이브 스카이 9(남성)", "code": "J1GC2502", "cc_code": {"US": "411533"}, "src": "page", "hint": "wave sky 9", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-sky-9/11346/",   # 모델 J1GC2502 · 블프 판매가 151,200 → 소비자가 칸 189,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2502/",   # ¥19,800(세금 별도 ¥18,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-sky-9-mens"}},   # 남성 보통 폭 411533 · 블프 $149.95 → 할인 전 칸 $180
+    {"id": "mizuno-rebellionpro3", "cat": "shoe", "brand": "미즈노", "name": "웨이브 리벨리온 프로 3(공용)", "code": "U1GD2530", "cc_code": {"US": "411498"}, "src": "page", "hint": "wave rebellion pro 3", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-rebellion-pro-3/10605/",   # 모델 U1GD2530 · 블프 판매가 181,300 → 소비자가 칸 259,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/U1GD2530/",   # 통상가 ¥29,700(회원가 ¥14,850 = 50% 할인 — 위 블프 검사)
+        "US": "https://usa.mizuno.com/running-unisex-wave-rebellion-pro-3-running-shoe/"}},   # 공용 411498 · 블프 $160 → 할인 전 칸 $250 · Lo 411526($230)은 다른 상품
+    # 뺌: 웨이브 라이더 29(J1GC2503 · 한국 10611 소비자가 169,000 → 판매가 118,300 · 미국 411538 $150 → $99) — 새 모델 라이더 30이 나와 재고 정리 중(해마다 새 모델이 나오는 러닝화 · 새 읽는 법 확인용으로만 시험)
+    # 뺌: 한국 리벨리온 프로 3 10194·10195(U1GD2533 오니하야이 한정 색) · 같은 모델 다른 색(라이더 30 12025·12027 · 네오 비스타 3 12063~12067 — 같은 품번·같은 값이라 하나만)
+    # 뺌: 넓은 폭·특별판 — 라이더 30 SW·라이더 GTX 4 SW(한국 J1GU2621·J1GM2621·J1GU2631) · 라이더 30.1·30.2·30 디스클로저(J1GU2624·2625·2623) · 미국 2E 페이지
+    # 다음 차례 후보(한국 상품 번호는 mizuno6 러닝 분류에서 찾았으나 한국 tryp를 아직 안 해 이번엔 안 넣음):
+    #   웨이브 프로페시 15(J1GC2651 · 한국 11370·11371 — 상품 페이지 미확인 · 일본 ¥26,400 OK · 미국 공용 411594 $300 / 남성 411592 $250 — 어느 쪽이 같은 상품인지 확인)
+    #   미즈노 스카이 프라임(한국 12357 J1GM2650 239,000 · 12359 J1GU2650 249,000 · 미국 남성 411625 $200 · 일본 미시험)
+    #   하이퍼워프 퓨어·엘리트·프로(한국 12335~12337 J1GC2687~2689 309,000·279,000·249,000 · 다른 색 12097~12099 J1GC2670~2672 · 미국 Hyperwarp Pure 2 411636 $300 — 같은 모델인지 확인 · 일본 미시험)
+    #   네오 젠 2(한국 12338은 J1GS2611(230부터 — 여성으로 보임) · 일본 J1GC2686 ¥17,600 OK와 품번이 달라 한국 같은 품번 페이지를 더 찾음 · 미국 남성 411559 할인 전 $160 / 공용 411595 $160)
+    #   웨이브 리벨리온 플래시 3(J1GC2535 · 일본 ¥20,900 OK · 미국 411524 할인 전 $180 · 한국 러닝 분류에 안 보임) · 웨이브 호라이즌 9(J1GC2626 · 일본 attgrp 404 · 미국 411564 $180 · 한국에 안 보임)
+    #   한국 이름 미확인 품번: J1GC2650(12205·11836·11837) · J1GC2600(11369) · J1GM2680(12206) · J1GM2683(12204) · J1GU2612·J1GM2612(12186~12188) — 상품 페이지로 이름 확인
 ]
 # v1.23 분류 cat(화면 착지 무게·관세 — build_dashboard LAND.cat과 같은 이름) — 새 상품은 반드시 넣음(빠지면 불러오기에서 멈춤 → check-files 실패)
 CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들류(샌들·슬리퍼·클로그 · 킨 유니크 포함) · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
@@ -1866,7 +2061,9 @@ def crocs_list(html, code, cur):
     (11/21 블프: 미국 클래식 클로그 JSON-LD $30 · 정가 $49.99 · 일본 ￥3,850 · 정가 ￥7,700)이라 화면 데이터의 이 상품 변형 묶음
     {"price":지금 값,"retailPrice":정가,"productId":"품번-색상-사이즈",…}(글 안 JSON이라 따옴표가 \\" — 그대로 쓴 JSON도)을 읽음.
     ① 이 상품만: productId가 '품번-'으로 시작하는 변형(추천 상품 칸은 다른 품번) · JSON-LD 상품이 있으면 sku가 이 품번이어야(다른 상품 페이지로 넘어감 방지)
-    ② 정가 = 그 변형 retailPrice 중 가장 높은 값(상품 묶음 masterProductId = 품번의 retailPrice도) · 지금 가장 싼 값 = 변형 price·상품 묶음 price·JSON-LD 판매가 중 가장 낮은 값
+    ② 정가 = 그 변형 retailPrice 중 가장 높은 값(상품 묶음 masterProductId = 품번의 retailPrice도) · 지금 가장 싼 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 가장 낮은 값
+      (v1.27 — 한국 몰 품절 변형은 자리표시 값 "price":10000·14900(orderable false · ats 0 · 정가 69,900)이라 뺌 · 주문 가능 = orderable true, 그 칸이 없으면 ats > 0 ·
+      주문 가능 변형 값도 JSON-LD 판매가도 없을 때만 상품 묶음 price)
     ③ 통화: JSON-LD 판매가나 상품 묶음 currency가 이 나라 통화여야(다른 통화가 보이면 실패) · 판매: JSON-LD 판매가가 있거나 주문 가능한(orderable) 변형이 있어야
     ④ 실패(할인가를 정가로 쓰지 않음): 변형 없음 · 변형 정가(retailPrice) 없음 · 정가보다 높은 판매가 · 정가가 지금 값의 5배 넘음"""
     nodes = [n for n in _ld_nodes(html, REL) if _types(n) & {"product", "productgroup"}]
@@ -1901,7 +2098,9 @@ def crocs_list(html, code, cur):
     for m in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}({re.escape(code)}-[^"\\]+){_JQ}', html):   # 이 상품 변형(품번-색상-사이즈)
         seg = _jobj(html, m.start())
         if seg:
-            rows.setdefault(m.group(1).upper(), set()).add((num(_jval(seg, "price")), num(_jval(seg, "retailPrice")), _jval(seg, "orderable") == "true"))
+            od = _jval(seg, "orderable")   # v1.27 주문 가능 = orderable true · 그 칸이 없으면 재고(ats) > 0
+            rows.setdefault(m.group(1).upper(), set()).add((num(_jval(seg, "price")), num(_jval(seg, "retailPrice")),
+                                                            od == "true" if od in ("true", "false") else bool(num(_jval(seg, "ats")))))
     vs = [x for s in rows.values() for x in s]
     if not vs:
         raise RuntimeError(f"화면 데이터에 이 상품 변형(productId {code}-…) 없음 — 이 나라 몰에 없거나 페이지 모양이 바뀜")
@@ -1922,7 +2121,9 @@ def crocs_list(html, code, cur):
     nows = [p for p, _, _ in vs if p] + [x for x in pnow if x] + ld
     if nows and max(nows) > full * 1.005:
         raise RuntimeError(f"판매가 {max(nows):g}가 정가 {full:g}보다 높음 — 값이 이상함")
-    low = min(nows) if nows else full
+    # v1.27 지금 값은 주문 가능한 변형·JSON-LD 판매가로만 — 한국 품절 변형의 자리표시 "price":10000이 5배 가드에 걸림(11/21 클래식 클로그 10001·바야 라인드 205969)
+    buy = [p for p, _, o in vs if p and o] + ld or [x for x in pnow if x]
+    low = min(buy) if buy else full
     if full > low * 5:
         raise RuntimeError(f"정가 {full:g}가 지금 값 {low:g}의 5배 넘음 — 값이 이상함")
     return full, {"cur_price": low if low < full * 0.995 else full, "by": "품번"}
