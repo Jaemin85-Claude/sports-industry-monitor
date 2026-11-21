@@ -1,0 +1,550 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "crocs-classic",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 클로그",
+    "code": "10001",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-clog/10001.html",
+     "US": "https://www.crocs.com/p/classic-clog/10001.html",
+     "GB": "https://www.crocs.co.uk/p/classic-clog/10001.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-classic/10001.html",
+     "DE": "https://www.crocs.de/p/classic-clog/10001.html"
+    }
+   },
+   {
+    "id": "crocs-classic-lined",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 라인드 클로그",
+    "code": "203591",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-lined-clog/203591.html",
+     "US": "https://www.crocs.com/p/classic-lined-clog/203591.html",
+     "GB": "https://www.crocs.co.uk/p/classic-lined-clog/203591.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-classic-lined-clog/203591.html",
+     "DE": "https://www.crocs.de/p/classic-lined-clog/203591.html"
+    }
+   },
+   {
+    "id": "crocs-baya",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "바야 클로그",
+    "code": "10126",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/baya-clog/10126.html",
+     "US": "https://www.crocs.com/p/baya-clog/10126.html",
+     "GB": "https://www.crocs.co.uk/p/baya-clog/10126.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-baya-clog/10126.html",
+     "DE": "https://www.crocs.de/p/baya-clog/10126.html"
+    }
+   },
+   {
+    "id": "crocs-baya-lined",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "바야 라인드 클로그",
+    "code": "205969",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/baya-lined-clog/205969.html",
+     "US": "https://www.crocs.com/p/baya-lined-clog/205969.html",
+     "GB": "https://www.crocs.co.uk/p/baya-lined-clog/205969.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-baya-lined-clog/205969.html",
+     "DE": "https://www.crocs.de/p/baya-lined-clog/205969.html"
+    }
+   },
+   {
+    "id": "crocs-unfurgettable",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "언퍼게터블 클로그",
+    "code": "212106",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-unfurgettable-vegan-suede-clog/212106.html",
+     "US": "https://www.crocs.com/p/unfurgettable-clog/212106.html",
+     "GB": "https://www.crocs.co.uk/p/unfurgettable-clog/212106.html",
+     "JP": "https://www.crocs.co.jp/p/classic-unfurgettable-sueded-clog/212106.html",
+     "DE": "https://www.crocs.de/p/unfurgettable-clog/212106.html"
+    }
+   },
+   {
+    "id": "crocs-unfurgettable-plat",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "언퍼게터블 플랫폼 클로그",
+    "code": "214108",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/unfurgettable-platform-clog/214108.html",
+     "US": "https://www.crocs.com/p/unfurgettable-platform-clog/214108.html",
+     "GB": "https://www.crocs.co.uk/p/unfurgettable-platform-clog/214108.html",
+     "JP": "https://www.crocs.co.jp/p/unfurgettable-platform-clog/214108.html",
+     "DE": "https://www.crocs.de/p/unfurgettable-platform-clog/214108.html"
+    }
+   },
+   {
+    "id": "crocs-crocband",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "크록밴드 클로그",
+    "code": "11016",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/crocband-clog/11016.html",
+     "US": "https://www.crocs.com/p/crocband-clog/11016.html",
+     "GB": "https://www.crocs.co.uk/p/crocband-clog/11016.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-crocband/11016.html",
+     "DE": "https://www.crocs.de/p/crocband-clog/11016.html"
+    }
+   },
+   {
+    "id": "crocs-echo",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "에코 클로그",
+    "code": "207937",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/echo-clog/207937.html",
+     "US": "https://www.crocs.com/p/echo-clog/207937.html",
+     "GB": "https://www.crocs.co.uk/p/echo-clog/207937.html",
+     "JP": "https://www.crocs.co.jp/p/echo-clog/207937.html",
+     "DE": "https://www.crocs.de/p/echo-clog/207937.html"
+    }
+   },
+   {
+    "id": "crocs-classic-plat",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 플랫폼 클로그(여성)",
+    "code": "206750",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-platform-clog/206750.html",
+     "US": "https://www.crocs.com/p/women-s-classic-platform-clog/206750.html",
+     "GB": "https://www.crocs.co.uk/p/women-s-classic-platform-clog/206750.html",
+     "JP": "https://www.crocs.co.jp/p/crocs-classic-platform-clog-w/206750.html",
+     "DE": "https://www.crocs.de/p/women-s-classic-platform-clog/206750.html"
+    }
+   }
+  ],
+  "memo": {
+   "batch": "crocs6 — 해외 정가 SKU 4차 2회(대표 11/21 '스포츠 브랜드 위주로 먼저 채워주세요') · 판정 브랜드 크록스(감시 브랜드 '크록스' · CHK_CUR USD · build_dashboard PM_NOPRICE block — 11/21 다시 열림)",
+   "reader": "이 브랜치 price_fetch에 v1.27 crocs_list(CROCS 사이트 www.crocs.co.kr·www.crocs.com·www.crocs.co.uk·www.crocs.co.jp·www.crocs.de)를 합친 뒤 돌림 — 정가 = 화면 데이터의 이 상품 변형(productId '품번-…') retailPrice 중 최고 · extra.cur_price = 변형 price·상품 묶음 price·JSON-LD 판매가 중 최저 · by '품번'. crocs5는 JSON-LD 판매가를 정가로 읽었음(미국 10001 $30 · 일본 ￥3,850 — 블프 세일가)",
+   "what": "크록스 대표 9개(crocs5에서 한국·해외 JSON-LD 품번 확인 · 독일은 www.crocs.de 사이트맵 + try OK) × 한국·미국·영국·일본·독일 = 45건 — 주소 slug는 사이트맵·첫 화면 정식 주소(일본·한국 일부는 crocs5 짐작 주소 — 크록스 앱은 slug와 상관없이 품번으로 열림: crocs5 dump 일본 /p/classic-clog/10001.html → 10001 페이지)",
+   "expect": {
+    "crocs-classic": "정가 KR 69900 · US 49.99 · GB 49.99 · JP 7700(crocs5 RX retailPrice) — cur_price는 지금 세일가(KR 29900 · US 30 · GB 29.99 · JP 3850 · DE 32.99 근처)",
+    "crocs-baya JP": "crocs5 'JPY 가격 없음'(JSON-LD 상품은 있는데 offer 없음) — 새 읽기가 '판매 가격 없음 — 품절·이 나라 몰에서 팔지 않음'이면 일본 뺌, OK면 넣음",
+    "crocs-echo US": "crocs5 'USD 가격 없음' · 미국 사이트맵에 없음 — 새 읽기도 실패면 미국 뺌(시험 1건)"
+   },
+   "pass": "OK + by 품번 + 블프 검사(아래) 통과 + 한국 OK인 상품만. FAIL '변형 없음'·'판매 가격 없음'은 그 나라 몰에서 안 팖 → 그 나라 뺌 · '정가(retailPrice) 없음'·'값이 이상함'이면 그 값 뺌(+ 원문을 다음 차례 dump로)",
+   "blackfriday": {
+    "rule": "비율 = 한국 정가 ÷ (현지 정가 × 11/20 환율). 새 읽기는 retailPrice(할인 전)라 블프에도 나라마다 상품끼리 비율이 고르게 나와야 함 — 크록스 나라별 가운데값(한국 OK 상품끼리)의 1.25배를 넘거나 1/1.25 밑인 상품·나라는 뺌(넘으면 현지 값이 세일가 · 밑이면 한국 값이 세일가이거나 현지 정가가 다른 사양) · 전 브랜드 기준과도 견줌",
+    "fx_1120": {
+     "USD": 1334.79,
+     "GBP": 1746.6941,
+     "EUR": 1462.41,
+     "JPY": 8.357,
+     "MXN": 69.9205
+    },
+    "crocs5_10001_ratio": {
+     "US": 1.048,
+     "GB": 0.801,
+     "JP": 1.086
+    },
+    "all_brand_median_x1.25": {
+     "US": [
+      0.991,
+      1.238
+     ],
+     "GB": [
+      0.904,
+      1.13
+     ],
+     "DE": [
+      0.905,
+      1.132
+     ],
+     "JP": [
+      1.158,
+      1.447
+     ]
+    },
+    "check": "OK 줄의 full이 crocs5 같은 상품 full(JSON-LD 세일가)보다 높아졌는지(미국 10001 30 → 49.99 · 일본 3850 → 7700) — 같으면 그 상품은 할인 안 함(정상) · 낮아지면 이상",
+    "sale_check": "OK 줄마다 extra.by == '품번'(아니면 새 읽기가 안 돈 것 — 그 값 뺌) · 블프 세일 나라(한국·미국·영국·일본 — crocs5에서 10001 세일 확인)는 extra.cur_price < full이어야: crocs-classic(10001)이 그 나라에서 cur_price == full이거나 그 나라 OK 상품 모두 cur_price == full이면 그 나라 retailPrice가 세일가를 따라가는 것일 수 있음 → 그 나라 뺌 · 독일은 crocs5 세일 근거가 JSON-LD 10001 €32.99뿐(미국 세일가 $30과 같은 꼴 — 세일 추정)이라 같은 검사 + 비율 검사(10001 full이 32.99 근처면 비율 69900 ÷ (32.99 × 1462.41) = 1.45로 걸림)"
+   },
+   "after": "넣으면: build_dashboard PM_NOPRICE block에서 '크록스' 빼기 · price_fetch 설명 131·175줄('크록스 한국 차단') 고침 · 버전 줄 v1.27(crocs_list) · 크록스 한 묶음(build_lanes) — 값 최대 약 90개 × 약 3초 ≈ 4~5분(가장 긴 묶음 킨+우포스 438초 안)"
+  }
+ },
+ {
+  "t": "dump",
+  "urls": [
+   "https://www.crocs.co.kr/p/classic-clog/10001.html"
+  ],
+  "max_ld": 2,
+  "ld_chars": 3000,
+  "pad": 500,
+  "per_rx": 2,
+  "ctx": [
+   "\\\\?\\\"price\\\\?\\\"\\s*:\\s*\\\\?\\\"?10000(?![0-9])"
+  ],
+  "memo": {
+   "what": "한국 10001 페이지의 설명 안 된 \"price\":10000(crocs5 RX — 색상 값 29,900~69,900 옆) 둘레 원문 — 이 상품 변형(productId '10001-…') 값인지(그러면 5배 가드로 한국 값 모두 실패: '정가 69900가 지금 값 10000의 5배 넘음') · 다른 묶음(배송비 기준·적립금·추천 상품 등)인지 이번 차례에 가름",
+   "judge": "둘레에 productId '10001-…'가 있으면 그 변형만 빼는 규칙을 다음 차례에 검토(지금은 실패로 둠 — 틀린 값 저장 없음) · 없으면 새 읽기에 영향 없음",
+   "requests": 1
+  }
+ },
+ {
+  "t": "grep",
+  "rx": "/p/[^/]*(?:slide|flip|sandal|mellow|echo|crush|literide|getaway|brooklyn|dylan|bayaband|cozzzy|clog-slide)[^/]*/[0-9]{5,6}\\.html$",
+  "max_maps": 1,
+  "per_host": 40,
+  "show": 120,
+  "sites": {
+   "US": {
+    "host": "www.crocs.com",
+    "start": [
+     "https://www.crocs.com/sitemap.xml"
+    ],
+    "sample": 2
+   },
+   "GB": {
+    "host": "www.crocs.co.uk",
+    "start": [
+     "https://www.crocs.co.uk/sitemap.xml"
+    ],
+    "sample": 2
+   },
+   "DE": {
+    "host": "www.crocs.de",
+    "start": [
+     "https://www.crocs.de/sitemap.xml"
+    ],
+    "sample": 2
+   },
+   "JP": {
+    "host": "www.crocs.co.jp",
+    "start": [
+     "https://www.crocs.co.jp/sitemap.xml"
+    ],
+    "sample": 2
+   }
+  },
+  "memo": {
+   "what": "슬라이드·플립·샌들(crocs5: 클래식 슬라이드 206121·클래식 플립 207713은 모든 나라 실패 · 사이트맵에 없음 — 옛 품번) + 멜로우·에코·라이트라이드 등의 지금 품번 — 나라별 사이트맵 1장씩(요청 4건 · crocs5에서 sitemap.xml이 색인 아님·미국 687·영국 925·독일 916·일본 82 상품)",
+   "next": "여러 나라(미국·영국·독일 중 2곳 이상)에 같은 품번이 있는 성인 상품(kids- 빼고)을 다음 차례 tryp(한국은 slug 상관없이 /p/아무-이름/품번.html로 시험 — 한국 사이트맵은 52개뿐이라 없다고 못 팖)"
+  }
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "crocs-chalet",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "샬레 클로그",
+    "code": "214955",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/chalet-clog/214955.html",
+     "US": "https://www.crocs.com/p/chalet-clog/214955.html",
+     "GB": "https://www.crocs.co.uk/p/chalet-clog/214955.html",
+     "JP": "https://www.crocs.co.jp/p/chalet-clog/214955.html",
+     "DE": "https://www.crocs.de/p/chalet-clog/214955.html"
+    }
+   },
+   {
+    "id": "crocs-mellow",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "멜로우 리커버리 클로그",
+    "code": "208493",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/mellow-recovery-clog/208493.html",
+     "JP": "https://www.crocs.co.jp/p/mellow-recovery-clog/208493.html"
+    }
+   },
+   {
+    "id": "crocs-bae-lined",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "배 라인드 클로그",
+    "code": "211753",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/bae-lined-clog/211753.html",
+     "US": "https://www.crocs.com/p/bae-lined-clog/211753.html",
+     "GB": "https://www.crocs.co.uk/p/bae-lined-clog/211753.html",
+     "JP": "https://www.crocs.co.jp/p/bae-lined-clog/211753.html",
+     "DE": "https://www.crocs.de/p/bae-lined-clog/211753.html"
+    }
+   },
+   {
+    "id": "crocs-cozzzy",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 코지 슬리퍼",
+    "code": "209386",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-cozzzy-slipper/209386.html",
+     "US": "https://www.crocs.com/p/classic-cozzzy-slipper/209386.html",
+     "GB": "https://www.crocs.co.uk/p/classic-cozzzy-slipper/209386.html",
+     "JP": "https://www.crocs.co.jp/p/classic-cozzzy-slipper/209386.html",
+     "DE": "https://www.crocs.de/p/classic-cozzzy-slipper/209386.html"
+    }
+   },
+   {
+    "id": "crocs-crafted",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 크래프티드 클로그",
+    "code": "211354",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-crafted-clog/211354.html",
+     "US": "https://www.crocs.com/p/classic-crafted-clog/211354.html",
+     "GB": "https://www.crocs.co.uk/p/classic-crafted-clog/211354.html",
+     "JP": "https://www.crocs.co.jp/p/classic-crafted-clog/211354.html",
+     "DE": "https://www.crocs.de/p/classic-crafted-clog/211354.html"
+    }
+   },
+   {
+    "id": "crocs-bayaband",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "바야밴드 클로그",
+    "code": "205089",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/bayaband-clog/205089.html",
+     "US": "https://www.crocs.com/p/bayaband-clog/205089.html",
+     "GB": "https://www.crocs.co.uk/p/bayaband-clog/205089.html",
+     "JP": "https://www.crocs.co.jp/p/bayaband-clog/205089.html",
+     "DE": "https://www.crocs.de/p/bayaband-clog/205089.html"
+    }
+   },
+   {
+    "id": "crocs-allterrain",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "올 터레인 클로그",
+    "code": "206340",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/all-terrain-clog/206340.html",
+     "GB": "https://www.crocs.co.uk/p/all-terrain-clog/206340.html",
+     "JP": "https://www.crocs.co.jp/p/all-terrain-clog/206340.html",
+     "DE": "https://www.crocs.de/p/all-terrain-clog/206340.html"
+    }
+   },
+   {
+    "id": "crocs-crocband-flip",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "크록밴드 플립",
+    "code": "11033",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/crocband-flip/11033.html",
+     "GB": "https://www.crocs.co.uk/p/crocband-flip/11033.html",
+     "JP": "https://www.crocs.co.jp/p/crocband-flip/11033.html",
+     "DE": "https://www.crocs.de/p/crocband-flip/11033.html"
+    }
+   },
+   {
+    "id": "crocs-literide360",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "라이트라이드 360 클로그",
+    "code": "206708",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/literide-360-clog/206708.html",
+     "JP": "https://www.crocs.co.jp/p/literide-360-clog/206708.html"
+    }
+   },
+   {
+    "id": "crocs-fuzz-scuff",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 퍼즈 스커프",
+    "code": "212143",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-fuzz-scuff/212143.html",
+     "US": "https://www.crocs.com/p/classic-fuzz-scuff/212143.html",
+     "GB": "https://www.crocs.co.uk/p/classic-fuzz-scuff/212143.html",
+     "JP": "https://www.crocs.co.jp/p/classic-fuzz-scuff/212143.html",
+     "DE": "https://www.crocs.de/p/classic-fuzz-scuff/212143.html"
+    }
+   },
+   {
+    "id": "crocs-cafe-slipper",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 카페 슬리퍼",
+    "code": "213622",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-cafe-slipper/213622.html",
+     "US": "https://www.crocs.com/p/classic-caf-slipper/213622.html",
+     "GB": "https://www.crocs.co.uk/p/classic-caf-slipper/213622.html",
+     "JP": "https://www.crocs.co.jp/p/classic-cafe-slipper/213622.html",
+     "DE": "https://www.crocs.de/p/classic-caf-slipper/213622.html"
+    }
+   }
+  ],
+  "memo": {
+   "what": "추가 후보 11개(47건) — 한국 첫 화면(샬레 214955·멜로우 리커버리 208493·배 라인드 211753) · 미국·영국 첫 화면(코지 슬리퍼 209386·퍼즈 스커프 212143·카페 슬리퍼 213622) · 미국·영국·독일 사이트맵(크래프티드 211354·바야밴드 205089) · 영국·독일 사이트맵(올 터레인 206340·크록밴드 플립 11033) · 한국 사이트맵(라이트라이드 360 206708)",
+   "countries": "미국·영국·독일 사이트맵(crocs5 TARGET)에 없던 나라는 요청 안 함(세 사이트맵은 상품 거의 전부) · 한국·일본은 사이트맵이 작아(52·82개) 늘 시험 · slug는 짐작이어도 품번으로 열림",
+   "pass": "한국 OK + 해외 1곳 이상 OK + 블프 검사(첫 tryp memo) — 계절 상품(코지·퍼즈·카페 슬리퍼·라인드)은 봄에 몰에서 빠지면 21일 뒤 실패 표시가 나므로 상시 상품(샬레·크래프티드·바야밴드·올 터레인·크록밴드 플립·멜로우·라이트라이드)을 먼저 넣음"
+  }
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "crocs-classic-slide2",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "클래식 슬라이드 2.0(품번 짐작)",
+    "code": "209401",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/classic-slide-2/209401.html",
+     "US": "https://www.crocs.com/p/classic-slide-2/209401.html"
+    }
+   },
+   {
+    "id": "crocs-mellow-slide",
+    "cat": "sandal",
+    "brand": "크록스",
+    "name": "멜로우 리커버리 슬라이드(품번 짐작)",
+    "code": "208392",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://www.crocs.co.kr/p/mellow-recovery-slide/208392.html",
+     "US": "https://www.crocs.com/p/mellow-recovery-slide/208392.html"
+    }
+   }
+  ],
+  "memo": {
+   "what": "품번 짐작 2개 × 한국·미국(4건) — 클래식 슬라이드 2.0 209401 · 멜로우 리커버리 슬라이드 208392(기억 — 확인 안 됨). FAIL '변형 없음'·HTTP 404면 위 grep 결과로 다음 차례에",
+   "why": "slug와 상관없이 품번으로 열리므로 짐작이 맞으면 한 차례 아낌"
+  }
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://www.crocs.com/"
+  ],
+  "max": 40,
+  "rx": [
+   "https?:(?:\\\\?/){2}(?:www\\.)?(?:crocs\\.(?:com\\.mx|de|eu|co\\.uk|co\\.jp|co\\.kr|com\\.au|ca|fr|nl|ae)|[a-z-]*\\.crocsgulf\\.com)[^\\\"\\\\<\\s]{0,60}",
+   "(?:Mexico|México|Deutschland|Germany)[^<\\\"\\\\]{0,80}"
+  ],
+  "memo": {
+   "what": "미국 공식몰 첫 화면의 나라 선택 링크 — crocs.com.mx(멕시코 쇼피파이 'Crocs México')를 크록스 본사 몰이 멕시코 공식몰로 가리키는지(공식몰 판정 근거 1) · 독일 www.crocs.de 링크도",
+   "requests": 1
+  }
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://crocs.com.mx/",
+   "https://crocs.com.mx/policies/privacy-policy"
+  ],
+  "max": 30,
+  "rx": [
+   "(?:©|&copy;|&#169;)[^<]{0,160}",
+   "[^<>\\\"]{0,100}(?:S\\.\\s?A\\.(?:\\s?P\\.\\s?I\\.)?\\s?de\\s?C\\.\\s?V\\.|S\\.\\s?de\\s?R\\.\\s?L\\.(?:\\s?de\\s?C\\.\\s?V\\.)?)[^<>\\\"]{0,100}",
+   "href=\\\"https?://(?:www\\.)?crocs\\.com(?!\\.mx)[^\\\"]{0,80}\\\"",
+   "(?:distribuidor|licenciatario|distribuidor autorizado|tienda oficial|sitio oficial)[^<]{0,120}"
+  ],
+  "memo": {
+   "what": "멕시코 crocs.com.mx(쇼피파이 · robots.txt Allow / — crocs5 ROBOTSRAW 원문에 /policies/ Disallow 없음(막는 곳은 /admin·/cart·/checkout·/account 등) · 막혔으면 pf.get이 요청 전에 거절 → PAGEERR) 운영 회사 — 첫 화면 ©·개인정보 처리방침(쇼피파이 기본 주소)의 회사 이름(S.A. de C.V.·S. de R.L.) · '공식' 표기 · crocs.com 링크(공식몰 판정 근거 2)",
+   "judge": "크록스 본사(Crocs, Inc.) 또는 크록스 멕시코 법인·공식 유통사가 운영하고 미국 몰 나라 선택이 이 주소를 가리키면 공식몰로 봄(온러닝 두바이 on.ae — Seddiqi 운영과 같은 기준) · 아니면 멕시코는 '크록스 공식 온라인몰 없음' 주석",
+   "requests": 2
+  }
+ },
+ {
+  "t": "grep",
+  "rx": "/products/[^/?#]*(?:classic-clog|classic-lined|baya|crocband|echo|platform|unfurgettable|chalet|crafted|mellow|slide|flip|sandal|all-terrain|literide|cozzzy|fuzz-scuff|caf)[^/?#]*$",
+  "max_maps": 3,
+  "per_host": 60,
+  "show": 120,
+  "sites": {
+   "MX": {
+    "host": "crocs.com.mx",
+    "start": [
+     "https://crocs.com.mx/sitemap.xml"
+    ],
+    "kid_pref": [
+     "products"
+    ],
+    "sample": 3
+   }
+  },
+  "memo": {
+   "what": "멕시코 쇼피파이 사이트맵(robots.txt Sitemap: https://crocs.com.mx/sitemap.xml — crocs5 codes는 www.crocs.com.mx로 찾아 색인 자식 0개였음: 자식이 crocs.com.mx) → 상품 sitemap에서 대표 상품 handle 목록(색인 1 + 상품 쪽 1~2 = 요청 2~3건)",
+   "next": "handle이 정해지면 다음 차례에 https://crocs.com.mx/products/{handle}.json으로 shopify_price(변형 sku에 품번 · compare_at_price = 정가) — 공식몰 판정(위 rxpage)이 된 뒤에만 넣음"
+  }
+ },
+ {
+  "t": "shopprod",
+  "urls": [
+   "https://crocs.com.mx/products/classic-clog.json",
+   "https://crocs.com.mx/products/classic-lined-clog.json",
+   "https://crocs.com.mx/products/baya-clog.json",
+   "https://crocs.com.mx/products/crocband-clog.json",
+   "https://crocs.com.mx/products/echo-clog.json"
+  ],
+  "want": [
+   "10001",
+   "203591",
+   "10126",
+   "11016",
+   "207937"
+  ],
+  "code_rx": "(?<![0-9])(?:10001|203591|10126|11016|207937)(?![0-9])",
+  "memo": {
+   "what": "멕시코 쇼피파이 상품 .json(handle 짐작 5개 — 첫 화면 링크 꼴 /products/hkf-lace-classic-clog 등이 영어 이름) — 변형 sku 꼴(품번이 들어 있는지 · price_fetch shopify_price는 변형 sku에 품번이 있어야)·price·compare_at_price(블프 할인 표시를 compare_at으로 하는지 — 아니면 세일가가 정가로 읽힘)·price_currency(MXN)",
+   "judge": "HTTP 404면 handle이 다름(위 grep 결과로) · WANT 줄에 품번이 잡히고 compare_at_price가 price보다 높게(할인 상품) 보이면 shopify_price로 정가 읽기 가능 · compare_at가 비었는데 price가 미국 대비 크게 낮으면 블프 세일가(블프 뒤 차례에)",
+   "requests": 5
+  }
+ }
+]
