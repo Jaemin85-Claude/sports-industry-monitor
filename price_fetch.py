@@ -341,7 +341,7 @@ PRODUCTS = [
         "GB": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
         "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
-        "AE": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22)
+        "AE": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22 · 11/21 사이트맵에도 없음)
     {"id": "puma-mostro", "cat": "shoe", "brand": "푸마", "name": "모스트로 OG", "code": "397330", "src": "page", "hint": "mostro", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
         "US": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
@@ -371,11 +371,11 @@ PRODUCTS = [
         "US": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html",
-        "AE": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27)
+        "AE": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27) · 독일은 11/21 사이트맵에 다시 있으나 시험 때 응답 없음(읽기 시간 초과) — 다음 차례에
     {"id": "puma-dnetrail", "cat": "shoe", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 트레일(남성)", "code": "310034", "src": "page", "hint": "deviate nitro elite trail", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
-        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03)
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음(영국 11/21도) · 멕시코 몰 사이트맵에 없음(10/27 · 11/21) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03 · 11/21 사이트맵)
     {"id": "puma-t7track", "cat": "wear", "brand": "푸마", "name": "T7 올웨이즈 온 숏 트랙 자켓(여성)", "code": "629796", "src": "page", "hint": "t7", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
         "US": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
@@ -388,24 +388,24 @@ PRODUCTS = [
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Edeviate-nitro-elite-trail-wn/310468.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-womens-trail-running-shoes/310468",
         "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-damen/310468",
-        "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"}},   # 영국 몰은 상품 가격 데이터(JSON-LD) 없음 · 두바이 몰에 없음(11/17)
+        "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"}},   # 영국 몰은 상품 가격 데이터(JSON-LD) 없음(11/17 · 11/21) · 두바이 몰에 없음(11/17 · 11/21 사이트맵) · 멕시코는 11/21 사이트맵에 없고 JSON-LD 없음(11/17부터 이전 값 — 이어지면 다음 차례에 뺌)
     {"id": "puma-foreverrun2", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 2(남성)", "code": "310109", "src": "page", "hint": "foreverrun nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Eforeverrun-nitro-2/310109.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-mens-road-running-shoes/310109",
         "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-herren/310109",
-        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-men/310109.html"}},   # 영국·멕시코 몰에 없음(11/17 사이트맵) · 11/17 한국·미국·독일·두바이 할인 중(정가는 취소선 정가)
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-men/310109.html"}},   # 영국·멕시코 몰에 없음(11/17 사이트맵 · 멕시코 11/21도) · 11/17 한국·미국·독일·두바이 할인 중(정가는 취소선 정가)
     {"id": "puma-kingindoor", "cat": "shoe", "brand": "푸마", "name": "킹 인도어", "code": "401683", "src": "page", "hint": "king indoor", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%82%B9-%EC%9D%B8%EB%8F%84%EC%96%B4-%3Cbr%3Eking-indoor/401683.html",
         "US": "https://us.puma.com/us/en/pd/king-indoor-sneakers/401683",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-king-indoor/401683.html",
-        "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵)
+        "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵 · 독일 11/21도)
     # v1.24 1차(11/20) — 한국 사이트맵 666개 중 해외 3개 나라 이상에 같은 품번이 있는 새 성인 상품은 이 둘뿐(나머지는 아동·한국 페이지 404 상품) ·
     # 포에버런 나이트로 3은 한국 사이트맵에 아직 없지만 한국 몰 상품 페이지가 열려 정가 읽기 확인(Firecrawl 검색으로 주소 찾음)
     {"id": "puma-foreverrun2w", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 2(여성)", "code": "310471", "src": "page", "hint": "foreverrun nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Eforeverrun-nitro-2-wn/310471.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-womens-road-running-shoes/310471",
         "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-damen/310471",
-        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-women/310471.html"}},   # 영국·멕시코 몰에 없음 · 11/20 네 나라 모두 할인 중(정가는 취소선 정가)
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-women/310471.html"}},   # 영국·멕시코 몰에 없음(멕시코 11/21 사이트맵도) · 11/20 네 나라 모두 할인 중(정가는 취소선 정가)
     {"id": "puma-foreverrun3", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 3(남성)", "code": "312942", "src": "page", "hint": "foreverrun nitro 3", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-3-%3Cbr%3Eforeverrun-nitro-3/312942.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-3-mens-road-running-shoes/312942",
@@ -426,9 +426,10 @@ PRODUCTS = [
     {"id": "puma-magmax2", "cat": "shoe", "brand": "푸마", "name": "매그맥스 나이트로 2(남성)", "code": "312125", "src": "page", "hint": "magmax nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Emagmax-nitro-2/312125.html",
         "US": "https://us.puma.com/us/en/pd/magmax-nitro-2-mens-road-running-shoes/312125",
+        "GB": "https://uk.puma.com/uk/en/pd/magmax-nitro%E2%84%A2-2-running-shoes-men/312125",
         "DE": "https://eu.puma.com/de/de/pd/magmax-nitro-2-laufschuhe-herren/312125",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-magmax-nitrotm-2-para-hombre/312125.html",
-        "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"}},   # 영국 몰은 시험 때 응답 없음(읽기 시간 초과 · 11/21) — 다음 차례에
+        "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"}},   # 영국 11/21 GitHub 서버 정가 읽기 확인(170파운드 · 한국 정가 비율 0.81 — 푸마 영국 가운데값 0.91의 1.25배 안 · 영국÷독일 1.07로 디비에이트 나이트로 4와 같은 꼴) · 11/21 한국·영국·독일·멕시코·두바이 할인 중(정가는 이 상품 취소선 정가)
     {"id": "puma-hstreet", "cat": "shoe", "brand": "푸마", "name": "H-스트리트 OG", "code": "403692", "src": "page", "hint": "h-street", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/h-street-og/403692.html",
         "US": "https://us.puma.com/us/en/pd/h-street-og-sneakers/403692",
@@ -479,17 +480,17 @@ PRODUCTS = [
     {"id": "on-cloudrunner3", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
     {"id": "on-cloudx5", "cat": "shoe", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043", "cloud-x-5")},
     {"id": "on-cloud6wp", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043", "cloud-6-waterproof")},
-    # v1.24 1차(11/20) — 나라별 상품 사이트맵({loc}/products.xml) 5개 나라 같은 품번 신발 중 주요 모델 · 정가 읽기 확인(GitHub 서버) · 두바이(on.ae)는 다음 차례에
-    {"id": "on-cloud6coast", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 코스트", "code": "3MF10030080", "src": "page", "hint": "cloud 6 coast", "urls": _on("cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080")},
-    {"id": "on-cloudzone", "cat": "shoe", "brand": "온러닝", "name": "클라우드존", "code": "3MF10080106", "src": "page", "hint": "cloudzone", "urls": _on("cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106")},
-    {"id": "on-cloudrocklowwp", "cat": "shoe", "brand": "온러닝", "name": "클라우드록 로우 워터프루프", "code": "3MF10251043", "src": "page", "hint": "cloudrock", "urls": _on("cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043")},
-    {"id": "on-cloudultra3", "cat": "shoe", "brand": "온러닝", "name": "클라우드울트라 3", "code": "3MF30231043", "src": "page", "hint": "cloudultra", "urls": _on("cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043")},
+    # v1.24 1차(11/20) — 나라별 상품 사이트맵({loc}/products.xml) 5개 나라 같은 품번 신발 중 주요 모델 · 정가 읽기 확인(GitHub 서버) · 두바이(on.ae)는 v1.27(11/21 4차)에 9개 더함(클라우드붐 맥스는 on.ae 이 색상만 다른 색상보다 싸 — 표시 없는 할인 · 블프 뒤 차례에)
+    {"id": "on-cloud6coast", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 코스트", "code": "3MF10030080", "src": "page", "hint": "cloud 6 coast", "urls": _on("cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080", "cloud-6-coast")},
+    {"id": "on-cloudzone", "cat": "shoe", "brand": "온러닝", "name": "클라우드존", "code": "3MF10080106", "src": "page", "hint": "cloudzone", "urls": _on("cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106", "cloudzone")},
+    {"id": "on-cloudrocklowwp", "cat": "shoe", "brand": "온러닝", "name": "클라우드록 로우 워터프루프", "code": "3MF10251043", "src": "page", "hint": "cloudrock", "urls": _on("cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043", "cloudrock-low-waterproof")},
+    {"id": "on-cloudultra3", "cat": "shoe", "brand": "온러닝", "name": "클라우드울트라 3", "code": "3MF30231043", "src": "page", "hint": "cloudultra", "urls": _on("cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043", "cloudultra-3")},
     {"id": "on-cloudboommax", "cat": "shoe", "brand": "온러닝", "name": "클라우드붐 맥스", "code": "3MF30310462", "src": "page", "hint": "cloudboom", "urls": _on("cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462")},
-    {"id": "on-cloudsurfernext", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 넥스트", "code": "3ME30021200", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200")},
-    {"id": "on-cloudsurfermax", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 맥스", "code": "3MF30431200", "src": "page", "hint": "cloudsurfer max", "urls": _on("cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200")},
-    {"id": "on-cloud6w", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6(여성)", "code": "3WF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-3wf1006/womens/black-black-shoes-3WF10061043")},
-    {"id": "on-cloudmonster3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 3(여성)", "code": "3WG10031043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043")},
-    {"id": "on-cloudrunner3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3(여성)", "code": "3WG10051043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043")},
+    {"id": "on-cloudsurfernext", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 넥스트", "code": "3ME30021200", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200", "cloudsurfer-next")},
+    {"id": "on-cloudsurfermax", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 맥스", "code": "3MF30431200", "src": "page", "hint": "cloudsurfer max", "urls": _on("cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200", "cloudsurfer-max")},
+    {"id": "on-cloud6w", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6(여성)", "code": "3WF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-3wf1006/womens/black-black-shoes-3WF10061043", "cloud-6")},
+    {"id": "on-cloudmonster3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 3(여성)", "code": "3WG10031043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043", "cloudmonster-3")},
+    {"id": "on-cloudrunner3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3(여성)", "code": "3WG10051043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043", "cloudrunner-3")},
     {"id": "salomon-xt6", "cat": "shoe", "brand": "살로몬", "name": "XT-6 고어텍스", "code": "L47450600", "alt": ["LG9333"], "src": "page", "hint": "xt-6", "urls": {
         "KR": "https://salomon.co.kr/products/l47450600.json",
         "US": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
@@ -747,7 +748,9 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html"}},   # 해마다 새 모델(라이드 20 등)이 나오면 품번·주소를 바꿈
     {"id": "saucony-endspeed5", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 스피드 5(남성)", "code": "S21007", "src": "page", "hint": "엔돌핀 스피드 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",   # v1.18 화이트/검(164)은 전 사이즈 품절로 JSON-LD 가격 없음
-        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html"}},   # v1.18 영국·독일 몰은 10/30부터 404(유럽은 엔돌핀 스피드 6 S101825 — 한국 몰에 6이 들어오면 품번·주소를 6으로)
+        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",   # 영국·독일 몰은 10/30~11/10 404였다가 11/21 다시 열림(같은 품번 · 정가 £180·€200 · 재고 정리 −40% 중 — 정가는 '원래 가격' 칸)
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html"}},   # 유럽은 엔돌핀 스피드 6 S101825 — 한국 몰에 6이 들어오면 품번·주소를 6으로(다시 404가 되면 영국·독일 뺌)
     {"id": "saucony-endpro5", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 프로 5(남성)", "code": "S21064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
         "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100",   # 색상 없는 주소는 10/23부터 JSON-LD 없는 페이지
@@ -770,7 +773,7 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html"}},
     {"id": "saucony-kinvara16", "cat": "shoe", "brand": "써코니", "name": "킨바라 16(남성)", "code": "S21020", "src": "page", "hint": "킨바라 16", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
-        "US": "https://www.saucony.com/en/kinvara-16/60309M.html"}},   # 영국·독일 몰 같은 주소는 다른 색상 품번(S101468)만 있어 뺌(시험 10/22)
+        "US": "https://www.saucony.com/en/kinvara-16/60309M.html"}},   # 영국·독일 몰 같은 주소는 다른 색상 품번(S101468)만 있어 뺌(시험 10/22) · 색상 지정 주소 S21020-141도 JSON-LD 없음(11/21)
     # v1.21 SKU 9차 — 한국 몰 상품 화면의 품번(상품 설명 그림 이름 SAUCONY29S…-색상) ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/17 정가 읽기 확인)
     {"id": "saucony-azura", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 아주라(남성)", "code": "S21070", "src": "page", "hint": "엔돌핀 아주라", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
