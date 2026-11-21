@@ -1,0 +1,1629 @@
+[
+ {
+  "t": "dump",
+  "urls": [
+   "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001",
+   "https://www.onitsukatiger.com/kr/ko-kr/product/tai-chi-og/1183c759.100"
+  ],
+  "max_ld": 5,
+  "ld_chars": 5000,
+  "pad": 350,
+  "per_rx": 3,
+  "ctx": [
+   "data-price-amount=\"[0-9.]+\"",
+   "\"(?:oldPrice|finalPrice|basePrice|regularPrice|regular_price|special_price|listPrice|list_price|salePrice|sale_price|originalPrice|original_price|msrp|compareAtPrice|compare_at_price|price_custom|consumerPrice|retailPrice)\"\\s*:",
+   "itemprop=\"(?:price|priceCurrency|sku|productID|mpn)\"",
+   "property=\"(?:product:price:amount|og:price:amount|product:sale_price:amount|og:type)\"",
+   "class=\"[^\"]*(?:old-price|special-price|price-final_price|strike|was-price|original-price|regular-price|price-standard|line-through|discount-rate|sale-price)[^\"]*\"",
+   "(?i)1183c(?:102|759)[._](?:001|100)"
+  ],
+  "memo": "onitsuka5 ① 한국 공식몰(www.onitsukatiger.com/kr/ko-kr — 11/21 access4: 첫 화면 200 617KB · 상품 링크 /kr/ko-kr/product/{slug}/{품번 소문자.색}) 상품 페이지 2개(멕시코 66 1183C102.001 · 타이치 OG 1183C759.100 — 첫 화면 실제 링크) 구조: 상태·최종 주소·막힘 표식·머리(server·set-cookie로 플랫폼)·JSON-LD 원문(@type Product·sku/mpn/productID·offers price·priceCurrency·priceSpecification ListPrice 유무)·가격 칸 둘레(Magento data-price-amount·oldPrice/finalPrice·취소선·마이크로데이터). 판정: JSON-LD Product에 KRW 가격이 있으면 page_price 그대로(②의 tryp OK로 확인) · JSON-LD가 없거나 판매가만이면(할인 중 정가 칸 따로) 다음 차례에 읽는 법(price_fetch 새 함수)을 이 원문으로 설계 — 이번엔 코드 안 고침. 11/21 access4의 follow는 /kr/ko-kr/p/denivita(기획 페이지 — JSON-LD Product 없음)라 상품 페이지 구조는 아직 모름. 403·봇 확인이면 그 뒤 같은 사이트 요청 모두 멈춤(price_fetch.get) → 결과 'block 그대로(한국도 막힘)'. 【이 계획 전체 판정】 한 호스트(www.onitsukatiger.com — 나라는 경로 /kr/ko-kr·/jp/ja-jp·/us/en-us·/gb/en-gb·/de/de-de)라 403·봇 확인이 한 번 나면 그 뒤 모든 나라 요청이 멈춤 → 값어치 큰 순서(한국 구조·정가 → 색인 → 나라별 사이트맵+정가: 일본 → 미국 → 영국 → 독일 → 멕시코·두바이 → 요청 없는 요약 → 첫 화면 진단)로 나눔. 결과: (가) 한국 OK + 해외 한 나라 이상 OK(블프 기준 통과) → 다음 차례 PRODUCTS(같은 id에 나라 주소)·build_dashboard PM_NOPRICE block에서 오니츠카타이거 뺌 / (나) 한국 OK + 해외 모두 403·봇 확인 → 'block 그대로(해외 막힘)' / (다) 해외는 열렸는데 같은 품번 없음(⑯ TARGET·ROW 겹침 0) → 막힘 아님 — ⑰ 나라별 표본으로 같은 표기·같은 품번 후보를 다시 골라 다음 차례 / (라) 한국 'JSON-LD 없음' → ① 원문으로 읽는 법 설계(price_fetch 새 함수 · 대표 보고) / (마) 사이트맵 색인에 해외 나라가 없음 → ⑱ 첫 화면 진단으로 다음 길."
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "ot-mexico66",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66",
+    "code": "1183C102.001",
+    "src": "page",
+    "hint": "mexico 66",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001"
+    }
+   },
+   {
+    "id": "ot-mexico66sd",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66 SD",
+    "code": "1183A592.200",
+    "src": "page",
+    "hint": "mexico 66 sd",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd/1183a592.200"
+    }
+   },
+   {
+    "id": "ot-taichiog",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "타이치 OG",
+    "code": "1183C759.100",
+    "src": "page",
+    "hint": "tai-chi og",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tai-chi-og/1183c759.100"
+    }
+   },
+   {
+    "id": "ot-tokuten",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "토쿠텐",
+    "code": "1183C429.250",
+    "src": "page",
+    "hint": "tokuten",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tokuten/1183c429.250"
+    }
+   },
+   {
+    "id": "ot-mexico66sdvin",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66 SD VIN",
+    "code": "1183C015.200",
+    "src": "page",
+    "hint": "mexico 66 sd vin",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd-vin/1183c015.200"
+    }
+   },
+   {
+    "id": "ot-mexico66slipon",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66 슬립온",
+    "code": "1183C742.250",
+    "src": "page",
+    "hint": "mexico 66 slip-on",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-slip-on/1183c742.250"
+    }
+   },
+   {
+    "id": "ot-mexico66tgrs",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66 TGRS",
+    "code": "1182A745.250",
+    "src": "page",
+    "hint": "mexico 66 tgrs",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-tgrs/1182a745.250"
+    }
+   },
+   {
+    "id": "ot-moageco",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "모아지 CO",
+    "code": "1183B555.022",
+    "src": "page",
+    "hint": "moage co",
+    "urls": {
+     "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/moage-co/1183b555.022"
+    }
+   }
+  ],
+  "memo": "onitsuka5 ② 한국 대표 상품 8개(멕시코 66 계열 6 · 타이치 OG · 토쿠텐 · 모아지 CO — 모두 11/21 한국 첫 화면 실제 상품 링크, 짐작 주소 없음)를 price_fetch.fetch_one(src page · page_price — JSON-LD 품번(sku·url에 품번 소문자)으로, 없으면 hint 이름)으로 정가 읽기. 이것이 최종 정의 뼈대: id ot-… · brand 오니츠카타이거(build_dashboard PM_NOPRICE block 목록 이름과 같음) · code = 글로벌 품번 대문자.점(1183C102.001 — 첫 화면 품번 표기) · cat shoe. 해외(JP·US·GB·DE·MX·AE)는 ④~⑪ 사이트맵 TRY 줄의 주소(짐작 없음)를 같은 id의 urls에 더함(나라 품번 표기가 다르면 cc_code에 그 나라 표기). OK가 하나도 없으면(JSON-LD 없음 등) ①의 원문으로 읽는 법부터. 한국 OK extra.cur_price < full이면 할인 중(정가는 JSON-LD 정가 명세나 취소선에서 읽혔는지 덤프로 확인)."
+ },
+ {
+  "t": "grep",
+  "rx": "$^",
+  "show": 0,
+  "max_maps": 1,
+  "per_host": 60,
+  "sites": {
+   "index": {
+    "host": "www.onitsukatiger.com",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "sample": 400,
+    "any_host": true
+   }
+  },
+  "memo": "onitsuka5 ③ robots.txt의 Sitemap 줄은 https://www.onitsukatiger.com/sitemaps/sitemap-index.xml 하나뿐(11/21 access4 ROBOTSRAW · robots.txt 원문은 AmazonS3 — hybris·sfcc(Sites-asics-eu-Site)·Magento 규칙이 섞여 나라마다 플랫폼이 다를 수 있음). 색인 1개만 읽어 SMAP 줄 sample에 하위 사이트맵 주소를 모두(400개까지) 보여 줌 → kr·us·gb(en-gb)·de·jp·mx·ae 나라 사이트맵이 있는지·주소 꼴·다른 호스트인지(codes는 같은 호스트 하위만 따라감 — 다른 호스트면 ④~⑪ CODES n=0, 다음 차례에 start를 그 주소로). 요청 1번."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {
+   "KR": {
+    "host": "www.onitsukatiger.com",
+    "path": "/kr/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "ko-kr",
+     "ko_kr",
+     "/kr/",
+     "kr-ko",
+     "kr_ko",
+     "-kr.",
+     "_kr.",
+     "-kr-",
+     "_kr_"
+    ]
+   },
+   "JP": {
+    "host": "www.onitsukatiger.com",
+    "path": "/jp/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "ja-jp",
+     "ja_jp",
+     "/jp/",
+     "jp-ja",
+     "jp_ja",
+     "-jp.",
+     "_jp.",
+     "-jp-",
+     "_jp_"
+    ]
+   }
+  },
+  "max_maps": 6,
+  "per_host": 90,
+  "show": 0,
+  "memo": "onitsuka5 ④ 한국·일본 사이트맵 색인(/sitemaps/sitemap-index.xml)에서 그 나라 하위 사이트맵(kid_pref — 주소에 나라·언어 표시가 든 것 · 상품 사이트맵 먼저)만 따라가 상품 주소 경로(/kr/·/jp/…)의 품번(4자리+영문+3자리+구분+3자리 — 대소문자·구분자(. - _) 그대로)을 모음. kid_pref가 하나도 안 맞으면 probe_sku codes는 색인의 모든 하위 사이트맵을 따라가므로 max_maps 6·per_host 90초로 묶음(경로 앞부분으로 걸러 다른 나라 주소는 안 셈). CODES n = 그 나라 품번 수 · INDEX 줄 = 따라간 색인과 하위 주소. 한국은 첫 화면 주소 꼴(/kr/ko-kr/product/{slug}/{품번 소문자.색})이 사이트맵에도 같은지·몇 개인지, 일본은 같은 아시아 플랫폼(같은 꼴 /jp/ja-jp/product/…)인지 봄. 요청 약 3~12번."
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "KR"
+  ],
+  "cands": [
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑤ 한국 — 더 볼 품번 7개(첫 화면 다른 색·모델 3: SD VIN .207·PF 사보 .100·묵릭 부츠 .200 + 멕시코 66 대표 색 짐작 4: .751·.100·.200·옛 품번 1183A201.751) 중 한국 사이트맵에 있는 것만 정가 읽기(한국 표기 소문자.점 하나만). 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 한국 표기로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "JP"
+  ],
+  "cands": [
+   {
+    "code": "1183c102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183c759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183c429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183c015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1182a745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1183b555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑥ 일본(/jp/ja-jp · 엔 · 세금 포함) — ②의 8개 + ⑤의 7개. 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 소문자.점(한국 꼴)·대문자.점 두 표기로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "ot-mexico66",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "멕시코 66",
+    "code": "1183C102.001",
+    "src": "page",
+    "hint": "mexico 66",
+    "urls": {
+     "JP": "https://www.onitsukatiger.com/jp/ja-jp/product/mexico-66/1183c102.001"
+    }
+   },
+   {
+    "id": "ot-taichiog",
+    "cat": "shoe",
+    "brand": "오니츠카타이거",
+    "name": "타이치 OG",
+    "code": "1183C759.100",
+    "src": "page",
+    "hint": "tai-chi og",
+    "urls": {
+     "JP": "https://www.onitsukatiger.com/jp/ja-jp/product/tai-chi-og/1183c759.100"
+    }
+   }
+  ],
+  "memo": "onitsuka5 ⑦ 일본 짐작 주소 2개(한국 꼴 그대로 /jp/ja-jp/product/{slug}/{품번 소문자.색}) — 일본 사이트맵을 못 찾았을 때(③에 일본 없음·④ JP n=0) 대신 보는 것. **짐작 주소** → tryp 결과로만 거름: OK면 일본도 한국과 같은 꼴(다음 차례 일본 주소는 사이트맵으로 확인해 넣음), HTTP 404·다른 페이지면 버림. 같은 사이트 요청을 줄이려고 정의에는 JP 주소만(KR은 ②의 같은 id 주소 — 합칠 때 OK면 urls JP만 더함 · 요청 2번). ⑥에서 같은 주소가 이미 OK면 이 결과는 무시. 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {
+   "US": {
+    "host": "www.onitsukatiger.com",
+    "path": "/us/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "en-us",
+     "en_us",
+     "/us/",
+     "us-en",
+     "us_en",
+     "-us.",
+     "_us.",
+     "-us-",
+     "_us_"
+    ]
+   }
+  },
+  "max_maps": 6,
+  "per_host": 90,
+  "show": 0,
+  "memo": "onitsuka5 ⑧ 미국 사이트맵 색인(/sitemaps/sitemap-index.xml)에서 그 나라 하위 사이트맵(kid_pref — 주소에 나라·언어 표시가 든 것 · 상품 사이트맵 먼저)만 따라가 상품 주소 경로(/us/…)의 품번(4자리+영문+3자리+구분+3자리 — 대소문자·구분자(. - _) 그대로)을 모음. kid_pref가 하나도 안 맞으면 probe_sku codes는 색인의 모든 하위 사이트맵을 따라가므로 max_maps 6·per_host 90초로 묶음(경로 앞부분으로 걸러 다른 나라 주소는 안 셈). CODES n = 그 나라 품번 수 · INDEX 줄 = 따라간 색인과 하위 주소. 11/21 access4: /us/en-us/ 첫 화면 200이지만 159KB에 상품 링크·품번 0개(스크립트로 그리는 화면이거나 다른 플랫폼) → 사이트맵이 유일한 길. 요청 약 2~6번."
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "US"
+  ],
+  "cands": [
+   {
+    "code": "1183c102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592-200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183c759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759-100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183c429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429-250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183c015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742-250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1182a745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745-250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1183b555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555-022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815-100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830-200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201-751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑨ 미국(/us/en-us · 달러 · 판매세 별도) — ②의 8개 + ⑤의 7개. 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 소문자.점·대문자.점·대문자-대시 세 표기(SFCC형이면 1183C102-001 꼴일 수 있음)로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {
+   "GB": {
+    "host": "www.onitsukatiger.com",
+    "path": "/gb/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "en-gb",
+     "en_gb",
+     "/gb/",
+     "gb-en",
+     "gb_en",
+     "-gb.",
+     "_gb.",
+     "-gb-",
+     "_gb_",
+     "en-uk",
+     "/uk/"
+    ]
+   }
+  },
+  "max_maps": 6,
+  "per_host": 90,
+  "show": 0,
+  "memo": "onitsuka5 ⑩ 영국 사이트맵 색인(/sitemaps/sitemap-index.xml)에서 그 나라 하위 사이트맵(kid_pref — 주소에 나라·언어 표시가 든 것 · 상품 사이트맵 먼저)만 따라가 상품 주소 경로(/gb/…)의 품번(4자리+영문+3자리+구분+3자리 — 대소문자·구분자(. - _) 그대로)을 모음. kid_pref가 하나도 안 맞으면 probe_sku codes는 색인의 모든 하위 사이트맵을 따라가므로 max_maps 6·per_host 90초로 묶음(경로 앞부분으로 걸러 다른 나라 주소는 안 셈). CODES n = 그 나라 품번 수 · INDEX 줄 = 따라간 색인과 하위 주소. 유럽은 robots.txt의 Sites-asics-eu-Site(SFCC) 규칙으로 보아 아식스 유럽 SFCC일 수 있음. 요청 약 2~6번."
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "GB"
+  ],
+  "cands": [
+   {
+    "code": "1183c102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592-200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183c759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759-100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183c429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429-250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183c015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742-250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1182a745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745-250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1183b555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555-022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815-100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830-200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201-751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑪ 영국(/gb/en-gb · 파운드 · 부가세 포함) — ②의 8개 + ⑤의 7개. 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 세 표기로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {
+   "DE": {
+    "host": "www.onitsukatiger.com",
+    "path": "/de/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "de-de",
+     "de_de",
+     "/de/",
+     "-de.",
+     "_de.",
+     "-de-",
+     "_de_"
+    ]
+   }
+  },
+  "max_maps": 6,
+  "per_host": 90,
+  "show": 0,
+  "memo": "onitsuka5 ⑫ 독일 사이트맵 색인(/sitemaps/sitemap-index.xml)에서 그 나라 하위 사이트맵(kid_pref — 주소에 나라·언어 표시가 든 것 · 상품 사이트맵 먼저)만 따라가 상품 주소 경로(/de/…)의 품번(4자리+영문+3자리+구분+3자리 — 대소문자·구분자(. - _) 그대로)을 모음. kid_pref가 하나도 안 맞으면 probe_sku codes는 색인의 모든 하위 사이트맵을 따라가므로 max_maps 6·per_host 90초로 묶음(경로 앞부분으로 걸러 다른 나라 주소는 안 셈). CODES n = 그 나라 품번 수 · INDEX 줄 = 따라간 색인과 하위 주소. 요청 약 2~6번."
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "DE"
+  ],
+  "cands": [
+   {
+    "code": "1183c102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592-200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183c759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759-100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183c429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429-250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183c015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742-250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1182a745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745-250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1183b555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555-022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815-100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830-200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201-751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑬ 독일(/de/de-de · 유로 · 부가세 포함) — ②의 8개 + ⑤의 7개. 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 세 표기로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {
+   "MX": {
+    "host": "www.onitsukatiger.com",
+    "path": "/mx/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "es-mx",
+     "es_mx",
+     "/mx/",
+     "-mx.",
+     "_mx.",
+     "-mx-",
+     "_mx_"
+    ]
+   },
+   "AE": {
+    "host": "www.onitsukatiger.com",
+    "path": "/ae/",
+    "start": [
+     "https://www.onitsukatiger.com/sitemaps/sitemap-index.xml"
+    ],
+    "kid_pref": [
+     "en-ae",
+     "en_ae",
+     "ar-ae",
+     "/ae/",
+     "-ae.",
+     "_ae.",
+     "-ae-",
+     "_ae_"
+    ]
+   }
+  },
+  "max_maps": 3,
+  "per_host": 40,
+  "show": 0,
+  "memo": "onitsuka5 ⑭ 멕시코·두바이 사이트맵 색인(/sitemaps/sitemap-index.xml)에서 그 나라 하위 사이트맵(kid_pref — 주소에 나라·언어 표시가 든 것 · 상품 사이트맵 먼저)만 따라가 상품 주소 경로(/mx/·/ae/…)의 품번(4자리+영문+3자리+구분+3자리 — 대소문자·구분자(. - _) 그대로)을 모음. kid_pref가 하나도 안 맞으면 probe_sku codes는 색인의 모든 하위 사이트맵을 따라가므로 max_maps 3·per_host 40초로 묶음(경로 앞부분으로 걸러 다른 나라 주소는 안 셈). CODES n = 그 나라 품번 수 · INDEX 줄 = 따라간 색인과 하위 주소. 두 나라는 오니츠카 공식 온라인몰이 없을 수 있어(③ 색인에 없으면) 헛읽기를 줄이려고 max_maps 3·per_host 40초. 요청 약 2~6번."
+ },
+ {
+  "t": "try",
+  "key": "ot",
+  "brand": "오니츠카타이거",
+  "ccs": [
+   "MX",
+   "AE"
+  ],
+  "cands": [
+   {
+    "code": "1183c102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-001",
+    "name": "멕시코 66",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592.200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183A592-200",
+    "name": "멕시코 66 SD",
+    "hint": "mexico 66 sd"
+   },
+   {
+    "code": "1183c759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759.100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183C759-100",
+    "name": "타이치 OG",
+    "hint": "tai-chi og"
+   },
+   {
+    "code": "1183c429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429.250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183C429-250",
+    "name": "토쿠텐",
+    "hint": "tokuten"
+   },
+   {
+    "code": "1183c015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-200",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742.250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1183C742-250",
+    "name": "멕시코 66 슬립온",
+    "hint": "mexico 66 slip-on"
+   },
+   {
+    "code": "1182a745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745.250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1182A745-250",
+    "name": "멕시코 66 TGRS",
+    "hint": "mexico 66 tgrs"
+   },
+   {
+    "code": "1183b555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555.022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183B555-022",
+    "name": "모아지 CO",
+    "hint": "moage co"
+   },
+   {
+    "code": "1183c015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015.207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183C015-207",
+    "name": "멕시코 66 SD VIN",
+    "hint": "mexico 66 sd vin"
+   },
+   {
+    "code": "1183c815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815.100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183C815-100",
+    "name": "멕시코 66 PF 사보",
+    "hint": "mexico 66 pf sabot"
+   },
+   {
+    "code": "1183c830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830.200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183C830-200",
+    "name": "묵릭 부츠",
+    "hint": "muklick boots"
+   },
+   {
+    "code": "1183c102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-751",
+    "name": "멕시코 66(옐로·블랙 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-100",
+    "name": "멕시코 66(.100 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183c102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102.200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183C102-200",
+    "name": "멕시코 66(.200 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183a201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201.751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   },
+   {
+    "code": "1183A201-751",
+    "name": "멕시코 66(옛 품번 짐작)",
+    "hint": "mexico 66"
+   }
+  ],
+  "memo": "onitsuka5 ⑮ 멕시코·두바이(있으면) — 사이트맵 주소 그대로만. 사이트맵에서 찾은 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price — 품번이 JSON-LD sku·url에 있으면 품번으로, 없으면 hint 이름). 품번 표기가 나라마다 다를 수 있어 같은 품번을 세 표기로 넣음 — 사이트맵에 그 표기가 없으면 TRY 줄 missing(요청 안 함). OK = 그 나라 정가(cur) → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(표기가 한국과 다르면 cc_code). FAIL 'HTTP 403'·'봇 확인 화면' = 그 나라 막힘 → 그 나라 빼고(그 뒤 같은 호스트 요청은 모두 멈춤 — 한 호스트라 나라별로 차례를 나눔), 'JSON-LD 없음'·'가격 없음' = 다음 차례에 그 나라 페이지 dump. 주의: 주소 표기(예 1183C102-001)와 JSON-LD sku 표기(1183C102.001)가 다르면 품번으로 못 찾고 hint 이름으로 찾음(OK extra by '이름') — 이름으로 찾은 값은 같은 페이지에 이름 비슷한 상품이 하나뿐일 때만이라 틀린 값은 아니지만, 최종 정의에는 그 나라 JSON-LD 표기를 cc_code(또는 alt)로 넣어 품번으로 받게 함 · '품번이 없고 이름이 비슷한 상품이 여럿'·이름 불일치 'JSON-LD 없음'도 같은 까닭일 수 있음(다음 차례 dump로 sku 표기 확인). 블프 기준: 오니츠카타이거는 docs/prices.json에 기존 값이 없음(0개) → ① 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 '한국 정가 ÷ (현지 정가 × 환율)' 가운데값 × 1.25를 넘는 상품을 그 나라에서 뺌 ② 3개 미만이면 스포츠 브랜드 참고 가운데값(나이키·푸마·온러닝·언더아머·써코니·브룩스 · docs/prices.json 11/21 · docs/data.json fx 11/20 종가 — 달러 1334.79 · 파운드 1746.6941 · 유로 1462.41 · 100엔 835.7 · 페소 69.9205(달러 경유) · 디르함 363.4554원) 미국 0.933(×1.25 = 1.166) · 영국 0.786(0.982) · 독일 0.849(1.061) · 멕시코 0.851(1.064) · 두바이 0.719(0.899) 넘으면 뺌 · 일본은 본국이라 정가가 낮아 정상 정가도 비율 1.2~1.4가 나올 수 있음(참고 1.081 → 1.351) — 일본은 같은 실행 오니츠카 일본 가운데값으로만 판단하고 참고값으로는 빼지 않음 · 같은 상품 다른 나라끼리도 견줌(그 나라만 튀게 낮으면 뺌) · 한국이 할인가로 읽힌 경우(OK extra cur_price < full이거나 덤프에 취소선·old-price 칸)는 비율이 거꾸로 낮게 나오니 한국 값을 먼저 확인"
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "KR",
+  "targets": [
+   "1183c102.001",
+   "1183C102.001",
+   "1183C102-001",
+   "1183a592.200",
+   "1183A592.200",
+   "1183A592-200",
+   "1183c759.100",
+   "1183C759.100",
+   "1183C759-100",
+   "1183c429.250",
+   "1183C429.250",
+   "1183C429-250",
+   "1183c015.200",
+   "1183C015.200",
+   "1183C015-200",
+   "1183c742.250",
+   "1183C742.250",
+   "1183C742-250",
+   "1182a745.250",
+   "1182A745.250",
+   "1182A745-250",
+   "1183b555.022",
+   "1183B555.022",
+   "1183B555-022",
+   "1183c015.207",
+   "1183C015.207",
+   "1183C015-207",
+   "1183c815.100",
+   "1183C815.100",
+   "1183C815-100",
+   "1183c830.200",
+   "1183C830.200",
+   "1183C830-200",
+   "1183c102.751",
+   "1183C102.751",
+   "1183C102-751",
+   "1183c102.100",
+   "1183C102.100",
+   "1183C102-100",
+   "1183c102.200",
+   "1183C102.200",
+   "1183C102-200",
+   "1183a201.751",
+   "1183A201.751",
+   "1183A201-751"
+  ],
+  "show": 40,
+  "memo": "onitsuka5 ⑯ 요약(요청 없음 — sites 비움, ④~⑭에서 모은 CODES 그대로): TARGET 줄 = 품번 표기별 나라 사이트맵 주소(빈 칸 = 그 나라 사이트맵에 그 표기 없음) · ROW 줄 = 한국 품번 40개(같은 표기를 가진 나라 수 많은 순 · miss = 없는 나라) → 같은 표기로 겹치는 품번이 다음 차례 후보. 나라마다 표기가 다르면(대소문자·구분자) 겹침 0으로 나오니 ⑰의 나라별 표본으로 표기를 보고 다음 차례 rx·후보를 그 표기로."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "US",
+  "show": 25,
+  "memo": "onitsuka5 ⑰ US 표본(요청 없음): ROW 줄 = US 사이트맵 품번 25개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. US가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "JP",
+  "show": 20,
+  "memo": "onitsuka5 ⑰ JP 표본(요청 없음): ROW 줄 = JP 사이트맵 품번 20개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. JP가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "GB",
+  "show": 15,
+  "memo": "onitsuka5 ⑰ GB 표본(요청 없음): ROW 줄 = GB 사이트맵 품번 15개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. GB가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "DE",
+  "show": 15,
+  "memo": "onitsuka5 ⑰ DE 표본(요청 없음): ROW 줄 = DE 사이트맵 품번 15개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. DE가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "MX",
+  "show": 8,
+  "memo": "onitsuka5 ⑰ MX 표본(요청 없음): ROW 줄 = MX 사이트맵 품번 8개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. MX가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "codes",
+  "key": "ot",
+  "rx": "(?i)([0-9]{4}[a-z][0-9]{3}[._-]?[0-9]{3})",
+  "sites": {},
+  "base": "AE",
+  "show": 8,
+  "memo": "onitsuka5 ⑰ AE 표본(요청 없음): ROW 줄 = AE 사이트맵 품번 8개와 주소 끝(표기·주소 꼴 확인) · miss = 같은 표기가 없는 나라. AE가 없으면 INTERSECT base 0."
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://www.onitsukatiger.com/us/en-us/",
+   "https://www.onitsukatiger.com/gb/en-gb/",
+   "https://www.onitsukatiger.com/de/de-de/"
+  ],
+  "max": 25,
+  "rx": [
+   "<title[^>]*>([^<]{0,120})",
+   "(?:src|href)=\"([^\"]*(?:demandware|/_next/|/static/version|/_ui/|etc\\.clientlibs|cdn\\.shopify|/mage/|requirejs|/_nuxt/|/on/demandware)[^\"]{0,80})\"",
+   "href=\"(/(?:us|gb|de)/[a-z]{2}-[a-z]{2}/[^\"?#]{3,90})\"",
+   "([0-9]{4}[A-Z][0-9]{3}[._-][0-9]{3})",
+   "(?i)(px-captcha|_pxAppId|captcha-delivery|cf-chl|challenge-platform|Access Denied|Just a moment|Pardon Our Interruption)"
+  ],
+  "memo": "onitsuka5 ⑱ 진단(맨 끝 · 남은 시간에만): 미국·영국·독일 첫 화면 3개에서 제목·플랫폼 표식(SFCC demandware·Next.js·Magento static/version·hybris _ui)·나라 링크 꼴·품번·막힘 표식만 봄 — 사이트맵에서 그 나라를 못 찾았을 때 다음 차례 길 찾기용(상품 페이지는 안 받음). 403·봇 확인이면 그 나라 막힘(그 뒤 요청 없음 — 맨 끝이라 앞 결과에 영향 없음)."
+ }
+]
