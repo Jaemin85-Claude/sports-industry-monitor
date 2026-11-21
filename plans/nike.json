@@ -1,0 +1,270 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "try-CN0149-001",
+    "brand": "나이키",
+    "name": "P-6000",
+    "code": "CN0149-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-CW2289-111",
+    "brand": "나이키",
+    "name": "에어포스 1 미드 '07",
+    "code": "CW2289-111",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-DD1068-102",
+    "brand": "나이키",
+    "name": "에어 허라취",
+    "code": "DD1068-102",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-CD4165-100",
+    "brand": "나이키",
+    "name": "에어맥스 엑시",
+    "code": "CD4165-100",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-DH9522-001",
+    "brand": "나이키",
+    "name": "와플 데뷰",
+    "code": "DH9522-001",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "shoe"
+   },
+   {
+    "id": "try-BQ4639-012",
+    "brand": "나이키",
+    "name": "오프코트 슬라이드",
+    "code": "BQ4639-012",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "sandal"
+   },
+   {
+    "id": "try-DC4244-010",
+    "brand": "나이키",
+    "name": "헤리티지 백팩",
+    "code": "DC4244-010",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "bag"
+   },
+   {
+    "id": "try-DH7710-010",
+    "brand": "나이키",
+    "name": "브라질리아 9.5 더플백(M)",
+    "code": "DH7710-010",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "bag"
+   },
+   {
+    "id": "try-DB0490-010",
+    "brand": "나이키",
+    "name": "헤리티지 웨이스트팩",
+    "code": "DB0490-010",
+    "src": "nike",
+    "cc": [
+     "KR",
+     "US",
+     "GB",
+     "DE",
+     "JP",
+     "MX"
+    ],
+    "urls": {},
+    "cat": "bag"
+   }
+  ]
+ },
+ {
+  "t": "grep",
+  "rx": "NOMATCH^",
+  "max_maps": 1,
+  "per_host": 60,
+  "show": 0,
+  "sites": {
+   "nikecom-pdp-index": {
+    "host": "www.nike.com",
+    "start": [
+     "https://www.nike.com/sitemap-v2-pdp-index.xml"
+    ],
+    "sample": 300
+   }
+  }
+ },
+ {
+  "t": "codes",
+  "key": "nike",
+  "base": "AE",
+  "rx": "(?:/t/[^/]+/|/en/(?![^/]*(?:kids|baby|toddler|infant|younger|older|boys|girls|hoodie|shirt|jacket|jogger|trouser|pants|shorts|legging|tights|socks|tracksuit|polo|gilet|skirt|dress|jersey|fleece|windrunner|anorak|parka|bodysuit|swim|sports-bra|beanie|glove|headband|sleeve|bottle|football-boot|-cap[-/]|-hat[-/]|-ball[-/]|-top[-/]|-vest[-/]|-tee[-/]|-crew[-/]|-coat[-/]))(?=[^/]*(?:mens|shoe|bag|pack|duffel|slide|sandal|mule|clog|boot))[^/]*/NK)([A-Z0-9]{6}-[0-9]{3})(?:\\.html)?/?$",
+  "sites": {
+   "AE": {
+    "host": "www.nike.ae",
+    "path": "/en/",
+    "start": [
+     "https://www.nike.ae/en/sitemap_0-product.xml"
+    ]
+   },
+   "KR": {
+    "host": "www.nike.com",
+    "path": "/kr/",
+    "start": [
+     "https://www.nike.com/sitemap-v2-pdp-index.xml"
+    ],
+    "kid_pref": [
+     "ko-kr",
+     "ko_kr",
+     "kr-ko",
+     "kr_ko",
+     "/kr/",
+     "-kr",
+     "_kr",
+     "kr-",
+     "kr_"
+    ]
+   }
+  },
+  "targets": [
+   "CW2288-111",
+   "CN0149-001",
+   "CW2289-111",
+   "DD1068-102",
+   "CD4165-100",
+   "DH9522-001",
+   "BQ4639-012",
+   "DC4244-010",
+   "DH7710-010",
+   "DB0490-010"
+  ],
+  "max_maps": 30,
+  "per_host": 240,
+  "show": 2000
+ },
+ {
+  "t": "try",
+  "key": "nike",
+  "brand": "나이키",
+  "ccs": [
+   "AE"
+  ],
+  "cands": [
+   {
+    "code": "CN0149-001",
+    "name": "P-6000"
+   },
+   {
+    "code": "CW2289-111",
+    "name": "에어포스 1 미드 '07"
+   },
+   {
+    "code": "DD1068-102",
+    "name": "에어 허라취"
+   },
+   {
+    "code": "CD4165-100",
+    "name": "에어맥스 엑시"
+   },
+   {
+    "code": "DH9522-001",
+    "name": "와플 데뷰"
+   },
+   {
+    "code": "BQ4639-012",
+    "name": "오프코트 슬라이드"
+   },
+   {
+    "code": "DC4244-010",
+    "name": "헤리티지 백팩"
+   },
+   {
+    "code": "DH7710-010",
+    "name": "브라질리아 9.5 더플백(M)"
+   },
+   {
+    "code": "DB0490-010",
+    "name": "헤리티지 웨이스트팩"
+   }
+  ]
+ }
+]
