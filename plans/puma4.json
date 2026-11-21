@@ -1,0 +1,183 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "puma-magmax2",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "매그맥스 나이트로 2(남성)",
+    "code": "312125",
+    "src": "page",
+    "hint": "magmax nitro 2",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Emagmax-nitro-2/312125.html",
+     "US": "https://us.puma.com/us/en/pd/magmax-nitro-2-mens-road-running-shoes/312125",
+     "GB": "https://uk.puma.com/uk/en/pd/magmax-nitro%E2%84%A2-2-running-shoes-men/312125",
+     "DE": "https://eu.puma.com/de/de/pd/magmax-nitro-2-laufschuhe-herren/312125",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-magmax-nitrotm-2-para-hombre/312125.html",
+     "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"
+    }
+   },
+   {
+    "id": "puma-dnetrailw",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 엘리트 트레일(여성)",
+    "code": "310468",
+    "src": "page",
+    "hint": "deviate nitro elite trail",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Edeviate-nitro-elite-trail-wn/310468.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-womens-trail-running-shoes/310468",
+     "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-trail-running-shoes-women/310468",
+     "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-damen/310468",
+     "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"
+    }
+   },
+   {
+    "id": "puma-dnetrail",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 엘리트 트레일(남성)",
+    "code": "310034",
+    "src": "page",
+    "hint": "deviate nitro elite trail",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
+     "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-elite-trail-running-shoes-men/310034",
+     "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"
+    }
+   }
+  ],
+  "memo": {
+   "what": "puma4 ① 영국(uk.puma.com) 빈칸 3개 — 완전한 새 정의(같은 id · price_fetch PRODUCTS 항목 그대로 + urls에 GB만 US 다음에 더함 · 합치는 사람이 기존 항목을 이 정의로 바꿈). 기존 나라(한국·미국·독일·멕시코·두바이)도 함께 받아 오늘 값으로 블프 비교.",
+   "gb_urls": "puma-magmax2 GB = 11/21 03:14 영국 사이트맵(r2/p1 puma · r2/p2 TARGET 'magmax-nitro™-2-running-shoes-men/312125') 그대로 — 11/21 r2/p2에서 읽기 시간 초과(25초)만 났던 값 · puma-dnetrailw GB = 11/17 영국 사이트맵 주소(sku9 puma_urls.json · 11/21 사이트맵에도 310468 있음) — 11/17 '상품 가격 데이터(JSON-LD) 없음' · puma-dnetrail GB = 짐작 주소(11/21 영국 사이트맵에 310034는 있으나 주소 원문이 기록에 없음 → 여성 310468 주소 꼴의 -women을 -men으로) — 주소가 틀리면 HTTP 404 등으로 FAIL(tryp 결과로 걸러짐 · 다음 차례에 영국 사이트맵 codes로 정확한 주소) · 10/27 영국 'JSON-LD 없음'.",
+   "uk_requests": "uk.puma.com은 11/21 응답 시간 초과가 이어져 이 계획에서 상품 페이지 3번 + robots.txt 1번만(영국 사이트맵은 다시 읽지 않음 — 11/21 03:14 r2/p1 결과를 씀). price_fetch.get은 같은 사이트가 연달아 2번 응답 없으면 그 실행에서 건너뜀 → 값어치 순(매그맥스 2 → 엘리트 트레일 여성 → 남성)으로 둠. robots.txt가 시간 초과면 그 실행 영국 전부 '이 사이트 건너뜀'(다음 차례).",
+   "judge": "블프 기준(docs/prices.json 11/21 14:10 KST · docs/data.json fx 11/20 종가 — 파운드 1746.6941 · 유로 1462.41 · 페소 69.9205(달러 경유) · 디르함 363.4554원): 기존 푸마 20개 한국 정가 ÷ (현지 정가 × 환율)의 나라별 가운데값(이전 값·수집 멈춤 값 빼고) = 영국 0.908(11개) · 독일 0.916(16) · 멕시코 0.896(15) · 두바이 0.763(17) · 미국 0.994(19) → ×1.25 = 영국 1.135 · 독일 1.145 · 멕시코 1.120 · 두바이 0.954 넘으면 할인가가 정가로 읽힌 것으로 보고 그 나라 뺌. 같은 상품 다른 나라와도 견줌(11/21 T7 트랙 자켓 영국처럼 그 나라만 낮으면 뺌). 뺄 선(영국 정가가 이 값 밑이면 뺌) · 같은 상품 다른 나라: 매그맥스 나이트로 2(한국 239,000) 120.6파운드 — 미국 180달러·독일 189.95유로·멕시코 3,999·두바이 899(디비에이트 나이트로 4 영국 150파운드가 미국 170달러 꼴이라 기대 ≈160파운드) / 디비에이트 나이트로 엘리트 트레일 남성·여성(한국 329,000) 166.0파운드 — 미국 250달러·독일 229.95유로(기대 ≈200~210파운드). 다시 'JSON-LD 없음'이면 넣지 않음(영국 몰에서 팔지 않는 상태 · 다음 차례).",
+   "merge": "OK이고 블프 검사 통과한 나라만 urls에 GB 추가 · 주소의 ™는 %E2%84%A2로(기존 영국 항목 꼴) · 주석에 '영국 11/21 GitHub 서버 정가 읽기 확인' · 실패면 기존 주석(영국 사이트맵에 없음/JSON-LD 없음)에 날짜만 더함. 기존 나라 값이 FAIL이면(예: 엘리트 트레일 여성 멕시코 — 11/21 03:14 멕시코 사이트맵에 310468 없음, prices.json MX 이전 값 11/17부터) 정의는 그대로 두고 보고만."
+  }
+ },
+ {
+  "t": "codes",
+  "key": "puma4",
+  "base": "DE",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
+  "sites": {
+   "DE": {
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "start": [
+     "https://eu.puma.com/sitemaps/urls/de/sitemap_index.xml"
+    ]
+   },
+   "MX": {
+    "host": "mx.puma.com",
+    "path": "/mx/es/",
+    "start": [
+     "https://mx.puma.com/sitemap_index.xml"
+    ],
+    "kid_pref": [
+     "custom-product"
+    ]
+   },
+   "AE": {
+    "host": "ae.puma.com",
+    "path": "/ae/en/",
+    "start": [
+     "https://ae.puma.com/sitemap_index.xml"
+    ],
+    "kid_pref": [
+     "custom-product"
+    ]
+   }
+  },
+  "targets": [
+   "403589",
+   "401683",
+   "396463",
+   "310034",
+   "310109",
+   "310471",
+   "310468"
+  ],
+  "max_maps": 45,
+  "per_host": 150,
+  "show": 0,
+  "memo": "puma4 ② 독일·멕시코·두바이 빈칸을 그 나라 몰 공개 사이트맵에서 같은 6자리 품번으로 다시 찾음(robots.txt 확인은 pf.get · 독일은 나라 폴더 /sitemaps/urls/de/ 색인 36개+1 = 약 37번 · 멕시코·두바이 custom-product 4개+1 = 각 5번 — 11/21 03:14 r2/p1에서 독일 37·멕시코 5·두바이 5번 문제없이 읽힘). 영국은 다시 읽지 않음(위 ①). TARGET 줄 = 품번별 DE·MX·AE 사이트맵 주소(빈 칸 = 사이트맵에 없음 → 그 나라는 넣지 않음 · 사이트맵에 없는 주소·짐작 주소는 쓰지 않음). 11/21 03:14 r2/p1 기준으로는 독일 403589만 있고(주소 원문 기록 없음 — 이번에 TARGET으로 얻음) 독일 401683·멕시코 396463·310034·310109·310471·두바이 310034·310468은 없었음 — 사이트맵은 날마다 바뀜(엘리트 트레일 여성 멕시코는 11/17 있음 → 11/21 없음)이라 한 번 더 봄. 미국 런 벨로시티 티셔츠(526578)는 미국 사이트맵 41개라 이번엔 안 봄(11/21 03:14 없음 · 다음 차례). 일본은 PAUSED(jp.puma.com Cloudflare 봇 확인 403)라 빼고 요청 안 함."
+ },
+ {
+  "t": "try",
+  "key": "puma4",
+  "brand": "푸마",
+  "ccs": [
+   "DE"
+  ],
+  "cands": [
+   {
+    "code": "403589",
+    "name": "스피드캣 GO(여성)",
+    "hint": "speedcat go"
+   },
+   {
+    "code": "401683",
+    "name": "킹 인도어",
+    "hint": "king indoor"
+   }
+  ],
+  "memo": "puma4 ③ 독일 — 위 codes에서 찾은 사이트맵 주소 그대로(짐작 없음)로 price_fetch.fetch_one(src page · page_price 품번 — 기존 푸마 독일 값과 같은 길 · 할인 중이면 이 상품 가격 칸 취소선 정가). TRY 줄 missing = 사이트맵에 없음(요청 안 함). 블프 기준(docs/prices.json 11/21 14:10 KST · docs/data.json fx 11/20 종가 — 파운드 1746.6941 · 유로 1462.41 · 페소 69.9205(달러 경유) · 디르함 363.4554원): 기존 푸마 20개 한국 정가 ÷ (현지 정가 × 환율)의 나라별 가운데값(이전 값·수집 멈춤 값 빼고) = 영국 0.908(11개) · 독일 0.916(16) · 멕시코 0.896(15) · 두바이 0.763(17) · 미국 0.994(19) → ×1.25 = 영국 1.135 · 독일 1.145 · 멕시코 1.120 · 두바이 0.954 넘으면 할인가가 정가로 읽힌 것으로 보고 그 나라 뺌. 같은 상품 다른 나라와도 견줌(11/21 T7 트랙 자켓 영국처럼 그 나라만 낮으면 뺌). 뺄 선(독일 정가가 이 값 밑이면 뺌): 스피드캣 GO 여성(한국 119,000) 71.1유로 — 미국 90달러·멕시코 1,999·두바이 429(기대 ≈89.95유로 · 10/27 독일은 할인가 45.95유로만 보여 뺐음 → 또 70유로 밑이면 뺌) / 킹 인도어(한국 169,000) 100.9유로 — 미국 125달러·멕시코 2,499·두바이 549. 합칠 때: 기존 정의(puma-speedcatgo — 일본 주소 포함 그대로 · puma-kingindoor)에 urls DE = TRY 줄 주소(독일 사이트맵 주소 · 기존 독일 항목 꼴, .html 없음)만 US 다음 자리에 더함."
+ },
+ {
+  "t": "try",
+  "key": "puma4",
+  "brand": "푸마",
+  "ccs": [
+   "MX"
+  ],
+  "cands": [
+   {
+    "code": "396463",
+    "name": "팔레르모",
+    "hint": "palermo"
+   },
+   {
+    "code": "310034",
+    "name": "디비에이트 나이트로 엘리트 트레일(남성)",
+    "hint": "deviate nitro elite trail"
+   },
+   {
+    "code": "310109",
+    "name": "포에버런 나이트로 2(남성)",
+    "hint": "foreverrun nitro 2"
+   },
+   {
+    "code": "310471",
+    "name": "포에버런 나이트로 2(여성)",
+    "hint": "foreverrun nitro 2"
+   }
+  ],
+  "memo": "puma4 ④ 멕시코 — 사이트맵 주소 그대로만(없으면 요청 안 함). 블프 기준(docs/prices.json 11/21 14:10 KST · docs/data.json fx 11/20 종가 — 파운드 1746.6941 · 유로 1462.41 · 페소 69.9205(달러 경유) · 디르함 363.4554원): 기존 푸마 20개 한국 정가 ÷ (현지 정가 × 환율)의 나라별 가운데값(이전 값·수집 멈춤 값 빼고) = 영국 0.908(11개) · 독일 0.916(16) · 멕시코 0.896(15) · 두바이 0.763(17) · 미국 0.994(19) → ×1.25 = 영국 1.135 · 독일 1.145 · 멕시코 1.120 · 두바이 0.954 넘으면 할인가가 정가로 읽힌 것으로 보고 그 나라 뺌. 같은 상품 다른 나라와도 견줌(11/21 T7 트랙 자켓 영국처럼 그 나라만 낮으면 뺌). 뺄 선(멕시코 정가가 이 값 밑이면 뺌): 팔레르모(한국 119,000) 1,519.6페소 — 미국 90달러·영국 75파운드·독일 89.95유로(같은 값 스웨이드 클래식 멕시코 1,999) / 엘리트 트레일 남성(329,000) 4,201페소 — 여성 멕시코 4,499(11/17) / 포에버런 나이트로 2 남성·여성(199,000) 2,541페소 — 미국 150달러·독일 159.95유로(기대 ≈3,299~3,499). 멕시코 SFCC는 할인 중이면 화면 데이터 c_listPrice(page_price 그대로). 합칠 때: 기존 정의에 urls MX = TRY 줄 주소(.html 꼴)만 더함 · 팔레르모 기존 주석 '멕시코 몰에는 팔레르모 없음(시험 10/22)'을 고침."
+ },
+ {
+  "t": "try",
+  "key": "puma4",
+  "brand": "푸마",
+  "ccs": [
+   "AE"
+  ],
+  "cands": [
+   {
+    "code": "310034",
+    "name": "디비에이트 나이트로 엘리트 트레일(남성)",
+    "hint": "deviate nitro elite trail"
+   },
+   {
+    "code": "310468",
+    "name": "디비에이트 나이트로 엘리트 트레일(여성)",
+    "hint": "deviate nitro elite trail"
+   }
+  ],
+  "memo": "puma4 ⑤ 두바이(되면) — 사이트맵 주소 그대로만. 11/03에는 두바이 몰 엘리트 트레일 남성 페이지가 사이트맵에 없고 JSON-LD도 없었음(재고 없는 페이지로 보임) — 사이트맵에 다시 나타났을 때만 시험. 블프 기준(docs/prices.json 11/21 14:10 KST · docs/data.json fx 11/20 종가 — 파운드 1746.6941 · 유로 1462.41 · 페소 69.9205(달러 경유) · 디르함 363.4554원): 기존 푸마 20개 한국 정가 ÷ (현지 정가 × 환율)의 나라별 가운데값(이전 값·수집 멈춤 값 빼고) = 영국 0.908(11개) · 독일 0.916(16) · 멕시코 0.896(15) · 두바이 0.763(17) · 미국 0.994(19) → ×1.25 = 영국 1.135 · 독일 1.145 · 멕시코 1.120 · 두바이 0.954 넘으면 할인가가 정가로 읽힌 것으로 보고 그 나라 뺌. 같은 상품 다른 나라와도 견줌(11/21 T7 트랙 자켓 영국처럼 그 나라만 낮으면 뺌). 뺄 선(두바이 정가가 이 값 밑이면 뺌): 엘리트 트레일 남성·여성(한국 329,000) 948.8디르함 — 미국 250달러(두바이 푸마는 대체로 미국 정가×5 안팎 · 디비에이트 나이트로 엘리트 4 미국 250달러 ↔ 두바이 1,249) → 기대 ≈1,249. 합칠 때: 기존 정의에 urls AE = TRY 줄 주소(.html)만 더하고 '두바이 몰에 없음' 주석을 고침."
+ }
+]
