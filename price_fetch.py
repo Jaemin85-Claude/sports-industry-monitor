@@ -199,7 +199,7 @@ LANES = 6           # v1.12 동시에 받는 묶음 수(update.yml 수동 실행
 LANE_GRACE = 60     # 초 — 묶음이 TIME_LIMIT + 이만큼 안에 안 끝나면 멈추고 남은 값은 이전 값(단계 15분 제한 전에 저장)
 LANE_JOIN = [("킨(KEEN)", "우포스")]   # v1.12 사이트는 다르지만 같은 회사·수입사 몰 — 한 묶음(차례대로) · 킨·우포스 한국 = LF 공식몰(고도몰)
 PACE_EXTRA = {"arcteryx.jp": "shopify", "dragondiffusion.com": "shopify",   # v1.12 여러 회사가 함께 쓰는 플랫폼 — 묶음을 넘어 한 줄로 GAP
-              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify)
+              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24", "kor.mizuno.com": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify) · v1.27 미즈노 한국 카페24
               "www.keenfootwear.kr": "godo", "www.oofos.co.kr": "godo"}     # SFCC형 몰(푸마·언더아머·써코니 해외)은 브랜드마다 따로 운영(자체 CDN)이라 넣지 않음 — 사이트별 간격만
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
@@ -214,6 +214,11 @@ PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식�
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
+CAFE24_ID_LIST = {"kor.mizuno.com"}   # v1.27 카페24 기본 상품 정보 칸(id="span_product_price_custom" 소비자가 · id="span_product_price_text" 판매가)으로 할인 전 정가를 읽는 몰 —
+                                      # 미즈노 한국(11/21 블프: 인스파이어 22 판매가 135,200 · 소비자가 169,000 — 소비자가 ÷ 일본 정가 비율이 다른 러닝화와 맞음 · 할인 없는 라이더 30은 둘 다 179,000)
+                                      # 브룩스 한국(CAFE24_LIST · 다른 칸 꼴)과 따로 — 브룩스 읽는 법은 그대로
+BIGC_LIST = {"usa.mizuno.com"}   # v1.27 빅커머스 몰 — 할인 중이면 JSON-LD에 판매가만 → 이 상품 가격 칸의 할인 전 가격(data-product-non-sale-price-without-tax)을 정가로
+                                 # (11/21 미즈노 미국: 라이더 29 $99 · 할인 전 $150 · 리벨리온 프로 3 $160 · 할인 전 $250 — 할인 없으면 그 칸이 비어 있음)
 SFRA_LIST = {"www.nike.ae": "NK", "www.underarmour.ae": "UA"}   # v1.17 두바이 SFCC(SFRA) 몰 → 이 상품 품번 표시(data-variation-group-id) 앞 글자 — sfra_list로 정가 확인
 SHOP_MODEL = {"on.ae": 7}   # v1.17 할인 표시 없이 일부 색상 값만 내리는 쇼피파이 몰 → 같은 모델로 볼 품번 앞 글자 수(온러닝 3MG1005… = 모델·성별)
                             # 상품 .json은 변형 250개까지만 — 11/03 cloud-6·cloudsurfer-2가 250개에서 잘림(cloudmonster-3 243개) → 같은 모델 비교는 응답에 온 색상끼리만
@@ -1687,6 +1692,73 @@ def cafe24_list(html, sale):
     return lps.pop() if len(lps) == 1 else None
 
 
+C24_TAGS = r'(?:<(?:strike|del|s|span|strong|em|b|font)\b[^>]*>\s*){0,3}'   # v1.27 값 앞 꾸밈 태그(여는 태그만 — 빈 칸에서 다음 칸 값으로 넘어가지 않게)
+C24_CUSTOM = re.compile(r'id="span_product_price_custom"[^>]*>\s*' + C24_TAGS + r'([\d,]+)\s*원')
+C24_TEXT = re.compile(r'id="span_product_price_text"[^>]*>\s*' + C24_TAGS + r'([\d,]+)\s*원')
+C24_WIN = 8000   # 글자 — 소비자가 칸 뒤 이만큼 안(다음 소비자가 칸 전)의 판매가 칸만 같은 상품 정보 칸으로 봄
+C24_CUSTOM_RAW = re.compile(r'id="span_product_price_custom"[^>]*>((?:(?!</span>).){0,300})', re.S)   # v1.27 소비자가 칸 안 글(꼴 확인용 — '…원' 꼴이 아니어도)
+
+
+def cafe24_id_list(html, sale):
+    """v1.27 카페24 기본 상품 정보 칸(미즈노 한국): 할인 중이면 JSON-LD·meta에는 판매가만 — 이 상품 정보 칸의 소비자가(id="span_product_price_custom",
+    <strike>)를 정가로. 이 상품 것만: 소비자가 칸 바로 뒤(C24_WIN 안 · 다음 소비자가 칸 전) 판매가 칸(id="span_product_price_text")과 짝 · 소비자가·판매가가 각각 한 가지 ·
+    판매가 칸 = 이 상품 JSON-LD 판매가(sale) · 판매가보다 높고 5배 안 → (정가, 판매가) · 할인 아님(소비자가 = 판매가)이면 (None, 판매가) ·
+    소비자가 칸이 없으면 (None, None) · 소비자가가 판매가보다 높은데(할인 표시) 위 조건을 못 맞추거나 소비자가 칸 숫자를 '…원' 꼴로 못 읽으면
+    RuntimeError(할인가를 정가로 저장하지 않게)"""
+    cus = [(m.start(), num(m.group(1))) for m in C24_CUSTOM.finditer(html)]
+    raw = [_money(re.sub(r"<[^>]*>", "", m.group(1))) for m in C24_CUSTOM_RAW.finditer(html)]
+    if sum(1 for x in raw if x) > sum(1 for _, lp in cus if lp) and any(x and x > sale * 1.005 for x in raw):   # v1.27 소비자가 칸에 판매가보다 큰 숫자가 있는데 '…원' 꼴로 못 읽음
+        raise RuntimeError(f"소비자가 칸 꼴을 못 읽음(칸 안 값 {sorted({x for x in raw if x})} · JSON-LD {sale:g}) — 할인가를 정가로 저장하지 않음")
+    if not cus:
+        return None, None
+    pairs = []
+    for i, (at, lp) in enumerate(cus):
+        end = min(at + C24_WIN, cus[i + 1][0] if i + 1 < len(cus) else len(html))
+        t = C24_TEXT.search(html, at, end)
+        if t:
+            pairs.append((lp, num(t.group(1))))
+    lps, svs = {lp for _, lp in cus}, {sv for _, sv in pairs}
+    if pairs and len(lps) == 1 and len(svs) == 1:
+        lp, sv = next(iter(lps)), next(iter(svs))
+        if lp and sv and abs(sv - sale) < 0.01:
+            if abs(lp - sv) < 0.01:
+                return None, sv
+            if sv < lp <= sv * 5:
+                return lp, sv
+    if any(lp and lp > sale * 1.005 for _, lp in cus):
+        raise RuntimeError(f"소비자가 칸을 이 상품 칸으로 확인 못 함(소비자가 {sorted(x for x in lps if x)} · 판매가 칸 {sorted(x for x in svs if x)} · "
+                           f"JSON-LD {sale:g}) — 할인가를 정가로 저장하지 않음")
+    return None, (next(iter(svs)) if len(svs) == 1 else None)
+
+
+BIGC_PAIR = re.compile(r'data-product-non-sale-price-without-tax[^>]*>\s*([^<]*?)\s*</span>'
+                       r'(?:(?!data-product-non-sale-price-without-tax).){0,1500}?data-product-price-without-tax[^>]*>\s*([^<]*?)\s*</span>', re.S)   # v1.27
+
+
+def bigc_list(html, sale):
+    """v1.27 빅커머스 몰(미즈노 미국): 할인 중이면 JSON-LD에 판매가만 — 이 상품 가격 칸(price-section)의 할인 전 가격
+    (data-product-non-sale-price-without-tax · 할인 없으면 빈 칸)을 정가로. 이 상품 것만: 할인 전 칸 바로 뒤(다음 할인 전 칸 전) 판매가 칸
+    (data-product-price-without-tax) 값이 이 상품 JSON-LD 판매가(sale)와 같은 칸끼리 · 정가가 한 가지 · 판매가보다 높고 5배 안 → (정가, 판매가) ·
+    할인 전 칸이 모두 비었으면 (None, 판매가) · 빈 칸과 값 칸이 섞이거나(판매가가 같은 다른 상품 카드) 이 상품 가격 칸을 못 찾거나 할인 전 가격을 확인 못 하면
+    RuntimeError(할인가·다른 상품 정가를 정가로 저장하지 않게)"""
+    mine = [(lv, _money(sv)) for lv, sv in BIGC_PAIR.findall(html)]
+    mine = [(lv, sv) for lv, sv in mine if sv and abs(sv - sale) < 0.01]
+    if not mine:
+        raise RuntimeError(f"빅커머스 가격 칸에서 이 상품 판매가({sale:g})를 못 찾음 — 할인 여부를 몰라 저장하지 않음")
+    lps = {_money(lv) if lv.strip() else 0 for lv, _ in mine}   # v1.27 빈 칸(할인 없음)도 한 값(0)으로 셈
+    if lps == {0}:
+        return None, sale
+    if 0 in lps:   # v1.27 빈 할인 전 칸(할인 없음)과 할인 전 값이 섞임 — 판매가가 같은 추천 상품 카드일 수 있어 이 상품 칸을 못 가림
+        raise RuntimeError(f"할인 전 칸이 빈 칸과 값({' · '.join(sorted({lv.strip() for lv, _ in mine if lv.strip()}))[:40]})으로 섞임 · 판매가 {sale:g} — 정가 확인 안 됨")
+    if len(lps) == 1:
+        lp = next(iter(lps))
+        if lp and abs(lp - sale) < 0.01:
+            return None, sale
+        if lp and sale < lp <= sale * 5:
+            return lp, sale
+    raise RuntimeError(f"할인 전 가격 칸을 확인 못 함({' · '.join(lv for lv, _ in mine if lv.strip())[:60]} · 판매가 {sale:g}) — 할인가를 정가로 저장하지 않음")
+
+
 SFRA_BOX = re.compile(r'b-pdp__priceline|product-detail__priceline|b-microproduct__price|product-tile')   # v1.17 가격 칸 표시 — 뒤 것(추천 상품 칸)은 이 상품 아님
 SFRA_STRIKE = re.compile(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*?content="([0-9][0-9.,]*)"')
 SFRA_SALES = re.compile(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*?content="([0-9][0-9.,]*)"', re.S)
@@ -1845,6 +1917,11 @@ def fetch_one(prod, cc):
         lp = cafe24_list(r.text, full)
         if lp:
             full = lp
+    if host in CAFE24_ID_LIST or host in BIGC_LIST:   # v1.27 카페24 기본 정보 칸(미즈노 한국)·빅커머스(미즈노 미국) — 할인 중이면 JSON-LD에 판매가만
+        lp, sv = (cafe24_id_list if host in CAFE24_ID_LIST else bigc_list)(r.text, full)
+        if lp:
+            full = lp
+            extra["cur_price"] = min(x for x in (extra.get("cur_price"), sv) if x)   # 할인가 = 지금 가장 싼 값(JSON-LD 변형·판매가 칸 중)
     return (full, extra), url
 
 

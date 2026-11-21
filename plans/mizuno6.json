@@ -1,0 +1,369 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "mizuno-waverider30",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 라이더 30(남성)",
+    "code": "J1GM2620",
+    "cc_code": {
+     "US": "411621"
+    },
+    "src": "page",
+    "hint": "wave rider 30",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/wave-rider-30/12026/",
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2620/",
+     "US": "https://usa.mizuno.com/running-wave-rider-30-mens/"
+    }
+   },
+   {
+    "id": "mizuno-neovista3",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "네오 비스타 3(남성)",
+    "code": "J1GM2610",
+    "src": "page",
+    "hint": "neo vista 3",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/mizuno-neo-vista-3/12065/",
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2610/",
+     "US": "https://usa.mizuno.com/running-mizuno-neo-vista-3-mens/"
+    },
+    "cc_code": {
+     "US": "411619"
+    }
+   },
+   {
+    "id": "mizuno-inspire22",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 인스파이어 22(남성)",
+    "code": "J1GC2644",
+    "src": "page",
+    "hint": "wave inspire 22",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/wave-inspire-22/11361/",
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2644/",
+     "US": "https://usa.mizuno.com/running-wave-inspire-22-mens"
+    },
+    "cc_code": {
+     "US": "411557"
+    }
+   },
+   {
+    "id": "mizuno-wavesky9",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 스카이 9(남성)",
+    "code": "J1GC2502",
+    "src": "page",
+    "hint": "wave sky 9",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/wave-sky-9/11346/",
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2502/",
+     "US": "https://usa.mizuno.com/running-wave-sky-9-mens"
+    },
+    "cc_code": {
+     "US": "411533"
+    }
+   },
+   {
+    "id": "mizuno-rebellionpro3",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 리벨리온 프로 3(공용)",
+    "code": "U1GD2530",
+    "cc_code": {
+     "US": "411498"
+    },
+    "src": "page",
+    "hint": "wave rebellion pro 3",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/wave-rebellion-pro-3/10605/",
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/U1GD2530/",
+     "US": "https://usa.mizuno.com/running-unisex-wave-rebellion-pro-3-running-shoe/"
+    }
+   },
+   {
+    "id": "mizuno-waverider29",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 라이더 29(남성) — 읽는 법 확인용(넣지 않음)",
+    "code": "J1GC2503",
+    "cc_code": {
+     "US": "411538"
+    },
+    "src": "page",
+    "hint": "wave rider 29",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://kor.mizuno.com/product/wave-rider-29/10611/",
+     "US": "https://usa.mizuno.com/running-wave-rider-29-mens"
+    }
+   }
+  ],
+  "memo": {
+   "batch": "mizuno6 — 해외 정가 SKU 4차 미즈노 2단계(mizuno5 뒤 · 11/21) · 감시 브랜드 이름 '미즈노'(naver_trend ('미즈노','mizuno','8022.T') · CHK_CUR JPY · build_dashboard PM_NOPRICE nomodel)",
+   "needs": "이 브랜치 price_fetch에 v1.27 수정이 들어가 있어야 함: CAFE24_ID_LIST {'kor.mizuno.com'}·cafe24_id_list(카페24 기본 정보 칸 소비자가 id=span_product_price_custom ↔ 판매가 id=span_product_price_text) · BIGC_LIST {'usa.mizuno.com'}·bigc_list(빅커머스 할인 전 칸 data-product-non-sale-price-without-tax) · PACE_EXTRA kor.mizuno.com cafe24",
+   "a": "(a) 최종 정의(mizuno_products.py 5개) 그대로 + 미국 보류 3개(네오 비스타 3 411619 · 인스파이어 22 411557 · 스카이 9 411533 — BIGC_LIST로 다시 읽음) + 라이더 29(한국 10611·미국 411538 — 할인 페이지에서 두 새 읽는 법 확인용 · 옛 모델이라 넣지 않음)",
+   "expect": {
+    "KR": {
+     "mizuno-waverider30": [
+      179000,
+      179000
+     ],
+     "mizuno-neovista3": [
+      219000,
+      219000
+     ],
+     "mizuno-inspire22": [
+      169000,
+      135200
+     ],
+     "mizuno-wavesky9": [
+      189000,
+      151200
+     ],
+     "mizuno-rebellionpro3": [
+      259000,
+      181300
+     ],
+     "mizuno-waverider29": [
+      169000,
+      118300
+     ]
+    },
+    "KR_note": "[full, extra.cur_price] — 할인 상품은 full = 소비자가 · cur_price = 판매가면 새 읽는 법 OK(서버에서 할인율이 바뀌었으면 cur_price만 달라짐) · FAIL '소비자가 칸을 이 상품 칸으로 확인 못 함'이면 아래 dump CTX로 두 칸 사이 거리·순서를 보고 C24_WIN·순서를 고침 · 리벨리온 프로 3은 10605(U1GD2530) — 10194·10195는 U1GD2533 오니하야이(한정 색)라 뺌",
+    "JP": {
+     "mizuno-waverider30": 18700,
+     "mizuno-neovista3": 24200,
+     "mizuno-inspire22": 16500,
+     "mizuno-wavesky9": 19800,
+     "mizuno-rebellionpro3": 29700
+    },
+    "US": {
+     "mizuno-waverider30": [
+      150,
+      150
+     ],
+     "mizuno-rebellionpro3": [
+      250,
+      160
+     ],
+     "mizuno-waverider29": [
+      150,
+      99
+     ],
+     "US_note": "v1.27 검토 반영: 할인 전 칸이 빈 칸과 값으로 섞이면(판매가가 같은 다른 상품 카드) FAIL '할인 전 칸이 빈 칸과 값…으로 섞임' — 그 나라는 넣지 않고 dump(라이더 30·29 미국)로 카드 칸 꼴을 봄 · 다른 상품 정가를 정가로 저장하지 않게",
+     "pending": "네오 비스타 3($200?) · 인스파이어 22($129.95 — 할인가로 보임 · 정가 $150쯤?) · 스카이 9($149.95 — 할인가로 보임 · 정가 $170쯤?) — OK면 full이 정가(할인 중이면 cur_price < full) → 블프 검사(한국 정가 ÷ (full × 환율) < 1.16 · 미즈노 미국 값 0.78~0.89와 비슷) 통과 시 PRODUCTS에 US 주소·cc_code 넣음 · FAIL '이 상품 판매가를 못 찾음'·'할인 전 가격 칸을 확인 못 함'이면 넣지 않고 아래 dump로 칸 꼴 확인"
+    }
+   },
+   "blackfriday": {
+    "rule": "비율 = 한국 정가 ÷ (현지 정가 × 환율) · 러닝화 기준(써코니·브룩스·온러닝 shoe) 가운데값 × 1.25를 넘으면 그 나라 뺌 · 11/20 환율 USD 1334.79 · JPY 8.357",
+    "run_shoe_median": {
+     "US": [
+      0.928,
+      1.16
+     ],
+     "JP": [
+      1.134,
+      1.418
+     ]
+    },
+    "mizuno5": "라이더 30 미국 0.894·일본 1.145 · 네오 비스타 3 일본 1.083(미국 $200이면 0.820) · 인스파이어 22 일본 1.226 · 스카이 9 일본 1.142 · 리벨리온 프로 3 일본 1.044·미국 정가 $250 0.776 — 모두 통과",
+    "kr_low": "한국이 일본 대비 0.907(1.134 ÷ 1.25) 밑이면 한국 판매가가 정가로 읽힌 것 — 새 읽는 법이 소비자가를 못 읽은 것"
+   },
+   "merge": "넣을 때: PRODUCTS 미즈노 블록(mizuno_products.py · 이 tryp에서 OK·블프 검사 통과한 나라만 · 미국 보류 3개는 OK면 US·cc_code 더함) · price_fetch 설명 131줄 '미즈노(한국 공식몰에 현재 모델 없음)'과 CLAUDE.md 같은 내용 고침(한국 몰이 카페24 kor.mizuno.com으로 바뀌며 현재 모델이 들어옴 · 11/21) · build_dashboard PM_NOPRICE nomodel에서 '미즈노' 뺌"
+  }
+ },
+ {
+  "t": "dump",
+  "urls": [
+   "https://kor.mizuno.com/product/wave-inspire-22/11361/",
+   "https://usa.mizuno.com/running-wave-rider-29-mens",
+   "https://usa.mizuno.com/running-wave-rider-30-mens/"
+  ],
+  "max_ld": 0,
+  "per_rx": 3,
+  "pad": 1600,
+  "ctx": [
+   "id=\"span_product_price_custom\"",
+   "data-product-non-sale-price-without-tax"
+  ],
+  "memo": "새 읽는 법이 기대는 칸 원문(서버 실물): 한국 소비자가 칸 앞뒤 1,600자(판매가 칸 span_product_price_text가 몇 글자 뒤인지 · 같은 id가 몇 번 나오는지 = CTX n) · 미국 할인 전 칸 앞뒤(가격 칸이 몇 개인지 · 추천 상품 카드에도 같은 칸이 있는지 — 할인 중 라이더 29 · 할인 없는 라이더 30: 할인 전 칸이 빈 이 상품 칸 옆에 판매가가 같고 할인 전 값이 있는 카드가 있으면 bigc_list가 섞임 오류로 실패(v1.27 검토 반영 — 다른 상품 정가를 저장하지 않게)) — tryp가 실패하면 이것으로 고침"
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2620/",
+   "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2610/",
+   "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2644/",
+   "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2502/",
+   "https://jpn.mizuno.com/ec/disp/attgrp/U1GD2530/"
+  ],
+  "max": 20,
+  "rx": [
+   "class=\"mz-goods-sale-wrapper\">([\\s\\S]{0,400}?)</div>",
+   "class=\"block-goods-price--price price mz-goods-price\">\\s*([^<]+?)\\s*<",
+   "class=\"block-goods-price--net-price[^\"]*\"[^>]*>([^<]+)<",
+   "(通常価格|定価|メーカー希望小売価格|セール価格|SALE|[0-9]+% ?OFF)[^<]{0,40}",
+   "\"price\"\\s*:\\s*\"?([0-9]+)"
+  ],
+  "memo": "일본 5개 값이 할인가가 아닌지: 할인 칸(mz-goods-sale-wrapper)이 비었고 · 표시 가격 = JSON-LD 가격 한 가지 · 세금 별도(net-price) × 1.1 = 표시 가격이면 정가(mizuno5 dump 라이더 30: 할인 칸 빔 · ¥18,700 · 세금 별도 ¥17,000) — 할인 칸에 글이 있거나 JSON-LD 가격이 여러 가지면 그 상품 일본은 뺌 · 마지막 정규식(JSON-LD price — 따옴표 있든 없든)이 0건이어도 가격 없음으로 읽지 말 것(꼴이 다를 뿐 · 판단은 할인 칸·표시 가격 정규식으로)"
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://kor.mizuno.com/category/%EB%9F%AC%EB%8B%9D/803/"
+  ],
+  "max": 80,
+  "rx": [
+   "href=\"((?:https?:)?(?://kor\\.mizuno\\.com)?/product/[^\"]{1,160})\"",
+   "anchorBoxId_([0-9]{4,6})",
+   "product_no['\"=:\\s]{1,4}([0-9]{4,6})",
+   "(?s)(?:anchorBoxId_|product_no=|/product/[^\"'/?#<>\\s]{1,150}/)([0-9]{4,6})(?![0-9])(?:(?!anchorBoxId_|product_no=|/product/[^\"'/?#<>\\s]{1,150}/[0-9]{4,6}).){0,3000}?((?:J1G|U1G)[A-Z][0-9]{4})",
+   "([\\s\\S]{0,110})(J1GM2620[0-9]{2})([\\s\\S]{0,110})",
+   "href=\"(/category/[^\"]{1,80}/[0-9]+/)\""
+  ],
+  "memo": "한국 러닝 분류(803) 목록 꼴 진단(1쪽만 — 목록 꼴은 쪽마다 같고 다음 pages 작업이 1~4쪽을 받음 · 요청 수 줄임) — mizuno5에서 'href=\"/product/이름/번호/' 꼴은 골프·블프 묶음(옆 칸)만 잡히고 러닝화 링크는 안 잡힘(품번 J1G…는 85개 보임) → 링크 꼴(절대 주소·detail.html?product_no=·anchorBoxId_)·(상품 번호, 근처 품번) 짝·라이더 30 품번 둘레 원문·하위 분류 링크(러닝화 분류가 따로 있는지) · 다음 job의 follow가 0개면 이것으로 다음 차례 정규식을 고침"
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://kor.mizuno.com/category/%EB%9F%AC%EB%8B%9D/803/",
+   "https://kor.mizuno.com/category/%EB%9F%AC%EB%8B%9D/803/?page=2",
+   "https://kor.mizuno.com/category/%EB%9F%AC%EB%8B%9D/803/?page=3",
+   "https://kor.mizuno.com/category/%EB%9F%AC%EB%8B%9D/803/?page=4"
+  ],
+  "code_rx": "(?:J1G|U1G)[A-Z][0-9]{4}(?:[0-9]{2})?",
+  "show": 0,
+  "follow": {
+   "rx": "(?s)(?:anchorBoxId_|product_no=|/product/[^\"'/?#<>\\s]{1,150}/)([0-9]{4,6})(?![0-9])(?=(?:(?!anchorBoxId_|product_no=|/product/[^\"'/?#<>\\s]{1,150}/[0-9]{4,6}).){0,3000}?(?:J1G|U1G)[A-Z][0-9]{4})",
+   "url": "https://kor.mizuno.com/product/detail.html?product_no={}",
+   "skip": [
+    "12026",
+    "12065",
+    "11361",
+    "11346",
+    "10611",
+    "10605",
+    "10194",
+    "10195",
+    "10667",
+    "10797"
+   ],
+   "max": 30,
+   "show": 0,
+   "code_rx": "(?:J1G|U1G)[A-Z][0-9]{4,6}",
+   "snip_rx": [
+    "id=\"span_product_price_custom\"",
+    "id=\"span_product_price_text\"",
+    "\"@id\"\\s*:\\s*\"https://kor\\.mizuno\\.com/product/[^\"]+\""
+   ]
+  },
+  "memo": "(b) 한국 러닝화 상품 찾기(우리 봇 · 카페24 기본 상품 주소 detail.html?product_no= · robots.txt Allow /): 러닝 분류 1~4쪽에서 근처에 미즈노 품번(J1G…·U1G…)이 있는 상품 번호만(최대 30개 — 요청 150건 안) 따라가 상품 페이지마다 og 이름·JSON-LD 이름·가격·품번(모델 = 8자리)·소비자가/판매가 칸·SEO 주소(@id)를 봄 → 성인 러닝화(골프·야구·배구·아동 J1GE…·한정판·라이프스타일 팩 뺌)만 골라 다음 차례(mizuno7) tryp 정의: 한국 = @id 주소 · 일본 = attgrp/{모델}/ · 미국 = 아래 rxpage의 스타일 번호(같은 모델·성별·보통 폭) — 목표 미즈노 20개(지금 5개 → +10~14: 호라이즌 9·프로페시 15·네오 젠 2·리벨리온 플래시 3·다이치 9·스카이 프라임·하이퍼워프 등 중 한국에 있는 것)"
+ },
+ {
+  "t": "rxpage",
+  "urls": [
+   "https://usa.mizuno.com/running-wave-horizon-9-mens",
+   "https://usa.mizuno.com/running-wave-horizon-9-2e-mens",
+   "https://usa.mizuno.com/running-wave-prophecy-15-unisex",
+   "https://usa.mizuno.com/running-wave-prophecy-15-mens",
+   "https://usa.mizuno.com/running-mizuno-neo-zen-2-mens",
+   "https://usa.mizuno.com/running-mizuno-neo-zen-2-unisex/",
+   "https://usa.mizuno.com/running-wave-rebellion-flash-3-mens/",
+   "https://usa.mizuno.com/running-mens-wave-daichi-9-trail-running-shoe/",
+   "https://usa.mizuno.com/running-mizuno-sky-prime-mens",
+   "https://usa.mizuno.com/running-hyperwarp-pure-2-unisex",
+   "https://usa.mizuno.com/running-wave-creation-25-ssw-mens",
+   "https://usa.mizuno.com/running-wave-rider-30-2e-mens/",
+   "https://usa.mizuno.com/running-wave-inspire-22-mens-2e",
+   "https://usa.mizuno.com/running-wave-sky-9-2e-mens",
+   "https://usa.mizuno.com/running-mizuno-neo-vista-3-unisex/",
+   "https://usa.mizuno.com/running-wave-rebellion-pro-3-lo-unisex/"
+  ],
+  "max": 6,
+  "rx": [
+   "\"@type\"\\s*:\\s*\"Product\",\\s*\"name\"\\s*:\\s*\"([^\"]{4,120})\",\\s*\"sku\"\\s*:\\s*\"([^\"]+)\"",
+   "\"priceCurrency\"\\s*:\\s*\"USD\",\\s*\"price\"\\s*:\\s*\"([0-9.]+)\"",
+   "data-product-non-sale-price-without-tax[^>]*>\\s*([^<]*?)\\s*</span>",
+   "data-product-price-without-tax[^>]*>\\s*([^<]*?)\\s*</span>"
+  ],
+  "memo": "(b) 미국 후보 페이지(공개 사이트맵 xmlsitemap.php products — mizuno5 grep)의 이름·스타일 번호(JSON-LD sku = cc_code US)·판매가·할인 전 칸 — mizuno7 tryp 정의의 미국 칸(2E·SW·공용·Lo는 한국 모델과 같은지 이름으로 맞춤 · 다른 폭·한정 색이면 뺌)"
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "mizuno-horizon9",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 호라이즌 9(남성)",
+    "code": "J1GC2626",
+    "cc_code": {
+     "US": "411564"
+    },
+    "src": "page",
+    "hint": "wave horizon 9",
+    "code_in_page": true,
+    "urls": {
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2626/",
+     "US": "https://usa.mizuno.com/running-wave-horizon-9-mens"
+    }
+   },
+   {
+    "id": "mizuno-prophecy15",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 프로페시 15(공용)",
+    "code": "J1GC2651",
+    "cc_code": {
+     "US": "411594"
+    },
+    "src": "page",
+    "hint": "wave prophecy 15",
+    "code_in_page": true,
+    "urls": {
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2651/",
+     "US": "https://usa.mizuno.com/running-wave-prophecy-15-unisex"
+    }
+   },
+   {
+    "id": "mizuno-neozen2",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "네오 젠 2(남성)",
+    "code": "J1GC2686",
+    "src": "page",
+    "hint": "neo zen 2",
+    "code_in_page": true,
+    "urls": {
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2686/"
+    }
+   },
+   {
+    "id": "mizuno-rebflash3",
+    "cat": "shoe",
+    "brand": "미즈노",
+    "name": "웨이브 리벨리온 플래시 3(남성)",
+    "code": "J1GC2535",
+    "src": "page",
+    "hint": "wave rebellion flash 3",
+    "code_in_page": true,
+    "urls": {
+     "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2535/"
+    }
+   }
+  ],
+  "memo": "(b) 한국 주소를 아직 모르는 새 모델의 일본·미국 정가 읽기 미리 확인(글로벌 품번은 유럽 공식몰 주소 J1GC2626·J1GC2651·J1GC2686·J1GC2535 · 미국 스타일 411564(소매점 SKU 411564.539Z)·411594(웹 검색 결과 — 검색만) — 한국 KR 칸은 위 pages follow 결과로 mizuno7에서 더함 · 한국 러닝 분류에 J1GC2651·J1GC2686은 보임(mizuno5) · J1GC2626·J1GC2535는 안 보임(한국에 없으면 상품째 뺌)"
+ }
+]
