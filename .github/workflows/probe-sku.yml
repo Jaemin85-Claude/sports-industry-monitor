@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [access4, on4, nike4, puma4, misc4]
+        plan: [crocs5, onitsuka5]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

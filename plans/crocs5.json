@@ -84,7 +84,8 @@
    "https://www.crocs.co.uk/p/classic-clog/10001.html"
   ],
   "rx": [
-   "\\\\?\"([A-Za-z_]{0,24}(?:[Pp]rice|PRICE|[Mm]srp|MSRP)[A-Za-z_]{0,24})\\\\?\"\\s*:\\s*(\\\\?\"[^\"\\\\]{0,30}\\\\?\"|-?[0-9][0-9.]{0,11}|null|true|false|\\{|\\[)",
+   "\\\\?\"(?!price\\\\?\"\\s*:)([A-Za-z_]{0,24}(?:[Pp]rice|PRICE|[Mm]srp|MSRP)[A-Za-z_]{0,24})\\\\?\"\\s*:\\s*(\\\\?\"[^\"\\\\]{0,30}\\\\?\"|-?[0-9][0-9.]{0,11}|null|true|false|\\{|\\[)",
+   "\\\\?\"price\\\\?\"\\s*:\\s*(\\\\?\"[^\"\\\\]{0,30}\\\\?\"|-?[0-9][0-9.]{0,11}|\\{)",
    "\\\\?\"(list|sale|standard|original|regular|was|current|promo|promotional|discount|discounted|base|retail|compare|msrp|full|strike|reduced)\\\\?\"\\s*:\\s*(\\\\?\"?-?[0-9][0-9.,]{0,12})",
    "(?:US\\$|\\$|£|€|¥|￥|₩)\\s?[0-9][0-9,.]{0,10}|[0-9][0-9,.]{0,10}\\s?(?:원|円|€|&euro;)",
    "(?:Original [Pp]rice|Regular [Pp]rice|List [Pp]rice|\\bWas\\b:?|Compare at|Sale [Pp]rice|정가|판매가|원래 가격|할인가|할인 전|定価|通常価格|参考価格|販売価格|セール価格|Previous price|Price reduced from)[^<\"\\\\]{0,80}",
@@ -92,8 +93,9 @@
    "\\\\?\"className\\\\?\"\\s*:\\s*\\\\?\"([^\"\\\\]{0,160}(?:line-through|strike)[^\"\\\\]{0,80})\\\\?\"(.{0,160})",
    "\"offers\"\\s*:\\s*\\{[^{}]{0,400}\\}"
   ],
-  "max": 80,
+  "max": 120,
   "memo": {
+   "rx_order": "RX 줄 순서(나라마다 8줄): ① 이름에 Price·msrp가 든 키:값('price' 키 하나만은 뺌 — listPrice·salePrice 등이 밀리지 않게) ② 'price' 키 값들 ③ list·sale·standard·original 같은 짧은 키:숫자 ④ 화면 통화 금액 전부 ⑤ 정가·할인·定価·Original price 글자 ⑥ HTML 취소선 칸(class) + 바로 뒤 글자 ⑦ 화면 데이터 className 취소선 + 뒤 글자 ⑧ JSON-LD offers",
    "what": "정가 칸 찾기(관건) — 클래식 클로그 10001 한국·미국·영국 페이지에서 가격 이름·값(화면 데이터 \\\"키\\\":값 — 중복 없이), 화면의 통화 금액 전부, 정가·할인 글자, 취소선(line-through) 칸, JSON-LD offers",
    "judge": "크록스 JSON-LD는 Offer 하나(price 한 값 · 정가 명세 ListPrice 없음 · 11/21 access4 snips)라 price_fetch page_price는 그 값을 정가(full)로 씀 → tryp OK 줄의 extra.cur_price == full이 정상이고, 그 값이 세일가인지는 page_price만으로 모름. 판정: 위 rxpage·dump(10001)에서 화면 데이터의 정가 칸(list·standard·original·strike·line-through 등)이 JSON-LD price보다 높게 보이면 → 할인 중인 상품은 tryp full이 세일가 → (a) 정가 칸 이름이 상품마다 안정적이면 price_fetch page_price에 크록스 정가 읽기를 더하고(c_listPrice처럼 — 이 상품 것만: 곁 판매가가 이 상품 JSON-LD price와 같을 때만) 다음 실행 tryp, (b) 아니면 블프 검사로 걸러 지금 정가로 보이는 값만 넣음. 정가 칸이 페이지에 아예 없으면(세일가만 표시) 블프 동안은 비율 검사를 통과한 값만 · 12/1 사이버먼데이 뒤 다시 받기",
    "expect": "미국 10001은 11/21 JSON-LD $30(세일가로 보임) — 같은 페이지에 49.99·54.99 같은 더 높은 금액과 그 키 이름(listPrice·standard·original 등)이 보이면 정가 칸을 찾은 것. 한국·영국도 같은 키가 있으면 page_price에 읽기를 더할 수 있음"
@@ -117,10 +119,10 @@
    "\\\\?\"price\\\\?\"\\s*:\\s*\\{",
    "\\\\?\"(?:sku|productId|masterId|styleNumber|pid|id)\\\\?\"\\s*:\\s*\\\\?\"?10001(?![0-9])"
   ],
-  "per_rx": 3,
+  "per_rx": 4,
   "pad": 300,
   "memo": {
-   "what": "① 미국 10001 정가 칸 둘레 원문(첫 3곳씩 · ±300자) — rxpage에서 본 키가 이 상품 칸인지(추천 상품 칸이 아닌지) 확인용 · 마지막 ctx는 품번 10001 둘레(이 상품 화면 데이터 위치)",
+   "what": "① 미국 10001 정가 칸 둘레 원문(첫 4곳씩 · ±300자) — rxpage에서 본 키가 이 상품 칸인지(추천 상품 칸이 아닌지) 확인용 · 마지막 ctx는 품번 10001 둘레(이 상품 화면 데이터 위치)",
    "slug_test": "② 일본 10001을 미국 slug(classic-clog)로 요청 — 일본 정식 주소는 /p/crocs-classic/10001.html. DUMP 줄 status·final이 200(또는 정식 주소로 넘김)이면 slug와 상관없이 품번으로 열림 → 아래 tryp의 짐작 주소(slug 짐작)도 대부분 열릴 것. 404면 slug가 맞아야 함 → tryp 짐작 주소는 실패하고 뒤 try(사이트맵 주소)가 대신함",
    "judge": "크록스 JSON-LD는 Offer 하나(price 한 값 · 정가 명세 ListPrice 없음 · 11/21 access4 snips)라 price_fetch page_price는 그 값을 정가(full)로 씀 → tryp OK 줄의 extra.cur_price == full이 정상이고, 그 값이 세일가인지는 page_price만으로 모름. 판정: 위 rxpage·dump(10001)에서 화면 데이터의 정가 칸(list·standard·original·strike·line-through 등)이 JSON-LD price보다 높게 보이면 → 할인 중인 상품은 tryp full이 세일가 → (a) 정가 칸 이름이 상품마다 안정적이면 price_fetch page_price에 크록스 정가 읽기를 더하고(c_listPrice처럼 — 이 상품 것만: 곁 판매가가 이 상품 JSON-LD price와 같을 때만) 다음 실행 tryp, (b) 아니면 블프 검사로 걸러 지금 정가로 보이는 값만 넣음. 정가 칸이 페이지에 아예 없으면(세일가만 표시) 블프 동안은 비율 검사를 통과한 값만 · 12/1 사이버먼데이 뒤 다시 받기"
   }
