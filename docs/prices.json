@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-21 14:10 KST",
+ "generated_at": "2026-11-21 21:42 KST",
  "fetched": "2026-11-21",
  "attempt": "2026-11-21",
- "cfg": "28d0ac639744",
+ "cfg": "65e81ff10cbf",
  "status": "ok",
  "items": [
   {
@@ -1721,15 +1721,15 @@
      "obs": 45000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 40500.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        40500.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 40500.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 37.0,
@@ -1739,15 +1739,15 @@
      "obs": 37.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 27.97,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        27.97,
        "base"
       ]
-     ]
+     ],
+     "sp": 27.97,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 32.99,
@@ -1757,15 +1757,15 @@
      "obs": 32.99,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 23.49,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        23.49,
        "base"
       ]
-     ]
+     ],
+     "sp": 23.49,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 34.99,
@@ -1775,15 +1775,15 @@
      "obs": 34.99,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 24.49,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        24.49,
        "base"
       ]
-     ]
+     ],
+     "sp": 24.49,
+     "sp_date": "2026-11-21"
     },
     "JP": {
      "p": 5170.0,
@@ -2703,7 +2703,9 @@
       ]
      ],
      "sp": 28.0,
-     "sp_date": "2026-11-21"
+     "sp_date": "2026-11-21",
+     "stale_since": "2026-11-21",
+     "why": "ReadTimeout: HTTPSConnectionPool(host='uk.puma.com', port=443): Read timed out. "
     },
     "DE": {
      "p": 69.95,
@@ -3185,15 +3187,15 @@
      "obs": 219000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 122640.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        122640.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 122640.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 170.0,
@@ -3212,15 +3214,15 @@
      "obs": 150.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 90.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        90.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 90.0,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 169.95,
@@ -3230,15 +3232,15 @@
      "obs": 169.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 102.95,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        102.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 102.95,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 3799.0,
@@ -3248,15 +3250,15 @@
      "obs": 3799.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 2279.4,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        2279.4,
        "base"
       ]
-     ]
+     ],
+     "sp": 2279.4,
+     "sp_date": "2026-11-21"
     },
     "AE": {
      "p": 899.0,
@@ -3284,15 +3286,15 @@
      "obs": 239000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 152960.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        152960.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 152960.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 180.0,
@@ -3311,15 +3313,15 @@
      "obs": 189.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 114.95,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        114.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 114.95,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 3999.0,
@@ -3329,15 +3331,15 @@
      "obs": 3999.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 2399.4,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        2399.4,
        "base"
       ]
-     ]
+     ],
+     "sp": 2399.4,
+     "sp_date": "2026-11-21"
     },
     "AE": {
      "p": 899.0,
@@ -3347,15 +3349,15 @@
      "obs": 899.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 629.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        629.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 629.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "shoe"
@@ -3374,15 +3376,15 @@
      "obs": 129000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 72240.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        72240.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 72240.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 85.0,
@@ -3392,15 +3394,15 @@
      "obs": 85.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 59.99,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        59.99,
        "base"
       ]
-     ]
+     ],
+     "sp": 59.99,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 89.95,
@@ -3410,15 +3412,15 @@
      "obs": 89.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 37.95,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        37.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 37.95,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 1999.0,
@@ -3428,15 +3430,15 @@
      "obs": 1999.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 999.5,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        999.5,
        "base"
       ]
-     ]
+     ],
+     "sp": 999.5,
+     "sp_date": "2026-11-21"
     },
     "AE": {
      "p": 469.0,
@@ -3446,15 +3448,15 @@
      "obs": 469.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 179.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        179.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 179.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "shoe"
@@ -3473,15 +3475,15 @@
      "obs": 119000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 39000.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        39000.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 39000.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 90.0,
@@ -3491,15 +3493,15 @@
      "obs": 90.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 80.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        80.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 80.0,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 70.0,
@@ -3509,15 +3511,15 @@
      "obs": 70.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 49.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        49.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 49.0,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 1899.0,
@@ -3554,15 +3556,15 @@
      "obs": 109000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 61040.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        61040.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 61040.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 75.0,
@@ -3572,15 +3574,15 @@
      "obs": 75.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 39.99,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        39.99,
        "base"
       ]
-     ]
+     ],
+     "sp": 39.99,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 74.95,
@@ -3590,15 +3592,15 @@
      "obs": 74.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 30.95,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        30.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 30.95,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 1299.0,
@@ -3608,15 +3610,15 @@
      "obs": 1299.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 909.3,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        909.3,
        "base"
       ]
-     ]
+     ],
+     "sp": 909.3,
+     "sp_date": "2026-11-21"
     },
     "AE": {
      "p": 369.0,
@@ -3626,15 +3628,15 @@
      "obs": 369.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 259.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        259.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 259.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "wear"
@@ -3653,15 +3655,15 @@
      "obs": 179000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 114560.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        114560.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 114560.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 140.0,
@@ -3698,15 +3700,15 @@
      "obs": 2899.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 2029.3,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        2029.3,
        "base"
       ]
-     ]
+     ],
+     "sp": 2029.3,
+     "sp_date": "2026-11-21"
     },
     "AE": {
      "p": 599.0,
@@ -3734,15 +3736,15 @@
      "obs": 39000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 21840.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        21840.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 21840.0,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 23.0,
@@ -3752,15 +3754,15 @@
      "obs": 23.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 11.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        11.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 11.0,
+     "sp_date": "2026-11-21"
     },
     "MX": {
      "p": 599.0,
@@ -5041,35 +5043,29 @@
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "GB": {
      "p": 185.0,
      "cur": "GBP",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-gb/product/xt-6-gore-tex-lg9333",
      "obs": 185.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "DE": {
      "p": 200.0,
      "cur": "EUR",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/de-de/product/xt-6-gore-tex-lg9333",
      "obs": 200.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -5092,35 +5088,29 @@
     "US": {
      "p": 185.0,
      "cur": "USD",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-us/product/xt-6-lg4239",
      "obs": 185.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "GB": {
      "p": 165.0,
      "cur": "GBP",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-gb/product/xt-6-lg4239",
      "obs": 165.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "DE": {
      "p": 180.0,
      "cur": "EUR",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/de-de/product/xt-6-lg4239",
      "obs": 180.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -5143,24 +5133,20 @@
     "US": {
      "p": 200.0,
      "cur": "USD",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-us/product/xt-4-og-li3335",
      "obs": 200.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "GB": {
      "p": 175.0,
      "cur": "GBP",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://www.salomon.com/en-gb/product/xt-4-og-li3335",
      "obs": 175.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "DE": {
      "p": 190.0,
@@ -6061,7 +6047,7 @@
      "cur": "USD",
      "seen": "2026-11-10",
      "url": "https://dragondiffusion.com/products/santa-maria-black-woven-leather-bag",
-     "obs": 575.0,
+     "obs": 574.0,
      "obs_date": "2026-11-21",
      "sale": true,
      "ph": [
@@ -6076,7 +6062,7 @@
        588.0
       ]
      ],
-     "sp": 575.0,
+     "sp": 574.0,
      "sp_date": "2026-11-21",
      "sh": [
       [
@@ -6925,15 +6911,15 @@
      "obs": 160.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 96.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        96.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 96.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "boot"
@@ -8269,7 +8255,9 @@
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
      "obs": 209000.0,
      "obs_date": "2026-11-21",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-21",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 170.0,
@@ -8504,64 +8492,6 @@
    "cat": "shoe"
   },
   {
-   "id": "saucony-endtrainer",
-   "brand": "써코니",
-   "name": "엔돌핀 트레이너(남성)",
-   "code": "S20996",
-   "m": {
-    "KR": {
-     "p": 219000.0,
-     "cur": "KRW",
-     "seen": "2026-11-21",
-     "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
-     "obs": 219000.0,
-     "obs_date": "2026-11-21",
-     "sale": false
-    },
-    "GB": {
-     "p": 200.0,
-     "cur": "GBP",
-     "seen": "2026-11-20",
-     "url": "https://www.saucony.com/UK/en_GB/endorphin-trainer/59961M.html",
-     "obs": 200.0,
-     "obs_date": "2026-11-20",
-     "sale": true,
-     "sh": [
-      [
-       "2026-11-17",
-       120.0,
-       "base"
-      ]
-     ],
-     "sp": 120.0,
-     "sp_date": "2026-11-20",
-     "stale_since": "2026-11-20",
-     "why": "HTTP 404"
-    },
-    "DE": {
-     "p": 220.0,
-     "cur": "EUR",
-     "seen": "2026-11-20",
-     "url": "https://www.saucony.com/DE/de_DE/endorphin-trainer/59961M.html",
-     "obs": 220.0,
-     "obs_date": "2026-11-20",
-     "sale": true,
-     "sh": [
-      [
-       "2026-11-17",
-       132.0,
-       "base"
-      ]
-     ],
-     "sp": 132.0,
-     "sp_date": "2026-11-20",
-     "stale_since": "2026-11-20",
-     "why": "HTTP 404"
-    }
-   },
-   "cat": "shoe"
-  },
-  {
    "id": "saucony-azuraw",
    "brand": "써코니",
    "name": "엔돌핀 아주라(여성)",
@@ -8593,15 +8523,15 @@
      "obs": 140.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 112.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        112.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 112.0,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 160.0,
@@ -8611,15 +8541,15 @@
      "obs": 160.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 128.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        128.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 128.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "shoe"
@@ -8637,7 +8567,9 @@
      "url": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/298/",
      "obs": 299000.0,
      "obs_date": "2026-11-21",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-21",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
     },
     "US": {
      "p": 240.0,
@@ -8645,6 +8577,24 @@
      "seen": "2026-11-21",
      "url": "https://www.saucony.com/en/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
      "obs": 240.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 250.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+     "obs": 250.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 270.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+     "obs": 270.0,
      "obs_date": "2026-11-21",
      "sale": false
     }
@@ -8709,6 +8659,17 @@
      "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-80-blackwhite/222/",
      "obs": 119000.0,
      "obs_date": "2026-11-21",
+     "sale": false,
+     "stale_since": "2026-11-21",
+     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+    },
+    "US": {
+     "p": 100.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/en/trainer-80/59999U.html?dwvar_59999U_color=S70884-2",
+     "obs": 100.0,
+     "obs_date": "2026-11-21",
      "sale": false
     },
     "GB": {
@@ -8719,15 +8680,15 @@
      "obs": 85.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 68.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        68.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 68.0,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 100.0,
@@ -8737,15 +8698,15 @@
      "obs": 100.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 80.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        80.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 80.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "shoe"
@@ -8854,15 +8815,15 @@
      "obs": 48.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 35.95,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        35.95,
        "base"
       ]
-     ]
+     ],
+     "sp": 35.95,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 40.0,
@@ -8929,6 +8890,132 @@
     }
    },
    "cat": "wear"
+  },
+  {
+   "id": "saucony-elite3",
+   "brand": "써코니",
+   "name": "엔돌핀 엘리트 3(공용)",
+   "code": "S100981",
+   "m": {
+    "US": {
+     "p": 290.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/en/endorphin-elite-3/61243U.html",
+     "obs": 290.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 300.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/UK/en_GB/endorphin-elite-3/61243U.html",
+     "obs": 300.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 320.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/DE/de_DE/endorphin-elite-3/61243U.html",
+     "obs": 320.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "shoe"
+  },
+  {
+   "id": "saucony-hurricane26w",
+   "brand": "써코니",
+   "name": "허리케인 26(여성)",
+   "code": "S101106",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/531/",
+     "obs": 209000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/en/hurricane-26/61262W.html",
+     "obs": 170.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 170.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/UK/en_GB/hurricane-26/61262W.html",
+     "obs": 170.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 190.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/DE/de_DE/hurricane-26/61262W.html",
+     "obs": 190.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "shoe"
+  },
+  {
+   "id": "saucony-pgtriumph4",
+   "brand": "써코니",
+   "name": "프로그리드 트라이엄프 4(공용)",
+   "code": "S70704",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-4-blacksilver/190/",
+     "obs": 209000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 165.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/en/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+     "obs": 165.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 160.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/UK/en_GB/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+     "obs": 160.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 180.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.saucony.com/DE/de_DE/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+     "obs": 180.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "shoe"
   },
   {
    "id": "brooks-ghost18",
@@ -10423,15 +10510,15 @@
      "obs": 90.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 63.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        63.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 63.0,
+     "sp_date": "2026-11-21"
     },
     "DE": {
      "p": 100.0,
@@ -10441,15 +10528,15 @@
      "obs": 100.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 70.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        70.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 70.0,
+     "sp_date": "2026-11-21"
     },
     "JP": {
      "p": 17600.0,
@@ -11138,15 +11225,15 @@
      "obs": 150.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 112.5,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        112.5,
        "base"
       ]
-     ]
+     ],
+     "sp": 112.5,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 120.0,
@@ -11327,15 +11414,15 @@
      "obs": 26400.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 18480.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        18480.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 18480.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "shoe"
@@ -11363,15 +11450,15 @@
      "obs": 150.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 112.5,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        112.5,
        "base"
       ]
-     ]
+     ],
+     "sp": 112.5,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 150.0,
@@ -11426,15 +11513,15 @@
      "obs": 140.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 105.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        105.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 105.0,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 130.0,
@@ -11489,15 +11576,15 @@
      "obs": 115.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 86.25,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        86.25,
        "base"
       ]
-     ]
+     ],
+     "sp": 86.25,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 90.0,
@@ -11543,15 +11630,15 @@
      "obs": 199000.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 159200.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        159200.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 159200.0,
+     "sp_date": "2026-11-21"
     },
     "US": {
      "p": 165.0,
@@ -11561,15 +11648,15 @@
      "obs": 165.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 123.75,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        123.75,
        "base"
       ]
-     ]
+     ],
+     "sp": 123.75,
+     "sp_date": "2026-11-21"
     },
     "GB": {
      "p": 130.0,
@@ -11624,15 +11711,15 @@
      "obs": 160.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 120.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        120.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 120.0,
+     "sp_date": "2026-11-21"
     },
     "JP": {
      "p": 19800.0,
@@ -11642,15 +11729,15 @@
      "obs": 19800.0,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 13860.0,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        13860.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 13860.0,
+     "sp_date": "2026-11-21"
     }
    },
    "cat": "sandal"
@@ -12088,15 +12175,15 @@
      "obs": 119.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 95.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        95.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 95.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12128,15 +12215,15 @@
      "obs": 139.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 111.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        111.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 111.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12168,15 +12255,15 @@
      "obs": 139.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 111.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        111.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 111.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12208,15 +12295,15 @@
      "obs": 139.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 111.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        111.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 111.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12279,15 +12366,15 @@
      "obs": 84.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 67.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        67.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 67.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12350,15 +12437,15 @@
      "obs": 89.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 71.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        71.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 71.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -12390,15 +12477,15 @@
      "obs": 119.95,
      "obs_date": "2026-11-21",
      "sale": true,
-     "sp": 95.96,
-     "sp_date": "2026-11-21",
      "sh": [
       [
        "2026-11-21",
        95.96,
        "base"
       ]
-     ]
+     ],
+     "sp": 95.96,
+     "sp_date": "2026-11-21"
     }
    },
    "cc_code": {
@@ -13164,6 +13251,501 @@
    "cat": "bag"
   },
   {
+   "id": "tb-longcardigan-w",
+   "brand": "톰브라운",
+   "name": "메리노 밀라노 브이넥 롱 카디건(여성·네이비)",
+   "code": "FKC289A-00014-415",
+   "m": {
+    "KR": {
+     "p": 3330000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 3330000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1850.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 1850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1560.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 1560.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 1650.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 1650.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 319000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 319000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 7850.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
+     "obs": 7850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "tb-skirt-w",
+   "brand": "톰브라운",
+   "name": "울 프레스코 플리츠 미니스커트(여성·그레이)",
+   "code": "FGC402V-00473-035",
+   "m": {
+    "KR": {
+     "p": 2400000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 2400000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1450.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 1450.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1160.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 1160.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 1230.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 1230.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 209000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 209000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 5850.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
+     "obs": 5850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "tb-sportcoat-w",
+   "brand": "톰브라운",
+   "name": "울 프레스코 스포츠코트(여성·블랙)",
+   "code": "FBC010I-00473-001",
+   "m": {
+    "KR": {
+     "p": 5220000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/wool-fresco-sportcoat-fbc010i-00473-001",
+     "obs": 5220000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2490.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/wool-fresco-sportcoat-fbc010i-00473-001",
+     "obs": 2490.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1980.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/wool-fresco-sportcoat-fbc010i-00473-001",
+     "obs": 1980.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2280.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/wool-fresco-sportcoat-fbc010i-00473-001",
+     "obs": 2280.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 10650.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/wool-fresco-sportcoat-fbc010i-00473-001",
+     "obs": 10650.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "tb-loafer-w",
+   "brand": "톰브라운",
+   "name": "스파촐라토 플리츠 바시티 로퍼(여성·블랙)",
+   "code": "FFF173A-L0043-001",
+   "m": {
+    "KR": {
+     "p": 1860000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 1860000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 990.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 990.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 870.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 870.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 920.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 920.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 178200.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 178200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 4400.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
+     "obs": 4400.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "shoe"
+  },
+  {
+   "id": "tb-wingboot-m",
+   "brand": "톰브라운",
+   "name": "페블 그레인 윙팁 부츠 러버솔(남성·블랙)",
+   "code": "MFR016M-00198-001",
+   "m": {
+    "KR": {
+     "p": 1920000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 1920000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1150.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 1150.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 960.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 960.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 970.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 970.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 183700.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 183700.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 4550.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
+     "obs": 4550.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "boot"
+  },
+  {
+   "id": "tb-reporter-m",
+   "brand": "톰브라운",
+   "name": "리포터 백 페블 그레인(블랙)",
+   "code": "MAG143B-00198-001",
+   "m": {
+    "KR": {
+     "p": 2560000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 2560000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1600.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 1600.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1210.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 1210.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 1350.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 1350.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 246400.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 246400.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 6050.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/pebble-grain-reporter-bag-mag143b-00198-001",
+     "obs": 6050.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "bag"
+  },
+  {
+   "id": "tb-alumni-m",
+   "brand": "톰브라운",
+   "name": "테크 나일론 알럼나이 스니커즈(남성·블랙)",
+   "code": "MFD271B-F0488-001",
+   "m": {
+    "KR": {
+     "p": 1680000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 1680000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 920.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 920.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 790.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 790.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 830.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 830.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 160600.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 160600.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 3950.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
+     "obs": 3950.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "shoe"
+  },
+  {
+   "id": "tb-duettote-m",
+   "brand": "톰브라운",
+   "name": "라지 듀엣 토트 페블 그레인(블랙)",
+   "code": "MAG228A-00198-001",
+   "m": {
+    "KR": {
+     "p": 5580000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 5580000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 3200.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 3200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 2620.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-gb/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 2620.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2770.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-eu/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 2770.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 535700.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 535700.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 13200.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://www.thombrowne.com/en-ae/products/pebble-grain-large-duet-tote-mag228a-00198-001",
+     "obs": 13200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "bag"
+  },
+  {
    "id": "bbr-kensington-mid",
    "brand": "버버리",
    "name": "미드 렝스 개버딘 켄싱턴 트렌치코트",
@@ -13193,6 +13775,33 @@
      "seen": "2026-11-21",
      "url": "https://uk.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
      "obs": 2190.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2490.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/mittellanger-trenchcoat-kensington-aus-gabardine-p81332441",
+     "obs": 2490.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 453200.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+     "obs": 453200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 10900.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+     "obs": 10900.0,
      "obs_date": "2026-11-21",
      "sale": false
     }
@@ -13231,6 +13840,33 @@
      "obs": 3250.0,
      "obs_date": "2026-11-21",
      "sale": false
+    },
+    "DE": {
+     "p": 3690.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/langer-kaschmir-trenchcoat-kensington-p81361201",
+     "obs": 3690.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 630300.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+     "obs": 630300.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 16500.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+     "obs": 16500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
     }
    },
    "cat": "wear"
@@ -13265,6 +13901,33 @@
      "seen": "2026-11-21",
      "url": "https://uk.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
      "obs": 2090.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2280.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/langer-trenchcoat-lakefield-aus-gabardine-p81354831",
+     "obs": 2280.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 430100.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+     "obs": 430100.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 10500.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+     "obs": 10500.0,
      "obs_date": "2026-11-21",
      "sale": false
     }
@@ -13303,12 +13966,832 @@
      "obs": 450.0,
      "obs_date": "2026-11-21",
      "sale": false
+    },
+    "DE": {
+     "p": 525.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/kaschmirschal-in-check-p81250011",
+     "obs": 525.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 90200.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/check-cashmere-scarf-p81250011",
+     "obs": 90200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 2290.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/check-cashmere-scarf-p81250011",
+     "obs": 2290.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-heritage-kensington-mid",
+   "brand": "버버리",
+   "name": "미드 렝스 켄싱턴 헤리티지 트렌치코트",
+   "code": "81172291",
+   "m": {
+    "KR": {
+     "p": 3720000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "obs": 3720000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2850.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "obs": 2850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1895.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "obs": 1895.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2150.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/mittellanger-heritage-trenchcoat-kensington-p81172291",
+     "obs": 2150.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 385000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "obs": 385000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 9500.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "obs": 9500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-heritage-chelsea-mid",
+   "brand": "버버리",
+   "name": "미드 렝스 첼시 헤리티지 트렌치코트",
+   "code": "81172391",
+   "m": {
+    "KR": {
+     "p": 3720000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "obs": 3720000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2850.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "obs": 2850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1895.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "obs": 1895.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2150.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/mittellanger-heritage-trenchcoat-chelsea-p81172391",
+     "obs": 2150.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 385000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "obs": 385000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 9500.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "obs": 9500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-heritage-waterloo-long",
+   "brand": "버버리",
+   "name": "롱 워털루 헤리티지 트렌치코트",
+   "code": "81172521",
+   "m": {
+    "KR": {
+     "p": 3720000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "obs": 3720000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2850.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "obs": 2850.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1895.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "obs": 1895.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2150.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/langer-heritage-trenchcoat-waterloo-p81172521",
+     "obs": 2150.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 385000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "obs": 385000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 9500.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "obs": 9500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-hoxton-long",
+   "brand": "버버리",
+   "name": "롱 개버딘 혹스턴 트렌치코트",
+   "code": "81330281",
+   "m": {
+    "KR": {
+     "p": 3750000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "obs": 3750000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2995.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "obs": 2995.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1990.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "obs": 1990.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 2190.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/langer-trenchcoat-hoxton-aus-gabardine-p81330281",
+     "obs": 2190.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 408100.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "obs": 408100.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 9900.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "obs": 9900.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-gradientscarf",
+   "brand": "버버리",
+   "name": "그라데이션 체크 캐시미어 스카프",
+   "code": "81348721",
+   "m": {
+    "KR": {
+     "p": 940000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "obs": 940000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 710.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "obs": 710.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 495.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "obs": 495.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 565.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/kaschmirschal-in-check-mit-farbverlauf-p81348721",
+     "obs": 565.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 100100.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "obs": 100100.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 2490.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "obs": 2490.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-knightscarf",
+   "brand": "버버리",
+   "name": "나이트 캐시미어 스카프",
+   "code": "81316191",
+   "m": {
+    "KR": {
+     "p": 900000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/knight-cashmere-scarf-p81316191",
+     "obs": 900000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 675.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/knight-cashmere-scarf-p81316191",
+     "obs": 675.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 475.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/knight-cashmere-scarf-p81316191",
+     "obs": 475.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 545.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/kaschmirschal-mit-knight-p81316191",
+     "obs": 545.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 95700.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/knight-cashmere-scarf-p81316191",
+     "obs": 95700.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 2390.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/knight-cashmere-scarf-p81316191",
+     "obs": 2390.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-reversiblescarf",
+   "brand": "버버리",
+   "name": "리버시블 체크 캐시미어 스카프",
+   "code": "81345821",
+   "m": {
+    "KR": {
+     "p": 1000000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "obs": 1000000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 750.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "obs": 750.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 525.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "obs": 525.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 595.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/wendbarer-kaschmirschal-in-check-p81345821",
+     "obs": 595.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 104500.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "obs": 104500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 2650.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "obs": 2650.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-widescarf",
+   "brand": "버버리",
+   "name": "와이드 체크 캐시미어 스카프",
+   "code": "80859311",
+   "m": {
+    "KR": {
+     "p": 1080000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "obs": 1080000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 795.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "obs": 795.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 555.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "obs": 555.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 635.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/breiterer-kaschmirschal-in-check-p80859311",
+     "obs": 635.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 111100.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "obs": 111100.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 2790.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "obs": 2790.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-narrowscarf",
+   "brand": "버버리",
+   "name": "슬림 체크 캐시미어 스카프",
+   "code": "81302831",
+   "m": {
+    "KR": {
+     "p": 750000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "obs": 750000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 585.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "obs": 585.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 395.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "obs": 395.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "DE": {
+     "p": 465.0,
+     "cur": "EUR",
+     "seen": "2026-11-21",
+     "url": "https://de.burberry.com/schmalerer-kaschmirschal-in-check-p81302831",
+     "obs": 465.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 79200.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "obs": 79200.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 1990.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "obs": 1990.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-checktote-s",
+   "brand": "버버리",
+   "name": "스몰 체크 토트(여성·초콜릿 브라운)",
+   "code": "81314921",
+   "m": {
+    "KR": {
+     "p": 2210000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/small-check-tote-p81314921",
+     "obs": 2210000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1750.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/small-check-tote-p81314921",
+     "obs": 1750.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1195.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/small-check-tote-p81314921",
+     "obs": 1195.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 231000.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/small-check-tote-p81314921",
+     "obs": 231000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 5900.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/small-check-tote-p81314921",
+     "obs": 5900.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "bag"
+  },
+  {
+   "id": "bbr-messenger-s",
+   "brand": "버버리",
+   "name": "스몰 시티 체크 클립 메신저 백(남성·아이언 그레이)",
+   "code": "81315271",
+   "m": {
+    "KR": {
+     "p": 1820000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+     "obs": 1820000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1450.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+     "obs": 1450.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 995.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+     "obs": 995.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 192500.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+     "obs": 192500.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 4990.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+     "obs": 4990.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "bag"
+  },
+  {
+   "id": "bbr-harrington",
+   "brand": "버버리",
+   "name": "디태처블 질레 블룸스버리 해링턴 재킷(남성·블랙)",
+   "code": "81311511",
+   "m": {
+    "KR": {
+     "p": 3100000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+     "obs": 3100000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 2295.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+     "obs": 2295.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1590.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+     "obs": 1590.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 333300.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+     "obs": 333300.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 7900.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+     "obs": 7900.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    }
+   },
+   "cat": "wear"
+  },
+  {
+   "id": "bbr-quilted",
+   "brand": "버버리",
+   "name": "나일론 퀼팅 재킷(여성·네이비)",
+   "code": "81270131",
+   "m": {
+    "KR": {
+     "p": 2340000.0,
+     "cur": "KRW",
+     "seen": "2026-11-21",
+     "url": "https://kr.burberry.com/nylon-quilted-jacket-p81270131",
+     "obs": 2340000.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "US": {
+     "p": 1695.0,
+     "cur": "USD",
+     "seen": "2026-11-21",
+     "url": "https://us.burberry.com/nylon-quilted-jacket-p81270131",
+     "obs": 1695.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "GB": {
+     "p": 1195.0,
+     "cur": "GBP",
+     "seen": "2026-11-21",
+     "url": "https://uk.burberry.com/nylon-quilted-jacket-p81270131",
+     "obs": 1195.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "JP": {
+     "p": 250800.0,
+     "cur": "JPY",
+     "seen": "2026-11-21",
+     "url": "https://jp.burberry.com/nylon-quilted-jacket-p81270131",
+     "obs": 250800.0,
+     "obs_date": "2026-11-21",
+     "sale": false
+    },
+    "AE": {
+     "p": 5900.0,
+     "cur": "AED",
+     "seen": "2026-11-21",
+     "url": "https://ae.burberry.com/nylon-quilted-jacket-p81270131",
+     "obs": 5900.0,
+     "obs_date": "2026-11-21",
+     "sale": false
     }
    },
    "cat": "wear"
   }
  ],
- "failed": [],
+ "failed": [
+  {
+   "id": "saucony-elite3",
+   "cc": "KR",
+   "since": "2026-11-21",
+   "code": "S100981",
+   "brand": "써코니",
+   "name": "엔돌핀 엘리트 3(공용)",
+   "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+  }
+ ],
  "host_try": {
   "salomon-xt6 US": "2026-11-21",
   "salomon-xt6 GB": "2026-11-21",
