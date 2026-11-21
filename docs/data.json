@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-21 21:39 KST",
+ "generated_at": "2026-11-22 08:47 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -699,7 +699,7 @@
    "q_inv_yoy": 61.43928498048079,
    "q_inv_rev_yoy": 16.909466680108885,
    "price": 2261.0,
-   "off_high_pct": -43.38286238157226,
+   "off_high_pct": -43.38286584284069,
    "earn_date": "2027-02-09",
    "error": null
   },
@@ -2319,7 +2319,7 @@
    "q_inv_yoy": 4.9036431423299165,
    "q_inv_rev_yoy": 3.419724142891223,
    "price": 30950.0,
-   "off_high_pct": -39.92405129900061,
+   "off_high_pct": -39.9240467438715,
    "earn_date": null,
    "error": null
   },
@@ -7116,9 +7116,9 @@
   },
   "CNY": {
    "name": "위안",
-   "rate": 199.9027,
+   "rate": 200.3497,
    "yago": 207.281,
-   "chg_pct": -3.56,
+   "chg_pct": -3.34,
    "asof": "2026-11-21",
    "via": "달러 경유"
   },
@@ -7157,7 +7157,7 @@
  },
  "fx_push": null,
  "fetch_status": {
-  "date": "2026-11-21",
+  "date": "2026-11-22",
   "ok": 63,
   "kept": [],
   "failed": [],
