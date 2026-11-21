@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.24: (대표 지시 2026-11-20 '브랜드당 MSRP 20개' · 결정 '검색만'(Firecrawl은 후보 주소 찾기만 · 정가는 우리 봇) · '블프 전 1차 + 이후 주 1회 차례')
+v1.25: (대표 지시 2026-11-21 '해외정가 금일 추가 수집' — 브랜드당 20개 2차) 상품 78개 추가(147 → 225 · 값 621 → 921): 아크테릭스 +9 · 써코니 +9 · 킨 +10 · 우포스 +10 ·
+    헌터 +10 · 푸마 +7 · 닥터마틴 +4 · 나이키 +3(모두 20개 · 써코니 18) + 판정 브랜드 첫 해외 정가 톰브라운 12(본사 쇼피파이 몰 나라별 폴더 6개 나라 · 상품 .json) ·
+    버버리 4(kr·us·uk.burberry.com JSON-LD sku = p 번호) — 나라별 몰 사이트맵·공개 기획전·쇼피파이 공개 .json으로 한국과 같은 글로벌 품번 → GitHub 서버에서 정가 읽기 확인(11/21) ·
+    블프 검사: 한국 정가 ÷ (현지 정가 × 11/20 환율)이 그 브랜드 기존 상품 나라별 가운데값의 1.25배를 넘는 나라는 뺌(할인가가 정가로 읽힌 것 — 아크테릭스 영국·독일 노반 LD 4 ·
+    써코니 엔돌핀 싱글렛·쇼트 슬리브 · 푸마 T7 트랙 자켓 영국 등) · 써코니 가이드 19 한국 주소를 품절 색상(373)에서 같은 품번 다른 색(372)으로 · 드래곤디퓨전은 코오롱몰 8개 모델이
+    모두 들어가 더 없음 · 살로몬 해외(www.salomon.com)는 11/20부터 첫 요청에서 403(PerimeterX — robots.txt는 열림)이라 늘리지 않음 · Firecrawl 안 씀
+v1.24:(대표 지시 2026-11-20 '브랜드당 MSRP 20개' · 결정 '검색만'(Firecrawl은 후보 주소 찾기만 · 정가는 우리 봇) · '블프 전 1차 + 이후 주 1회 차례')
     1차 29개 상품(값 약 140개): 나이키 +7(17) · 온러닝 +10(20) · 닥터마틴 +6(16) · 푸마 +2(13) — 나라별 몰 사이트맵(robots.txt에 적힌 것)·나이키 product_feed로
     한국과 같은 글로벌 품번 → GitHub 서버에서 정가 읽기 확인(11/20) · 닥터마틴 미국 몰은 블프 할인가가 정가로 읽혀(한국 정가 ÷ 미국 값이 지금 상품의 1.4배) 처치만 넣고
     나머지 미국 값은 블프 뒤에 · 아크테릭스·써코니·살로몬은 다음 차례(검색 결과에 품번이 드물고 살로몬 해외는 한 실행 8건)
@@ -307,6 +313,14 @@ PRODUCTS = [
     {"id": "nike-airmaxsc", "cat": "shoe", "brand": "나이키", "name": "에어맥스 SC", "code": "CW4555-002", "src": "nike", "cc": ["KR", "GB", "DE", "JP", "MX"],
      "urls": {"AE": "https://www.nike.ae/en/air-max-sc-mens-shoes/NKCW4555-002.html"}},   # 미국 나이키에서 팔지 않음(11/20)
     {"id": "nike-benassi", "cat": "sandal", "brand": "나이키", "name": "베나시 JDI 슬라이드", "code": "343880-090", "src": "nike", "cc": ["KR", "US", "JP", "MX"]},   # 영국·독일 나이키에서 팔지 않음 · 두바이 페이지는 가격 데이터 없음(11/20)
+    # v1.25 SKU 2차(11/21) — 6개 나라 product_feed 같은 styleColor 정가 fullPrice 읽기 확인(GitHub 서버) · 두바이 = nike.ae 사이트맵 상품 페이지(헤리티지 백팩은 가격 데이터(JSON-LD) 없음) ·
+    # 블프 검사(참고 — fullPrice는 정가 자체) 한국 정가 ÷ (현지 정가 × 11/20 환율)이 기존 17개 나라별 가운데값(미국 0.90 · 영국 0.75 · 독일 0.82 · 일본 1.06 · 멕시코 0.76 · 두바이 0.63)의 0.87~1.13배 ·
+    # 예비 에어 허라취(DD1068-102 · 6개 나라 OK · 두바이 사이트맵에 없음)는 브랜드당 20개라 다음 차례에 · 에어맥스 엑시(CD4165-100)는 한국 나이키에서 팔지 않음
+    {"id": "nike-p6000", "cat": "shoe", "brand": "나이키", "name": "P-6000", "code": "CN0149-001", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP"],
+     "urls": {"AE": "https://www.nike.ae/en/p-6000-shoe/NKCN0149-001.html"}},   # 멕시코 나이키에서 팔지 않음(11/21)
+    {"id": "nike-af1mid", "cat": "shoe", "brand": "나이키", "name": "에어포스 1 미드 '07", "code": "CW2289-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+     "urls": {"AE": "https://www.nike.ae/en/air-force-1-mid-07-mens-shoe/NKCW2289-111.html"}},   # 에어포스 1 '07(로우 CW2288-111)과 다른 모델·가격
+    {"id": "nike-heritagebp", "cat": "bag", "brand": "나이키", "name": "헤리티지 백팩(25L)", "code": "DC4244-010", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},   # 11/21 한국·미국·영국·독일 할인 중(정가 fullPrice) · 두바이 페이지는 가격 데이터 없음
     # v1.17 푸마 두바이 = ae.puma.com(PUMA UAE 직영 · SFCC) — JSON-LD 품번 398846_xx · 할인 중이면 화면 데이터 c_listPrice(지금 page_price 그대로)
     {"id": "puma-speedcat", "cat": "shoe", "brand": "푸마", "name": "스피드캣 OG", "code": "398846", "src": "page", "hint": "speedcat", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
@@ -394,6 +408,55 @@ PRODUCTS = [
         "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-3-laufschuhe-herren/312942",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-foreverrun-nitrotm-3-para-hombre/312942.html",
         "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-3-running-shoes-men/312942.html"}},
+    # v1.25 SKU 2차(11/21) — 한국 몰 /pd/x/{품번}.html이 넘겨 준 정식 주소(한국 사이트맵에 아직 없는 새 품번) ∩ 미국·영국·독일·멕시코·두바이 몰 같은 품번(사이트맵) —
+    #   11/21 GitHub 서버 정가 읽기 확인 · 일본 몰은 접속 막음이라 뺌 · 블프 검사 = 한국 정가 ÷ (현지 정가 × 11/20 환율)이 기존 푸마 13개 나라별 가운데값
+    #   (미국 0.99 · 영국 0.91 · 독일 0.91 · 멕시코 0.97 · 두바이 0.76)의 1.25배 안인 나라만
+    {"id": "puma-dn4", "cat": "shoe", "brand": "푸마", "name": "디비에이트 나이트로 4(남성)", "code": "312123", "src": "page", "hint": "deviate nitro 4", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-4-%3Cbr%3Edeviate-nitro-4/312123.html",
+        "US": "https://us.puma.com/us/en/pd/deviate-nitro-4-mens-road-running-shoes/312123",
+        "GB": "https://uk.puma.com/uk/en/pd/deviate-nitro%E2%84%A2-4-running-shoes-men/312123",
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-4-laufschuhe-herren/312123",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-deviate-nitrotm-4-para-hombre/312123.html",
+        "AE": "https://ae.puma.com/ae/en/pd/deviate-nitrotm-4-running-shoes-men/312123.html"}},   # 11/21 한국·영국·독일·멕시코 할인 중(정가는 이 상품 취소선 정가)
+    {"id": "puma-magmax2", "cat": "shoe", "brand": "푸마", "name": "매그맥스 나이트로 2(남성)", "code": "312125", "src": "page", "hint": "magmax nitro 2", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Emagmax-nitro-2/312125.html",
+        "US": "https://us.puma.com/us/en/pd/magmax-nitro-2-mens-road-running-shoes/312125",
+        "DE": "https://eu.puma.com/de/de/pd/magmax-nitro-2-laufschuhe-herren/312125",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-magmax-nitrotm-2-para-hombre/312125.html",
+        "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"}},   # 영국 몰은 시험 때 응답 없음(읽기 시간 초과 · 11/21) — 다음 차례에
+    {"id": "puma-hstreet", "cat": "shoe", "brand": "푸마", "name": "H-스트리트 OG", "code": "403692", "src": "page", "hint": "h-street", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/h-street-og/403692.html",
+        "US": "https://us.puma.com/us/en/pd/h-street-og-sneakers/403692",
+        "DE": "https://eu.puma.com/de/de/pd/h-street-og-sneakers-unisex/403692",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-h-street-og-unisex/403692.html",
+        "AE": "https://ae.puma.com/ae/en/pd/h-street-og-sneakers-unisex/403692.html"}},   # 영국 몰은 할인가(38파운드)만 보여 정가로 읽혀 뺌(한국 정가 ÷ 영국 값 1.94 — 가운데값의 2.1배 · 11/21)
+    {"id": "puma-speedcatballet", "cat": "shoe", "brand": "푸마", "name": "스피드캣 발레 스웨이드(여성)", "code": "401287", "src": "page", "hint": "speedcat ballet", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%EB%B0%9C%EB%A0%9B-sd-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-ballet-sd-wns/401287.html",
+        "US": "https://us.puma.com/us/en/pd/speedcat-ballet-suede-womens-sneakers/401287",
+        "GB": "https://uk.puma.com/uk/en/pd/speedcat-suede-ballet-shoes-women/401287",
+        "MX": "https://mx.puma.com/mx/es/pd/balerinas-speedcat-gamuza-para-mujer/401287.html",
+        "AE": "https://ae.puma.com/ae/en/pd/speedcat-ballet-suede-sneakers-women/401287.html"}},   # 독일 63.95유로는 할인가로 보여 뺌(비율 1.27 — 가운데값의 1.4배 · 영국 70파운드는 0.97) · 11/21 한국 −67% 할인 중
+    {"id": "puma-t7jacket", "cat": "wear", "brand": "푸마", "name": "T7 트랙 자켓(남성)", "code": "629587", "src": "page", "hint": "t7", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/t7-%EC%98%AC%EC%9B%A8%EC%9D%B4%EC%A6%88-%EC%98%A8-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-track-jacket-dk/629587.html",
+        "US": "https://us.puma.com/us/en/pd/t7-mens-track-jacket/629587",
+        "DE": "https://eu.puma.com/de/de/pd/t7-always-on-trainingsjacke-herren/629587",
+        "MX": "https://mx.puma.com/mx/es/pd/chamarra-t7-always-on-para-hombre/629587.html",
+        "AE": "https://ae.puma.com/ae/en/pd/t7-always-on-track-jacket-men/629587.html"}},   # 영국(55파운드)은 뺌 — 한국 정가 비율이 푸마 가운데값의 1.25배 바로 밑이고 이 상품 나라 간 비교(영국÷독일 0.73)에서 영국만 낮음(블프 할인가 의심) · 11/21 다섯 나라 할인 중(정가는 취소선 정가)
+    {"id": "puma-velocity5", "cat": "shoe", "brand": "푸마", "name": "벨로시티 나이트로 5(남성)", "code": "312944", "src": "page", "hint": "velocity nitro 5", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EB%B2%A8%EB%A1%9C%EC%8B%9C%ED%8B%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-5-%3Cbr%3Evelocity-nitro-5/312944.html",
+        "US": "https://us.puma.com/us/en/pd/velocity-nitro-5-running-shoes-men-mens-road-running-shoes/312944",
+        "GB": "https://uk.puma.com/uk/en/pd/velocity-nitro%E2%84%A2-5-running-shoes-men/312944",
+        "DE": "https://eu.puma.com/de/de/pd/velocity-nitro-5-laufschuhe-herren/312944",
+        "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-velocity-nitrotm-5-para-hombre/312944.html",
+        "AE": "https://ae.puma.com/ae/en/pd/velocity-nitrotm-5-running-shoes-men/312944.html"}},   # 11/21 한국·멕시코만 할인 중
+    {"id": "puma-velocityteew", "cat": "top", "brand": "푸마", "name": "런 벨로시티 티셔츠(여성)", "code": "526578", "src": "page", "hint": "velocity", "urls": {
+        "KR": "https://kr.puma.com/kr/ko/pd/%EC%97%AC%EC%84%B1-%EB%9F%B0-%EB%B2%A8%EB%A1%9C%EC%8B%9C%ED%8B%B0-%ED%8B%B0%EC%85%94%EC%B8%A0(poly)-%3Cbr%3Ew-run-velocity-tee-(poly)/526578.html",
+        "GB": "https://uk.puma.com/uk/en/pd/velocity-running-tee-women/526578",
+        "MX": "https://mx.puma.com/mx/es/pd/playera-de-running-velocity-para-mujer/526578.html",
+        "AE": "https://ae.puma.com/ae/en/pd/velocity-running-tee-women/526578.html"}},   # 미국 몰 사이트맵에 없음 · 독일 21.95유로는 할인가로 보여 뺌(비율 1.22 — 가운데값의 1.34배 · 11/21 1단계·2차 모두)
+    # 뺌(11/21): 스웨이드 XL(395205)·리드캣 2.0 슬라이드(384139)·T7 스트레이트 트랙 팬츠 여성(629797) — 한국 페이지 404 ·
+    #   디비에이트 나이트로 엘리트 4 여성(312128)·포에버런 나이트로 3 여성(312943)·디비에이트 나이트로 4 여성(312124) — 남성 모델(puma-dne4·puma-foreverrun3·puma-dn4)과 여섯 나라 정가가 모두 같아 뺌 ·
+    #   매그맥스 나이트로 여성(310089) — 새 모델 매그맥스 나이트로 2가 나와 미국 −30%·두바이 −50% 재고 정리 중이라 뺌
     # v1.20 옛 클라우드몬스터(61.98434 올 화이트)는 11/10부터 한국 몰에서 빠짐(상품 주소가 목록 /shop으로 넘어감 · 일본은 재고 정리 할인 중) → 같은 모델 새 품번 '클라우드몬스터 1'(3MF3074) 블랙 —
     # 한국 몰에 있는 색상은 이것뿐 · 일본 몰에는 남성 클라우드몬스터 1이 없어 뺌 · 두바이(on.ae)는 이 색상 없음(11/11 나라별 상품 사이트맵·정가 읽기 확인)
     {"id": "on-cloudmonster", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 1", "code": "3MF30740553", "src": "page", "hint": "cloudmonster", "urls": {
@@ -495,6 +558,22 @@ PRODUCTS = [
         "KR": "https://www.drmartens.co.kr/products/boots-church-black-16054001.json",
         "US": f"{DM}/us/en/church-vintage-monkey-boots-black/p/16054001",
         "GB": f"{DM}/uk/en_gb/church-vintage-smooth-leather-monkey-boots-black/p/16054001"}},
+    # v1.25 SKU 2차(11/21) — 한국 쇼피파이 /products.json 품번 ∩ 영국 사이트맵 /p/품번 · 정가 읽기 확인(GitHub 서버) · 한국·영국만(기존 묶음 방침) ·
+    # 영국 값은 한국 정가 ÷ (영국 값 × 환율) 0.90~0.91로 기존 16개 가운데값 0.904와 같아 할인가 아님 · 미국은 블프 할인가로 읽혀 블프 뒤(블레어 $60 = 1.99 · 리더 $84 = 1.60 — 기존 가운데값 1.12) ·
+    # 빈티지(메이드 인 잉글랜드)는 일반 1460·1461·2976과 다른 줄·다른 가격(349,000·299,000 vs 279,000·229,000) · 1461 체리레드·앰버서더·크레이지 호스, 1460 파스칼 모노·크레이지 호스·버지니아,
+    # 2976 모노·앰버서더는 기존 상품과 같은 모델 같은 가격이라 뺌 · 리더(27104001)·제이든 III(26378001)는 정가 읽기 OK였으나 브랜드당 20개라 다음 차례에(독일 칸도 브랜드 전체로 다음에)
+    {"id": "drm-vintage1460", "cat": "boot", "brand": "닥터마틴", "name": "빈티지 1460(메이드 인 잉글랜드)", "code": "12308001", "src": "page", "hint": "1460", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/bintiji-1460.json",
+        "GB": f"{DM}/uk/en_gb/vintage-1460-quilon-leather-ankle-boots-black/p/12308001"}},
+    {"id": "drm-vintage1461", "cat": "shoe", "brand": "닥터마틴", "name": "빈티지 1461(메이드 인 잉글랜드)", "code": "12877001", "src": "page", "hint": "1461", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/bintiji-1461.json",
+        "GB": f"{DM}/uk/en_gb/vintage-1461-quilon-leather-oxford-shoes-black/p/12877001"}},
+    {"id": "drm-blaire", "cat": "sandal", "brand": "닥터마틴", "name": "블레어 샌들", "code": "31520001", "src": "page", "hint": "blaire", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/31520001-blaire.json",
+        "GB": f"{DM}/uk/en_gb/blaire-athena-leather-strap-sandals-black/p/31520001"}},
+    {"id": "drm-vintage2976", "cat": "boot", "brand": "닥터마틴", "name": "빈티지 2976 첼시(메이드 인 잉글랜드)", "code": "25747001", "src": "page", "hint": "2976", "urls": {
+        "KR": "https://www.drmartens.co.kr/products/boots-2976-black-quillon-25747001.json",
+        "GB": f"{DM}/uk/en_gb/2976-vintage-made-in-england-chelsea-boots-black/p/25747001"}},
     {"id": "dd-santacroce", "cat": "bag", "brand": "드래곤디퓨전", "name": "산타크로체 빅 백", "code": "8892", "alt": ["W2BAS26025DBR"], "src": "page", "hint": "santa croce", "urls": {
         "KR": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",   # 코오롱몰(공식 수입) 자체 품번
         "US": "https://dragondiffusion.com/products/santa-croce-big-dark-brown-woven-leather-bag-handmade"}},   # 글로벌 몰 1곳 — 접속한 나라 통화(미국 서버 → 달러), 달러가 아니면 실패
@@ -559,6 +638,40 @@ PRODUCTS = [
     {"id": "hunter-intrepidtall", "cat": "boot", "brand": "헌터", "name": "인트레피드 톨 스노 부츠(여성)", "code": "WFT2108WWU", "src": "page", "hint": "wft2108wwublk", "urls": {
         "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508591697023BK01",
         "GB": "https://hunterboots.co.uk/products/womens-intrepid-tall-snow-boot-wft2108wwu-blk.json"}},   # 일본 몰 사이트맵에 없음(11/17)
+    # v1.25 SKU 2차 — 코오롱몰 목록 화면 품번(상품 이름 끝) ∩ 일본 쇼피파이(11/21 정가 읽기 확인 · 미국·영국 몰은 새 시즌 상품을 새 품번 HF…·HA…로 바꿔 같은 품번 없음 · 영국은 MFS9135WWU만)
+    # 블프 검사(한국 정가 ÷ (현지 정가 × 11/20 환율)): 일본 0.87~1.14(기존 헌터 가운데값 0.93의 0.94~1.23배) · 영국 0.93(가운데값 0.95) — 모두 1.25배 안
+    {"id": "hunter-wandershort", "cat": "boot", "brand": "헌터", "name": "인트레피드 원더러 숏 스노 부츠", "code": "UFS7119WWU", "src": "page", "hint": "ufs7119wwublk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133875939070BK01",
+        "JP": "https://hunterboots.co.jp/products/ufs7119wwu-blk.json"}},
+    {"id": "hunter-wandertall", "cat": "boot", "brand": "헌터", "name": "인트레피드 원더러 톨 스노 부츠", "code": "UFT7120WWU", "src": "page", "hint": "uft7120wwublk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133666918092BK01",
+        "JP": "https://hunterboots.co.jp/products/uft7120wwu-blk.json"}},
+    {"id": "hunter-refinedtall", "cat": "boot", "brand": "헌터", "name": "리파인드 슬림핏 톨(여성)", "code": "WFT2200RMA", "src": "page", "hint": "wft2200rmablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508601844067BK01",
+        "JP": "https://hunterboots.co.jp/products/wft2200rma-blk.json"}},
+    {"id": "hunter-neochelsea", "cat": "boot", "brand": "헌터", "name": "오리지널 네오프렌 첼시(여성)", "code": "WFS2403NRE", "src": "page", "hint": "wfs2403nreblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1785476517288037BK01",
+        "JP": "https://hunterboots.co.jp/products/wfs2403nre-blk.json"}},
+    {"id": "hunter-mplaychelsea", "cat": "boot", "brand": "헌터", "name": "플레이 네오프렌 첼시(남성)", "code": "MFS9022RMA", "src": "page", "hint": "mfs9022rmablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508683714035NO01",   # 상품 번호 끝은 NO01이지만 상품 이름 끝 품번은 MFS9022RMABLK(블랙)
+        "JP": "https://hunterboots.co.jp/products/mfs9022rma-blk.json"}},
+    {"id": "hunter-mintrepidshort", "cat": "boot", "brand": "헌터", "name": "인트레피드 인슐레이티드 숏 스노 부츠(남성)", "code": "MFS9135WWU", "src": "page", "hint": "mfs9135wwublk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084986999013BK01",
+        "GB": "https://hunterboots.co.uk/products/mens-intrepid-insulated-short-snow-boots-mfs9135wwu-blk.json"}},   # 영국은 11/21 할인 중(96파운드) — 정가는 compare_at 160(비율 0.93) · 일본 몰에 없음
+    {"id": "hunter-gripexplorer", "cat": "boot", "brand": "헌터", "name": "그립 익스플로러 레이스업 부츠", "code": "UFS7123LNR", "src": "page", "hint": "ufs7123lnrblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1789969305240016BK01",
+        "JP": "https://hunterboots.co.jp/products/ufs7123lnr-blk.json"}},
+    {"id": "hunter-explorerchelsea", "cat": "boot", "brand": "헌터", "name": "리파인드 익스플로러 로퍼 첼시 부츠", "code": "UFS7125LEA", "src": "page", "hint": "ufs7125leablk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1774579934235020BK01",
+        "JP": "https://hunterboots.co.jp/products/ufs7125lea-blk.json"}},
+    {"id": "hunter-griptall", "cat": "boot", "brand": "헌터", "name": "그립 톨 스노 부츠", "code": "UFT7101NYL", "src": "page", "hint": "uft7101nylblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084821690065BK01",
+        "JP": "https://hunterboots.co.jp/products/uft7101nyl-blk.json"}},
+    {"id": "hunter-travel2suede", "cat": "shoe", "brand": "헌터", "name": "트래블 2.0 방수 스웨이드 스니커즈", "code": "UFF7146REN", "src": "page", "hint": "uff7146renblk", "urls": {
+        "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1784599846737092BK01",
+        "JP": "https://hunterboots.co.jp/products/uff7146ren-blk.json"}},
+    # 예비 4개(트래블 2.0 레이스 UFF7147REN·원더러 부클 숏 WFS2226WAD(일본 −50% 할인 중 · compare_at 정가)·원더러 프로텍트 UFF7139REN·트래블 플로우 UFF7159LEA)도
+    # 한국·일본 정가 읽기 OK(11/21)였으나 브랜드당 20개 상한이라 뺌 — 위 상품이 몰에서 빠지면 대신 넣을 후보(남성 오리지널 숏·톨·첼시·플레이 숏은 코오롱몰 K 번호를 찾으면 4개 나라 · 바꿀 때 우선)
     # v1.17 언더아머 두바이 = underarmour.ae(공식 중동 유통사 Athlocity · SFCC) — 색상 페이지 UA품번-색상(정가는 색상과 같음 · 11/03 확인) · sfra_list
     {"id": "ua-tech2", "cat": "top", "brand": "언더아머", "name": "UA 테크 2.0 반팔", "code": "1326413", "src": "page", "hint": "ua tech", "urls": {
         "KR": "https://www.underarmour.co.kr/ko-kr/p/%EC%83%81%EC%9D%98/ua_tech_2.0/1326413.html",
@@ -641,7 +754,7 @@ PRODUCTS = [
         "GB": "https://www.saucony.com/UK/en_GB/triumph-24/61229M.html",
         "DE": "https://www.saucony.com/DE/de_DE/triumph-24/61229M.html"}},
     {"id": "saucony-guide19", "cat": "shoe", "brand": "써코니", "name": "가이드 19(남성)", "code": "S21058", "src": "page", "hint": "가이드 19", "code_in_page": True, "urls": {
-        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-triple-black/373/",
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-fossilcarbon/372/",   # v1.25 triple-black(373)은 전 사이즈 품절로 가격 없음 → fossilcarbon(같은 품번 S21058 · 11/21 179,000원)
         "US": "https://www.saucony.com/en/guide-19/60838M.html",
         "GB": "https://www.saucony.com/UK/en_GB/guide-19/60838M.html",
         "DE": "https://www.saucony.com/DE/de_DE/guide-19/60838M.html"}},
@@ -663,6 +776,47 @@ PRODUCTS = [
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
         "GB": "https://www.saucony.com/UK/en_GB/endorphin-trainer/59961M.html",
         "DE": "https://www.saucony.com/DE/de_DE/endorphin-trainer/59961M.html"}},   # 미국 몰 같은 주소 HTTP 404(11/17) · 엑소더스 울트라 4는 한국 몰 가격 없음(품절)이라 뺌
+    # SKU 2차(11/21) — 한국 몰 상품 정보 칸 '모델' 품번 ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/21 GitHub 서버 정가 읽기 확인) · 여성 모델·옷 포함
+    {"id": "saucony-azuraw", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 아주라(여성)", "code": "S11070", "src": "page", "hint": "엔돌핀 아주라", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-ivorywhite/307/",
+        "US": "https://www.saucony.com/en/endorphin-azura/60808W.html",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-azura/60808W.html",
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-azura/60808W.html"}},   # 11/21 영국·독일 할인 중(£140 → £112 · €160 → €128 — 정가는 원래 가격 칸)
+    {"id": "saucony-endpro5w", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 프로 5(여성)", "code": "S11064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/298/",
+        "US": "https://www.saucony.com/en/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101"}},   # 색상 없는 주소는 미국·영국·독일 모두 JSON-LD 없는 페이지(11/21) — 미국만 색상 지정 주소로 확인, 영국·독일은 다음 차례에
+    {"id": "saucony-omnist23", "cat": "shoe", "brand": "써코니", "name": "옴니 ST 23(남성)", "code": "S21072", "src": "page", "hint": "옴니 st 23", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%98%B4%EB%8B%88-st-23-triple-black/289/",
+        "US": "https://www.saucony.com/en/omni-st-23/60844M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/omni-st-23/60844M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/omni-st-23/60844M.html"}},
+    {"id": "saucony-trainer80", "cat": "shoe", "brand": "써코니", "name": "트레이너 80(공용)", "code": "S70884", "src": "page", "hint": "트레이너 80", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-80-blackwhite/222/",
+        "GB": "https://www.saucony.com/UK/en_GB/trainer-80/59999U.html",
+        "DE": "https://www.saucony.com/DE/de_DE/trainer-80/59999U.html"}},   # 미국 몰 같은 주소는 JSON-LD 없는 페이지(11/21)라 뺌 · 11/21 영국·독일 할인 중(£85 → £68 · €100 → €80)
+    {"id": "saucony-peregrine16", "cat": "shoe", "brand": "써코니", "name": "페레그린 16 와이드(남성)", "code": "S21067", "src": "page", "hint": "페레그린 16", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0-16-%EC%99%80%EC%9D%B4%EB%93%9C-carbonblack/211/",
+        "US": "https://www.saucony.com/en/peregrine-16-wide/60849M.html"}},   # 한국 몰은 와이드(S21067) — 보통 폭 주소(60848M)는 미국 JSON-LD 없음·영국·독일 페이지에 S21067 없음(11/21)이라 미국 와이드 몰만
+    {"id": "saucony-recoveryhoody", "cat": "wear", "brand": "써코니", "name": "리커버리 후디(공용)", "code": "SAU800047", "src": "page", "hint": "리커버리 후디", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EB%A6%AC%EC%BB%A4%EB%B2%84%EB%A6%AC-%ED%9B%84%EB%94%94-light-grey-heather/275/",
+        "US": "https://www.saucony.com/en/recovery-hoody/58009U.html"}},
+    {"id": "saucony-hurricanejkt", "cat": "wear", "brand": "써코니", "name": "허리케인 워터프루프 재킷(남성)", "code": "SAM800360", "src": "page", "hint": "허리케인 워터프루프 재킷", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-%EC%9B%8C%ED%84%B0%ED%94%84%EB%A3%A8%ED%94%84-%EC%9E%AC%ED%82%B7-white-black/278/",
+        "US": "https://www.saucony.com/en/hurricane-waterproof-jacket/58003M.html"}},
+    {"id": "saucony-stopwatchls", "cat": "wear", "brand": "써코니", "name": "스톱워치 롱 슬리브(남성)", "code": "SAM800379", "src": "page", "hint": "스톱워치 롱 슬리브", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%8A%A4%ED%86%B1%EC%9B%8C%EC%B9%98-%EB%A1%B1-%EC%8A%AC%EB%A6%AC%EB%B8%8C-ivory-heather/271/",
+        "US": "https://www.saucony.com/en/stopwatch-long-sleeve/58947M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/stopwatch-long-sleeve/58947M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/stopwatch-long-sleeve/58947M.html"}},   # 긴팔이라 분류 wear(top = 반팔·민소매) · 11/21 미국 할인 중($48 → $35.95)
+    {"id": "saucony-outpace5", "cat": "wear", "brand": "써코니", "name": "아웃페이스 5인치 쇼츠(남성)", "code": "SAM800410", "src": "page", "hint": "아웃페이스 5인치", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EC%9B%83%ED%8E%98%EC%9D%B4%EC%8A%A4-5%EC%9D%B8%EC%B9%98-%EC%87%BC%EC%B8%A0-black/250/",
+        "US": "https://www.saucony.com/en/outpace-5-inch-short/60026M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/outpace-5-inch-short/60026M.html",
+        "DE": "https://www.saucony.com/DE/de_DE/outpace-5-inch-short/60026M.html"}},
+    # 뺌(11/21): 엔돌핀 스피드 5 여성(S11007) — 한국 몰 연결 끊김(한 번 · 1단계에선 219,000원 읽힘 · 미국·영국·독일 정가 읽기 OK) → 다음 차례에
+    # 뺌: 라이드 19 여성·킨바라 16 여성·프로그리드 가이드 7·프로그리드 트라이엄프 4 — 미국·영국·독일 몰 모두 JSON-LD 없는 페이지(색상 지정 주소로 다음 차례에) · 가이드 19 여성 — 한국 /512/·/510/ 페이지에 품번 S11058 없음
+    # 뺌: 엔돌핀 엘리트 2(S30994) — 정가 읽기는 OK(한국 339,000 · $290 · £280 · €300)이나 새 모델 엘리트 3(한국 369,000원 · S100981)이 나와 해외 3곳 모두 약 50% 재고 정리 중 → 엘리트 3로 다음 차례에
+    # 뺌(11/21 검증): 엔돌핀 싱글렛(SAM800382)·엔돌핀 쇼트 슬리브(SAM800394) — 영국·독일 값의 한국 정가 비율이 써코니 가운데값의 1.6~1.8배(블프 할인가가 정가로 읽힌 것으로 봄) · 빼면 한국만 남아 상품째 뺌
     {"id": "brooks-ghost18", "cat": "shoe", "brand": "브룩스", "name": "고스트 18(남성)", "code": "1104931D", "cc_code": {"JP": "BRM4933"}, "src": "page", "hint": "고스트 18", "code_in_page": True, "urls": {
         "KR": "https://brooksrunning.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B3%A0%EC%8A%A4%ED%8A%B8-18-%EB%B8%94%EB%9E%99-medium/852/",   # 품번은 prd_model 칸(1104931D020)
         "JP": "https://brooksrunning.co.jp/products/brm4933-b-b.json"}},   # 일본 수입사 품번 BRM4933 = 고스트 18 남성 보통 폭 · 미국·유럽 몰은 403(넣지 않음)
@@ -720,6 +874,28 @@ PRODUCTS = [
      "urls": _arc("686731", "konseal-trek-boot-0504", "konseal-trek-m.json")},
     {"id": "arc-norvanjacket", "cat": "wear", "brand": "아크테릭스", "name": "노반 재킷(남성)", "code": "X000009571", "cc_code": {"KR": "AJQFM09571"}, "src": "page", "hint": "norvan jacket",
      "urls": _arc("686750", "norvan-jacket-9571", "norvan-jacket-m")},   # 노반 LD 4(GTX 아님)는 다음 차례 · 코펙 2 로우 GTX는 영국·독일 몰 404·일본 몰에 없어 뺌(10/29)
+    # 20개 2차(11/21) — 한국 상품 번호·품번은 1단계에서 상품 페이지로 확인 · 블프 검사 = 한국 정가 ÷ (현지 정가 × 11/20 환율)이 기존 11개 나라별 가운데값
+    #   (미국 1.29 · 영국 1.08 · 독일 1.18 · 일본 1.20)의 1.25배 안인 나라만 · 여성 신발은 같은 남성 모델과 모든 나라 정가가 같은지도 확인
+    {"id": "arc-norvanld4", "cat": "shoe", "brand": "아크테릭스", "name": "노반 LD 4(남성)", "code": "X000010398", "cc_code": {"KR": "AFQFM10398"}, "src": "page", "hint": "norvan ld 4",
+     "urls": {cc: u for cc, u in _arc("686685", "norvan-ld-4-shoe-0398", "norvan-ld-4-m.json").items() if cc not in ("GB", "DE")}},   # 영국 £90·독일 €102는 블프 40% 할인가가 정가로 읽힘(비율 1.85·1.94) — 블프 뒤 차례에
+    {"id": "arc-norvan7vest", "cat": "bag", "brand": "아크테릭스", "name": "노반 7 베스트(남성)", "code": "X000006747", "cc_code": {"KR": "ABQFM06747"}, "src": "page", "hint": "norvan 7 vest",
+     "urls": _arc("686986", "norvan-7-vest-6747", "norvan-7-vest-m.json")},   # 여성(6803)은 남성과 같은 값의 같은 모델이라 뺌
+    {"id": "arc-kopecgtx", "cat": "shoe", "brand": "아크테릭스", "name": "코펙 GTX(남성)", "code": "X000010023", "cc_code": {"KR": "AFQFM10023"}, "src": "page", "hint": "kopec gtx",
+     "urls": {cc: u for cc, u in _arc("686680", "kopec-gtx-shoe-0023", "kopec-gtx-m.json").items() if cc != "US"}},   # 미국 몰 사이트맵에 0023 없음 · 여성(0028)은 남성과 같은 값이라 뺌
+    {"id": "arc-kraggw", "cat": "shoe", "brand": "아크테릭스", "name": "크래그(여성)", "code": "X000010081", "cc_code": {"KR": "AFQSW10081"}, "src": "page", "hint": "kragg",
+     "urls": _arc("686228", "kragg-shoe-0081", "kragg-w.json", g="womens/")},
+    {"id": "arc-sylan2w", "cat": "shoe", "brand": "아크테릭스", "name": "사일렌 2(여성)", "code": "X000010153", "cc_code": {"KR": "AFQSW10153"}, "src": "page", "hint": "sylan 2",
+     "urls": _arc("686229", "sylan-2-shoe-0153", g="womens/")},   # 일본 몰 sylan-2-w는 404라 뺌(남성 주소 꼴에서 짐작한 주소)
+    {"id": "arc-konsealtrekw", "cat": "boot", "brand": "아크테릭스", "name": "컨실 트렉 부츠(여성)", "code": "X000010502", "cc_code": {"KR": "AFQFW10502"}, "src": "page", "hint": "konseal trek boot",
+     "urls": _arc("686738", "konseal-trek-boot-0502", "konseal-trek-w.json", g="womens/")},
+    {"id": "arc-norvancrewlsw", "cat": "wear", "brand": "아크테릭스", "name": "노반 크루 셔츠 LS(여성)", "code": "X000010748", "cc_code": {"KR": "ATQFW10748"}, "src": "page", "hint": "norvan crew",
+     "urls": _arc("687008", "norvan-crew-shirt-ls-0748", "norvan-crew-ls-w.json", g="womens/")},
+    {"id": "arc-downwordls", "cat": "wear", "brand": "아크테릭스", "name": "노반 다운워드 로고 셔츠 LS(남성)", "code": "X000010730", "cc_code": {"KR": "ATQFM10730"}, "src": "page", "hint": "norvan downword logo",
+     "urls": _arc("686883", "norvan-downword-logo-shirt-ls-0730", "norvan-downword-logo-ls-m.json")},   # 영국·독일은 지금 30% 할인 중(£63·€70) — 정가 £90·€100으로 읽힘(비율 정상)
+    {"id": "arc-norvanshort3w", "cat": "wear", "brand": "아크테릭스", "name": "노반 쇼츠 3인치(여성)", "code": "X000010613", "cc_code": {"KR": "APQSW10613"}, "src": "page", "hint": "norvan short 3",
+     "urls": _arc("686342", "norvan-short-3-0613", g="womens/")},   # 일본 몰에 없음
+    # 뺌: 노반 LD 4 GTX 여성(0399)·노반 LD 4 여성(0400)은 남성(기존 0397·이번 0398)과 모든 나라 정가가 같고 영국·독일은 블프로 빠져 3개 나라뿐 — 20개 한도 안에서 다른 상품을 먼저 ·
+    #   버텍스 알파인 GTX는 해외 사이트맵에 없음 · 코펙 2 로우 GTX 여성은 영국·독일 404 · Walk Gently는 협업 한정 컬렉션
     # v1.4 킨 — 품번 = 색상까지 정해진 7자리 · 한국 고도몰은 상품 정보 칸 ARTICLE, 미국·독일·일본 쇼피파이는 변형 품번이 바코드라 상품 태그, 영국은 변형 품번(1022258-10)
     {"id": "keen-newporth2", "cat": "sandal", "brand": "킨(KEEN)", "name": "뉴포트 H2(남성 · 트리플 블랙)", "code": "1022258", "src": "page", "hint": "newport h2",
      "urls": _keen("1000000673", "mens-newport-h2-triple-black")},
@@ -744,6 +920,36 @@ PRODUCTS = [
         "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000945",
         "US": "https://www.keenfootwear.com/products/mens-jasper-zionic-waterproof-black-black.json",
         "JP": "https://www.keenfootwear.jp/products/mens-jasper-zionic-waterproof-black-black.json"}},   # 영국·독일 몰에 없음(404, 10/28)
+    # SKU 2차(11/21) 킨 — 한국 LF 몰 상품 번호 ↔ 상품 정보 칸 품번(Article No.)을 해외 쇼피파이 상품 태그 품번과 대조 · 블프 검사 = 한국 정가 ÷ (현지 정가 × 환율)이 기존 킨 나라별 가운데값의 1.25배 넘으면 그 나라 뺌
+    {"id": "keen-uneekwk", "cat": "sandal", "brand": "킨(KEEN)", "name": "유니크 WK(남성 · 블랙)", "code": "1030271", "src": "page", "hint": "uneek wk",
+     "urls": _keen("1000000638", "mens-uneek-wk-black-black", gb="mens-uneek-wk-sneaker-black-black")},   # 영국 몰은 상품 주소가 다름(…-sneaker-…)
+    {"id": "keen-wander", "cat": "shoe", "brand": "킨(KEEN)", "name": "원더(남성 · 블랙)", "code": "1033146", "src": "page", "hint": "wander", "urls": {
+        "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000860",
+        "GB": "https://www.keenfootwear.co.uk/products/mens-wander-black-magnet.json",
+        "DE": "https://www.keenfootwear.de/en/products/mens-wander-black-magnet.json",
+        "JP": "https://www.keenfootwear.jp/products/mens-wander-black-magnet.json"}},   # 미국 140달러는 비율 1.279(가운데값 1.005의 1.27배 · 할인 표시 없음) — 블프 할인가로 보여 뺌, 블프 뒤 차례에(11/21)
+    {"id": "keen-roamwp", "cat": "shoe", "brand": "킨(KEEN)", "name": "롬 워터프루프(남성 · 블랙)", "code": "1032758", "src": "page", "hint": "roam waterproof",
+     "urls": _keen("1000000890", "mens-roam-waterproof-black-black")},
+    {"id": "keen-seek", "cat": "shoe", "brand": "킨(KEEN)", "name": "시크(남성 · 사파리/블랙)", "code": "1032315", "src": "page", "hint": "seek",
+     "urls": _keen("1000000588", "mens-seek-safari-black")},
+    {"id": "keen-jzionic", "cat": "shoe", "brand": "킨(KEEN)", "name": "재스퍼 자이오닉(남성 · 마그넷/스틸 그레이)", "code": "1032646", "src": "page", "hint": "jasper zionic",
+     "urls": _keen("1000000952", "mens-jasper-zionic-magnet-steel-grey")},   # 워터프루프(keen-jzwp)와 다른 모델 · 블랙(1029584)은 한국 품번이 달라 이 색으로
+    {"id": "keen-jnylonwp", "cat": "shoe", "brand": "킨(KEEN)", "name": "재스퍼 나일론 워터프루프(남성 · 블랙)", "code": "1032707", "src": "page", "hint": "jasper nylon waterproof",
+     "urls": _keen("1000000986", "mens-jasper-nylon-waterproof-black-black")},
+    {"id": "keen-howser2", "cat": "sandal", "brand": "킨(KEEN)", "name": "하우저 II(남성 · 트리플 블랙)", "code": "1023997", "src": "page", "hint": "howser ii",
+     "urls": _keen("1000001045", "mens-howser-ii-triple-black")},
+    {"id": "keen-targhee4ox", "cat": "shoe", "brand": "킨(KEEN)", "name": "타기 IV 옥스포드(남성 · 블랙)", "code": "1031647", "src": "page", "hint": "targhee iv oxford",
+     "urls": _keen("1000000585", "mens-targhee-iv-oxford-black")},   # 한국 몰 할인 중(판매가 159,200) — 정가 칸 199,000으로 읽힘(11/21)
+    {"id": "keen-uneeklea", "cat": "sandal", "brand": "킨(KEEN)", "name": "유니크 레더(남녀공용 · 블랙)", "code": "1032097", "src": "page", "hint": "uneek leather", "urls": {
+        "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000073",
+        "US": "https://www.keenfootwear.com/products/all-gender-uneek-lea-perseid-black.json",
+        "JP": "https://www.keenfootwear.jp/products/all-gender-uneek-lea-perseid-black.json"}},   # 영국 몰에 없음 · 독일 125유로는 비율 1.307(가운데값 1.019의 1.28배 · 할인 표시 없음) — 블프 할인가로 보여 뺌(11/21)
+    {"id": "keen-jmerko", "cat": "shoe", "brand": "킨(KEEN)", "name": "재스퍼 멀코(남성 · 블랙)", "code": "1032554", "src": "page", "hint": "jasper merko", "urls": {
+        "KR": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000991",
+        "US": "https://www.keenfootwear.com/products/mens-jasper-merko-black-black.json",
+        "DE": "https://www.keenfootwear.de/en/products/mens-jasper-merko-black-black.json",
+        "JP": "https://www.keenfootwear.jp/products/mens-jasper-merko-black-black.json"}},   # 영국 몰에 없음(11/21)
+    # 예비 재스퍼 록스 SP(1032958)·KS86(1032651)·샨티(1026263)·타기 IV 슬립온(1031164)도 정가 읽기 OK였으나 브랜드당 20개라 넣지 않음 · ASPIRE·TTS ZIP은 미국 몰에만 있어 뺌(11/21)
     # v1.4 우포스 — 품번 = 모델 4자리 + 색상(한국 Article No. '1100 Black' · 미국 변형 품번 앞머리 '1100BLK…') · 한국 콜라보 상품(같은 Article No.)은 다른 상품 번호
     {"id": "oofos-ooriginal", "cat": "sandal", "brand": "우포스", "name": "OOriginal 샌들(블랙)", "code": "1000", "cc_code": {"KR": "1000 Black", "US": "1000BLK"}, "src": "page", "hint": "ooriginal",
      "urls": _oofos("1000000050", "mens-original-sandal-black")},
@@ -766,6 +972,133 @@ PRODUCTS = [
      "urls": _oofos("1000000018", "mens-oomy-stride-black")},
     {"id": "oofos-ooahhsport", "cat": "sandal", "brand": "우포스", "name": "OOahh Sport 슬라이드(택티컬 그린)", "code": "1500", "cc_code": {"KR": "1500 Tactical Green", "US": "1500TACGRN"}, "src": "page", "hint": "ooahh sport",
      "urls": _oofos("1000000063", "mens-ooahh-sport-slide-sandal-tactical-green")},   # 블랙은 한국 1500 Black Matrix(64) ↔ 미국 FootJoy 콜라보뿐이라 두 몰 모두 있는 택티컬 그린
+    # 20개 2차(11/21) — 한국 LF 몰 Article No.(cc_code KR) ∩ 미국 쇼피파이 변형 품번 앞머리(cc_code US) · 11/21 GitHub 서버 정가 읽기 확인(11개 모두 OK) ·
+    #   블프 검사 = 한국 정가 ÷ (미국 정가 × 11/20 환율 1,334.79원)이 기존 10개 가운데값 0.972의 1.25배(1.215) 안 — 새 10개 0.85~1.12 · 미국 할인 중(−20%)인 상품은 정가 = compare_at_price
+    {"id": "oofos-ooyea", "cat": "sandal", "brand": "우포스", "name": "OOyea 슬라이드(블랙)", "code": "1700", "cc_code": {"KR": "1700 Black", "US": "1700BLACK"}, "src": "page", "hint": "ooyea",
+     "urls": _oofos("1000000054", "womens-ooyea-slide-sandal-black")},
+    {"id": "oofos-oocoozie", "cat": "sandal", "brand": "우포스", "name": "OOcoozie Thermo 뮬(남성 · 블랙)", "code": "5286", "cc_code": {"KR": "5286 Black", "US": "5286BLACK"}, "src": "page", "hint": "oocoozie",
+     "urls": _oofos("1000000148", "mens-oocoozie-thermo-mule-black")},   # 11/21 미국 할인 중($119.95 → $95.96)
+    {"id": "oofos-roamthermo", "cat": "shoe", "brand": "우포스", "name": "Roam Thermo 방한화(남성 · 블랙)", "code": "5388", "cc_code": {"KR": "5388 Black", "US": "5388BLACK"}, "src": "page", "hint": "roam thermo",
+     "urls": _oofos("1000000145", "mens-roam-thermo-black")},   # 미국 상품 분류 Shoe · 11/21 미국 할인 중($139.95 → $111.96)
+    {"id": "oofos-roamthermow", "cat": "shoe", "brand": "우포스", "name": "Roam Thermo 방한화(여성 · 블랙)", "code": "5378", "cc_code": {"KR": "5378 Black", "US": "5378BLACK"}, "src": "page", "hint": "roam thermo",
+     "urls": _oofos("1000000149", "womens-roam-thermo-black")},   # 여성은 모델 번호가 다름(남성 5388) · 11/21 미국 할인 중($139.95 → $111.96)
+    {"id": "oofos-posh", "cat": "sandal", "brand": "우포스", "name": "OOmega Posh 뮬(여성 · 블랙)", "code": "5374", "cc_code": {"KR": "5374 Black", "US": "5374BLACK"}, "src": "page", "hint": "posh",
+     "urls": _oofos("1000000153", "womens-oomega-posh-mule-black")},   # 11/21 미국 할인 중($139.95 → $111.96)
+    {"id": "oofos-sherpa", "cat": "sandal", "brand": "우포스", "name": "OOcoozie Sherpa 뮬(여성 · 블랙)", "code": "5277", "cc_code": {"KR": "5277 Black", "US": "5277BLACK"}, "src": "page", "hint": "sherpa",
+     "urls": _oofos("1000000151", "womens-oocoozie-sherpa-mule-black")},
+    {"id": "oofos-oocloogluxe", "cat": "sandal", "brand": "우포스", "name": "OOcloog Luxe 스택 클로그(포토벨로)", "code": "1201", "cc_code": {"KR": "1201 Stacked Portobello", "US": "1201NOMPOR"}, "src": "page", "hint": "oocloog",
+     "urls": _oofos("1000000075", "mens-oocloog-stacked-clog-portobello")},   # 한국 남녀공용 · 미국 Stacked Clog(남성·여성 주소 같은 품번 1201NOMPORM) · 11/21 미국 할인 중($84.95 → $67.96)
+    {"id": "oofos-oolala", "cat": "sandal", "brand": "우포스", "name": "OOlala 샌들(블랙)", "code": "1400", "cc_code": {"KR": "1400 Black", "US": "1400BLK"}, "src": "page", "hint": "oolala",
+     "urls": _oofos("1000000073", "womens-sandal-oolala-black")},   # 한국 몰에 같은 Article No. 상품이 둘(073·037 — 같은 이름·정가) — 상품 번호로 고름
+    {"id": "oofos-oomegaoolala", "cat": "sandal", "brand": "우포스", "name": "OOmega OOlala 샌들(블랙)", "code": "1410", "cc_code": {"KR": "1410 Black", "US": "1410BLACK"}, "src": "page", "hint": "oomega",
+     "urls": _oofos("1000000067", "womens-oomega-oolala-sandal-black")},   # 한국 몰에 같은 Article No. 상품이 둘(067·035) — 상품 번호로 고름 · 11/21 미국 할인 중($89.95 → $71.96)
+    {"id": "oofos-oomystridew", "cat": "shoe", "brand": "우포스", "name": "OOmy Stride 운동화(여성 · 블랙)", "code": "5077", "cc_code": {"KR": "5077 Black", "US": "5077BLACK"}, "src": "page", "hint": "oomy stride",
+     "urls": _oofos("1000000027", "womens-oomy-stride-black")},   # 여성은 모델 번호가 다름(남성 5087) · 11/21 미국 할인 중($119.95 → $95.96)
+    # 뺌(11/21): OOcoozie Thermo 뮬 여성(5276 Black · 한국 1000000154 · 정가 읽기 OK 159,000원 · $119.95) — 남성(5286)과 같은 모델·같은 정가라 하나만(브랜드 20개 한도)
+    # 톰브라운(SKU 2차 11/21 · 판정 브랜드 첫 해외 정가): 본사 쇼피파이 몰 하나(www.thombrowne.com) · 나라별 하위 폴더 — 한국 /ko-kr(원화) · 미국 맨 위(달러) · 영국 /en-gb ·
+    # 독일 = /en-eu(EU 공통 유로 가격 — 독일 전용 몰 없음) · 일본 /ja-jp · 두바이 /en-ae · 멕시코 없음 · 같은 상품은 나라별 handle이 같고 handle 끝에 품번 · robots.txt Allow: / (상품 .json 막지 않음)
+    {"id": "tb-cardigan-m", "cat": "wear", "brand": "톰브라운", "name": "메리노 4-바 밀라노 스티치 카디건(남성·네이비)", "code": "MKC160A-00014-415", "src": "page", "hint": "mkc160a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json",
+        "US": "https://www.thombrowne.com/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415.json"}},
+    {"id": "tb-cardigan-w", "cat": "wear", "brand": "톰브라운", "name": "울 4-바 브이넥 카디건(여성·네이비)", "code": "FKC207A-00014-415", "src": "page", "hint": "fkc207a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json",
+        "US": "https://www.thombrowne.com/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415.json"}},
+    {"id": "tb-pullover-w", "cat": "wear", "brand": "톰브라운", "name": "밀라노 스티치 메리노 4-바 풀오버(여성·네이비)", "code": "FKA239A-00014-415", "src": "page", "hint": "fka239a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json",
+        "US": "https://www.thombrowne.com/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415.json"}},
+    {"id": "tb-vcardigan-m", "cat": "wear", "brand": "톰브라운", "name": "메리노 4-바 클래식 브이넥 카디건(남성·네이비)", "code": "MKC002A-Y1014-415", "src": "page", "hint": "mkc002a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json",
+        "US": "https://www.thombrowne.com/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415.json"}},
+    {"id": "tb-pullover-m", "cat": "wear", "brand": "톰브라운", "name": "파인 메리노 4-바 풀오버(남성·네이비)", "code": "MKA002A-Y1014-415", "src": "page", "hint": "mka002a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json",
+        "US": "https://www.thombrowne.com/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415.json"}},
+    {"id": "tb-woolpullover-m", "cat": "wear", "brand": "톰브라운", "name": "울 4-바 풀오버(남성·네이비)", "code": "MKA189A-00014-415", "src": "page", "hint": "mka189a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/wool-4-bar-pullover-mka189a-00014-415.json",
+        "US": "https://www.thombrowne.com/products/wool-4-bar-pullover-mka189a-00014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/wool-4-bar-pullover-mka189a-00014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/wool-4-bar-pullover-mka189a-00014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/wool-4-bar-pullover-mka189a-00014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/wool-4-bar-pullover-mka189a-00014-415.json"}},
+    {"id": "tb-sweatpants-m", "cat": "wear", "brand": "톰브라운", "name": "와플 4-바 스웨트팬츠(남성·그레이)", "code": "MJQ082A-06452-035", "src": "page", "hint": "mjq082a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json",
+        "US": "https://www.thombrowne.com/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/waffle-4-bar-sweatpants-mjq082a-06452-035.json"}},
+    {"id": "tb-oxford-m", "cat": "wear", "brand": "톰브라운", "name": "옥스퍼드 클래식 셔츠(남성·화이트)", "code": "MWL001A-F0313-100", "src": "page", "hint": "mwl001a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/oxford-shirt-mwl001a-f0313-100.json",
+        "US": "https://www.thombrowne.com/products/oxford-shirt-mwl001a-f0313-100.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/oxford-shirt-mwl001a-f0313-100.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/oxford-shirt-mwl001a-f0313-100.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/oxford-shirt-mwl001a-f0313-100.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/oxford-shirt-mwl001a-f0313-100.json"}},
+    {"id": "tb-longwing-m", "cat": "shoe", "brand": "톰브라운", "name": "페블 그레인 롱윙 브로그 러버솔(남성·블랙)", "code": "MFD002H-00198-001", "src": "page", "hint": "mfd002h", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001.json"}},
+    {"id": "tb-penny-m", "cat": "shoe", "brand": "톰브라운", "name": "페블 그레인 페니 로퍼 러버솔(남성·블랙)", "code": "MFD054G-00198-001", "src": "page", "hint": "mfd054g", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001.json"}},
+    {"id": "tb-hector-m", "cat": "bag", "brand": "톰브라운", "name": "헥터 백 페블 그레인(블랙)", "code": "MAG050A-00198-001", "src": "page", "hint": "mag050a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json",
+        "US": "https://www.thombrowne.com/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001.json"}},
+    {"id": "tb-mrthom-m", "cat": "bag", "brand": "톰브라운", "name": "미스터 톰 백 페블 그레인(블랙)", "code": "MAG001L-00198-001", "src": "page", "hint": "mag001l", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json"}},
+    # 버버리(SKU 2차 11/21 · 판정 브랜드 첫 해외 정가): 나라별 공식몰 kr·us·uk.burberry.com · robots.txt가 상품 페이지 허용 · JSON-LD Product sku = 주소 끝 p 뒤 8자리(세 나라 같음) ·
+    # 독일·일본·멕시코·두바이는 이번에 시험 안 함(다음 차례) · 체크 울 캐시미어 스카프(81307581)는 세 나라 모두 JSON-LD 가격 없음이라 뺌
+    {"id": "bbr-kensington-mid", "cat": "wear", "brand": "버버리", "name": "미드 렝스 개버딘 켄싱턴 트렌치코트", "code": "81332441", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+        "US": "https://us.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+        "GB": "https://uk.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441"}},
+    {"id": "bbr-kensington-long", "cat": "wear", "brand": "버버리", "name": "롱 캐시미어 켄싱턴 트렌치코트", "code": "81361201", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+        "US": "https://us.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+        "GB": "https://uk.burberry.com/long-cashmere-kensington-trench-coat-p81361201"}},
+    {"id": "bbr-lakefield-long", "cat": "wear", "brand": "버버리", "name": "롱 개버딘 레이크필드 트렌치코트", "code": "81354831", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+        "US": "https://us.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+        "GB": "https://uk.burberry.com/long-gabardine-lakefield-trench-coat-p81354831"}},
+    {"id": "bbr-checkscarf", "cat": "wear", "brand": "버버리", "name": "체크 캐시미어 스카프", "code": "81250011", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/check-cashmere-scarf-p81250011",
+        "US": "https://us.burberry.com/check-cashmere-scarf-p81250011",
+        "GB": "https://uk.burberry.com/check-cashmere-scarf-p81250011"}},
 ]
 # v1.23 분류 cat(화면 착지 무게·관세 — build_dashboard LAND.cat과 같은 이름) — 새 상품은 반드시 넣음(빠지면 불러오기에서 멈춤 → check-files 실패)
 CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들류(샌들·슬리퍼·클로그 · 킨 유니크 포함) · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
