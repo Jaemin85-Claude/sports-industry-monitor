@@ -181,11 +181,30 @@
   "max": 60,
   "rx": [
    "\"item_id\":\"([0-9A-Za-z._-]{8,14})\",\"price\":\"([0-9.]+)\",\"originalPrice\":\"([0-9.]+)\"",
-   "\"item_sale_product\":\"(Yes|No)\"",
+   "\"item_id\":\"([0-9A-Za-z._-]{8,14})\"[^{}]{0,1500}?\"item_sale_product\":\"(Yes|No)\"",
    "(?i)href=\"(https://www\\.onitsukatiger\\.com/kr/ko-kr/[^\"]*(?:sale|outlet|special|event|promotion|black)[^\"]*)\"",
    "href=\"(https://www\\.onitsukatiger\\.com/kr/ko-kr/product/[^\"]+)\""
   ],
-  "memo": "onitsuka6 ② 한국 첫 화면(11/21 200 확인) — 할인 상품 찾기: dataLayer 목록 상품의 item_id·price·originalPrice(price < originalPrice = 할인 중)·할인 표시 수 + 세일·기획전 링크 + 상품 링크. 할인 중인 한국 상품이 있으면 다음 차례 tryp로 ot_price 할인 경우(정가 = originalPrice = price_info regular_price · cur_price = 할인가)를 실제 페이지로 확인. 요청 1번."
+  "memo": "onitsuka6 ② 한국 첫 화면(11/21 200 확인) — 할인 상품 찾기: dataLayer 목록 상품의 item_id·price·originalPrice(price < originalPrice = 할인 중) + 상품별 할인 표시(item_id·item_sale_product 쌍 — rxpage는 같은 글을 한 번만 보여 주므로 표시만 뽑으면 Yes/No 두 개뿐이라 품번과 묶음 · Yes 쌍 수 = 할인 표시 상품 수 · 같은 상품 객체 안(중괄호 없이 1,500자 안)만) + 세일·기획전 링크 + 상품 링크. 할인 중인 한국 상품이 있으면 다음 차례 tryp로 ot_price 할인 경우(정가 = originalPrice = price_info regular_price · cur_price = 할인가)를 실제 페이지로 확인. 요청 1번."
+ },
+ {
+  "t": "dump",
+  "urls": [
+   "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001"
+  ],
+  "max_ld": 1,
+  "ld_chars": 500,
+  "pad": 600,
+  "per_rx": 2,
+  "ctx": [
+   "<script[^>]*text/x-magento-init[^>]*>\\s*\\{[^<]{0,300}product\\\\?/view\\\\?/provider",
+   "product\\\\?/view\\\\?/provider",
+   "\"items\"\\s*:\\s*\\{\\s*\"\\d+\"\\s*:\\s*\\{",
+   "(?i)\"url\"\\s*:\\s*\"[^\"]{0,200}1183c102[._]001",
+   "\"price_info\"\\s*:",
+   "\"event\"\\s*:\\s*\"view_item\"|\\bdl4Objects\\s*="
+  ],
+  "memo": "onitsuka6 ②-2 한국 상품 페이지 1개(멕시코 66 1183C102.001 — onitsuka5 덤프 때 상품 번호 96615 · 196,000원 정가 그대로) 덤프: onitsuka5는 price_info 둘레만 보여 그것을 감싼 x-magento-init 상품 화면 provider(Magento_Catalog/js/product/view/provider — 슬래시가 \\/로 이스케이프돼 있을 수 있음)·items 번호·url 칸이 안 보였음 → ot_price ②가 이 상품 price_info를 고르는 두 길(url 칸 품번 · provider에 상품 하나뿐)이 실제 페이지에 있는지 확인. ① tryp how가 'dataLayer·price_info'면 이 덤프는 확인용, 'dataLayer'만이면 이 덤프로 바로 ot_price ②를 고침(다음 차례 덤프가 필요 없게). 요청 1번(약 350KB · 약 9초)."
  },
  {
   "t": "codes",
@@ -230,20 +249,13 @@
     "start": [
      "https://www.onitsukatiger.com/gb/en-gb/sitemap-en-gb.xml"
     ]
-   },
-   "DE": {
-    "host": "www.onitsukatiger.com",
-    "path": "/de/de-de/",
-    "start": [
-     "https://www.onitsukatiger.com/de/de-de/sitemap-de-de.xml"
-    ]
    }
   },
   "max_maps": 2,
   "per_host": 60,
   "base": "KR",
   "show": 150,
-  "memo": "onitsuka6 ④ 모델 품번(앞 8자리 — 1183c102 · 색상 번호 빼고) 겹침: 한국·영국·독일 사이트맵을 다시 읽어(요청 3번) 모델별 한 주소씩 → ROW = 한국 모델 150개(겹치는 나라 수 많은 순 · kr = 한국 주소 하나 — 이름(slug)으로 모델을 앎 · miss = 없는 나라). n=2(영국·독일 모두)인 인기 모델(멕시코 66 계열·타이치·토쿠텐·세라노·델리게이션·얼티밋 81·캘리포니아 78·모아지 등) 중 ⑥ try에 없던 모델은 ⑦ grep의 색상 목록에서 같은 색상 품번을 골라 다음 차례에. INTERSECT all = 세 나라 모두 있는 모델 수."
+  "memo": "onitsuka6 ④ 모델 품번(앞 8자리 — 1183c102 · 색상 번호 빼고) 겹침: 한국·영국 사이트맵을 읽어(요청 2번 — 영국은 ③에 이어 두 번째 · 독일은 영국과 품번 수가 같아(1,034) ③에서 한 번만 읽고 여기선 뺌 · 독일 있음은 ⑥ try와 다음 차례 codes가 확인) 모델별 한 주소씩 → ROW = 한국 모델 150개(영국에 있는 것 먼저 · kr = 한국 주소 하나 — 이름(slug)으로 모델을 앎 · miss = 없는 나라). n=1(영국에 있음)인 인기 모델(멕시코 66 계열·타이치·토쿠텐·세라노·델리게이션·얼티밋 81·캘리포니아 78·모아지 등) 중 ⑥ try에 없던 모델은 ⑦ grep의 색상 목록에서 같은 색상 품번을 골라 다음 차례에. INTERSECT all = 한국·영국 모두 있는 모델 수."
  },
  {
   "t": "dump",
@@ -260,6 +272,8 @@
    "\"item_id\"\\s*:",
    "data-price-type=\"(?:oldPrice|finalPrice)\"",
    "id=\"product_addtocart_form\"",
+   "id=\"product_addtocart_form\"(?:(?!</form>)[\\s\\S]){0,6000}?<input[^>]*\\bname=\"product\"[^>]*>",
+   "<input[^>]*\\bname=\"product\"[^>]*>",
    "\"price_info\"\\s*:",
    "\"(?:oldPrice|finalPrice|basePrice|originalPrice|regular_price|final_price|special_price)\"\\s*:",
    "property=\"product:price:(?:amount|currency)\"",
@@ -267,7 +281,7 @@
    "class=\"[^\"]*(?:old-price|special-price|normal-price|price-final_price)[^\"]*\"",
    "(?i)1182a67[67][._-]00[12]"
   ],
-  "memo": "onitsuka6 ⑤ 영국 상품 페이지 2개(11/21 onitsuka5 영국 사이트맵 ROW 주소 — 1182A677.001은 한국·독일에도 같은 품번) 구조: 상태·막힘 표식·JSON-LD 원문·dataLayer(dl4Objects·view_item·item_id)·마젠토 가격 칸(data-price-type oldPrice/finalPrice · id product-price-{번호}/old-price-{번호})·장바구니 폼(product_addtocart_form · name=product 번호)·price_info·jsonConfig oldPrice/finalPrice·og 가격·품번 둘레. 유럽 몰은 한국과 다른 마젠토(static.ot-eur-prod.com · Asics/onitsuka 테마 — onitsuka5 ⑱)라 ot_price ①(dataLayer)·②(price_info)가 없을 수 있음 → ③(가격 칸: 폼 상품 번호와 같은 번호의 oldPrice·finalPrice, 주소 품번 확인)으로 읽게 짜 둠(짐작 모양) — 이 덤프로 실제 모양이 맞는지 확인하고, 다르면 다음 차례에 ot_price를 고침. ⑥ try 결과가 OK여도 덤프 원문과 값이 맞는지(정가 = 할인 전 값) 꼭 대조. 요청 2번."
+  "memo": "onitsuka6 ⑤ 영국 상품 페이지 2개(11/21 onitsuka5 영국 사이트맵 ROW 주소 — 1182A677.001은 한국·독일에도 같은 품번) 구조: 상태·막힘 표식·JSON-LD 원문·dataLayer(dl4Objects·view_item·item_id)·마젠토 가격 칸(data-price-type oldPrice/finalPrice · id product-price-{번호}/old-price-{번호})·장바구니 폼(product_addtocart_form · name=product 번호)·price_info·jsonConfig oldPrice/finalPrice·og 가격·품번 둘레. 유럽 몰은 한국과 다른 마젠토(static.ot-eur-prod.com · Asics/onitsuka 테마 — onitsuka5 ⑱)라 ot_price ①(dataLayer)·②(price_info)가 없을 수 있음 → ③(가격 칸: 폼 상품 번호와 같은 번호의 oldPrice·finalPrice, 주소 품번 확인)으로 읽게 짜 둠(짐작 모양) — 이 덤프로 실제 모양이 맞는지 확인하고, 다르면 다음 차례에 ot_price를 고침. ⑥ try 결과가 OK여도 덤프 원문과 값이 맞는지(정가 = 할인 전 값) 꼭 대조. 장바구니 폼 확인: 'product_addtocart_form …(?!</form>)… name=product' 줄이 n≥1이면 상품 번호 칸이 폼 안 6000자 안(ot_price ③이 읽는 창 — </form>에서 멈춤)에 있음 · n=0인데 name=product 줄은 있으면 폼 밖(다른 폼·추천 칸)이라 ③은 안 읽음 → 유럽 값은 '가격 데이터 없음'이 정상이고 OK가 나오면 안 됨 · 그 번호가 가격 칸 id(product-price-{번호}·old-price-{번호})와 같은지도 봄. 요청 2번."
  },
  {
   "t": "try",
@@ -349,7 +363,7 @@
     "hint": "muklick boots"
    }
   ],
-  "memo": "onitsuka6 ⑥ 영국(파운드 · 부가세 포함)·독일(유로 · 부가세 포함) — ①의 한국 14개와 같은 품번(유럽 주소 표기 소문자-대시)을 ③ 사이트맵 주소 그대로(짐작 없음)로 price_fetch.fetch_one → ot_price. 사이트맵에 없으면 TRY missing(요청 안 함). OK = 그 나라 정가 → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(품번 표기는 ot_price가 맞춰 봄 — cc_code 필요 없음). FAIL '정가 칸 없음'·'가격 데이터 없음'·'통화 확인 안 됨' = 유럽 페이지 모양이 짐작과 다름 → ⑤ 덤프로 ot_price 고침(다음 차례) · '다른 상품 페이지' = 넘겨짐. 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 28번(있는 것만)."
+  "memo": "onitsuka6 ⑥ 영국(파운드 · 부가세 포함)·독일(유로 · 부가세 포함) — ①의 한국 14개와 같은 품번(유럽 주소 표기 소문자-대시)을 ③ 사이트맵 주소 그대로(짐작 없음)로 price_fetch.fetch_one → ot_price. 사이트맵에 없으면 TRY missing(요청 안 함). OK = 그 나라 정가 → 같은 id 정의 urls에 그 나라 주소(TRY 줄 urls)를 더함(품번 표기는 ot_price가 맞춰 봄 — cc_code 필요 없음). FAIL '정가 칸 없음'·'가격 데이터 없음'·'통화 확인 안 됨' = 유럽 페이지 모양이 짐작과 다름 → ⑤ 덤프로 ot_price 고침(다음 차례) · '다른 상품 페이지' = 넘겨짐. 유럽 OK 값(how '가격 칸')은 ⑤ 덤프에서 장바구니 폼 안 상품 번호(name=product)·같은 번호의 oldPrice·finalPrice 칸 원문을 보고 정가 = 할인 전 값임을 확인한 뒤에만 PRODUCTS에 넣음(덤프 2페이지와 템플릿이 같다고 보고 — 폼 줄 n=0이면 유럽 값은 넣지 않음). 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · 낮은 쪽도 봄: 가운데값 ÷ 1.25 밑인 상품은 뺄 후보로 따로 적음 — 한국 값이 할인가로 잘못 들어가면 그 상품 비율이 모든 나라에서 함께 내려가므로, 영국·독일 둘 다 낮으면 한국 값을 의심(① 그 상품 how·cur_price를 보고 한국 값부터 보류), 한 나라만 낮으면 그 나라 정가가 부풀었는지(옛 값·다른 사양) 확인 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 28번(있는 것만)."
  },
  {
   "t": "grep",
@@ -363,15 +377,9 @@
     "start": [
      "https://www.onitsukatiger.com/kr/sitemap_web_kr_ko.xml"
     ]
-   },
-   "GB": {
-    "host": "www.onitsukatiger.com",
-    "start": [
-     "https://www.onitsukatiger.com/gb/en-gb/sitemap-en-gb.xml"
-    ]
    }
   },
-  "memo": "onitsuka6 ⑦ 인기 모델 색상 목록: 한국·영국 사이트맵(각 요청 1번)에서 주소 이름이 멕시코 66 계열·타이치·토쿠텐·모아지·세라노·델리게이션·얼티밋 81·캘리포니아 78·어드반티·GSM·타이거 앨리·스클로·덴티그레인 상품 주소를 모두(200개까지) — 다음 차례에 두 나라에 같은 품번(색상까지)이 있는 성인 모델을 골라 8~12개로 채움(아동 GS·PS·TS 이름은 뺌). 독일은 영국과 품번 수가 같아(1,034) 따로 안 읽음."
+  "memo": "onitsuka6 ⑦ 인기 모델 색상 목록: 한국 사이트맵(요청 1번 — 영국은 ③·④에서 이미 두 번 읽어 여기선 뺌)에서 주소 이름이 멕시코 66 계열·타이치·토쿠텐·모아지·세라노·델리게이션·얼티밋 81·캘리포니아 78·어드반티·GSM·타이거 앨리·스클로·덴티그레인 상품 주소를 모두(200개까지) — 다음 차례에 ④에서 영국에도 있는 모델(n=1)의 한국 색상 중 성인 모델을 골라 8~12개로 채움(아동 GS·PS·TS 이름은 뺌) · 영국·독일에 같은 색상 품번이 있는지는 다음 차례 codes(영국·독일)·try가 봄(사이트맵에 없으면 TRY missing · 요청 없음)."
  },
  {
   "t": "codes",
@@ -701,7 +709,7 @@
     "hint": "muklick boots"
    }
   ],
-  "memo": "onitsuka6 ⑩ 일본(엔 · 부가세 포함) — ⑧ 사이트맵에 일본 상품 주소가 있으면 같은 14개 품번을 네 표기(소문자.점·소문자-대시·대문자.점·대문자-대시 — 일본 표기를 몰라서)로 찾아 있는 것만 ot_price로 받음(없으면 TRY missing · 요청 없음). 일본 몰이 한국·유럽과 다른 플랫폼이면 FAIL '가격 데이터 없음' → 다음 차례 덤프. 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 14번."
+  "memo": "onitsuka6 ⑩ 일본(엔 · 부가세 포함) — ⑧ 사이트맵에 일본 상품 주소가 있으면 같은 14개 품번을 네 표기(소문자.점·소문자-대시·대문자.점·대문자-대시 — 일본 표기를 몰라서)로 찾아 있는 것만 ot_price로 받음(없으면 TRY missing · 요청 없음). 일본 몰이 한국·유럽과 다른 플랫폼이면 FAIL '가격 데이터 없음' → 다음 차례 덤프. 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · 낮은 쪽도 봄: 가운데값 ÷ 1.25 밑인 상품은 뺄 후보로 따로 적음 — 한국 값이 할인가로 잘못 들어가면 그 상품 비율이 모든 나라에서 함께 내려가므로, 영국·독일 둘 다 낮으면 한국 값을 의심(① 그 상품 how·cur_price를 보고 한국 값부터 보류), 한 나라만 낮으면 그 나라 정가가 부풀었는지(옛 값·다른 사양) 확인 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 14번."
  },
  {
   "t": "rxpage",
@@ -1036,6 +1044,6 @@
     "hint": "muklick boots"
    }
   ],
-  "memo": "onitsuka6 ⑬ 미국(달러 · 판매세 별도) — ⑫에서 미국 상품 주소를 찾았을 때만 같은 14개 품번(네 표기)을 ot_price로(없으면 요청 없음). 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 14번. 멕시코·두바이: 사이트맵 색인 41개(onitsuka5 ③)에 mx·ae 없음 — 같은 도메인 공식 온라인몰 없음으로 봄(찾지 않음). 【이 계획 결과 판정】 (가) ① 한국 OK(how에 dataLayer·price_info) + ⑥ 영국·독일 OK → 다음 차례 PRODUCTS(같은 id에 나라 주소 · 블프 기준 통과 값만)·build_dashboard PM_NOPRICE block에서 오니츠카타이거 뺌 / (나) 한국 OK + 유럽 FAIL(가격 데이터 없음 등) → ⑤ 덤프로 ot_price 유럽 모양 고침 → 다음 probe / (다) 한국 FAIL → 오류 글·덤프로 ot_price 고침(할인가를 정가로 쓰지 않게 멈춘 것인지 먼저) / (라) 일본·미국은 ⑧~⑬ 결과로 다음 차례 길."
+  "memo": "onitsuka6 ⑬ 미국(달러 · 판매세 별도) — ⑫에서 미국 상품 주소를 찾았을 때만 같은 14개 품번(네 표기)을 ot_price로(없으면 요청 없음). 블프 기준(11/21 블프 기간 — 해외 몰 다수가 할인 중): ot_price는 dataLayer originalPrice·마젠토 price_info regular_price·가격 칸 oldPrice(할인 전 정가)를 읽고 할인가는 extra cur_price로만 냄 — 그래도 OK 값마다 '한국 정가 ÷ (현지 정가 × 11/20 환율)'을 견줌: 이 실행에서 OK가 3개 이상인 나라는 그 나라 오니츠카 값들의 가운데값 × 1.25를 넘는 상품은 그 나라에서 뺌 · 3개 미만이면 스포츠 브랜드 참고 가운데값(onitsuka5 메모 — 영국 0.786 → 0.982 · 독일 0.849 → 1.061 · 미국 0.933 → 1.166) 넘으면 뺌 · 일본은 본국이라 정상 정가도 비율 1.2~1.4일 수 있어 같은 실행 오니츠카 일본 가운데값으로만 판단 · 낮은 쪽도 봄: 가운데값 ÷ 1.25 밑인 상품은 뺄 후보로 따로 적음 — 한국 값이 할인가로 잘못 들어가면 그 상품 비율이 모든 나라에서 함께 내려가므로, 영국·독일 둘 다 낮으면 한국 값을 의심(① 그 상품 how·cur_price를 보고 한국 값부터 보류), 한 나라만 낮으면 그 나라 정가가 부풀었는지(옛 값·다른 사양) 확인 · OK extra how(정가를 읽은 곳)가 둘 이상이거나 '가격 칸'(마젠토 oldPrice)인지 확인 · extra cur_price < full이면 할인 중(정가는 할인 전 값). 요청 최대 14번. 멕시코·두바이: 사이트맵 색인 41개(onitsuka5 ③)에 mx·ae 없음 — 같은 도메인 공식 온라인몰 없음으로 봄(찾지 않음). 【이 계획 결과 판정】 (가) ① 한국 OK(how에 dataLayer·price_info) + ⑥ 영국·독일 OK → 다음 차례 PRODUCTS(같은 id에 나라 주소 · 블프 기준 통과 값만)·build_dashboard PM_NOPRICE block에서 오니츠카타이거 뺌 / (나) 한국 OK + 유럽 FAIL(가격 데이터 없음 등) → ⑤ 덤프로 ot_price 유럽 모양 고침 → 다음 probe / (다) 한국 FAIL → 오류 글·덤프로 ot_price 고침(할인가를 정가로 쓰지 않게 멈춘 것인지 먼저) / (라) 일본·미국은 ⑧~⑬ 결과로 다음 차례 길 — 단 넣기 전에 묶음 시간부터: 모든 나라가 한 호스트(www.onitsukatiger.com)라 한 묶음에서 차례로(페이지 1개 약 9초 · onitsuka5 t=8.0~10.3초) → 한국·영국·독일 42개 ≈ 380초(지금 가장 긴 묶음 킨+우포스 438초 안), 일본·미국까지 약 70개 ≈ 630초는 CLAUDE.md 85% 규칙(13분의 85% ≈ 663초)에 바짝 붙음 → 이 실행 OK 줄의 t(초)로 다시 잰 '값 수 × 평균 초'가 438초를 넘으면 일본·미국을 넣기 전에 수집 방식 변경(이 호스트만 요일별로 나눠 받기 등)을 대표에게 먼저 제안."
  }
 ]

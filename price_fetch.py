@@ -220,9 +220,12 @@ CAFE24_ID_LIST = {"kor.mizuno.com"}   # v1.27 카페24 기본 상품 정보 칸(
 BIGC_LIST = {"usa.mizuno.com"}   # v1.27 빅커머스 몰 — 할인 중이면 JSON-LD에 판매가만 → 이 상품 가격 칸의 할인 전 가격(data-product-non-sale-price-without-tax)을 정가로
                                  # (11/21 미즈노 미국: 라이더 29 $99 · 할인 전 $150 · 리벨리온 프로 3 $160 · 할인 전 $250 — 할인 없으면 그 칸이 비어 있음)
 SFRA_LIST = {"www.nike.ae": "NK", "www.underarmour.ae": "UA"}   # v1.17 두바이 SFCC(SFRA) 몰 → 이 상품 품번 표시(data-variation-group-id) 앞 글자 — sfra_list로 정가 확인
+CROCS = {"www.crocs.co.kr", "www.crocs.com", "www.crocs.co.uk", "www.crocs.co.jp", "www.crocs.de"}   # v1.27 크록스 공식몰(한국·미국·영국·일본·독일 — 같은 Next.js 몰 · Vercel)
+                                    # → JSON-LD 가격은 지금 판매가 하나뿐(11/21 블프 확인)이라 화면 데이터의 이 상품 변형 정가(retailPrice)로 읽음(crocs_list)
 SHOP_MODEL = {"on.ae": 7}   # v1.17 할인 표시 없이 일부 색상 값만 내리는 쇼피파이 몰 → 같은 모델로 볼 품번 앞 글자 수(온러닝 3MG1005… = 모델·성별)
                             # 상품 .json은 변형 250개까지만 — 11/03 cloud-6·cloudsurfer-2가 250개에서 잘림(cloudmonster-3 243개) → 같은 모델 비교는 응답에 온 색상끼리만
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
+OT_LIST = {"www.onitsukatiger.com"}   # v1.27 오니츠카타이거 몰(마젠토 · 나라는 경로 /kr/ko-kr·/gb/en-gb…) — JSON-LD가 없어 ot_price(화면 데이터 dataLayer·price_info·가격 칸)로만 읽음(page_price로 넘기지 않음)
 
 
 def note_sale(o, now, td, seen_off=False):
@@ -1816,6 +1819,115 @@ def sfra_list(html, code, pre, sale):
     return sale
 
 
+_JQ = r'\\*"'   # v1.27 화면 데이터 따옴표 — 그대로(")·한 번 감쌈(\" — Next.js 화면 데이터는 글 안 JSON)·두 번 감쌈 모두
+
+
+def _jobj(h, i, head=False, lim=4000):
+    """v1.27 h[i]를 감싼 가장 안쪽 { } 의 바깥 칸 글(안쪽 { }·[ ] 값은 뺌) — head면 i 뒤 첫 안쪽 묶음 앞까지만(큰 변형 목록을 건너뜀) · 못 찾으면 ''.
+    따옴표 안 괄호는 셈하지 않음(크록스 변형 묶음에는 없음 — 괄호가 섞여 묶음을 못 찾으면 그 변형은 빠지고, 다 빠지면 실패)"""
+    d, a = 0, i
+    while a > 0 and i - a < lim:
+        a -= 1
+        c = h[a]
+        if c in "}]":
+            d += 1
+        elif c in "{[":
+            if d:
+                d -= 1
+                continue
+            if c == "[":
+                return ""   # 배열 바로 안 — 묶음이 아님
+            out, d, b = [], 0, a + 1
+            while b < len(h) and b - a < lim:
+                c = h[b]
+                if c in "{[":
+                    if head and b > i:
+                        return "".join(out)
+                    d += 1
+                elif c in "}]":
+                    if not d:
+                        return "".join(out)
+                    d -= 1
+                elif not d:
+                    out.append(c)
+                b += 1
+            return ""
+    return ""
+
+
+def _jval(seg, k):
+    """v1.27 묶음 바깥 칸 글에서 키 k의 값(글·숫자·null·true·false) — 없으면 None"""
+    m = re.search(rf'{_JQ}{k}{_JQ}\s*:\s*(?:{_JQ}([^"\\]*){_JQ}|(-?[0-9][0-9.]*|null|true|false))', seg)
+    return None if not m else m.group(1) if m.group(1) is not None else m.group(2)
+
+
+def crocs_list(html, code, cur):
+    """v1.27 크록스 공식몰(CROCS — 한국·미국·영국·일본·독일 같은 Next.js 몰) 정가. JSON-LD Offer 가격은 지금 판매가 하나뿐
+    (11/21 블프: 미국 클래식 클로그 JSON-LD $30 · 정가 $49.99 · 일본 ￥3,850 · 정가 ￥7,700)이라 화면 데이터의 이 상품 변형 묶음
+    {"price":지금 값,"retailPrice":정가,"productId":"품번-색상-사이즈",…}(글 안 JSON이라 따옴표가 \\" — 그대로 쓴 JSON도)을 읽음.
+    ① 이 상품만: productId가 '품번-'으로 시작하는 변형(추천 상품 칸은 다른 품번) · JSON-LD 상품이 있으면 sku가 이 품번이어야(다른 상품 페이지로 넘어감 방지)
+    ② 정가 = 그 변형 retailPrice 중 가장 높은 값(상품 묶음 masterProductId = 품번의 retailPrice도) · 지금 가장 싼 값 = 변형 price·상품 묶음 price·JSON-LD 판매가 중 가장 낮은 값
+    ③ 통화: JSON-LD 판매가나 상품 묶음 currency가 이 나라 통화여야(다른 통화가 보이면 실패) · 판매: JSON-LD 판매가가 있거나 주문 가능한(orderable) 변형이 있어야
+    ④ 실패(할인가를 정가로 쓰지 않음): 변형 없음 · 변형 정가(retailPrice) 없음 · 정가보다 높은 판매가 · 정가가 지금 값의 5배 넘음"""
+    nodes = [n for n in _ld_nodes(html, REL) if _types(n) & {"product", "productgroup"}]
+    ld, ld_bad = [], set()
+    if nodes:
+        mine = [n for n in nodes if code.lower() in {str(n.get(k) or "").strip().lower() for k in ("sku", "productID", "productGroupID", "mpn")}]
+        if not mine:
+            skus = sorted({str(n.get("sku") or n.get("productID") or "?") for n in nodes})
+            raise RuntimeError(f"JSON-LD 품번이 다름({', '.join(skus)[:40]}) — 다른 상품 페이지로 바뀜(대응표 확인)")
+        st = [n.get("offers") for n in mine]
+        while st:
+            x = st.pop()
+            if isinstance(x, list):
+                st.extend(x)
+            elif isinstance(x, dict):
+                v, c = num(x.get("price") or x.get("lowPrice")), str(x.get("priceCurrency") or "")
+                if v and c == cur:
+                    ld.append(v)
+                elif v and c:
+                    ld_bad.add(c)
+                if x.get("offers"):
+                    st.append(x.get("offers"))
+    pcur, plist, pnow = set(), [], []
+    for m in re.finditer(rf'{_JQ}masterProductId{_JQ}\s*:\s*{_JQ}{re.escape(code)}{_JQ}', html):   # 이 상품 묶음(변형 목록 앞 칸 — 통화·정가·지금 값)
+        seg = _jobj(html, m.start(), head=True)
+        if seg:
+            c = _jval(seg, "currency")
+            if c:
+                pcur.add(c)
+            plist.append(num(_jval(seg, "retailPrice"))); pnow.append(num(_jval(seg, "price")))
+    rows = {}
+    for m in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}({re.escape(code)}-[^"\\]+){_JQ}', html):   # 이 상품 변형(품번-색상-사이즈)
+        seg = _jobj(html, m.start())
+        if seg:
+            rows.setdefault(m.group(1).upper(), set()).add((num(_jval(seg, "price")), num(_jval(seg, "retailPrice")), _jval(seg, "orderable") == "true"))
+    vs = [x for s in rows.values() for x in s]
+    if not vs:
+        raise RuntimeError(f"화면 데이터에 이 상품 변형(productId {code}-…) 없음 — 이 나라 몰에 없거나 페이지 모양이 바뀜")
+    lps = [r for _, r, _ in vs if r]
+    if not lps:
+        raise RuntimeError("변형 정가(retailPrice) 없음 — 정가 확인 안 됨(할인가를 정가로 쓰지 않음)")
+    bad = sorted({c for c in pcur if c != cur} | ld_bad)
+    if bad:
+        raise RuntimeError(f"{cur} 가격 없음(통화 {', '.join(bad)})")
+    if not ld and cur not in pcur:
+        raise RuntimeError(f"{cur} 가격 없음(통화 확인 안 됨 — JSON-LD 판매가·상품 묶음 currency 없음)")
+    if not ld and not any(o for _, _, o in vs):
+        raise RuntimeError(f"{cur} 판매 가격 없음 — 품절·이 나라 몰에서 팔지 않음")
+    full = max(lps + [x for x in plist if x])
+    hi = [(p, r) for p, r, _ in vs if p and r and p > r * 1.005]
+    if hi:
+        raise RuntimeError(f"판매가가 정가보다 높은 변형({hi[0][0]:g} > {hi[0][1]:g}) — 값이 이상함")
+    nows = [p for p, _, _ in vs if p] + [x for x in pnow if x] + ld
+    if nows and max(nows) > full * 1.005:
+        raise RuntimeError(f"판매가 {max(nows):g}가 정가 {full:g}보다 높음 — 값이 이상함")
+    low = min(nows) if nows else full
+    if full > low * 5:
+        raise RuntimeError(f"정가 {full:g}가 지금 값 {low:g}의 5배 넘음 — 값이 이상함")
+    return full, {"cur_price": low if low < full * 0.995 else full, "by": "품번"}
+
+
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
@@ -1863,6 +1975,147 @@ def godo_price(html, cur, code):
     return max(fp or 0, sp or 0), {"cur_price": sp or fp}
 
 
+OT_CODE = re.compile(r"(?i)(?<![0-9a-z])([0-9]{4}[a-z][0-9]{3})[._-]([0-9]{3})(?![0-9])")   # v1.27 오니츠카 품번(1183C102.001 · 유럽 주소 1183c102-001) — 대소문자·구분자 무시하고 견줌
+
+
+def _otc(s):
+    """v1.27 글 속 오니츠카 품번들 → {'1183C102.001', …}(대문자·점으로 맞춤)"""
+    return {f"{a.upper()}.{b}" for a, b in OT_CODE.findall(str(s or ""))}
+
+
+def _ot_dicts(x):
+    """v1.27 JSON 안의 dict 모두"""
+    st = [x]
+    while st:
+        y = st.pop()
+        if isinstance(y, dict):
+            yield y
+            st.extend(y.values())
+        elif isinstance(y, list):
+            st.extend(y)
+
+
+def _ot_one(vals, what):
+    """v1.27 같은 뜻의 값들 → 하나(0.5% 넘게 다르면 실패 — 어느 값이 이 상품 것인지 모름)"""
+    vs = sorted({v for v in vals if v})
+    if vs and vs[-1] > vs[0] * 1.005:
+        raise RuntimeError(f"{what} 값이 여러 가지({', '.join(f'{v:g}' for v in vs)})")
+    return vs[-1] if vs else None
+
+
+def ot_price(html, cur, code, url=""):
+    """v1.27 오니츠카타이거 몰(마젠토 — 한국 /kr/ko-kr/product/{이름}/{품번} · 유럽 /gb/en-gb/{이름}/p/{품번}.html) 정가.
+    JSON-LD가 없고 한국은 가격 칸을 화면 스크립트(knockout)가 그림 → 페이지에 든 화면 데이터에서 이 상품 것만:
+    ① dataLayer(dl4Objects · dataLayer.push)의 view_item 상품 중 item_id가 이 품번인 것 — originalPrice = 정가 · price = 지금 가격
+       (추천 상품 목록 view_item_list 등은 안 봄 · 할인 상품 표시 item_sale_product)
+    ② 마젠토 상품 데이터(x-magento-init)의 price_info — 그 상품 주소(url)에 이 품번이 있는 것(주소가 없으면 상품 화면 provider에 상품이 하나뿐일 때만)
+       · regular_price(사이즈별 정가 max·minimal이 같아야) = 정가 · final_price = 지금 가격
+    ③ 마젠토 가격 칸(data-price-type oldPrice·finalPrice) — 장바구니 폼 안(</form> 전) 상품 번호(name="product")와 같은 번호의 칸만(추천 상품 칸 빼고) · 주소에 이 품번이 있을 때만
+    있는 곳끼리 정가·지금 가격이 같아야(0.5% 안) · 정가가 ①에만 있으면 할인 상품 표시와 맞아야(Yes = 할인 중 · No = 정가 그대로) ·
+    할인 상품 표시인데 정가 = 지금 가격이면 실패 · og 가격(product:price:amount)이 있으면 정가·지금 가격 중 하나와 같아야 · 통화가 확인돼야 —
+    확인이 안 되면 실패(할인가를 정가로 쓰지 않음 · page_price로 넘기지 않음)"""
+    want = _otc(code)
+    if len(want) != 1:
+        raise RuntimeError(f"오니츠카 품번 꼴이 아님({code})")
+    at = _otc(urllib.parse.unquote(urllib.parse.urlsplit(url or "").path))
+    if at and at != want:
+        raise RuntimeError(f"다른 상품 페이지({'/'.join(sorted(at))})로 넘어감 — 이 상품({code})이 몰에서 빠졌을 수 있음")
+    curs = set()
+    # ① dataLayer view_item — 이 품번 상품만
+    dl = []
+    for m in re.finditer(r'(?:\bdl4Objects\s*=\s*|\bdataLayer\.push\(\s*)(?=[\[{])', html):
+        try:
+            d = json.JSONDecoder().raw_decode(html, m.end())[0]
+        except ValueError:
+            continue
+        for top in (d if isinstance(d, list) else [d]):
+            if not isinstance(top, dict) or top.get("event") != "view_item":
+                continue   # 추천 상품 목록(view_item_list)·장바구니 등은 이 상품 값이 아님
+            ec = top.get("ecommerce") if isinstance(top.get("ecommerce"), dict) else {}
+            if ec.get("currency"):
+                curs.add(str(ec["currency"]))
+            for it in ec.get("items") or []:
+                if isinstance(it, dict) and _otc(it.get("item_id")) == want:
+                    dl.append(it)
+    curs |= {str(it["currency"]) for it in dl if it.get("currency")}
+    now_a = _ot_one([num(it.get("price")) for it in dl], "dataLayer 지금 가격")
+    list_a = _ot_one([num(it.get("originalPrice")) for it in dl], "dataLayer 정가")
+    flags = {str(it.get("item_sale_product") or "").strip().lower() for it in dl} - {""}
+    if len(flags) > 1:
+        raise RuntimeError(f"할인 상품 표시가 여러 가지({', '.join(sorted(flags))})")
+    # ② x-magento-init price_info — 이 상품 것만(주소 품번 · 상품 화면 provider의 단 하나)
+    pi_l, pi_n, pi_url = [], [], False
+    for m in re.finditer(r'<script[^>]*text/x-magento-init[^>]*>(.*?)</script>', html, re.S | re.I):
+        if '"price_info"' not in m.group(1):
+            continue
+        try:
+            d = json.loads(m.group(1))
+        except ValueError:
+            continue
+        sole = set()
+        for x in _ot_dicts(d):
+            for k, v in x.items():
+                if "product/view/provider" in str(k) and isinstance(v, dict) and isinstance(v.get("data"), dict):
+                    its = v["data"].get("items")
+                    if isinstance(its, dict) and len(its) == 1:
+                        sole.update(id(y) for y in its.values())
+        for x in _ot_dicts(d):
+            pi = x.get("price_info")
+            if not isinstance(pi, dict) or "final_price" not in pi:
+                continue
+            uc = _otc(urllib.parse.unquote(str(x.get("url") or "")))
+            if not (uc == want or (not uc and id(x) in sole)):
+                continue   # 다른 상품(추천·최근 본 상품)
+            pi_url = pi_url or uc == want
+            if x.get("currency_code"):
+                curs.add(str(x["currency_code"]))
+            pi_l.append(_ot_one([num(pi.get(k)) for k in ("regular_price", "max_regular_price", "minimal_regular_price")], "price_info 사이즈별 정가"))
+            pi_n.append(num(pi.get("final_price")) or num(pi.get("minimal_price")))
+    list_b, now_b = _ot_one(pi_l, "price_info 정가"), _ot_one(pi_n, "price_info 지금 가격")
+    # ③ 마젠토 가격 칸 — 장바구니 폼 상품 번호와 같은 칸만(가격 칸에는 품번이 없어 주소 품번으로 확인)
+    list_c = now_c = None
+    fm = re.search(r'id="product_addtocart_form"', html)
+    fb = html[fm.end():fm.end() + 6000].split("</form>")[0] if fm else ""   # 폼 안(</form> 전 · 6000자 안)만 — 폼 밖 다른 상품 번호를 쓰지 않음
+    pm = re.search(r'<input[^>]*\bname="product"[^>]*>', fb) if fm else None
+    vm = re.search(r'\bvalue="(\d+)"', pm.group(0)) if pm else None
+    if vm and at == want:
+        got = {"oldPrice": [], "finalPrice": []}
+        for t in re.finditer(r'<span\b[^>]*\bdata-price-type="(oldPrice|finalPrice)"[^>]*>', html):
+            im = re.search(r'\bid="(?:old-price|product-price)-(\d+)"', t.group(0))
+            am = re.search(r'\bdata-price-amount="([0-9.]+)"', t.group(0))
+            if im and am and im.group(1) == vm.group(1):
+                got[t.group(1)].append(num(am.group(1)))
+        now_c = _ot_one(got["finalPrice"], "가격 칸 지금 가격")
+        list_c = _ot_one(got["oldPrice"], "가격 칸 정가") if now_c else None
+    if not (dl or pi_l or now_c):
+        raise RuntimeError("이 상품 가격 데이터 없음(dataLayer view_item·price_info·가격 칸) — 페이지 모양이 바뀜(덤프로 확인)")
+    if not (dl or pi_url or at == want):
+        raise RuntimeError(f"이 상품 품번({code}) 확인 안 됨 — 주소·dataLayer에 품번 없음")
+    lists = {k: v for k, v in (("dataLayer", list_a), ("price_info", list_b), ("가격 칸", list_c)) if v}
+    nows = {k: v for k, v in (("dataLayer", now_a), ("price_info", now_b), ("가격 칸", now_c)) if v}
+    if not lists:
+        raise RuntimeError(f"정가 칸 없음(지금 가격 {', '.join(f'{v:g}' for v in nows.values())}만) — 할인가를 정가로 쓰지 않음")
+    full = _ot_one(lists.values(), f"정가({'·'.join(lists)})")
+    now = _ot_one(nows.values(), f"지금 가격({'·'.join(nows)})") or full
+    if now > full * 1.005 or full > now * 5:
+        raise RuntimeError(f"정가 {full:g} · 지금 가격 {now:g}이 맞지 않음")
+    sale = now < full * 0.995
+    if "yes" in flags and not sale:
+        raise RuntimeError(f"할인 상품 표시인데 정가 = 지금 가격({full:g}) — 정가 확인 안 됨(할인가를 정가로 쓰지 않음)")
+    if len(lists) < 2 and not set(lists) & {"price_info", "가격 칸"} and flags != {"yes" if sale else "no"}:
+        raise RuntimeError(f"정가가 dataLayer에만 있고 할인 상품 표시({'/'.join(flags) or '없음'})와 맞지 않음 — 확인 안 됨")
+    mc = re.search(r'<meta[^>]*property="product:price:currency"[^>]*content="([A-Za-z]{3})"', html)
+    if mc:
+        curs.add(mc.group(1).upper())
+    if not curs or curs != {cur}:
+        raise RuntimeError(f"{cur} 가격 없음(통화 {', '.join(sorted(curs)) or '확인 안 됨'})")
+    ma = re.search(r'<meta[^>]*property="product:price:amount"[^>]*content="([0-9.,]+)"', html)
+    v = num(ma.group(1)) if ma else None
+    if v and not any(abs(v - x) <= x * 0.005 for x in (full, now)):
+        raise RuntimeError(f"og 가격 {v:g}이 정가 {full:g}·지금 가격 {now:g}과 다름 — 확인 안 됨")
+    return full, {"cur_price": now, "by": "품번", "how": "·".join(lists)}
+
+
 def _feed(prod, cc):
     """v1.17 나이키 상품 정보(product_feed)로 받는 값 — 나이키 상품이라도 urls에 있는 나라(두바이)는 페이지로 읽음(페이지 값처럼 할인 가드·크게 바뀜)"""
     return prod["src"] == "nike" and cc not in (prod.get("urls") or {})
@@ -1906,8 +2159,12 @@ def fetch_one(prod, cc):
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
         return godo_price(r.text, cur, code), url
-    full, extra = page_price(r.text, prod.get("hint") or code, cur, [code] + prod.get("alt", []))   # 나이키 상품은 hint 없음(품번으로만 찾음)
+    if urllib.parse.urlsplit(url).netloc in OT_LIST:   # v1.27 오니츠카타이거 몰 — 이 상품 화면 데이터로만(넘겨진 최종 주소의 품번도 확인)
+        return ot_price(r.text, cur, code, r.url), url
     host = urllib.parse.urlsplit(url).netloc
+    if host in CROCS:   # v1.27 크록스 — JSON-LD 가격은 지금 판매가 하나뿐 → 화면 데이터의 이 상품 변형 정가(crocs_list)
+        return crocs_list(r.text, code, cur), url
+    full, extra = page_price(r.text, prod.get("hint") or code, cur, [code] + prod.get("alt", []))   # 나이키 상품은 hint 없음(품번으로만 찾음)
     if host in SFRA_LIST:   # v1.17 두바이 SFCC 몰 — 이 상품 품번 표시·GTM 상세로 확인한 취소선 정가(할인 중이면 JSON-LD는 판매가뿐)
         if extra.get("cur_price") is None or abs(full - extra["cur_price"]) > 0.01:
             raise RuntimeError(f"JSON-LD 가격이 여러 가지({full:g} · {extra.get('cur_price')})")
