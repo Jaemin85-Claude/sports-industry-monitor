@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.25: (대표 지시 2026-11-21 '해외정가 금일 추가 수집' — 브랜드당 20개 2차) 상품 78개 추가(147 → 225 · 값 621 → 921): 아크테릭스 +9 · 써코니 +9 · 킨 +10 · 우포스 +10 ·
+v1.26: (대표 2026-11-21 '지금 추가 수집 해볼까요?' — 브랜드당 20개 3차 · 블프 영향 적은 곳 위주) 상품 225 → 248 · 값 921 → 1,066: 버버리 4 → 17(트렌치 헤리티지
+    켄싱턴·첼시·워털루·혹스턴 · 캐시미어 스카프 5 · 스몰 체크 토트·시티 체크 클립 메신저 백 · 해링턴·퀼팅 재킷) + 나라를 한국·미국·영국 → 독일(de · 주소 독일어)·일본(jp)·
+    두바이(ae)까지(기존 4개도 · 멕시코 mx.burberry.com은 DNS에 없음) · 톰브라운 12 → 20(여성 롱 카디건·미니스커트·스포츠코트(일본 뺌 — 블프 검사)·로퍼 · 윙팁 부츠 ·
+    리포터 백 · 알럼나이 스니커즈 · 라지 듀엣 토트) · 써코니 18 → 20(엔돌핀 엘리트 3·허리케인 26 여성·프로그리드 트라이엄프 4 넣고 엔돌핀 트레이너(S20996)는 영국·독일 404가
+    두 번이라 뺌) · 엔돌핀 프로 5 여성 영국·독일·트레이너 80 미국을 색상 지정 주소로 더함 · 같은 정의로 GitHub 서버 정가 읽기 확인(11/21) · 블프 검사 통과 값만 · Firecrawl 안 씀
+v1.25:(대표 지시 2026-11-21 '해외정가 금일 추가 수집' — 브랜드당 20개 2차) 상품 78개 추가(147 → 225 · 값 621 → 921): 아크테릭스 +9 · 써코니 +9 · 킨 +10 · 우포스 +10 ·
     헌터 +10 · 푸마 +7 · 닥터마틴 +4 · 나이키 +3(모두 20개 · 써코니 18) + 판정 브랜드 첫 해외 정가 톰브라운 12(본사 쇼피파이 몰 나라별 폴더 6개 나라 · 상품 .json) ·
     버버리 4(kr·us·uk.burberry.com JSON-LD sku = p 번호) — 나라별 몰 사이트맵·공개 기획전·쇼피파이 공개 .json으로 한국과 같은 글로벌 품번 → GitHub 서버에서 정가 읽기 확인(11/21) ·
     블프 검사: 한국 정가 ÷ (현지 정가 × 11/20 환율)이 그 브랜드 기존 상품 나라별 가운데값의 1.25배를 넘는 나라는 뺌(할인가가 정가로 읽힌 것 — 아크테릭스 영국·독일 노반 LD 4 ·
@@ -772,10 +777,7 @@ PRODUCTS = [
         "US": "https://www.saucony.com/en/endorphin-azura/60807M.html?dwvar_60807M_color=S21070-172",
         "GB": "https://www.saucony.com/UK/en_GB/endorphin-azura/60807M.html",
         "DE": "https://www.saucony.com/DE/de_DE/endorphin-azura/60807M.html"}},
-    {"id": "saucony-endtrainer", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 트레이너(남성)", "code": "S20996", "src": "page", "hint": "엔돌핀 트레이너", "code_in_page": True, "urls": {
-        "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-whitenavy/214/",
-        "GB": "https://www.saucony.com/UK/en_GB/endorphin-trainer/59961M.html",
-        "DE": "https://www.saucony.com/DE/de_DE/endorphin-trainer/59961M.html"}},   # 미국 몰 같은 주소 HTTP 404(11/17) · 엑소더스 울트라 4는 한국 몰 가격 없음(품절)이라 뺌
+    # v1.26 뺌: 엔돌핀 트레이너(S20996) — 영국·독일 59961M 주소가 11/21 2·3차 모두 HTTP 404(미국·독일 사이트맵에도 없음 — 해외 몰에서 빠짐) · 한국만 남아 빼고 프로그리드 트라이엄프 4로 빈자리
     # SKU 2차(11/21) — 한국 몰 상품 정보 칸 '모델' 품번 ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/21 GitHub 서버 정가 읽기 확인) · 여성 모델·옷 포함
     {"id": "saucony-azuraw", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 아주라(여성)", "code": "S11070", "src": "page", "hint": "엔돌핀 아주라", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-ivorywhite/307/",
@@ -784,7 +786,9 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/endorphin-azura/60808W.html"}},   # 11/21 영국·독일 할인 중(£140 → £112 · €160 → €128 — 정가는 원래 가격 칸)
     {"id": "saucony-endpro5w", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 프로 5(여성)", "code": "S11064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/298/",
-        "US": "https://www.saucony.com/en/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101"}},   # 색상 없는 주소는 미국·영국·독일 모두 JSON-LD 없는 페이지(11/21) — 미국만 색상 지정 주소로 확인, 영국·독일은 다음 차례에
+        "US": "https://www.saucony.com/en/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101"}},   # 색상 없는 주소는 미국·영국·독일 모두 JSON-LD 없는 페이지(11/21) — 세 나라 모두 색상 지정 주소
     {"id": "saucony-omnist23", "cat": "shoe", "brand": "써코니", "name": "옴니 ST 23(남성)", "code": "S21072", "src": "page", "hint": "옴니 st 23", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%98%B4%EB%8B%88-st-23-triple-black/289/",
         "US": "https://www.saucony.com/en/omni-st-23/60844M.html",
@@ -792,8 +796,9 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/omni-st-23/60844M.html"}},
     {"id": "saucony-trainer80", "cat": "shoe", "brand": "써코니", "name": "트레이너 80(공용)", "code": "S70884", "src": "page", "hint": "트레이너 80", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-80-blackwhite/222/",
+        "US": "https://www.saucony.com/en/trainer-80/59999U.html?dwvar_59999U_color=S70884-2",
         "GB": "https://www.saucony.com/UK/en_GB/trainer-80/59999U.html",
-        "DE": "https://www.saucony.com/DE/de_DE/trainer-80/59999U.html"}},   # 미국 몰 같은 주소는 JSON-LD 없는 페이지(11/21)라 뺌 · 11/21 영국·독일 할인 중(£85 → £68 · €100 → €80)
+        "DE": "https://www.saucony.com/DE/de_DE/trainer-80/59999U.html"}},   # 미국 색상 없는 주소는 JSON-LD 없는 페이지(11/21) · 11/21 영국·독일 할인 중(£85 → £68 · €100 → €80 — 정가는 원래 가격 칸)
     {"id": "saucony-peregrine16", "cat": "shoe", "brand": "써코니", "name": "페레그린 16 와이드(남성)", "code": "S21067", "src": "page", "hint": "페레그린 16", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0-16-%EC%99%80%EC%9D%B4%EB%93%9C-carbonblack/211/",
         "US": "https://www.saucony.com/en/peregrine-16-wide/60849M.html"}},   # 한국 몰은 와이드(S21067) — 보통 폭 주소(60848M)는 미국 JSON-LD 없음·영국·독일 페이지에 S21067 없음(11/21)이라 미국 와이드 몰만
@@ -813,6 +818,26 @@ PRODUCTS = [
         "US": "https://www.saucony.com/en/outpace-5-inch-short/60026M.html",
         "GB": "https://www.saucony.com/UK/en_GB/outpace-5-inch-short/60026M.html",
         "DE": "https://www.saucony.com/DE/de_DE/outpace-5-inch-short/60026M.html"}},
+    # SKU 3차(11/21 · 18 → 20) — 한국 몰 상품 정보 칸 '모델' 품번 ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/21 GitHub 서버 정가 읽기 확인) ·
+    # 블프 검사(한국 정가 ÷ (현지 정가 × 환율)이 써코니 기존 나라별 가운데값 미국 0.929·영국 0.732·독일 0.765의 1.25배 넘으면 뺌) 통과 — 두 상품 모두 할인 표시 없음
+    {"id": "saucony-elite3", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 엘리트 3(공용)", "code": "S100981", "src": "page", "hint": "엔돌핀 엘리트 3", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%97%94%EB%8F%8C%ED%95%80-%EC%97%98%EB%A6%AC%ED%8A%B8-3-whiteblack/478/",
+        "US": "https://www.saucony.com/en/endorphin-elite-3/61243U.html",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-elite-3/61243U.html",
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-elite-3/61243U.html"}},   # 엘리트 2(해외 재고 정리 중이라 뺌)의 새 모델 · 11/21 369,000원 · $290 · £300 · €320
+    {"id": "saucony-hurricane26w", "cat": "shoe", "brand": "써코니", "name": "허리케인 26(여성)", "code": "S101106", "src": "page", "hint": "허리케인 26", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/531/",
+        "US": "https://www.saucony.com/en/hurricane-26/61262W.html",
+        "GB": "https://www.saucony.com/UK/en_GB/hurricane-26/61262W.html",
+        "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61262W.html"}},   # 11/21 209,000원 · $170 · £170 · €190(영국·독일 색상 지정 주소 ?dwvar_61262W_color=S101106-1009도 같은 값)
+    # 뺌(11/21 3차 · 브랜드당 20개 한도): 트라이엄프 24 여성(S100999)·페레그린 16 여성(S11066)·프로그리드 가이드 7(S70936)·프로그리드 트라이엄프 4(S70704) — 정가 읽기·블프 검사 OK(아래 엔돌핀 트레이너를 빼면 한 자리)
+    # 뺌: 엔돌핀 스피드 5 여성(S11007) — 해외 3곳 재고 정리 중(−34~40%) · 라이드 19 여성 — 미국·영국·독일 색상 지정 주소도 JSON-LD 없음 · 킨바라 16 여성 — 영국·독일 색상 지정 주소 JSON-LD 없음(한국·미국만)
+    {"id": "saucony-pgtriumph4", "cat": "shoe", "brand": "써코니", "name": "프로그리드 트라이엄프 4(공용)", "code": "S70704", "src": "page", "hint": "프로그리드 트라이엄프 4", "code_in_page": True, "urls": {
+        "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-4-blacksilver/190/",
+        "US": "https://www.saucony.com/en/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+        "GB": "https://www.saucony.com/UK/en_GB/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+        "DE": "https://www.saucony.com/DE/de_DE/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23"}},   # 색상 없는 주소는 미국·영국·독일 모두 JSON-LD 없는 페이지(11/21 2차)
+    # 확인만(고침 없음): saucony-hurricane26·saucony-endspeed5 한국 — 같은 주소로 11/21 3차 시험에서 다시 받힘(209,000원 · 219,000원) → 그때 연결 끊김은 일시적
     # 뺌(11/21): 엔돌핀 스피드 5 여성(S11007) — 한국 몰 연결 끊김(한 번 · 1단계에선 219,000원 읽힘 · 미국·영국·독일 정가 읽기 OK) → 다음 차례에
     # 뺌: 라이드 19 여성·킨바라 16 여성·프로그리드 가이드 7·프로그리드 트라이엄프 4 — 미국·영국·독일 몰 모두 JSON-LD 없는 페이지(색상 지정 주소로 다음 차례에) · 가이드 19 여성 — 한국 /512/·/510/ 페이지에 품번 S11058 없음
     # 뺌: 엔돌핀 엘리트 2(S30994) — 정가 읽기는 OK(한국 339,000 · $290 · £280 · €300)이나 새 모델 엘리트 3(한국 369,000원 · S100981)이 나와 해외 3곳 모두 약 50% 재고 정리 중 → 엘리트 3로 다음 차례에
@@ -1081,24 +1106,193 @@ PRODUCTS = [
         "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
         "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json",
         "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-mr-thom-bag-mag001l-00198-001.json"}},
+    # 톰브라운 3차(11/21 · 12 → 20): 여성 4(롱 카디건·미니스커트·스포츠코트·로퍼) · 윙팁 부츠 · 리포터 백 · 알럼나이 스니커즈 · 라지 듀엣 토트 — 같은 몰 같은 handle 6개 나라 정가 읽기 확인(11/21) ·
+    # 블프 검사(한국 정가 ÷ (현지 정가 × 환율)이 2차 12개 나라별 가운데값의 1.25배 넘으면 뺌) 통과 — 스포츠코트 일본만 뺌 · 모든 값 할인 표시(compare_at) 없음
+    {"id": "tb-longcardigan-w", "cat": "wear", "brand": "톰브라운", "name": "메리노 밀라노 브이넥 롱 카디건(여성·네이비)", "code": "FKC289A-00014-415", "src": "page", "hint": "fkc289a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json",
+        "US": "https://www.thombrowne.com/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415.json"}},
+    {"id": "tb-skirt-w", "cat": "wear", "brand": "톰브라운", "name": "울 프레스코 플리츠 미니스커트(여성·그레이)", "code": "FGC402V-00473-035", "src": "page", "hint": "fgc402v", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json",
+        "US": "https://www.thombrowne.com/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035.json"}},
+    # 일본 뺌(11/21): 한국 정가 ÷ (일본 정가 326,700엔 × 환율) 1.91 — 톰브라운 2차 일본 가운데값 1.25의 1.25배(1.56) 넘음(일본 값만 다른 나라보다 약 20% 낮음 · 할인 표시는 없음) ·
+    # 다른 나라도 비율이 높은 편(미국 1.57·영국 1.51·독일 1.57·두바이 1.35 — 모두 1.25배 안)이라 한국 정가가 높게 매겨진 상품으로 보고 넣음
+    {"id": "tb-sportcoat-w", "cat": "wear", "brand": "톰브라운", "name": "울 프레스코 스포츠코트(여성·블랙)", "code": "FBC010I-00473-001", "src": "page", "hint": "fbc010i", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/wool-fresco-sportcoat-fbc010i-00473-001.json",
+        "US": "https://www.thombrowne.com/products/wool-fresco-sportcoat-fbc010i-00473-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/wool-fresco-sportcoat-fbc010i-00473-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/wool-fresco-sportcoat-fbc010i-00473-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/wool-fresco-sportcoat-fbc010i-00473-001.json"}},
+    {"id": "tb-loafer-w", "cat": "shoe", "brand": "톰브라운", "name": "스파촐라토 플리츠 바시티 로퍼(여성·블랙)", "code": "FFF173A-L0043-001", "src": "page", "hint": "fff173a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json",
+        "US": "https://www.thombrowne.com/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001.json"}},
+    {"id": "tb-wingboot-m", "cat": "boot", "brand": "톰브라운", "name": "페블 그레인 윙팁 부츠 러버솔(남성·블랙)", "code": "MFR016M-00198-001", "src": "page", "hint": "mfr016m", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001.json"}},
+    {"id": "tb-reporter-m", "cat": "bag", "brand": "톰브라운", "name": "리포터 백 페블 그레인(블랙)", "code": "MAG143B-00198-001", "src": "page", "hint": "mag143b", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-reporter-bag-mag143b-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-reporter-bag-mag143b-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-reporter-bag-mag143b-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-reporter-bag-mag143b-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-reporter-bag-mag143b-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-reporter-bag-mag143b-00198-001.json"}},
+    {"id": "tb-alumni-m", "cat": "shoe", "brand": "톰브라운", "name": "테크 나일론 알럼나이 스니커즈(남성·블랙)", "code": "MFD271B-F0488-001", "src": "page", "hint": "mfd271b", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json",
+        "US": "https://www.thombrowne.com/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001.json"}},
+    {"id": "tb-duettote-m", "cat": "bag", "brand": "톰브라운", "name": "라지 듀엣 토트 페블 그레인(블랙)", "code": "MAG228A-00198-001", "src": "page", "hint": "mag228a", "urls": {
+        "KR": "https://www.thombrowne.com/ko-kr/products/pebble-grain-large-duet-tote-mag228a-00198-001.json",
+        "US": "https://www.thombrowne.com/products/pebble-grain-large-duet-tote-mag228a-00198-001.json",
+        "GB": "https://www.thombrowne.com/en-gb/products/pebble-grain-large-duet-tote-mag228a-00198-001.json",
+        "DE": "https://www.thombrowne.com/en-eu/products/pebble-grain-large-duet-tote-mag228a-00198-001.json",
+        "JP": "https://www.thombrowne.com/ja-jp/products/pebble-grain-large-duet-tote-mag228a-00198-001.json",
+        "AE": "https://www.thombrowne.com/en-ae/products/pebble-grain-large-duet-tote-mag228a-00198-001.json"}},
+    # 뺌(11/21 · 브랜드 20개 한도 — 다음 차례 후보, 6개 나라 모두 정가 읽기 OK · 블프 검사 통과): 북 백 페블 그레인(MAG152A-00198-001 · 3,080,000원 · $1,950)·
+    # 비즈니스 백 페블 그레인(MAG410A-00198-001 · 4,790,000원 · $2,800 — 같은 페블 그레인 가방이 몰리지 않게 가방은 2개만) · 캔버스 헤리티지 스니커즈(MFD201A-01588-100 · 950,000원 · $550)·
+    # 클래식 루프백 4-바 스웨트셔츠(MJT021H-00535-068 · 1,370,000원 · $820)
     # 버버리(SKU 2차 11/21 · 판정 브랜드 첫 해외 정가): 나라별 공식몰 kr·us·uk.burberry.com · robots.txt가 상품 페이지 허용 · JSON-LD Product sku = 주소 끝 p 뒤 8자리(세 나라 같음) ·
-    # 독일·일본·멕시코·두바이는 이번에 시험 안 함(다음 차례) · 체크 울 캐시미어 스카프(81307581)는 세 나라 모두 JSON-LD 가격 없음이라 뺌
+    # 독일·일본·두바이는 v1.26(11/21 3차)에 더함(de·jp·ae.burberry.com — 독일 주소는 독일어 slug) · 멕시코 mx.burberry.com은 DNS에 없음(공식몰 없음) · 체크 울 캐시미어 스카프(81307581)는 세 나라 모두 JSON-LD 가격 없음이라 뺌
     {"id": "bbr-kensington-mid", "cat": "wear", "brand": "버버리", "name": "미드 렝스 개버딘 켄싱턴 트렌치코트", "code": "81332441", "src": "page", "hint": "", "urls": {
         "KR": "https://kr.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
         "US": "https://us.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
-        "GB": "https://uk.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441"}},
+        "GB": "https://uk.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+        "DE": "https://de.burberry.com/mittellanger-trenchcoat-kensington-aus-gabardine-p81332441",
+        "JP": "https://jp.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
+        "AE": "https://ae.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441"}},
     {"id": "bbr-kensington-long", "cat": "wear", "brand": "버버리", "name": "롱 캐시미어 켄싱턴 트렌치코트", "code": "81361201", "src": "page", "hint": "", "urls": {
         "KR": "https://kr.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
         "US": "https://us.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
-        "GB": "https://uk.burberry.com/long-cashmere-kensington-trench-coat-p81361201"}},
+        "GB": "https://uk.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+        "DE": "https://de.burberry.com/langer-kaschmir-trenchcoat-kensington-p81361201",
+        "JP": "https://jp.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
+        "AE": "https://ae.burberry.com/long-cashmere-kensington-trench-coat-p81361201"}},
     {"id": "bbr-lakefield-long", "cat": "wear", "brand": "버버리", "name": "롱 개버딘 레이크필드 트렌치코트", "code": "81354831", "src": "page", "hint": "", "urls": {
         "KR": "https://kr.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
         "US": "https://us.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
-        "GB": "https://uk.burberry.com/long-gabardine-lakefield-trench-coat-p81354831"}},
+        "GB": "https://uk.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+        "DE": "https://de.burberry.com/langer-trenchcoat-lakefield-aus-gabardine-p81354831",
+        "JP": "https://jp.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
+        "AE": "https://ae.burberry.com/long-gabardine-lakefield-trench-coat-p81354831"}},
     {"id": "bbr-checkscarf", "cat": "wear", "brand": "버버리", "name": "체크 캐시미어 스카프", "code": "81250011", "src": "page", "hint": "", "urls": {
         "KR": "https://kr.burberry.com/check-cashmere-scarf-p81250011",
         "US": "https://us.burberry.com/check-cashmere-scarf-p81250011",
-        "GB": "https://uk.burberry.com/check-cashmere-scarf-p81250011"}},
+        "GB": "https://uk.burberry.com/check-cashmere-scarf-p81250011",
+        "DE": "https://de.burberry.com/kaschmirschal-in-check-p81250011",
+        "JP": "https://jp.burberry.com/check-cashmere-scarf-p81250011",
+        "AE": "https://ae.burberry.com/check-cashmere-scarf-p81250011"}},
+    # 버버리 추가(11/21 · 나라·상품 늘리기): 독일 de.burberry.com(주소는 독일어)·일본 jp.burberry.com·두바이 ae.burberry.com 공식몰 — robots.txt 사이트맵에서 한국과 같은 p 번호 →
+    # GitHub 서버에서 정가 읽기 확인(JSON-LD sku · EUR·JPY·AED) · 멕시코 mx.burberry.com은 DNS에 없음(공식몰 없음) · 기존 4개도 독일·일본·두바이 더함(아래 REPLACE) ·
+    # 블프 검사(한국 정가 ÷ (현지 정가 × 11/20 환율)) 모든 값이 나라별 가운데값(미국 0.94·영국 1.08·독일 1.14·일본 1.11·두바이 1.03)의 1.25배 안 · 할인 표시 없음
+    # 헤리티지 트렌치는 길이·핏(켄싱턴·첼시·워털루)마다 하나(나라별 정가가 같아도 다른 상품) · 체크 캐시미어 스카프 쿼츠 핑크(81249961)·페블 화이트(81126341)는 기존 81250011과 같은 모델·같은 한국 가격(850,000원)이라 뺌
+    {"id": "bbr-heritage-kensington-mid", "cat": "wear", "brand": "버버리", "name": "미드 렝스 켄싱턴 헤리티지 트렌치코트", "code": "81172291", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+        "US": "https://us.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+        "GB": "https://uk.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+        "DE": "https://de.burberry.com/mittellanger-heritage-trenchcoat-kensington-p81172291",
+        "JP": "https://jp.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+        "AE": "https://ae.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291"}},
+    {"id": "bbr-heritage-chelsea-mid", "cat": "wear", "brand": "버버리", "name": "미드 렝스 첼시 헤리티지 트렌치코트", "code": "81172391", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+        "US": "https://us.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+        "GB": "https://uk.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+        "DE": "https://de.burberry.com/mittellanger-heritage-trenchcoat-chelsea-p81172391",
+        "JP": "https://jp.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+        "AE": "https://ae.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391"}},
+    {"id": "bbr-heritage-waterloo-long", "cat": "wear", "brand": "버버리", "name": "롱 워털루 헤리티지 트렌치코트", "code": "81172521", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+        "US": "https://us.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+        "GB": "https://uk.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+        "DE": "https://de.burberry.com/langer-heritage-trenchcoat-waterloo-p81172521",
+        "JP": "https://jp.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+        "AE": "https://ae.burberry.com/long-waterloo-heritage-trench-coat-p81172521"}},
+    {"id": "bbr-hoxton-long", "cat": "wear", "brand": "버버리", "name": "롱 개버딘 혹스턴 트렌치코트", "code": "81330281", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+        "US": "https://us.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+        "GB": "https://uk.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+        "DE": "https://de.burberry.com/langer-trenchcoat-hoxton-aus-gabardine-p81330281",
+        "JP": "https://jp.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+        "AE": "https://ae.burberry.com/long-gabardine-hoxton-trench-coat-p81330281"}},
+    # 스카프 이름은 한국 몰 제목(리버시블·슬림 — 주소는 reversible·narrow) · 아동용 아님(한국 제목에 '- 아동' 없음)
+    {"id": "bbr-gradientscarf", "cat": "wear", "brand": "버버리", "name": "그라데이션 체크 캐시미어 스카프", "code": "81348721", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/gradient-check-cashmere-scarf-p81348721",
+        "US": "https://us.burberry.com/gradient-check-cashmere-scarf-p81348721",
+        "GB": "https://uk.burberry.com/gradient-check-cashmere-scarf-p81348721",
+        "DE": "https://de.burberry.com/kaschmirschal-in-check-mit-farbverlauf-p81348721",
+        "JP": "https://jp.burberry.com/gradient-check-cashmere-scarf-p81348721",
+        "AE": "https://ae.burberry.com/gradient-check-cashmere-scarf-p81348721"}},
+    {"id": "bbr-knightscarf", "cat": "wear", "brand": "버버리", "name": "나이트 캐시미어 스카프", "code": "81316191", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/knight-cashmere-scarf-p81316191",
+        "US": "https://us.burberry.com/knight-cashmere-scarf-p81316191",
+        "GB": "https://uk.burberry.com/knight-cashmere-scarf-p81316191",
+        "DE": "https://de.burberry.com/kaschmirschal-mit-knight-p81316191",
+        "JP": "https://jp.burberry.com/knight-cashmere-scarf-p81316191",
+        "AE": "https://ae.burberry.com/knight-cashmere-scarf-p81316191"}},
+    {"id": "bbr-reversiblescarf", "cat": "wear", "brand": "버버리", "name": "리버시블 체크 캐시미어 스카프", "code": "81345821", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/reversible-check-cashmere-scarf-p81345821",
+        "US": "https://us.burberry.com/reversible-check-cashmere-scarf-p81345821",
+        "GB": "https://uk.burberry.com/reversible-check-cashmere-scarf-p81345821",
+        "DE": "https://de.burberry.com/wendbarer-kaschmirschal-in-check-p81345821",
+        "JP": "https://jp.burberry.com/reversible-check-cashmere-scarf-p81345821",
+        "AE": "https://ae.burberry.com/reversible-check-cashmere-scarf-p81345821"}},
+    {"id": "bbr-widescarf", "cat": "wear", "brand": "버버리", "name": "와이드 체크 캐시미어 스카프", "code": "80859311", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/wide-check-cashmere-scarf-p80859311",
+        "US": "https://us.burberry.com/wide-check-cashmere-scarf-p80859311",
+        "GB": "https://uk.burberry.com/wide-check-cashmere-scarf-p80859311",
+        "DE": "https://de.burberry.com/breiterer-kaschmirschal-in-check-p80859311",
+        "JP": "https://jp.burberry.com/wide-check-cashmere-scarf-p80859311",
+        "AE": "https://ae.burberry.com/wide-check-cashmere-scarf-p80859311"}},
+    {"id": "bbr-narrowscarf", "cat": "wear", "brand": "버버리", "name": "슬림 체크 캐시미어 스카프", "code": "81302831", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/narrow-check-cashmere-scarf-p81302831",
+        "US": "https://us.burberry.com/narrow-check-cashmere-scarf-p81302831",
+        "GB": "https://uk.burberry.com/narrow-check-cashmere-scarf-p81302831",
+        "DE": "https://de.burberry.com/schmalerer-kaschmirschal-in-check-p81302831",
+        "JP": "https://jp.burberry.com/narrow-check-cashmere-scarf-p81302831",
+        "AE": "https://ae.burberry.com/narrow-check-cashmere-scarf-p81302831"}},
+    # 가방·재킷 4개 — 최종 정의 그대로 11/21 다시 정가 읽기(한국·미국·영국·일본·두바이 20건 모두 OK · 이름은 한국 몰 제목) · 독일 몰은 주소가 독일어라 이번에 못 찾음(다음 차례)
+    {"id": "bbr-checktote-s", "cat": "bag", "brand": "버버리", "name": "스몰 체크 토트(여성·초콜릿 브라운)", "code": "81314921", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/small-check-tote-p81314921",
+        "US": "https://us.burberry.com/small-check-tote-p81314921",
+        "GB": "https://uk.burberry.com/small-check-tote-p81314921",
+        "JP": "https://jp.burberry.com/small-check-tote-p81314921",
+        "AE": "https://ae.burberry.com/small-check-tote-p81314921"}},
+    {"id": "bbr-messenger-s", "cat": "bag", "brand": "버버리", "name": "스몰 시티 체크 클립 메신저 백(남성·아이언 그레이)", "code": "81315271", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+        "US": "https://us.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+        "GB": "https://uk.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+        "JP": "https://jp.burberry.com/small-city-check-clip-messenger-bag-p81315271",
+        "AE": "https://ae.burberry.com/small-city-check-clip-messenger-bag-p81315271"}},
+    {"id": "bbr-harrington", "cat": "wear", "brand": "버버리", "name": "디태처블 질레 블룸스버리 해링턴 재킷(남성·블랙)", "code": "81311511", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+        "US": "https://us.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+        "GB": "https://uk.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+        "JP": "https://jp.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
+        "AE": "https://ae.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511"}},
+    {"id": "bbr-quilted", "cat": "wear", "brand": "버버리", "name": "나일론 퀼팅 재킷(여성·네이비)", "code": "81270131", "src": "page", "hint": "", "urls": {
+        "KR": "https://kr.burberry.com/nylon-quilted-jacket-p81270131",
+        "US": "https://us.burberry.com/nylon-quilted-jacket-p81270131",
+        "GB": "https://uk.burberry.com/nylon-quilted-jacket-p81270131",
+        "JP": "https://jp.burberry.com/nylon-quilted-jacket-p81270131",
+        "AE": "https://ae.burberry.com/nylon-quilted-jacket-p81270131"}},
+    # 가방·재킷: 나라별 사이트맵에서 같은 p 번호(나라마다 첫 상품이 한국과 같음) · 독일 몰 주소는 독일어(Tasche·Jacke)라 이번 찾기에서 못 찾아 독일 뺌(다음 차례) ·
+    # 나이트·락킹 호스·쉴드·체스·스닙·페그·B 클립 백·트렌치 토트·박스 스니커즈·하이랜드 부츠는 한국 사이트맵에 없음(이 이름 주소 0건)
 ]
 # v1.23 분류 cat(화면 착지 무게·관세 — build_dashboard LAND.cat과 같은 이름) — 새 상품은 반드시 넣음(빠지면 불러오기에서 멈춤 → check-files 실패)
 CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들류(샌들·슬리퍼·클로그 · 킨 유니크 포함) · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
