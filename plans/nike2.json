@@ -1,0 +1,20 @@
+[
+ {
+  "t": "tryp",
+  "memo": {
+   "pick": "목표 3개(나이키 기존 17 → 20): nike-p6000 · nike-af1mid · nike-heritagebp 순서. 한 상품은 KR OK + 해외 1곳 이상 OK여야 넣음. 셋 중 하나가 KR FAIL이면 예비 nike-huarache로 채움(넷 다 OK면 예비는 넣지 않음).",
+   "why_these": "1단계(11/21 GitHub 서버): 나이키 product_feed 6개 나라 정가 fullPrice 읽기 — P-6000(CN0149-001) KR 139,000·US 125·GB 109.99·DE 119.99·JP 17,160 · MX '팔지 않음' · 두바이 nike.ae 사이트맵 상품 페이지 AED 699(품번 일치). 에어포스 1 미드 '07(CW2289-111) KR 159,000·US 125·GB 109.99·DE 119.99·JP 18,150·MX 2,799 · 두바이 AED 679 — 기존 에어포스 1 '07(CW2288-111 · 로우)과 다른 모델·가격. 헤리티지 백팩 25L(DC4244-010) KR 45,000·US 37·GB 32.99·DE 34.99·JP 5,170·MX 749 — 두바이 페이지는 '가격 데이터(JSON-LD) 없음'이라 뺌(베나시와 같은 까닭) · 나이키 첫 가방(cat bag). 예비 에어 허라취(DD1068-102) KR 159,000·6개 나라 OK · 두바이 사이트맵에 없음.",
+   "dropped": "에어맥스 엑시(CD4165-100) 한국 나이키에서 팔지 않음 · 와플 데뷰(DH9522-001)·오프코트 슬라이드(BQ4639-012)·브라질리아 9.5 더플(DH7710-010)·헤리티지 웨이스트팩(DB0490-010)은 목표 3개를 넘어 다음 차례 후보(모두 6개 나라 정가 읽기 OK · 두바이는 사이트맵에 없거나 JSON-LD 없음).",
+   "fx_check": "블프 할인 검사(참고 — 나이키 product_feed fullPrice는 정가 자체라 가드 없음): 기존 나이키 17개의 '한국 정가 ÷ (현지 정가 × 환율)' 나라별 가운데값 US 0.898 · GB 0.750 · DE 0.819 · JP 1.059 · MX 0.758 · AE 0.632(docs/prices.json p · docs/data.json fx 11/20 USD 1334.79 · GBP 1746.69 · EUR 1462.41 · JPY 8.357 · MXN 69.92 · AED 363.46). 1단계 후보 비율: P-6000 US 0.83·GB 0.72·DE 0.79·JP 0.97·AE 0.55 / AF1 미드 US 0.95·GB 0.83·DE 0.91·JP 1.05·MX 0.81·AE 0.64 / 헤리티지 백팩 US 0.91·GB 0.78·DE 0.88·JP 1.04·MX 0.86 / 허라취 US 0.95·GB 0.76·DE 0.84·JP 1.24·MX 0.76 — 모두 가운데값 × 1.25 안. 이번 tryp 결과에서도 같은 검사: 비율 > 가운데값 × 1.25면 그 나라 값이 할인가일 수 있음 — product_feed 나라는 참고만(그대로 넣되 주석), 두바이(nike.ae 페이지 값)는 그 나라를 urls에서 빼고 다음 차례에 다시 봄. nike.ae가 할인가만 보이면 sfra_list가 FAIL을 내는 설계 — FAIL이면 두바이만 뺌.",
+   "py_form": "PRODUCTS 나이키 줄 끝(nike-benassi 뒤)에 사전 그대로 — 기존 nike-af1·nike-airmaxsc와 같은 꼴. 주석 '# v1.25 SKU 2차(11/21) — 6개 나라 product_feed 같은 styleColor · 두바이 = nike.ae 사이트맵 상품 페이지(헤리티지 백팩은 가격 데이터 없음)'. P-6000은 cc에서 MX를 뺀 꼴 + 줄 주석 '# 멕시코 나이키에서 팔지 않음(11/21)'. FAIL 나라는 cc/urls에서 빼고 넣음."
+  },
+  "prods": [
+   {"id": "nike-p6000", "cat": "shoe", "brand": "나이키", "name": "P-6000", "code": "CN0149-001", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP"],
+    "urls": {"AE": "https://www.nike.ae/en/p-6000-shoe/NKCN0149-001.html"}},
+   {"id": "nike-af1mid", "cat": "shoe", "brand": "나이키", "name": "에어포스 1 미드 '07", "code": "CW2289-111", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"],
+    "urls": {"AE": "https://www.nike.ae/en/air-force-1-mid-07-mens-shoe/NKCW2289-111.html"}},
+   {"id": "nike-heritagebp", "cat": "bag", "brand": "나이키", "name": "헤리티지 백팩(25L)", "code": "DC4244-010", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]},
+   {"id": "nike-huarache", "cat": "shoe", "brand": "나이키", "name": "에어 허라취", "code": "DD1068-102", "src": "nike", "cc": ["KR", "US", "GB", "DE", "JP", "MX"]}
+  ]
+ }
+]

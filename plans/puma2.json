@@ -1,0 +1,350 @@
+[
+ {
+  "t": "tryp",
+  "memo": "푸마 SKU 2차 최종 확인. 한국: 새 품번 12개는 한국 사이트맵(666개 · 오래된 상품 404 많음)에 없어 한국 주소를 /kr/ko/pd/x/{품번}.html(몰이 정식 주소로 넘김 — 1단계 dump 396463로 확인)로 읽음 → PRODUCTS에는 아래 dump 작업의 DUMP final(정식 주소 · %3Cbr%3E 퍼센트 꼴)로 바꿔 옮김(같은 페이지라 읽는 값 같음) · 한국 404면 그 상품 뺌. 영국·독일·멕시코·두바이 주소는 뒤 codes(TARGET 줄)·try(TRY·OK 줄)에서 — TARGET/TRY 주소는 풀어 쓴 꼴이라 ™ 등은 퍼센트 꼴로(기존 GB %E2%84%A2처럼) 옮김. 할인가 검사(블프): 비율 = 한국 정가 ÷ (현지 정가 × 환율 · data.json fx 11/20 USD 1334.79 · GBP 1746.69 · EUR 1462.41 · MXN 69.92 · AED 363.46). 기존 푸마 13개 가운데값 US 0.994 · GB 0.908 · DE 0.905 · MX 0.967 · AE 0.763 → 25% 넘게 높으면(US > 1.243 · GB > 1.135 · DE > 1.131 · MX > 1.209 · AE > 0.954) 현지 값이 할인가일 수 있어 그 나라는 뺌(블프 뒤 차례에 다시). 1단계 근거: puma-velocityteew DE 21.95 EUR → 1.215(뺌 · 이번에 다시 봄) · GB 0.971·MX 0.931·AE 0.832 OK · puma-magmaxw US 0.995·AE 0.731 OK. 고르는 순서(목표 7): dn4 → magmax2 → suedexl → hstreet → speedcatballet → leadcat2 → t7jacket → velocity5 → dne4w → foreverrun3w → dn4w → t7pantsw → (예비) magmaxw(매그맥스 2가 한국에 있으면 옛 모델이라 뒤로) → velocityteew. 해외 2개 나라 이상(할인가 검사 통과)인 것만 · 일본은 PAUSED라 넣지 않음.",
+  "prods": [
+   {
+    "id": "puma-dn4",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 4(남성)",
+    "code": "312123",
+    "src": "page",
+    "hint": "deviate nitro 4",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312123.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-4-mens-road-running-shoes/312123"
+    }
+   },
+   {
+    "id": "puma-magmax2",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "매그맥스 나이트로 2(남성)",
+    "code": "312125",
+    "src": "page",
+    "hint": "magmax nitro 2",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312125.html",
+     "US": "https://us.puma.com/us/en/pd/magmax-nitro-2-mens-road-running-shoes/312125"
+    }
+   },
+   {
+    "id": "puma-suedexl",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "스웨이드 XL",
+    "code": "395205",
+    "src": "page",
+    "hint": "suede xl",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/395205.html",
+     "US": "https://us.puma.com/us/en/pd/suede-xl-sneakers/395205",
+     "MX": "https://mx.puma.com/mx/es/pd/tenis-suede-xl/395205.html",
+     "AE": "https://ae.puma.com/ae/en/pd/suede-xl-sneakers-unisex/395205.html"
+    }
+   },
+   {
+    "id": "puma-hstreet",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "H-스트리트 OG",
+    "code": "403692",
+    "src": "page",
+    "hint": "h-street",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/403692.html",
+     "US": "https://us.puma.com/us/en/pd/h-street-og-sneakers/403692"
+    }
+   },
+   {
+    "id": "puma-speedcatballet",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "스피드캣 발레 스웨이드(여성)",
+    "code": "401287",
+    "src": "page",
+    "hint": "speedcat ballet",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/401287.html",
+     "US": "https://us.puma.com/us/en/pd/speedcat-ballet-suede-womens-sneakers/401287"
+    }
+   },
+   {
+    "id": "puma-leadcat2",
+    "cat": "sandal",
+    "brand": "푸마",
+    "name": "리드캣 2.0 슬라이드",
+    "code": "384139",
+    "src": "page",
+    "hint": "leadcat 2.0",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/384139.html",
+     "US": "https://us.puma.com/us/en/pd/leadcat-20-slides/384139"
+    }
+   },
+   {
+    "id": "puma-t7jacket",
+    "cat": "wear",
+    "brand": "푸마",
+    "name": "T7 트랙 자켓(남성)",
+    "code": "629587",
+    "src": "page",
+    "hint": "t7",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/629587.html",
+     "US": "https://us.puma.com/us/en/pd/t7-mens-track-jacket/629587"
+    }
+   },
+   {
+    "id": "puma-velocity5",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "벨로시티 나이트로 5(남성)",
+    "code": "312944",
+    "src": "page",
+    "hint": "velocity nitro 5",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312944.html",
+     "US": "https://us.puma.com/us/en/pd/velocity-nitro-5-running-shoes-men-mens-road-running-shoes/312944"
+    }
+   },
+   {
+    "id": "puma-dne4w",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 엘리트 4(여성)",
+    "code": "312128",
+    "src": "page",
+    "hint": "deviate nitro elite 4",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312128.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-4-womens-road-running-shoes/312128"
+    }
+   },
+   {
+    "id": "puma-foreverrun3w",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "포에버런 나이트로 3(여성)",
+    "code": "312943",
+    "src": "page",
+    "hint": "foreverrun nitro 3",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312943.html",
+     "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-3-womens-road-running-shoes/312943"
+    }
+   },
+   {
+    "id": "puma-dn4w",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "디비에이트 나이트로 4(여성)",
+    "code": "312124",
+    "src": "page",
+    "hint": "deviate nitro 4",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/312124.html",
+     "US": "https://us.puma.com/us/en/pd/deviate-nitro-4-womens-road-running-shoes/312124"
+    }
+   },
+   {
+    "id": "puma-t7pantsw",
+    "cat": "wear",
+    "brand": "푸마",
+    "name": "T7 스트레이트 트랙 팬츠(여성)",
+    "code": "629797",
+    "src": "page",
+    "hint": "t7",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/x/629797.html",
+     "US": "https://us.puma.com/us/en/pd/t7-womens-straight-track-pants/629797"
+    }
+   },
+   {
+    "id": "puma-magmaxw",
+    "cat": "shoe",
+    "brand": "푸마",
+    "name": "매그맥스 나이트로(여성)",
+    "code": "310089",
+    "src": "page",
+    "hint": "magmax nitro",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Emagmax-nitro-wns/310089.html",
+     "US": "https://us.puma.com/us/en/pd/magmax-nitro-womens-road-running-shoes/310089",
+     "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-running-shoes-women/310089.html"
+    }
+   },
+   {
+    "id": "puma-velocityteew",
+    "cat": "top",
+    "brand": "푸마",
+    "name": "런 벨로시티 티셔츠(여성)",
+    "code": "526578",
+    "src": "page",
+    "hint": "velocity",
+    "urls": {
+     "KR": "https://kr.puma.com/kr/ko/pd/%EC%97%AC%EC%84%B1-%EB%9F%B0-%EB%B2%A8%EB%A1%9C%EC%8B%9C%ED%8B%B0-%ED%8B%B0%EC%85%94%EC%B8%A0(poly)-%3Cbr%3Ew-run-velocity-tee-(poly)/526578.html",
+     "GB": "https://uk.puma.com/uk/en/pd/velocity-running-tee-women/526578",
+     "DE": "https://eu.puma.com/de/de/pd/velocity-lauf-t-shirt-damen/526578",
+     "MX": "https://mx.puma.com/mx/es/pd/playera-de-running-velocity-para-mujer/526578.html",
+     "AE": "https://ae.puma.com/ae/en/pd/velocity-running-tee-women/526578.html"
+    }
+   }
+  ]
+ },
+ {
+  "t": "dump",
+  "memo": "새 품번 한국 정식 주소(DUMP final) · 404면 DUMPERR — PRODUCTS KR 주소용",
+  "urls": [
+   "https://kr.puma.com/kr/ko/pd/x/312123.html",
+   "https://kr.puma.com/kr/ko/pd/x/312125.html",
+   "https://kr.puma.com/kr/ko/pd/x/395205.html",
+   "https://kr.puma.com/kr/ko/pd/x/403692.html",
+   "https://kr.puma.com/kr/ko/pd/x/401287.html",
+   "https://kr.puma.com/kr/ko/pd/x/384139.html",
+   "https://kr.puma.com/kr/ko/pd/x/629587.html",
+   "https://kr.puma.com/kr/ko/pd/x/312944.html",
+   "https://kr.puma.com/kr/ko/pd/x/312128.html",
+   "https://kr.puma.com/kr/ko/pd/x/312943.html",
+   "https://kr.puma.com/kr/ko/pd/x/312124.html",
+   "https://kr.puma.com/kr/ko/pd/x/629797.html"
+  ],
+  "ctx": [
+   "<link[^>]+rel=\"canonical\"[^>]*>"
+  ],
+  "per_rx": 1,
+  "pad": 0,
+  "max_ld": 0,
+  "head": 0
+ },
+ {
+  "t": "codes",
+  "memo": "새 품번의 영국·독일·멕시코·두바이 상품 주소(사이트맵 · 미국·한국은 이미 앎) → TARGET 줄",
+  "key": "puma",
+  "base": "AE",
+  "rx": "/pd/[^/]+/(\\d{6})(?:\\.html)?$",
+  "sites": {
+   "GB": {
+    "host": "uk.puma.com",
+    "path": "/uk/en/",
+    "start": [
+     "https://uk.puma.com/sitemaps/urls/uk/sitemap_index.xml"
+    ]
+   },
+   "DE": {
+    "host": "eu.puma.com",
+    "path": "/de/de/",
+    "start": [
+     "https://eu.puma.com/sitemaps/urls/de/sitemap_index.xml"
+    ]
+   },
+   "MX": {
+    "host": "mx.puma.com",
+    "path": "/mx/es/",
+    "start": [
+     "https://mx.puma.com/sitemap_index.xml"
+    ],
+    "kid_pref": [
+     "custom-product"
+    ]
+   },
+   "AE": {
+    "host": "ae.puma.com",
+    "path": "/ae/en/",
+    "start": [
+     "https://ae.puma.com/sitemap_index.xml"
+    ],
+    "kid_pref": [
+     "custom-product"
+    ]
+   }
+  },
+  "targets": [
+   "312123",
+   "312125",
+   "395205",
+   "403692",
+   "401287",
+   "384139",
+   "629587",
+   "312944",
+   "312128",
+   "312943",
+   "312124",
+   "629797"
+  ],
+  "max_maps": 50,
+  "per_host": 120,
+  "show": 0
+ },
+ {
+  "t": "try",
+  "memo": "codes에서 찾은 영국·독일·멕시코·두바이 주소로 정가 읽기(PRODUCTS 정의와 같은 src page·hint·품번) — 할인가 검사는 tryp 메모대로",
+  "key": "puma",
+  "brand": "푸마",
+  "ccs": [
+   "GB",
+   "DE",
+   "MX",
+   "AE"
+  ],
+  "cands": [
+   {
+    "code": "312123",
+    "name": "디비에이트 나이트로 4(남성)",
+    "hint": "deviate nitro 4"
+   },
+   {
+    "code": "312125",
+    "name": "매그맥스 나이트로 2(남성)",
+    "hint": "magmax nitro 2"
+   },
+   {
+    "code": "403692",
+    "name": "H-스트리트 OG",
+    "hint": "h-street"
+   },
+   {
+    "code": "401287",
+    "name": "스피드캣 발레 스웨이드(여성)",
+    "hint": "speedcat ballet"
+   },
+   {
+    "code": "384139",
+    "name": "리드캣 2.0 슬라이드",
+    "hint": "leadcat 2.0"
+   },
+   {
+    "code": "629587",
+    "name": "T7 트랙 자켓(남성)",
+    "hint": "t7"
+   },
+   {
+    "code": "312944",
+    "name": "벨로시티 나이트로 5(남성)",
+    "hint": "velocity nitro 5"
+   },
+   {
+    "code": "312128",
+    "name": "디비에이트 나이트로 엘리트 4(여성)",
+    "hint": "deviate nitro elite 4"
+   },
+   {
+    "code": "312943",
+    "name": "포에버런 나이트로 3(여성)",
+    "hint": "foreverrun nitro 3"
+   },
+   {
+    "code": "312124",
+    "name": "디비에이트 나이트로 4(여성)",
+    "hint": "deviate nitro 4"
+   },
+   {
+    "code": "629797",
+    "name": "T7 스트레이트 트랙 팬츠(여성)",
+    "hint": "t7"
+   }
+  ]
+ }
+]

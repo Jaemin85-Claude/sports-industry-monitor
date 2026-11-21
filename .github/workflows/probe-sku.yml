@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [nike, access]
+        plan: [arc2, sau2, keen2, oofos2, hunter2, puma2, drm2, nike2]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7

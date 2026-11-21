@@ -1,0 +1,236 @@
+[
+ {
+  "t": "tryp",
+  "memo": {
+   "pick": "OK 나온 것 중 위 순서대로 10개(목표 20 = 기존 10 + 10). 한 상품은 KR OK + 해외 1곳 이상 OK이고 아래 할인 검사를 통과해야 넣음. 해외 나라가 FAIL·할인 의심이면 그 상품은 해외가 없어지므로 빼고 예비(hunter-travel2lace → hunter-boucleshort → hunter-wanderprotect → hunter-travelflow) 순서로 채움. 같은 모델 다른 색은 넣지 않음",
+   "why_these": "코오롱몰 헌터 목록 화면(1단계 RX — /Product/K… 바로 뒤 상품 이름 끝 품번+색) ∩ 일본 쇼피파이 사이트맵(1단계 GREP JP · 주소 = 품번-색) — 같은 품번·같은 색(블랙, travel2lace만 블랙/화이트윌로우 BWG = 일본 bwg). 미국·영국 몰은 새 시즌 상품을 새 품번(HF…·HA…)으로 바꿔 한국 옛 품번(U…·W…·M…)과 같은 것이 없음 — 영국은 MFS9135WWU 하나만(사이트맵·products.json). 성인 상품만 · 콜라보(헌터X잔망루피 WFS2365REN) 뺌 · 기존 10개 품번(WFT1000RMA·WFS1000RMA·WFT2007RMA·WFS2078RMA·WFS2020RMA·WFT1000RGL·WFS1000RGL·WFS2200RMA·WFT2235RMA·WFT2108WWU) 뺌",
+   "py_form": "PRODUCTS에 사전 그대로(헌터는 도우미 함수 없음) — 기존 hunter-refinedshort 등과 같은 꼴. FAIL 나라는 urls에서 빼고 넣음. 주석: '# v1.25 SKU 2차 — 코오롱몰 목록 화면 품번 ∩ 일본 쇼피파이(미국·영국 몰은 새 품번 HF…로 바뀌어 같은 품번 없음 · 영국은 MFS9135WWU만)'",
+   "sale_check": {
+    "rule": "비율 = 한국 정가 ÷ (현지 정가 × 환율) · 기존 헌터 10개 나라별 가운데값보다 25% 넘게 높으면(=현지 값이 블프 할인가로 보임) 그 나라는 빼고 블프 뒤 차례에. tryp OK 줄의 full로 검사(쇼피파이 full = 변형 price·compare_at 중 최고 — 영국 몰은 지금 할인에 compare_at을 달아 full이 정가로 읽힘 · 일본 몰이 compare_at 없이 값을 내렸으면 비율이 높게 나옴). 한국 full도 기존 헌터 비슷한 상품(오리지널 톨 209,000·인트레피드 톨 289,000 등)과 견줘 한국 쪽이 할인가로 읽혔는지 함께 봄",
+    "fx_2026_11_20": {
+     "USD": 1334.79,
+     "GBP": 1746.6941,
+     "JPY": 8.357
+    },
+    "median": {
+     "US": 0.885,
+     "GB": 0.953,
+     "JP": 0.928
+    },
+    "max_ratio": {
+     "US": 1.106,
+     "GB": 1.191,
+     "JP": 1.16
+    },
+    "base_rows": "US 7개 0.824~0.914 · GB 10개 0.859~1.202(첼시 1.202) · JP 5개 0.922~1.149(플레이 톨 1.149)",
+    "step1_ratio": "1단계 로그에 후보 정가 없음(목록 화면은 품번만 · 일본은 사이트맵 주소만) — 영국 MFS9135WWU는 products.json price 96.00 · compare_at 160.00(할인 중 — full은 160으로 읽힐 것) · 한국 값은 이번 tryp에서"
+   },
+   "dropped": {
+    "MFF9000WWU 인앤아웃 슬립온(남성)·UFD3109LEA·UFD3110LEA 시티 레블 샌들·UFS7000RMA·UFT7000RMA 오리지날 2.0·WFS1004PCT·WFS2048RMA·WFS2204HER·WFS2205RMA·WFS2241NRE·WFS2264REN·WFS2299RMA·WFT2000NYR·WFT2041RMA·WFT2210RMA·WFT2272RMA·WFP1012NRG": "미국·영국·일본 몰(사이트맵·영국 products.json)에 같은 품번 없음",
+    "WFS2365REN 헌터X잔망루피": "콜라보 — 뺌(해외에도 없음)",
+    "WFS2265REN 인앤아웃 푸퍼 니트 커프": "한국(블랙·화이트윌로우)과 일본(bar·nhs·wgu) 색이 겹치지 않음 — 색마다 값이 다를 수 있어 뺌",
+    "UFF7161NBR 부클 슬리퍼·UFF7162NBR 트래블 2.0 부클·WFF7148REN 메리제인·WFF1100REN 트래블 스니커즈·WFF3104LEA 보우 로퍼": "일본에 같은 품번 있음 — 이번 10개+예비 4개 뒤 순위(시즌 슬리퍼·같은 트래블 줄 · 다음 차례 후보)",
+    "기존 품번 다른 색(WFS2078RMABCH·MFX 등·WFT1000RMACAS·WFT2007RMAAPL·CAS·UFS7119WWUCCG·WAC 등)": "같은 모델 같은 가격"
+   },
+   "next_round": "미국·영국·일본 세 나라 모두 있는 남성 오리지널(MFS9000RMA 숏·MFT9000RMA 톨·MFS9116RMA 첼시·MFS9088RMA 플레이 숏)은 이번 목록 화면 3쪽에 한국 상품 번호(K…)가 안 나와 못 넣음 — 다음 차례에 코오롱몰 남성 목록(브랜드 화면 링크 /Brands/HUNTER/List/1330100715xx 등)에서 K 번호를 찾으면 4개 나라 상품"
+  },
+  "prods": [
+   {
+    "id": "hunter-wandershort",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "인트레피드 원더러 숏 스노 부츠",
+    "code": "UFS7119WWU",
+    "src": "page",
+    "hint": "ufs7119wwublk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133875939070BK01",
+     "JP": "https://hunterboots.co.jp/products/ufs7119wwu-blk.json"
+    }
+   },
+   {
+    "id": "hunter-wandertall",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "인트레피드 원더러 톨 스노 부츠",
+    "code": "UFT7120WWU",
+    "src": "page",
+    "hint": "uft7120wwublk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133666918092BK01",
+     "JP": "https://hunterboots.co.jp/products/uft7120wwu-blk.json"
+    }
+   },
+   {
+    "id": "hunter-refinedtall",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "리파인드 슬림핏 톨(여성)",
+    "code": "WFT2200RMA",
+    "src": "page",
+    "hint": "wft2200rmablk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508601844067BK01",
+     "JP": "https://hunterboots.co.jp/products/wft2200rma-blk.json"
+    }
+   },
+   {
+    "id": "hunter-neochelsea",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "오리지널 네오프렌 첼시(여성)",
+    "code": "WFS2403NRE",
+    "src": "page",
+    "hint": "wfs2403nreblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1785476517288037BK01",
+     "JP": "https://hunterboots.co.jp/products/wfs2403nre-blk.json"
+    }
+   },
+   {
+    "id": "hunter-mplaychelsea",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "플레이 네오프렌 첼시(남성)",
+    "code": "MFS9022RMA",
+    "src": "page",
+    "hint": "mfs9022rmablk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508683714035NO01",
+     "JP": "https://hunterboots.co.jp/products/mfs9022rma-blk.json"
+    }
+   },
+   {
+    "id": "hunter-mintrepidshort",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "인트레피드 인슐레이티드 숏 스노 부츠(남성)",
+    "code": "MFS9135WWU",
+    "src": "page",
+    "hint": "mfs9135wwublk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084986999013BK01",
+     "GB": "https://hunterboots.co.uk/products/mens-intrepid-insulated-short-snow-boots-mfs9135wwu-blk.json"
+    }
+   },
+   {
+    "id": "hunter-gripexplorer",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "그립 익스플로러 레이스업 부츠",
+    "code": "UFS7123LNR",
+    "src": "page",
+    "hint": "ufs7123lnrblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1789969305240016BK01",
+     "JP": "https://hunterboots.co.jp/products/ufs7123lnr-blk.json"
+    }
+   },
+   {
+    "id": "hunter-explorerchelsea",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "리파인드 익스플로러 로퍼 첼시 부츠",
+    "code": "UFS7125LEA",
+    "src": "page",
+    "hint": "ufs7125leablk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1774579934235020BK01",
+     "JP": "https://hunterboots.co.jp/products/ufs7125lea-blk.json"
+    }
+   },
+   {
+    "id": "hunter-griptall",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "그립 톨 스노 부츠",
+    "code": "UFT7101NYL",
+    "src": "page",
+    "hint": "uft7101nylblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084821690065BK01",
+     "JP": "https://hunterboots.co.jp/products/uft7101nyl-blk.json"
+    }
+   },
+   {
+    "id": "hunter-travel2suede",
+    "cat": "shoe",
+    "brand": "헌터",
+    "name": "트래블 2.0 방수 스웨이드 스니커즈",
+    "code": "UFF7146REN",
+    "src": "page",
+    "hint": "uff7146renblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1784599846737092BK01",
+     "JP": "https://hunterboots.co.jp/products/uff7146ren-blk.json"
+    }
+   },
+   {
+    "id": "hunter-travel2lace",
+    "cat": "shoe",
+    "brand": "헌터",
+    "name": "트래블 2.0 방수 레이스 스니커즈",
+    "code": "UFF7147REN",
+    "src": "page",
+    "hint": "uff7147renbwg",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1784187512746076BK01",
+     "JP": "https://hunterboots.co.jp/products/uff7147ren-bwg.json"
+    }
+   },
+   {
+    "id": "hunter-boucleshort",
+    "cat": "boot",
+    "brand": "헌터",
+    "name": "원더러 부클 숏 스노 부츠(여성)",
+    "code": "WFS2226WAD",
+    "src": "page",
+    "hint": "wfs2226wadblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760085021623079BK01",
+     "JP": "https://hunterboots.co.jp/products/wfs2226wad-blk.json"
+    }
+   },
+   {
+    "id": "hunter-wanderprotect",
+    "cat": "shoe",
+    "brand": "헌터",
+    "name": "원더러 프로텍트 스니커즈",
+    "code": "UFF7139REN",
+    "src": "page",
+    "hint": "uff7139renblk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1786518268162039BK01",
+     "JP": "https://hunterboots.co.jp/products/uff7139ren-blk.json"
+    }
+   },
+   {
+    "id": "hunter-travelflow",
+    "cat": "shoe",
+    "brand": "헌터",
+    "name": "트래블 플로우 스웨이드 스니커즈",
+    "code": "UFF7159LEA",
+    "src": "page",
+    "hint": "uff7159leablk",
+    "urls": {
+     "KR": "https://www.kolonmall.com/Brands/HUNTER/Product/K1794297322092085BK01",
+     "JP": "https://hunterboots.co.jp/products/uff7159lea-blk.json"
+    }
+   }
+  ]
+ },
+ {
+  "t": "rxpage",
+  "max": 80,
+  "memo": "다음 차례용(이번 tryp와 무관) — 브랜드 화면이 걸어 둔 다른 분류 목록 2쪽에서 남성 오리지널(MFS9000RMA·MFT9000RMA·MFS9116RMA·MFS9088RMA — 미국·영국·일본 모두 있음)의 한국 상품 번호(K…)를 찾음 · 요청 2번",
+  "urls": [
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071500?inStock=TRUE",
+   "https://www.kolonmall.com/Brands/HUNTER/List/133010071501?inStock=TRUE"
+  ],
+  "rx": [
+   "/Product/(K\\d{16}[A-Z]{2}\\d{2})(?:(?!/Product/K)[\\s\\S]){0,4000}?(?<![A-Z0-9])([WMUK][A-Z]{2}\\d{4}[A-Z]{3}-?[A-Z]{3})",
+   "[^\\\"<>\\\\]{0,90}(?<![A-Z0-9])M[A-Z]{2}\\d{4}[A-Z]{3}-?[A-Z]{3}",
+   "\\\"(?:total|totalCount|totalCnt|totalElements)\\\"\\s*:\\s*[0-9a-z]+"
+  ]
+ }
+]
