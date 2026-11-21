@@ -1,0 +1,400 @@
+[
+ {
+  "t": "robotsraw",
+  "max": 1500,
+  "hosts": [
+   "de.burberry.com",
+   "jp.burberry.com",
+   "ae.burberry.com",
+   "mx.burberry.com"
+  ],
+  "memo": "① 나라 늘리기 — 버버리 독일·일본·두바이·멕시코 공식몰이 있는지(상태·넘겨짐·Sitemap 줄). DNS 오류·다른 나라 몰(row·us 등)로 넘김이면 그 나라는 버버리 공식몰 없음으로 봄(아래 codes·try에서 0건)."
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "bbr-heritage-kensington-mid",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "미드 렝스 켄싱턴 헤리티지 트렌치코트",
+    "code": "81172291",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "US": "https://us.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
+     "GB": "https://uk.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291"
+    }
+   },
+   {
+    "id": "bbr-heritage-kensington-short",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "쇼트 켄싱턴 헤리티지 트렌치코트",
+    "code": "81172341",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/short-kensington-heritage-trench-coat-p81172341",
+     "US": "https://us.burberry.com/short-kensington-heritage-trench-coat-p81172341",
+     "GB": "https://uk.burberry.com/short-kensington-heritage-trench-coat-p81172341"
+    }
+   },
+   {
+    "id": "bbr-heritage-kensington-long",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "롱 켄싱턴 헤리티지 트렌치코트",
+    "code": "81172281",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/long-kensington-heritage-trench-coat-p81172281",
+     "US": "https://us.burberry.com/long-kensington-heritage-trench-coat-p81172281",
+     "GB": "https://uk.burberry.com/long-kensington-heritage-trench-coat-p81172281"
+    }
+   },
+   {
+    "id": "bbr-heritage-chelsea-mid",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "미드 렝스 첼시 헤리티지 트렌치코트",
+    "code": "81172391",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "US": "https://us.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
+     "GB": "https://uk.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391"
+    }
+   },
+   {
+    "id": "bbr-heritage-waterloo-long",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "롱 워털루 헤리티지 트렌치코트",
+    "code": "81172521",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "US": "https://us.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
+     "GB": "https://uk.burberry.com/long-waterloo-heritage-trench-coat-p81172521"
+    }
+   },
+   {
+    "id": "bbr-hoxton-long",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "롱 개버딘 혹스턴 트렌치코트",
+    "code": "81330281",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "US": "https://us.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
+     "GB": "https://uk.burberry.com/long-gabardine-hoxton-trench-coat-p81330281"
+    }
+   },
+   {
+    "id": "bbr-gradientscarf",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "그라데이션 체크 캐시미어 스카프",
+    "code": "81348721",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "US": "https://us.burberry.com/gradient-check-cashmere-scarf-p81348721",
+     "GB": "https://uk.burberry.com/gradient-check-cashmere-scarf-p81348721"
+    }
+   },
+   {
+    "id": "bbr-knightscarf",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "나이트 캐시미어 스카프",
+    "code": "81316191",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/knight-cashmere-scarf-p81316191",
+     "US": "https://us.burberry.com/knight-cashmere-scarf-p81316191",
+     "GB": "https://uk.burberry.com/knight-cashmere-scarf-p81316191"
+    }
+   },
+   {
+    "id": "bbr-reversiblescarf",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "리버서블 체크 캐시미어 스카프",
+    "code": "81345821",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "US": "https://us.burberry.com/reversible-check-cashmere-scarf-p81345821",
+     "GB": "https://uk.burberry.com/reversible-check-cashmere-scarf-p81345821"
+    }
+   },
+   {
+    "id": "bbr-widescarf",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "와이드 체크 캐시미어 스카프",
+    "code": "80859311",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "US": "https://us.burberry.com/wide-check-cashmere-scarf-p80859311",
+     "GB": "https://uk.burberry.com/wide-check-cashmere-scarf-p80859311"
+    }
+   },
+   {
+    "id": "bbr-narrowscarf",
+    "cat": "wear",
+    "brand": "버버리",
+    "name": "내로우 체크 캐시미어 스카프",
+    "code": "81302831",
+    "src": "page",
+    "hint": "",
+    "urls": {
+     "KR": "https://kr.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "US": "https://us.burberry.com/narrow-check-cashmere-scarf-p81302831",
+     "GB": "https://uk.burberry.com/narrow-check-cashmere-scarf-p81302831"
+    }
+   }
+  ],
+  "memo": {
+   "what": "② 상품 늘리기 — 2차 로그(p2b access2) 한국·미국·영국 사이트맵에 모두 있는 트렌치·캐시미어 스카프 11개(목표 +8의 일부 — 아래 가방·재킷·신발 찾기와 합쳐 고름) · price_fetch PRODUCTS 모양 그대로(kr·us·uk.burberry.com · JSON-LD sku = p번호).",
+   "pick": "OK(by 품번)인 나라만 urls에 · 한국 + 해외 1곳 이상 OK인 상품만 · 독일·일본·두바이·멕시코 주소는 아래 5번째 작업(try) TRY 줄에서 같은 p번호로 OK인 나라를 더함",
+   "sale_check": "비율 = 한국 정가 ÷ (현지 정가 × 환율)이 버버리 기존 4개 나라별 가운데값(2차 OK 값: 미국 약 0.94·영국 약 1.08 — 환율 11/20 달러 1,334.79·파운드 1,746.69 기준)보다 25% 넘게 높으면 할인가로 보고 그 나라 뺌 · extra.cur_price < full이면 할인 표시",
+   "kids": "한국 가격이 기존 같은 분류보다 크게 낮으면(트렌치 약 150만 원 밑 · 스카프 약 60만 원 밑) 아동용일 수 있음 → 다음 pages 작업 og 제목('- 아동')으로 확인 후 뺌"
+  }
+ },
+ {
+  "t": "pages",
+  "code_rx": "\"sku\":\"(\\d{8})\"",
+  "snip_rx": [
+   "\"priceCurrency\"\\s*:\\s*\"[A-Z]{3}\""
+  ],
+  "urls": [
+   "https://kr.burberry.com/gradient-check-cashmere-scarf-p81348721",
+   "https://kr.burberry.com/knight-cashmere-scarf-p81316191",
+   "https://kr.burberry.com/reversible-check-cashmere-scarf-p81345821",
+   "https://kr.burberry.com/wide-check-cashmere-scarf-p80859311",
+   "https://kr.burberry.com/narrow-check-cashmere-scarf-p81302831",
+   "https://kr.burberry.com/check-cashmere-scarf-p81249961",
+   "https://kr.burberry.com/check-cashmere-scarf-p81126341"
+  ],
+  "memo": "스카프 후보 한국 페이지 제목(og — 색상·'- 아동' 여부)·가격 확인 · 마지막 2개(81249961·81126341)는 참고만(상품 정의 없음): 기존 체크 캐시미어 스카프(81250011 토렌트 블루 · 850,000원)와 같은 모델의 다른 색(아카이브 베이지 등)인지 — 같은 가격이면 넣지 않음(같은 모델 같은 한국 가격 다른 색은 하나만)"
+ },
+ {
+  "t": "codes",
+  "key": "bbr",
+  "rx": "((?<=-p)(?:81332441|81361201|81354831|81250011|81172291|81172341|81172281|81172391|81172521|81330281|81348721|81316191|81345821|80859311|81302831)$|(?<=[/-])(?:[a-z0-9]+-)?(?:bag|tote|jacket|sneakers|boots|loafers)(?=-p\\d{8}$))",
+  "base": "KR",
+  "max_maps": 7,
+  "per_host": 100,
+  "show": 200,
+  "sites": {
+   "KR": {
+    "host": "kr.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "US": {
+    "host": "us.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "GB": {
+    "host": "uk.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "DE": {
+    "host": "de.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "JP": {
+    "host": "jp.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "AE": {
+    "host": "ae.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   },
+   "MX": {
+    "host": "mx.burberry.com",
+    "kid_pref": [
+     "product-detail"
+    ]
+   }
+  },
+  "memo": "나라별 공식몰 robots.txt 사이트맵(상품 상세 사이트맵만)을 한 번씩 읽어 한 정규식으로 두 가지를 모음: (가) 알려진 p번호 15개(기존 4 + 위 11) → 그 나라 주소 · (나) 가방·재킷·신발 주소를 '모델 낱말 + 분류'(주소 끝 두 낱말 — medium-knight-bag → knight-bag, check-trim-harrington-jacket → harrington-jacket)로 묶어 나라마다 사이트맵 순서 첫 상품 하나(같은 모델 다른 색·크기는 하나만). ROW 줄 = 한국 몰에 있는 키 목록(나라 수·없는 나라 · kr 주소 끝 90자) — 이번 try에 없는 가방·재킷·신발 이름은 다음 차례 후보로 씀"
+ },
+ {
+  "t": "try",
+  "key": "bbr",
+  "brand": "버버리",
+  "ccs": [
+   "DE",
+   "JP",
+   "AE",
+   "MX"
+  ],
+  "cands": [
+   {
+    "code": "81332441",
+    "name": "미드 렝스 개버딘 켄싱턴 트렌치코트(기존 bbr-kensington-mid)"
+   },
+   {
+    "code": "81361201",
+    "name": "롱 캐시미어 켄싱턴 트렌치코트(기존 bbr-kensington-long)"
+   },
+   {
+    "code": "81354831",
+    "name": "롱 개버딘 레이크필드 트렌치코트(기존 bbr-lakefield-long)"
+   },
+   {
+    "code": "81250011",
+    "name": "체크 캐시미어 스카프(기존 bbr-checkscarf)"
+   },
+   {
+    "code": "81172291",
+    "name": "미드 렝스 켄싱턴 헤리티지 트렌치코트"
+   },
+   {
+    "code": "81172341",
+    "name": "쇼트 켄싱턴 헤리티지 트렌치코트"
+   },
+   {
+    "code": "81172281",
+    "name": "롱 켄싱턴 헤리티지 트렌치코트"
+   },
+   {
+    "code": "81172391",
+    "name": "미드 렝스 첼시 헤리티지 트렌치코트"
+   },
+   {
+    "code": "81172521",
+    "name": "롱 워털루 헤리티지 트렌치코트"
+   },
+   {
+    "code": "81330281",
+    "name": "롱 개버딘 혹스턴 트렌치코트"
+   },
+   {
+    "code": "81348721",
+    "name": "그라데이션 체크 캐시미어 스카프"
+   },
+   {
+    "code": "81316191",
+    "name": "나이트 캐시미어 스카프"
+   },
+   {
+    "code": "81345821",
+    "name": "리버서블 체크 캐시미어 스카프"
+   },
+   {
+    "code": "80859311",
+    "name": "와이드 체크 캐시미어 스카프"
+   },
+   {
+    "code": "81302831",
+    "name": "내로우 체크 캐시미어 스카프"
+   }
+  ],
+  "memo": "① 기존 4개 + 위 11개를 독일·일본·두바이·멕시코 사이트맵 주소(같은 p번호)로 price_fetch 정가 읽기 — OK이고 통화가 그 나라 통화(EUR·JPY·AED·MXN)인 나라만 그 상품 urls에 TRY 줄 주소(https://{나라 호스트}{경로})로 더함 · 할인 검사는 tryp 메모와 같은 비율 방식(두바이·멕시코는 버버리 기존 값이 없어 같은 상품의 미국 비율보다 25% 넘게 높으면 뺌)"
+ },
+ {
+  "t": "try",
+  "key": "bbr",
+  "brand": "버버리",
+  "ccs": [
+   "KR",
+   "US",
+   "GB",
+   "DE",
+   "JP",
+   "AE",
+   "MX"
+  ],
+  "cands": [
+   {
+    "code": "knight-bag",
+    "name": "나이트 백"
+   },
+   {
+    "code": "horse-bag",
+    "name": "락킹 호스 백"
+   },
+   {
+    "code": "shield-bag",
+    "name": "쉴드 백"
+   },
+   {
+    "code": "chess-bag",
+    "name": "체스 백"
+   },
+   {
+    "code": "snip-bag",
+    "name": "스닙 백"
+   },
+   {
+    "code": "peg-bag",
+    "name": "페그 백"
+   },
+   {
+    "code": "clip-bag",
+    "name": "B 클립 백"
+   },
+   {
+    "code": "trench-tote",
+    "name": "트렌치 토트"
+   },
+   {
+    "code": "check-tote",
+    "name": "체크 토트"
+   },
+   {
+    "code": "messenger-bag",
+    "name": "메신저 백"
+   },
+   {
+    "code": "harrington-jacket",
+    "name": "해링턴 재킷"
+   },
+   {
+    "code": "quilted-jacket",
+    "name": "퀼팅 재킷"
+   },
+   {
+    "code": "box-sneakers",
+    "name": "박스 스니커즈"
+   },
+   {
+    "code": "highland-boots",
+    "name": "하이랜드 부츠"
+   }
+  ],
+  "memo": {
+   "what": "② 가방·재킷·신발 찾기 → 바로 정가 읽기: 모델 키(위 codes (나))마다 나라별 사이트맵 첫 상품 페이지를 price_fetch로 읽음(JSON-LD url에 키가 있어 by 품번) · 키가 사이트맵에 없으면 요청 없이 TRY missing만",
+   "pick": "TRY 줄 주소 끝 -p번호가 한국과 같은 나라만 한 상품으로(나라마다 첫 상품이 다른 색·크기면 그 나라는 뺌) · 상품 정의는 code = 한국 p번호 · cat = bag(가방·토트)/wear(재킷)/shoe(스니커즈)/boot(부츠) · name = 한국어 모델 이름 · hint '' · urls = p번호가 같은 나라 주소",
+   "kids": "한국 가격이 가방 약 100만 원 밑·재킷 약 120만 원 밑이면 아동용일 수 있어 뺌(제목 확인은 다음 차례) · 키링·참(charm)·카드지갑은 정규식에서 이미 빠짐"
+  }
+ }
+]

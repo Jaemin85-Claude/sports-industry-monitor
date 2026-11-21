@@ -1,0 +1,337 @@
+[
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "saucony-elite3-kr",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 엘리트 3(공용)",
+    "code": "S100981",
+    "src": "page",
+    "hint": "엔돌핀 엘리트 3",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%97%94%EB%8F%8C%ED%95%80-%EC%97%98%EB%A6%AC%ED%8A%B8-3-whiteblack/478/"
+    }
+   },
+   {
+    "id": "saucony-hurricane26w-kr",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "허리케인 26(여성)",
+    "code": "S101106",
+    "src": "page",
+    "hint": "허리케인 26",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/531/"
+    }
+   },
+   {
+    "id": "saucony-triumph24w-kr",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "트라이엄프 24(여성)",
+    "code": "S100999",
+    "src": "page",
+    "hint": "트라이엄프 24",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/409/"
+    }
+   },
+   {
+    "id": "saucony-peregrine16w-kr",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "페레그린 16(여성)",
+    "code": "S11066",
+    "src": "page",
+    "hint": "페레그린 16",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0-16-aquacitron/212/"
+    }
+   },
+   {
+    "id": "saucony-endspeed5w-kr",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(여성)",
+    "code": "S11007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-blackwhite/104/"
+    }
+   }
+  ],
+  "ids": [
+   {
+    "ids": [
+     "saucony-hurricane26",
+     "saucony-endspeed5"
+    ],
+    "only": [
+     "KR"
+    ]
+   },
+   {
+    "ids": [
+     "saucony-endtrainer"
+    ],
+    "only": [
+     "GB",
+     "DE"
+    ]
+   }
+  ],
+  "memo": "① 한국 먼저 — 새 상품 5개 한국 값(id 끝 -kr = 아래 본 정의의 한국 값과 같은 주소 · 한국 요청을 붙여서 연결 끊김을 줄임) · 기존 실패 다시: saucony-hurricane26·endspeed5 한국(11/21 main·2차 시험 'RemoteDisconnected' — 다시 받히면 일시적) · saucony-endtrainer 영국·독일(11/21 HTTP 404 — 2차 사이트맵: 미국·독일 사이트맵에 엔돌핀 트레이너 자체가 없음 · 영국 사이트맵의 59961M이 이 404 주소 → 또 404면 해외 몰에서 빠진 것으로 보고 상품째 빼기 제안)"
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "saucony-elite3",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 엘리트 3(공용)",
+    "code": "S100981",
+    "src": "page",
+    "hint": "엔돌핀 엘리트 3",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%97%94%EB%8F%8C%ED%95%80-%EC%97%98%EB%A6%AC%ED%8A%B8-3-whiteblack/478/",
+     "US": "https://www.saucony.com/en/endorphin-elite-3/61243U.html",
+     "GB": "https://www.saucony.com/UK/en_GB/endorphin-elite-3/61243U.html",
+     "DE": "https://www.saucony.com/DE/de_DE/endorphin-elite-3/61243U.html"
+    }
+   },
+   {
+    "id": "saucony-hurricane26w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "허리케인 26(여성)",
+    "code": "S101106",
+    "src": "page",
+    "hint": "허리케인 26",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/531/",
+     "US": "https://www.saucony.com/en/hurricane-26/61262W.html",
+     "GB": "https://www.saucony.com/UK/en_GB/hurricane-26/61262W.html",
+     "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61262W.html"
+    }
+   },
+   {
+    "id": "saucony-triumph24w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "트라이엄프 24(여성)",
+    "code": "S100999",
+    "src": "page",
+    "hint": "트라이엄프 24",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/409/",
+     "US": "https://www.saucony.com/en/triumph-24/61241W.html",
+     "GB": "https://www.saucony.com/UK/en_GB/triumph-24/61241W.html",
+     "DE": "https://www.saucony.com/DE/de_DE/triumph-24/61241W.html"
+    }
+   },
+   {
+    "id": "saucony-peregrine16w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "페레그린 16(여성)",
+    "code": "S11066",
+    "src": "page",
+    "hint": "페레그린 16",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0-16-aquacitron/212/",
+     "US": "https://www.saucony.com/en/peregrine-16/60850W.html",
+     "GB": "https://www.saucony.com/UK/en_GB/peregrine-16/60850W.html",
+     "DE": "https://www.saucony.com/DE/de_DE/peregrine-16/60850W.html"
+    }
+   },
+   {
+    "id": "saucony-endspeed5w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 스피드 5(여성)",
+    "code": "S11007",
+    "src": "page",
+    "hint": "엔돌핀 스피드 5",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-blackwhite/104/",
+     "US": "https://www.saucony.com/en/endorphin-speed-5/60308W.html",
+     "GB": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60308W.html",
+     "DE": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60308W.html"
+    }
+   },
+   {
+    "id": "saucony-ride19w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "라이드 19(여성)",
+    "code": "S11055",
+    "src": "page",
+    "hint": "라이드 19",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-cloud/208/",
+     "US": "https://www.saucony.com/en/ride-19/60827W.html?dwvar_60827W_color=S11055-103",
+     "GB": "https://www.saucony.com/UK/en_GB/ride-19/60827W.html?dwvar_60827W_color=S11055-103",
+     "DE": "https://www.saucony.com/DE/de_DE/ride-19/60827W.html?dwvar_60827W_color=S11055-103"
+    }
+   },
+   {
+    "id": "saucony-kinvara16w",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "킨바라 16(여성)",
+    "code": "S11020",
+    "src": "page",
+    "hint": "킨바라 16",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/155/",
+     "US": "https://www.saucony.com/en/kinvara-16/60310W.html?dwvar_60310W_color=S11020-200",
+     "GB": "https://www.saucony.com/UK/en_GB/kinvara-16/60310W.html?dwvar_60310W_color=S11020-200",
+     "DE": "https://www.saucony.com/DE/de_DE/kinvara-16/60310W.html?dwvar_60310W_color=S11020-200"
+    }
+   },
+   {
+    "id": "saucony-pgguide7",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "프로그리드 가이드 7(공용)",
+    "code": "S70936",
+    "src": "page",
+    "hint": "프로그리드 가이드 7",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%EA%B0%80%EC%9D%B4%EB%93%9C-7-greysilver/134/",
+     "US": "https://www.saucony.com/en/progrid-guide-7/60339U.html?dwvar_60339U_color=S70936-12",
+     "GB": "https://www.saucony.com/UK/en_GB/progrid-guide-7/60339U.html?dwvar_60339U_color=S70936-12",
+     "DE": "https://www.saucony.com/DE/de_DE/progrid-guide-7/60339U.html?dwvar_60339U_color=S70936-12"
+    }
+   },
+   {
+    "id": "saucony-pgtriumph4",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "프로그리드 트라이엄프 4(공용)",
+    "code": "S70704",
+    "src": "page",
+    "hint": "프로그리드 트라이엄프 4",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-4-blacksilver/190/",
+     "US": "https://www.saucony.com/en/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+     "GB": "https://www.saucony.com/UK/en_GB/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23",
+     "DE": "https://www.saucony.com/DE/de_DE/progrid-triumph-4/53038U.html?dwvar_53038U_color=S70704-23"
+    }
+   },
+   {
+    "id": "saucony-endpro5w-fix",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 프로 5(여성)",
+    "code": "S11064",
+    "src": "page",
+    "hint": "엔돌핀 프로 5",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/298/",
+     "US": "https://www.saucony.com/en/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+     "GB": "https://www.saucony.com/UK/en_GB/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101",
+     "DE": "https://www.saucony.com/DE/de_DE/endorphin-pro-5/60804W.html?dwvar_60804W_color=S11064-101"
+    }
+   },
+   {
+    "id": "saucony-trainer80-fix",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "트레이너 80(공용)",
+    "code": "S70884",
+    "src": "page",
+    "hint": "트레이너 80",
+    "code_in_page": true,
+    "urls": {
+     "KR": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-80-blackwhite/222/",
+     "US": "https://www.saucony.com/en/trainer-80/59999U.html?dwvar_59999U_color=S70884-2",
+     "GB": "https://www.saucony.com/UK/en_GB/trainer-80/59999U.html",
+     "DE": "https://www.saucony.com/DE/de_DE/trainer-80/59999U.html"
+    }
+   }
+  ],
+  "memo": "② 본 정의(PRODUCTS 모양 그대로) — 새 후보 9개(우선순위: 엘리트 3·허리케인 26 여성·트라이엄프 24 여성·페레그린 16 여성 → 스피드 5 여성(해외 재고 정리 중 −34~40%) → 색상 지정 주소 후보 라이드 19 여성·킨바라 16 여성·프로그리드 가이드 7·트라이엄프 4) + 고침 2개(-fix = 기존 id에 바뀐 나라만 반영: endpro5w 영국·독일 · trainer80 미국 색상 지정 주소). 할인 검사(2차 기준): 비율 = 한국 정가 ÷ (현지 정가 × 환율), 써코니 가운데값 US 0.923·GB 0.704·DE 0.757의 1.25배(US > 1.154·GB > 0.880·DE > 0.946) 넘으면 그 나라 뺌 · extra.cur_price < full이면 할인 표시를 보고 원래 가격(price-standard)을 읽은 것(정상)"
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "saucony-elite3-c",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "엔돌핀 엘리트 3(공용)",
+    "code": "S100981",
+    "src": "page",
+    "hint": "엔돌핀 엘리트 3",
+    "code_in_page": true,
+    "urls": {
+     "GB": "https://www.saucony.com/UK/en_GB/endorphin-elite-3/61243U.html?dwvar_61243U_color=S100981-1025",
+     "DE": "https://www.saucony.com/DE/de_DE/endorphin-elite-3/61243U.html?dwvar_61243U_color=S100981-1025"
+    }
+   },
+   {
+    "id": "saucony-hurricane26w-c",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "허리케인 26(여성)",
+    "code": "S101106",
+    "src": "page",
+    "hint": "허리케인 26",
+    "code_in_page": true,
+    "urls": {
+     "GB": "https://www.saucony.com/UK/en_GB/hurricane-26/61262W.html?dwvar_61262W_color=S101106-1009",
+     "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61262W.html?dwvar_61262W_color=S101106-1009"
+    }
+   },
+   {
+    "id": "saucony-triumph24w-c",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "트라이엄프 24(여성)",
+    "code": "S100999",
+    "src": "page",
+    "hint": "트라이엄프 24",
+    "code_in_page": true,
+    "urls": {
+     "GB": "https://www.saucony.com/UK/en_GB/triumph-24/61241W.html?dwvar_61241W_color=S100999-1024",
+     "DE": "https://www.saucony.com/DE/de_DE/triumph-24/61241W.html?dwvar_61241W_color=S100999-1024"
+    }
+   },
+   {
+    "id": "saucony-peregrine16w-c",
+    "cat": "shoe",
+    "brand": "써코니",
+    "name": "페레그린 16(여성)",
+    "code": "S11066",
+    "src": "page",
+    "hint": "페레그린 16",
+    "code_in_page": true,
+    "urls": {
+     "GB": "https://www.saucony.com/UK/en_GB/peregrine-16/60850W.html?dwvar_60850W_color=S11066-130",
+     "DE": "https://www.saucony.com/DE/de_DE/peregrine-16/60850W.html?dwvar_60850W_color=S11066-130"
+    }
+   }
+  ],
+  "memo": "③ 영국·독일 대안 — 새 상품 4개의 색상 지정 주소(id 끝 -c). ②의 기본 주소가 'JSON-LD 없음'(기본 색상이 다른 품번)인 나라만 이 주소로 바꿈 · 둘 다 OK면 기본 주소(기존 써코니 영국·독일과 같은 꼴)"
+ }
+]

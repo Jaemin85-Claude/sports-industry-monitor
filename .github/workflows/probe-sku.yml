@@ -1,6 +1,6 @@
 name: probe-sku
 
-# 임시 시험(병합하지 않음) — 해외 정가 2차 상품 늘리기 후보(대표 지시 2026-11-21 금일 추가 수집): 브랜드마다 따로(동시) 사이트맵 대조·정가 읽기
+# 임시 시험(병합하지 않음) — 해외 정가 3차 상품 늘리기(대표 2026-11-21 지금 추가 수집 — 버버리·톰브라운·클락스·써코니): 브랜드마다 따로(동시) 사이트맵 대조·정가 읽기
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [brand4]
+        plan: [bbr3, tb3, clarks3, sau3]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
