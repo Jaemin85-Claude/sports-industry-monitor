@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-21 14:07 KST",
+ "generated_at": "2026-11-21 21:39 KST",
  "items": [
   {
    "ticker": "NKE",
@@ -51,7 +51,7 @@
    "q_inv_yoy": -3.3029332018733037,
    "q_inv_rev_yoy": -4.3259385665529,
    "price": 32.91999816894531,
-   "off_high_pct": -50.14795977490566,
+   "off_high_pct": -50.147965534555674,
    "earn_date": "2026-12-17",
    "error": null
   },
@@ -104,8 +104,8 @@
    "q_inv_prev_date": "2025-09-30",
    "q_inv_yoy": 4.898556022664957,
    "q_inv_rev_yoy": 9.38159879336351,
-   "price": 172.1999969482422,
-   "off_high_pct": -8.35550689633947,
+   "price": 165.0,
+   "off_high_pct": -12.18733083573178,
    "earn_date": null,
    "error": null
   },
@@ -914,8 +914,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 24.75,
-   "off_high_pct": -17.500000000000004,
+   "price": 23.43000030517578,
+   "off_high_pct": -21.89999898274739,
    "earn_date": null,
    "error": null
   },
@@ -1076,8 +1076,8 @@
    "q_inv_prev_date": "2025-09-30",
    "q_inv_yoy": 3.003003003003002,
    "q_inv_rev_yoy": null,
-   "price": 54.5,
-   "off_high_pct": -38.405059056238365,
+   "price": 52.20000076293945,
+   "off_high_pct": -41.00447772004463,
    "earn_date": null,
    "error": null
   },
@@ -1130,8 +1130,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 176.8000030517578,
-   "off_high_pct": -42.19788290401492,
+   "price": 174.60000610351562,
+   "off_high_pct": -42.917139007058516,
    "earn_date": null,
    "error": null
   },
@@ -1184,8 +1184,8 @@
    "q_inv_prev_date": "2025-06-30",
    "q_inv_yoy": -13.989923633605915,
    "q_inv_rev_yoy": null,
-   "price": 2.259999990463257,
-   "off_high_pct": -3.8297837370926735,
+   "price": 2.109999895095825,
+   "off_high_pct": -10.212766777719008,
    "earn_date": null,
    "error": null
   },
@@ -1293,7 +1293,7 @@
    "q_inv_yoy": 2.01737640020081,
    "q_inv_rev_yoy": null,
    "price": 0.3400000035762787,
-   "off_high_pct": -33.57442780359586,
+   "off_high_pct": -33.57442006839062,
    "earn_date": null,
    "error": null
   },
@@ -1400,8 +1400,8 @@
    "q_inv_prev_date": null,
    "q_inv_yoy": null,
    "q_inv_rev_yoy": null,
-   "price": 41.20000076293945,
-   "off_high_pct": -27.605949615428514,
+   "price": 39.4900016784668,
+   "off_high_pct": -30.610652469469258,
    "earn_date": null,
    "error": null
   },
@@ -1508,8 +1508,8 @@
    "q_inv_prev_date": "2025-09-30",
    "q_inv_yoy": 11.037527593818975,
    "q_inv_rev_yoy": null,
-   "price": 1170.0,
-   "off_high_pct": -13.970588235294112,
+   "price": 1124.5,
+   "off_high_pct": -17.31617647058824,
    "earn_date": null,
    "error": null
   },
@@ -1670,8 +1670,8 @@
    "q_inv_prev_date": "2025-07-31",
    "q_inv_yoy": 1.7872711421098586,
    "q_inv_rev_yoy": null,
-   "price": 90.30000305175781,
-   "off_high_pct": -7.479503623454353,
+   "price": 88.36000061035156,
+   "off_high_pct": -9.467211074003801,
    "earn_date": null,
    "error": null
   },
@@ -1778,8 +1778,8 @@
    "q_inv_prev_date": "2025-04-30",
    "q_inv_yoy": 13.427279978729057,
    "q_inv_rev_yoy": null,
-   "price": 936.5,
-   "off_high_pct": -4.584819154355579,
+   "price": 922.5,
+   "off_high_pct": -6.011207335710644,
    "earn_date": "2026-12-10",
    "error": null
   },
@@ -1832,8 +1832,8 @@
    "q_inv_prev_date": "2025-09-30",
    "q_inv_yoy": -0.30916802092829654,
    "q_inv_rev_yoy": 5.101635436668217,
-   "price": 28.81999969482422,
-   "off_high_pct": -4.695767483603519,
+   "price": 28.239999771118164,
+   "off_high_pct": -6.613756663815106,
    "earn_date": null,
    "error": null
   },
@@ -2319,7 +2319,7 @@
    "q_inv_yoy": 4.9036431423299165,
    "q_inv_rev_yoy": 3.419724142891223,
    "price": 30950.0,
-   "off_high_pct": -39.9240467438715,
+   "off_high_pct": -39.92405129900061,
    "earn_date": null,
    "error": null
   },
@@ -5882,10 +5882,10 @@
   },
   "BRL": {
    "name": "브라질 헤알",
-   "rate": 224.9583,
-   "yago": 275.1436,
-   "chg_pct": -18.24,
-   "asof": "2026-11-20",
+   "rate": 225.9522,
+   "yago": 276.2879,
+   "chg_pct": -18.22,
+   "asof": "2026-11-21",
    "via": "달러 경유"
   },
   "JPY": {
