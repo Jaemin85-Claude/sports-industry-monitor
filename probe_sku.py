@@ -87,7 +87,8 @@ def grep(j):   # 사이트맵에서 정규식에 맞는 상품 주소(풀어 쓴
             d = urllib.parse.unquote(u)
             if rx.search(d) and d not in hits: hits.append(d)
         out("GREP", site=name, n=len(hits), hits=hits[: j.get("show", 40)])
-def pages(j):   # 페이지를 받아 제목·JSON-LD 이름·가격·품번 후보·상품 링크를 보여 줌
+def pages(j):   # 페이지를 받아 제목·JSON-LD 이름·가격·품번 후보·상품 링크를 보여 줌 · follow = 페이지에서 찾은 번호로 상품 페이지를 이어서 받음(SKU 2차)
+    fol = j.get("follow"); ids = []
     for u in j["urls"]:
         if left() < 60: out("TIMEOUT"); return
         try:
@@ -109,6 +110,14 @@ def pages(j):   # 페이지를 받아 제목·JSON-LD 이름·가격·품번 후
                 snips.append(h[max(0, m.start() - 160): m.end() + 160].replace("\n", " "))
         out("PAGE", url=urllib.parse.unquote(u)[-120:], status=r.status_code, kb=len(h) // 1000, og=og.group(1)[:120] if og else None,
             names=names, prices=prices, codes=codes, links=links[: j.get("show", 60)], snips=snips)
+        if fol:
+            for m in re.finditer(fol["rx"], h):
+                x = m.group(1)
+                if x not in ids and x not in fol.get("skip", []) and len(ids) < fol.get("max", 40): ids.append(x)
+    if fol and ids:
+        out("FOLLOW", n=len(ids), ids=ids)
+        pages({"urls": [fol["url"].format(x) for x in ids], "code_rx": fol.get("code_rx", r"$^"), "link_rx": fol.get("link_rx"),
+               "snip_rx": fol.get("snip_rx", []), "show": fol.get("show", 15)})
 
 def shopjson(j):   # 쇼피파이 몰 /products.json 쪽마다 → 상품 이름·handle·변형 품번·가격 · 품번 앞 8자리를 CODES[key][cc]에 넣음(다음 codes 작업에서 대조)
     key = j.get("key", "x"); cc = j.get("cc", "KR"); CODES.setdefault(key, {}).setdefault(cc, {})
