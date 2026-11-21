@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [access2]
+        plan: [brand3]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
