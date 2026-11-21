@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [crocs5, onitsuka5]
+        plan: [mizuno5]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
