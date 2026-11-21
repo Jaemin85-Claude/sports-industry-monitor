@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-20 16:46 KST",
+ "generated_at": "2026-11-21 09:50 KST",
  "fetched": "2026-11-20",
  "attempt": "2026-11-20",
  "cfg": "3c9609ea998e",
@@ -6859,13 +6859,11 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-17",
+     "seen": "2026-11-21",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",
      "obs": 219000.0,
-     "obs_date": "2026-11-17",
-     "sale": false,
-     "stale_since": "2026-11-17",
-     "why": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed c"
+     "obs_date": "2026-11-21",
+     "sale": false
     },
     "US": {
      "p": 175.0,
@@ -9292,22 +9290,21 @@
  ],
  "failed": [],
  "host_try": {
-  "salomon-xt6 US": "2026-11-20",
-  "salomon-xt6 GB": "2026-11-20",
-  "salomon-xt6 DE": "2026-11-20",
-  "salomon-xt6base US": "2026-11-20",
-  "salomon-xt6base GB": "2026-11-20",
-  "salomon-xt6base DE": "2026-11-20",
-  "salomon-xt4og US": "2026-11-20",
-  "salomon-xt4og GB": "2026-11-20",
-  "salomon-xt4og DE": "2026-11-20",
-  "salomon-xt6expanse US": "2026-11-20",
-  "salomon-xt6expanse GB": "2026-11-20",
-  "salomon-xt6expanse DE": "2026-11-20",
-  "salomon-xt4oggtx US": "2026-11-20",
-  "salomon-xt4oggtx GB": "2026-11-20",
-  "salomon-xt4oggtx DE": "2026-11-20"
+  "salomon-xt6 US": "2026-11-21",
+  "salomon-xt6 GB": "2026-11-21",
+  "salomon-xt6 DE": "2026-11-21",
+  "salomon-xt6base US": "2026-11-21",
+  "salomon-xt6base GB": "2026-11-21",
+  "salomon-xt6base DE": "2026-11-21",
+  "salomon-xt4og US": "2026-11-21",
+  "salomon-xt4og GB": "2026-11-21",
+  "salomon-xt4og DE": "2026-11-21",
+  "salomon-xt6expanse US": "2026-11-21",
+  "salomon-xt6expanse GB": "2026-11-21",
+  "salomon-xt6expanse DE": "2026-11-21",
+  "salomon-xt4oggtx US": "2026-11-21",
+  "salomon-xt4oggtx GB": "2026-11-21",
+  "salomon-xt4oggtx DE": "2026-11-21"
  },
- "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
- "tried": "2026-11-20"
+ "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"
 }
