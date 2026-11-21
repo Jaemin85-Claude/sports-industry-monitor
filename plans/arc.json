@@ -1,0 +1,245 @@
+[
+ {
+  "t": "robots",
+  "hosts": [
+   "arcteryx.co.kr",
+   "arcteryx.com",
+   "arcteryx.jp"
+  ]
+ },
+ {
+  "t": "grep",
+  "rx": "/products/view/\\d{6}",
+  "sites": {
+   "KR": {
+    "host": "arcteryx.co.kr",
+    "start": [
+     "https://arcteryx.co.kr/sitemap.xml"
+    ],
+    "sample": 5
+   }
+  },
+  "max_maps": 3,
+  "per_host": 40,
+  "show": 300
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/lp",
+   "https://arcteryx.co.kr/",
+   "https://arcteryx.co.kr/products/best",
+   "https://arcteryx.co.kr/products/new",
+   "https://arcteryx.co.kr/system-0/",
+   "https://arcteryx.co.kr/rebird",
+   "https://arcteryx.co.kr/explore/walk-gently",
+   "https://arcteryx.co.kr/UTNP2026"
+  ],
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}|X0000\\d{5}",
+  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}|/products/view/\\d{6}|href=\"/(?!products/view/)[A-Za-z0-9_./-]{2,80}\"",
+  "snip_rx": [
+   "(?i)<title>[^<]{0,60}"
+  ],
+  "show": 300,
+  "follow": {
+   "rx": "products/(\\d{6})/[A-Z]\\d{2}_X0000\\d{5}",
+   "url": "https://arcteryx.co.kr/products/view/{}",
+   "skip": [
+    "686206",
+    "686212",
+    "686214",
+    "686216",
+    "686217",
+    "686221",
+    "686226",
+    "686228",
+    "686229",
+    "686230",
+    "686231",
+    "686342",
+    "686680",
+    "686683",
+    "686686",
+    "686700",
+    "686737",
+    "686738",
+    "686739",
+    "686883",
+    "686905",
+    "686979",
+    "686980",
+    "686986",
+    "687008",
+    "687020",
+    "686241",
+    "685690",
+    "686323",
+    "686259",
+    "686764",
+    "686432",
+    "686729",
+    "686215",
+    "686681",
+    "686731",
+    "686750",
+    "686685",
+    "686948"
+   ],
+   "max": 40,
+   "code_rx": "A[A-Z]{3}[MWUX]\\d{5}|X0000\\d{5}",
+   "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}",
+   "show": 15
+  }
+ },
+ {
+  "t": "pages",
+  "urls": [
+   "https://arcteryx.co.kr/products/view/686206",
+   "https://arcteryx.co.kr/products/view/686212",
+   "https://arcteryx.co.kr/products/view/686214",
+   "https://arcteryx.co.kr/products/view/686216",
+   "https://arcteryx.co.kr/products/view/686217",
+   "https://arcteryx.co.kr/products/view/686221",
+   "https://arcteryx.co.kr/products/view/686226",
+   "https://arcteryx.co.kr/products/view/686228",
+   "https://arcteryx.co.kr/products/view/686229",
+   "https://arcteryx.co.kr/products/view/686230",
+   "https://arcteryx.co.kr/products/view/686231",
+   "https://arcteryx.co.kr/products/view/686342",
+   "https://arcteryx.co.kr/products/view/686680",
+   "https://arcteryx.co.kr/products/view/686683",
+   "https://arcteryx.co.kr/products/view/686686",
+   "https://arcteryx.co.kr/products/view/686700",
+   "https://arcteryx.co.kr/products/view/686737",
+   "https://arcteryx.co.kr/products/view/686738",
+   "https://arcteryx.co.kr/products/view/686739",
+   "https://arcteryx.co.kr/products/view/686883",
+   "https://arcteryx.co.kr/products/view/686905",
+   "https://arcteryx.co.kr/products/view/686979",
+   "https://arcteryx.co.kr/products/view/686980",
+   "https://arcteryx.co.kr/products/view/686986",
+   "https://arcteryx.co.kr/products/view/687008",
+   "https://arcteryx.co.kr/products/view/687020"
+  ],
+  "code_rx": "A[A-Z]{3}[MWUX]\\d{5}|X0000\\d{5}",
+  "link_rx": "products/\\d{6}/[A-Z]\\d{2}_X0000\\d{5}",
+  "show": 15
+ },
+ {
+  "t": "tryp",
+  "prods": [
+   {
+    "id": "arc-norvanld4",
+    "cat": "shoe",
+    "brand": "아크테릭스",
+    "name": "노반 LD 4(남성)",
+    "code": "X000010398",
+    "cc_code": {
+     "KR": "AFQFM10398"
+    },
+    "src": "page",
+    "hint": "norvan ld 4",
+    "urls": {
+     "KR": "https://arcteryx.co.kr/products/view/686685",
+     "US": "https://arcteryx.com/us/en/shop/mens/norvan-ld-4-shoe-0398",
+     "GB": "https://arcteryx.com/gb/en/shop/mens/norvan-ld-4-shoe-0398",
+     "DE": "https://arcteryx.com/de/en/shop/mens/norvan-ld-4-shoe-0398",
+     "JP": "https://arcteryx.jp/products/norvan-ld-4-m.json"
+    }
+   }
+  ]
+ },
+ {
+  "t": "shopjson",
+  "key": "arc",
+  "cc": "JP",
+  "sku_rx": ".*?X0000\\d(\\d{4})",
+  "urls": [
+   "https://arcteryx.jp/products.json?limit=250&page=1",
+   "https://arcteryx.jp/products.json?limit=250&page=2",
+   "https://arcteryx.jp/products.json?limit=250&page=3",
+   "https://arcteryx.jp/products.json?limit=250&page=4",
+   "https://arcteryx.jp/products.json?limit=250&page=5",
+   "https://arcteryx.jp/products.json?limit=250&page=6"
+  ],
+  "show": false
+ },
+ {
+  "t": "codes",
+  "key": "arc",
+  "base": "US",
+  "rx": "/shop/(?:mens/|womens/)?[a-z0-9-]+-(\\d{4})/?$",
+  "sites": {
+   "US": {
+    "host": "arcteryx.com",
+    "path": "/us/",
+    "kid_pref": [
+     "/us/",
+     "us-en",
+     "en-us",
+     "us_en",
+     "en_us",
+     "_us.",
+     "-us."
+    ]
+   },
+   "GB": {
+    "host": "arcteryx.com",
+    "path": "/gb/",
+    "kid_pref": [
+     "/gb/",
+     "gb-en",
+     "en-gb",
+     "gb_en",
+     "en_gb",
+     "_gb.",
+     "-gb."
+    ]
+   },
+   "DE": {
+    "host": "arcteryx.com",
+    "path": "/de/",
+    "kid_pref": [
+     "/de/",
+     "de-en",
+     "en-de",
+     "de-de",
+     "de_en",
+     "en_de",
+     "de_de",
+     "_de.",
+     "-de."
+    ]
+   },
+   "JP": {
+    "preset": true,
+    "host": "arcteryx.jp"
+   }
+  },
+  "targets": [
+   "0398",
+   "0399",
+   "0400",
+   "0023",
+   "0028",
+   "0081",
+   "0153",
+   "0502",
+   "0613",
+   "0627",
+   "0628",
+   "0635",
+   "0730",
+   "0748",
+   "0764",
+   "0833",
+   "6747",
+   "6803",
+   "9602",
+   "9603"
+  ],
+  "max_maps": 25,
+  "per_host": 150,
+  "show": 300
+ }
+]
