@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        plan: [bbr3, tb3, clarks3, sau3]
+        plan: [bbr4]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
