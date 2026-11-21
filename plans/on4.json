@@ -1,0 +1,315 @@
+[
+ {
+  "t": "grep",
+  "memo": "on.ae 공개 상품 사이트맵(robots.txt Sitemap → /sitemap.xml 색인 → 기본 언어 sitemap_products_1 — /ar/는 kid_pref로 뺌, 요청 2번)에서 대상 모델 handle 확인. 11/03 사이트맵에 cloud-6-coast·cloudsurfer-next·cloudsurfer-max·cloud-6·cloudmonster-3·cloudrunner-3·cloudmonster-1 있었음 · cloudzone은 products.json 2쪽 · cloudrock·cloudultra·cloudboom·cloudmonster-1-waterproof는 처음 찾음(11/11 시험에서 클라우드몬스터 1 WP는 on.ae 404)",
+  "sites": {
+   "onae": {
+    "host": "on.ae",
+    "start": [
+     "https://on.ae/sitemap.xml"
+    ],
+    "kid_pref": [
+     "on.ae/sitemap_products"
+    ],
+    "sample": 2
+   }
+  },
+  "rx": "^https://on\\.ae/products/(cloudmonster-1|cloudrock|cloudultra|cloudboom|cloudzone|cloud-6|cloudsurfer-next|cloudsurfer-max|cloudmonster-3|cloudrunner-3)",
+  "max_maps": 2,
+  "per_host": 90,
+  "show": 60
+ },
+ {
+  "t": "shopjson",
+  "memo": "on.ae 공개 상품 목록 /products.json(쇼피파이 스토어프런트 공개 목록 — 11/03 shopstats로 1~2쪽 485개 받음 · robots.txt 확인은 pf.get)에서 변형 품번(예 '3MG10051043 M 7' — 앞 11자리 글로벌 품번) → 상품 handle 대응을 CODES['on4']['AE']에 넣음(다음 try 작업이 씀). SP 줄 = handle·제목·품번 앞 3개·첫 변형 가격(같은 품번이 없을 때 모델 handle·다른 색상 확인용). 변형 250개 넘는 상품(cloud-6 · 11/03 250개)은 목록에서도 잘릴 수 있음 → 여성 클라우드 6이 TRY에서 missing이면 아래 tryp 결과('변형 250개에서 잘림')로 판단",
+  "key": "on4",
+  "cc": "AE",
+  "sku_rx": "(\\d[A-Z]{2}\\d{8})",
+  "show": true,
+  "urls": [
+   "https://on.ae/products.json?limit=250&page=1",
+   "https://on.ae/products.json?limit=250&page=2",
+   "https://on.ae/products.json?limit=250&page=3"
+  ]
+ },
+ {
+  "t": "try",
+  "memo": "products.json에서 찾은 handle 그대로(짐작 없음)로 price_fetch.fetch_one → shopify_price(SHOP_MODEL on.ae 7 포함) 정가 읽기. TRY 줄 urls = 그 품번이 있는 on.ae 상품 .json(아래 tryp 짐작 handle과 다르면 이 주소로 정의를 고침) · missing = 목록에 그 품번 없음(요청 안 함). 두바이 블프 기준(11/21 docs/prices.json · docs/data.json fx AED 363.4554원 — 달러 고정 3.6725): 기존 온러닝 AE 8개 한국÷(AED×환율) = 0.663·0.684·0.684·0.684·0.684·0.689·0.709·0.719 → 가운데값 0.684 · ×1.25 = 0.856 넘으면 뺌. 상품별 기대 AED(한국÷(0.684×363.46) · on.ae는 대체로 미국 정가×5)와 뺄 선(AED 이 값 밑이면 비율 0.856 넘음): cloudmonster 1 ≈880(미국 180×5=900)·705 / cloudmonster 1 WP ≈1001(1000)·801 / cloud 6 coast ≈840(850)·673 / cloudzone ≈800(750 · 11/03 products.json 최고 775)·640 / cloudrock low WP ≈961(1000)·769 / cloudultra 3 ≈921(950)·737 / cloudboom max ≈1122(1150)·898 / cloudsurfer next ≈760(750)·608 / cloudsurfer max ≈880(900)·705 / cloud 6 여성 ≈800(800)·640 / cloudmonster 3 여성 ≈921(950)·737 / cloudrunner 3 여성 ≈800(800)·640. on.ae는 compare_at_price를 안 써 할인이 '일부 색상만 낮은 값'으로 보임 — OK 줄 extra에 unsure(SHOP_MODEL: 같은 모델·성별 품번 앞 7자리 다른 색상보다 낮음)가 있으면 처음 값으로 못 씀(뺌 또는 다음 차례). 모든 색상이 함께 내려간 할인은 unsure가 안 뜨므로 위 비율 기준으로 거름.",
+  "key": "on4",
+  "ccs": [
+   "AE"
+  ],
+  "brand": "온러닝",
+  "cands": [
+   {
+    "code": "3MF30740553",
+    "name": "클라우드몬스터 1",
+    "hint": "cloudmonster"
+   },
+   {
+    "code": "3MG10701043",
+    "name": "클라우드몬스터 1 워터프루프",
+    "hint": "cloudmonster"
+   },
+   {
+    "code": "3MF10030080",
+    "name": "클라우드 6 코스트",
+    "hint": "cloud 6 coast"
+   },
+   {
+    "code": "3MF10080106",
+    "name": "클라우드존",
+    "hint": "cloudzone"
+   },
+   {
+    "code": "3MF10251043",
+    "name": "클라우드록 로우 워터프루프",
+    "hint": "cloudrock"
+   },
+   {
+    "code": "3MF30231043",
+    "name": "클라우드울트라 3",
+    "hint": "cloudultra"
+   },
+   {
+    "code": "3MF30310462",
+    "name": "클라우드붐 맥스",
+    "hint": "cloudboom"
+   },
+   {
+    "code": "3ME30021200",
+    "name": "클라우드서퍼 넥스트",
+    "hint": "cloudsurfer"
+   },
+   {
+    "code": "3MF30431200",
+    "name": "클라우드서퍼 맥스",
+    "hint": "cloudsurfer max"
+   },
+   {
+    "code": "3WF10061043",
+    "name": "클라우드 6(여성)",
+    "hint": "cloud 6"
+   },
+   {
+    "code": "3WG10031043",
+    "name": "클라우드몬스터 3(여성)",
+    "hint": "cloudmonster 3"
+   },
+   {
+    "code": "3WG10051043",
+    "name": "클라우드러너 3(여성)",
+    "hint": "cloudrunner 3"
+   }
+  ]
+ },
+ {
+  "t": "tryp",
+  "memo": "합칠 정의 — price_fetch PRODUCTS의 온러닝 12개를 그대로 두고 urls에 AE(on.ae 모델 상품 .json)만 더함(같은 id · 합칠 때는 _on(path, 'handle') 꼴: on-cloudmonster → _on(…, \"cloudmonster-1\") · on-cloudmonster1wp → _on(…, \"cloudmonster-1-waterproof\") · on-cloud6coast → _on(…, \"cloud-6-coast\") · on-cloudzone → _on(…, \"cloudzone\") · on-cloudrocklowwp → _on(…, \"cloudrock-low-waterproof\") · on-cloudultra3 → _on(…, \"cloudultra-3\") · on-cloudboommax → _on(…, \"cloudboom-max\") · on-cloudsurfernext → _on(…, \"cloudsurfer-next\") · on-cloudsurfermax → _on(…, \"cloudsurfer-max\") · on-cloud6w → _on(…, \"cloud-6\") · on-cloudmonster3w → _on(…, \"cloudmonster-3\") · on-cloudrunner3w → _on(…, \"cloudrunner-3\") · on-cloudmonster는 JP 뺀 dict 그대로에 AE 추가). 짐작 handle(사이트맵·products.json으로 확인 전): cloudmonster-1-waterproof·cloudrock-low-waterproof·cloudultra-3·cloudboom-max — 위 GREP·TRY 결과와 다르면 HTTP 404로 걸러짐(그때는 TRY 주소로 고쳐 다음 차례). 예상 실패: on-cloudmonster(11/11 on.ae cloudmonster-1에 남성 블랙 3MF30740553 없음 → '품번이 다른 상품'이면 뺌) · on-cloudmonster1wp(11/11 404) · on-cloud6w(cloud-6 변형 250개 — '변형 250개에서 잘림'이면 뺌). 한국·미국·영국·독일·일본 값은 기존 정의 그대로 다시 읽음(같은 실행 한국 정가로 블프 비율 계산). 두바이 블프 기준(11/21 docs/prices.json · docs/data.json fx AED 363.4554원 — 달러 고정 3.6725): 기존 온러닝 AE 8개 한국÷(AED×환율) = 0.663·0.684·0.684·0.684·0.684·0.689·0.709·0.719 → 가운데값 0.684 · ×1.25 = 0.856 넘으면 뺌. 상품별 기대 AED(한국÷(0.684×363.46) · on.ae는 대체로 미국 정가×5)와 뺄 선(AED 이 값 밑이면 비율 0.856 넘음): cloudmonster 1 ≈880(미국 180×5=900)·705 / cloudmonster 1 WP ≈1001(1000)·801 / cloud 6 coast ≈840(850)·673 / cloudzone ≈800(750 · 11/03 products.json 최고 775)·640 / cloudrock low WP ≈961(1000)·769 / cloudultra 3 ≈921(950)·737 / cloudboom max ≈1122(1150)·898 / cloudsurfer next ≈760(750)·608 / cloudsurfer max ≈880(900)·705 / cloud 6 여성 ≈800(800)·640 / cloudmonster 3 여성 ≈921(950)·737 / cloudrunner 3 여성 ≈800(800)·640. on.ae는 compare_at_price를 안 써 할인이 '일부 색상만 낮은 값'으로 보임 — OK 줄 extra에 unsure(SHOP_MODEL: 같은 모델·성별 품번 앞 7자리 다른 색상보다 낮음)가 있으면 처음 값으로 못 씀(뺌 또는 다음 차례). 모든 색상이 함께 내려간 할인은 unsure가 안 뜨므로 위 비율 기준으로 거름.",
+  "prods": [
+   {
+    "id": "on-cloudmonster",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드몬스터 1",
+    "code": "3MF30740553",
+    "src": "page",
+    "hint": "cloudmonster",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "US": "https://www.on.com/en-us/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "GB": "https://www.on.com/en-gb/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "DE": "https://www.on.com/de-de/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
+     "AE": "https://on.ae/products/cloudmonster-1.json"
+    }
+   },
+   {
+    "id": "on-cloudmonster1wp",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드몬스터 1 워터프루프",
+    "code": "3MG10701043",
+    "src": "page",
+    "hint": "cloudmonster",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "US": "https://www.on.com/en-us/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "GB": "https://www.on.com/en-gb/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "DE": "https://www.on.com/de-de/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "JP": "https://www.on.com/ja-jp/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
+     "AE": "https://on.ae/products/cloudmonster-1-waterproof.json"
+    }
+   },
+   {
+    "id": "on-cloud6coast",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드 6 코스트",
+    "code": "3MF10030080",
+    "src": "page",
+    "hint": "cloud 6 coast",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
+     "US": "https://www.on.com/en-us/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
+     "GB": "https://www.on.com/en-gb/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
+     "DE": "https://www.on.com/de-de/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
+     "JP": "https://www.on.com/ja-jp/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
+     "AE": "https://on.ae/products/cloud-6-coast.json"
+    }
+   },
+   {
+    "id": "on-cloudzone",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드존",
+    "code": "3MF10080106",
+    "src": "page",
+    "hint": "cloudzone",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
+     "US": "https://www.on.com/en-us/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
+     "GB": "https://www.on.com/en-gb/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
+     "DE": "https://www.on.com/de-de/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
+     "JP": "https://www.on.com/ja-jp/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
+     "AE": "https://on.ae/products/cloudzone.json"
+    }
+   },
+   {
+    "id": "on-cloudrocklowwp",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드록 로우 워터프루프",
+    "code": "3MF10251043",
+    "src": "page",
+    "hint": "cloudrock",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
+     "US": "https://www.on.com/en-us/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
+     "GB": "https://www.on.com/en-gb/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
+     "DE": "https://www.on.com/de-de/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
+     "JP": "https://www.on.com/ja-jp/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
+     "AE": "https://on.ae/products/cloudrock-low-waterproof.json"
+    }
+   },
+   {
+    "id": "on-cloudultra3",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드울트라 3",
+    "code": "3MF30231043",
+    "src": "page",
+    "hint": "cloudultra",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
+     "US": "https://www.on.com/en-us/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
+     "GB": "https://www.on.com/en-gb/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
+     "DE": "https://www.on.com/de-de/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
+     "JP": "https://www.on.com/ja-jp/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
+     "AE": "https://on.ae/products/cloudultra-3.json"
+    }
+   },
+   {
+    "id": "on-cloudboommax",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드붐 맥스",
+    "code": "3MF30310462",
+    "src": "page",
+    "hint": "cloudboom",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
+     "US": "https://www.on.com/en-us/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
+     "GB": "https://www.on.com/en-gb/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
+     "DE": "https://www.on.com/de-de/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
+     "JP": "https://www.on.com/ja-jp/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
+     "AE": "https://on.ae/products/cloudboom-max.json"
+    }
+   },
+   {
+    "id": "on-cloudsurfernext",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드서퍼 넥스트",
+    "code": "3ME30021200",
+    "src": "page",
+    "hint": "cloudsurfer",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
+     "US": "https://www.on.com/en-us/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
+     "GB": "https://www.on.com/en-gb/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
+     "DE": "https://www.on.com/de-de/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
+     "JP": "https://www.on.com/ja-jp/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
+     "AE": "https://on.ae/products/cloudsurfer-next.json"
+    }
+   },
+   {
+    "id": "on-cloudsurfermax",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드서퍼 맥스",
+    "code": "3MF30431200",
+    "src": "page",
+    "hint": "cloudsurfer max",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
+     "US": "https://www.on.com/en-us/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
+     "GB": "https://www.on.com/en-gb/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
+     "DE": "https://www.on.com/de-de/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
+     "JP": "https://www.on.com/ja-jp/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
+     "AE": "https://on.ae/products/cloudsurfer-max.json"
+    }
+   },
+   {
+    "id": "on-cloud6w",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드 6(여성)",
+    "code": "3WF10061043",
+    "src": "page",
+    "hint": "cloud 6",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
+     "US": "https://www.on.com/en-us/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
+     "GB": "https://www.on.com/en-gb/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
+     "DE": "https://www.on.com/de-de/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
+     "JP": "https://www.on.com/ja-jp/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
+     "AE": "https://on.ae/products/cloud-6.json"
+    }
+   },
+   {
+    "id": "on-cloudmonster3w",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드몬스터 3(여성)",
+    "code": "3WG10031043",
+    "src": "page",
+    "hint": "cloudmonster 3",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
+     "US": "https://www.on.com/en-us/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
+     "GB": "https://www.on.com/en-gb/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
+     "DE": "https://www.on.com/de-de/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
+     "JP": "https://www.on.com/ja-jp/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
+     "AE": "https://on.ae/products/cloudmonster-3.json"
+    }
+   },
+   {
+    "id": "on-cloudrunner3w",
+    "cat": "shoe",
+    "brand": "온러닝",
+    "name": "클라우드러너 3(여성)",
+    "code": "3WG10051043",
+    "src": "page",
+    "hint": "cloudrunner 3",
+    "urls": {
+     "KR": "https://www.on.com/ko-kr/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
+     "US": "https://www.on.com/en-us/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
+     "GB": "https://www.on.com/en-gb/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
+     "DE": "https://www.on.com/de-de/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
+     "JP": "https://www.on.com/ja-jp/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
+     "AE": "https://on.ae/products/cloudrunner-3.json"
+    }
+   }
+  ]
+ }
+]
