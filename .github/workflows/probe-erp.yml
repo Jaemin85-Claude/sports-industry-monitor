@@ -2,7 +2,7 @@ name: probe-erp
 
 # 임시 시험(병합하지 않음 · PR 전에 지움) — ERP 판매·예정 상품 목록(Secrets ERP_SKU_URL·ERP_SKU_TOKEN)이 GitHub 서버에서 읽히는지 확인.
 # 공개 저장소라 실행 기록이 공개 — 품번·상품명·주소·토큰·ERP 브랜드 표기는 찍지 않음. 읽힘 여부·칸 이름·대략 개수(구간)·
-# 감시 브랜드(공개 이름)와 맞는지·품번 모양(글자 A·숫자 0)·한국 주소 호스트(공식몰)만.
+# 감시 브랜드(공개 이름)와 맞는지·품번 모양(글자 A·숫자 0)·한국 주소 호스트(공식몰)만. (커밋 메시지에 skip ci가 있으면 안 돎)
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
