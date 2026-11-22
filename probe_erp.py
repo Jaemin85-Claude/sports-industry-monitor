@@ -213,6 +213,77 @@ def shop_tags(brand, codes, hosts, cut=None):
         say(f"  {cc} products.json {n}쪽")
         report(brand, cc, codes, found)
 
+def look(host, start=None, n=4):
+    """사이트맵 구조 보기(공개 주소만)"""
+    maps = start or robots_maps(host)
+    say(f"  {host} robots 사이트맵: {[m[-70:] for m in maps[:5]]}")
+    for sm in maps[:2]:
+        try:
+            r = pf.get(sm); txt = body(r)
+        except Exception as e:
+            say(f"   {sm[-60:]} 오류 {str(e)[:60]}"); continue
+        locs = [html.unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", txt)]
+        say(f"   {sm[-60:]}: 최종 {r.url[-60:]} · index={'<sitemapindex' in txt[:3000]} · {len(locs)}개 · 예 {[l[-90:] for l in locs[:n]]}")
+
+def nike2(codes):
+    say("[나이키 2] 묻는 방식 비교(공개 품번)")
+    pub = [p["code"] for p in pf.PRODUCTS if p["brand"] == "나이키"][:3]
+    m, l, cur = pf.MK["KR"]
+    base = pf.NIKE_FEED.split("&filter=productInfo")[0].format(m=m, l=l)
+    tries = [("한 품번", pf.NIKE_FEED.format(m=m, l=l, s=pub[0])),
+             ("한 품번+count=50", pf.NIKE_FEED.format(m=m, l=l, s=pub[0]) + "&count=50"),
+             ("styleCode", base + f"&filter=productInfo.merchProduct.styleCode({pub[0].split('-')[0]})"),
+             ("styleCode+count=50", base + f"&filter=productInfo.merchProduct.styleCode({pub[0].split('-')[0]})&count=50"),
+             ("styleColor %2C", base + "&filter=productInfo.merchProduct.styleColor(" + "%2C".join(pub[:2]) + ")"),
+             ("styleColor 두 칸", base + "".join(f"&filter=productInfo.merchProduct.styleColor({c})" for c in pub[:2]))]
+    for name, u in tries:
+        try:
+            d = pf._json(pf.get(u)); objs = d.get("objects") or []
+            got = sorted({(pi.get("merchProduct") or {}).get("styleColor") for o in objs for pi in o.get("productInfo") or []} - {None})
+            say(f"  {name}: 객체 {len(objs)} · 품번 {len(got)}개 {got[:6]} · pages {json.dumps(d.get('pages') or {})[:120]}")
+        except Exception as e:
+            say(f"  {name}: 오류 {str(e)[:60]}")
+    if not codes:
+        return
+    cs = sorted(set(codes)); styles = sorted({c.split("-")[0] for c in cs})
+    say(f"  ERP 나이키: 품번 {band(len(cs))} · 스타일(앞자리) {band(len(styles))} · 스타일당 평균 {len(cs) / max(1, len(styles)):.1f}색")
+    # 한 품번씩 — 표본(앞에서 40개)으로 비율·시간
+    smp = cs[:40]; found = set(); t0 = time.time()
+    for c in smp:
+        if left() < 300: break
+        try:
+            d = pf._json(pf.get(pf.NIKE_FEED.format(m=m, l=l, s=c)))
+            for o in d.get("objects") or []:
+                for pi in o.get("productInfo") or []:
+                    if norm((pi.get("merchProduct") or {}).get("styleColor")) == c and (pi.get("merchPrice") or {}).get("fullPrice"):
+                        found.add(c)
+        except Exception as e:
+            say(f"  한 품번 오류: {type(e).__name__}" + (f" {str(e)[:12]}" if str(e).startswith("HTTP") else ""))
+    say(f"  KR 한 품번씩 표본 {len(smp)}개: {pct(len(found), len(smp))} 찾음 · {time.time() - t0:.0f}초")
+    # 스타일 단위 — 표본 스타일 15개로 그 스타일의 ERP 색상을 몇 %나 덮는지
+    ss = styles[:15]; got = set(); t0 = time.time(); nobj = []
+    for st in ss:
+        if left() < 300: break
+        try:
+            d = pf._json(pf.get(base + f"&filter=productInfo.merchProduct.styleCode({st})&count=50"))
+            objs = d.get("objects") or []; nobj.append(len(objs))
+            for o in objs:
+                for pi in o.get("productInfo") or []:
+                    sc = norm((pi.get("merchProduct") or {}).get("styleColor"))
+                    if sc in cs and (pi.get("merchPrice") or {}).get("fullPrice"):
+                        got.add(sc)
+        except Exception as e:
+            say(f"  스타일 오류: {type(e).__name__}" + (f" {str(e)[:12]}" if str(e).startswith("HTTP") else ""))
+    tgt = [c for c in cs if c.split("-")[0] in ss]
+    say(f"  KR 스타일 단위 표본 {len(ss)}개(ERP 색상 {band(len(tgt))}): {pct(len(got), len(tgt))} 찾음 · 스타일당 객체 최대 {max(nobj or [0])} · {time.time() - t0:.0f}초")
+
+def arc(codes):
+    say("[아크테릭스] arcteryx.com 사이트맵 주소 끝 숫자(모델) ↔ ERP 품번 앞 숫자")
+    nums = [str(int(c.split("-")[0])) if c.split("-")[0].isdigit() else "" for c in codes]
+    us = walk("arcteryx.com", path_pre="/us/en/", kid_pref=("product",), max_maps=10, per_host=60)
+    found = {m.group(1).lstrip("0") for u in us if (m := re.search(r"-(\d{4,6})/?$", urllib.parse.urlsplit(u).path))}
+    report("아크테릭스", "US 모델 숫자", nums, found)
+
 def main():
     items = erp_list()
     by = collections.defaultdict(list)
@@ -220,23 +291,33 @@ def main():
         b = AL.get(key(it.get("brand")))
         if b and norm(it.get("code")):
             by[b].append(norm(it.get("code")))
-    say("브랜드별 목록(구간): " + " · ".join(f"{b} {band(len(v))}" for b, v in sorted(by.items(), key=lambda x: -len(x[1]))))
-    # 나이키 품번 모양 정리 — 'AAA_' 앞머리는 떼어 봄
     nk = [re.sub(r"^[A-Z]{2,4}_", "", c) for c in by.get("나이키", [])]
-    nike(nk)
-    for fn, b in ((crocs, "크록스"), (puma, "푸마"), (on, "온러닝"), (drm, "닥터마틴"), (salomon, "살로몬"), (ua, "언더아머")):
-        if left() < 200:
-            say(f"시간 부족 — {b}부터 건너뜀"); break
+    nike2(nk)
+    say("[크록스] 사이트맵 구조")
+    for h in ("www.crocs.co.kr", "www.crocs.com", "www.crocs.de"):
+        look(h)
+    say("[푸마] 독일 사이트맵 주소 예")
+    look("eu.puma.com", start=["https://eu.puma.com/sitemaps/urls/de/sitemap_0.xml"], n=6)
+    try:
+        arc(by.get("아크테릭스", []))
+    except Exception as e:
+        say(f"[아크테릭스] 오류 {type(e).__name__}")
+    shop_tags("드래곤디퓨전", by.get("드래곤디퓨전", []), (("US", "dragondiffusion.com", "/"),), cut=lambda c: c.split("-")[0])
+    shop_tags("킨(KEEN)", by.get("킨(KEEN)", []), (("GB", "www.keenfootwear.co.uk", "/"), ("DE", "www.keenfootwear.de", "/en/")))
+    # 살로몬 6자리(L 없는 품번)도
+    sal = by.get("살로몬", []); found, n = set(), 0
+    for page in range(1, 9):
         try:
-            fn(by.get(b, []))
+            d = pf._json(pf.get(f"https://salomon.co.kr/products.json?limit=250&page={page}")); n += 1
         except Exception as e:
-            say(f"[{b}] 오류: {type(e).__name__}: {str(e)[:100]}")
-    if left() > 200:
-        shop_tags("킨(KEEN)", by.get("킨(KEEN)", []), (("US", "www.keenfootwear.com", "/"),))
-    if left() > 200:
-        shop_tags("헌터", by.get("헌터", []), (("US", "hunterboots.com", "/"),), cut=lambda c: c.split("-")[0])
-    if left() > 200:
-        shop_tags("우포스", by.get("우포스", []), (("US", "www.oofos.com", "/"),), cut=lambda c: re.sub(r"[^0-9A-Z]", "", c.split("-")[0]))
+            break
+        ps = d.get("products") or []
+        for p in ps:
+            for v in p.get("variants") or []:
+                s_ = norm(v.get("sku")); found |= {s_, s_[:9], s_[1:7], s_[:6]}
+            found.add(str(p.get("handle") or "").upper())
+        if len(ps) < 250: break
+    report("살로몬", "KR(L 없는 6자리 포함)", sal, found)
     say(f"끝 · {time.time() - T0:.0f}초")
 
 if __name__ == "__main__":
