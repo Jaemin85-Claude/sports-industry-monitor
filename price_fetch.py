@@ -2618,19 +2618,25 @@ def _sku_hkey(token, *parts):
 def _sku_cat(name, default):
     s = str(name or "").lower()
     for cat, rx in (("bag", r"백팩|가방|토트|더플|크로스백|숄더백|bag|backpack|tote|duffel"), ("sandal", r"슬라이드|샌들|클로그|쪼리|플립|slide|sandal|clog|flip"),
-                    ("boot", r"부츠|워커|boot"), ("top", r"티셔츠|반팔|민소매|탱크|t-shirt|tee|tank|short sleeve|싱글렛|singlet"),
+                    ("boot", r"부츠|워커|boot"), ("top", r"티셔츠|반팔|민소매|탱크|컴프레션|t-shirt|tee|tank|short sleeve|싱글렛|singlet|compression"),
                     ("wear", r"재킷|자켓|후디|후드|팬츠|바지|쇼츠|반바지|베스트|조끼|플리스|맨투맨|스웨트|레깅스|jacket|hoodie|pants|shorts|vest|fleece|sweat|legging|crew")):
         if re.search(rx, s):
             return cat
     return default
 
 
+def _clean_name(x):
+    """상품 이름 — HTML 조각(<br> 등)·겹친 빈칸 정리"""
+    t = re.sub(r"\s+", " ", re.sub(r"<[^>]*>", " ", unescape(str(x or "")))).strip()
+    return t[:80] or None
+
+
 def _ld_name(html, code=None):
     for n in _ld_nodes(html, REL):
         if _types(n) & {"product", "productgroup"} and n.get("name"):
-            return unescape(str(n["name"])).strip()[:80]
+            return _clean_name(n["name"])
     m = re.search(r'<meta[^>]+property="og:title"[^>]+content="([^"]+)"', html)
-    return unescape(m.group(1)).strip()[:80] if m else None
+    return _clean_name(m.group(1)) if m else None
 
 
 class _SkuIdx:
@@ -2697,10 +2703,8 @@ def _sku_index(brand, cc):
                 if re.match(r"\d{8}", s) and p.get("handle"):
                     out.setdefault(s[:8], f"https://www.drmartens.co.kr/products/{p['handle']}.json")
         return out
-    if brand == "닥터마틴":
-        host, pre = DRM_SITE[cc]
-        us = _sm_walk(_robots_maps(host) or [f"https://{host}/sitemap.xml"], host, pre, max_maps=12)
-        return {m.group(1): u for u in us if (m := re.search(r"/p/(\d{8})$", urllib.parse.urlsplit(u).path))}
+    if brand == "닥터마틴":   # 미국·영국은 같은 사이트 — 사이트맵을 한 번만 돌고 나라 경로로 나눔(_sku_idx_web)
+        raise RuntimeError("닥터마틴 미국·영국은 _sku_idx_web")
     if brand == "살로몬":
         out = {}
         for p in _shop_all("https://salomon.co.kr"):
@@ -2717,12 +2721,26 @@ def _sku_index(brand, cc):
         base, out = KEEN_SHOP[cc], {}
         for p in _shop_all(base):
             tags = p.get("tags") if isinstance(p.get("tags"), list) else str(p.get("tags") or "").split(",")
-            for t in tags:
-                t = str(t).strip()
-                if re.fullmatch(r"\d{7}", t) and p.get("handle"):
-                    out.setdefault(t, f"{base}/products/{p['handle']}.json")
+            if not p.get("handle"):
+                continue
+            for t in set(re.findall(r"(?<!\d)(\d{7})(?!\d)", " ".join(str(t) for t in tags))):   # 태그 속 품번(영국·독일 몰은 '1022258-…'처럼 붙여 씀)
+                out.setdefault(t, f"{base}/products/{p['handle']}.json")
         return out
     raise RuntimeError(f"색인 없는 브랜드 {brand}")
+
+
+def _sku_idx_web():
+    """닥터마틴 미국·영국 — www.drmartens.com 사이트맵을 한 번 돌아 {나라: {품번: 주소}}"""
+    host = "www.drmartens.com"
+    us = _sm_walk(_robots_maps(host) or [f"https://{host}/sitemap.xml"], host, "/", max_maps=30, budget=120)
+    out = {cc: {} for cc in DRM_SITE}
+    for u in us:
+        pth = urllib.parse.urlsplit(u).path
+        m = re.search(r"/p/(\d{8})$", pth)
+        for cc, (_, pre) in DRM_SITE.items():
+            if m and pth.startswith(pre):
+                out[cc].setdefault(m.group(1), u)
+    return out
 
 
 def _sku_fetch(brand, cc, q, codes, idx):
@@ -2741,7 +2759,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 if sc in codes and fp and mp.get("currency") == cur and sc not in got:
                     pt = str(mer.get("productType") or "").upper()
                     hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
-                    got[sc] = (fp, {"cur_price": num(mp.get("currentPrice"))}, pc.get("fullTitle") or pc.get("title"), hint, None, None)
+                    got[sc] = (fp, {"cur_price": num(mp.get("currentPrice"))}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
         return got, not (d.get("objects") or [])
     if brand in ("크록스", "푸마", "언더아머"):
         url = (f"https://{CROCS_HOST[cc]}/p/x/{q}.html" if brand == "크록스" else PUMA_PD[cc].format(m=q) if brand == "푸마"
@@ -2766,7 +2784,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
         if ex.get("by") == "이름":
             raise RuntimeError("페이지 JSON-LD에 모델 번호 없음 — 다른 상품일 수 있음")
         for c in codes:
-            got[c] = (full, ex, name, "shoe", fin, "model")
+            got[c] = (full, ex, name, None, fin, "model")
         return got, False
     # 색인으로 찾는 브랜드
     url = idx.get(q) if idx else None
@@ -2775,7 +2793,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
     got = {}
     if url.endswith(".json"):   # 쇼피파이 상품 .json — 한 번 받아 품번마다
         p = _json(get(url)).get("product") or {}
-        name = unescape(str(p.get("title") or "")).strip()[:80] or None
+        name = _clean_name(p.get("title"))
         for c in codes:
             try:
                 full, ex = _shop_price_p(p, url, c[:8] if brand == "닥터마틴" else c, cur)
@@ -2851,7 +2869,7 @@ def sku_stage(old, t0, today, td, rep_codes):
         lanes.setdefault(k[0], []).append(k)
     deadline = min(t0 + TIME_LIMIT - 30, time.time() + SKU_MAX)
     idx, res, rlock, cnt = _SkuIdx(), {}, threading.Lock(), collections.Counter()
-    new_asked = {}
+    new_asked, shown = {}, set()
     def lane(b, ks):
         c = _TL.c = _Ctx()
         try:
@@ -2862,7 +2880,13 @@ def sku_stage(old, t0, today, td, rep_codes):
                 _, cc, q = k; j = jobs[k]
                 ix = None
                 if SKU_BRANDS[b].get("idx"):
-                    ix = idx.get(f"{b} {cc}", lambda: _sku_index(b, cc))
+                    if b == "닥터마틴" and cc != "KR":
+                        web = idx.get("닥터마틴 web", _sku_idx_web)
+                        ix = None if web is None else web.get(cc)
+                    else:
+                        ix = idx.get(f"{b} {cc}", lambda: _sku_index(b, cc))
+                    if test and ix is not None and (b, cc) not in shown:
+                        shown.add((b, cc)); say(f"  SKU 색인 {b} {cc}: {len(ix)}개")
                     if ix is None:
                         with rlock: cnt["noidx"] += 1
                         continue
@@ -2908,6 +2932,8 @@ def sku_stage(old, t0, today, td, rep_codes):
         by_q[(b, SKU_BRANDS[b]["q"](c))].append(c)
     kept = {it["id"]: it for it in keep}
     n_new = n_ok = n_kr = 0
+    bcat = {b: collections.Counter(p["cat"] for p in PRODUCTS if p["brand"] == b).most_common(1)[0][0]
+            for b in {p["brand"] for p in PRODUCTS}}   # 분류를 못 정하면 그 브랜드 대표 상품에 가장 많은 분류
     for b, c, st in tgt:
         h = SKU_BRANDS[b]; q = h["q"](c); i = iid(b, c)
         it = json.loads(json.dumps(old_items.get(i) or {"id": i, "brand": b, "name": None, "code": c, "cat": None, "kind": "sku", "m": {}}, ensure_ascii=False))
@@ -2940,10 +2966,10 @@ def sku_stage(old, t0, today, td, rep_codes):
             if name and (cc == "KR" or not it.get("name")):
                 it["name"] = name
             if not it.get("cat"):
-                it["cat"] = _sku_cat(name, hint or "shoe")
+                it["cat"] = _sku_cat(name, hint or bcat.get(b, "shoe"))
         if it["m"]:
             if not it.get("cat"):
-                it["cat"] = _sku_cat(it.get("name"), "shoe")
+                it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
             items[i] = it
             kept.pop(i, None)
     out = list(items.values()) + list(kept.values())   # 목록에서 빠진 상품은 SKU_DROP까지 그대로(다시 받지 않음)
