@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.40: (대표 결정 2026-11-22 'ERP 판매·예정 상품 위주로 먼저 수집' — price_fetch v1.29 SKU 단계) prices.json의 kind "sku" 상품(판매·예정 상품 색상 단위 정가 —
+    ERP가 읽는 값)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익은 대표 상품 그대로 · 파일 크기 그대로) · 파일 최상위 sku_q 등도 화면에 안 넣음 ·
+    수집 상태 '해외 정가' 줄의 이전 값·못 받음 셈도 대표 상품만, 끝에 'SKU 정가 상품 n개(값 m · 한국 k)' 한 줄(알림 셈 밖).
 v33.39: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주 · 국내 MSRP 최우선' — price_fetch v1.28 PAUSED_CC) 나라 단위로 수집을 멈춘 값(paused가 '수집 중단'으로 시작 —
   일본·멕시코·두바이)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익 — 그 나라 열은 값이 없어 저절로 숨음 · 파일 prices.json에는 이전 값 그대로) ·
   수집 상태 '해외 정가'는 '수집 중단 n건 — 일본·멕시코·두바이(…)' 한 줄(사이트 단위 수집 멈춤 줄은 그대로) · 꼬리표 prPz '수집 중단'.
@@ -6336,6 +6339,8 @@ def _partial(fn, d):
         notes += _conn_note(d.get("dgk_conn"), "공공데이터포털")   # v33.10 logistics_fetch v1.3
     elif fn == "prices.json":   # v33.14 price_fetch v1 — 이전 값(stale_since)·값 없음(failed)인 상품·나라
         ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코", "AE": "두바이"}
+        sku = [it for it in d.get("items") or [] if isinstance(it, dict) and it.get("kind") == "sku"]   # v33.40 SKU 단계 상품(price_fetch v1.29)은 따로 한 줄
+        d = {**d, "items": [it for it in d.get("items") or [] if isinstance(it, dict) and it.get("kind") != "sku"]}
         kept = [f"{it.get('brand', '')} {it.get('name', '')} {ccn.get(cc, cc)}" for it in d.get("items") or [] if isinstance(it, dict)
                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since") and not o.get("paused")]
         pzv = [(it, cc, o) for it in d.get("items") or [] if isinstance(it, dict) for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused")]
@@ -6355,6 +6360,8 @@ def _partial(fn, d):
             notes.append("값 없음 " + ", ".join(bad[:4]) + (f" 외 {len(bad) - 4}건" if len(bad) > 4 else ""))
         if d.get("fetched"):
             notes.append(f"마지막으로 받은 날 {d['fetched']}")
+        if sku:   # v33.40 판매·예정 상품 색상 단위 정가(화면에는 안 보임 — ERP가 prices.json을 읽음)
+            notes.append(f"SKU 정가 상품 {len(sku)}개(값 {sum(len(it.get('m') or {}) for it in sku)} · 한국 {sum(1 for it in sku if 'KR' in (it.get('m') or {}))})")
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes
@@ -6569,7 +6576,9 @@ def main():
                 if isinstance(x, dict) and x.get("id") and x.get("cc"):
                     miss.setdefault(x["id"], []).append(x["cc"])
             prices["missing"] = miss
-            prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict)]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게
+            prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict) and it.get("kind") != "sku"]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게 · v33.40 SKU 단계 상품은 뺌
+            for k in ("sku_q", "sku_list_fail", "sku_list_told"):   # v33.40 화면에 안 쓰는 SKU 단계 상태
+                prices.pop(k, None)
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
                 it["m"] = {cc: o for cc, o in it["m"].items() if not str(o.get("paused") or "").startswith("수집 중단")}   # v33.39 나라 단위 수집 중단(price_fetch v1.28 PAUSED_CC — 일본·멕시코·두바이)은 화면에서 뺌

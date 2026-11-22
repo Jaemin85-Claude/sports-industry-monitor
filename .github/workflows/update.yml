@@ -80,6 +80,9 @@ jobs:
           PYTHONUNBUFFERED: "1"
           PRICE_FORCE: ${{ inputs.price_force }}   # 수동 실행 입력 price_force=1이면 7일이 안 지나도 받음
           PRICE_LANES: ${{ inputs.price_lanes }}   # 수동 실행 입력 — 비우면 묶음 6개 동시, 1이면 예전처럼 차례대로
+          # v2026-11-22 price_fetch v1.29 SKU 단계: 판매·예정 상품 비공개 목록(주소·토큰은 Secrets에만 · 이 단계에만 넘김 · 로그에 안 찍음) — 없으면 건너뜀
+          ERP_SKU_URL: ${{ secrets.ERP_SKU_URL }}
+          ERP_SKU_TOKEN: ${{ secrets.ERP_SKU_TOKEN }}
         run: python price_fetch.py
       - name: Note price failure
         if: steps.price.outcome == 'failure'
