@@ -5,7 +5,7 @@ v1.28: (대표 결정 2026-11-22 '타 국가는 추가적인 가격 수집은 �
     '미주 = 미국만'·'한국 값을 먼저 받기') ① 나라 단위 수집 중단 PAUSED_CC = 일본·멕시코·두바이(11-22부터 · 값 294개 · 수집 시간 약 23%) — paused_of가 사이트(PAUSED)보다 먼저 보고
     나이키 상품 정보(product_feed) 값에도 적용 · 요청 안 함 · 이전 값 그대로 + 표시 paused(셈·21일 알림 밖 · 화면 '수집 중단' 꼬리표) · 묶음의 값 수·예상 시간(n·est)은 받는 값만 ·
     로그 '해외 정가: 수집 멈춤 n건 — … · 일본·멕시코·두바이 수집 중단(11-22부터)' ② 묶음마다 한국 값을 먼저 받고 해외 값은 그 뒤(묶음이 시간 안에 안 끝나도 한국 값이 먼저 들어옴 ·
-    합치는 순서·파일은 PRODUCTS 순서 그대로 · 묶음마다라 전체로는 늦게 시작한 묶음의 한국 값이 뒤일 수 있음) · 한국 값만 받는 사이트는 요청 간격 3초(KR_GAP — 한국 몰에 요청이
+    합치는 순서·파일은 PRODUCTS 순서 그대로 · '수집 멈춤' 로그 줄은 실제로 멈춘 값이 있는 까닭만 · 묶음마다라 전체로는 늦게 시작한 묶음의 한국 값이 뒤일 수 있음) · 한국 값만 받는 사이트는 요청 간격 3초(KR_GAP — 한국 몰에 요청이
     몰리지 않게 · build_lanes에서 HOST_GAP에 넣음) — 앞으로 늘리는 상품은 한국 + 미국·영국·독일만.
 v1.27: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — SKU 4차) 상품 248 → 273 · 값 1,066 → 1,173: 판정 브랜드 첫 해외 정가 3곳 + 빈 나라 채우기 ·
     크록스 15(한국·미국·영국·일본·독일 — 같은 Next.js 몰 CROCS · 새 읽는 법 crocs_list: 화면 데이터에서 productId가 '품번-'인 이 상품 변형의 retailPrice 최고값 = 정가 ·
@@ -2736,7 +2736,7 @@ def main():
             log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
     # v1.19 수집을 멈춘 사이트(PAUSED) 표시를 지금 설정으로 다시 매김(받지 않은 날도 · PAUSED에서 빼면 표시도 지움)
     byid = {p["id"]: p for p in PRODUCTS}
-    n_pause = 0
+    n_pause, pz_used = 0, set()
     for it in items:
         prod = byid.get(it.get("id"))
         for cc, o in (it.get("m") or {}).items():
@@ -2744,15 +2744,16 @@ def main():
                 continue
             pz = paused_of(prod, cc) if prod else None
             if pz:
-                o["paused"] = pz["why"]; n_pause += 1
+                o["paused"] = pz["why"]; n_pause += 1; pz_used.add(id(pz))
                 o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td)   # 받지 않은 날(주 1회 건너뜀)에도 화면 'm/d 값' 날짜가 비지 않게
             else:
                 o.pop("paused", None)
     failed = {k: f for k, f in failed.items() if not (byid.get(f.get("id")) and paused_of(byid[f["id"]], f.get("cc")))}   # 멈춘 사이트의 값 없음 기록은 지움
     if n_pause:
         ccz = {"JP": "일본", "MX": "멕시코", "AE": "두바이"}   # v1.28 나라 단위 수집 중단도 한 덩어리로
-        log(f"해외 정가: 수집 멈춤 {n_pause}건 — " + " · ".join([f"{h} {v['why']}({v['since'][5:]}부터)" for h, v in PAUSED.items()]
-            + ([f"{'·'.join(ccz.get(c, c) for c in PAUSED_CC)} {next(iter(PAUSED_CC.values()))['why']}({next(iter(PAUSED_CC.values()))['since'][5:]}부터)"] if PAUSED_CC else [])) + " · 이전 값 그대로(알림 안 함)")
+        ccs_u = [c for c, v in PAUSED_CC.items() if id(v) in pz_used]   # v1.28 실제로 멈춘 값이 있는 까닭만(나라 단위가 앞서 가린 사이트 — 푸마 일본 — 는 뺌)
+        log(f"해외 정가: 수집 멈춤 {n_pause}건 — " + " · ".join([f"{h} {v['why']}({v['since'][5:]}부터)" for h, v in PAUSED.items() if id(v) in pz_used]
+            + ([f"{'·'.join(ccz.get(c, c) for c in ccs_u)} {PAUSED_CC[ccs_u[0]]['why']}({PAUSED_CC[ccs_u[0]]['since'][5:]}부터)"] if ccs_u else [])) + " · 이전 값 그대로(알림 안 함)")
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림 — v1.19 수집을 멈춘 사이트 값은 뺌
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and not o.get("paused") and _days(o["stale_since"]) > STALE_ALERT]
