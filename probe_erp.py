@@ -18,3 +18,4 @@ for it in items:
     print("ITEM", it["id"], it["name"], it["cat"], json.dumps({cc: {k: o.get(k) for k in ("p", "cur", "sale", "sp", "lvl", "url")} for cc, o in it["m"].items()}, ensure_ascii=False))
 print("sku_q", len(meta.get("sku_q") or {}), f"{time.time() - t0:.0f}초")
 # rerun 1795335667
+# rerun2

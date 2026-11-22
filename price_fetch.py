@@ -2,14 +2,16 @@
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
 v1.29: (대표 결정 2026-11-22 'ERP에 있는 판매 중·판매 예정 상품 위주로 먼저 수집' — 선택 '비공개로 받기'·'공개 prices.json에 함께'·'판매 중 먼저, 예정은 다음')
-    SKU 단계(sku_stage) — 대표 상품을 받은 뒤 남은 시간(최대 SKU_MAX 8분)에 비공개 목록(Secrets ERP_SKU_URL·ERP_SKU_TOKEN — 없으면 건너뜀)의 상품을
-    공식몰에서 찾아 정가를 받음: 한국 먼저 → 미국·영국·독일 · 판매 중 먼저 · 처음 받는 값 먼저 · 받은 값은 7일마다(SKU_DAYS) · 공식몰에 없던 품번은 7일 뒤 다시(SKU_ASK_DAYS).
+    SKU 단계(sku_stage) — 대표 상품을 받은 뒤 남은 시간(최대 SKU_MAX 8분 · 남은 시간 90초 밑이면 목록도 안 받고 건너뜀)에 비공개 목록(Secrets ERP_SKU_URL·ERP_SKU_TOKEN —
+    없으면 건너뜀 · https만 · 넘겨짐 안 따라감)의 상품을 공식몰에서 찾아 정가를 받음: 한국 먼저(모든 브랜드 한국 묶음 → 해외) · 판매 중 먼저 · 처음 받는 값 먼저 ·
+    받은 값은 7일마다(SKU_DAYS) · 이전 값은 3일마다 · 아직 못 찾은 값은 한국 매일·해외 7일마다(상태 없이 품번 해시로 정한 날 — 못 찾은 품번은 파일 어디에도 안 남김).
     읽는 법: 나이키 = 상품 정보 스타일 단위(styleCode — 그 스타일 색상 모두 한 번에 · 여러 품번 한 번에는 HTTP 400) · 크록스 = 모델 페이지(/p/x/모델.html — 주소 이름 부분은
-    몰이 바꿔 줌)의 그 색상 변형 정가(crocs_list color) · 푸마·언더아머(미국) = 모델 페이지 정가(lvl "model" — 색상별로 다를 수 있음) · 온러닝 = 나라별 products.xml 색인 ·
-    닥터마틴 = 한국 쇼피파이 상품 목록·미국·영국 사이트맵 색인 · 살로몬 한국·킨 미국·영국·독일 = 쇼피파이 상품 목록 색인(실행마다 그 사이트를 처음 쓸 때 한 번).
-    찾은 상품만 prices.json items에 kind "sku"(id s-브랜드-품번 · 판매 상태·목록 출처는 쓰지 않음 · 화면·주간 메일은 뺌) · 값 반영은 대표 상품과 같은 apply_obs(할인 가드·크게 바뀜 보류·
-    정가 변동·할인가 — _value에서 떼어 냄) · 공개 저장소라 목록 주소·토큰·품번·상품명은 줄에 찍지 않음(개수·구간만) · 못 찾은 품번은 파일에 남기지 않고 토큰으로 가린 열쇠(sku_q)로
-    다시 물을 날만 · 목록을 이틀 연달아 못 받으면 한 번 실패 표시 · 목록에서 빠진 상품은 값이 60일(SKU_DROP) 넘게 오래되면 뺌 · 시험: 환경 변수 ERP_SKU_TEST(공개 품번 JSON)면 그 목록으로 자세히.
+    몰이 바꿔 줌)의 그 색상 변형 정가(crocs_list color) · 푸마·언더아머(미국) = 모델 페이지 정가라 색상을 확인 못 해 목록 색상 품번 대신 모델 번호로 한 상품(lvl "model") ·
+    온러닝 = 나라별 products.xml 색인 · 닥터마틴 = 한국 쇼피파이 상품 목록·미국·영국 사이트맵 색인(8자리 품번만) · 살로몬 한국·킨 미국·영국·독일 = 쇼피파이 상품 목록 색인.
+    찾은 상품만 prices.json items에 kind "sku"(id s-브랜드-품번 · 판매 상태·목록 출처는 쓰지 않음 · 화면·주간 메일은 뺌) · 값 반영은 대표 상품과 같은 apply_obs(_value에서 떼어 냄) ·
+    정가 표시(정가 명세·취소선·compare_at·fullPrice·retailPrice — page_price·쇼피파이 extra lst)가 없는 새 값은 대표 상품의 '한국 ÷ 그 나라 정가' 가운데값보다 1.25배 넘게 싸 보이면 보류(블프 검사 자동화) ·
+    공개 기록이라 목록 크기·못 찾은 수·요청 수는 구간만, 못 읽는 브랜드는 곳 수만 · 목록에서 빠진 상품도 받아 둔 값만 같은 주기로(빠진 날이 드러나지 않게) · 값이 모두 60일 넘게 이전 값이면 뺌 ·
+    목록을 이틀 연달아 못 받으면 한 번 실패 표시 · 시험: 환경 변수 ERP_SKU_TEST(공개 품번 JSON)면 그 목록으로 자세히.
 v1.28: (대표 결정 2026-11-22 '타 국가는 추가적인 가격 수집은 중단하고 국내 및 미주 유럽 브랜드의 가격 위주로 · 그 중 국내 MSRP가 최우선' — 선택 '지금 받기도 중단'·
     '미주 = 미국만'·'한국 값을 먼저 받기') ① 나라 단위 수집 중단 PAUSED_CC = 일본·멕시코·두바이(11-22부터 · 값 294개 · 수집 시간 약 23%) — paused_of가 사이트(PAUSED)보다 먼저 보고
     나이키 상품 정보(product_feed) 값에도 적용 · 요청 안 함 · 이전 값 그대로 + 표시 paused(셈·21일 알림 밖 · 화면 '수집 중단' 꼬리표) · 묶음의 값 수·예상 시간(n·est)은 받는 값만 ·
@@ -202,7 +204,7 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     weekly_digest CC_KO·CUR_SYM + (새 통화면) fetch_data FX·build_dashboard FX_LBL를 함께 고친다.
     (v1.17 나이키 상품 정보에 없는 나라는 MK 첫 칸을 None으로 두고 나이키 상품 urls에 그 나라 페이지 주소)
 """
-import collections, contextlib, datetime, hashlib, hmac, json, os, re, sys, threading, time, traceback, urllib.error, urllib.parse, urllib.request
+import collections, contextlib, datetime, hashlib, json, os, re, sys, threading, time, traceback, urllib.error, urllib.parse, urllib.request
 from html import unescape
 import requests
 
@@ -1893,7 +1895,8 @@ def page_price(html, hint, cur, codes=()):
         raise RuntimeError(f"{cur} 가격 없음")
     full = max(lists) if lists else max(offers)
     if offers and max(offers) > full: full = max(offers)   # 정가 명세보다 높은 판매가는 없으므로 높은 쪽
-    return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code or micro else "이름" if prods or base_name else ""}
+    return full, {"cur_price": min(offers) if offers else None, "by": "품번" if by_code or base_code or micro else "이름" if prods or base_name else "",
+                  "lst": bool(lists)}   # v1.29 정가 표시(정가 명세·취소선 등)로 읽었는지 — SKU 단계 새 값 정가 확인
 
 
 def cafe24_list(html, sale):
@@ -2171,7 +2174,8 @@ def _shop_price_p(p, url, code, cur):
     full = max(max(num(v.get("price")) or 0, num(v.get("compare_at_price")) or 0) for v in vs)
     if not full:
         raise RuntimeError("가격 없음")
-    extra = {"cur_price": min(num(v.get("price")) or full for v in vs)}
+    extra = {"cur_price": min(num(v.get("price")) or full for v in vs),
+             "lst": any((num(v.get("compare_at_price")) or 0) > (num(v.get("price")) or 0) for v in vs)}   # v1.29 정가 표시(compare_at)로 읽었는지
     k = SHOP_MODEL.get(urllib.parse.urlsplit(url).netloc)
     if k and not any(num(v.get("compare_at_price")) for v in vs):   # v1.17 할인 표시 없이 일부 색상 값만 내리는 몰(on.ae) — 같은 모델 다른 색상이 더 비싸면 정가 확인 안 됨
         top = max([num(v.get("price")) or 0 for v in p.get("variants") or [] if isinstance(v, dict)
@@ -2517,14 +2521,17 @@ def _lanes_n():
 
 # ── v1.29 SKU 단계: 판매·예정 상품(비공개 목록)의 정가 — 대표 결정 2026-11-22 '비공개로 받기 · 공개 prices.json에 함께 · 판매 중 먼저, 예정은 다음' ──
 # 목록 = GitHub Secrets ERP_SKU_URL(주소)·ERP_SKU_TOKEN(Bearer 토큰)의 JSON {"items":[{"brand","code","status":"selling|planned",…}]} — 없으면 이 단계는 건너뜀.
-# 저장소·실행 기록이 공개라 목록 주소·토큰·품번·상품명은 찍지 않음(줄은 개수·구간만) · 못 찾은 품번도 파일에 남기지 않음(다시 물을 날은 토큰으로 가린 열쇠 sku_q).
+# 저장소·실행 기록이 공개라 목록 주소·토큰·품번·상품명은 찍지 않음(줄은 구간·찾은 상품 수만) · 못 찾은 품번은 파일 어디에도 남기지 않음(다시 물을 날은 상태 없이 품번 해시로 정한 요일 — _sku_slot).
 # 공식몰에서 찾은 상품만 prices.json items에 kind "sku"로 넣음(판매 상태·목록 출처는 쓰지 않음) — 화면·주간 메일은 kind "sku"를 뺌(대표 상품만).
 # 요청은 대표 상품과 같은 get(우리 봇 이름 · robots.txt · 사이트별 간격 · 막히면 그 실행에서 멈춤 — 우회 없음).
 SKU_ENV_URL, SKU_ENV_TOKEN, SKU_ENV_TEST = "ERP_SKU_URL", "ERP_SKU_TOKEN", "ERP_SKU_TEST"   # TEST = 공개 품번 시험 목록(JSON · 브랜치 시험용 — 줄을 자세히 찍음)
 SKU_MAX = 8 * 60     # 초 — 한 실행 SKU 단계 최대(대표 상품을 받은 뒤 남은 시간 안에서 · TIME_LIMIT 30초 전까지)
 SKU_DAYS = 7         # 일 — 받은 값을 다시 받는 주기(오래된 것부터 · 한국 먼저)
-SKU_ASK_DAYS = 7     # 일 — 공식몰에 없던 품번·나라를 다시 물어보는 주기
-SKU_DROP = 60        # 일 — 목록에서 빠져 다시 받지 않는 상품은 값이 모두 이만큼 오래되면 파일에서 뺌
+SKU_ASK_DAYS = 7     # 일 — 공식몰에서 아직 못 찾은 해외 값을 다시 물어보는 주기(한국은 매일 · 상태 없이 품번 해시로 정한 날 — 파일에 기록 안 남김)
+SKU_STALE_EVERY = 3  # 일 — 전에 받았는데 이번에 못 받은 값(이전 값)을 다시 받는 주기
+SKU_DROP = 60        # 일 — 값이 모두 이만큼 넘게 이전 값(공식몰에서 빠짐)이면 파일에서 뺌 · 목록에서 빠진 상품도 같은 주기로 계속 받음(빠진 날이 드러나지 않게)
+SKU_MIN_LEFT = 90    # 초 — 대표 상품 뒤 남은 시간이 이보다 적으면 SKU 단계 건너뜀(목록도 안 받음 — 단계 15분 제한 전에 저장)
+SKU_BF = 1.25        # 배 — 정가 표시가 없는 새 값은 대표 상품의 '한국 정가 ÷ 그 나라 정가' 가운데값(브랜드·나라별)에서 이만큼 넘게 싸 보이면 보류(할인가를 정가로 저장하지 않게 — 11/21 블프 검사 자동화)
 SKU_CC = ("KR", "US", "GB", "DE")   # 대표 결정 11-22 — 한국(최우선) + 미국·영국·독일
 SKU_LANES = 6
 SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 무시) → 감시 브랜드 이름
@@ -2543,15 +2550,16 @@ KEEN_SHOP = {"US": "https://www.keenfootwear.com", "GB": "https://www.keenfootwe
 DRM_SITE = {"US": ("www.drmartens.com", "/us/en/"), "GB": ("www.drmartens.com", "/uk/en_gb/")}
 NIKE_STYLE = NIKE_FEED.split("&filter=productInfo")[0] + "&filter=productInfo.merchProduct.styleCode({s})&count=50"   # 스타일 하나 → 그 스타일 색상 모두(11/22 시험 — 여러 품번 한 번에는 HTTP 400)
 
-# 브랜드 → (id 앞머리, 받는 나라, 묻는 단위 함수(품번 → 묻는 열쇠), 품번 정리) — 아직 못 읽는 브랜드(한국 몰에서 품번으로 찾을 길을 아직 못 찾음)는 없음
+# 브랜드 → slug(id 앞머리) · cc(받는 나라) · q(품번 → 묻는 열쇠) · rx(받을 품번 모양) · norm(품번 정리) · idx(색인으로 찾음) ·
+# model(모델 페이지 정가만 읽혀 색상을 확인 못 함 → 목록 색상 품번 대신 모델 번호로 한 상품 · 값 lvl "model" — 목록 색상 품번은 파일에 안 남음)
 def _sku_model(c): return c.split("-")[0]
 SKU_BRANDS = {
     "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c)},
     "크록스": {"slug": "crocs", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{5,6}-[0-9A-Z]{3}$"},
-    "푸마": {"slug": "puma", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{6}(-\d{2})?$", "lvl": "model"},
-    "언더아머": {"slug": "ua", "cc": ("US",), "q": _sku_model, "rx": r"^\d{7}(-\d{3})?$", "lvl": "model"},   # 한국·영국·독일 몰은 접속 막음(수집 멈춤)
+    "푸마": {"slug": "puma", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{6}(-\d{2})?$", "model": True},
+    "언더아머": {"slug": "ua", "cc": ("US",), "q": _sku_model, "rx": r"^\d{7}(-\d{3})?$", "model": True},   # 한국·영국·독일 몰은 접속 막음(수집 멈춤)
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
-    "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c[:8], "rx": r"^\d{8}", "idx": True},
+    "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
     "킨(KEEN)": {"slug": "keen", "cc": ("US", "GB", "DE"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True},   # 한국 LF 몰은 품번으로 찾을 길이 없음(다음 차례)
 }
@@ -2561,9 +2569,16 @@ def _sku_norm(c):
     return re.sub(r"\s+", "", str(c or "")).upper()
 
 
-def sku_list():
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """목록 주소가 다른 곳으로 넘기면 따라가지 않음(토큰이 다른 사이트·http로 가지 않게) — HTTP 3xx 오류로"""
+    def redirect_request(self, *a, **k):
+        return None
+
+
+def sku_list(deadline=None):
     """비공개 목록 → ([{brand(감시 브랜드), code, st(0 판매 중 · 1 예정)}], 시험?, 못 받은 까닭) — Secrets가 없으면 (None, False, None).
-    주소·토큰·응답 글은 찍지 않음(오류는 HTTP 코드·종류만) · 서버가 잠든 뒤 첫 요청은 503일 수 있어 15·30·60초 쉬고 다시"""
+    주소·토큰·응답 글은 찍지 않음(오류는 HTTP 코드·종류만) · https만 · 넘겨짐은 따라가지 않음 · 서버가 잠든 뒤 첫 요청은 503일 수 있어 15·30·60초 쉬고 다시 —
+    deadline(시각)을 넘길 다시 받기는 하지 않음 · 같은 품번이 여럿이면 판매 중이 앞섬 · 모델 단위 브랜드(model)는 모델 번호로 모음"""
     test = os.environ.get(SKU_ENV_TEST, "").strip()
     if test:
         raw, is_test = json.loads(test), True
@@ -2571,13 +2586,19 @@ def sku_list():
         url, tok = os.environ.get(SKU_ENV_URL, "").strip(), os.environ.get(SKU_ENV_TOKEN, "").strip()
         if not url or not tok:
             return None, False, None
+        if not url.lower().startswith("https://"):
+            return None, False, "목록 주소가 https가 아님"
         tok = tok[7:].strip() if tok.lower().startswith("bearer ") else tok
         req = urllib.request.Request(url, headers={"Authorization": f"Bearer {tok}", "Accept": "application/json", "User-Agent": UA})
+        opener = urllib.request.build_opener(_NoRedirect)
         raw, why = None, ""
         for n, w in enumerate((0, 15, 30, 60), 1):
+            if deadline and time.time() + w + 10 > deadline:
+                why = (why + " · " if why else "") + "남은 시간 부족"
+                break
             time.sleep(w)
             try:
-                with urllib.request.urlopen(req, timeout=40) as r:
+                with opener.open(req, timeout=max(5, min(40, (deadline or time.time() + 40) - time.time()))) as r:
                     d = json.loads(r.read())
                 raw = d.get("items") if isinstance(d, dict) else None
                 if not isinstance(raw, list):
@@ -2592,7 +2613,7 @@ def sku_list():
         if raw is None:
             return None, False, why or "못 받음"
         is_test = False
-    out, seen = [], set()
+    out, idx = [], {}
     for it in raw:
         if not isinstance(it, dict):
             continue
@@ -2603,16 +2624,19 @@ def sku_list():
         h = SKU_BRANDS.get(b)
         if h and h.get("norm"):
             c = h["norm"](c)
+        if h and h.get("model") and (not h.get("rx") or re.match(h["rx"], c)):
+            c = h["q"](c)   # 모델 단위 — 색상 품번은 모델 번호로(목록 색상 품번을 파일에 남기지 않음)
         st = 1 if str(it.get("status") or "").lower() == "planned" else 0
-        if (b, c) in seen:
+        if (b, c) in idx:
+            idx[(b, c)]["st"] = min(idx[(b, c)]["st"], st)   # 같은 품번 — 판매 중이 앞섬
             continue
-        seen.add((b, c)); out.append({"brand": b, "code": c, "st": st})
+        idx[(b, c)] = {"brand": b, "code": c, "st": st}; out.append(idx[(b, c)])
     return out, is_test, None
 
 
-def _sku_hkey(token, *parts):
-    """다시 물을 날 열쇠 — 토큰으로 가린 짧은 값(품번을 파일에 남기지 않음 · 토큰이 바뀌면 처음부터)"""
-    return hmac.new(token.encode(), "|".join(parts).encode(), hashlib.sha256).hexdigest()[:12]
+def _sku_slot(key, every, today):
+    """상태 없이 다시 물을 날 — 품번 해시로 정한 요일(every일마다 하루 · 파일에 기록을 남기지 않음)"""
+    return every <= 1 or int(hashlib.sha1(key.encode()).hexdigest()[:8], 16) % every == today.toordinal() % every
 
 
 def _sku_cat(name, default):
@@ -2764,7 +2788,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 if sc in codes and fp and mp.get("currency") == cur and sc not in got:
                     pt = str(mer.get("productType") or "").upper()
                     hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
-                    got[sc] = (fp, {"cur_price": num(mp.get("currentPrice"))}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
+                    got[sc] = (fp, {"cur_price": num(mp.get("currentPrice")), "lst": True}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
         return got, not (d.get("objects") or [])
     if brand in ("크록스", "푸마", "언더아머"):
         url = (f"https://{CROCS_HOST[cc]}/p/x/{q}.html" if brand == "크록스" else PUMA_PD[cc].format(m=q) if brand == "푸마"
@@ -2781,14 +2805,14 @@ def _sku_fetch(brand, cc, q, codes, idx):
             for c in codes:
                 try:
                     full, ex = crocs_list(r.text, q, cur, color=c.split("-", 1)[1])
-                    got[c] = (full, ex, name, "sandal", fin, None)
+                    got[c] = (full, {**ex, "lst": True}, name, "sandal", fin, None)   # 변형 정가(retailPrice) — 정가 표시 있음
                 except RuntimeError:
                     pass   # 이 나라 몰에 이 색상 없음(다른 색상만)
             return got, False
         full, ex = page_price(r.text, q, cur, [q])
         if ex.get("by") == "이름":
             raise RuntimeError("페이지 JSON-LD에 모델 번호 없음 — 다른 상품일 수 있음")
-        for c in codes:
+        for c in codes:   # 모델 단위 브랜드 — 목록 품번이 곧 모델 번호(sku_list)
             got[c] = (full, ex, name, None, fin, "model")
         return got, False
     # 색인으로 찾는 브랜드
@@ -2801,7 +2825,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
         name = _clean_name(p.get("title"))
         for c in codes:
             try:
-                full, ex = _shop_price_p(p, url, c[:8] if brand == "닥터마틴" else c, cur)
+                full, ex = _shop_price_p(p, url, c, cur)
             except RuntimeError:
                 continue   # 이 상품에 그 품번 변형이 없음
             got[c] = (full, ex, name, None, url[:-5], None)
@@ -2818,14 +2842,28 @@ def _sku_fetch(brand, cc, q, codes, idx):
     return got, False
 
 
-def sku_stage(old, t0, today, td, rep_codes):
-    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_q, sku_list_fail, sku_list_told})"""
+def sku_stage(old, t0, today, td, rep_codes, rep_items):
+    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told})"""
     def age(d): return (today - datetime.date.fromisoformat(str(d)[:10])).days
+    def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     old_items = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku" and it.get("id")}
-    meta = {k: old[k] for k in ("sku_q", "sku_list_fail", "sku_list_told") if k in old}
-    lst, test, why = sku_list()
-    keep = [it for it in old_items.values() if any(isinstance(o, dict) and o.get("seen") and age(o.get("obs_date") or o["seen"]) <= SKU_DROP
-                                                   for o in (it.get("m") or {}).values())]
+    meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
+    def alive(it):   # 값이 모두 SKU_DROP일 넘게 이전 값(공식몰에서 빠짐)이거나, 받지 않는 브랜드라 오래 그대로면 뺌
+        for o in (it.get("m") or {}).values():
+            if not isinstance(o, dict) or not o.get("seen"):
+                continue
+            if o.get("stale_since") and age(o["stale_since"]) <= SKU_DROP:
+                return True
+            if not o.get("stale_since") and age(o.get("obs_date") or o["seen"]) <= SKU_DROP * 2:
+                return True
+        return False
+    keep = [it for it in old_items.values() if alive(it)]
+    left = t0 + TIME_LIMIT - 30 - time.time()
+    if left < SKU_MIN_LEFT:   # 단계 15분 제한 전에 저장 — 목록도 안 받음
+        log(f"SKU 정가: 남은 시간 부족({max(0, left):.0f}초) — 이번 실행은 건너뜀 · 받아 둔 상품 {len(keep)}개는 그대로")
+        return keep, meta
+    deadline = time.time() + min(SKU_MAX, left)
+    lst, test, why = sku_list(deadline)
     if lst is None:
         if why:   # 목록을 못 받음 — 이틀째(연달아) 한 번만 실패 표시, 그동안 받아 둔 값은 그대로
             since = meta.get("sku_list_fail") or td
@@ -2836,11 +2874,9 @@ def sku_stage(old, t0, today, td, rep_codes):
                 meta["sku_list_told"] = since
         return keep, meta
     meta.pop("sku_list_fail", None); meta.pop("sku_list_told", None)
-    token = os.environ.get(SKU_ENV_TOKEN, "") if not test else "test"
-    asked = {k: v for k, v in (meta.get("sku_q") or {}).items() if isinstance(v, str) and age(v) < SKU_ASK_DAYS}
     say = log if test else (lambda *_: None)   # 시험 목록(공개 품번)일 때만 자세히
-    # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만
-    tgt, n_out, n_unsup = [], 0, collections.Counter()
+    # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만 · 목록에서 빠진 상품도 맨 뒤로 계속 받음(st 2)
+    tgt, n_out, n_unsup = {}, 0, collections.Counter()
     for it in lst:
         b, c = it["brand"], it["code"]
         if not b:
@@ -2848,36 +2884,50 @@ def sku_stage(old, t0, today, td, rep_codes):
         h = SKU_BRANDS.get(b)
         if not h:
             n_unsup[b] += 1; continue
-        if h.get("rx") and not re.match(h["rx"], c):
+        if h.get("rx") and not re.match(h["rx"], c) and not h.get("model"):
+            n_unsup[b + "(품번 모양)"] += 1; continue
+        if h.get("model") and not re.match(h["rx"].split("(")[0] + "$", c):   # 모델 단위 — 모델 번호만(sku_list가 바꿈)
             n_unsup[b + "(품번 모양)"] += 1; continue
         if c in rep_codes.get(b, set()):
             continue
-        tgt.append((b, c, it["st"]))
+        tgt[(b, c)] = min(tgt.get((b, c), 9), it["st"])
     def iid(b, c): return f"s-{SKU_BRANDS[b]['slug']}-{re.sub(r'[^0-9a-z]+', '-', c.lower()).strip('-')}"
+    for it in keep:
+        b, c = it.get("brand"), it.get("code")
+        if b in SKU_BRANDS and c and (b, c) not in tgt and c not in rep_codes.get(b, set()) and iid(b, c) == it["id"]:
+            tgt[(b, c)] = 2   # 목록에서 빠진 상품 — 받아 둔 값만 같은 주기로(새 나라는 묻지 않음)
     # 일감 = (브랜드, 나라, 묻는 열쇠) — 그 열쇠의 품번들을 한 번에 · 받을 때가 된 값이 있는 것만
     jobs = {}
-    for b, c, st in tgt:
+    for (b, c), st in tgt.items():
         h = SKU_BRANDS[b]; q = h["q"](c); it = old_items.get(iid(b, c)) or {}
         for cc in h["cc"]:
             o = (it.get("m") or {}).get(cc) or {}
+            key = f"{b}|{c}|{cc}"
             if o.get("seen") and not o.get("stale_since") and age(o.get("obs_date") or o["seen"]) < SKU_DAYS:
                 continue   # 이번 주기에 받음
-            if not o and _sku_hkey(token, b, c, cc) in asked:
-                continue   # 최근에 물었는데 공식몰에 없었음
-            j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 1, "new": False, "age": 0})
+            if o.get("stale_since") and not _sku_slot(key, SKU_STALE_EVERY, today):
+                continue   # 이전 값 — 3일마다
+            if not o and (st == 2 or (cc != "KR" and not _sku_slot(key, SKU_ASK_DAYS, today))):
+                continue   # 아직 못 찾은 해외 값 — 7일마다(한국은 매일)
+            j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "new": False, "age": 0})
             j["codes"].add(c); j["st"] = min(j["st"], st); j["new"] = j["new"] or not o
             j["age"] = max(j["age"], 10 ** 4 if not o else age(o.get("obs_date") or o.get("seen") or td))
     ccr = {cc: i for i, cc in enumerate(SKU_CC)}
     order = sorted(jobs, key=lambda k: (ccr[k[1]], jobs[k]["st"], not jobs[k]["new"], -jobs[k]["age"], k))   # 한국 먼저 · 판매 중 먼저 · 처음 받는 값 먼저 · 오래된 값 먼저
-    lanes = collections.OrderedDict()
+    lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국, 1 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤)
     for k in order:
-        lanes.setdefault(k[0], []).append(k)
-    deadline = min(t0 + TIME_LIMIT - 30, time.time() + SKU_MAX)
+        lanes.setdefault((0 if k[1] == "KR" else 1, k[0]), []).append(k)
+    kr_done = {b: threading.Event() for b in SKU_BRANDS}
+    for b in SKU_BRANDS:
+        if (0, b) not in lanes:
+            kr_done[b].set()
     idx, res, rlock, cnt = _SkuIdx(), {}, threading.Lock(), collections.Counter()
-    new_asked, shown = {}, set()
-    def lane(b, ks):
+    shown = set()
+    def lane(ph, b, ks):
         c = _TL.c = _Ctx()
         try:
+            if ph == 1:   # 해외 값은 그 브랜드 한국 값을 다 받은 뒤(나이키처럼 나라가 한 사이트면 한국 요청이 밀리지 않게)
+                kr_done[b].wait(max(0.0, deadline - time.time()))
             for k in ks:
                 if time.time() > deadline or _STOP.is_set():
                     with rlock: cnt["left"] += 1
@@ -2901,51 +2951,61 @@ def sku_stage(old, t0, today, td, rep_codes):
                     w = (str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)
                     w = re.sub(r"https?://\S+", "(주소)", w)[:80]
                     with rlock:
-                        cnt["fail"] += 1; res[k] = {"err": w}
+                        cnt["fail"] += 1; res[k] = {"err": w, "codes": set(j["codes"])}
                     say(f"  SKU {b} {cc} {q}: 못 받음 — {w}")
                     continue
                 with rlock:
-                    cnt["req"] += 1; res[k] = {"got": got}
-                    for cd in j["codes"] - set(got):   # 공식몰에 없는 품번 — SKU_ASK_DAYS 뒤에 다시 물음(품번은 토큰으로 가린 열쇠로만)
-                        new_asked[_sku_hkey(token, b, cd, cc)] = td
+                    cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"])}
                     cnt["none"] += int(bool(none or not got))
                 say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(got.items())) or "공식몰에 없음"))
         finally:
+            if ph == 0:
+                kr_done[b].set()
             c.sess.close(); _TL.c = None
-    for h in _kr_only_hosts(PRODUCTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도
-        HOST_GAP[h] = max(HOST_GAP.get(h, 0), KR_GAP)
+    for h_ in _kr_only_hosts(PRODUCTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도
+        HOST_GAP[h_] = max(HOST_GAP.get(h_, 0), KR_GAP)
     if not _PACE:
         _PACE.update(pace_map(PRODUCTS))
     _STOP.clear()
     s0 = time.time()
-    q_ = sorted(lanes.items(), key=lambda x: -len(x[1]))   # 일감 많은 브랜드부터(나이키)
+    q_ = sorted([x for x in lanes.items() if x[0][0] == 0], key=lambda x: -len(x[1])) + sorted([x for x in lanes.items() if x[0][0] == 1], key=lambda x: -len(x[1]))
     qlock = threading.Lock()
     def worker():
         while True:
             with qlock:
                 if not q_:
                     return
-                bk = q_.pop(0)
-            lane(*bk)
+                (ph, b), ks = q_.pop(0)
+            lane(ph, b, ks)
     ths = [threading.Thread(target=worker, daemon=True) for _ in range(min(SKU_LANES, len(q_)))]
     for th in ths: th.start()
     for th in ths: th.join(max(0.0, deadline + 60 - time.time()))
     _STOP.set()
-    # 합치기 — 목록에 있는 상품 + 목록에서 빠졌지만 아직 SKU_DROP 안 된 상품
-    items, by_q = {}, collections.defaultdict(list)
-    for b, c, st in tgt:
-        by_q[(b, SKU_BRANDS[b]["q"](c))].append(c)
-    kept = {it["id"]: it for it in keep}
-    n_new = n_ok = n_kr = 0
+    # 새 값 정가 확인 — 정가 표시(정가 명세·취소선·compare_at·나이키 fullPrice·크록스 retailPrice)가 없는 새 값은 대표 상품의 한국 ÷ 그 나라 정가 가운데값과 견줌
+    rat = collections.defaultdict(list)
+    for it in rep_items:
+        if not isinstance(it, dict) or it.get("kind") == "sku":
+            continue
+        m = it.get("m") or {}
+        kr = m.get("KR") or {}
+        if not (kr.get("p") and kr.get("cur") == "KRW") or kr.get("stale_since") or kr.get("paused"):
+            continue
+        for cc, o in m.items():
+            if cc != "KR" and isinstance(o, dict) and o.get("p") and o.get("cur") == MK.get(cc, (0, 0, ""))[2] and not o.get("stale_since") and not o.get("paused"):
+                rat[(it.get("brand"), cc)].append(kr["p"] / o["p"])
+    med = {k: sorted(v)[len(v) // 2] for k, v in rat.items() if len(v) >= 3}
+    # 합치기 — 그 일감에서 물은 품번만(같은 열쇠의 다른 품번은 그대로 · 이전 값 표시 안 함)
+    items, kept = {}, {it["id"]: it for it in keep}
+    n_new = n_ok = n_kr = n_hold = 0
     bcat = {b: collections.Counter(p["cat"] for p in PRODUCTS if p["brand"] == b).most_common(1)[0][0]
             for b in {p["brand"] for p in PRODUCTS}}   # 분류를 못 정하면 그 브랜드 대표 상품에 가장 많은 분류
-    for b, c, st in tgt:
+    for (b, c), st in sorted(tgt.items()):
         h = SKU_BRANDS[b]; q = h["q"](c); i = iid(b, c)
         it = json.loads(json.dumps(old_items.get(i) or {"id": i, "brand": b, "name": None, "code": c, "cat": None, "kind": "sku", "m": {}}, ensure_ascii=False))
         it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc in h["cc"] and isinstance(o, dict)}
-        for cc in h["cc"]:
+        for cc in h["cc"]:   # 한국이 앞(아래 정가 확인이 이번에 받은 한국 값을 씀)
             r = res.get((b, cc, q))
-            if not r:
+            if not r or c not in r["codes"]:
                 continue
             o = it["m"].get(cc) or {}
             if "err" in r:
@@ -2958,13 +3018,27 @@ def sku_stage(old, t0, today, td, rep_codes):
                     o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = "이번엔 공식몰에서 못 찾음"
                 continue
             full, ex, name, hint, url, lvl = v
-            feed = b == "나이키"
-            o2, n, _ = apply_obs(dict(o), full, ex, MK[cc][2], td, feed, url, age)
+            cur = MK[cc][2]
+            if not (o.get("p") and o.get("cur") == cur) and not ex.get("lst"):   # 새 값 + 정가 표시 없음 → 대표 상품 비율로 확인
+                bad = False
+                if cc != "KR":
+                    kr = it["m"].get("KR") or {}
+                    mm = med.get((b, cc))
+                    bad = bool(mm and kr.get("p") and kr.get("cur") == "KRW" and kr["p"] / full > mm * SKU_BF)
+                else:
+                    for c2, o2 in it["m"].items():
+                        mm = med.get((b, c2))
+                        if c2 != "KR" and mm and o2.get("p") and o2.get("cur") == MK[c2][2] and full / o2["p"] < mm / SKU_BF:
+                            bad = True
+                if bad:   # 할인가가 정가로 보이는 것 같음 — 저장하지 않고 다음에 다시
+                    n_hold += 1
+                    say(f"  SKU {b} {cc} {c}: 정가 확인 보류 — {full:,g} {cur}가 대표 상품 비율보다 많이 쌈(할인가일 수 있음)")
+                    continue
+            o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키", url, age)
             if o2.get("url") is None:
                 o2.pop("url", None)
-            lv = lvl or h.get("lvl")
-            if lv:
-                o2["lvl"] = lv   # 모델 정가(색상별로 다를 수 있음 — 페이지가 모델 단위)
+            if lvl:
+                o2["lvl"] = lvl   # 모델 정가(색상별로 다를 수 있음 — 페이지가 모델 단위)
             else:
                 o2.pop("lvl", None)
             it["m"][cc] = o2; n_ok += 1; n_new += int(not o); n_kr += int(cc == "KR")
@@ -2977,19 +3051,16 @@ def sku_stage(old, t0, today, td, rep_codes):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
             items[i] = it
             kept.pop(i, None)
-    out = list(items.values()) + list(kept.values())   # 목록에서 빠진 상품은 SKU_DROP까지 그대로(다시 받지 않음)
+    out = [it for it in list(items.values()) + list(kept.values()) if alive(it)]
     out.sort(key=lambda x: (x["brand"], x["code"]))
-    sq = dict(asked); sq.update(new_asked)
-    meta["sku_q"] = dict(sorted(sq.items()))
-    def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     nv = sum(len(it["m"]) for it in out)
     nb = len({k.split("(")[0] for k in n_unsup})   # 못 읽는 브랜드는 곳 수만(목록 구성은 내부 정보 — 이름은 시험 목록일 때만)
-    log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드 {nb}곳 {band(sum(n_unsup.values()))}개"
+    log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드·품번 모양 {nb}곳 {band(sum(n_unsup.values()))}개"
         + (f" — {', '.join(sorted({k.split('(')[0] for k in n_unsup}))}" if n_unsup and test else "") + ")"
         + f" · 공식몰에서 찾은 상품 {len(out)}개(값 {nv} · 한국 {sum(1 for it in out if 'KR' in it['m'])})"
-        + f" · 이번 실행 요청 {cnt['req'] + cnt['fail']}번 · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {cnt['fail']} · 공식몰에 없음 {band(cnt['none'])}묶음"
-        + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "") + (f" · 색인 못 만듦 {cnt['noidx']}" if cnt["noidx"] else "")
-        + f" · {time.time() - s0:.0f}초" + (" · 시험 목록" if test else ""))
+        + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번 · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
+        + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
+        + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · {time.time() - s0:.0f}초" + (" · 시험 목록" if test else ""))
     return out, meta
 
 
@@ -3272,23 +3343,23 @@ def main():
     if busy:
         log("SKU 정가: 대표 상품 묶음이 안 끝나 이번 실행은 건너뜀 — 받아 둔 상품은 그대로")
         sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
-        sku_meta = {k: old[k] for k in ("sku_q", "sku_list_fail", "sku_list_told") if k in old}
+        sku_meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
     else:
         try:
-            sku_items, sku_meta = sku_stage(old, t0, today, td, rep_codes)
+            sku_items, sku_meta = sku_stage(old, t0, today, td, rep_codes, items)
         except Exception:   # SKU 단계 오류가 대표 상품 저장을 막지 않게 — 받아 둔 상품은 그대로
             et, _, tb = sys.exc_info()   # 오류 글에 품번이 들어갈 수 있어 종류·자리만(공개 기록)
             log(f"[WARN] SKU 정가: 단계 오류 {et.__name__} — 받아 둔 상품은 그대로 · "
                 + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
             sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
-            sku_meta = {k: old[k] for k in ("sku_q", "sku_list_fail", "sku_list_told") if k in old}
+            sku_meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
     out = {"generated_at": now.strftime("%Y-%m-%d %H:%M KST"),
            "fetched": td if ok_run else last,                       # 받은 날 — 잘 끝난 실행만
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
            "cfg": cfg if mode else old.get("cfg"),
            "status": "ok" if not stale else "kept", "items": items + sku_items, "failed": list(failed.values()), "host_try": htry,
            "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"}
-    out.update(sku_meta)   # v1.29 SKU 단계 상태(다시 물을 날 sku_q — 토큰으로 가린 열쇠 · 목록 못 받은 날)
+    out.update(sku_meta)   # v1.29 SKU 단계 상태(목록 못 받은 날만 — 못 찾은 품번은 어디에도 안 남김)
     if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
     with open(OUT, "w", encoding="utf-8") as f:
