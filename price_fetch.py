@@ -5,7 +5,8 @@ v1.28: (대표 결정 2026-11-22 '타 국가는 추가적인 가격 수집은 �
     '미주 = 미국만'·'한국 값을 먼저 받기') ① 나라 단위 수집 중단 PAUSED_CC = 일본·멕시코·두바이(11-22부터 · 값 294개 · 수집 시간 약 23%) — paused_of가 사이트(PAUSED)보다 먼저 보고
     나이키 상품 정보(product_feed) 값에도 적용 · 요청 안 함 · 이전 값 그대로 + 표시 paused(셈·21일 알림 밖 · 화면 '수집 중단' 꼬리표) · 묶음의 값 수·예상 시간(n·est)은 받는 값만 ·
     로그 '해외 정가: 수집 멈춤 n건 — … · 일본·멕시코·두바이 수집 중단(11-22부터)' ② 묶음마다 한국 값을 먼저 받고 해외 값은 그 뒤(묶음이 시간 안에 안 끝나도 한국 값이 먼저 들어옴 ·
-    합치는 순서·파일은 PRODUCTS 순서 그대로) — 앞으로 늘리는 상품은 한국 + 미국·영국·독일만.
+    합치는 순서·파일은 PRODUCTS 순서 그대로 · 묶음마다라 전체로는 늦게 시작한 묶음의 한국 값이 뒤일 수 있음) · 한국 값만 받는 사이트는 요청 간격 3초(KR_GAP — 한국 몰에 요청이
+    몰리지 않게 · build_lanes에서 HOST_GAP에 넣음) — 앞으로 늘리는 상품은 한국 + 미국·영국·독일만.
 v1.27: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — SKU 4차) 상품 248 → 273 · 값 1,066 → 1,173: 판정 브랜드 첫 해외 정가 3곳 + 빈 나라 채우기 ·
     크록스 15(한국·미국·영국·일본·독일 — 같은 Next.js 몰 CROCS · 새 읽는 법 crocs_list: 화면 데이터에서 productId가 '품번-'인 이 상품 변형의 retailPrice 최고값 = 정가 ·
     지금 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 최저(JSON-LD는 블프 판매가뿐 — 클래식 클로그 미국 $30 · 정가 $49.99 · 품절 변형의 자리표시 가격 한국 10,000원은 뺌) ·
@@ -2402,10 +2403,24 @@ def _hosts(p):
     return [urllib.parse.urlsplit(NIKE_FEED if _feed(p, cc) else p["urls"][cc]).netloc for cc in ccs(p)]   # v1.17 나이키 페이지 나라(두바이)는 그 사이트
 
 
+KR_GAP = 3   # 초 — v1.28 한국 값만 받는 사이트의 요청 간격(한국 값을 먼저 몰아 받으니 한국 몰에 1.5초 간격 요청이 이어지지 않게 · 해외와 함께 쓰는 사이트는 그대로)
+
+
+def _kr_only_hosts(products):
+    """v1.28 한국 값만 요청하는 사이트(해외 나라 값이 하나도 없는 사이트 — 나이키 상품 정보·온러닝·톰브라운·오니츠카처럼 나라를 함께 쓰는 사이트는 빠짐)"""
+    kr, other = set(), set()
+    for p in products:
+        for cc, h in zip(ccs(p), _hosts(p)):
+            (kr if cc == "KR" else other).add(h)
+    return kr - other
+
+
 def build_lanes(products):
     """v1.12 동시에 받을 묶음 — 브랜드·사이트(·ROBOTS_ALT·LANE_JOIN)로 이어진 상품끼리 한 묶음, 묶음 안은 PRODUCTS 순서.
     한 사이트·한 브랜드는 늘 한 묶음에만 있음(사이트별 요청 수·한도 미룸·브랜드 셈을 그 묶음만 씀).
     est = 예상 초(값 × max(GAP, HOST_GAP), 한도 사이트는 한도까지) — 긴 묶음부터 시작"""
+    for h in _kr_only_hosts(products):   # v1.28 한국 몰 간격(이미 더 긴 간격이 있으면 그대로)
+        HOST_GAP[h] = max(HOST_GAP.get(h, 0), KR_GAP)
     par = {}
     def find(x):
         par.setdefault(x, x)
@@ -2526,7 +2541,8 @@ def main():
             pz = paused_of(prod, cc)
             if pz:   # v1.19 수집을 멈춘 사이트 — 요청 없이 이전 값 그대로(셈·알림 밖 · 표시는 아래 합칠 때 매김)
                 st = o.get("stale_since") or o.get("obs_date") or o.get("seen")
-                log(f"  {key}: 건너뜀 — {pz['why']}(수집 멈춤 · {pz['since'][5:]}부터)" + (f" · 이전 값({str(st)[5:10]} 받은 값)" if o else " · 이전 값 없음"))
+                if cc not in PAUSED_CC:   # v1.28 나라 단위 수집 중단(일본·멕시코·두바이 — 값 약 300개)은 값마다 줄을 쓰지 않음(끝의 '수집 멈춤 n건' 한 줄)
+                    log(f"  {key}: 건너뜀 — {pz['why']}(수집 멈춤 · {pz['since'][5:]}부터)" + (f" · 이전 값({str(st)[5:10]} 받은 값)" if o else " · 이전 값 없음"))
                 if o:
                     o.setdefault("stale_since", st or td)
                     return {"o": o, "n": {"paused": 1}}

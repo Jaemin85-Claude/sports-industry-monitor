@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.18: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주' — price_fetch v1.28 PAUSED_CC) '■ 해외 정가 변동'에서 나라 단위로 수집을 멈춘 값(paused '수집 중단 …' — 일본·멕시코·두바이)을 뺌
+  (정가 변동·할인 시작·끝·지금 할인 중 모두 — 대시보드 v33.39와 같게 · 멈추기 전 기록도).
 v1.17: (대표 확인 2026-11-10 '브룩스 한국 공식몰 리뉴얼 중' · price_fetch v1.19 PAUSED) '■ 해외 정가 변동'의 '지금 할인 중 n건'에서 수집을 잠시 멈춘 값(paused — 리뉴얼 전 11/03 할인)은 뺌.
 v1.16: (대표 지시 2026-11-03 '두바이 추가해주세요') '■ 해외 정가 변동'에 두바이(UAE 공식몰 · price_fetch v1.17) — 나라 이름 CC_KO·통화 표시 CUR_SYM(AED)
 v1.15: (대표 지시 2026-10-27 'A') '이번 주 새 본사 발언' 줄에 한 지역 이야기면 '중화권만(점수 제외)'(build_dashboard v33.24 — 판정 점수에서 뺌) ·
@@ -587,6 +589,8 @@ def price_changes(prices, today, old=None, upto=None, n=8):
         nm = f"{it.get('brand', '')} {it.get('name', '')}".strip()
         for cc, o in (it.get("m") or {}).items():
             if not isinstance(o, dict) or not o.get("cur"):
+                continue
+            if str(o.get("paused") or "").startswith("수집 중단"):   # v1.18 나라 단위 수집 중단(price_fetch v1.28 — 일본·멕시코·두바이)은 변동·할인 셈에서 뺌(화면과 같게)
                 continue
             cur, place = o["cur"], CC_KO.get(cc, cc)
             if o.get("sale") and not o.get("paused"):   # v1.17 수집을 잠시 멈춘 값(price_fetch v1.19 paused)의 옛 할인은 셈에서 뺌
