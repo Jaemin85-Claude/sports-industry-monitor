@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.39: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주 · 국내 MSRP 최우선' — price_fetch v1.28 PAUSED_CC) 나라 단위로 수집을 멈춘 값(paused가 '수집 중단'으로 시작 —
+  일본·멕시코·두바이)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익 — 그 나라 열은 값이 없어 저절로 숨음 · 파일 prices.json에는 이전 값 그대로) ·
+  수집 상태 '해외 정가'는 '수집 중단 n건 — 일본·멕시코·두바이(…)' 한 줄(사이트 단위 수집 멈춤 줄은 그대로) · 꼬리표 prPz '수집 중단'.
 v33.38: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — price_fetch v1.27) 해외 정가가 생긴 판정 브랜드를 PM_NOPRICE에서 뺌 — block에서 크록스·오니츠카타이거, nomodel에서 미즈노
   (한국 공식몰이 kor.mizuno.com으로 옮겨 현재 러닝화가 있음) · 사유 칸 nomodel은 빈 목록으로 남김(다시 생기면 넣음).
 v33.37: (대표 2026-11-21 '지금 추가 수집 해볼까요?' — SKU 3차 접속 시험) PM_NOPRICE nokr에 클락스(clarks.co.kr → www.clarks.co.kr 넘김인데 그 주소가 DNS에 없음 ·
@@ -2366,7 +2369,7 @@ const tagA=(t,title,c)=>`<span class="tg${c?' '+c:''}"${title?` title="${esc(tit
 const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 // v33.32 해외 정가 — 수집을 잠시 멈춘 사이트 값(paused · price_fetch v1.19 PAUSED)은 수집 실패가 아님: 이전 값 셈에서 빼고 회색 시계 꼬리표
 const prStale=o=>!!(o&&o.stale_since&&!o.paused);
-const prPz=o=>{ const w=String(o&&o.paused||''); return /막음/.test(w)?'접속 막음':w.replace(/^\S+ 공식몰 /,''); };   // v33.33 짧은 꼬리표 — '리뉴얼 중' · '접속 막음'(일본 공식몰이 자동 접속을 막음)
+const prPz=o=>{ const w=String(o&&o.paused||''); return /^수집 중단/.test(w)?'수집 중단':/막음/.test(w)?'접속 막음':w.replace(/^\S+ 공식몰 /,''); };   // v33.39 나라 단위 '수집 중단'   // v33.33 짧은 꼬리표 — '리뉴얼 중' · '접속 막음'(일본 공식몰이 자동 접속을 막음)
 const prStA=o=>o&&o.paused?tagA(`${prPz(o)} · ${mdOf(o.stale_since)} 값`,`${o.paused} — 수집을 잠시 멈춤(이전 값 그대로 · 알림 안 함)`):staleA(o&&o.stale_since);
 const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
 // v33.22 연간 결산 재고가 9개월 넘음(chkInv 결과 i) → 그 결산일 — 표시만, 점수 그대로(결정 D14) · 브랜드 상세·목록·오늘 ①이 같이 씀
@@ -6334,8 +6337,13 @@ def _partial(fn, d):
         ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코", "AE": "두바이"}
         kept = [f"{it.get('brand', '')} {it.get('name', '')} {ccn.get(cc, cc)}" for it in d.get("items") or [] if isinstance(it, dict)
                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since") and not o.get("paused")]
-        pz = collections.Counter((o.get("paused"), f"{it.get('brand', '')} {ccn.get(cc, cc)}") for it in d.get("items") or [] if isinstance(it, dict)
-                                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused"))   # v33.32 수집을 잠시 멈춘 값 — 못 받음 수 밖
+        pzv = [(it, cc, o) for it in d.get("items") or [] if isinstance(it, dict) for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused")]
+        cz = collections.Counter(cc for it, cc, o in pzv if str(o.get("paused")).startswith("수집 중단"))   # v33.39 나라 단위 수집 중단(price_fetch v1.28) — 한 줄로
+        if cz:
+            why = next(str(o.get("paused")) for it, cc, o in pzv if str(o.get("paused")).startswith("수집 중단"))
+            notes.append(f"수집 중단 {sum(cz.values())}건 — {'·'.join(ccn.get(c, c) for c in ('JP', 'MX', 'AE', 'US', 'GB', 'DE', 'KR') if c in cz)}({why.replace('수집 중단 — ', '')} · 화면에서 뺌)")
+        pz = collections.Counter((o.get("paused"), f"{it.get('brand', '')} {ccn.get(cc, cc)}") for it, cc, o in pzv
+                                 if not str(o.get("paused")).startswith("수집 중단"))   # v33.32 수집을 잠시 멈춘 값 — 못 받음 수 밖
         for (why, where), k in sorted(pz.items(), key=lambda t: -t[1]):
             notes.append(f"수집 멈춤 {k}건 — {why}({where})")
         bad = [f"{f.get('brand', '')} {f.get('name', '')} {ccn.get(f.get('cc'), f.get('cc'))}" for f in d.get("failed") or [] if isinstance(f, dict)]
@@ -6563,6 +6571,7 @@ def main():
             prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict)]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
+                it["m"] = {cc: o for cc, o in it["m"].items() if not str(o.get("paused") or "").startswith("수집 중단")}   # v33.39 나라 단위 수집 중단(price_fetch v1.28 PAUSED_CC — 일본·멕시코·두바이)은 화면에서 뺌
                 for o in it["m"].values():
                     for k in ("url", "why", "obs", "obs_date", "cand", "cand_date", "off_seen", "sh"):   # v33.23 할인 기록 sh·off_seen은 주간 메일용(화면은 sp·ph만)
                         o.pop(k, None)
