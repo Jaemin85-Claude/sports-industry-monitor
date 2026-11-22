@@ -284,40 +284,69 @@ def arc(codes):
     found = {m.group(1).lstrip("0") for u in us if (m := re.search(r"-(\d{4,6})/?$", urllib.parse.urlsplit(u).path))}
     report("아크테릭스", "US 모델 숫자", nums, found)
 
-def main():
-    items = erp_list()
-    by = collections.defaultdict(list)
-    for it in items:
-        b = AL.get(key(it.get("brand")))
-        if b and norm(it.get("code")):
-            by[b].append(norm(it.get("code")))
-    nk = [re.sub(r"^[A-Z]{2,4}_", "", c) for c in by.get("나이키", [])]
-    nike2(nk)
-    say("[크록스] 사이트맵 구조")
-    for h in ("www.crocs.co.kr", "www.crocs.com", "www.crocs.de"):
-        look(h)
-    say("[푸마] 독일 사이트맵 주소 예")
-    look("eu.puma.com", start=["https://eu.puma.com/sitemaps/urls/de/sitemap_0.xml"], n=6)
+def st(u):
     try:
-        arc(by.get("아크테릭스", []))
+        r = pf.get(u)
+        return r, f"200 · 최종 {r.url[-70:]} · {len(r.text) // 1000}KB"
     except Exception as e:
-        say(f"[아크테릭스] 오류 {type(e).__name__}")
-    shop_tags("드래곤디퓨전", by.get("드래곤디퓨전", []), (("US", "dragondiffusion.com", "/"),), cut=lambda c: c.split("-")[0])
-    shop_tags("킨(KEEN)", by.get("킨(KEEN)", []), (("GB", "www.keenfootwear.co.uk", "/"), ("DE", "www.keenfootwear.de", "/en/")))
-    # 살로몬 6자리(L 없는 품번)도
-    sal = by.get("살로몬", []); found, n = set(), 0
-    for page in range(1, 9):
-        try:
-            d = pf._json(pf.get(f"https://salomon.co.kr/products.json?limit=250&page={page}")); n += 1
-        except Exception as e:
-            break
-        ps = d.get("products") or []
-        for p in ps:
-            for v in p.get("variants") or []:
-                s_ = norm(v.get("sku")); found |= {s_, s_[:9], s_[1:7], s_[:6]}
-            found.add(str(p.get("handle") or "").upper())
-        if len(ps) < 250: break
-    report("살로몬", "KR(L 없는 6자리 포함)", sal, found)
+        return None, f"오류 {str(e)[:70]}"
+
+def main():
+    say("[크록스] 주소의 이름 부분(slug)을 바꿔도 열리는지 — 공개 모델 10001")
+    for cc, host in (("KR", "www.crocs.co.kr"), ("US", "www.crocs.com"), ("DE", "www.crocs.de")):
+        cur = pf.MK[cc][2]
+        for slug in ("classic-clog", "x"):
+            r, msg = st(f"https://{host}/p/{slug}/10001.html")
+            extra = ""
+            if r is not None:
+                try:
+                    full, ex = pf.crocs_list(r.text, "10001", cur); extra = f" · 정가 {full} · 지금 {ex.get('cur_price')}"
+                except Exception as e:
+                    extra = f" · 읽기 오류 {str(e)[:50]}"
+                cols = sorted(set(re.findall(r'productId\\?"\s*:\s*\\?"10001-([0-9A-Za-z]{3})-', r.text)))
+                extra += f" · 변형 색상 {cols[:8]}"
+            say(f"  {cc} /p/{slug}/10001.html: {msg}{extra}")
+    say("[푸마] slug 바꿔도 열리는지 · 색상 표식 — 공개 모델 396463")
+    for cc, u in (("KR", "https://kr.puma.com/kr/ko/pd/x/396463.html"), ("US", "https://us.puma.com/us/en/pd/x/396463"),
+                  ("GB", "https://uk.puma.com/uk/en/pd/x/396463"), ("DE", "https://eu.puma.com/de/de/pd/x/396463")):
+        r, msg = st(u); extra = ""
+        if r is not None:
+            t = r.text
+            extra = f" · '396463_' {t.count('396463_')} · '396463-0' {t.count('396463-0')} · 'swatch=' {t.count('swatch=')}"
+            cols = sorted(set(re.findall(r'396463[_-](\d{2})(?!\d)', t)))
+            extra += f" · 색상 {cols[:10]}"
+            try:
+                full, ex = pf.page_price(t, "396463", pf.MK[cc][2], ["396463"]); extra += f" · 정가 {full}"
+            except Exception as e:
+                extra += f" · 읽기 오류 {str(e)[:50]}"
+        say(f"  {cc} {u[-40:]}: {msg}{extra}")
+    for n in (1, 2, 3):
+        look("eu.puma.com", start=[f"https://eu.puma.com/sitemaps/urls/de/sitemap_{n}.xml"], n=3)
+    say("[언더아머] 미국 색상 주소 — 공개 모델 1372586")
+    for u in ("https://www.underarmour.com/en-us/p/x/1372586.html", "https://www.underarmour.com/en-us/p/heatgear_compression_mens_mock_short_sleeve/1372586.html?dwvar_1372586_color=001"):
+        r, msg = st(u); extra = ""
+        if r is not None:
+            t = r.text
+            cols = sorted(set(re.findall(r'1372586[-_](\d{3})(?!\d)', t)))
+            extra = f" · 색상 표식 {cols[:10]}"
+            try:
+                full, ex = pf.page_price(t, "1372586", "USD", ["1372586"]); extra += f" · 정가 {full}"
+            except Exception as e:
+                extra += f" · 읽기 오류 {str(e)[:50]}"
+        say(f"  {u[-60:]}: {msg}{extra}")
+    say("[나이키] 상품 정보 칸(이름·종류)")
+    m, l, cur = pf.MK["KR"]
+    try:
+        d = pf._json(pf.get(pf.NIKE_FEED.format(m=m, l=l, s="CW2288-111")))
+        o = (d.get("objects") or [{}])[0]
+        pi = (o.get("productInfo") or [{}])[0]
+        pc = pi.get("productContent") or {}
+        say(f"  productContent: title={pc.get('title')!r} · fullTitle={pc.get('fullTitle')!r} · subtitle={pc.get('subtitle')!r}")
+        mp = pi.get("merchProduct") or {}
+        say(f"  merchProduct: productType={mp.get('productType')!r} · genders={mp.get('genders')} · status={mp.get('status')!r} · keys {sorted(mp.keys())[:30]}")
+        say(f"  merchPrice: {json.dumps({k: (pi.get('merchPrice') or {}).get(k) for k in ('fullPrice', 'currentPrice', 'currency', 'discounted')}, ensure_ascii=False)}")
+    except Exception as e:
+        say(f"  오류 {str(e)[:80]}")
     say(f"끝 · {time.time() - T0:.0f}초")
 
 if __name__ == "__main__":
