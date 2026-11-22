@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.28: (대표 결정 2026-11-22 '타 국가는 추가적인 가격 수집은 중단하고 국내 및 미주 유럽 브랜드의 가격 위주로 · 그 중 국내 MSRP가 최우선' — 선택 '지금 받기도 중단'·
+    '미주 = 미국만'·'한국 값을 먼저 받기') ① 나라 단위 수집 중단 PAUSED_CC = 일본·멕시코·두바이(11-22부터 · 값 294개 · 수집 시간 약 23%) — paused_of가 사이트(PAUSED)보다 먼저 보고
+    나이키 상품 정보(product_feed) 값에도 적용 · 요청 안 함 · 이전 값 그대로 + 표시 paused(셈·21일 알림 밖 · 화면 '수집 중단' 꼬리표) · 묶음의 값 수·예상 시간(n·est)은 받는 값만 ·
+    로그 '해외 정가: 수집 멈춤 n건 — … · 일본·멕시코·두바이 수집 중단(11-22부터)' ② 묶음마다 한국 값을 먼저 받고 해외 값은 그 뒤(묶음이 시간 안에 안 끝나도 한국 값이 먼저 들어옴 ·
+    합치는 순서·파일은 PRODUCTS 순서 그대로 · '수집 멈춤' 로그 줄은 실제로 멈춘 값이 있는 까닭만 · 묶음마다라 전체로는 늦게 시작한 묶음의 한국 값이 뒤일 수 있음) · 한국 값만 받는 사이트는 요청 간격 3초(KR_GAP — 한국 몰에 요청이
+    몰리지 않게 · build_lanes에서 HOST_GAP에 넣음) — 앞으로 늘리는 상품은 한국 + 미국·영국·독일만.
 v1.27: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — SKU 4차) 상품 248 → 273 · 값 1,066 → 1,173: 판정 브랜드 첫 해외 정가 3곳 + 빈 나라 채우기 ·
     크록스 15(한국·미국·영국·일본·독일 — 같은 Next.js 몰 CROCS · 새 읽는 법 crocs_list: 화면 데이터에서 productId가 '품번-'인 이 상품 변형의 retailPrice 최고값 = 정가 ·
     지금 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 최저(JSON-LD는 블프 판매가뿐 — 클래식 클로그 미국 $30 · 정가 $49.99 · 품절 변형의 자리표시 가격 한국 10,000원은 뺌) ·
@@ -220,6 +226,8 @@ PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식�
           "www.underarmour.co.uk": {"since": "2026-11-17", "why": "영국 공식몰이 자동 접속을 막음"},
           "www.underarmour.de": {"since": "2026-11-17", "why": "독일 공식몰이 자동 접속을 막음"}}
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
+PAUSED_CC = {cc: {"since": "2026-11-22", "why": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"} for cc in ("JP", "MX", "AE")}   # v1.28 나라 단위 수집 중단
+                                    # (대표 결정 2026-11-22 '국내 및 미주 유럽 위주 · 국내 MSRP 최우선' — 미주 = 미국만) · 사이트 PAUSED와 같게 요청 안 함·이전 값 그대로 · 다시 받으려면 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
 CAFE24_ID_LIST = {"kor.mizuno.com"}   # v1.27 카페24 기본 상품 정보 칸(id="span_product_price_custom" 소비자가 · id="span_product_price_text" 판매가)으로 할인 전 정가를 읽는 몰 —
@@ -2323,7 +2331,10 @@ def _feed(prod, cc):
 
 
 def paused_of(prod, cc):
-    """v1.19 이 값의 사이트가 수집을 멈춘 사이트(PAUSED)면 {since, why}, 아니면 None — 나이키 상품 정보(product_feed) 값은 해당 없음"""
+    """v1.19 이 값의 사이트가 수집을 멈춘 사이트(PAUSED)면 {since, why}, 아니면 None — 나이키 상품 정보(product_feed) 값은 해당 없음 ·
+    v1.28 나라 단위 수집 중단(PAUSED_CC)이 먼저(나이키 상품 정보 값에도)"""
+    if cc in PAUSED_CC:   # v1.28 나라 단위 수집 중단(나이키 상품 정보 값도)
+        return PAUSED_CC[cc]
     u = None if _feed(prod, cc) else (prod.get("urls") or {}).get(cc)
     return PAUSED.get(urllib.parse.urlsplit(u).netloc) if u else None
 
@@ -2392,10 +2403,24 @@ def _hosts(p):
     return [urllib.parse.urlsplit(NIKE_FEED if _feed(p, cc) else p["urls"][cc]).netloc for cc in ccs(p)]   # v1.17 나이키 페이지 나라(두바이)는 그 사이트
 
 
+KR_GAP = 3   # 초 — v1.28 한국 값만 받는 사이트의 요청 간격(한국 값을 먼저 몰아 받으니 한국 몰에 1.5초 간격 요청이 이어지지 않게 · 해외와 함께 쓰는 사이트는 그대로)
+
+
+def _kr_only_hosts(products):
+    """v1.28 한국 값만 요청하는 사이트(해외 나라 값이 하나도 없는 사이트 — 나이키 상품 정보·온러닝·톰브라운·오니츠카처럼 나라를 함께 쓰는 사이트는 빠짐)"""
+    kr, other = set(), set()
+    for p in products:
+        for cc, h in zip(ccs(p), _hosts(p)):
+            (kr if cc == "KR" else other).add(h)
+    return kr - other
+
+
 def build_lanes(products):
     """v1.12 동시에 받을 묶음 — 브랜드·사이트(·ROBOTS_ALT·LANE_JOIN)로 이어진 상품끼리 한 묶음, 묶음 안은 PRODUCTS 순서.
     한 사이트·한 브랜드는 늘 한 묶음에만 있음(사이트별 요청 수·한도 미룸·브랜드 셈을 그 묶음만 씀).
     est = 예상 초(값 × max(GAP, HOST_GAP), 한도 사이트는 한도까지) — 긴 묶음부터 시작"""
+    for h in _kr_only_hosts(products):   # v1.28 한국 몰 간격(이미 더 긴 간격이 있으면 그대로)
+        HOST_GAP[h] = max(HOST_GAP.get(h, 0), KR_GAP)
     par = {}
     def find(x):
         par.setdefault(x, x)
@@ -2414,7 +2439,7 @@ def build_lanes(products):
     lanes = {}
     for p in products:
         ln = lanes.setdefault(find("b:" + p["brand"]), {"prods": [], "brands": [], "hosts": collections.Counter()})
-        ln["prods"].append(p); ln["hosts"].update(_hosts(p))
+        ln["prods"].append(p); ln["hosts"].update(h for cc, h in zip(ccs(p), _hosts(p)) if not paused_of(p, cc))   # v1.28 값 수·예상 시간은 받는 값만(수집 멈춤 값은 요청 안 함)
         if p["brand"] not in ln["brands"]:
             ln["brands"].append(p["brand"])
     for ln in lanes.values():
@@ -2516,7 +2541,8 @@ def main():
             pz = paused_of(prod, cc)
             if pz:   # v1.19 수집을 멈춘 사이트 — 요청 없이 이전 값 그대로(셈·알림 밖 · 표시는 아래 합칠 때 매김)
                 st = o.get("stale_since") or o.get("obs_date") or o.get("seen")
-                log(f"  {key}: 건너뜀 — {pz['why']}(수집 멈춤 · {pz['since'][5:]}부터)" + (f" · 이전 값({str(st)[5:10]} 받은 값)" if o else " · 이전 값 없음"))
+                if cc not in PAUSED_CC:   # v1.28 나라 단위 수집 중단(일본·멕시코·두바이 — 값 약 300개)은 값마다 줄을 쓰지 않음(끝의 '수집 멈춤 n건' 한 줄)
+                    log(f"  {key}: 건너뜀 — {pz['why']}(수집 멈춤 · {pz['since'][5:]}부터)" + (f" · 이전 값({str(st)[5:10]} 받은 값)" if o else " · 이전 값 없음"))
                 if o:
                     o.setdefault("stale_since", st or td)
                     return {"o": o, "n": {"paused": 1}}
@@ -2604,21 +2630,21 @@ def main():
         res, rlock, closed, errs, took = {}, threading.Lock(), [False], [], {}
         def run_lane(ln):   # 다 받으면 True · 시간 초과로 멈추면 False
             c = _ctx()
-            for prod in ln["prods"]:
+            order = [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc == "KR"] + [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc != "KR"]   # v1.28 한국 값 먼저(대표 결정 11-22 '국내 MSRP 최우선')
+            for prod, cc in order:
                 pi = prev.get(prod["id"]) or {}
-                for cc in ccs(prod):
-                    if _STOP.is_set():
+                if _STOP.is_set():
+                    return False
+                c.buf = []
+                try:
+                    out = _value(prod, cc, pi)
+                finally:
+                    lines, c.buf = c.buf, None
+                with rlock:
+                    if closed[0]:
                         return False
-                    c.buf = []
-                    try:
-                        out = _value(prod, cc, pi)
-                    finally:
-                        lines, c.buf = c.buf, None
-                    with rlock:
-                        if closed[0]:
-                            return False
-                        res[f"{prod['id']} {cc}"] = out
-                        _out(lines)   # 값 하나의 줄은 한꺼번에(묶음끼리 섞이지 않게)
+                    res[f"{prod['id']} {cc}"] = out
+                    _out(lines)   # 값 하나의 줄은 한꺼번에(묶음끼리 섞이지 않게)
             return True
         def worker(q):
             while True:
@@ -2710,7 +2736,7 @@ def main():
             log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
     # v1.19 수집을 멈춘 사이트(PAUSED) 표시를 지금 설정으로 다시 매김(받지 않은 날도 · PAUSED에서 빼면 표시도 지움)
     byid = {p["id"]: p for p in PRODUCTS}
-    n_pause = 0
+    n_pause, pz_used = 0, set()
     for it in items:
         prod = byid.get(it.get("id"))
         for cc, o in (it.get("m") or {}).items():
@@ -2718,13 +2744,16 @@ def main():
                 continue
             pz = paused_of(prod, cc) if prod else None
             if pz:
-                o["paused"] = pz["why"]; n_pause += 1
+                o["paused"] = pz["why"]; n_pause += 1; pz_used.add(id(pz))
                 o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td)   # 받지 않은 날(주 1회 건너뜀)에도 화면 'm/d 값' 날짜가 비지 않게
             else:
                 o.pop("paused", None)
     failed = {k: f for k, f in failed.items() if not (byid.get(f.get("id")) and paused_of(byid[f["id"]], f.get("cc")))}   # 멈춘 사이트의 값 없음 기록은 지움
     if n_pause:
-        log(f"해외 정가: 수집 멈춤 {n_pause}건 — " + " · ".join(f"{h} {v['why']}({v['since'][5:]}부터)" for h, v in PAUSED.items()) + " · 이전 값 그대로(알림 안 함)")
+        ccz = {"JP": "일본", "MX": "멕시코", "AE": "두바이"}   # v1.28 나라 단위 수집 중단도 한 덩어리로
+        ccs_u = [c for c, v in PAUSED_CC.items() if id(v) in pz_used]   # v1.28 실제로 멈춘 값이 있는 까닭만(나라 단위가 앞서 가린 사이트 — 푸마 일본 — 는 뺌)
+        log(f"해외 정가: 수집 멈춤 {n_pause}건 — " + " · ".join([f"{h} {v['why']}({v['since'][5:]}부터)" for h, v in PAUSED.items() if id(v) in pz_used]
+            + ([f"{'·'.join(ccz.get(c, c) for c in ccs_u)} {PAUSED_CC[ccs_u[0]]['why']}({PAUSED_CC[ccs_u[0]]['since'][5:]}부터)"] if ccs_u else [])) + " · 이전 값 그대로(알림 안 함)")
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림 — v1.19 수집을 멈춘 사이트 값은 뺌
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and not o.get("paused") and _days(o["stale_since"]) > STALE_ALERT]

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.39: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주 · 국내 MSRP 최우선' — price_fetch v1.28 PAUSED_CC) 나라 단위로 수집을 멈춘 값(paused가 '수집 중단'으로 시작 —
+  일본·멕시코·두바이)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익 — 그 나라 열은 값이 없어 저절로 숨음 · 파일 prices.json에는 이전 값 그대로) ·
+  수집 상태 '해외 정가'는 '수집 중단 n건 — 일본·멕시코·두바이(…)' 한 줄(사이트 단위 수집 멈춤 줄은 그대로) · 꼬리표 prPz '수집 중단'.
 v33.38: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — price_fetch v1.27) 해외 정가가 생긴 판정 브랜드를 PM_NOPRICE에서 뺌 — block에서 크록스·오니츠카타이거, nomodel에서 미즈노
   (한국 공식몰이 kor.mizuno.com으로 옮겨 현재 러닝화가 있음) · 사유 칸 nomodel은 빈 목록으로 남김(다시 생기면 넣음).
 v33.37: (대표 2026-11-21 '지금 추가 수집 해볼까요?' — SKU 3차 접속 시험) PM_NOPRICE nokr에 클락스(clarks.co.kr → www.clarks.co.kr 넘김인데 그 주소가 DNS에 없음 ·
@@ -2366,7 +2369,7 @@ const tagA=(t,title,c)=>`<span class="tg${c?' '+c:''}"${title?` title="${esc(tit
 const staleA=d=>d?tagA(`이전 값(${mdOf(d)})`,`${d} 수집분 — 그 뒤 수집 실패`):'';
 // v33.32 해외 정가 — 수집을 잠시 멈춘 사이트 값(paused · price_fetch v1.19 PAUSED)은 수집 실패가 아님: 이전 값 셈에서 빼고 회색 시계 꼬리표
 const prStale=o=>!!(o&&o.stale_since&&!o.paused);
-const prPz=o=>{ const w=String(o&&o.paused||''); return /막음/.test(w)?'접속 막음':w.replace(/^\S+ 공식몰 /,''); };   // v33.33 짧은 꼬리표 — '리뉴얼 중' · '접속 막음'(일본 공식몰이 자동 접속을 막음)
+const prPz=o=>{ const w=String(o&&o.paused||''); return /^수집 중단/.test(w)?'수집 중단':/막음/.test(w)?'접속 막음':w.replace(/^\S+ 공식몰 /,''); };   // v33.39 나라 단위 '수집 중단'   // v33.33 짧은 꼬리표 — '리뉴얼 중' · '접속 막음'(일본 공식몰이 자동 접속을 막음)
 const prStA=o=>o&&o.paused?tagA(`${prPz(o)} · ${mdOf(o.stale_since)} 값`,`${o.paused} — 수집을 잠시 멈춤(이전 값 그대로 · 알림 안 함)`):staleA(o&&o.stale_since);
 const pendA=p=>p?tagA('새 실적 반영 대기',`${p.src} 공시 ${p.end} 분기 발표됨 — 야후 미반영, 값은 이전 분기`):'';
 // v33.22 연간 결산 재고가 9개월 넘음(chkInv 결과 i) → 그 결산일 — 표시만, 점수 그대로(결정 D14) · 브랜드 상세·목록·오늘 ①이 같이 씀
@@ -5157,7 +5160,8 @@ const PM_NOPRICE_T={block:['공식몰이 자동 접속을 막음',' — 우회�
 const PM_WHY='정가 = 할인 전 가격(공식몰 정가 표기 · 나이키는 상품 정보 fullPrice, 두바이는 공식몰 페이지). 원화 = 현지 가격 × 적용 환율(매일 받은 최근 종가 — 정가가 그대로여도 환율 따라 바뀜), 표는 만원 단위 소수 한 자리. 굵은 밑줄 = 원화로 가장 싼 곳(한국 포함 — 한국과 0.5% 안이면 한국), 진한 글자 = 한국보다 싼 나라, 회색 = 한국과 같거나 비싼 나라. 펼친 줄 \'거의 같음\' = 0.5% 안. – = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름).<br>'
   +'할인가 = 지금 가장 싼 색상·사이즈(일부 색상만일 수 있음) — 한국도 할인 중이면 한국 판매가와 견줌. 할인가 보기에서 굵은 밑줄 칸 아래 −n% = 그 나라 할인율(다른 나라는 줄을 펼치면). 해외 정가는 주 1회 수집이라 그사이 할인은 다음 수집 때.<br>'
   +'착지 = (현지 가격 × 환율 + 항공 운임 kg당 × 분류별 무게) × 관세 × 수입 부가세 1.10 — 무게는 1개를 상자째 보내는 가정(신발 1.5 · 부츠 2.5 · 샌들류 1.0 · 반팔·민소매 0.3 · 옷 0.8 · 가방 1.0kg — 펼친 줄 아래 품번 옆), 관세는 기본세율(신발·의류 13% · 가방 8% — FTA 세율·통관 수수료 안 넣음), 항공 운임 = 관세청 항공 수입 운임 최근 달(영국·독일 = 유럽연합, 멕시코 = 미국, 두바이는 자료 없음 –). 마진 = 1 − 착지 ÷ 한국에서 지금 팔리는 가격(한국도 할인 중이면 할인가 — 정가 보기도 같음, 착지일 때 한국 줄이 그 가격) − 판매 수수료(설정 패널 · 이 기기에만 저장 · 비우면 수수료 전) — 국내 배송·통관 비용 전. 추천(굵은 밑줄) = 마진 0% 이상인 나라 중 가장 큰 곳 — 40% 이상 할인한 값(*)은 일부 색상·사이즈일 수 있어 빼고, 수집을 멈춘 나라 값(접속 막음·리뉴얼 중 — 옛 값)도 빼며, 한국 가격 수집을 멈춘 상품은 추천·요약 숫자에서 뺌(요약 끝에 따로). 본전 매입가 = 착지가 한국 판매가(판매 수수료를 넣었으면 그만큼 뺀 값)와 같아지는 현지 가격, 목표 매입가 = 목표 마진을 남기는 현지 가격 — 둘 다 현지 부가세 포함 표시가, 정수로 내림(목표 마진은 이 기기에만 저장). \'수출 환급 가정\'을 고르면 현지 부가세를 빼고 계산하고 기준 줄에 적음.<br>'
-  +'미국 가격은 판매세 별도, 그 밖은 부가세 포함(두바이 5% · 디르함은 달러 고정 3.6725로 환산). 접속을 막는 공식몰은 우회하지 않음.';
+  +'미국 가격은 판매세 별도, 그 밖은 부가세 포함(두바이 5% · 디르함은 달러 고정 3.6725로 환산). 접속을 막는 공식몰은 우회하지 않음. '
+  +'일본·멕시코·두바이는 2026-11-22부터 수집 중단(대표 결정 — 한국·미국·유럽 위주) — 화면에서 뺌.';   // v33.39
 /* 착지(원) = (현지 가격[수출 환급 가정이면 현지 부가세를 뺌] × 환율 + 운임 원) × 관세·수입 부가세 — fwd = 착지, inv = 착지가 won(한국 가격 × (1 − 목표))이 되는 현지 가격(현지 부가세 포함 표시가 · 환율이 없으면 null) */
 const pmLand={
   fwd:(v,cur,cc,fr,K,vat)=>{ const k=krwOf((vat||PM_VAT)==='out'?v/(1+(LAND.lvat[cc]||0)):v,cur); return k==null?null:(k+(fr||0))*K; },   // v33.35 vat = 'in'·'out'(없으면 화면 설정 PM_VAT)
@@ -5303,7 +5307,7 @@ function pmTableParts(D){
   const curOf=cc=>{ for(const x of D.rows){ if(x.c[cc]) return x.c[cc].o.cur; } return null; };
   const fxSt=cc=>{ const c=curOf(cc), d=c&&(FXD[c]||{}).stale_since; return d?pmDot(`환율 ${mdTxt(d)} 값 — 그 뒤 수집 실패`):''; };   // 환율이 이전 값이면 그 나라 머리 칸에 점
   const use=(x,cc)=>{ const c=x.c[cc]; return L?!!c&&c.fr!=null&&c.m!=null:(!!c&&c.val!=null)||prMiss(x.it.id).includes(cc); };
-  const cols=PR_ORD.filter(cc=>D.rows.some(x=>use(x,cc))); PM_COLS=cols.length?cols:PR_ORD;   // v33.35 값이 하나도 없는 나라 열은 숨김
+  const cols=PR_ORD.filter(cc=>D.rows.some(x=>use(x,cc))), live=PR_ORD.filter(cc=>((PRICES&&PRICES.items)||[]).some(it=>it.m&&it.m[cc])); PM_COLS=cols.length?cols:(live.length?live:PR_ORD);   // v33.39 남은 해외 값이 없는 브랜드(브룩스)는 수집하는 나라 열만   // v33.35 값이 하나도 없는 나라 열은 숨김
   const head=`<div class="pm-mxw"><table class="pm-mx" aria-label="상품별 나라 ${L?'착지 마진':'원화 가격'}"><colgroup><col class="c0">${PM_COLS.map(()=>'<col>').join('')}</colgroup>`
     +`<thead><tr><th class="h0" scope="col">상품 <span>(${L?'마진 %':'만원'})</span></th>${PM_COLS.map(cc=>`<th scope="col">${PR_CC[cc]}${fxSt(cc)}</th>`).join('')}</tr></thead>`;
   return {head, tail:'</table></div>', box:'table.pm-mx', n:D.G.map(g=>g.xs.length),
@@ -6334,8 +6338,13 @@ def _partial(fn, d):
         ccn = {"KR": "한국", "US": "미국", "GB": "영국", "DE": "독일", "JP": "일본", "MX": "멕시코", "AE": "두바이"}
         kept = [f"{it.get('brand', '')} {it.get('name', '')} {ccn.get(cc, cc)}" for it in d.get("items") or [] if isinstance(it, dict)
                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("stale_since") and not o.get("paused")]
-        pz = collections.Counter((o.get("paused"), f"{it.get('brand', '')} {ccn.get(cc, cc)}") for it in d.get("items") or [] if isinstance(it, dict)
-                                 for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused"))   # v33.32 수집을 잠시 멈춘 값 — 못 받음 수 밖
+        pzv = [(it, cc, o) for it in d.get("items") or [] if isinstance(it, dict) for cc, o in (it.get("m") or {}).items() if isinstance(o, dict) and o.get("paused")]
+        cz = collections.Counter(cc for it, cc, o in pzv if str(o.get("paused")).startswith("수집 중단"))   # v33.39 나라 단위 수집 중단(price_fetch v1.28) — 한 줄로
+        if cz:
+            why = next(str(o.get("paused")) for it, cc, o in pzv if str(o.get("paused")).startswith("수집 중단"))
+            notes.append(f"수집 중단 {sum(cz.values())}건 — {'·'.join(ccn.get(c, c) for c in ('JP', 'MX', 'AE', 'US', 'GB', 'DE', 'KR') if c in cz)} · {why.replace('수집 중단 — ', '')} · 화면에서 뺌")
+        pz = collections.Counter((o.get("paused"), f"{it.get('brand', '')} {ccn.get(cc, cc)}") for it, cc, o in pzv
+                                 if not str(o.get("paused")).startswith("수집 중단"))   # v33.32 수집을 잠시 멈춘 값 — 못 받음 수 밖
         for (why, where), k in sorted(pz.items(), key=lambda t: -t[1]):
             notes.append(f"수집 멈춤 {k}건 — {why}({where})")
         bad = [f"{f.get('brand', '')} {f.get('name', '')} {ccn.get(f.get('cc'), f.get('cc'))}" for f in d.get("failed") or [] if isinstance(f, dict)]
@@ -6563,6 +6572,7 @@ def main():
             prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict)]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
+                it["m"] = {cc: o for cc, o in it["m"].items() if not str(o.get("paused") or "").startswith("수집 중단")}   # v33.39 나라 단위 수집 중단(price_fetch v1.28 PAUSED_CC — 일본·멕시코·두바이)은 화면에서 뺌
                 for o in it["m"].values():
                     for k in ("url", "why", "obs", "obs_date", "cand", "cand_date", "off_seen", "sh"):   # v33.23 할인 기록 sh·off_seen은 주간 메일용(화면은 sp·ph만)
                         o.pop(k, None)
