@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.27: (대표 2026-11-21 '스포츠 브랜드 위주로 먼저 채워주세요' — SKU 4차) 상품 248 → 273 · 값 1,066 → 1,173: 판정 브랜드 첫 해외 정가 3곳 + 빈 나라 채우기 ·
+    크록스 15(한국·미국·영국·일본·독일 — 같은 Next.js 몰 CROCS · 새 읽는 법 crocs_list: 화면 데이터에서 productId가 '품번-'인 이 상품 변형의 retailPrice 최고값 = 정가 ·
+    지금 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 최저(JSON-LD는 블프 판매가뿐 — 클래식 클로그 미국 $30 · 정가 $49.99 · 품절 변형의 자리표시 가격 한국 10,000원은 뺌) ·
+    멕시코 crocs.com.mx는 공식몰 근거 없고 정가·할인가를 못 가려 뺌 · 두바이 crocsgulf 403) · 오니츠카타이거 5(한국·영국·독일 — 마젠토 몰 OT_LIST · JSON-LD 없음 →
+    ot_price: dataLayer view_item originalPrice · price_info regular_price · 가격 칸 oldPrice 중 이 품번 것 · 일본(주소 밑줄 표기)·미국은 다음 차례) · 미즈노 5(한국 kor.mizuno.com
+    카페24 · 일본 · 미국 — 한국 블프 판매가는 CAFE24_ID_LIST 소비자가 칸(cafe24_id_list) · 미국 빅커머스 할인 중이면 BIGC_LIST 할인 전 칸(bigc_list) · 라이더 29는 새 모델 30이
+    나와 뺌) · 빈 나라: 온러닝 두바이 9 · 푸마 매그맥스 나이트로 2 영국 · 써코니 엔돌핀 스피드 5 영국·독일(11/21 다시 열림) — 새 읽는 법은 모두 이 상품 칸이 확실하지 않으면
+    실패(할인가·다른 상품 값을 정가로 저장하지 않음 · 브랜드마다 독립 검토 2개 · 블프 비율 검사 — 그 브랜드 나라별 가운데값 1.25배 안).
 v1.26: (대표 2026-11-21 '지금 추가 수집 해볼까요?' — 브랜드당 20개 3차 · 블프 영향 적은 곳 위주) 상품 225 → 248 · 값 921 → 1,066: 버버리 4 → 17(트렌치 헤리티지
     켄싱턴·첼시·워털루·혹스턴 · 캐시미어 스카프 5 · 스몰 체크 토트·시티 체크 클립 메신저 백 · 해링턴·퀼팅 재킷) + 나라를 한국·미국·영국 → 독일(de · 주소 독일어)·일본(jp)·
     두바이(ae)까지(기존 4개도 · 멕시코 mx.burberry.com은 DNS에 없음) · 톰브라운 12 → 20(여성 롱 카디건·미니스커트·스포츠코트(일본 뺌 — 블프 검사)·로퍼 · 윙팁 부츠 ·
@@ -129,7 +137,7 @@ v1.4: (대표 지시 2026-10-22 '스포츠 브랜드는 모두 추가하고 싶�
     ④ 한 실행 최대 11 → 13분(update.yml 해외 정가 단계 13 → 15분 · 작업 32 → 34분).
     ⑤ 넣지 못한 브랜드(접속 시험·조사 10/21~23): 아디다스·뉴발란스·아식스·오니츠카타이거·룰루레몬·오클리(봇 차단 403/429) ·
        크록스·스케쳐스(한국 몰 차단) · 호카(한국 공식 온라인몰 없음) · 미즈노(한국 공식몰에 현재 모델 없음) · 노르다·CEP(한국 공식몰 없음) ·
-       안다르(한국몰 상품 페이지에 자체 품번이 없어 일본 공식몰 상품과 같은지 확인 불가).
+       안다르(한국몰 상품 페이지에 자체 품번이 없어 일본 공식몰 상품과 같은지 확인 불가). → v1.27(11/21) 크록스·오니츠카타이거·미즈노는 다시 열려 넣음.
 v1.3: (대표 지시 2026-10-22 '브랜드별 대표 인기 상품으로 골라서 추가 — 최소 5개 이상씩') 상품 13 → 56개(브랜드마다 5~7개 · 값 227개 —
     나라별로 같은 품번을 GitHub 서버에서 확인한 것만 · 그 나라 몰에 없거나 품번·사양이 다르거나 할인가가 정가로 보이면 그 나라는 뺌, 이유는 상품 줄 주석).
     ① SFCC형 몰(푸마 한국 등)이 가격인하 중이면 JSON-LD에 판매가만 있어, 이 상품 가격 칸의 취소선 정가(strike-through list)를 정가로 —
@@ -199,7 +207,7 @@ LANES = 6           # v1.12 동시에 받는 묶음 수(update.yml 수동 실행
 LANE_GRACE = 60     # 초 — 묶음이 TIME_LIMIT + 이만큼 안에 안 끝나면 멈추고 남은 값은 이전 값(단계 15분 제한 전에 저장)
 LANE_JOIN = [("킨(KEEN)", "우포스")]   # v1.12 사이트는 다르지만 같은 회사·수입사 몰 — 한 묶음(차례대로) · 킨·우포스 한국 = LF 공식몰(고도몰)
 PACE_EXTRA = {"arcteryx.jp": "shopify", "dragondiffusion.com": "shopify",   # v1.12 여러 회사가 함께 쓰는 플랫폼 — 묶음을 넘어 한 줄로 GAP
-              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify)
+              "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24", "kor.mizuno.com": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify) · v1.27 미즈노 한국 카페24
               "www.keenfootwear.kr": "godo", "www.oofos.co.kr": "godo"}     # SFCC형 몰(푸마·언더아머·써코니 해외)은 브랜드마다 따로 운영(자체 CDN)이라 넣지 않음 — 사이트별 간격만
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
@@ -214,10 +222,18 @@ PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식�
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
+CAFE24_ID_LIST = {"kor.mizuno.com"}   # v1.27 카페24 기본 상품 정보 칸(id="span_product_price_custom" 소비자가 · id="span_product_price_text" 판매가)으로 할인 전 정가를 읽는 몰 —
+                                      # 미즈노 한국(11/21 블프: 인스파이어 22 판매가 135,200 · 소비자가 169,000 — 소비자가 ÷ 일본 정가 비율이 다른 러닝화와 맞음 · 할인 없는 라이더 30은 둘 다 179,000)
+                                      # 브룩스 한국(CAFE24_LIST · 다른 칸 꼴)과 따로 — 브룩스 읽는 법은 그대로
+BIGC_LIST = {"usa.mizuno.com"}   # v1.27 빅커머스 몰 — 할인 중이면 JSON-LD에 판매가만 → 이 상품 가격 칸의 할인 전 가격(data-product-non-sale-price-without-tax)을 정가로
+                                 # (11/21 미즈노 미국: 라이더 29 $99 · 할인 전 $150 · 리벨리온 프로 3 $160 · 할인 전 $250 — 할인 없으면 그 칸이 비어 있음)
 SFRA_LIST = {"www.nike.ae": "NK", "www.underarmour.ae": "UA"}   # v1.17 두바이 SFCC(SFRA) 몰 → 이 상품 품번 표시(data-variation-group-id) 앞 글자 — sfra_list로 정가 확인
+CROCS = {"www.crocs.co.kr", "www.crocs.com", "www.crocs.co.uk", "www.crocs.co.jp", "www.crocs.de"}   # v1.27 크록스 공식몰(한국·미국·영국·일본·독일 — 같은 Next.js 몰 · Vercel)
+                                    # → JSON-LD 가격은 지금 판매가 하나뿐(11/21 블프 확인)이라 화면 데이터의 이 상품 변형 정가(retailPrice)로 읽음(crocs_list)
 SHOP_MODEL = {"on.ae": 7}   # v1.17 할인 표시 없이 일부 색상 값만 내리는 쇼피파이 몰 → 같은 모델로 볼 품번 앞 글자 수(온러닝 3MG1005… = 모델·성별)
                             # 상품 .json은 변형 250개까지만 — 11/03 cloud-6·cloudsurfer-2가 250개에서 잘림(cloudmonster-3 243개) → 같은 모델 비교는 응답에 온 색상끼리만
 SH_MAX, PH_MAX = 20, 12   # v1.5 할인 기록·정가 변동 기록 최대 개수(오래된 것부터 버림)
+OT_LIST = {"www.onitsukatiger.com"}   # v1.27 오니츠카타이거 몰(마젠토 · 나라는 경로 /kr/ko-kr·/gb/en-gb…) — JSON-LD가 없어 ot_price(화면 데이터 dataLayer·price_info·가격 칸)로만 읽음(page_price로 넘기지 않음)
 
 
 def note_sale(o, now, td, seen_off=False):
@@ -341,7 +357,7 @@ PRODUCTS = [
         "GB": "https://uk.puma.com/uk/en/pd/palermo-sneakers-unisex/396463",
         "DE": "https://eu.puma.com/de/de/pd/palermo-sneakers-unisex/396463",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%83%A6%E3%83%8B%E3%82%BB%E3%83%83%E3%82%AF%E3%82%B9-%E3%83%91%E3%83%AC%E3%83%AB%E3%83%A2-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/396463",
-        "AE": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22)
+        "AE": "https://ae.puma.com/ae/en/pd/palermo-sneakers-unisex/396463.html"}},   # 멕시코 몰에는 팔레르모(396463) 없음(시험 10/22 · 11/21 사이트맵에도 없음)
     {"id": "puma-mostro", "cat": "shoe", "brand": "푸마", "name": "모스트로 OG", "code": "397330", "src": "page", "hint": "mostro", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
         "US": "https://us.puma.com/us/en/pd/mostro-og-mens-sneakers/397330",
@@ -371,11 +387,11 @@ PRODUCTS = [
         "US": "https://us.puma.com/us/en/pd/speedcat-go-womens-sneakers/403589",
         "JP": "https://jp.puma.com/jp/ja/pd/%E3%82%A6%E3%82%A3%E3%83%A1%E3%83%B3%E3%82%BA-%E3%82%B9%E3%83%94%E3%83%BC%E3%83%89%E3%82%AD%E3%83%A3%E3%83%83%E3%83%88-go-%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC/403589",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-speedcat-go-para-mujer/403589.html",
-        "AE": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27)
+        "AE": "https://ae.puma.com/ae/en/pd/speedcat-go-shoes-women/403589.html"}},   # 독일 몰은 할인가(45.95유로)만 보여 정가로 읽혀 뺌(스피드캣 OG 독일 정가 109.95유로) · 영국 몰 사이트맵에 없음(10/27) · 독일은 11/21 사이트맵에 다시 있으나 시험 때 응답 없음(읽기 시간 초과) — 다음 차례에
     {"id": "puma-dnetrail", "cat": "shoe", "brand": "푸마", "name": "디비에이트 나이트로 엘리트 트레일(남성)", "code": "310034", "src": "page", "hint": "deviate nitro elite trail", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-mens-trail-running-shoes/310034",
-        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음 · 멕시코 몰 사이트맵에 없음(10/27) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03)
+        "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-herren/310034"}},   # 영국·일본 몰은 상품 가격 데이터(JSON-LD) 없음(영국 11/21도) · 멕시코 몰 사이트맵에 없음(10/27 · 11/21) · 두바이 몰도 JSON-LD 없음·사이트맵에 없음(11/03 · 11/21 사이트맵)
     {"id": "puma-t7track", "cat": "wear", "brand": "푸마", "name": "T7 올웨이즈 온 숏 트랙 자켓(여성)", "code": "629796", "src": "page", "hint": "t7", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
         "US": "https://us.puma.com/us/en/pd/t7-womens-short-track-jacket/629796",
@@ -388,24 +404,24 @@ PRODUCTS = [
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Edeviate-nitro-elite-trail-wn/310468.html",
         "US": "https://us.puma.com/us/en/pd/deviate-nitro-elite-womens-trail-running-shoes/310468",
         "DE": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-damen/310468",
-        "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"}},   # 영국 몰은 상품 가격 데이터(JSON-LD) 없음 · 두바이 몰에 없음(11/17)
+        "MX": "https://mx.puma.com/mx/es/pd/deviate-nitrotm-elite-trail-running-shoes-women/310468.html"}},   # 영국 몰은 상품 가격 데이터(JSON-LD) 없음(11/17 · 11/21) · 두바이 몰에 없음(11/17 · 11/21 사이트맵) · 멕시코는 11/21 사이트맵에 없고 JSON-LD 없음(11/17부터 이전 값 — 이어지면 다음 차례에 뺌)
     {"id": "puma-foreverrun2", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 2(남성)", "code": "310109", "src": "page", "hint": "foreverrun nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Eforeverrun-nitro-2/310109.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-mens-road-running-shoes/310109",
         "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-herren/310109",
-        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-men/310109.html"}},   # 영국·멕시코 몰에 없음(11/17 사이트맵) · 11/17 한국·미국·독일·두바이 할인 중(정가는 취소선 정가)
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-men/310109.html"}},   # 영국·멕시코 몰에 없음(11/17 사이트맵 · 멕시코 11/21도) · 11/17 한국·미국·독일·두바이 할인 중(정가는 취소선 정가)
     {"id": "puma-kingindoor", "cat": "shoe", "brand": "푸마", "name": "킹 인도어", "code": "401683", "src": "page", "hint": "king indoor", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%82%B9-%EC%9D%B8%EB%8F%84%EC%96%B4-%3Cbr%3Eking-indoor/401683.html",
         "US": "https://us.puma.com/us/en/pd/king-indoor-sneakers/401683",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-king-indoor/401683.html",
-        "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵)
+        "AE": "https://ae.puma.com/ae/en/pd/king-indoor-sneakers-unisex/401683.html"}},   # 영국·독일 몰에 없음(11/17 사이트맵 · 독일 11/21도)
     # v1.24 1차(11/20) — 한국 사이트맵 666개 중 해외 3개 나라 이상에 같은 품번이 있는 새 성인 상품은 이 둘뿐(나머지는 아동·한국 페이지 404 상품) ·
     # 포에버런 나이트로 3은 한국 사이트맵에 아직 없지만 한국 몰 상품 페이지가 열려 정가 읽기 확인(Firecrawl 검색으로 주소 찾음)
     {"id": "puma-foreverrun2w", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 2(여성)", "code": "310471", "src": "page", "hint": "foreverrun nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Eforeverrun-nitro-2-wn/310471.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-2-womens-road-running-shoes/310471",
         "DE": "https://eu.puma.com/de/de/pd/foreverrun-nitro-2-laufschuhe-damen/310471",
-        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-women/310471.html"}},   # 영국·멕시코 몰에 없음 · 11/20 네 나라 모두 할인 중(정가는 취소선 정가)
+        "AE": "https://ae.puma.com/ae/en/pd/foreverrun-nitrotm-2-running-shoes-women/310471.html"}},   # 영국·멕시코 몰에 없음(멕시코 11/21 사이트맵도) · 11/20 네 나라 모두 할인 중(정가는 취소선 정가)
     {"id": "puma-foreverrun3", "cat": "shoe", "brand": "푸마", "name": "포에버런 나이트로 3(남성)", "code": "312942", "src": "page", "hint": "foreverrun nitro 3", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-3-%3Cbr%3Eforeverrun-nitro-3/312942.html",
         "US": "https://us.puma.com/us/en/pd/foreverrun-nitro-3-mens-road-running-shoes/312942",
@@ -426,9 +442,10 @@ PRODUCTS = [
     {"id": "puma-magmax2", "cat": "shoe", "brand": "푸마", "name": "매그맥스 나이트로 2(남성)", "code": "312125", "src": "page", "hint": "magmax nitro 2", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Emagmax-nitro-2/312125.html",
         "US": "https://us.puma.com/us/en/pd/magmax-nitro-2-mens-road-running-shoes/312125",
+        "GB": "https://uk.puma.com/uk/en/pd/magmax-nitro%E2%84%A2-2-running-shoes-men/312125",
         "DE": "https://eu.puma.com/de/de/pd/magmax-nitro-2-laufschuhe-herren/312125",
         "MX": "https://mx.puma.com/mx/es/pd/tenis-de-running-magmax-nitrotm-2-para-hombre/312125.html",
-        "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"}},   # 영국 몰은 시험 때 응답 없음(읽기 시간 초과 · 11/21) — 다음 차례에
+        "AE": "https://ae.puma.com/ae/en/pd/magmax-nitrotm-2-running-shoes-men/312125.html"}},   # 영국 11/21 GitHub 서버 정가 읽기 확인(170파운드 · 한국 정가 비율 0.81 — 푸마 영국 가운데값 0.91의 1.25배 안 · 영국÷독일 1.07로 디비에이트 나이트로 4와 같은 꼴) · 11/21 한국·영국·독일·멕시코·두바이 할인 중(정가는 이 상품 취소선 정가)
     {"id": "puma-hstreet", "cat": "shoe", "brand": "푸마", "name": "H-스트리트 OG", "code": "403692", "src": "page", "hint": "h-street", "urls": {
         "KR": "https://kr.puma.com/kr/ko/pd/h-street-og/403692.html",
         "US": "https://us.puma.com/us/en/pd/h-street-og-sneakers/403692",
@@ -479,17 +496,17 @@ PRODUCTS = [
     {"id": "on-cloudrunner3", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3", "code": "3MG10071043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043", "cloudrunner-3")},
     {"id": "on-cloudx5", "cat": "shoe", "brand": "온러닝", "name": "클라우드 X 5", "code": "3MG30081043", "src": "page", "hint": "cloud x 5", "urls": _on("cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043", "cloud-x-5")},
     {"id": "on-cloud6wp", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 워터프루프", "code": "3MF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043", "cloud-6-waterproof")},
-    # v1.24 1차(11/20) — 나라별 상품 사이트맵({loc}/products.xml) 5개 나라 같은 품번 신발 중 주요 모델 · 정가 읽기 확인(GitHub 서버) · 두바이(on.ae)는 다음 차례에
-    {"id": "on-cloud6coast", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 코스트", "code": "3MF10030080", "src": "page", "hint": "cloud 6 coast", "urls": _on("cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080")},
-    {"id": "on-cloudzone", "cat": "shoe", "brand": "온러닝", "name": "클라우드존", "code": "3MF10080106", "src": "page", "hint": "cloudzone", "urls": _on("cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106")},
-    {"id": "on-cloudrocklowwp", "cat": "shoe", "brand": "온러닝", "name": "클라우드록 로우 워터프루프", "code": "3MF10251043", "src": "page", "hint": "cloudrock", "urls": _on("cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043")},
-    {"id": "on-cloudultra3", "cat": "shoe", "brand": "온러닝", "name": "클라우드울트라 3", "code": "3MF30231043", "src": "page", "hint": "cloudultra", "urls": _on("cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043")},
+    # v1.24 1차(11/20) — 나라별 상품 사이트맵({loc}/products.xml) 5개 나라 같은 품번 신발 중 주요 모델 · 정가 읽기 확인(GitHub 서버) · 두바이(on.ae)는 v1.27(11/21 4차)에 9개 더함(클라우드붐 맥스는 on.ae 이 색상만 다른 색상보다 싸 — 표시 없는 할인 · 블프 뒤 차례에)
+    {"id": "on-cloud6coast", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6 코스트", "code": "3MF10030080", "src": "page", "hint": "cloud 6 coast", "urls": _on("cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080", "cloud-6-coast")},
+    {"id": "on-cloudzone", "cat": "shoe", "brand": "온러닝", "name": "클라우드존", "code": "3MF10080106", "src": "page", "hint": "cloudzone", "urls": _on("cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106", "cloudzone")},
+    {"id": "on-cloudrocklowwp", "cat": "shoe", "brand": "온러닝", "name": "클라우드록 로우 워터프루프", "code": "3MF10251043", "src": "page", "hint": "cloudrock", "urls": _on("cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043", "cloudrock-low-waterproof")},
+    {"id": "on-cloudultra3", "cat": "shoe", "brand": "온러닝", "name": "클라우드울트라 3", "code": "3MF30231043", "src": "page", "hint": "cloudultra", "urls": _on("cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043", "cloudultra-3")},
     {"id": "on-cloudboommax", "cat": "shoe", "brand": "온러닝", "name": "클라우드붐 맥스", "code": "3MF30310462", "src": "page", "hint": "cloudboom", "urls": _on("cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462")},
-    {"id": "on-cloudsurfernext", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 넥스트", "code": "3ME30021200", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200")},
-    {"id": "on-cloudsurfermax", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 맥스", "code": "3MF30431200", "src": "page", "hint": "cloudsurfer max", "urls": _on("cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200")},
-    {"id": "on-cloud6w", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6(여성)", "code": "3WF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-3wf1006/womens/black-black-shoes-3WF10061043")},
-    {"id": "on-cloudmonster3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 3(여성)", "code": "3WG10031043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043")},
-    {"id": "on-cloudrunner3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3(여성)", "code": "3WG10051043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043")},
+    {"id": "on-cloudsurfernext", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 넥스트", "code": "3ME30021200", "src": "page", "hint": "cloudsurfer", "urls": _on("cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200", "cloudsurfer-next")},
+    {"id": "on-cloudsurfermax", "cat": "shoe", "brand": "온러닝", "name": "클라우드서퍼 맥스", "code": "3MF30431200", "src": "page", "hint": "cloudsurfer max", "urls": _on("cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200", "cloudsurfer-max")},
+    {"id": "on-cloud6w", "cat": "shoe", "brand": "온러닝", "name": "클라우드 6(여성)", "code": "3WF10061043", "src": "page", "hint": "cloud 6", "urls": _on("cloud-6-3wf1006/womens/black-black-shoes-3WF10061043", "cloud-6")},
+    {"id": "on-cloudmonster3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드몬스터 3(여성)", "code": "3WG10031043", "src": "page", "hint": "cloudmonster 3", "urls": _on("cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043", "cloudmonster-3")},
+    {"id": "on-cloudrunner3w", "cat": "shoe", "brand": "온러닝", "name": "클라우드러너 3(여성)", "code": "3WG10051043", "src": "page", "hint": "cloudrunner 3", "urls": _on("cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043", "cloudrunner-3")},
     {"id": "salomon-xt6", "cat": "shoe", "brand": "살로몬", "name": "XT-6 고어텍스", "code": "L47450600", "alt": ["LG9333"], "src": "page", "hint": "xt-6", "urls": {
         "KR": "https://salomon.co.kr/products/l47450600.json",
         "US": "https://www.salomon.com/en-us/product/xt-6-gore-tex-lg9333",
@@ -747,7 +764,9 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/ride-19/60823M.html"}},   # 해마다 새 모델(라이드 20 등)이 나오면 품번·주소를 바꿈
     {"id": "saucony-endspeed5", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 스피드 5(남성)", "code": "S21007", "src": "page", "hint": "엔돌핀 스피드 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",   # v1.18 화이트/검(164)은 전 사이즈 품절로 JSON-LD 가격 없음
-        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html"}},   # v1.18 영국·독일 몰은 10/30부터 404(유럽은 엔돌핀 스피드 6 S101825 — 한국 몰에 6이 들어오면 품번·주소를 6으로)
+        "US": "https://www.saucony.com/en/endorphin-speed-5/60307M.html",
+        "GB": "https://www.saucony.com/UK/en_GB/endorphin-speed-5/60307M.html",   # 영국·독일 몰은 10/30~11/10 404였다가 11/21 다시 열림(같은 품번 · 정가 £180·€200 · 재고 정리 −40% 중 — 정가는 '원래 가격' 칸)
+        "DE": "https://www.saucony.com/DE/de_DE/endorphin-speed-5/60307M.html"}},   # 유럽은 엔돌핀 스피드 6 S101825 — 한국 몰에 6이 들어오면 품번·주소를 6으로(다시 404가 되면 영국·독일 뺌)
     {"id": "saucony-endpro5", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 프로 5(남성)", "code": "S21064", "src": "page", "hint": "엔돌핀 프로 5", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
         "US": "https://www.saucony.com/en/endorphin-pro-5/60803M.html?dwvar_60803M_color=S21064-100",   # 색상 없는 주소는 10/23부터 JSON-LD 없는 페이지
@@ -770,7 +789,7 @@ PRODUCTS = [
         "DE": "https://www.saucony.com/DE/de_DE/hurricane-26/61249M.html"}},
     {"id": "saucony-kinvara16", "cat": "shoe", "brand": "써코니", "name": "킨바라 16(남성)", "code": "S21020", "src": "page", "hint": "킨바라 16", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
-        "US": "https://www.saucony.com/en/kinvara-16/60309M.html"}},   # 영국·독일 몰 같은 주소는 다른 색상 품번(S101468)만 있어 뺌(시험 10/22)
+        "US": "https://www.saucony.com/en/kinvara-16/60309M.html"}},   # 영국·독일 몰 같은 주소는 다른 색상 품번(S101468)만 있어 뺌(시험 10/22) · 색상 지정 주소 S21020-141도 JSON-LD 없음(11/21)
     # v1.21 SKU 9차 — 한국 몰 상품 화면의 품번(상품 설명 그림 이름 SAUCONY29S…-색상) ∩ 미국·영국·독일 몰 같은 품번(data-stock-number · 11/17 정가 읽기 확인)
     {"id": "saucony-azura", "cat": "shoe", "brand": "써코니", "name": "엔돌핀 아주라(남성)", "code": "S21070", "src": "page", "hint": "엔돌핀 아주라", "code_in_page": True, "urls": {
         "KR": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
@@ -1293,6 +1312,193 @@ PRODUCTS = [
         "AE": "https://ae.burberry.com/nylon-quilted-jacket-p81270131"}},
     # 가방·재킷: 나라별 사이트맵에서 같은 p 번호(나라마다 첫 상품이 한국과 같음) · 독일 몰 주소는 독일어(Tasche·Jacke)라 이번 찾기에서 못 찾아 독일 뺌(다음 차례) ·
     # 나이트·락킹 호스·쉴드·체스·스닙·페그·B 클립 백·트렌치 토트·박스 스니커즈·하이랜드 부츠는 한국 사이트맵에 없음(이 이름 주소 0건)
+    # 크록스 SKU 4차(11/21) — +15
+    # 크록스(SKU 4차 11/21 · 판정 브랜드 첫 해외 정가 · 감시 브랜드 '크록스' · CHK_CUR USD): 나라별 공식몰 www.crocs.co.kr·www.crocs.com·www.crocs.co.uk·www.crocs.co.jp·www.crocs.de
+    # (같은 Next.js 몰 · CROCS · 독일 = 유로) · 읽기 = v1.27 crocs_list(화면 데이터의 이 상품 변형 retailPrice = 정가 · JSON-LD는 지금 판매가뿐) · 한국·일본 첫 화면·사이트맵 +
+    # 미국·영국·독일 사이트맵의 같은 품번 → GitHub 서버 정가 읽기 확인(crocs6 · 11/21) · 주소 slug는 사이트맵·첫 화면 정식 주소(크록스 몰은 slug와 상관없이 품번으로 열림) ·
+    # 분류 sandal(클로그·슬라이드·플립 — 모두 성인 · 206750은 여성)
+    # 블프 검사: 세일 중인 10001의 지금 값 < 정가(미국 $30 < $49.99 · 영국 £29.99 < £49.99 · 일본 ￥3,850 < ￥7,700 · 독일 €32.99 < €54.99) — retailPrice가 세일가를 따라가지 않음 ·
+    #   한국 정가 ÷ (현지 정가 × 11/20 환율) 이번 차례 가운데값(에코 뺀 뒤) 미국 1.06 · 영국 0.79 · 일본 1.12 · 독일 0.91 — 넣은 값 모두 1/1.25~1.25배 안(가장 큼 샬레 미국·독일 1.23배 · 가장 작음 크록밴드 플립 영국 0.83배)
+    # 멕시코 뺌: crocs.com.mx(쇼피파이 'Crocs México')는 미국 몰 나라 선택에 없고(영국·EU·독일·프랑스·네덜란드·일본·한국·호주·캐나다만) 운영 회사 표기 없음(© 줄·개인정보 처리방침에 회사 이름 없음 ·
+    #   '공식'은 설명 글뿐) · 상품이 색상별 주소(classic-clog-4 …)이고 compare_at_price가 빈칸(블프 중 정가·세일가 구분 안 됨) · 확인한 2개(크록밴드 1,599·에코 1,799페소) 모두 주문 가능 변형 0 — 공식몰 근거 부족
+    # 두바이 뺌: www.crocs.ae → en-ae.crocsgulf.com robots.txt부터 HTTP 403(접속 차단 — 우회하지 않음)
+    # 한국 10001: crocs6 '정가 69900가 지금 값 10000의 5배 넘음' — 품절 변형(orderable false · ats 0)의 자리표시 "price":10000(dump 확인) · 주문 가능 변형만 보는 읽기 고침 뒤 브랜치 실행에서 다시 확인
+    {"id": "crocs-classic", "cat": "sandal", "brand": "크록스", "name": "클래식 클로그", "code": "10001", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-clog/10001.html",
+        "US": "https://www.crocs.com/p/classic-clog/10001.html",
+        "GB": "https://www.crocs.co.uk/p/classic-clog/10001.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic/10001.html",
+        "DE": "https://www.crocs.de/p/classic-clog/10001.html"}},
+    {"id": "crocs-classic-lined", "cat": "sandal", "brand": "크록스", "name": "클래식 라인드 클로그", "code": "203591", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-lined-clog/203591.html",
+        "US": "https://www.crocs.com/p/classic-lined-clog/203591.html",
+        "GB": "https://www.crocs.co.uk/p/classic-lined-clog/203591.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic-lined-clog/203591.html",
+        "DE": "https://www.crocs.de/p/classic-lined-clog/203591.html"}},
+    # JP 뺌: 일본 화면 데이터에 10126 변형 없음(crocs5 'JPY 가격 없음'도 — 일본 몰에서 안 팖)
+    {"id": "crocs-baya", "cat": "sandal", "brand": "크록스", "name": "바야 클로그", "code": "10126", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/baya-clog/10126.html",
+        "US": "https://www.crocs.com/p/baya-clog/10126.html",
+        "GB": "https://www.crocs.co.uk/p/baya-clog/10126.html",
+        "DE": "https://www.crocs.de/p/baya-clog/10126.html"}},
+    # 한국 205969: crocs6 '정가 84900가 지금 값 14900의 5배 넘음' — 10001과 같은 품절 변형 값 · 읽기 고침 뒤 브랜치 실행에서 다시 확인(그때도 실패면 한국 뺌)
+    {"id": "crocs-baya-lined", "cat": "sandal", "brand": "크록스", "name": "바야 라인드 클로그", "code": "205969", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/baya-lined-clog/205969.html",
+        "US": "https://www.crocs.com/p/baya-lined-clog/205969.html",
+        "GB": "https://www.crocs.co.uk/p/baya-lined-clog/205969.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-baya-lined-clog/205969.html",
+        "DE": "https://www.crocs.de/p/baya-lined-clog/205969.html"}},
+    # 한국 첫 화면 classic-unfurgettable-vegan-suede-clog · 미국·영국·독일 사이트맵 unfurgettable-clog · 일본 첫 화면 classic-unfurgettable-sueded-clog
+    {"id": "crocs-unfurgettable", "cat": "sandal", "brand": "크록스", "name": "언퍼게터블 클로그", "code": "212106", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-unfurgettable-vegan-suede-clog/212106.html",
+        "US": "https://www.crocs.com/p/unfurgettable-clog/212106.html",
+        "GB": "https://www.crocs.co.uk/p/unfurgettable-clog/212106.html",
+        "JP": "https://www.crocs.co.jp/p/classic-unfurgettable-sueded-clog/212106.html",
+        "DE": "https://www.crocs.de/p/unfurgettable-clog/212106.html"}},
+    {"id": "crocs-unfurgettable-plat", "cat": "sandal", "brand": "크록스", "name": "언퍼게터블 플랫폼 클로그", "code": "214108", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/unfurgettable-platform-clog/214108.html",
+        "US": "https://www.crocs.com/p/unfurgettable-platform-clog/214108.html",
+        "GB": "https://www.crocs.co.uk/p/unfurgettable-platform-clog/214108.html",
+        "JP": "https://www.crocs.co.jp/p/unfurgettable-platform-clog/214108.html",
+        "DE": "https://www.crocs.de/p/unfurgettable-platform-clog/214108.html"}},
+    {"id": "crocs-crocband", "cat": "sandal", "brand": "크록스", "name": "크록밴드 클로그", "code": "11016", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/crocband-clog/11016.html",
+        "US": "https://www.crocs.com/p/crocband-clog/11016.html",
+        "GB": "https://www.crocs.co.uk/p/crocband-clog/11016.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-crocband/11016.html",
+        "DE": "https://www.crocs.de/p/crocband-clog/11016.html"}},
+    # 미국·영국·독일 정식 주소 women-s-classic-platform-clog · 일본 crocs-classic-platform-clog-w
+    {"id": "crocs-classic-plat", "cat": "sandal", "brand": "크록스", "name": "클래식 플랫폼 클로그(여성)", "code": "206750", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-platform-clog/206750.html",
+        "US": "https://www.crocs.com/p/women-s-classic-platform-clog/206750.html",
+        "GB": "https://www.crocs.co.uk/p/women-s-classic-platform-clog/206750.html",
+        "JP": "https://www.crocs.co.jp/p/crocs-classic-platform-clog-w/206750.html",
+        "DE": "https://www.crocs.de/p/women-s-classic-platform-clog/206750.html"}},
+    # 한국 첫 화면 · 한국 정가가 높은 편(나라별 비율 가운데값의 1.02~1.23배 — 1.25배 안) · 한국·영국·일본·독일은 할인 아님
+    {"id": "crocs-chalet", "cat": "sandal", "brand": "크록스", "name": "샬레 클로그", "code": "214955", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/chalet-clog/214955.html",
+        "US": "https://www.crocs.com/p/chalet-clog/214955.html",
+        "GB": "https://www.crocs.co.uk/p/chalet-clog/214955.html",
+        "JP": "https://www.crocs.co.jp/p/chalet-clog/214955.html",
+        "DE": "https://www.crocs.de/p/chalet-clog/214955.html"}},
+    # US 뺌: 미국 읽기 시간 초과(crocs6 1번 — 다음 차례에 다시) · 라인드(겨울) 상품이라 봄에 몰에서 빠지면 21일 뒤 실패 표시
+    {"id": "crocs-bae-lined", "cat": "sandal", "brand": "크록스", "name": "배 라인드 클로그", "code": "211753", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/bae-lined-clog/211753.html",
+        "GB": "https://www.crocs.co.uk/p/bae-lined-clog/211753.html",
+        "JP": "https://www.crocs.co.jp/p/bae-lined-clog/211753.html",
+        "DE": "https://www.crocs.de/p/bae-lined-clog/211753.html"}},
+    {"id": "crocs-crafted", "cat": "sandal", "brand": "크록스", "name": "클래식 크래프티드 클로그", "code": "211354", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/classic-crafted-clog/211354.html",
+        "US": "https://www.crocs.com/p/classic-crafted-clog/211354.html",
+        "GB": "https://www.crocs.co.uk/p/classic-crafted-clog/211354.html",
+        "JP": "https://www.crocs.co.jp/p/classic-crafted-clog/211354.html",
+        "DE": "https://www.crocs.de/p/classic-crafted-clog/211354.html"}},
+    # US 뺌: 'USD 판매 가격 없음'(주문 가능 변형 없음 — 미국 몰에서 안 팖)
+    {"id": "crocs-bayaband", "cat": "sandal", "brand": "크록스", "name": "바야밴드 클로그", "code": "205089", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/bayaband-clog/205089.html",
+        "GB": "https://www.crocs.co.uk/p/bayaband-clog/205089.html",
+        "JP": "https://www.crocs.co.jp/p/bayaband-clog/205089.html",
+        "DE": "https://www.crocs.de/p/bayaband-clog/205089.html"}},
+    # US 없음: 미국 사이트맵에 없어 시험 안 함 · JP 뺌: 'JPY 판매 가격 없음'(일본 몰에서 안 팖)
+    {"id": "crocs-allterrain", "cat": "sandal", "brand": "크록스", "name": "올 터레인 클로그", "code": "206340", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/all-terrain-clog/206340.html",
+        "GB": "https://www.crocs.co.uk/p/all-terrain-clog/206340.html",
+        "DE": "https://www.crocs.de/p/all-terrain-clog/206340.html"}},
+    # US 없음: 미국 사이트맵에 없어 시험 안 함 · JP 뺌: 'JPY 판매 가격 없음'(일본 몰에서 안 팖)
+    {"id": "crocs-crocband-flip", "cat": "sandal", "brand": "크록스", "name": "크록밴드 플립", "code": "11033", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/crocband-flip/11033.html",
+        "GB": "https://www.crocs.co.uk/p/crocband-flip/11033.html",
+        "DE": "https://www.crocs.de/p/crocband-flip/11033.html"}},
+    # 한국·미국만 시험(crocs6) — 영국·독일 사이트맵에도 같은 품번(mellow-recovery-slide/208392)이 있어 다음 차례에 · 멜로우 2 슬라이드는 사이트맵에 없음(옛 모델 아님)
+    {"id": "crocs-mellow-slide", "cat": "sandal", "brand": "크록스", "name": "멜로우 리커버리 슬라이드", "code": "208392", "src": "page", "hint": "", "urls": {
+        "KR": "https://www.crocs.co.kr/p/mellow-recovery-slide/208392.html",
+        "US": "https://www.crocs.com/p/mellow-recovery-slide/208392.html"}},
+    # 뺌: 에코 클로그(207937 — 나가는 모델: 후속 에코 II 212810이 미국·영국·독일 사이트맵에 있고(crocs6) 미국 몰은 207937 변형이 이미 없음 · 한국 몰에도 에코 II(crocs5 /p/ii/212810) ·
+    #   나라마다 정가의 40~50%로 정리 중(한국 37,900/94,900 · 영국·독일 35/69.99 · 일본 4,620/11,550) — 다음 차례에 에코 II 212810으로)
+    # 뺌: 멜로우 리커버리 클로그(208493 — 한국만 OK · 일본 변형 없음 · 미국·영국·독일 사이트맵에 없음 — 그 나라는 멜로우 2 리커버리 클로그 214289로 바뀜)
+    # 뺌: 라이트라이드 360 클로그(206708 — 한국만 OK · 일본 변형 없음 · 미국·영국·독일 사이트맵에 없음)
+    # 뺌: 클래식 코지 슬리퍼(209386 — 한국 'KRW 판매 가격 없음')·클래식 퍼즈 스커프(212143)·클래식 카페 슬리퍼(213622 — 한국 화면 데이터에 변형 없음) — 한국 몰에서 안 팖(해외는 정가 읽기 OK)
+    # 뺌: 클래식 슬라이드 2.0(짐작 품번 209401 — 한국 '판매 가격 없음' · 미국 변형 없음)
+    # 오니츠카타이거 SKU 4차(11/21) — +5
+    # 오니츠카타이거(새 브랜드 · 10/21 접속 시험 때 막혔던 곳 → 11/21 다시 열림): 공식몰 www.onitsukatiger.com 한 곳(마젠토 · 나라는 경로 — 한국 /kr/ko-kr/product/{이름}/{품번 소문자.점} ·
+    # 영국 /gb/en-gb·독일 /de/de-de/{이름}/p/{품번 소문자-대시}.html) · JSON-LD가 없어(한국) ot_price(v1.27)로 읽음 — 품번 표기(점·대시)는 ot_price가 맞춰 봐 cc_code 필요 없음 ·
+    # 한국 = 11/21 GitHub 서버 onitsuka6 정가 읽기 OK(how 'dataLayer·price_info' — dataLayer view_item originalPrice = price_info regular_price · og 가격 같음) ·
+    # 영국·독일 = 나라 사이트맵(각 품번 1,034개)에서 같은 품번 주소 → 같은 실행 정가 읽기 OK(how 'price_info' — 유럽 dataLayer는 지금 가격만이라 price_info regular_price가 정가) ·
+    # 유럽 페이지 모양은 영국 덤프 2개(1182A677.001 · 1182A676.002)로 확인: 장바구니 폼 안 <input name="product" value="210738"> = 가격 칸 data-product-id 210738 ·
+    # 할인 아님 = 가격 칸 normal-price에 finalPrice 하나뿐(oldPrice 칸 없음) · price_info regular_price 160 = final_price 160 · special_price null · item_sale_product "No" · og 160.00 GBP
+    # 블프 검사(11/21): 5개 모두 지금 가격 = 정가(cur_price = full · 한국·영국·독일) · 한국 정가 ÷ (현지 정가 × 11/20 환율) 나라별 가운데값 영국 0.75·독일 0.82 —
+    # 모든 값이 가운데값의 0.96~1.09배(1.25배·1/1.25배 안) · 묶음 시간: 한 호스트라 한 묶음에서 차례로 값 15개 × 약 9초 ≈ 135초(가장 긴 묶음 438초 안)
+    # 일본: 일본 사이트맵(/jp/media/sitemap/sitemap.xml · 품번 2,141개)은 주소 꼴이 /jp/ja-jp/product/{이름}/{품번 소문자_밑줄}.html이라 이번 시험(점·대시 표기)에서 주소를 못 찾음 —
+    #   한국 꼴 주소(/jp/ja-jp/product/…/1183c102.001)는 HTTP 404(onitsuka5) → 밑줄 표기로 다음 차례에 시험(일본 첫 화면에 1183C102_751·1183A592_200·1183C015_200 등 있음)
+    # 미국: 미국 사이트맵 없음(짐작 주소 5개 404·0개) · 첫 화면에 상품 링크·품번 없음 → 다음 차례 · 멕시코·두바이: 같은 도메인 공식 온라인몰 없음(사이트맵 색인 41개에 mx·ae 없음)
+    # 뺌: 멕시코 66 1183C102.751·1183C102.100 — 블랙·화이트(.001)와 같은 모델·같은 한국 정가(196,000원 · 영국 £150 · 독일 €160)
+    # 뺌: 멕시코 66 SD VIN 1183C015.200 — .207과 같은 모델·같은 한국 정가(250,000원 · 영국 £195 · 독일 €210 · 영국 주소 이름이 mexico-66-sd로 다름)
+    # 뺌: 멕시코 66 슬립온(1183C742.250)·멕시코 66 TGRS 1182A745.250·모아지 CO(1183B555.022)·멕시코 66 PF 사보(1183C815.100)·묵릭 부츠(1183C830.200) — 한국 OK이나
+    #   영국·독일 사이트맵에 같은 품번 없음(해외 값 없음)
+    # 뺌: 멕시코 66 TGRS 여성 1182A677.001(230,000원 · £160 · €170 · 정가 읽기는 깨끗함) — 영국 JSON-LD 설명 'AW25 glitter pack' = 지난 시즌 테마 묶음 색
+    #   (대표·스테디셀러 아님 · 블프·아웃렛으로 먼저 빠지고 몰에서 내려가면 21일 알림) · 비율도 브랜드 최고(영국 가운데값의 1.10배·독일 1.12배) — 묶음 아닌 색(1182A745 등)이 영국·독일 사이트맵에 생기면 다음 차례에
+    {"id": "ot-mexico66", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66(블랙·화이트)", "code": "1183C102.001", "src": "page", "hint": "mexico 66", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66/p/1183c102-001.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66/p/1183c102-001.html"}},   # 196,000원 · £150 · €160
+    {"id": "ot-mexico66sd", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66 SD", "code": "1183A592.200", "src": "page", "hint": "mexico 66 sd", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd/1183a592.200",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66-sd/p/1183a592-200.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66-sd/p/1183a592-200.html"}},   # 220,000원 · £170 · €190
+    {"id": "ot-mexico66sdvin", "cat": "shoe", "brand": "오니츠카타이거", "name": "멕시코 66 SD VIN", "code": "1183C015.207", "src": "page", "hint": "mexico 66 sd vin", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd-vin/1183c015.207",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/mexico-66-sd-vin/p/1183c015-207.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/mexico-66-sd-vin/p/1183c015-207.html"}},   # 250,000원 · £195 · €210 · 영국·독일 첫 화면에 1183C015_207 그림(onitsuka5)
+    {"id": "ot-taichiog", "cat": "shoe", "brand": "오니츠카타이거", "name": "타이치 OG(화이트·블랙)", "code": "1183C759.100", "src": "page", "hint": "tai-chi og", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tai-chi-og/1183c759.100",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/tai-chi-og/p/1183c759-100.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/tai-chi-og/p/1183c759-100.html"}},   # 200,000원 · £140 · €160
+    {"id": "ot-tokuten", "cat": "shoe", "brand": "오니츠카타이거", "name": "토쿠텐", "code": "1183C429.250", "src": "page", "hint": "tokuten", "urls": {
+        "KR": "https://www.onitsukatiger.com/kr/ko-kr/product/tokuten/1183c429.250",
+        "GB": "https://www.onitsukatiger.com/gb/en-gb/tokuten/p/1183c429-250.html",
+        "DE": "https://www.onitsukatiger.com/de/de-de/tokuten/p/1183c429-250.html"}},   # 210,000원 · £160 · €175
+    # 미즈노 SKU 4차(11/21) — +5
+    # 미즈노(SKU 4차 11/21 · 판정 브랜드 첫 해외 정가 · 감시 브랜드 '미즈노' · CHK_CUR JPY): 한국 kor.mizuno.com(카페24) · 일본 jpn.mizuno.com · 미국 usa.mizuno.com(빅커머스)
+    # 읽기: 한국 = JSON-LD sku가 카페24 번호라 이름(hint) + 페이지 '모델' 칸 글로벌 품번(code_in_page) · 블프 판매가면 v1.27 cafe24_id_list(소비자가 칸 span_product_price_custom
+    #   ↔ 판매가 칸 span_product_price_text — mizuno6 dump 인스파이어 22: 소비자가 <strike>169,000원</strike> · 판매가 135,200원, 같은 칸 3번 모두 같은 값) ·
+    #   일본 = 모델 페이지 /ec/disp/attgrp/{품번}/(색상·사이즈 상품 페이지로 넘어감 · JSON-LD ProductGroup = 품번 · 색상별 가격 중 높은 값) ·
+    #   미국 = 자체 스타일 번호(JSON-LD sku → cc_code US) · 할인 중이면 v1.27 bigc_list(할인 전 칸 data-product-non-sale-price-without-tax · 할인 없으면 빈 칸) ·
+    #   같은 모델·성별·보통 폭으로 대응(미국 2E·SW·공용 Noir·Lo·한정 색은 다른 스타일 번호라 뺌)
+    # 블프 검사(mizuno6 · GitHub 서버 11/21 · 11/20 환율): 한국 할인 3개(인스파이어 22·스카이 9·리벨리온 프로 3)는 full = 소비자가 · cur_price = 판매가(135,200·151,200·181,300) ·
+    #   미국 할인 중 인스파이어 22 $129.95 < 정가 $150 · 스카이 9 $149.95 < $180 · 리벨리온 프로 3 $160 < $250(2E 페이지 할인 전 칸도 같은 $150·$180) ·
+    #   일본 할인 칸: 라이더 30·인스파이어 22·스카이 9는 비어 있음(표시가 = 세금 별도 × 1.1) · 네오 비스타 3·리벨리온 프로 3은 '会員価格'(회원가 ¥16,940·¥14,850 표시) —
+    #   JSON-LD 가격 24,200·16,940 / 29,700·14,850에서 낮은 값이 정확히 30%·50% 할인이고 읽은 값은 높은 통상가(mizuno5와 같음) → 정가로 넣음(스카이 9 JSON-LD 13,860 = 다른 색상 30% 할인도 같음)
+    #   한국 정가 ÷ (현지 정가 × 환율) 가운데값 미국 0.82 · 일본 1.14 — 넣은 값 모두 가운데값의 1.10배 안(기준 1.25배) · 한국이 일본 대비 0.91 밑인 값 없음(판매가를 정가로 읽은 값 없음)
+    {"id": "mizuno-waverider30", "cat": "shoe", "brand": "미즈노", "name": "웨이브 라이더 30(남성)", "code": "J1GM2620", "cc_code": {"US": "411621"}, "src": "page", "hint": "wave rider 30", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-rider-30/12026/",   # 모델 J1GM2620 · 소비자가 = 판매가 179,000(할인 없음)
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2620/",   # ¥18,700(세금 별도 ¥17,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-rider-30-mens/"}},   # 남성 보통 폭 411621 · $150(할인 전 칸 빔)
+    {"id": "mizuno-neovista3", "cat": "shoe", "brand": "미즈노", "name": "네오 비스타 3(남성)", "code": "J1GM2610", "cc_code": {"US": "411619"}, "src": "page", "hint": "neo vista 3", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/mizuno-neo-vista-3/12065/",   # 모델 J1GM2610 · 소비자가 = 판매가 219,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2610/",   # 통상가 ¥24,200(회원가 ¥16,940 = 30% 할인 — 위 블프 검사)
+        "US": "https://usa.mizuno.com/running-mizuno-neo-vista-3-mens/"}},   # 남성 411619 · $200(할인 전 칸 빔) · 공용 Noir 411629는 다른 상품
+    {"id": "mizuno-inspire22", "cat": "shoe", "brand": "미즈노", "name": "웨이브 인스파이어 22(남성)", "code": "J1GC2644", "cc_code": {"US": "411557"}, "src": "page", "hint": "wave inspire 22", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-inspire-22/11361/",   # 모델 J1GC2644 · 블프 판매가 135,200 → 소비자가 칸 169,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2644/",   # ¥16,500(세금 별도 ¥15,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-inspire-22-mens"}},   # 남성 보통 폭 411557 · 블프 $129.95 → 할인 전 칸 $150
+    {"id": "mizuno-wavesky9", "cat": "shoe", "brand": "미즈노", "name": "웨이브 스카이 9(남성)", "code": "J1GC2502", "cc_code": {"US": "411533"}, "src": "page", "hint": "wave sky 9", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-sky-9/11346/",   # 모델 J1GC2502 · 블프 판매가 151,200 → 소비자가 칸 189,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2502/",   # ¥19,800(세금 별도 ¥18,000 · 할인 칸 빔)
+        "US": "https://usa.mizuno.com/running-wave-sky-9-mens"}},   # 남성 보통 폭 411533 · 블프 $149.95 → 할인 전 칸 $180
+    {"id": "mizuno-rebellionpro3", "cat": "shoe", "brand": "미즈노", "name": "웨이브 리벨리온 프로 3(공용)", "code": "U1GD2530", "cc_code": {"US": "411498"}, "src": "page", "hint": "wave rebellion pro 3", "code_in_page": True, "urls": {
+        "KR": "https://kor.mizuno.com/product/wave-rebellion-pro-3/10605/",   # 모델 U1GD2530 · 블프 판매가 181,300 → 소비자가 칸 259,000
+        "JP": "https://jpn.mizuno.com/ec/disp/attgrp/U1GD2530/",   # 통상가 ¥29,700(회원가 ¥14,850 = 50% 할인 — 위 블프 검사)
+        "US": "https://usa.mizuno.com/running-unisex-wave-rebellion-pro-3-running-shoe/"}},   # 공용 411498 · 블프 $160 → 할인 전 칸 $250 · Lo 411526($230)은 다른 상품
+    # 뺌: 웨이브 라이더 29(J1GC2503 · 한국 10611 소비자가 169,000 → 판매가 118,300 · 미국 411538 $150 → $99) — 새 모델 라이더 30이 나와 재고 정리 중(해마다 새 모델이 나오는 러닝화 · 새 읽는 법 확인용으로만 시험)
+    # 뺌: 한국 리벨리온 프로 3 10194·10195(U1GD2533 오니하야이 한정 색) · 같은 모델 다른 색(라이더 30 12025·12027 · 네오 비스타 3 12063~12067 — 같은 품번·같은 값이라 하나만)
+    # 뺌: 넓은 폭·특별판 — 라이더 30 SW·라이더 GTX 4 SW(한국 J1GU2621·J1GM2621·J1GU2631) · 라이더 30.1·30.2·30 디스클로저(J1GU2624·2625·2623) · 미국 2E 페이지
+    # 다음 차례 후보(한국 상품 번호는 mizuno6 러닝 분류에서 찾았으나 한국 tryp를 아직 안 해 이번엔 안 넣음):
+    #   웨이브 프로페시 15(J1GC2651 · 한국 11370·11371 — 상품 페이지 미확인 · 일본 ¥26,400 OK · 미국 공용 411594 $300 / 남성 411592 $250 — 어느 쪽이 같은 상품인지 확인)
+    #   미즈노 스카이 프라임(한국 12357 J1GM2650 239,000 · 12359 J1GU2650 249,000 · 미국 남성 411625 $200 · 일본 미시험)
+    #   하이퍼워프 퓨어·엘리트·프로(한국 12335~12337 J1GC2687~2689 309,000·279,000·249,000 · 다른 색 12097~12099 J1GC2670~2672 · 미국 Hyperwarp Pure 2 411636 $300 — 같은 모델인지 확인 · 일본 미시험)
+    #   네오 젠 2(한국 12338은 J1GS2611(230부터 — 여성으로 보임) · 일본 J1GC2686 ¥17,600 OK와 품번이 달라 한국 같은 품번 페이지를 더 찾음 · 미국 남성 411559 할인 전 $160 / 공용 411595 $160)
+    #   웨이브 리벨리온 플래시 3(J1GC2535 · 일본 ¥20,900 OK · 미국 411524 할인 전 $180 · 한국 러닝 분류에 안 보임) · 웨이브 호라이즌 9(J1GC2626 · 일본 attgrp 404 · 미국 411564 $180 · 한국에 안 보임)
+    #   한국 이름 미확인 품번: J1GC2650(12205·11836·11837) · J1GC2600(11369) · J1GM2680(12206) · J1GM2683(12204) · J1GU2612·J1GM2612(12186~12188) — 상품 페이지로 이름 확인
 ]
 # v1.23 분류 cat(화면 착지 무게·관세 — build_dashboard LAND.cat과 같은 이름) — 새 상품은 반드시 넣음(빠지면 불러오기에서 멈춤 → check-files 실패)
 CATS = ("shoe", "boot", "sandal", "top", "wear", "bag")   # 신발 · 부츠 · 샌들류(샌들·슬리퍼·클로그 · 킨 유니크 포함) · 반팔·민소매 · 옷(후디·집업·바지·재킷) · 가방
@@ -1684,6 +1890,73 @@ def cafe24_list(html, sale):
     return lps.pop() if len(lps) == 1 else None
 
 
+C24_TAGS = r'(?:<(?:strike|del|s|span|strong|em|b|font)\b[^>]*>\s*){0,3}'   # v1.27 값 앞 꾸밈 태그(여는 태그만 — 빈 칸에서 다음 칸 값으로 넘어가지 않게)
+C24_CUSTOM = re.compile(r'id="span_product_price_custom"[^>]*>\s*' + C24_TAGS + r'([\d,]+)\s*원')
+C24_TEXT = re.compile(r'id="span_product_price_text"[^>]*>\s*' + C24_TAGS + r'([\d,]+)\s*원')
+C24_WIN = 8000   # 글자 — 소비자가 칸 뒤 이만큼 안(다음 소비자가 칸 전)의 판매가 칸만 같은 상품 정보 칸으로 봄
+C24_CUSTOM_RAW = re.compile(r'id="span_product_price_custom"[^>]*>((?:(?!</span>).){0,300})', re.S)   # v1.27 소비자가 칸 안 글(꼴 확인용 — '…원' 꼴이 아니어도)
+
+
+def cafe24_id_list(html, sale):
+    """v1.27 카페24 기본 상품 정보 칸(미즈노 한국): 할인 중이면 JSON-LD·meta에는 판매가만 — 이 상품 정보 칸의 소비자가(id="span_product_price_custom",
+    <strike>)를 정가로. 이 상품 것만: 소비자가 칸 바로 뒤(C24_WIN 안 · 다음 소비자가 칸 전) 판매가 칸(id="span_product_price_text")과 짝 · 소비자가·판매가가 각각 한 가지 ·
+    판매가 칸 = 이 상품 JSON-LD 판매가(sale) · 판매가보다 높고 5배 안 → (정가, 판매가) · 할인 아님(소비자가 = 판매가)이면 (None, 판매가) ·
+    소비자가 칸이 없으면 (None, None) · 소비자가가 판매가보다 높은데(할인 표시) 위 조건을 못 맞추거나 소비자가 칸 숫자를 '…원' 꼴로 못 읽으면
+    RuntimeError(할인가를 정가로 저장하지 않게)"""
+    cus = [(m.start(), num(m.group(1))) for m in C24_CUSTOM.finditer(html)]
+    raw = [_money(re.sub(r"<[^>]*>", "", m.group(1))) for m in C24_CUSTOM_RAW.finditer(html)]
+    if sum(1 for x in raw if x) > sum(1 for _, lp in cus if lp) and any(x and x > sale * 1.005 for x in raw):   # v1.27 소비자가 칸에 판매가보다 큰 숫자가 있는데 '…원' 꼴로 못 읽음
+        raise RuntimeError(f"소비자가 칸 꼴을 못 읽음(칸 안 값 {sorted({x for x in raw if x})} · JSON-LD {sale:g}) — 할인가를 정가로 저장하지 않음")
+    if not cus:
+        return None, None
+    pairs = []
+    for i, (at, lp) in enumerate(cus):
+        end = min(at + C24_WIN, cus[i + 1][0] if i + 1 < len(cus) else len(html))
+        t = C24_TEXT.search(html, at, end)
+        if t:
+            pairs.append((lp, num(t.group(1))))
+    lps, svs = {lp for _, lp in cus}, {sv for _, sv in pairs}
+    if pairs and len(lps) == 1 and len(svs) == 1:
+        lp, sv = next(iter(lps)), next(iter(svs))
+        if lp and sv and abs(sv - sale) < 0.01:
+            if abs(lp - sv) < 0.01:
+                return None, sv
+            if sv < lp <= sv * 5:
+                return lp, sv
+    if any(lp and lp > sale * 1.005 for _, lp in cus):
+        raise RuntimeError(f"소비자가 칸을 이 상품 칸으로 확인 못 함(소비자가 {sorted(x for x in lps if x)} · 판매가 칸 {sorted(x for x in svs if x)} · "
+                           f"JSON-LD {sale:g}) — 할인가를 정가로 저장하지 않음")
+    return None, (next(iter(svs)) if len(svs) == 1 else None)
+
+
+BIGC_PAIR = re.compile(r'data-product-non-sale-price-without-tax[^>]*>\s*([^<]*?)\s*</span>'
+                       r'(?:(?!data-product-non-sale-price-without-tax).){0,1500}?data-product-price-without-tax[^>]*>\s*([^<]*?)\s*</span>', re.S)   # v1.27
+
+
+def bigc_list(html, sale):
+    """v1.27 빅커머스 몰(미즈노 미국): 할인 중이면 JSON-LD에 판매가만 — 이 상품 가격 칸(price-section)의 할인 전 가격
+    (data-product-non-sale-price-without-tax · 할인 없으면 빈 칸)을 정가로. 이 상품 것만: 할인 전 칸 바로 뒤(다음 할인 전 칸 전) 판매가 칸
+    (data-product-price-without-tax) 값이 이 상품 JSON-LD 판매가(sale)와 같은 칸끼리 · 정가가 한 가지 · 판매가보다 높고 5배 안 → (정가, 판매가) ·
+    할인 전 칸이 모두 비었으면 (None, 판매가) · 빈 칸과 값 칸이 섞이거나(판매가가 같은 다른 상품 카드) 이 상품 가격 칸을 못 찾거나 할인 전 가격을 확인 못 하면
+    RuntimeError(할인가·다른 상품 정가를 정가로 저장하지 않게)"""
+    mine = [(lv, _money(sv)) for lv, sv in BIGC_PAIR.findall(html)]
+    mine = [(lv, sv) for lv, sv in mine if sv and abs(sv - sale) < 0.01]
+    if not mine:
+        raise RuntimeError(f"빅커머스 가격 칸에서 이 상품 판매가({sale:g})를 못 찾음 — 할인 여부를 몰라 저장하지 않음")
+    lps = {_money(lv) if lv.strip() else 0 for lv, _ in mine}   # v1.27 빈 칸(할인 없음)도 한 값(0)으로 셈
+    if lps == {0}:
+        return None, sale
+    if 0 in lps:   # v1.27 빈 할인 전 칸(할인 없음)과 할인 전 값이 섞임 — 판매가가 같은 추천 상품 카드일 수 있어 이 상품 칸을 못 가림
+        raise RuntimeError(f"할인 전 칸이 빈 칸과 값({' · '.join(sorted({lv.strip() for lv, _ in mine if lv.strip()}))[:40]})으로 섞임 · 판매가 {sale:g} — 정가 확인 안 됨")
+    if len(lps) == 1:
+        lp = next(iter(lps))
+        if lp and abs(lp - sale) < 0.01:
+            return None, sale
+        if lp and sale < lp <= sale * 5:
+            return lp, sale
+    raise RuntimeError(f"할인 전 가격 칸을 확인 못 함({' · '.join(lv for lv, _ in mine if lv.strip())[:60]} · 판매가 {sale:g}) — 할인가를 정가로 저장하지 않음")
+
+
 SFRA_BOX = re.compile(r'b-pdp__priceline|product-detail__priceline|b-microproduct__price|product-tile')   # v1.17 가격 칸 표시 — 뒤 것(추천 상품 칸)은 이 상품 아님
 SFRA_STRIKE = re.compile(r'class="strike-through list"[^>]*>\s*(?:<(?!span class="value")[^>]+>\s*)*<span class="value"[^>]*?content="([0-9][0-9.,]*)"')
 SFRA_SALES = re.compile(r'class="sales[^"]*"(?:(?!strike-through).)*?<span class="value"[^>]*?content="([0-9][0-9.,]*)"', re.S)
@@ -1741,6 +2014,121 @@ def sfra_list(html, code, pre, sale):
     return sale
 
 
+_JQ = r'\\*"'   # v1.27 화면 데이터 따옴표 — 그대로(")·한 번 감쌈(\" — Next.js 화면 데이터는 글 안 JSON)·두 번 감쌈 모두
+
+
+def _jobj(h, i, head=False, lim=4000):
+    """v1.27 h[i]를 감싼 가장 안쪽 { } 의 바깥 칸 글(안쪽 { }·[ ] 값은 뺌) — head면 i 뒤 첫 안쪽 묶음 앞까지만(큰 변형 목록을 건너뜀) · 못 찾으면 ''.
+    따옴표 안 괄호는 셈하지 않음(크록스 변형 묶음에는 없음 — 괄호가 섞여 묶음을 못 찾으면 그 변형은 빠지고, 다 빠지면 실패)"""
+    d, a = 0, i
+    while a > 0 and i - a < lim:
+        a -= 1
+        c = h[a]
+        if c in "}]":
+            d += 1
+        elif c in "{[":
+            if d:
+                d -= 1
+                continue
+            if c == "[":
+                return ""   # 배열 바로 안 — 묶음이 아님
+            out, d, b = [], 0, a + 1
+            while b < len(h) and b - a < lim:
+                c = h[b]
+                if c in "{[":
+                    if head and b > i:
+                        return "".join(out)
+                    d += 1
+                elif c in "}]":
+                    if not d:
+                        return "".join(out)
+                    d -= 1
+                elif not d:
+                    out.append(c)
+                b += 1
+            return ""
+    return ""
+
+
+def _jval(seg, k):
+    """v1.27 묶음 바깥 칸 글에서 키 k의 값(글·숫자·null·true·false) — 없으면 None"""
+    m = re.search(rf'{_JQ}{k}{_JQ}\s*:\s*(?:{_JQ}([^"\\]*){_JQ}|(-?[0-9][0-9.]*|null|true|false))', seg)
+    return None if not m else m.group(1) if m.group(1) is not None else m.group(2)
+
+
+def crocs_list(html, code, cur):
+    """v1.27 크록스 공식몰(CROCS — 한국·미국·영국·일본·독일 같은 Next.js 몰) 정가. JSON-LD Offer 가격은 지금 판매가 하나뿐
+    (11/21 블프: 미국 클래식 클로그 JSON-LD $30 · 정가 $49.99 · 일본 ￥3,850 · 정가 ￥7,700)이라 화면 데이터의 이 상품 변형 묶음
+    {"price":지금 값,"retailPrice":정가,"productId":"품번-색상-사이즈",…}(글 안 JSON이라 따옴표가 \\" — 그대로 쓴 JSON도)을 읽음.
+    ① 이 상품만: productId가 '품번-'으로 시작하는 변형(추천 상품 칸은 다른 품번) · JSON-LD 상품이 있으면 sku가 이 품번이어야(다른 상품 페이지로 넘어감 방지)
+    ② 정가 = 그 변형 retailPrice 중 가장 높은 값(상품 묶음 masterProductId = 품번의 retailPrice도) · 지금 가장 싼 값 = 주문 가능한 변형 price·JSON-LD 판매가 중 가장 낮은 값
+      (v1.27 — 한국 몰 품절 변형은 자리표시 값 "price":10000·14900(orderable false · ats 0 · 정가 69,900)이라 뺌 · 주문 가능 = orderable true, 그 칸이 없으면 ats > 0 ·
+      주문 가능 변형 값도 JSON-LD 판매가도 없을 때만 상품 묶음 price)
+    ③ 통화: JSON-LD 판매가나 상품 묶음 currency가 이 나라 통화여야(다른 통화가 보이면 실패) · 판매: JSON-LD 판매가가 있거나 주문 가능한(orderable) 변형이 있어야
+    ④ 실패(할인가를 정가로 쓰지 않음): 변형 없음 · 변형 정가(retailPrice) 없음 · 정가보다 높은 판매가 · 정가가 지금 값의 5배 넘음"""
+    nodes = [n for n in _ld_nodes(html, REL) if _types(n) & {"product", "productgroup"}]
+    ld, ld_bad = [], set()
+    if nodes:
+        mine = [n for n in nodes if code.lower() in {str(n.get(k) or "").strip().lower() for k in ("sku", "productID", "productGroupID", "mpn")}]
+        if not mine:
+            skus = sorted({str(n.get("sku") or n.get("productID") or "?") for n in nodes})
+            raise RuntimeError(f"JSON-LD 품번이 다름({', '.join(skus)[:40]}) — 다른 상품 페이지로 바뀜(대응표 확인)")
+        st = [n.get("offers") for n in mine]
+        while st:
+            x = st.pop()
+            if isinstance(x, list):
+                st.extend(x)
+            elif isinstance(x, dict):
+                v, c = num(x.get("price") or x.get("lowPrice")), str(x.get("priceCurrency") or "")
+                if v and c == cur:
+                    ld.append(v)
+                elif v and c:
+                    ld_bad.add(c)
+                if x.get("offers"):
+                    st.append(x.get("offers"))
+    pcur, plist, pnow = set(), [], []
+    for m in re.finditer(rf'{_JQ}masterProductId{_JQ}\s*:\s*{_JQ}{re.escape(code)}{_JQ}', html):   # 이 상품 묶음(변형 목록 앞 칸 — 통화·정가·지금 값)
+        seg = _jobj(html, m.start(), head=True)
+        if seg:
+            c = _jval(seg, "currency")
+            if c:
+                pcur.add(c)
+            plist.append(num(_jval(seg, "retailPrice"))); pnow.append(num(_jval(seg, "price")))
+    rows = {}
+    for m in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}({re.escape(code)}-[^"\\]+){_JQ}', html):   # 이 상품 변형(품번-색상-사이즈)
+        seg = _jobj(html, m.start())
+        if seg:
+            od = _jval(seg, "orderable")   # v1.27 주문 가능 = orderable true · 그 칸이 없으면 재고(ats) > 0
+            rows.setdefault(m.group(1).upper(), set()).add((num(_jval(seg, "price")), num(_jval(seg, "retailPrice")),
+                                                            od == "true" if od in ("true", "false") else bool(num(_jval(seg, "ats")))))
+    vs = [x for s in rows.values() for x in s]
+    if not vs:
+        raise RuntimeError(f"화면 데이터에 이 상품 변형(productId {code}-…) 없음 — 이 나라 몰에 없거나 페이지 모양이 바뀜")
+    lps = [r for _, r, _ in vs if r]
+    if not lps:
+        raise RuntimeError("변형 정가(retailPrice) 없음 — 정가 확인 안 됨(할인가를 정가로 쓰지 않음)")
+    bad = sorted({c for c in pcur if c != cur} | ld_bad)
+    if bad:
+        raise RuntimeError(f"{cur} 가격 없음(통화 {', '.join(bad)})")
+    if not ld and cur not in pcur:
+        raise RuntimeError(f"{cur} 가격 없음(통화 확인 안 됨 — JSON-LD 판매가·상품 묶음 currency 없음)")
+    if not ld and not any(o for _, _, o in vs):
+        raise RuntimeError(f"{cur} 판매 가격 없음 — 품절·이 나라 몰에서 팔지 않음")
+    full = max(lps + [x for x in plist if x])
+    hi = [(p, r) for p, r, _ in vs if p and r and p > r * 1.005]
+    if hi:
+        raise RuntimeError(f"판매가가 정가보다 높은 변형({hi[0][0]:g} > {hi[0][1]:g}) — 값이 이상함")
+    nows = [p for p, _, _ in vs if p] + [x for x in pnow if x] + ld
+    if nows and max(nows) > full * 1.005:
+        raise RuntimeError(f"판매가 {max(nows):g}가 정가 {full:g}보다 높음 — 값이 이상함")
+    # v1.27 지금 값은 주문 가능한 변형·JSON-LD 판매가로만 — 한국 품절 변형의 자리표시 "price":10000이 5배 가드에 걸림(11/21 클래식 클로그 10001·바야 라인드 205969)
+    buy = [p for p, _, o in vs if p and o] + ld or [x for x in pnow if x]
+    low = min(buy) if buy else full
+    if full > low * 5:
+        raise RuntimeError(f"정가 {full:g}가 지금 값 {low:g}의 5배 넘음 — 값이 이상함")
+    return full, {"cur_price": low if low < full * 0.995 else full, "by": "품번"}
+
+
 def shopify_price(url, code, cur):
     p = _json(get(url)).get("product") or {}
     vs = [v for v in p.get("variants") or [] if isinstance(v, dict) and code.lower() in str(v.get("sku", "")).lower()]
@@ -1788,6 +2176,147 @@ def godo_price(html, cur, code):
     return max(fp or 0, sp or 0), {"cur_price": sp or fp}
 
 
+OT_CODE = re.compile(r"(?i)(?<![0-9a-z])([0-9]{4}[a-z][0-9]{3})[._-]([0-9]{3})(?![0-9])")   # v1.27 오니츠카 품번(1183C102.001 · 유럽 주소 1183c102-001) — 대소문자·구분자 무시하고 견줌
+
+
+def _otc(s):
+    """v1.27 글 속 오니츠카 품번들 → {'1183C102.001', …}(대문자·점으로 맞춤)"""
+    return {f"{a.upper()}.{b}" for a, b in OT_CODE.findall(str(s or ""))}
+
+
+def _ot_dicts(x):
+    """v1.27 JSON 안의 dict 모두"""
+    st = [x]
+    while st:
+        y = st.pop()
+        if isinstance(y, dict):
+            yield y
+            st.extend(y.values())
+        elif isinstance(y, list):
+            st.extend(y)
+
+
+def _ot_one(vals, what):
+    """v1.27 같은 뜻의 값들 → 하나(0.5% 넘게 다르면 실패 — 어느 값이 이 상품 것인지 모름)"""
+    vs = sorted({v for v in vals if v})
+    if vs and vs[-1] > vs[0] * 1.005:
+        raise RuntimeError(f"{what} 값이 여러 가지({', '.join(f'{v:g}' for v in vs)})")
+    return vs[-1] if vs else None
+
+
+def ot_price(html, cur, code, url=""):
+    """v1.27 오니츠카타이거 몰(마젠토 — 한국 /kr/ko-kr/product/{이름}/{품번} · 유럽 /gb/en-gb/{이름}/p/{품번}.html) 정가.
+    JSON-LD가 없고 한국은 가격 칸을 화면 스크립트(knockout)가 그림 → 페이지에 든 화면 데이터에서 이 상품 것만:
+    ① dataLayer(dl4Objects · dataLayer.push)의 view_item 상품 중 item_id가 이 품번인 것 — originalPrice = 정가 · price = 지금 가격
+       (추천 상품 목록 view_item_list 등은 안 봄 · 할인 상품 표시 item_sale_product)
+    ② 마젠토 상품 데이터(x-magento-init)의 price_info — 그 상품 주소(url)에 이 품번이 있는 것(주소가 없으면 상품 화면 provider에 상품이 하나뿐일 때만)
+       · regular_price(사이즈별 정가 max·minimal이 같아야) = 정가 · final_price = 지금 가격
+    ③ 마젠토 가격 칸(data-price-type oldPrice·finalPrice) — 장바구니 폼 안(</form> 전) 상품 번호(name="product")와 같은 번호의 칸만(추천 상품 칸 빼고) · 주소에 이 품번이 있을 때만
+    있는 곳끼리 정가·지금 가격이 같아야(0.5% 안) · 정가가 ①에만 있으면 할인 상품 표시와 맞아야(Yes = 할인 중 · No = 정가 그대로) ·
+    할인 상품 표시인데 정가 = 지금 가격이면 실패 · og 가격(product:price:amount)이 있으면 정가·지금 가격 중 하나와 같아야 · 통화가 확인돼야 —
+    확인이 안 되면 실패(할인가를 정가로 쓰지 않음 · page_price로 넘기지 않음)"""
+    want = _otc(code)
+    if len(want) != 1:
+        raise RuntimeError(f"오니츠카 품번 꼴이 아님({code})")
+    at = _otc(urllib.parse.unquote(urllib.parse.urlsplit(url or "").path))
+    if at and at != want:
+        raise RuntimeError(f"다른 상품 페이지({'/'.join(sorted(at))})로 넘어감 — 이 상품({code})이 몰에서 빠졌을 수 있음")
+    curs = set()
+    # ① dataLayer view_item — 이 품번 상품만
+    dl = []
+    for m in re.finditer(r'(?:\bdl4Objects\s*=\s*|\bdataLayer\.push\(\s*)(?=[\[{])', html):
+        try:
+            d = json.JSONDecoder().raw_decode(html, m.end())[0]
+        except ValueError:
+            continue
+        for top in (d if isinstance(d, list) else [d]):
+            if not isinstance(top, dict) or top.get("event") != "view_item":
+                continue   # 추천 상품 목록(view_item_list)·장바구니 등은 이 상품 값이 아님
+            ec = top.get("ecommerce") if isinstance(top.get("ecommerce"), dict) else {}
+            if ec.get("currency"):
+                curs.add(str(ec["currency"]))
+            for it in ec.get("items") or []:
+                if isinstance(it, dict) and _otc(it.get("item_id")) == want:
+                    dl.append(it)
+    curs |= {str(it["currency"]) for it in dl if it.get("currency")}
+    now_a = _ot_one([num(it.get("price")) for it in dl], "dataLayer 지금 가격")
+    list_a = _ot_one([num(it.get("originalPrice")) for it in dl], "dataLayer 정가")
+    flags = {str(it.get("item_sale_product") or "").strip().lower() for it in dl} - {""}
+    if len(flags) > 1:
+        raise RuntimeError(f"할인 상품 표시가 여러 가지({', '.join(sorted(flags))})")
+    # ② x-magento-init price_info — 이 상품 것만(주소 품번 · 상품 화면 provider의 단 하나)
+    pi_l, pi_n, pi_url = [], [], False
+    for m in re.finditer(r'<script[^>]*text/x-magento-init[^>]*>(.*?)</script>', html, re.S | re.I):
+        if '"price_info"' not in m.group(1):
+            continue
+        try:
+            d = json.loads(m.group(1))
+        except ValueError:
+            continue
+        sole = set()
+        for x in _ot_dicts(d):
+            for k, v in x.items():
+                if "product/view/provider" in str(k) and isinstance(v, dict) and isinstance(v.get("data"), dict):
+                    its = v["data"].get("items")
+                    if isinstance(its, dict) and len(its) == 1:
+                        sole.update(id(y) for y in its.values())
+        for x in _ot_dicts(d):
+            pi = x.get("price_info")
+            if not isinstance(pi, dict) or "final_price" not in pi:
+                continue
+            uc = _otc(urllib.parse.unquote(str(x.get("url") or "")))
+            if not (uc == want or (not uc and id(x) in sole)):
+                continue   # 다른 상품(추천·최근 본 상품)
+            pi_url = pi_url or uc == want
+            if x.get("currency_code"):
+                curs.add(str(x["currency_code"]))
+            pi_l.append(_ot_one([num(pi.get(k)) for k in ("regular_price", "max_regular_price", "minimal_regular_price")], "price_info 사이즈별 정가"))
+            pi_n.append(num(pi.get("final_price")) or num(pi.get("minimal_price")))
+    list_b, now_b = _ot_one(pi_l, "price_info 정가"), _ot_one(pi_n, "price_info 지금 가격")
+    # ③ 마젠토 가격 칸 — 장바구니 폼 상품 번호와 같은 칸만(가격 칸에는 품번이 없어 주소 품번으로 확인)
+    list_c = now_c = None
+    fm = re.search(r'id="product_addtocart_form"', html)
+    fb = html[fm.end():fm.end() + 6000].split("</form>")[0] if fm else ""   # 폼 안(</form> 전 · 6000자 안)만 — 폼 밖 다른 상품 번호를 쓰지 않음
+    pm = re.search(r'<input[^>]*\bname="product"[^>]*>', fb) if fm else None
+    vm = re.search(r'\bvalue="(\d+)"', pm.group(0)) if pm else None
+    if vm and at == want:
+        got = {"oldPrice": [], "finalPrice": []}
+        for t in re.finditer(r'<span\b[^>]*\bdata-price-type="(oldPrice|finalPrice)"[^>]*>', html):
+            im = re.search(r'\bid="(?:old-price|product-price)-(\d+)"', t.group(0))
+            am = re.search(r'\bdata-price-amount="([0-9.]+)"', t.group(0))
+            if im and am and im.group(1) == vm.group(1):
+                got[t.group(1)].append(num(am.group(1)))
+        now_c = _ot_one(got["finalPrice"], "가격 칸 지금 가격")
+        list_c = _ot_one(got["oldPrice"], "가격 칸 정가") if now_c else None
+    if not (dl or pi_l or now_c):
+        raise RuntimeError("이 상품 가격 데이터 없음(dataLayer view_item·price_info·가격 칸) — 페이지 모양이 바뀜(덤프로 확인)")
+    if not (dl or pi_url or at == want):
+        raise RuntimeError(f"이 상품 품번({code}) 확인 안 됨 — 주소·dataLayer에 품번 없음")
+    lists = {k: v for k, v in (("dataLayer", list_a), ("price_info", list_b), ("가격 칸", list_c)) if v}
+    nows = {k: v for k, v in (("dataLayer", now_a), ("price_info", now_b), ("가격 칸", now_c)) if v}
+    if not lists:
+        raise RuntimeError(f"정가 칸 없음(지금 가격 {', '.join(f'{v:g}' for v in nows.values())}만) — 할인가를 정가로 쓰지 않음")
+    full = _ot_one(lists.values(), f"정가({'·'.join(lists)})")
+    now = _ot_one(nows.values(), f"지금 가격({'·'.join(nows)})") or full
+    if now > full * 1.005 or full > now * 5:
+        raise RuntimeError(f"정가 {full:g} · 지금 가격 {now:g}이 맞지 않음")
+    sale = now < full * 0.995
+    if "yes" in flags and not sale:
+        raise RuntimeError(f"할인 상품 표시인데 정가 = 지금 가격({full:g}) — 정가 확인 안 됨(할인가를 정가로 쓰지 않음)")
+    if len(lists) < 2 and not set(lists) & {"price_info", "가격 칸"} and flags != {"yes" if sale else "no"}:
+        raise RuntimeError(f"정가가 dataLayer에만 있고 할인 상품 표시({'/'.join(flags) or '없음'})와 맞지 않음 — 확인 안 됨")
+    mc = re.search(r'<meta[^>]*property="product:price:currency"[^>]*content="([A-Za-z]{3})"', html)
+    if mc:
+        curs.add(mc.group(1).upper())
+    if not curs or curs != {cur}:
+        raise RuntimeError(f"{cur} 가격 없음(통화 {', '.join(sorted(curs)) or '확인 안 됨'})")
+    ma = re.search(r'<meta[^>]*property="product:price:amount"[^>]*content="([0-9.,]+)"', html)
+    v = num(ma.group(1)) if ma else None
+    if v and not any(abs(v - x) <= x * 0.005 for x in (full, now)):
+        raise RuntimeError(f"og 가격 {v:g}이 정가 {full:g}·지금 가격 {now:g}과 다름 — 확인 안 됨")
+    return full, {"cur_price": now, "by": "품번", "how": "·".join(lists)}
+
+
 def _feed(prod, cc):
     """v1.17 나이키 상품 정보(product_feed)로 받는 값 — 나이키 상품이라도 urls에 있는 나라(두바이)는 페이지로 읽음(페이지 값처럼 할인 가드·크게 바뀜)"""
     return prod["src"] == "nike" and cc not in (prod.get("urls") or {})
@@ -1831,8 +2360,12 @@ def fetch_one(prod, cc):
         raise RuntimeError(f"페이지에 품번({code}) 없음 — 다른 상품으로 바뀜(대응표 확인)")
     if 'name="set_goods_fixedPrice"' in r.text:   # 고도몰형 한국 몰(킨·우포스) — JSON-LD 없음, 상품 정보 칸 품번으로 확인
         return godo_price(r.text, cur, code), url
-    full, extra = page_price(r.text, prod.get("hint") or code, cur, [code] + prod.get("alt", []))   # 나이키 상품은 hint 없음(품번으로만 찾음)
+    if urllib.parse.urlsplit(url).netloc in OT_LIST:   # v1.27 오니츠카타이거 몰 — 이 상품 화면 데이터로만(넘겨진 최종 주소의 품번도 확인)
+        return ot_price(r.text, cur, code, r.url), url
     host = urllib.parse.urlsplit(url).netloc
+    if host in CROCS:   # v1.27 크록스 — JSON-LD 가격은 지금 판매가 하나뿐 → 화면 데이터의 이 상품 변형 정가(crocs_list)
+        return crocs_list(r.text, code, cur), url
+    full, extra = page_price(r.text, prod.get("hint") or code, cur, [code] + prod.get("alt", []))   # 나이키 상품은 hint 없음(품번으로만 찾음)
     if host in SFRA_LIST:   # v1.17 두바이 SFCC 몰 — 이 상품 품번 표시·GTM 상세로 확인한 취소선 정가(할인 중이면 JSON-LD는 판매가뿐)
         if extra.get("cur_price") is None or abs(full - extra["cur_price"]) > 0.01:
             raise RuntimeError(f"JSON-LD 가격이 여러 가지({full:g} · {extra.get('cur_price')})")
@@ -1842,6 +2375,11 @@ def fetch_one(prod, cc):
         lp = cafe24_list(r.text, full)
         if lp:
             full = lp
+    if host in CAFE24_ID_LIST or host in BIGC_LIST:   # v1.27 카페24 기본 정보 칸(미즈노 한국)·빅커머스(미즈노 미국) — 할인 중이면 JSON-LD에 판매가만
+        lp, sv = (cafe24_id_list if host in CAFE24_ID_LIST else bigc_list)(r.text, full)
+        if lp:
+            full = lp
+            extra["cur_price"] = min(x for x in (extra.get("cur_price"), sv) if x)   # 할인가 = 지금 가장 싼 값(JSON-LD 변형·판매가 칸 중)
     return (full, extra), url
 
 
