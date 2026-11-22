@@ -1,13 +1,13 @@
 name: probe-erp
 
-# 임시 시험(병합하지 않음 · PR 전에 지움) — ERP 판매·예정 상품 목록(Secrets ERP_SKU_URL·ERP_SKU_TOKEN)이 GitHub 서버에서 읽히는지 확인.
-# 공개 저장소라 실행 기록이 공개 — 품번·상품명·주소·토큰·ERP 브랜드 표기는 찍지 않음. 읽힘 여부·칸 이름·대략 개수(구간)·
-# 감시 브랜드(공개 이름)와 맞는지·품번 모양(글자 A·숫자 0)·한국 주소 호스트(공식몰)만. (커밋 메시지에 skip ci가 있으면 안 돎)
+# 임시 시험(병합하지 않음 · PR 전에 지움) — ERP 판매·예정 상품(Secrets ERP_SKU_URL·ERP_SKU_TOKEN)을 공식몰에서 몇 %나 찾는지(나라별).
+# 공개 저장소라 실행 기록이 공개 — ERP 품번·상품명·주소·토큰은 찍지 않음(비율·구간만 · probe_erp.py). 커밋 메시지에 skip ci가 있으면 안 돎.
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
     paths:
       - .github/workflows/probe-erp.yml
+      - probe_erp.py
 
 permissions:
   contents: read
@@ -15,110 +15,15 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - name: Probe ERP list (aggregates only)
+      - run: pip install -r requirements.txt
+      - name: Probe ERP coverage (aggregates only)
         env:
           ERP_SKU_URL: ${{ secrets.ERP_SKU_URL }}
           ERP_SKU_TOKEN: ${{ secrets.ERP_SKU_TOKEN }}
-        run: |
-          python3 - <<'PY'
-          import collections, json, os, re, sys, time, urllib.error, urllib.parse, urllib.request
-          url, tok = os.environ.get("ERP_SKU_URL", "").strip(), os.environ.get("ERP_SKU_TOKEN", "").strip()
-          print("Secrets:", "ERP_SKU_URL", "있음" if url else "없음", "·", "ERP_SKU_TOKEN", "있음" if tok else "없음")
-          if not url or not tok:
-              sys.exit(0)
-          print("주소 꼴:", urllib.parse.urlsplit(url).scheme, "· 토큰 앞에 'Bearer ' 붙음" if tok.lower().startswith("bearer ") else "· 토큰 값만")
-          if tok.lower().startswith("bearer "):
-              tok = tok[7:].strip()
-          req = urllib.request.Request(url, headers={"Authorization": f"Bearer {tok}", "Accept": "application/json",
-                                                     "User-Agent": "sports-industry-monitor"})
-          body = None
-          for n, wait in enumerate((0, 15, 30, 60), 1):
-              time.sleep(wait)
-              t0 = time.time()
-              try:
-                  with urllib.request.urlopen(req, timeout=40) as r:
-                      body, st, ct = r.read(), r.status, r.headers.get("Content-Type", "")
-                  break
-              except urllib.error.HTTPError as e:
-                  info = []
-                  try:
-                      ej = json.loads(e.read() or b"null")
-                      if isinstance(ej, dict):
-                          info.append(f"오류 JSON 칸 {sorted(ej.keys())[:8]}")
-                          for k in ("code", "error", "error_code", "status", "reason", "type"):
-                              v = ej.get(k)
-                              if isinstance(v, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.\-]{0,39}", v):
-                                  info.append(f"{k}={v}")
-                  except Exception:
-                      info.append("오류 본문 JSON 아님")
-                  ra = e.headers.get("Retry-After")
-                  srv = (e.headers.get("Server") or "")[:20]
-                  print(f"{n}번째: HTTP 오류 {e.code} · {(e.headers.get('Content-Type') or '-').split(';')[0]} · {time.time()-t0:.1f}초",
-                        "·", " · ".join(info), f"· Retry-After {ra}" if ra else "", f"· Server {srv}" if re.fullmatch(r"[\w./ -]*", srv) and srv else "")
-                  if e.code not in (429, 500, 502, 503, 504):
-                      sys.exit(0)
-              except Exception as e:
-                  print(f"{n}번째: 연결 오류 {type(e).__name__} · {time.time()-t0:.1f}초")
-          if body is None:
-              sys.exit(0)
-          print("응답:", st, "·", ct.split(";")[0], "·", f"{time.time()-t0:.1f}초")
-          try:
-              d = json.loads(body)
-          except Exception as e:
-              print("JSON 아님:", type(e).__name__); sys.exit(0)
-          items = d.get("items") if isinstance(d, dict) else None
-          print("최상위 칸:", sorted(d.keys()) if isinstance(d, dict) else type(d).__name__, "· items 목록", "있음" if isinstance(items, list) else "없음")
-          if not isinstance(items, list):
-              sys.exit(0)
-          items = [it for it in items if isinstance(it, dict)]
-          def band(n):
-              return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
-          print("상품 수(구간):", band(len(items)))
-          print("상품 칸 이름:", sorted({k for it in items for k in it}))
-          print("status 값 종류:", sorted({str(it.get("status")) for it in items}))
-          A = {"나이키": "nike", "푸마": "puma", "온러닝": "on|onrunning|온|on running", "아크테릭스": "arcteryx|arc'teryx",
-               "써코니": "saucony|사코니", "살로몬": "salomon", "킨(KEEN)": "keen|킨", "우포스": "oofos", "크록스": "crocs",
-               "오니츠카타이거": "onitsukatiger|onitsuka tiger|오니츠카", "미즈노": "mizuno", "닥터마틴": "drmartens|dr.martens|dr martens|닥터마틴스",
-               "헌터": "hunter", "드래곤디퓨전": "dragondiffusion|dragon diffusion", "톰브라운": "thombrowne|thom browne",
-               "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning",
-               "아디다스": "adidas", "아식스": "asics", "뉴발란스": "newbalance|new balance", "룰루레몬": "lululemon", "오클리": "oakley",
-               "몽클레르": "moncler", "랄프로렌": "ralphlauren|ralph lauren|polo|폴로|폴로랄프로렌", "어그": "ugg", "에코": "ecco",
-               "스케쳐스": "skechers", "스톤아일랜드": "stoneisland|stone island", "호카": "hoka", "노르다": "norda", "CEP": "cep",
-               "클락스": "clarks"}
-          key = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
-          AL = {}
-          for k, v in A.items():
-              for a in [k] + v.split("|"):
-                  AL[key(a)] = k
-          shape = lambda s: re.sub(r"[A-Za-z]", "A", re.sub(r"\d", "0", str(s or "").strip()))
-          KNOWN = {"arcteryx.co.kr", "brooksrunning.co.kr", "kor.mizuno.com", "kr.burberry.com", "kr.puma.com", "salomon.co.kr",
-                   "saucony.co.kr", "www.crocs.co.kr", "www.drmartens.co.kr", "www.keenfootwear.kr", "www.kolonmall.com", "www.on.com",
-                   "www.onitsukatiger.com", "www.oofos.co.kr", "www.thombrowne.com", "www.underarmour.co.kr", "www.nike.com",
-                   "www.lfmall.co.kr", "www.musinsa.com"}
-          by = collections.defaultdict(list)
-          un = collections.Counter()
-          for it in items:
-              b = AL.get(key(it.get("brand")))
-              if b:
-                  by[b].append(it)
-              else:
-                  un[key(it.get("brand"))] += 1
-          for b, its in sorted(by.items(), key=lambda x: -len(x[1])):
-              sh = collections.Counter(shape(it.get("code")) for it in its)
-              tot = sum(sh.values())
-              shs = " · ".join(f"{s or '(빈칸)'} {round(100*n/tot, -1):.0f}%" for s, n in sh.most_common(4))
-              st_ = sorted({str(it.get("status")) for it in its})
-              hosts = collections.Counter(urllib.parse.urlsplit(str(it.get("kr_url"))).hostname for it in its if it.get("kr_url"))
-              ku = sum(hosts.values())
-              pub = [h for h, _ in hosts.most_common() if h in KNOWN]
-              print(f"  {b}: {band(len(its))}개 · status {st_} · 품번 모양 {shs} · kr_url {round(100*ku/len(its), -1):.0f}%",
-                    ("· 공식몰 호스트 " + ", ".join(pub[:3])) if pub else "", f"· 그 밖 호스트 {len(hosts) - len(pub)}가지" if len(hosts) > len(pub) else "")
-          print("감시 브랜드와 안 맞는 브랜드 표기:", len(un), "가지 ·", band(sum(un.values())), "개")
-          dup = sum(n - 1 for n in collections.Counter((key(it.get("brand")), str(it.get("code")).strip().upper()) for it in items).values() if n > 1)
-          print("같은 브랜드·품번 겹침:", band(dup), "· 품번 빈칸:", band(sum(1 for it in items if not str(it.get("code") or "").strip())))
-          PY
+        run: python probe_erp.py
