@@ -4,7 +4,7 @@
 import datetime, json, os, time
 TEST = [{"brand": "나이키", "code": c, "status": "selling"} for c in ("CW2288-111", "CW2288-001", "DD1391-100", "FD4116-001", "315122-111", "ZZ9999-999")] + [
     {"brand": "크록스", "code": c, "status": "selling"} for c in ("10001-001", "10001-100", "206991-001", "999999-001")] + [
-    {"brand": "푸마", "code": "396463-01", "status": "selling"}, {"brand": "푸마", "code": "398846-01", "status": "selling"},
+    {"brand": "푸마", "code": "396463-01", "status": "selling"}, {"brand": "푸마", "code": "396463-77", "status": "planned"}, {"brand": "푸마", "code": "398846-01", "status": "selling"},
     {"brand": "언더아머", "code": "1372586-001", "status": "selling"}, {"brand": "온러닝", "code": "3MF10071200", "status": "selling"},
     {"brand": "닥터마틴", "code": "11838002", "status": "selling"}, {"brand": "닥터마틴", "code": "15265001", "status": "selling"},
     {"brand": "살로몬", "code": "L47450600", "status": "selling"}, {"brand": "킨(KEEN)", "code": "1022258", "status": "selling"},
@@ -13,9 +13,11 @@ os.environ["ERP_SKU_TEST"] = json.dumps(TEST, ensure_ascii=False)
 import price_fetch as pf
 today = datetime.datetime.now(pf.KST).date()
 t0 = time.time()
-items, meta = pf.sku_stage({}, t0, today, today.isoformat(), {})
+rep = [it for it in json.load(open("docs/prices.json", encoding="utf-8"))["items"] if it.get("kind") != "sku"]
+pf._sku_slot = lambda *a: True   # 시험 — 해외도 오늘 묻는 날로
+items, meta = pf.sku_stage({}, t0, today, today.isoformat(), {}, rep)
 for it in items:
     print("ITEM", it["id"], it["name"], it["cat"], json.dumps({cc: {k: o.get(k) for k in ("p", "cur", "sale", "sp", "lvl", "url")} for cc, o in it["m"].items()}, ensure_ascii=False))
-print("sku_q", len(meta.get("sku_q") or {}), f"{time.time() - t0:.0f}초")
+print("meta", meta, f"{time.time() - t0:.0f}초")
 # rerun 1795335667
 # rerun2
