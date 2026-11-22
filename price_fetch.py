@@ -2723,7 +2723,12 @@ def _sku_index(brand, cc):
             tags = p.get("tags") if isinstance(p.get("tags"), list) else str(p.get("tags") or "").split(",")
             if not p.get("handle"):
                 continue
-            for t in set(re.findall(r"(?<!\d)(\d{7})(?!\d)", " ".join(str(t) for t in tags))):   # 태그 속 품번(영국·독일 몰은 '1022258-…'처럼 붙여 씀)
+            ks = set(re.findall(r"(?<!\d)(\d{7})(?!\d)", " ".join(str(t) for t in tags)))   # 태그 속 품번(미국·독일)
+            for v in p.get("variants") or []:   # 영국 몰은 태그에 품번이 없고 변형 품번 앞 7자리(바코드 12~14자리는 뺌)
+                sv = str(v.get("sku") or "").strip()
+                if re.match(r"\d{7}(?!\d)|\d{7}\D", sv) or (re.match(r"\d{7}", sv) and not re.fullmatch(r"\d{12,14}", sv)):
+                    ks.add(sv[:7])
+            for t in ks:
                 out.setdefault(t, f"{base}/products/{p['handle']}.json")
         return out
     raise RuntimeError(f"색인 없는 브랜드 {brand}")
@@ -2978,8 +2983,9 @@ def sku_stage(old, t0, today, td, rep_codes):
     meta["sku_q"] = dict(sorted(sq.items()))
     def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     nv = sum(len(it["m"]) for it in out)
-    log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드 {band(sum(n_unsup.values()))}"
-        + (f" — {', '.join(sorted({k.split('(')[0] for k in n_unsup}))}" if n_unsup else "") + ")"
+    nb = len({k.split("(")[0] for k in n_unsup})   # 못 읽는 브랜드는 곳 수만(목록 구성은 내부 정보 — 이름은 시험 목록일 때만)
+    log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드 {nb}곳 {band(sum(n_unsup.values()))}개"
+        + (f" — {', '.join(sorted({k.split('(')[0] for k in n_unsup}))}" if n_unsup and test else "") + ")"
         + f" · 공식몰에서 찾은 상품 {len(out)}개(값 {nv} · 한국 {sum(1 for it in out if 'KR' in it['m'])})"
         + f" · 이번 실행 요청 {cnt['req'] + cnt['fail']}번 · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {cnt['fail']} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "") + (f" · 색인 못 만듦 {cnt['noidx']}" if cnt["noidx"] else "")
