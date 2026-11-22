@@ -9,8 +9,8 @@ v1.29: (대표 결정 2026-11-22 'ERP에 있는 판매 중·판매 예정 상품
     몰이 바꿔 줌)의 그 색상 변형 정가(crocs_list color) · 푸마·언더아머(미국) = 모델 페이지 정가라 색상을 확인 못 해 목록 색상 품번 대신 모델 번호로 한 상품(lvl "model") ·
     온러닝 = 나라별 products.xml 색인 · 닥터마틴 = 한국 쇼피파이 상품 목록·미국·영국 사이트맵 색인(8자리 품번만) · 살로몬 한국·킨 미국·영국·독일 = 쇼피파이 상품 목록 색인.
     찾은 상품만 prices.json items에 kind "sku"(id s-브랜드-품번 · 판매 상태·목록 출처는 쓰지 않음 · 화면·주간 메일은 뺌) · 값 반영은 대표 상품과 같은 apply_obs(_value에서 떼어 냄) ·
-    정가 표시(정가 명세·취소선·compare_at·fullPrice·retailPrice — page_price·쇼피파이 extra lst)가 없는 새 값은 같은 상품 다른 나라 값과 대표 상품 나라 쌍 비율 가운데값으로 견줘 1.25배 넘게 싸면 보류(held · 같은 값 14일이면 받아들임) ·
-    공개 기록이라 목록 크기·못 찾은 수·요청 수는 구간만, 못 읽는 브랜드는 곳 수만 · 목록에서 빠진 상품도 받아 둔 값만 같은 주기로(빠진 날이 드러나지 않게) · 값이 모두 60일 넘게 이전 값이면 뺌 ·
+    정가 표시(정가 명세·취소선·compare_at·fullPrice·retailPrice — page_price·쇼피파이 extra lst)가 없는 새 값은 같은 상품의 저장된 정가·정가 표시 새 값과 대표 상품 나라 쌍 비율 가운데값으로 견줘 1.25배 넘게 싸면 보류 · 세일 기간(11/15~1/5)엔 견줄 값 없는 해외 첫 값도 보류(held · 21일 같은 값 + 세일 기간 밖이면 받아들임) ·
+    공개 기록이라 목록 크기·못 찾은 수·요청 수는 구간만, 못 읽는 브랜드는 곳 수만 · 목록에서 빠진 상품도 같은 규칙으로 계속 받음(빠진 날이 드러나지 않게) · 값이 모두 60일 넘게 이전 값이면 뺌 ·
     목록을 이틀 연달아 못 받으면 한 번 실패 표시 · 시험: 환경 변수 ERP_SKU_TEST(공개 품번 JSON)면 그 목록으로 자세히.
 v1.28: (대표 결정 2026-11-22 '타 국가는 추가적인 가격 수집은 중단하고 국내 및 미주 유럽 브랜드의 가격 위주로 · 그 중 국내 MSRP가 최우선' — 선택 '지금 받기도 중단'·
     '미주 = 미국만'·'한국 값을 먼저 받기') ① 나라 단위 수집 중단 PAUSED_CC = 일본·멕시코·두바이(11-22부터 · 값 294개 · 수집 시간 약 23%) — paused_of가 사이트(PAUSED)보다 먼저 보고
@@ -2533,7 +2533,12 @@ SKU_ASK_DAYS = 7     # 일 — 공식몰에서 아직 못 찾은 해외 값을 �
 SKU_STALE_EVERY = 3  # 일 — 전에 받았는데 이번에 못 받은 값(이전 값)을 다시 받는 주기
 SKU_ASK_KR = 2       # 일 — 한국에서 아직 못 찾은 값을 다시 묻는 주기(목록의 새 상품은 1~2일 안에 · 날마다 순서를 돌림)
 SKU_NEW_SHARE = 0.6  # 한국 '아직 못 찾은 값 묻기'는 SKU 단계 시간의 이만큼까지만 — 나머지는 해외·다시 받기 몫(목록에 공식몰에 없는 품번이 많아도)
-SKU_HOLD_DAYS = 14   # 일 — 정가 확인 보류 값이 같은 값으로 이만큼 넘게 이어지면 정가로 받아들임(세일이 끝나도 값이 그대로면 실제 정가)
+SKU_HOLD_DAYS = 21   # 일 — 정가 확인 보류 값이 같은 값(5% 안)으로 이만큼 넘게 이어지고 세일 기간(_sku_promo) 밖이면 정가로 받아들임
+
+
+def _sku_promo(d):
+    """세일 기간(블프·사이버먼데이·연말 세일 — 11/15~1/5): 정가 표시 없는 해외 첫 값은 견줄 값이 없으면 보류 · 보류 값은 이 기간에 받아들이지 않음"""
+    return (d.month == 11 and d.day >= 15) or d.month == 12 or (d.month == 1 and d.day <= 5)
 SKU_DROP = 60        # 일 — 값이 모두 이만큼 넘게 이전 값(공식몰에서 빠짐)이면 파일에서 뺌 · 목록에서 빠진 상품도 같은 주기로 계속 받음(빠진 날이 드러나지 않게)
 SKU_MIN_LEFT = 90    # 초 — 대표 상품 뒤 남은 시간이 이보다 적으면 SKU 단계 건너뜀(목록도 안 받음 — 단계 15분 제한 전에 저장)
 SKU_BF = 1.25        # 배 — 정가 표시가 없는 새 값은 대표 상품의 '한국 정가 ÷ 그 나라 정가' 가운데값(브랜드·나라별)에서 이만큼 넘게 싸 보이면 보류(할인가를 정가로 저장하지 않게 — 11/21 블프 검사 자동화)
@@ -2881,7 +2886,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         return keep, meta
     meta.pop("sku_list_fail", None); meta.pop("sku_list_told", None)
     say = log if test else (lambda *_: None)   # 시험 목록(공개 품번)일 때만 자세히
-    # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만 · 목록에서 빠진 상품도 맨 뒤로 계속 받음(st 2)
+    # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만 · 목록에서 빠진 상품도 같은 규칙으로 계속 받음(st 2 — 묻기 순서에선 예정과 같게)
     tgt, n_out, n_unsup = {}, 0, collections.Counter()
     for it in lst:
         b, c = it["brand"], it["code"]
@@ -2901,7 +2906,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     for it in keep:
         b, c = it.get("brand"), it.get("code")
         if b in SKU_BRANDS and c and (b, c) not in tgt and c not in rep_codes.get(b, set()) and iid(b, c) == it["id"]:
-            tgt[(b, c)] = 2   # 목록에서 빠진 상품 — 받아 둔 값만 같은 주기로(새 나라는 묻지 않음)
+            tgt[(b, c)] = 2   # 목록에서 빠진 상품 — 목록에 있는 상품과 같은 규칙(빠진 날이 파일에 드러나지 않게)
     # 일감 = (브랜드, 나라, 묻는 열쇠) — 그 열쇠의 품번들을 한 번에 · 받을 때가 된 값이 있는 것만.
     # 받아 둔 값 다시 받기(ref)가 먼저(오래된 것부터 · 판매 상태와 상관없이 — 순서로 상태가 드러나지 않게), 아직 못 찾은 값 묻기(new)는 그 뒤(판매 중 먼저 · 날마다 돌아가는 순서)
     jobs = {}
@@ -2926,7 +2931,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 j["age"] = max(j["age"], age(o.get("obs_date") or o.get("seen") or td))
     ccr = {cc: i for i, cc in enumerate(SKU_CC)}
     rot = lambda k: hashlib.sha1(f"{k}|{td}".encode()).hexdigest()   # 못 찾은 값 묻는 순서 — 날마다 바뀜(뒤쪽 품번도 차례가 옴)
-    order = sorted(jobs, key=lambda k: (ccr[k[1]], 0, -jobs[k]["age"], k) if jobs[k]["ref"] else (ccr[k[1]], 1, jobs[k]["st"], rot(k)))
+    order = sorted(jobs, key=lambda k: (k[1] != "KR", 0, -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 1, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저
     lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국, 1 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤에 시작)
     for k in order:
         lanes.setdefault((0 if k[1] == "KR" else 1, k[0]), []).append(k)
@@ -3047,19 +3052,25 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         def fresh(cc):   # 이번에 처음(또는 통화가 바뀌어 다시) 받는 값인지
             o = it["m"].get(cc) or {}
             return not (o.get("p") and o.get("cur") == MK[cc][2])
-        refs = {cc: o["p"] for cc, o in it["m"].items() if o.get("p") and o.get("cur") == MK[cc][2] and not o.get("stale_since")}
-        refs.update({cc: v[0] for cc, v in newv.items()})   # 이번에 받은 값끼리도 견줌(둘 다 새 값이면 나라 쌍 비율로 어느 쪽이 싼지 가름)
+        # 믿을 기준 = 이미 저장된 정가(이전 값 포함 — 할인 가드가 지킨 p) + 이번에 정가 표시로 읽은 새 값(정가 표시 없는 새 값끼리는 서로 보증하지 않음)
+        trusted = {cc: o["p"] for cc, o in it["m"].items() if o.get("p") and o.get("cur") == MK[cc][2]}
+        trusted.update({cc: v[0] for cc, v in newv.items() if fresh(cc) and v[1].get("lst")})
+        promo = _sku_promo(today)
         for cc in [x for x in h["cc"] if x in newv]:   # 한국이 앞
             full, ex, name, hint, url, lvl = newv[cc]
             cur = MK[cc][2]
             if fresh(cc) and not ex.get("lst"):
-                bad = [c2 for c2, p2 in refs.items() if c2 != cc and med.get((b, c2, cc)) and p2 / full > med[(b, c2, cc)] * SKU_BF]
+                rf = {c2: p2 for c2, p2 in trusted.items() if c2 != cc and med.get((b, c2, cc))}
+                bad = [c2 for c2, p2 in rf.items() if p2 / full > med[(b, c2, cc)] * SKU_BF]
+                why = (f"{'·'.join(bad)} 값과 견주면 대표 상품 비율보다 많이 쌈(할인가일 수 있음)" if bad
+                       else "세일 기간인데 견줄 값이 없음(정가 표시 없음)" if (promo and cc != "KR" and not rf) else "")
                 hv = held.get(cc)
-                if bad and not (hv and abs(hv[0] - full) <= full * 0.01 and age(hv[1]) >= SKU_HOLD_DAYS):
+                near = bool(hv and abs(hv[0] - full) <= full * 0.05)
+                if why and not (near and age(hv[1]) >= SKU_HOLD_DAYS and not promo):
                     n_hold += 1
-                    if not (hv and abs(hv[0] - full) <= full * 0.01):
-                        held[cc] = [full, td]   # 처음 보류한 날 — 같은 값이 14일 넘게 이어지면 정가로 받아들임
-                    say(f"  SKU {b} {cc} {c}: 정가 확인 보류 — {full:,g} {cur}가 {'·'.join(bad)} 값과 견주면 대표 상품 비율보다 많이 쌈(할인가일 수 있음)")
+                    if not near:
+                        held[cc] = [full, td]   # 처음 보류한 날(5% 안 값이면 그대로) — 21일 넘게 이어지고 세일 기간 밖이면 정가로 받아들임
+                    say(f"  SKU {b} {cc} {c}: 정가 확인 보류 — {full:,g} {cur}가 {why}")
                     continue
             held.pop(cc, None)
             o = it["m"].get(cc) or {}
