@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.34: (ERP 세션 요청 2026-11-23 — 대표 전달) 정가 표본 검사 결과 audit.miss 각 줄에 구분 값 k — "mismatch"(페이지에 이 정가가 안 보임 · 불일치 — n에 셈) · "unread"(페이지 못 받음·페이지 이름 없음·원화 가격 글자 없음 — 대조 못 함 · not_read에 셈) — ERP가 사유 글(why)이 아니라 k로 가르게(why 글은 그대로) · 불일치를 목록 앞에 · 로그 '확인할 값'에 대조 못 함이 섞이던 것 고침.
 v1.33: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터') 정가 표본 검사 audit_stage — 주 1회(AUDIT_DAYS) 남은 시간이 있으면(150초 이상) 국내 정가 20개(대표 상품·SKU·모델 단위 · 브랜드마다 돌아가며 · 주마다 다른 표본 · 이전 값·수집 멈춤·8일 넘은 값 뺌)를 공식몰 상품 페이지에 보이는 가격과 대조 — 일치 = '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 100배 단위 포함) · 나이키는 상품 정보의 페이지 이름으로 nike.com/kr 상품 페이지 · 결과 prices.json 'audit' {date·n·ok·rate·not_read·miss} · 로그 '정가 표본 검사: 국내 n개 중 일치 k(…%)' · 일치율 80% 밑(10개 이상)이면 [WARN] · 페이지에 원화 가격 글자가 아예 없으면(화면 스크립트로 그림 — 톰브라운) 불일치가 아니라 '대조 못 함' · SKU 단계 뒤 멈춤 표시를 풀고 요청 · 하나도 대조 못 하면 결과를 남기지 않고 다음 실행에 · 11/23 브랜치 실측 18개 중 일치 17(94%).
 v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 한 번 만든 모델 상품은 목록과 상관없이 유지(7일마다 그 모델만 다시 받음 — 목록 변화가 파일에 안 드러나게 · 색상 정가가 갈리거나 SKU_DROP일 넘게 이전 값이면 뺌) · 그 나라 몰에 있는 색상의 정가를 확실히 못 읽으면 모델 값 안 정함 · 크록스 대표 상품 모델도 남김 · 할인 가드는 색상 값과 같고 할인 표시는 안 붙임(독립 검토 3건 반영) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
 v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게) · robots.txt는 * 그룹 + 옛 이름(OLD_BOT)·새 이름 그룹을 모두 지킴(하나라도 막으면 막음 — 새 이름 그룹은 다른 봇 것일 수 있어 *보다 넓게 허용 안 함) · 옛 접속 이름 OLD_UA는 수집에 안 씀(막혔던 사이트 다시 시험용).
@@ -2927,7 +2928,12 @@ def _audit_page(it, o):
 def audit_stage(items_all, t0, today, td, old_audit):
     """v1.33 정가 표본 검사 — 주 1회 국내 정가 AUDIT_N개(브랜드마다 돌아가며 · 주마다 다른 표본)를 공식몰 상품 페이지에 보이는 가격과 대조.
     일치 = 페이지에 그 정가가 '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 등 100배 단위 포함)이 있음 · 못 받은 페이지는 셈에서 뺌 ·
-    돌려줌 prices.json 'audit' {date, n, ok, rate, not_read, miss[{id, p, why}]} — 공개 파일(대표 상품·찾은 SKU 상품은 이미 공개)"""
+    돌려줌 prices.json 'audit' {date, n, ok, rate, not_read, miss[{id, p, k, why}]} — k = "mismatch"(불일치 — n에 셈) · "unread"(대조 못 함 — not_read에 셈) ·
+    why는 사람이 읽는 글(바뀔 수 있음 — ERP는 k로 가름) · 공개 파일(대표 상품·찾은 SKU 상품은 이미 공개)"""
+    if isinstance(old_audit, dict):   # v1.34 v1.33 결과(k 없음)에도 k를 채움 — 불일치 글은 v1.33 그대로 '페이지에 이 정가가 안 보임'
+        for m in old_audit.get("miss") or []:
+            if isinstance(m, dict) and m.get("k") not in ("mismatch", "unread"):
+                m["k"] = "mismatch" if str(m.get("why") or "").startswith("페이지에 이 정가") else "unread"
     if isinstance(old_audit, dict) and old_audit.get("date"):
         try:
             if (today - datetime.date.fromisoformat(old_audit["date"])).days < AUDIT_DAYS:
@@ -2968,27 +2974,28 @@ def audit_stage(items_all, t0, today, td, old_audit):
         try:
             url, why = _audit_page(it, o)
             if not url:
-                nf += 1; miss.append({"id": it["id"], "p": o["p"], "why": why}); continue
+                nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": why}); continue
             t = get(url).text
         except Exception as e:
             nf += 1
             w = re.sub(r"https?://\S+", "(주소)", str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)[:80]
-            miss.append({"id": it["id"], "p": o["p"], "why": "페이지 못 받음 — " + w}); continue
+            miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지 못 받음 — " + w}); continue
         p_ = int(round(o["p"]))
         if f"{p_:,}" in t or re.search(rf"[\"':\s]({p_}|{p_ * 100})(?:\.0+)?[\"',\s}}]", t):
             ok += 1
         elif not re.search(r"\d{1,3}(?:,\d{3})+\s*원|₩\s*\d|\"priceCurrency\"\s*:\s*\"KRW\"", t):
-            nf += 1; miss.append({"id": it["id"], "p": o["p"], "why": "페이지에 원화 가격 글자 없음(화면 스크립트로 그림) — 대조 못 함"})   # 11/23 톰브라운
+            nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지에 원화 가격 글자 없음(화면 스크립트로 그림) — 대조 못 함"})   # 11/23 톰브라운
         else:
-            bad += 1; miss.append({"id": it["id"], "p": o["p"], "why": "페이지에 이 정가가 안 보임"})
+            bad += 1; miss.append({"id": it["id"], "p": o["p"], "k": "mismatch", "why": "페이지에 이 정가가 안 보임"})
     _STOP.set()
     n = ok + bad
     if not n:   # 하나도 대조 못 함(모두 못 받음) — 결과를 남기지 않고 다음 실행에 다시(받은 날을 옮기지 않음)
         log(f"정가 표본 검사: 대조한 값 없음(못 받음 {nf}) — 다음 실행에 다시" + (" · " + miss[0]["why"][:80] if miss else ""))
         return old_audit
+    miss.sort(key=lambda x: x["k"] != "mismatch")   # v1.34 불일치 먼저(목록을 자를 때 불일치가 빠지지 않게)
     au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_N]}
     log(f"정가 표본 검사: 국내 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 못 받음 {nf}" if nf else "")
-        + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["why"].startswith("페이지에"))[:300] if bad else ""))
+        + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["k"] == "mismatch")[:300] if bad else ""))
     if n >= 10 and ok / n < 0.8:
         log(f"[WARN] 정가 표본 검사 일치율 {ok / n:.0%} — 저장된 국내 정가가 공식몰 페이지와 다른 값이 많음(읽는 법 확인)")
     return au
