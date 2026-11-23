@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.42: (price_fetch v1.39) prices.json 최상위 kr_none(국내 공식몰에 없음 꼬리표 — ERP용)은 화면 자료에 넣지 않음.
 v33.41: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터' — price_fetch v1.33) 수집 상태 '해외 정가' 줄 끝에 '정가 표본 검사 m/d 일치 k/n'(prices.json audit — 주 1회 국내 정가를 공식몰 페이지와 대조).
 v33.40: (대표 결정 2026-11-22 'ERP 판매·예정 상품 위주로 먼저 수집' — price_fetch v1.29 SKU 단계) prices.json의 kind "sku" 상품(판매·예정 상품 색상 단위 정가 —
     ERP가 읽는 값)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익은 대표 상품 그대로 · 파일 크기 그대로) · 파일 최상위 sku_q 등도 화면에 안 넣음 ·
@@ -6581,7 +6582,7 @@ def main():
                     miss.setdefault(x["id"], []).append(x["cc"])
             prices["missing"] = miss
             prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict) and it.get("kind") != "sku"]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게 · v33.40 SKU 단계 상품은 뺌
-            for k in ("sku_q", "sku_list_fail", "sku_list_told"):   # v33.40 화면에 안 쓰는 SKU 단계 상태
+            for k in ("sku_q", "sku_list_fail", "sku_list_told", "kr_none"):   # v33.40 화면에 안 쓰는 SKU 단계 상태 · v33.42 국내 공식몰에 없음 꼬리표(ERP용)
                 prices.pop(k, None)
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}

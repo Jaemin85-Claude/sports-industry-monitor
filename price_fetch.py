@@ -3,11 +3,14 @@
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
 v1.39: (ERP 조건 11/23 '목록 전체 확대' · 대표 결정 11/23 '암호 꼬리표만 공개 (추천)') ① 모니터가 읽지 않는 브랜드(SKU_BRANDS 밖)의 목록 품번은 받자마자 버림 —
     이름·품번·건수를 셈하지도 공개 파일·실행 기록에 남기지도 않음(전에는 '감시 브랜드 밖 n · 아직 못 읽는 브랜드 n곳 n개' 구간 셈) · 요약 줄 '목록(읽는 브랜드) n개(품번 모양이 다름 n)' ·
-    시험 목록(공개 품번)일 때만 건너뛴 브랜드 이름을 찍음. ② 국내 공식몰에 없음(none)인데 파일에 없는 목록 품번(어느 나라 값도 없음 — 병행수입 품번 등)은 품번 대신
-    꼬리표만 prices.json 최상위 kr_none {"v": 1, "tags": [...]}에 — 꼬리표 = HMAC-SHA256(SHA-256("kr-none|v1|" + 목록 토큰), 목록에 온 품번(빈칸 모두 빼고 대문자)) 16진 앞 16자리 ·
-    ERP(토큰을 만든 쪽)가 자기 품번으로 같은 꼬리표를 만들어 맞춤 · 실제 개수가 드러나지 않게 가짜 꼬리표로 50개 단위까지 채움(KR_NONE_PAD) · 상태 규칙은 v1.37 kr_status와 같음
-    (그 품번 국내 차례 날에 답을 받았을 때만 바꿈 · 못 받은 날은 지난 꼬리표가 앞 상태) · 파일에 남는 상품(kr_status)·같은 모델 국내 모델 단위 값이 있는 색상·대표 상품 품번은 넣지 않음 ·
-    목록에서 빠진 품번의 꼬리표는 다음 실행에서 빠짐 · 토큰을 바꾸면 꼬리표가 차례 날(2일)까지 다시 쌓임 · 요약 줄 끝 '파일 밖 국내 공식몰에 없음 꼬리표 n'(구간).
+    시험 목록(공개 품번)일 때만 건너뛴 브랜드 이름을 찍음 · 빈 목록은 못 받은 것으로 봄('목록이 비어 있음'). ② 국내 공식몰에 없음(none)인데 파일에 없는 목록 품번(어느 나라 값도 없음 —
+    병행수입 품번 등)은 품번 대신 꼬리표만 prices.json 최상위 kr_none {"v": 1, "d": 날짜, "kc": 확인값, "tags": [...]}에 — 열쇠 = PBKDF2-HMAC-SHA256(목록 토큰, "kr-none|v1", 200,000번, 32바이트),
+    꼬리표 = HMAC-SHA256(열쇠, "날짜|품번")(품번 = 목록에 온 그대로에서 빈칸 모두 빼고 대문자) 16진 앞 16자리 · 확인값 kc = HMAC(열쇠, "날짜|check") · ERP(토큰을 만든 쪽)가 자기 품번으로
+    같은 꼬리표를 만들어 맞춤 · 가짜 꼬리표("날짜|pad|n")로 50개 단위까지 채우고 날마다 날짜를 섞어 어제 꼬리표와 이어 볼 수 없게(실제 개수·품번별 변화가 드러나지 않게 — 개수는
+    실행 기록에도 안 찍음 · 열쇠를 느리게 만들어 토큰을 짐작해 보기 어렵게 — 검토 11/23) · 상태 규칙은 v1.37 kr_status와 같음(그 품번 국내 차례 날에 답을 받았을 때만 바꿈 · 못 받은 날은 지난 꼬리표
+    (지난 날짜로 다시 만들어 대조)가 앞 상태) · 파일에 남는 상품(kr_status)·같은 모델 국내 모델 단위 값이 있는 색상(ERP 규칙 ②)·대표 상품 품번과 한국 정가가 있는 대표 상품 품번으로 시작하는 품번
+    (ERP 규칙 ③ — 이 품번은 파일 상품의 kr_status도 달지 않음)은 넣지 않음 · 목록에서 빠진 품번은 다음 실행에서 빠짐 · 토큰을 바꾸면 차례 날(2일)까지 다시 쌓임 ·
+    SKU 단계를 건너뛴 날(시간 부족·목록 못 받음)은 받아 둔 상품을 빼지 않음(뺄 때 국내 상태를 꼬리표로 옮기는 일은 목록을 받은 실행에서만).
 v1.38: (대표 지시 2026-11-23 '90% 이상' · '스포츠 브랜드가 제일 중요') 컨버스 국내 정가 — ERP 판매 중 품번(감시 브랜드 밖 · SKU_ALIAS '컨버스')을 한국 공식몰(카페24
     www.converse.co.kr)에서 품번 검색(search.html?keyword=) → 상품 페이지 '스타일 : 품번' 칸(ma_product_code)이 같을 때만 정가(converse_price — meta product:price:amount ·
     할인가 product:sale_price:amount · 소비자가 칸이 판매가보다 높으면 그것) · 같은 품번 페이지 여러 개면 3개까지 받아 정가가 모두 같을 때만 · 검색에 없으면 __noans__
@@ -2577,6 +2580,7 @@ SKU_NEW_SHARE = 0.6  # 한국 '아직 못 찾은 값 묻기'는 SKU 단계 시�
 SKU_HOLD_DAYS = 21   # 일 — 정가 확인 보류 값이 같은 값(5% 안)으로 이만큼 넘게 이어지고 세일 기간(_sku_promo) 밖이면 정가로 받아들임
 SKU_META = ("sku_list_fail", "sku_list_told", "kr_none")   # 파일 최상위에 두는 SKU 단계 상태(단계를 건너뛴 날은 그대로 이어 씀)
 KR_NONE_PAD = 50     # v1.39 '국내 공식몰에 없음' 목록 품번 꼬리표(kr_none) 개수를 이 단위로 채움 — 가짜 꼬리표를 섞어 실제 개수가 드러나지 않게
+KR_NONE_ITER = 200000   # v1.39 꼬리표 열쇠를 만드는 PBKDF2 반복 수(느리게 — 공개 꼬리표로 토큰을 짐작해 보기 어렵게 · 검토 11/23)
 
 
 def _sku_token():
@@ -2586,13 +2590,15 @@ def _sku_token():
 
 
 def _kr_none_key(test):
-    """v1.39 꼬리표 열쇠 = SHA-256("kr-none|v1|" + 목록 토큰) — ERP(토큰을 만든 쪽)와 모니터만 앎 · 시험 목록이면 고정 시험 열쇠(브랜치 시험 전용)"""
-    return hashlib.sha256(b"kr-none|v1|" + (b"test" if test else _sku_token().encode("utf-8"))).digest()
+    """v1.39 꼬리표 열쇠 = PBKDF2-HMAC-SHA256(목록 토큰, 소금 "kr-none|v1", KR_NONE_ITER번, 32바이트) — ERP(토큰을 만든 쪽)와 모니터만 앎 ·
+    느린 열쇠 만들기라 공개 꼬리표로 토큰을 짐작해 보기 어려움(검토 11/23) · 시험 목록이면 고정 시험 열쇠(브랜치 시험 전용)"""
+    return hashlib.pbkdf2_hmac("sha256", b"test" if test else _sku_token().encode("utf-8"), b"kr-none|v1", KR_NONE_ITER, 32)
 
 
-def _kr_tag(key, code):
-    """v1.39 꼬리표 = HMAC-SHA256(열쇠, 목록 품번(빈칸 모두 빼고 대문자)) 16진 앞 16자리 — 열쇠 없이는 품번을 알 수 없음"""
-    return hmac.new(key, code.encode("utf-8"), hashlib.sha256).hexdigest()[:16]
+def _kr_tag(key, msg):
+    """v1.39 꼬리표 = HMAC-SHA256(열쇠, "날짜|품번")(품번은 빈칸 모두 빼고 대문자) 16진 앞 16자리 — 열쇠 없이는 품번을 알 수 없고,
+    날마다 날짜가 바뀌어 어제 꼬리표와 이어 볼 수 없음(가짜 꼬리표 "날짜|pad|n"·확인값 "날짜|check"도 같은 식 — 검토 11/23)"""
+    return hmac.new(key, msg.encode("utf-8"), hashlib.sha256).hexdigest()[:16]
 
 
 def _sku_promo(d):
@@ -2682,6 +2688,8 @@ def sku_list(deadline=None):
                 why = type(e).__name__
         if raw is None:
             return None, False, why or "못 받음"
+        if not raw:   # v1.39 빈 목록은 받은 것으로 보지 않음(국내 상태·꼬리표가 한꺼번에 지워지지 않게 — 검토 11/23)
+            return None, False, "목록이 비어 있음"
         is_test = False
     # v1.39 (ERP 조건 11/23 '목록 전체 확대') 모니터가 읽지 않는 브랜드(SKU_BRANDS 밖 — 감시 브랜드 밖·대표 상품만 받는 브랜드)의 품번은 받자마자 버림:
     # 이름·품번·건수를 셈하지도 공개 파일·실행 기록에 남기지도 않음(미확인 셈은 ERP가 함) · 시험 목록(공개 품번)일 때만 건너뛴 브랜드 이름을 찍음
@@ -3253,19 +3261,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     keep = [it for it in old_items.values() if alive(it)]
     left = t0 + TIME_LIMIT - 30 - time.time()
     if left < SKU_MIN_LEFT:   # 단계 15분 제한 전에 저장 — 목록도 안 받음
-        log(f"SKU 정가: 남은 시간 부족({max(0, left):.0f}초) — 이번 실행은 건너뜀 · 받아 둔 상품 {len(keep)}개는 그대로")
-        return keep, meta
+        log(f"SKU 정가: 남은 시간 부족({max(0, left):.0f}초) — 이번 실행은 건너뜀 · 받아 둔 상품 {len(old_items)}개는 그대로")
+        return list(old_items.values()), meta   # v1.39 건너뛴 날은 상품을 빼지 않음(뺄 때 국내 상태를 꼬리표로 옮기는 일은 목록을 받은 실행에서만 — 검토 11/23)
     deadline = time.time() + min(SKU_MAX, left)
     lst, test, why = sku_list(deadline)
     if lst is None:
         if why:   # 목록을 못 받음 — 이틀째(연달아) 한 번만 실패 표시, 그동안 받아 둔 값은 그대로
             since = meta.get("sku_list_fail") or td
             meta["sku_list_fail"] = since
-            log(f"SKU 정가: 목록 못 받음({why}) — 받아 둔 상품 {len(keep)}개는 그대로" + (f" · {since[5:]}부터" if since != td else ""))
+            log(f"SKU 정가: 목록 못 받음({why}) — 받아 둔 상품 {len(old_items)}개는 그대로" + (f" · {since[5:]}부터" if since != td else ""))
             if since != td and meta.get("sku_list_told") != since:
                 soft_fail(f"SKU 정가 목록을 {since[5:]}부터 못 받음({why}) — 목록 주소·토큰(GitHub Secrets ERP_SKU_URL·ERP_SKU_TOKEN)·목록 서버 확인")
                 meta["sku_list_told"] = since
-        return keep, meta
+        return list(old_items.values()), meta   # v1.39 위와 같음
     meta.pop("sku_list_fail", None); meta.pop("sku_list_told", None)
     say = log if test else (lambda *_: None)   # 시험 목록(공개 품번)일 때만 자세히
     # v1.32 모델 단위 채우기 상품(같은 모델 다른 색상의 국내 정가 — id s-브랜드-model-모델)은 따로 — 아래 목록 품번 규칙과 섞이지 않게
@@ -3473,9 +3481,15 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     # 파일에 없는 목록 품번(어느 나라 값도 없음)은 품번 대신 꼬리표만 — 지난 실행 꼬리표에 있으면 앞 상태 "none"(그날 묻지 않았거나 답을 못 받은 날은 그대로)
     kkey = _kr_none_key(test)
     okn = old.get("kr_none") if isinstance(old.get("kr_none"), dict) and old["kr_none"].get("v") == 1 else {}
-    old_tags = set(okn.get("tags") or ())
-    def tagged(b, c): return any(_kr_tag(kkey, r) in old_tags for r in raws.get((b, c), ()))
+    old_tags, od = set(okn.get("tags") or ()), str(okn.get("d") or "")
+    def tagged(b, c): return bool(od) and any(_kr_tag(kkey, f"{od}|{r}") in old_tags for r in raws.get((b, c), ()))
     krs = {}   # (브랜드, 품번) → 이번 국내 상태(한국 값이 없을 때만)
+    # v1.39 한국 정가가 있는 대표 상품 품번 — ERP가 그 품번으로 시작하는 목록 품번을 대표 상품 앞자리 대조(규칙 ③)로 이미 확보함 → 국내 상태·꼬리표를 달지 않음(두 신호가 겹치지 않게 · 검토 11/23)
+    rep_kr = collections.defaultdict(set)
+    for it in rep_items:
+        if isinstance(it, dict) and it.get("kind") != "sku" and ((it.get("m") or {}).get("KR") or {}).get("p"):
+            rep_kr[it.get("brand")].add(_sku_norm(it.get("code")))
+    def rep_cov(b, c): return any(r and c.startswith(r) for r in rep_kr.get(b, ()))
     # 합치기 — 그 일감에서 물은 품번만(같은 열쇠의 다른 품번은 그대로 · 이전 값 표시 안 함)
     items, kept = {}, {it["id"]: it for it in keep}
     n_new = n_ok = n_kr = n_hold = 0
@@ -3543,7 +3557,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         # 보류·덜 끝난(또는 빈) 색인·국내 몰을 읽지 못하는 브랜드·아직 못 물음 · 그날 묻지 않았으면 지난 상태 그대로 · 확인한 날은 싣지 않음(날마다 어느 품번을 물었는지가
         # 공개 파일에 드러나 목록 순서(판매 중 먼저)를 짐작할 수 있어 — 검토 11/23)
         it.pop("kr_checked", None)
-        if (it["m"].get("KR") or {}).get("p"):
+        if (it["m"].get("KR") or {}).get("p") or rep_cov(b, c):   # v1.39 대표 상품 앞자리로 확보된 품번도 국내 상태를 달지 않음
             it.pop("kr_status", None)
         else:
             st_ = it.get("kr_status") or ("none" if tagged(b, c) else None)   # v1.39 파일에 없던 품번은 지난 꼬리표가 앞 상태
@@ -3619,10 +3633,12 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     out.sort(key=lambda x: (x["brand"], x["code"]))
     # v1.39 꼬리표 — 파일에 남는 상품(kr_status를 씀)·같은 모델 국내 모델 단위 값이 있는 색상(ERP 규칙 ②)은 빼고, 목록에 온 품번 그대로 · 가짜 꼬리표로 KR_NONE_PAD 단위까지 채움
     oid = {it["id"] for it in out}
-    tags = {_kr_tag(kkey, r) for (b, c), st_ in krs.items() if st_ == "none" and iid(b, c) not in oid
+    # 날마다 날짜를 섞어 만듦(어제 꼬리표와 이어 볼 수 없게 — 가짜 꼬리표도 같은 식이라 실제 개수가 드러나지 않음 · 개수는 실행 기록에도 안 찍음 · 검토 11/23)
+    tags = {_kr_tag(kkey, f"{td}|{r}") for (b, c), st_ in krs.items() if st_ == "none" and iid(b, c) not in oid
             and not (SKU_BRANDS[b].get("mfill") and mid(b, SKU_BRANDS[b]["q"](c)) in mout) for r in raws.get((b, c), ())}
     npad = max(KR_NONE_PAD, -(-len(tags) // KR_NONE_PAD) * KR_NONE_PAD) - len(tags)
-    meta["kr_none"] = {"v": 1, "tags": sorted(tags | {_kr_tag(kkey, f"pad|{i}") for i in range(npad)})}
+    meta["kr_none"] = {"v": 1, "d": td, "kc": _kr_tag(kkey, f"{td}|check"),
+                       "tags": sorted(tags | {_kr_tag(kkey, f"{td}|pad|{i}") for i in range(npad)})}
     nv = sum(len(it["m"]) for it in out)
     log(f"SKU 정가: 목록(읽는 브랜드) {band(len(lst))}개"
         + (f"(품번 모양이 다름 {band(sum(n_shape.values()))}" + (f" — {', '.join(sorted(n_shape))}" if test else "") + ")" if n_shape else "")
@@ -3632,7 +3648,6 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
-        + f" · 파일 밖 국내 공식몰에 없음 꼬리표 {band(len(tags))}"
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
     return out, meta
 
