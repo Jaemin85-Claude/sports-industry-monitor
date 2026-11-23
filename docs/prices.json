@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 15:22 KST",
+ "generated_at": "2026-11-23 16:12 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -17058,6 +17058,24 @@
    }
   },
   {
+   "id": "s-nike-model-ar4997",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 클럽 남성 티셔츠",
+   "code": "AR4997",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 35000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 35000.0,
+     "obs_date": "2026-11-23",
+     "lvl": "model"
+    }
+   }
+  },
+  {
    "id": "s-nike-ar4997-101",
    "brand": "나이키",
    "name": "ナイキ スポーツウェア クラブ メンズ Tシャツ",
@@ -17072,6 +17090,58 @@
      "obs": 5116.0,
      "obs_date": "2026-11-23",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar4997-410",
+   "brand": "나이키",
+   "name": "Nike Sportswear Club Men's T-Shirt",
+   "code": "AR4997-410",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 32.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 32.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 22.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 22.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 20.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       20.99,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 24.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 24.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 22.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       22.49,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -17636,6 +17706,24 @@
        "base"
       ]
      ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-model-cz4652",
+   "brand": "나이키",
+   "name": "나이키 에어맥스 게놈 주니어 신발",
+   "code": "CZ4652",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 179000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 179000.0,
+     "obs_date": "2026-11-23",
+     "lvl": "model"
     }
    }
   },
@@ -19290,6 +19378,14 @@
      "obs": 309000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "DE": {
+     "p": 259.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 259.99,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -20296,6 +20392,34 @@
    }
   },
   {
+   "id": "s-crocs-203591-060",
+   "brand": "크록스",
+   "name": "クラシック ラインド クロッグ",
+   "code": "203591-060",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/203591.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 6160.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       6160.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "s-crocs-203591-0ex",
    "brand": "크록스",
    "name": "클래식 라인드 클로그",
@@ -20357,6 +20481,24 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/203591.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 6160.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       6160.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -20385,6 +20527,15 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/203591.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -20404,6 +20555,24 @@
      "obs": 84900.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/203591.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 6160.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       6160.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -20652,6 +20821,34 @@
       [
        "2026-11-23",
        28.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206453-060",
+   "brand": "크록스",
+   "name": "Brooklyn Low Wedge Sandal",
+   "code": "206453-060",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 54.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/206453.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 27.5,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       27.5,
        "base"
       ]
      ]
@@ -21379,6 +21576,25 @@
      "seen": "2026-11-23",
      "url": "https://www.crocs.co.kr/p/x/210059.html",
      "obs": 94900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-210059-100",
+   "brand": "크록스",
+   "name": "クラシック ラインド オーバーパフ クロッグ",
+   "code": "210059-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 10450.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/210059.html",
+     "obs": 10450.0,
      "obs_date": "2026-11-23",
      "sale": false
     }
