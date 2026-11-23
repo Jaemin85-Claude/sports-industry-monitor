@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.36: (대표 결정 2026-11-23 — 90% 분모 = 수집 브랜드 판매 중 품번) ERP 목록 브랜드 표기 'THOM BROWN'(E 빠짐)도 톰브라운으로 알아봄(SKU_ALIAS — 전에는 '감시 브랜드 밖'으로 셈).
 v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 카드(같은 <a> 안 사진 주소 …/{품번}_00.jpg · 이름은 사진 alt)로 색인(_keen_kr_index — 맨 위 분류를 날마다 다른 분류부터 · 쪽 번호 끝·새 상품 없는 쪽에서 분류를 멈춤 · 찾는 품번을 다 찾거나 150초(KR_GAP 3초라 약 50쪽)·단계 마감·한국 묻기 마감이면 멈춤 · 목록 화면 하나가 안 열리면 그 분류만 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 같은 품번 상품 페이지가 여럿(11/23 약 9%)이면 3개까지 받아 정가가 모두 같을 때만 · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(keep — 이번 실행에 색인을 이미 만들었으면 색인으로 대조) · 받아 둔 주소가 다른 상품·없는 페이지일 때만 색인으로 한 번 더(일시 오류는 그대로) · 요약 줄 '(+ 색인 목록 화면 n쪽)' · 독립 검토 13건 반영.
 v1.34: (ERP 세션 요청 2026-11-23 — 대표 전달) 정가 표본 검사 결과 audit.miss 각 줄에 구분 값 k — "mismatch"(페이지에 이 정가가 안 보임 · 불일치 — n에 셈) · "unread"(페이지 못 받음·페이지 이름 없음·원화 가격 글자 없음 — 대조 못 함 · not_read에 셈) — ERP가 사유 글(why)이 아니라 k로 가르게(why 글은 그대로) · 불일치를 목록 앞에 · 로그 '확인할 값'에 대조 못 함이 섞이던 것 고침.
 v1.33: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터') 정가 표본 검사 audit_stage — 주 1회(AUDIT_DAYS) 남은 시간이 있으면(150초 이상) 국내 정가 20개(대표 상품·SKU·모델 단위 · 브랜드마다 돌아가며 · 주마다 다른 표본 · 이전 값·수집 멈춤·8일 넘은 값 뺌)를 공식몰 상품 페이지에 보이는 가격과 대조 — 일치 = '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 100배 단위 포함) · 나이키는 상품 정보의 페이지 이름으로 nike.com/kr 상품 페이지 · 결과 prices.json 'audit' {date·n·ok·rate·not_read·miss} · 로그 '정가 표본 검사: 국내 n개 중 일치 k(…%)' · 일치율 80% 밑(10개 이상)이면 [WARN] · 페이지에 원화 가격 글자가 아예 없으면(화면 스크립트로 그림 — 톰브라운) 불일치가 아니라 '대조 못 함' · SKU 단계 뒤 멈춤 표시를 풀고 요청 · 하나도 대조 못 하면 결과를 남기지 않고 다음 실행에 · 11/23 브랜치 실측 18개 중 일치 17(94%).
@@ -2567,7 +2568,7 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "나이키": "nike", "푸마": "puma", "온러닝": "on|onrunning|on running|온", "아크테릭스": "arcteryx|arc'teryx",
     "써코니": "saucony|사코니", "살로몬": "salomon", "킨(KEEN)": "keen|킨", "우포스": "oofos", "크록스": "crocs",
     "오니츠카타이거": "onitsukatiger|onitsuka tiger|오니츠카", "미즈노": "mizuno", "닥터마틴": "drmartens|dr.martens|dr martens|닥터마틴스",
-    "헌터": "hunter", "드래곤디퓨전": "dragondiffusion|dragon diffusion", "톰브라운": "thombrowne|thom browne",
+    "헌터": "hunter", "드래곤디퓨전": "dragondiffusion|dragon diffusion", "톰브라운": "thombrowne|thom browne|thombrown|thom brown",
     "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning"}
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
