@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 17:38 KST",
+ "generated_at": "2026-11-23 19:29 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -35099,7 +35099,7 @@
      "TW": 1,
      "SG": 1
     },
-    973.6,
+    976.6,
     34
    ]
   ],
@@ -35129,14 +35129,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45139997097",
+  "run": "45156234862",
   "tries": [
    {
     "n": 1,
-    "where": "20.64.x.x · Washington · AS8075 Microsoft Corporation",
+    "where": "128.85.x.x · Virginia · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-23 17:39"
+    "at": "11-23 19:30"
    }
   ]
  },
