@@ -15,7 +15,7 @@ pzPYLgzZxlsO5e/rIQeUbL0DCdZzNvTDXIk9KTCi0td8TI8d8+gFhNh7wfg5++vA
 aGNMT3gNbjBTksBRHEqpb5RWAHpucURS8FwBITRkrEAzAgMBAAE=
 -----END PUBLIC KEY-----
 """
-PLAN = {
+PLAN = json.loads(r'''{
  "MAISON KITSUNE": [
   {
    "url": "https://www.ssfshop.com/"
@@ -110,7 +110,7 @@ PLAN = {
    "url": "https://www.idlookmall.com/"
   }
  ]
-}
+}''')
 
 
 def enc_out(obj):
