@@ -2856,8 +2856,12 @@ def _sku_fetch(brand, cc, q, codes, idx):
                     try:
                         mod[f"{q}-{col}"] = (crocs_list(r.text, q, cur, color=col)[0], name, "sandal")
                     except RuntimeError:
-                        pass   # 그 색상은 정가를 확실히 못 읽음(품절 등) — 모델 값 판단에서 뺌
-                _sku_mput(got, mod, fin)
+                        mod = None   # 페이지에 있는 색상인데 정가를 확실히 못 읽음 — 그 색상 값이 다를 수 있어 모델 값을 정하지 않음(검토 11/23)
+                        break
+                if mod is None:
+                    got["__mixed__"] = -1
+                else:
+                    _sku_mput(got, mod, fin)
             return got, False
         full, ex = page_price(r.text, q, cur, [q])
         if ex.get("by") == "이름":
@@ -2980,6 +2984,18 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         for c in byq.get((b, q), ()):
             if c not in j["codes"] and not ((((old_items.get(iid(b, c)) or {}).get("m") or {}).get(cc)) or {}).get("seen"):
                 j["codes"].add(c)
+    # v1.32 모델 단위 상품은 목록과 상관없이 따로 다시 받음(색상 상품의 '목록에서 빠진 상품'처럼 — 목록이 바뀐 날이 파일에 드러나지 않게) · 7일마다 · 이전 값은 3일마다
+    for i_, it_ in mitems.items():
+        b_, m_ = it_["brand"], str(it_.get("code"))
+        o_ = (it_.get("m") or {}).get("KR") or {}
+        if not o_.get("seen"):
+            continue
+        if not o_.get("stale_since") and age(o_.get("obs_date") or o_["seen"]) < SKU_DAYS:
+            continue
+        if o_.get("stale_since") and not _sku_slot(f"{b_}|{m_}|KR|model", SKU_STALE_EVERY, today):
+            continue
+        j = jobs.setdefault((b_, "KR", m_), {"codes": set(), "st": 2, "ref": True, "age": 0})
+        j["ref"] = True; j["age"] = max(j["age"], age(o_.get("obs_date") or o_.get("seen") or td))
     ccr = {cc: i for i, cc in enumerate(SKU_CC)}
     rot = lambda k: hashlib.sha1(f"{k}|{td}".encode()).hexdigest()   # 못 찾은 값 묻는 순서 — 날마다 바뀜(뒤쪽 품번도 차례가 옴)
     order = sorted(jobs, key=lambda k: (k[1] != "KR", 0, -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 1, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저
@@ -3027,9 +3043,9 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 gx = {cd: v for cd, v in got.items() if not cd.startswith("__")}   # v1.32 __model__·__mixed__(모델 단위)는 품번이 아님
                 with rlock:
                     cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"])}
-                    cnt["none"] += int(bool(none or not gx))
+                    cnt["none"] += int(bool(none or not gx) and "__model__" not in got)
                 say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(gx.items())) or "공식몰에 없음")
-                    + (f" · 모델 단위 {got['__model__'][0]:,g}" if "__model__" in got else f" · 모델 색상 정가가 서로 다름({got['__mixed__']}색)" if "__mixed__" in got else ""))
+                    + (f" · 모델 단위 {got['__model__'][0]:,g}" if "__model__" in got else (f" · 모델 색상 정가가 서로 다름({got['__mixed__']}색)" if got["__mixed__"] > 0 else " · 정가를 확실히 못 읽은 색상이 있어 모델 값 안 정함") if "__mixed__" in got else ""))
         finally:
             if ph == 0:
                 kr_done[b].set()
@@ -3153,8 +3169,10 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     def has_kr(i):
         x = items.get(i) or kept.get(i) or {}
         return bool(((x.get("m") or {}).get("KR") or {}).get("p"))
-    need = sorted({(b, SKU_BRANDS[b]["q"](c)) for (b, c), st in tgt.items() if SKU_BRANDS[b].get("mfill") and st <= 1 and "KR" in SKU_BRANDS[b]["cc"] and not has_kr(iid(b, c))})
-    for b, m_ in need:
+    # 새로 만드는 것은 목록 품번(판매 중·예정)의 그 색상 국내 값이 없을 때만 · 한 번 만든 모델 상품은 목록과 상관없이 유지(위에서 따로 다시 받음 — 색상 정가가 서로 달라지거나 SKU_DROP일 넘게 이전 값이면 뺌)
+    need = {(b, SKU_BRANDS[b]["q"](c)) for (b, c), st in tgt.items() if SKU_BRANDS[b].get("mfill") and st <= 1 and "KR" in SKU_BRANDS[b]["cc"] and not has_kr(iid(b, c))}
+    need |= {(it_["brand"], str(it_.get("code"))) for it_ in mitems.values()}
+    for b, m_ in sorted(need):
         i = mid(b, m_)
         it = json.loads(json.dumps(mitems.get(i) or {"id": i, "brand": b, "name": None, "code": m_, "cat": None, "kind": "sku", "m": {}}, ensure_ascii=False))
         it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc == "KR" and isinstance(o, dict)}
@@ -3162,11 +3180,13 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         o = it["m"].get("KR")
         if r and "got" in r and "__model__" in r["got"]:
             full, ex, name, hint, url, lvl = r["got"]["__model__"]
-            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)
+            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, True, url, age)   # 값이 늘 정가 표시(나이키 fullPrice·크록스 retailPrice)라 할인 가드 없이(검토 11/23)
+            for k_ in ("sale", "sp", "sp_date", "sh", "off_seen"):
+                o2.pop(k_, None)   # 할인 표시는 안 붙임(색상마다 다를 수 있어)
             if o2.get("url") is None:
                 o2.pop("url", None)
             o2["lvl"] = "model"
-            it["m"]["KR"] = o2
+            it["m"]["KR"] = o2; n_ok += 1; n_new += int(not o); n_kr += 1
             if name:
                 it["name"] = name
             if not it.get("cat"):
