@@ -86,197 +86,92 @@ def is_cov(b, c, sku, model, rep):
 def work(R):
     items = raw_list()
     R["n_items"] = len(items)
-    sku, model, rep = covered_index()
-    miss = {}
+    by = {}
     for it in items:
         b = pf._SKU_AL.get(pf._SKU_KEY(it.get("brand")))
-        c = pf._sku_norm(it.get("code"))
-        if str(it.get("status") or "").lower() == "planned" or not b or not c:
-            continue
-        if b == "나이키":
-            c = re.sub(r"^[A-Z]{2,4}_", "", c)
-        if not is_cov(b, c, sku, model, rep):
-            miss.setdefault(b, []).append({"code": c, "name": it.get("name")})
-    R["miss_counts"] = {b: len(v) for b, v in miss.items()}
-    R["miss"] = miss
-    R["rep_codes"] = {b: [rc for bb, rc in rep if bb == b] for b in ("아크테릭스", "미즈노", "톰브라운", "드래곤디퓨전", "킨(KEEN)")}
+        if b and str(it.get("status") or "").lower() != "planned":
+            by.setdefault(b, []).append(pf._sku_norm(it.get("code")))
+    R["n_by"] = {b: len(v) for b, v in by.items()}
 
-    # 1) 나이키 — 빠진 품번의 스타일이 한국·미국 상품 정보에 있는지
-    t0, nk = time.time(), {}
-    for q in sorted({x["code"].split("-")[0] for x in miss.get("나이키", [])}):
-        if time.time() - t0 > 600:
-            nk[q] = "시간"; continue
-        row = {}
-        for cc in ("KR", "US"):
-            m, l, cur = pf.MK[cc]
-            r, err = tryget(pf.NIKE_STYLE.format(m=m, l=l, s=q))
+    # A) 킨 한국 — 분류 목록 → 상품 번호 → 상품 페이지 품번 칸(색인을 만들 수 있는지 · 몇 개인지)
+    kn = {"cats": {}, "goods": {}}
+    r, err = tryget("https://www.keenfootwear.kr/")
+    cats = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d+)", r.text))) if not err else []
+    kn["home_err"], kn["cats_found"] = err, cats[:60]
+    allg = []
+    t0 = time.time()
+    for cd in cats[:40]:
+        if time.time() - t0 > 240:
+            break
+        for page in range(1, 8):
+            r, err = tryget(f"https://www.keenfootwear.kr/goods/goods_list.php?cateCd={cd}&page={page}")
             if err:
-                row[cc] = err; continue
-            cols = []
-            for o in (r.json().get("objects") or []):
-                for pi in o.get("productInfo") or []:
-                    mp, mer, pc = pi.get("merchPrice") or {}, pi.get("merchProduct") or {}, pi.get("productContent") or {}
-                    cols.append([mer.get("styleColor"), mp.get("fullPrice"), mp.get("currentPrice"), mp.get("currency"), mer.get("productType"),
-                                 mer.get("status"), mer.get("publishType"), (pc.get("title") or "")[:40], mer.get("commerceStartDate")])
-            row[cc] = cols
-        nk[q] = row
-    R["nike"] = nk
-
-    # 2) 킨 한국 — LF 고도몰 품번 검색 → 상품 페이지 품번 칸 → 정가
-    kn = {}
-    for x in miss.get("킨(KEEN)", []):
-        c = x["code"]
-        r, err = tryget(f"https://www.keenfootwear.kr/goods/goods_search.php?keyword={c}")
-        if err:
-            kn[c] = {"search": err}; continue
-        gs = list(dict.fromkeys(re.findall(r"goodsNo=(\d+)", r.text)))
-        row = {"goods": gs[:8], "pages": []}
-        for g in gs[:3]:
-            p, e2 = tryget(f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={g}")
-            if e2:
-                row["pages"].append([g, e2]); continue
-            arts = re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', p.text)
-            try:
-                v = pf.godo_price(p.text, "KRW", c)
-            except Exception as e3:
-                v = f"{type(e3).__name__}: {str(e3)[:100]}"
-            row["pages"].append([g, arts[:6], v, (re.search(r"<title>([^<]{0,80})", p.text) or [None, ""])[1]])
-            if not isinstance(v, str):
+                kn["cats"][f"{cd}/{page}"] = err; break
+            gs = list(dict.fromkeys(re.findall(r"goodsNo=(\d+)", r.text)))
+            new = [g for g in gs if g not in allg]
+            kn["cats"][f"{cd}/{page}"] = [len(gs), len(new), len(r.text)]
+            allg += new
+            if not new:
                 break
-        kn[c] = row
+    kn["n_goods"] = len(allg)
+    want = set(by.get("킨(KEEN)", []))
+    hit = {}
+    t1 = time.time()
+    for g in allg[:400]:
+        if time.time() - t1 > 420:
+            kn["goods_cut"] = True; break
+        p, e2 = tryget(f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={g}")
+        if e2:
+            kn["goods"][g] = e2; continue
+        arts = [a.strip() for a in re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', p.text)]
+        codes = sorted(set(re.findall(r"(?<!\d)(\d{7})(?!\d)", " ".join(arts))))
+        kn["goods"][g] = codes
+        for c in codes:
+            if c in want:
+                try:
+                    v = pf.godo_price(p.text, "KRW", c)[0]
+                except Exception as e3:
+                    v = f"{type(e3).__name__}: {str(e3)[:80]}"
+                hit[c] = [g, v]
+    kn["n_goods_read"] = len(kn["goods"])
+    kn["want"], kn["hit"] = len(want), hit
+    kn["sec"] = round(time.time() - t0)
     R["keen"] = kn
 
-    # 3) 아크테릭스 한국 — 공개 페이지에서 상품 번호 ↔ 모델(X0000…) 찾기
-    ax = {"pages": {}, "map": {}}
-    seeds = ["https://arcteryx.co.kr/robots.txt", "https://arcteryx.co.kr/sitemap.xml", "https://arcteryx.co.kr/", "https://arcteryx.co.kr/lp"]
-    links = []
-    for u in seeds:
-        r, err = tryget(u)
-        if err:
-            ax["pages"][u] = err; continue
-        t = r.text
-        ax["pages"][u] = {"len": len(t), "final": r.url, "head": t[:600] if u.endswith((".txt", ".xml")) else "",
-                          "view": len(set(re.findall(r"products/view/(\d+)", t))), "x": len(set(re.findall(r"X0000(\d{5})", t)))}
-        links += [h for h in re.findall(r'href="([^"#]+)"', t)]
-    cand = []
-    for h in links:
-        full = urllib.parse.urljoin("https://arcteryx.co.kr/", h)
-        sp = urllib.parse.urlsplit(full)
-        if sp.netloc == "arcteryx.co.kr" and "/products/view/" not in sp.path and not re.search(r"\.(css|js|png|jpg|svg|ico)$", sp.path) and full not in cand:
-            cand.append(full)
-    ax["cand"] = cand[:120]
-    pick = [u for u in cand if re.search(r"/(lp|category|categories|list|products|collection|men|women|shop|new)", u, re.I)][:30]
-    for u in pick:
-        r, err = tryget(u)
-        if err:
-            ax["pages"][u] = err; continue
-        t = r.text
-        pairs = re.findall(r"products/(\d{5,7})/[A-Z0-9]{1,4}_X0000(\d{5})", t)
-        for v, xm in pairs:
-            ax["map"].setdefault(str(int(xm)), set()).add(v)
-        ax["pages"][u] = {"len": len(t), "final": r.url, "view": len(set(re.findall(r"products/view/(\d+)", t))), "pairs": len(set(pairs)),
-                          "x": len(set(re.findall(r"X0000(\d{5})", t)))}
-    ax["map"] = {k: sorted(v) for k, v in ax["map"].items()}
-    am = [x["code"] for x in miss.get("아크테릭스", [])]
-    ax["miss_found"] = {c: ax["map"].get(c.split("-")[0]) for c in am}
-    ax["rep_tail"] = {c: [rc for rc in R["rep_codes"]["아크테릭스"] if rc.startswith("X") and str(int(rc[1:])) == c.split("-")[0]] for c in am}
-    got = 0
-    for c, vs in ax["miss_found"].items():
-        if vs and got < 6:
-            r, err = tryget(f"https://arcteryx.co.kr/products/view/{vs[0]}")
-            if err:
-                ax.setdefault("view", {})[c] = err; continue
-            t = r.text
-            i = t.find("Model")
-            ax.setdefault("view", {})[c] = {"model_txt": re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", t[i:i + 400]))[:200] if i >= 0 else None,
-                                            "krcodes": sorted(set(re.findall(r"\b[A-Z]{5}\d{5}\b", t)))[:8],
-                                            "retail": re.findall(r"retail_price[^0-9]{0,12}([0-9]{4,8})", t)[:4], "title": (re.search(r"<title>([^<]{0,80})", t) or [None, ""])[1]}
-            got += 1
-    R["arc"] = ax
-
-    # 4) 드래곤디퓨전 — 코오롱몰 브랜드 페이지 + 글로벌 몰 품번
-    dd = {}
-    r, err = tryget("https://www.kolonmall.com/Brands/DRAGON_DIFFUSION")
-    kol = []
+    # B) 아크테릭스 한국 — 분류 화면이 상품 목록을 어디서 받는지(스크립트 주소·자료 칸 이름만 · 그 주소는 부르지 않음)
+    r, err = tryget("https://arcteryx.co.kr/products/category/97")
     if err:
-        dd["kolon"] = err
+        R["arc"] = err
     else:
-        kol = list(dict.fromkeys(re.findall(r"/Product/(W2BAS\w+)", r.text)))
-        dd["kolon_ids"] = kol
-    pages = {}
-    for k in kol[:30]:
-        p, e2 = tryget(f"https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/{k}")
-        if e2:
-            pages[k] = e2; continue
-        t = p.text
-        try:
-            v = pf.page_price(t, None, "KRW", [k])
-        except Exception as e3:
-            v = f"{type(e3).__name__}: {str(e3)[:80]}"
-        pages[k] = {"title": (re.search(r"<title>([^<]{0,120})", t) or [None, ""])[1], "n4": sorted(set(re.findall(r"(?<![0-9A-Z])(8\d{3}|9\d{3}|CDS-?\w+)(?![0-9])", t)))[:12], "price": v}
-    dd["kolon_pages"] = pages
-    glob = []
-    for page in (1, 2, 3, 4):
-        r, e2 = tryget(f"https://dragondiffusion.com/products.json?limit=250&page={page}")
-        if e2:
-            dd["global_err"] = e2; break
+        t = r.text
+        R["arc"] = {"scripts": re.findall(r'<script[^>]+src="([^"]+)"', t)[:40],
+                    "api": sorted(set(re.findall(r'["\'](/(?:api|ajax|v1|v2|products/(?:list|search|data))[^"\'\s]{0,120})["\']', t)))[:60],
+                    "json_keys": sorted(set(re.findall(r'"(product[A-Za-z_]{0,30}|goods[A-Za-z_]{0,30}|item[A-Za-z_]{0,20})"\s*:', t)))[:60],
+                    "next": ("__NEXT_DATA__" in t, "__NUXT__" in t, "window.__INITIAL" in t),
+                    "x": len(set(re.findall(r"X0000(\d{5})", t))), "kr": len(set(re.findall(r"\b[A-Z]{5}\d{5}\b", t))),
+                    "snip": [t[max(0, m.start() - 150):m.start() + 200] for m in re.finditer(r"axios|fetch\(|\$\.ajax|XMLHttpRequest", t)][:8]}
+
+    # C) 톰브라운 한국 — 쇼피파이 상품 목록에서 스타일-원단으로
+    tb = {"pages": 0, "hit": {}}
+    want = {"-".join(c.split("-")[:2]).lower(): c for c in by.get("톰브라운", [])}
+    allp = []
+    for page in range(1, 25):
+        r, err = tryget(f"https://www.thombrowne.com/ko-kr/products.json?limit=250&page={page}")
+        if err:
+            tb["err"] = err; break
         ps = r.json().get("products") or []
-        for p in ps:
-            glob.append([p.get("title"), p.get("handle"), sorted({str(v.get("sku")) for v in p.get("variants") or []})[:6]])
+        tb["pages"] = page
+        allp += ps
         if len(ps) < 250:
             break
-    dd["global"] = glob
-    R["dd"] = dd
-
-    # 5) 미즈노 한국 — 카페24 검색 → 상품 페이지에 품번
-    mz = {}
-    for x in miss.get("미즈노", []):
-        c = x["code"]
-        row = {}
-        for q in (c, c[:8]):
-            r, err = tryget(f"https://kor.mizuno.com/product/search.html?keyword={q}")
-            if err:
-                row[q] = err; continue
-            ls = list(dict.fromkeys(re.findall(r'href="(/product/[^"]+/\d+/[^"]*)"', r.text)))
-            row[q] = ls[:6]
-            if ls:
-                break
-        lst = next((v for v in row.values() if isinstance(v, list) and v), [])
-        for h in lst[:2]:
-            p, e2 = tryget(urllib.parse.urljoin("https://kor.mizuno.com/", h))
-            if e2:
-                row.setdefault("pages", []).append([h, e2]); continue
-            t = p.text
-            row.setdefault("pages", []).append([h, c in t, c[:8] in t, sorted(set(re.findall(r"\b[A-Z]\d[A-Z]{2}\d{4,6}\b", t)))[:8],
-                                                (re.search(r"<title>([^<]{0,80})", t) or [None, ""])[1]])
-        mz[c] = row
-    R["mizuno"] = mz
-
-    # 6) 톰브라운 — 쇼피파이 한국 검색(스타일-원단)
-    tb = {}
-    for x in miss.get("톰브라운", []):
-        c = x["code"]
-        st = "-".join(c.split("-")[:2]).lower()
-        r, err = tryget(f"https://www.thombrowne.com/ko-kr/search/suggest.json?q={st}&resources%5Btype%5D=product&resources%5Blimit%5D=10")
-        if err:
-            tb[c] = {"suggest": err}; continue
-        hs = [p.get("handle") for p in ((r.json().get("resources") or {}).get("results") or {}).get("products") or []]
-        row = {"handles": hs, "js": []}
-        for h in [h for h in hs if h and st in h][:4]:
-            p, e2 = tryget(f"https://www.thombrowne.com/ko-kr/products/{h}.json")
-            if e2:
-                row["js"].append([h, e2]); continue
-            pp = p.json().get("product") or {}
-            row["js"].append([h, sorted({(v.get("price"), v.get("compare_at_price")) for v in pp.get("variants") or []}, key=str)[:4]])
-        tb[c] = row
-    r, err = tryget("https://www.thombrowne.com/ko-kr/products.json?limit=250&page=1")
-    tb["_products_json"] = err or len(r.json().get("products") or [])
+    tb["n_products"] = len(allp)
+    for p in allp:
+        h = str(p.get("handle") or "")
+        for st, c in want.items():
+            if st in h:
+                tb["hit"].setdefault(c, []).append([h[-30:], sorted({(v.get("price"), v.get("compare_at_price")) for v in p.get("variants") or []}, key=str)[:3]])
+    tb["want"] = len(want)
     R["tb"] = tb
-
-    # 7) 브룩스 한국 — 리뉴얼 끝났는지
-    r, err = tryget("https://brooksrunning.co.kr/")
-    R["brooks"] = err or {"len": len(r.text), "final": r.url, "title": (re.search(r"<title>([^<]{0,80})", r.text) or [None, ""])[1]}
-
 
 def main():
     R, buf = {"start": time.time()}, io.StringIO()
