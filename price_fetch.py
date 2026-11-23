@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 그 모델에서 국내 값이 빈 목록 품번이 없어지면 모델 상품도 뺌(색상 값이 앞섬) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
+v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 한 번 만든 모델 상품은 목록과 상관없이 유지(7일마다 그 모델만 다시 받음 — 목록 변화가 파일에 안 드러나게 · 색상 정가가 갈리거나 SKU_DROP일 넘게 이전 값이면 뺌) · 그 나라 몰에 있는 색상의 정가를 확실히 못 읽으면 모델 값 안 정함 · 크록스 대표 상품 모델도 남김 · 할인 가드는 색상 값과 같고 할인 표시는 안 붙임(독립 검토 3건 반영) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
 v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게) · robots.txt는 * 그룹 + 옛 이름(OLD_BOT)·새 이름 그룹을 모두 지킴(하나라도 막으면 막음 — 새 이름 그룹은 다른 봇 것일 수 있어 *보다 넓게 허용 안 함) · 옛 접속 이름 OLD_UA는 수집에 안 씀(막혔던 사이트 다시 시험용).
 v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
     수집을 멈춘 사이트 jp.puma.com은 그대로) · SKU 단계 나라에 일본(SKU_CC 맨 뒤 — 나이키 상품 정보·크록스 www.crocs.co.jp·온러닝 ja-jp·킨 www.keenfootwear.jp · 푸마는 일본 몰 막힘이라 뺌).
@@ -2827,10 +2827,13 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
                 if sc in codes and fp and mp.get("currency") == cur and sc not in got:
                     got[sc] = (fp, {"cur_price": num(mp.get("currentPrice")), "lst": True}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
-                if fp and mp.get("currency") == cur and sc.startswith(q + "-") and sc not in mod:   # v1.32 이 모델의 그 나라 색상 정가(모델 단위 채우기)
-                    mod[sc] = (fp, _clean_name(pc.get("fullTitle") or pc.get("title")), hint)
+                if sc.startswith(q + "-") and sc not in mod:   # v1.32 이 모델의 그 나라 색상 정가(모델 단위 채우기)
+                    mod[sc] = (fp, _clean_name(pc.get("fullTitle") or pc.get("title")), hint) if fp and mp.get("currency") == cur else None
         if cc == "KR" and SKU_BRANDS[brand].get("mfill"):
-            _sku_mput(got, mod, None)
+            if any(v is None for v in mod.values()):
+                got["__mixed__"] = -1   # 그 나라 몰에 있는 색상인데 정가를 확실히 못 읽음 — 모델 값을 정하지 않음(크록스와 같게 · 검토 11/23)
+            else:
+                _sku_mput(got, mod, None)
         return got, not (d.get("objects") or [])
     if brand in ("크록스", "푸마", "언더아머"):
         url = (f"https://{CROCS_HOST[cc]}/p/x/{q}.html" if brand == "크록스" else PUMA_PD[cc].format(m=q) if brand == "푸마"
@@ -3180,7 +3183,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         o = it["m"].get("KR")
         if r and "got" in r and "__model__" in r["got"]:
             full, ex, name, hint, url, lvl = r["got"]["__model__"]
-            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, True, url, age)   # 값이 늘 정가 표시(나이키 fullPrice·크록스 retailPrice)라 할인 가드 없이(검토 11/23)
+            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)   # 색상 값과 같은 가드(나이키 fullPrice는 가드 없음 · 크록스는 120일 할인 가드 — 검토 11/23)
             for k_ in ("sale", "sp", "sp_date", "sh", "off_seen"):
                 o2.pop(k_, None)   # 할인 표시는 안 붙임(색상마다 다를 수 있어)
             if o2.get("url") is None:
@@ -3201,7 +3204,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
             mout[i] = it
     out = [it for it in list(items.values()) + list(kept.values()) + list(mout.values())
-           if alive(it) and it.get("code") not in rep_codes.get(it.get("brand"), set())]   # 대표 상품이 된 품번은 뺌(같은 품번 두 줄이 되지 않게)
+           if alive(it) and (it["id"] in mout or it.get("code") not in rep_codes.get(it.get("brand"), set()))]   # 대표 상품이 된 품번은 뺌(같은 품번 두 줄이 되지 않게) · 모델 단위 상품은 남김(대표 상품 정가는 색상 중 가장 높은 값이라 색상 정가가 갈리는지 확인 안 함 — ERP는 lvl model을 먼저 씀 · 검토 11/23)
     out.sort(key=lambda x: (x["brand"], x["code"]))
     nv = sum(len(it["m"]) for it in out)
     nb = len({k.split("(")[0] for k in n_unsup})   # 못 읽는 브랜드는 곳 수만(목록 구성은 내부 정보 — 이름은 시험 목록일 때만)
