@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 7-A/B: 유럽·일본 브랜드 IR 지역·채널 분해 (v1.2)
-v1.8: (대표 지시 2026-11-23 '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 저장소 이름 sports-industry-monitor 대신 일반 이름 market-monitor로(봇임은 그대로 · 브라우저 흉내 아님 · 세 사이트 robots.txt 새 이름 허용 확인).
+v1.8: (대표 지시 2026-11-23 '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 저장소 이름 sports-industry-monitor 대신 일반 이름 market-monitor로(봇임은 그대로 · 브라우저 흉내 아님 · 11/23 시험: 아디다스 robots.txt 새 이름 허용 · 푸마 robots.txt에 우리 이름 그룹 없음(옛 이름과 같은 규칙) · 아식스 robots.txt 없음(404) · 세 사이트 IR 페이지 새 이름으로 받힘).
 v1.7: (대표 지시 2026-10-27 'A' — 브랜드 판정) 본사 발언 범위 scope(global·region + region 이름) — extract_segments v11.4와 같은 규칙,
       sig 또는 scope가 없는 발언만 1회 분류(이미 있는 sig는 그대로 · temperature 0 · 객체 n개 배열만 읽음) · 다시 뽑은 같은 문장은 이전 scope·region도
       옮김(merge_notes) · 비슷한 문장 합치기(_same)는 지역 이름이 다르면 안 합침
