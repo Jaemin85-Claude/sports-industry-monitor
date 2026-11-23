@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
+    수집을 멈춘 사이트 jp.puma.com은 그대로) · SKU 단계 나라에 일본(SKU_CC 맨 뒤 — 나이키 상품 정보·크록스 www.crocs.co.jp·온러닝 ja-jp·킨 www.keenfootwear.jp · 푸마는 일본 몰 막힘이라 뺌).
 v1.29: (대표 결정 2026-11-22 'ERP에 있는 판매 중·판매 예정 상품 위주로 먼저 수집' — 선택 '비공개로 받기'·'공개 prices.json에 함께'·'판매 중 먼저, 예정은 다음')
     SKU 단계(sku_stage) — 대표 상품을 받은 뒤 남은 시간(최대 SKU_MAX 8분 · 남은 시간 90초 밑이면 목록도 안 받고 건너뜀)에 비공개 목록(Secrets ERP_SKU_URL·ERP_SKU_TOKEN —
     없으면 건너뜀 · https만 · 넘겨짐 안 따라감)의 상품을 공식몰에서 찾아 정가를 받음: 한국 먼저(모든 브랜드 한국 묶음 → 해외) · 판매 중 먼저 · 처음 받는 값 먼저 ·
@@ -237,7 +239,7 @@ PAUSED = {"brooksrunning.co.kr": {"since": "2026-11-03", "why": "한국 공식�
           "www.underarmour.co.uk": {"since": "2026-11-17", "why": "영국 공식몰이 자동 접속을 막음"},
           "www.underarmour.de": {"since": "2026-11-17", "why": "독일 공식몰이 자동 접속을 막음"}}
                                     # 요청 안 함 · 이전 값 그대로 + 표시 paused · 셈·21일 알림에서 뺌 · 다시 열리면 주소·상품 번호를 고치고 여기서 뺌
-PAUSED_CC = {cc: {"since": "2026-11-22", "why": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"} for cc in ("JP", "MX", "AE")}   # v1.28 나라 단위 수집 중단
+PAUSED_CC = {cc: {"since": "2026-11-22", "why": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"} for cc in ("MX", "AE")}   # v1.28 나라 단위 수집 중단 · v1.30 일본 재개(대표 결정 11-23)
                                     # (대표 결정 2026-11-22 '국내 및 미주 유럽 위주 · 국내 MSRP 최우선' — 미주 = 미국만) · 사이트 PAUSED와 같게 요청 안 함·이전 값 그대로 · 다시 받으려면 여기서 뺌
 CAFE24_LIST = {"brooksrunning.co.kr"}   # v1.13 소비자가 칸(price_custom)을 할인 전 정가로 읽는 카페24 몰 — 그 칸이 실제 정가인지 확인한 몰만(10/28 브룩스 한국:
                                          # 글리세린 맥스 2 소비자가 249,000 = 세일 전 받은 정가 · 아드레날린 GTS 25 189,000 · 블랙프라이데이 판매가 132,300)
@@ -2542,7 +2544,7 @@ def _sku_promo(d):
 SKU_DROP = 60        # 일 — 값이 모두 이만큼 넘게 이전 값(공식몰에서 빠짐)이면 파일에서 뺌 · 목록에서 빠진 상품도 같은 주기로 계속 받음(빠진 날이 드러나지 않게)
 SKU_MIN_LEFT = 90    # 초 — 대표 상품 뒤 남은 시간이 이보다 적으면 SKU 단계 건너뜀(목록도 안 받음 — 단계 15분 제한 전에 저장)
 SKU_BF = 1.25        # 배 — 정가 표시가 없는 새 값은 대표 상품의 '한국 정가 ÷ 그 나라 정가' 가운데값(브랜드·나라별)에서 이만큼 넘게 싸 보이면 보류(할인가를 정가로 저장하지 않게 — 11/21 블프 검사 자동화)
-SKU_CC = ("KR", "US", "GB", "DE")   # 대표 결정 11-22 — 한국(최우선) + 미국·영국·독일
+SKU_CC = ("KR", "US", "GB", "DE", "JP")   # 대표 결정 11-22 — 한국(최우선) + 미국·영국·독일 · v1.30 일본(11-23 — 맨 뒤 차례)
 SKU_LANES = 6
 SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 무시) → 감시 브랜드 이름
     "나이키": "nike", "푸마": "puma", "온러닝": "on|onrunning|on running|온", "아크테릭스": "arcteryx|arc'teryx",
@@ -2552,11 +2554,11 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning"}
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
-CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de"}
+CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de", "JP": "www.crocs.co.jp"}
 PUMA_PD = {"KR": "https://kr.puma.com/kr/ko/pd/x/{m}.html", "US": "https://us.puma.com/us/en/pd/x/{m}",
            "GB": "https://uk.puma.com/uk/en/pd/x/{m}", "DE": "https://eu.puma.com/de/de/pd/x/{m}"}   # 주소 이름 부분(x)을 몰이 제 이름으로 바꿔 줌(11/22 시험)
-ON_LOC = {"KR": "ko-kr", "US": "en-us", "GB": "en-gb", "DE": "de-de"}
-KEEN_SHOP = {"US": "https://www.keenfootwear.com", "GB": "https://www.keenfootwear.co.uk", "DE": "https://www.keenfootwear.de/en"}
+ON_LOC = {"KR": "ko-kr", "US": "en-us", "GB": "en-gb", "DE": "de-de", "JP": "ja-jp"}
+KEEN_SHOP = {"US": "https://www.keenfootwear.com", "GB": "https://www.keenfootwear.co.uk", "DE": "https://www.keenfootwear.de/en", "JP": "https://www.keenfootwear.jp"}
 DRM_SITE = {"US": ("www.drmartens.com", "/us/en/"), "GB": ("www.drmartens.com", "/uk/en_gb/")}
 NIKE_STYLE = NIKE_FEED.split("&filter=productInfo")[0] + "&filter=productInfo.merchProduct.styleCode({s})&count=50"   # 스타일 하나 → 그 스타일 색상 모두(11/22 시험 — 여러 품번 한 번에는 HTTP 400)
 
@@ -2566,12 +2568,12 @@ def _sku_model(c): return c.split("-")[0]
 SKU_BRANDS = {
     "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c)},
     "크록스": {"slug": "crocs", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{5,6}-[0-9A-Z]{3}$"},
-    "푸마": {"slug": "puma", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{6}(-\d{2})?$", "model": True},
+    "푸마": {"slug": "puma", "cc": ("KR", "US", "GB", "DE"), "q": _sku_model, "rx": r"^\d{6}(-\d{2})?$", "model": True},   # 일본 몰은 접속 막음(PAUSED jp.puma.com)
     "언더아머": {"slug": "ua", "cc": ("US",), "q": _sku_model, "rx": r"^\d{7}(-\d{3})?$", "model": True},   # 한국·영국·독일 몰은 접속 막음(수집 멈춤)
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
     "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
-    "킨(KEEN)": {"slug": "keen", "cc": ("US", "GB", "DE"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True},   # 한국 LF 몰은 품번으로 찾을 길이 없음(다음 차례)
+    "킨(KEEN)": {"slug": "keen", "cc": ("US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True},   # 한국 LF 몰은 품번으로 찾을 길이 없음(다음 차례)
 }
 
 
