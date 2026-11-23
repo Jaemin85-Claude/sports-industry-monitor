@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU 상품에 국내 확인 상태 kr_status — "none"(이번에 국내 공식몰이 답했는데 이 품번이 없음) · "unread"(아직 못 물음 ·
-    못 받음 · 정가를 확실히 못 읽음 · 보류 · 덜 끝난(또는 빈) 색인 · 국내 몰을 읽지 못하는 브랜드) — ERP는 "none"만 '국내 공식 판매 없음'으로 셈. 확인한 날은 싣지 않음(날마다 물은 품번이
+v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU 상품에 국내 확인 상태 kr_status — "none"(이번에 국내 공식몰이 답했는데 이 품번이 없음) · "unread"(아직 답을 못 받음 ·
+    국내 몰에 있는데 정가를 확실히 못 읽음 · 보류 · 국내 몰을 읽지 못하는 브랜드) — ERP는 "none"만 '국내 공식 판매 없음'으로 셈. 확인한 날은 싣지 않음(날마다 물은 품번이
     공개 파일에 드러나 목록 순서를 짐작할 수 있어 — 검토 11/23). 이미 파일에 있는 상품(해외에서 찾은 공개 품번)에만 붙임 — 어디서도 못 찾은 목록 품번은 지금처럼 파일에 남기지 않음 ·
     한국 값이 생기면 지움 · 그날 묻지 않은 상품은 지난 상태 그대로 · 같은 모델의 국내 모델 단위 값이 있는 색상은 달지 않음(ERP 규칙 ②로 확보).
     "none"은 확실할 때만(검토 11/23 — 잘못된 none이 가장 해로움): 크록스 모델 페이지에 그 색상이 있는데 정가를 못 읽거나 이 모델 변형이 하나도 없으면 unread(__unread__) ·
     나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 unread(SNKRS 발매 채널·50개 넘는 스타일 미확인) · 색인(킨 한국 목록 넘기기 — 쪽 번호 끝 전에 멈춘 분류나 품번을 못 읽은 상품 카드가 있으면 ·
     온러닝 사이트맵·쇼피파이 목록 — 한도로 멈춤)이 덜 끝났거나 비었으면 색인에 없는 품번은 unread(_Idx.partial) · 쇼피파이 상품에 색인 품번 변형을 못 읽으면 unread ·
-    색인을 못 만든 날 unread(지난 none을 이어 쓰지 않음) · 온러닝 한국 사이트맵에 없음은 unread · 닥터마틴 한국 품번을 못 읽는 상품(액세서리 빼고)이 있으면 덜 끝난 색인 ·
+    답을 못 받은 날(국내 몰 오류·색인 못 만듦·덜 끝난 색인·크록스 페이지에 변형 데이터 없음 — __noans__)은 앞 상태 유지(처음이면 unread — ERP 요청 11/23) · 온러닝 한국 사이트맵에 없음은 unread · 닥터마틴 한국 품번을 못 읽는 상품(액세서리 빼고)이 있으면 덜 끝난 색인 ·
     킨 한국 목록 사진·상품 페이지 품번 불일치면 덜 끝난 색인 · 상태는 그 품번 국내 차례 날에만 바꿈 · 파일에 있는 상품의 국내 묻기는 판매 상태로 앞세우지 않음(묻는 날·순서가 드러나지 않게)
 v1.36: (대표 결정 2026-11-23 — 90% 분모 = 수집 브랜드 판매 중 품번) ERP 목록 브랜드 표기 'THOM BROWN'(E 빠짐)도 톰브라운으로 알아봄(SKU_ALIAS — 전에는 '감시 브랜드 밖'으로 셈).
 v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 카드(같은 <a> 안 사진 주소 …/{품번}_00.jpg · 이름은 사진 alt)로 색인(_keen_kr_index — 맨 위 분류를 날마다 다른 분류부터 · 쪽 번호 끝·새 상품 없는 쪽에서 분류를 멈춤 · 찾는 품번을 다 찾거나 150초(KR_GAP 3초라 약 50쪽)·단계 마감·한국 묻기 마감이면 멈춤 · 목록 화면 하나가 안 열리면 그 분류만 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 같은 품번 상품 페이지가 여럿(11/23 약 9%)이면 3개까지 받아 정가가 모두 같을 때만 · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(keep — 이번 실행에 색인을 이미 만들었으면 색인으로 대조) · 받아 둔 주소가 다른 상품·없는 페이지일 때만 색인으로 한 번 더(일시 오류는 그대로) · 요약 줄 '(+ 색인 목록 화면 n쪽)' · 독립 검토 13건 반영.
@@ -2973,8 +2973,10 @@ def _sku_fetch(brand, cc, q, codes, idx):
                     full, ex = crocs_list(r.text, q, cur, color=c.split("-", 1)[1])
                     got[c] = (full, {**ex, "lst": True}, name, "sandal", fin, None)   # 변형 정가(retailPrice) — 정가 표시 있음
                 except RuntimeError:   # 이 나라 몰에 이 색상 없음(다른 색상만) — v1.37 페이지에 그 색상 변형이 있으면 정가를 못 읽은 것(unread)
-                    if not any_v or re.search(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(c)}-', r.text, re.I):
-                        got.setdefault("__unread__", set()).add(c)
+                    if not any_v:
+                        got.setdefault("__noans__", set()).add(c)   # v1.37 페이지에 이 모델 변형이 하나도 없음 — 답을 못 받은 것(앞 상태 유지)
+                    elif re.search(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(c)}-', r.text, re.I):
+                        got.setdefault("__unread__", set()).add(c)   # 그 색상은 있는데 정가를 못 읽음 — 국내에 있음(unread)
             if cc == "KR" and SKU_BRANDS[brand].get("mfill"):   # v1.32 이 모델의 국내 색상 정가(모델 단위 채우기)
                 mod = {}
                 for col in sorted({m_.group(1).upper() for m_ in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(q)}-([0-9A-Za-z]{{3}})-', r.text)}):
@@ -3252,7 +3254,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         if (0, b) not in lanes:
             kr_done[b].set()
     idx, res, rlock, cnt = _SkuIdx(say), {}, threading.Lock(), collections.Counter()
-    noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태 unread)
+    noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태는 앞 상태 유지 · ERP 요청 11/23)
     pre_by, want_by = {}, collections.defaultdict(set)   # v1.35 받아 둔 상품 주소(keep 나라)로 받는 일감 · 색인으로 찾는 열쇠(그 밖 — 킨 한국 색인이 다 찾으면 멈춤)
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ in SKU_BRANDS.get(b_, {}).get("keep", ()):
@@ -3324,7 +3326,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 with rlock:
                     part = bool(getattr(used, "partial", False)) or (used is not None and not used)
                     cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"]), "partial": part, "ix": used if isinstance(used, _Idx) else None}
-                    isnone = bool(none or not gx) and "__model__" not in got and not got.get("__unread__") and not part
+                    isnone = bool(none or not gx) and "__model__" not in got and not got.get("__unread__") and not got.get("__noans__") and not part
                     cnt["none"] += int(isnone)
                 say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(gx.items()))
                                                or ("공식몰에 없음" if isnone else "미확인(" + ("덜 끝난 색인" if part else "정가를 확실히 못 읽음·확인 못 함") + ")"))
@@ -3449,12 +3451,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             st_ = it.get("kr_status")
             r = res.get((b, "KR", q)) if "KR" in h["cc"] else None
             own = "KR" in h["cc"] and _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today)   # v1.37 그 품번 차례 날에만 상태를 바꿈(같은 열쇠 다른 품번 일감에 섞여 물은 날은 값만 저장 — 묻는 날이 드러나지 않게 · 검토 11/23)
+            # ERP 요청 11/23: 답을 받은 날에만 바꿈 · 못 받은 날(오류·색인 못 만듦·덜 끝난 색인·페이지에 변형 데이터 없음)은 앞 상태 유지(처음이면 unread) —
+            # 확보율 분모가 날마다 흔들리지 않게. 답 = 국내 몰에 있음(정가 못 읽음·보류 → unread) 또는 확실히 없음(none)
             if own and r and c in r["codes"]:
                 g_ = r.get("got") or {}
                 part_ = r.get("partial") or bool(getattr(r.get("ix"), "partial", False))   # 일감이 끝난 뒤 색인이 덜 끝남으로 바뀐 것도(킨 사진·품번 불일치)
-                st_ = "unread" if ("err" in r or c in g_ or c in (g_.get("__unread__") or ()) or part_ or "KR" in held) else "none"
-            elif own and (b, "KR", q) in noidx_k and c in jobs[(b, "KR", q)]["codes"]:
-                st_ = "unread"   # 색인을 못 만들어 묻지 못함(못 받음) — 지난 none을 이어 쓰지 않음(검토 11/23)
+                if "err" in r or c in (g_.get("__noans__") or ()):
+                    pass   # 못 받음 — 앞 상태 유지
+                elif c in g_ or c in (g_.get("__unread__") or ()) or "KR" in held:
+                    st_ = "unread"   # 국내 몰에 있음(정가를 확실히 못 읽음·보류)
+                elif part_:
+                    pass   # 덜 끝난 색인에 없음 — 답이 아님, 앞 상태 유지
+                else:
+                    st_ = "none"
             if "KR" not in h["cc"] or st_ not in ("none", "unread"):
                 st_ = "unread"
             it["kr_status"] = st_
