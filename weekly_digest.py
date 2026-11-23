@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.19: (price_fetch v1.29 SKU 단계 — 대표 결정 2026-11-22) '■ 해외 정가 변동'·지금 할인 중 셈에서 kind "sku" 상품(판매·예정 상품 색상 단위 정가 — ERP용)은 뺌(대표 상품만 · 화면과 같게).
 v1.18: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주' — price_fetch v1.28 PAUSED_CC) '■ 해외 정가 변동'에서 나라 단위로 수집을 멈춘 값(paused '수집 중단 …' — 일본·멕시코·두바이)을 뺌
   (정가 변동·할인 시작·끝·지금 할인 중 모두 — 대시보드 v33.39와 같게 · 멈추기 전 기록도).
 v1.17: (대표 확인 2026-11-10 '브룩스 한국 공식몰 리뉴얼 중' · price_fetch v1.19 PAUSED) '■ 해외 정가 변동'의 '지금 할인 중 n건'에서 수집을 잠시 멈춘 값(paused — 리뉴얼 전 11/03 할인)은 뺌.
@@ -586,6 +587,8 @@ def price_changes(prices, today, old=None, upto=None, n=8):
     seen, until = keys(old), (keys(upto) if upto else None)
     ch, sale, end, on = [], [], [], 0
     for it in (prices or {}).get("items") or []:
+        if it.get("kind") == "sku":   # v1.19 SKU 단계 상품(price_fetch v1.29 — ERP용 색상 단위)은 뺌
+            continue
         nm = f"{it.get('brand', '')} {it.get('name', '')}".strip()
         for cc, o in (it.get("m") or {}).items():
             if not isinstance(o, dict) or not o.get("cur"):
