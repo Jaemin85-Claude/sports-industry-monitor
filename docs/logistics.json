@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 16:40 KST",
+ "generated_at": "2026-11-23 17:38 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -35084,7 +35084,7 @@
      "AU": 1,
      "VN": 1
     },
-    790.4,
+    788.3,
     29
    ],
    [
@@ -35129,14 +35129,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45132538453",
+  "run": "45139997097",
   "tries": [
    {
     "n": 1,
-    "where": "3.42.x.x · Oregon · AS16509 Amazon.com, Inc.",
+    "where": "20.64.x.x · Washington · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-23 16:41"
+    "at": "11-23 17:39"
    }
   ]
  },
