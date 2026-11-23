@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
-v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게).
+v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게) · robots.txt는 * 그룹 + 옛 이름(OLD_BOT)·새 이름 그룹을 모두 지킴(하나라도 막으면 막음 — 새 이름 그룹은 다른 봇 것일 수 있어 *보다 넓게 허용 안 함) · 옛 접속 이름 OLD_UA는 수집에 안 씀(막혔던 사이트 다시 시험용).
 v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
     수집을 멈춘 사이트 jp.puma.com은 그대로) · SKU 단계 나라에 일본(SKU_CC 맨 뒤 — 나이키 상품 정보·크록스 www.crocs.co.jp·온러닝 ja-jp·킨 www.keenfootwear.jp · 푸마는 일본 몰 막힘이라 뺌).
 v1.29: (대표 결정 2026-11-22 'ERP에 있는 판매 중·판매 예정 상품 위주로 먼저 수집' — 선택 '비공개로 받기'·'공개 prices.json에 함께'·'판매 중 먼저, 예정은 다음')
@@ -215,6 +215,8 @@ SCRIPT = "price_fetch"
 OUT = "docs/prices.json"
 KST = datetime.timezone(datetime.timedelta(hours=9))
 BOT = "market-monitor"   # robots.txt에서 우리를 가리키는 이름(UA 안의 이름과 같게) · v1.31 일반 이름(11-23 전에는 sports-industry-monitor)
+OLD_BOT = "sports-industry-monitor"   # v1.31 11-23 전 이름 — robots.txt에 이 이름 그룹이 있으면 그 규칙도 지킴(이름을 바꿔 피하지 않게)
+OLD_UA = "Mozilla/5.0 (compatible; sports-industry-monitor price bot; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"   # v1.31 11-23 전 접속 이름 — 수집에는 안 씀 · 그 전에 우리를 막은 사이트를 다시 시험할 때만(임시 시험 · CLAUDE.md)
 UA = f"Mozilla/5.0 (compatible; {BOT} price bot)"   # v1.31 저장소 주소·저장소 이름은 넣지 않음(대표 지시 11-23) — robots.txt는 BOT 이름으로 맞춤
 HDR = {"User-Agent": UA, "Accept": "text/html,application/json;q=0.9,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.8,ko;q=0.6"}
 DAYS = 7            # 주 1회
@@ -1589,7 +1591,9 @@ ROBOTS_ALT = {"api.nike.com": "https://www.nike.com"}
 
 
 def _robots_rules(txt):
-    """robots.txt → 우리에게 맞는 규칙 [(허용?, 정규식, 길이)] — RFC 9309: 우리 이름 그룹이 있으면 그것만, 없으면 *"""
+    """robots.txt → 지킬 규칙 묶음 [[(허용?, 정규식, 길이)], …] — v1.31: * 그룹 + (있으면) 옛 이름 그룹 + (있으면) 새 이름 그룹을 모두 지킴
+    (어느 묶음 하나라도 막으면 막음 — 옛 이름 그룹은 이름을 바꿔 피하지 않게, 새 이름 그룹은 아직 아무 사이트도 우리 새 이름을 몰라 다른 봇 것일 수
+    있어 *보다 넓게 허용하지 않게 · 전에는 RFC 9309대로 우리 이름 그룹이 있으면 그것만, 없으면 *)"""
     groups, g, rule_seen = [], None, True
     for line in txt.splitlines():
         line = line.split("#", 1)[0].strip()
@@ -1606,8 +1610,11 @@ def _robots_rules(txt):
                 if rx.endswith(r"\$"): rx = rx[:-2] + "$"
                 rx = rx.replace("\x00", r"\*").replace("\x01", r"\$")
                 g["rules"].append((k == "allow", re.compile(rx), len(v)))
-    mine = [gg for gg in groups if BOT in gg["ua"]] or [gg for gg in groups if "*" in gg["ua"]]
-    return [r for gg in mine for r in gg["rules"]]
+    sets = [[r for gg in groups if "*" in gg["ua"] for r in gg["rules"]]]
+    for name in (OLD_BOT, BOT):
+        if any(name in gg["ua"] for gg in groups):
+            sets.append([r for gg in groups if name in gg["ua"] for r in gg["rules"]])
+    return sets
 
 
 def _robots_get(base):
@@ -1636,12 +1643,17 @@ def robots_ok(url):
                 if not _QUIET[0]:   # v1.29 SKU 단계에서는 찍지 않음(어느 브랜드를 묻는지가 드러나지 않게)
                     log(f"  {p.netloc}: {_ROB[base]} — robots.txt를 두지 않는 API 주소라 {urllib.parse.urlsplit(alt).netloc} robots.txt를 따름")
                 _ROB[base] = got
+        if not isinstance(_ROB[base], str) and len(_ROB[base]) > 1 and not _QUIET[0]:
+            log(f"  {p.netloc}: robots.txt에 우리 이름(옛 이름·새 이름) 그룹이 있음 — * 규칙과 함께 모두 지킴(더 엄격한 쪽)")
     rules = _ROB[base]
     if isinstance(rules, str):
         return False, f"{rules} — 이 사이트 건너뜀"
     path = urllib.parse.unquote(p.path or "/") + ("?" + urllib.parse.unquote(p.query) if p.query else "")
-    hit = [(n, a) for a, rx, n in rules if rx.match(path)]
-    return (True, "") if not hit or max(hit)[1] else (False, "robots.txt가 막음")
+    for rs in rules:   # v1.31 묶음마다 가장 긴 규칙 — 하나라도 막으면 막음
+        hit = [(n, a) for a, rx, n in rs if rx.match(path)]
+        if hit and not max(hit)[1]:
+            return False, "robots.txt가 막음"
+    return True, ""
 
 
 _S = _MAIN.sess   # 넘겨짐 사이 쿠키를 이어 주려고(예전 allow_redirects=True와 같게) · v1.12 묶음마다 세션(_Ctx.sess)
