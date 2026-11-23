@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.39: (ERP 조건 11/23 '목록 전체 확대' · 대표 결정 11/23 '암호 꼬리표만 공개 (추천)') ① 모니터가 읽지 않는 브랜드(SKU_BRANDS 밖)의 목록 품번은 받자마자 버림 —
+    이름·품번·건수를 셈하지도 공개 파일·실행 기록에 남기지도 않음(전에는 '감시 브랜드 밖 n · 아직 못 읽는 브랜드 n곳 n개' 구간 셈) · 요약 줄 '목록(읽는 브랜드) n개(품번 모양이 다름 n)' ·
+    시험 목록(공개 품번)일 때만 건너뛴 브랜드 이름을 찍음. ② 국내 공식몰에 없음(none)인데 파일에 없는 목록 품번(어느 나라 값도 없음 — 병행수입 품번 등)은 품번 대신
+    꼬리표만 prices.json 최상위 kr_none {"v": 1, "tags": [...]}에 — 꼬리표 = HMAC-SHA256(SHA-256("kr-none|v1|" + 목록 토큰), 목록에 온 품번(빈칸 모두 빼고 대문자)) 16진 앞 16자리 ·
+    ERP(토큰을 만든 쪽)가 자기 품번으로 같은 꼬리표를 만들어 맞춤 · 실제 개수가 드러나지 않게 가짜 꼬리표로 50개 단위까지 채움(KR_NONE_PAD) · 상태 규칙은 v1.37 kr_status와 같음
+    (그 품번 국내 차례 날에 답을 받았을 때만 바꿈 · 못 받은 날은 지난 꼬리표가 앞 상태) · 파일에 남는 상품(kr_status)·같은 모델 국내 모델 단위 값이 있는 색상·대표 상품 품번은 넣지 않음 ·
+    목록에서 빠진 품번의 꼬리표는 다음 실행에서 빠짐 · 토큰을 바꾸면 꼬리표가 차례 날(2일)까지 다시 쌓임 · 요약 줄 끝 '파일 밖 국내 공식몰에 없음 꼬리표 n'(구간).
 v1.38: (대표 지시 2026-11-23 '90% 이상' · '스포츠 브랜드가 제일 중요') 컨버스 국내 정가 — ERP 판매 중 품번(감시 브랜드 밖 · SKU_ALIAS '컨버스')을 한국 공식몰(카페24
     www.converse.co.kr)에서 품번 검색(search.html?keyword=) → 상품 페이지 '스타일 : 품번' 칸(ma_product_code)이 같을 때만 정가(converse_price — meta product:price:amount ·
     할인가 product:sale_price:amount · 소비자가 칸이 판매가보다 높으면 그것) · 같은 품번 페이지 여러 개면 3개까지 받아 정가가 모두 같을 때만 · 검색에 없으면 __noans__
@@ -225,7 +232,7 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     weekly_digest CC_KO·CUR_SYM + (새 통화면) fetch_data FX·build_dashboard FX_LBL를 함께 고친다.
     (v1.17 나이키 상품 정보에 없는 나라는 MK 첫 칸을 None으로 두고 나이키 상품 urls에 그 나라 페이지 주소)
 """
-import collections, contextlib, datetime, hashlib, json, os, re, sys, threading, time, traceback, urllib.error, urllib.parse, urllib.request
+import collections, contextlib, datetime, hashlib, hmac, json, os, re, sys, threading, time, traceback, urllib.error, urllib.parse, urllib.request
 from html import unescape
 import requests
 
@@ -2556,7 +2563,8 @@ def _lanes_n():
 
 # ── v1.29 SKU 단계: 판매·예정 상품(비공개 목록)의 정가 — 대표 결정 2026-11-22 '비공개로 받기 · 공개 prices.json에 함께 · 판매 중 먼저, 예정은 다음' ──
 # 목록 = GitHub Secrets ERP_SKU_URL(주소)·ERP_SKU_TOKEN(Bearer 토큰)의 JSON {"items":[{"brand","code","status":"selling|planned",…}]} — 없으면 이 단계는 건너뜀.
-# 저장소·실행 기록이 공개라 목록 주소·토큰·품번·상품명은 찍지 않음(줄은 구간·찾은 상품 수만) · 못 찾은 품번은 파일 어디에도 남기지 않음(다시 물을 날은 상태 없이 품번 해시로 정한 요일 — _sku_slot).
+# 저장소·실행 기록이 공개라 목록 주소·토큰·품번·상품명은 찍지 않음(줄은 구간·찾은 상품 수만) · 못 찾은 품번은 파일 어디에도 남기지 않음(다시 물을 날은 상태 없이 품번 해시로 정한 요일 — _sku_slot)
+# v1.39 읽지 않는 브랜드(SKU_BRANDS 밖)의 품번은 받자마자 버림(셈도 안 함) · 국내 공식몰에 없음(none)인 파일 밖 품번은 품번 대신 꼬리표만(kr_none — _kr_tag).
 # 공식몰에서 찾은 상품만 prices.json items에 kind "sku"로 넣음(판매 상태·목록 출처는 쓰지 않음) — 화면·주간 메일은 kind "sku"를 뺌(대표 상품만).
 # 요청은 대표 상품과 같은 get(우리 봇 이름 · robots.txt · 사이트별 간격 · 막히면 그 실행에서 멈춤 — 우회 없음).
 SKU_ENV_URL, SKU_ENV_TOKEN, SKU_ENV_TEST = "ERP_SKU_URL", "ERP_SKU_TOKEN", "ERP_SKU_TEST"   # TEST = 공개 품번 시험 목록(JSON · 브랜치 시험용 — 줄을 자세히 찍음)
@@ -2567,6 +2575,24 @@ SKU_STALE_EVERY = 3  # 일 — 전에 받았는데 이번에 못 받은 값(이�
 SKU_ASK_KR = 2       # 일 — 한국에서 아직 못 찾은 값을 다시 묻는 주기(목록의 새 상품은 1~2일 안에 · 날마다 순서를 돌림)
 SKU_NEW_SHARE = 0.6  # 한국 '아직 못 찾은 값 묻기'는 SKU 단계 시간의 이만큼까지만 — 나머지는 해외·다시 받기 몫(목록에 공식몰에 없는 품번이 많아도)
 SKU_HOLD_DAYS = 21   # 일 — 정가 확인 보류 값이 같은 값(5% 안)으로 이만큼 넘게 이어지고 세일 기간(_sku_promo) 밖이면 정가로 받아들임
+SKU_META = ("sku_list_fail", "sku_list_told", "kr_none")   # 파일 최상위에 두는 SKU 단계 상태(단계를 건너뛴 날은 그대로 이어 씀)
+KR_NONE_PAD = 50     # v1.39 '국내 공식몰에 없음' 목록 품번 꼬리표(kr_none) 개수를 이 단위로 채움 — 가짜 꼬리표를 섞어 실제 개수가 드러나지 않게
+
+
+def _sku_token():
+    """ERP 목록 토큰(Bearer 앞머리 뗀 값) — 없으면 빈 글"""
+    tok = os.environ.get(SKU_ENV_TOKEN, "").strip()
+    return tok[7:].strip() if tok.lower().startswith("bearer ") else tok
+
+
+def _kr_none_key(test):
+    """v1.39 꼬리표 열쇠 = SHA-256("kr-none|v1|" + 목록 토큰) — ERP(토큰을 만든 쪽)와 모니터만 앎 · 시험 목록이면 고정 시험 열쇠(브랜치 시험 전용)"""
+    return hashlib.sha256(b"kr-none|v1|" + (b"test" if test else _sku_token().encode("utf-8"))).digest()
+
+
+def _kr_tag(key, code):
+    """v1.39 꼬리표 = HMAC-SHA256(열쇠, 목록 품번(빈칸 모두 빼고 대문자)) 16진 앞 16자리 — 열쇠 없이는 품번을 알 수 없음"""
+    return hmac.new(key, code.encode("utf-8"), hashlib.sha256).hexdigest()[:16]
 
 
 def _sku_promo(d):
@@ -2628,12 +2654,11 @@ def sku_list(deadline=None):
     if test:
         raw, is_test = json.loads(test), True
     else:
-        url, tok = os.environ.get(SKU_ENV_URL, "").strip(), os.environ.get(SKU_ENV_TOKEN, "").strip()
+        url, tok = os.environ.get(SKU_ENV_URL, "").strip(), _sku_token()
         if not url or not tok:
             return None, False, None
         if not url.lower().startswith("https://"):
             return None, False, "목록 주소가 https가 아님"
-        tok = tok[7:].strip() if tok.lower().startswith("bearer ") else tok
         req = urllib.request.Request(url, headers={"Authorization": f"Bearer {tok}", "Accept": "application/json", "User-Agent": UA})
         opener = urllib.request.build_opener(_NoRedirect)
         raw, why = None, ""
@@ -2658,24 +2683,30 @@ def sku_list(deadline=None):
         if raw is None:
             return None, False, why or "못 받음"
         is_test = False
-    out, idx = [], {}
+    # v1.39 (ERP 조건 11/23 '목록 전체 확대') 모니터가 읽지 않는 브랜드(SKU_BRANDS 밖 — 감시 브랜드 밖·대표 상품만 받는 브랜드)의 품번은 받자마자 버림:
+    # 이름·품번·건수를 셈하지도 공개 파일·실행 기록에 남기지도 않음(미확인 셈은 ERP가 함) · 시험 목록(공개 품번)일 때만 건너뛴 브랜드 이름을 찍음
+    out, idx, skip = [], {}, set()
     for it in raw:
         if not isinstance(it, dict):
             continue
         b = _SKU_AL.get(_SKU_KEY(it.get("brand")))
-        c = _sku_norm(it.get("code"))
-        if not b or not c:
-            out.append({"brand": None, "code": c, "st": 0}); continue
+        raw_c = _sku_norm(it.get("code"))   # v1.39 목록에 온 품번 그대로(빈칸 빼고 대문자) — 국내 공식몰에 없음 꼬리표(kr_none)는 이 품번으로(ERP가 같은 꼬리표를 만듦)
         h = SKU_BRANDS.get(b)
-        if h and h.get("norm"):
-            c = h["norm"](c)
-        if h and h.get("model") and (not h.get("rx") or re.match(h["rx"], c)):
+        if not h or not raw_c:
+            if is_test:
+                skip.add(str(it.get("brand") or "?"))
+            continue
+        c = h["norm"](raw_c) if h.get("norm") else raw_c
+        if h.get("model") and (not h.get("rx") or re.match(h["rx"], c)):
             c = h["q"](c)   # 모델 단위 — 색상 품번은 모델 번호로(목록 색상 품번을 파일에 남기지 않음)
         st = 1 if str(it.get("status") or "").lower() == "planned" else 0
         if (b, c) in idx:
             idx[(b, c)]["st"] = min(idx[(b, c)]["st"], st)   # 같은 품번 — 판매 중이 앞섬
+            idx[(b, c)]["raw"].add(raw_c)
             continue
-        idx[(b, c)] = {"brand": b, "code": c, "st": st}; out.append(idx[(b, c)])
+        idx[(b, c)] = {"brand": b, "code": c, "st": st, "raw": {raw_c}}; out.append(idx[(b, c)])
+    if skip:
+        log(f"  SKU 시험 목록: 읽지 않는 브랜드 건너뜀 — {', '.join(sorted(skip))}")
     return out, is_test, None
 
 
@@ -3205,11 +3236,11 @@ def audit_stage(items_all, t0, today, td, old_audit):
 
 
 def sku_stage(old, t0, today, td, rep_codes, rep_items):
-    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told})"""
+    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told, kr_none})"""
     def age(d): return (today - datetime.date.fromisoformat(str(d)[:10])).days
     def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     old_items = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku" and it.get("id")}
-    meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
+    meta = {k: old[k] for k in SKU_META if k in old}
     def alive(it):   # 값이 모두 SKU_DROP일 넘게 이전 값(공식몰에서 빠짐)이거나, 받지 않는 브랜드라 오래 그대로면 뺌
         for o in (it.get("m") or {}).values():
             if not isinstance(o, dict) or not o.get("seen"):
@@ -3242,21 +3273,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     mitems = {it["id"]: it for it in keep if SKU_BRANDS.get(it.get("brand"), {}).get("mfill") and it["id"] == mid(it["brand"], str(it.get("code") or ""))}
     keep = [it for it in keep if it["id"] not in mitems]
     # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만 · 목록에서 빠진 상품도 같은 규칙으로 계속 받음(st 2 — 묻기 순서에선 예정과 같게)
-    tgt, n_out, n_unsup = {}, 0, collections.Counter()
+    # v1.39 목록에는 읽는 브랜드(SKU_BRANDS) 품번만 옴(sku_list가 나머지를 버림) · 품번 모양이 다른 것은 구간 셈만(브랜드 이름은 시험 목록일 때만)
+    tgt, n_shape, raws = {}, collections.Counter(), collections.defaultdict(set)
     for it in lst:
         b, c = it["brand"], it["code"]
-        if not b:
-            n_out += 1; continue
-        h = SKU_BRANDS.get(b)
-        if not h:
-            n_unsup[b] += 1; continue
+        h = SKU_BRANDS[b]
         if h.get("rx") and not re.match(h["rx"], c) and not h.get("model"):
-            n_unsup[b + "(품번 모양)"] += 1; continue
+            n_shape[b] += 1; continue
         if h.get("model") and not re.match(h["rx"].split("(")[0] + "$", c):   # 모델 단위 — 모델 번호만(sku_list가 바꿈)
-            n_unsup[b + "(품번 모양)"] += 1; continue
+            n_shape[b] += 1; continue
         if c in rep_codes.get(b, set()):
             continue
         tgt[(b, c)] = min(tgt.get((b, c), 9), it["st"])
+        raws[(b, c)] |= it.get("raw") or {c}   # v1.39 목록에 온 품번(꼬리표 kr_none용 — 모델 단위 브랜드는 그 모델의 색상 품번 모두)
     def iid(b, c): return f"s-{SKU_BRANDS[b]['slug']}-{re.sub(r'[^0-9a-z]+', '-', c.lower()).strip('-')}"
     for it in keep:
         b, c = it.get("brand"), it.get("code")
@@ -3440,6 +3469,13 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 if c1 != c2:
                     rat[(it.get("brand"), c1, c2)].append(p1 / p2)
     med = {k: sorted(v)[len(v) // 2] for k, v in rat.items() if len(v) >= 3}
+    # v1.39 국내 공식몰에 없음 꼬리표(kr_none — 대표 결정 11/23 '암호 꼬리표만 공개 (추천)' · ERP 요청 '파일에 없는 품번도 none을 알 수 있게'):
+    # 파일에 없는 목록 품번(어느 나라 값도 없음)은 품번 대신 꼬리표만 — 지난 실행 꼬리표에 있으면 앞 상태 "none"(그날 묻지 않았거나 답을 못 받은 날은 그대로)
+    kkey = _kr_none_key(test)
+    okn = old.get("kr_none") if isinstance(old.get("kr_none"), dict) and old["kr_none"].get("v") == 1 else {}
+    old_tags = set(okn.get("tags") or ())
+    def tagged(b, c): return any(_kr_tag(kkey, r) in old_tags for r in raws.get((b, c), ()))
+    krs = {}   # (브랜드, 품번) → 이번 국내 상태(한국 값이 없을 때만)
     # 합치기 — 그 일감에서 물은 품번만(같은 열쇠의 다른 품번은 그대로 · 이전 값 표시 안 함)
     items, kept = {}, {it["id"]: it for it in keep}
     n_new = n_ok = n_kr = n_hold = 0
@@ -3510,7 +3546,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         if (it["m"].get("KR") or {}).get("p"):
             it.pop("kr_status", None)
         else:
-            st_ = it.get("kr_status")
+            st_ = it.get("kr_status") or ("none" if tagged(b, c) else None)   # v1.39 파일에 없던 품번은 지난 꼬리표가 앞 상태
             r = res.get((b, "KR", q)) if "KR" in h["cc"] else None
             own = "KR" in h["cc"] and _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today)   # v1.37 그 품번 차례 날에만 상태를 바꿈(같은 열쇠 다른 품번 일감에 섞여 물은 날은 값만 저장 — 묻는 날이 드러나지 않게 · 검토 11/23)
             # ERP 요청 11/23: 답을 받은 날에만 바꿈 · 못 받은 날(오류·색인 못 만듦·덜 끝난 색인·페이지에 변형 데이터 없음)은 앞 상태 유지(처음이면 unread) —
@@ -3529,6 +3565,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             if "KR" not in h["cc"] or st_ not in ("none", "unread"):
                 st_ = "unread"
             it["kr_status"] = st_
+            krs[(b, c)] = st_
         if it["m"]:
             if held:
                 it["held"] = held   # 정가 확인 보류 중인 나라(값·처음 보류한 날) — ERP는 p만 씀
@@ -3580,16 +3617,22 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     out = [it for it in list(items.values()) + list(kept.values()) + list(mout.values())
            if alive(it) and (it["id"] in mout or it.get("code") not in rep_codes.get(it.get("brand"), set()))]   # 대표 상품이 된 품번은 뺌(같은 품번 두 줄이 되지 않게) · 모델 단위 상품은 남김(대표 상품 정가는 색상 중 가장 높은 값이라 색상 정가가 갈리는지 확인 안 함 — ERP는 lvl model을 먼저 씀 · 검토 11/23)
     out.sort(key=lambda x: (x["brand"], x["code"]))
+    # v1.39 꼬리표 — 파일에 남는 상품(kr_status를 씀)·같은 모델 국내 모델 단위 값이 있는 색상(ERP 규칙 ②)은 빼고, 목록에 온 품번 그대로 · 가짜 꼬리표로 KR_NONE_PAD 단위까지 채움
+    oid = {it["id"] for it in out}
+    tags = {_kr_tag(kkey, r) for (b, c), st_ in krs.items() if st_ == "none" and iid(b, c) not in oid
+            and not (SKU_BRANDS[b].get("mfill") and mid(b, SKU_BRANDS[b]["q"](c)) in mout) for r in raws.get((b, c), ())}
+    npad = max(KR_NONE_PAD, -(-len(tags) // KR_NONE_PAD) * KR_NONE_PAD) - len(tags)
+    meta["kr_none"] = {"v": 1, "tags": sorted(tags | {_kr_tag(kkey, f"pad|{i}") for i in range(npad)})}
     nv = sum(len(it["m"]) for it in out)
-    nb = len({k.split("(")[0] for k in n_unsup})   # 못 읽는 브랜드는 곳 수만(목록 구성은 내부 정보 — 이름은 시험 목록일 때만)
-    log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드·품번 모양 {nb}곳 {band(sum(n_unsup.values()))}개"
-        + (f" — {', '.join(sorted({k.split('(')[0] for k in n_unsup}))}" if n_unsup and test else "") + ")"
+    log(f"SKU 정가: 목록(읽는 브랜드) {band(len(lst))}개"
+        + (f"(품번 모양이 다름 {band(sum(n_shape.values()))}" + (f" — {', '.join(sorted(n_shape))}" if test else "") + ")" if n_shape else "")
         + f" · 공식몰에서 찾은 상품 {len(out)}개(값 {nv} · 한국 {sum(1 for it in out if 'KR' in it['m'])}"
         + (f" — 그중 모델 단위 국내 {sum(1 for it in out if it['id'] in mout)}" if mout else "") + ")"
         + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
         + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
+        + f" · 파일 밖 국내 공식몰에 없음 꼬리표 {band(len(tags))}"
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
     return out, meta
 
@@ -3873,7 +3916,7 @@ def main():
     if busy:
         log("SKU 정가: 대표 상품 묶음이 안 끝나 이번 실행은 건너뜀 — 받아 둔 상품은 그대로")
         sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
-        sku_meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
+        sku_meta = {k: old[k] for k in SKU_META if k in old}
     else:
         try:
             _QUIET[0] = True   # SKU 단계 — 사이트별 안내 줄을 찍지 않음(어느 브랜드를 묻는지 드러나지 않게)
@@ -3886,7 +3929,7 @@ def main():
             log(f"[WARN] SKU 정가: 단계 오류 {et.__name__} — 받아 둔 상품은 그대로 · "
                 + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
             sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
-            sku_meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
+            sku_meta = {k: old[k] for k in SKU_META if k in old}
     try:   # v1.33 정가 표본 검사(주 1회 · 남은 시간 있을 때) — 오류가 저장을 막지 않게
         _QUIET[0] = True
         try:
