@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요') 접속 이름(User-Agent)에서 GitHub 저장소 주소를 뺌 — 'sports-industry-monitor price bot'만(봇임은 그대로 밝힘 · robots.txt는 BOT 이름으로 맞춰 바뀌는 것 없음).
 v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
     수집을 멈춘 사이트 jp.puma.com은 그대로) · SKU 단계 나라에 일본(SKU_CC 맨 뒤 — 나이키 상품 정보·크록스 www.crocs.co.jp·온러닝 ja-jp·킨 www.keenfootwear.jp · 푸마는 일본 몰 막힘이라 뺌).
 v1.29: (대표 결정 2026-11-22 'ERP에 있는 판매 중·판매 예정 상품 위주로 먼저 수집' — 선택 '비공개로 받기'·'공개 prices.json에 함께'·'판매 중 먼저, 예정은 다음')
@@ -214,7 +215,7 @@ SCRIPT = "price_fetch"
 OUT = "docs/prices.json"
 KST = datetime.timezone(datetime.timedelta(hours=9))
 BOT = "sports-industry-monitor"   # robots.txt에서 우리를 가리키는 이름(UA 안의 이름과 같게)
-UA = f"Mozilla/5.0 (compatible; {BOT} price bot; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"
+UA = f"Mozilla/5.0 (compatible; {BOT} price bot)"   # v1.31 저장소 주소는 넣지 않음(대표 지시 11-23) — robots.txt는 BOT 이름으로 맞춤
 HDR = {"User-Agent": UA, "Accept": "text/html,application/json;q=0.9,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.8,ko;q=0.6"}
 DAYS = 7            # 주 1회
 SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 할인으로 보고 정가를 지킴

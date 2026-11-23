@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 10: 물류 (운임·운송기간)
+v1.12: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요') 접속 이름(User-Agent)에서 GitHub 저장소 주소를 뺌 — 'sports-industry-monitor logistics'만.
 v1.11: (대표 지시 2026-11-11 '추천 순서대로' 3번) 관세청 운송비용 파일 3개 — 공공데이터포털 화면 개편(KRDS · 10/29 무렵)으로 화면에 내려받기 번호(FILE_…)가 없고
       내려받기는 화면 스크립트 함수(fileDetailObj.fn_fileDataDown)로만 됨 → 화면 내부 스크립트는 쓰지 않고 공식 오픈 API(파일데이터 자동변환 — 명세
       https://infuser.odcloud.kr/oas/docs?namespace={번호}/v1 · 키 없이 읽힘, 자료 https://api.odcloud.kr/api/{번호}/v1/uddi:… · 인증키 DATA_GO_KR_API_KEY)로 받음(kcs_api_csv —
@@ -194,7 +195,7 @@ import urllib3
 SCRIPT = "logistics_fetch"
 OUT = "docs/logistics.json"
 KST = datetime.timezone(datetime.timedelta(hours=9))
-UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"}
+UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor logistics)"}   # v1.12 저장소 주소는 넣지 않음(대표 지시 11-23)
 TIMEOUT = (15, 40)             # (연결, 읽기) 초 — 연결이 안 되는 곳은 빨리 포기
 RUN_LIMIT = 8 * 60             # 한 실행 최대 8분 — 넘으면 남은 요청은 바로 실패(이전 값 유지), 대시보드 갱신 작업(20분 제한)은 계속
 T_END = float("inf")           # main()이 시작할 때 정함
