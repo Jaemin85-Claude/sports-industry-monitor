@@ -2961,6 +2961,7 @@ def audit_stage(items_all, t0, today, td, old_audit):
     deadline = time.time() + min(left - 30, 240)
     ok = bad = nf = 0
     miss = []
+    _STOP.clear()   # SKU 단계가 끝나며 켠 '묶음 멈춤'을 풀어야 요청이 나감(11/23 브랜치 시험에서 20개 모두 못 받음)
     for it, o in sample:
         if time.time() > deadline:
             nf += 1; continue
@@ -2978,7 +2979,11 @@ def audit_stage(items_all, t0, today, td, old_audit):
             ok += 1
         else:
             bad += 1; miss.append({"id": it["id"], "p": o["p"], "why": "페이지에 이 정가가 안 보임"})
+    _STOP.set()
     n = ok + bad
+    if not n:   # 하나도 대조 못 함(모두 못 받음) — 결과를 남기지 않고 다음 실행에 다시(받은 날을 옮기지 않음)
+        log(f"정가 표본 검사: 대조한 값 없음(못 받음 {nf}) — 다음 실행에 다시" + (" · " + miss[0]["why"][:80] if miss else ""))
+        return old_audit
     au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_N]}
     log(f"정가 표본 검사: 국내 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 못 받음 {nf}" if nf else "")
         + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["why"].startswith("페이지에"))[:300] if bad else ""))
