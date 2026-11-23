@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.41: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터' — price_fetch v1.33) 수집 상태 '해외 정가' 줄 끝에 '정가 표본 검사 m/d 일치 k/n'(prices.json audit — 주 1회 국내 정가를 공식몰 페이지와 대조).
 v33.40: (대표 결정 2026-11-22 'ERP 판매·예정 상품 위주로 먼저 수집' — price_fetch v1.29 SKU 단계) prices.json의 kind "sku" 상품(판매·예정 상품 색상 단위 정가 —
     ERP가 읽는 값)은 화면 자료에서 뺌(해외 정가 표·카드·착지·브랜드 상세·오늘 해외 할인 차익은 대표 상품 그대로 · 파일 크기 그대로) · 파일 최상위 sku_q 등도 화면에 안 넣음 ·
     수집 상태 '해외 정가' 줄의 이전 값·못 받음 셈도 대표 상품만, 끝에 'SKU 정가 상품 n개(값 m · 한국 k)' 한 줄(알림 셈 밖).
@@ -6362,6 +6363,9 @@ def _partial(fn, d):
             notes.append(f"마지막으로 받은 날 {d['fetched']}")
         if sku:   # v33.40 판매·예정 상품 색상 단위 정가(화면에는 안 보임 — ERP가 prices.json을 읽음)
             notes.append(f"SKU 정가 상품 {len(sku)}개(값 {sum(len(it.get('m') or {}) for it in sku)} · 한국 {sum(1 for it in sku if 'KR' in (it.get('m') or {}))})")
+        au = d.get("audit") if isinstance(d.get("audit"), dict) else None
+        if au and au.get("n"):   # v33.41 정가 표본 검사(price_fetch v1.33 — 주 1회 국내 정가를 공식몰 페이지와 대조)
+            notes.append(f"정가 표본 검사 {str(au.get('date') or '')[5:].replace('-', '/')} 일치 {au.get('ok', 0)}/{au['n']}")
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes

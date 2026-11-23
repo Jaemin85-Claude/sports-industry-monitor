@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.33: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터') 정가 표본 검사 audit_stage — 주 1회(AUDIT_DAYS) 남은 시간이 있으면(150초 이상) 국내 정가 20개(대표 상품·SKU·모델 단위 · 브랜드마다 돌아가며 · 주마다 다른 표본 · 이전 값·수집 멈춤·8일 넘은 값 뺌)를 공식몰 상품 페이지에 보이는 가격과 대조 — 일치 = '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 100배 단위 포함) · 나이키는 상품 정보의 페이지 이름으로 nike.com/kr 상품 페이지 · 결과 prices.json 'audit' {date·n·ok·rate·not_read·miss} · 로그 '정가 표본 검사: 국내 n개 중 일치 k(…%)' · 일치율 80% 밑(10개 이상)이면 [WARN] · 페이지에 원화 가격 글자가 아예 없으면(화면 스크립트로 그림 — 톰브라운) 불일치가 아니라 '대조 못 함' · SKU 단계 뒤 멈춤 표시를 풀고 요청 · 하나도 대조 못 하면 결과를 남기지 않고 다음 실행에 · 11/23 브랜치 실측 18개 중 일치 17(94%).
 v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 한 번 만든 모델 상품은 목록과 상관없이 유지(7일마다 그 모델만 다시 받음 — 목록 변화가 파일에 안 드러나게 · 색상 정가가 갈리거나 SKU_DROP일 넘게 이전 값이면 뺌) · 그 나라 몰에 있는 색상의 정가를 확실히 못 읽으면 모델 값 안 정함 · 크록스 대표 상품 모델도 남김 · 할인 가드는 색상 값과 같고 할인 표시는 안 붙임(독립 검토 3건 반영) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
 v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게) · robots.txt는 * 그룹 + 옛 이름(OLD_BOT)·새 이름 그룹을 모두 지킴(하나라도 막으면 막음 — 새 이름 그룹은 다른 봇 것일 수 있어 *보다 넓게 허용 안 함) · 옛 접속 이름 OLD_UA는 수집에 안 씀(막혔던 사이트 다시 시험용).
 v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
@@ -2899,6 +2900,100 @@ def _sku_fetch(brand, cc, q, codes, idx):
     return got, False
 
 
+AUDIT_N = 20          # v1.33 정가 표본 검사 — 한 번에 대조할 국내 값 수(대표 결정 11-23 '정확도는 모니터 자체 표본 검사부터')
+AUDIT_DAYS = 7        # 주 1회
+AUDIT_MIN_LEFT = 150  # 초 — 남은 시간이 이보다 적으면 다음 실행에(받은 날을 옮기지 않음)
+
+
+def _audit_page(it, o):
+    """v1.33 대조할 공식몰 상품 페이지 → (주소 또는 None, 까닭) — 나이키는 상품 정보(같은 회사 API)에 적힌 페이지 이름으로 nike.com/kr 상품 페이지"""
+    u = str(o.get("url") or "")
+    if u.startswith("http") and "api.nike.com" not in u:
+        return u, ""
+    if it.get("brand") == "나이키":
+        code = str(it.get("code") or "")
+        m, l, _ = MK["KR"]
+        d = _json(get(NIKE_STYLE.format(m=m, l=l, s=code.split("-")[0])))
+        for ob in d.get("objects") or []:
+            for pi in ob.get("productInfo") or []:
+                sc = _sku_norm((pi.get("merchProduct") or {}).get("styleColor"))
+                slug = str((pi.get("productContent") or {}).get("slug") or "")
+                if slug and re.fullmatch(r"[0-9a-z-]+", slug) and (sc == code or ("-" not in code and sc.startswith(code + "-"))):
+                    return f"https://www.nike.com/kr/t/{slug}/{sc}", ""
+        return None, "나이키 상품 정보에 페이지 이름 없음"
+    return None, "페이지 주소 없음"
+
+
+def audit_stage(items_all, t0, today, td, old_audit):
+    """v1.33 정가 표본 검사 — 주 1회 국내 정가 AUDIT_N개(브랜드마다 돌아가며 · 주마다 다른 표본)를 공식몰 상품 페이지에 보이는 가격과 대조.
+    일치 = 페이지에 그 정가가 '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 등 100배 단위 포함)이 있음 · 못 받은 페이지는 셈에서 뺌 ·
+    돌려줌 prices.json 'audit' {date, n, ok, rate, not_read, miss[{id, p, why}]} — 공개 파일(대표 상품·찾은 SKU 상품은 이미 공개)"""
+    if isinstance(old_audit, dict) and old_audit.get("date"):
+        try:
+            if (today - datetime.date.fromisoformat(old_audit["date"])).days < AUDIT_DAYS:
+                return old_audit
+        except ValueError:
+            pass
+    left = t0 + TIME_LIMIT - 30 - time.time()
+    if left < AUDIT_MIN_LEFT:
+        log(f"정가 표본 검사: 남은 시간 부족({max(0, left):.0f}초) — 다음 실행에")
+        return old_audit
+    wk = "%d-%02d" % today.isocalendar()[:2]
+    pool = collections.defaultdict(list)
+    for it in items_all:
+        o = (it.get("m") or {}).get("KR") if isinstance(it, dict) else None
+        if not isinstance(o, dict) or not o.get("p") or o.get("cur") != "KRW" or o.get("paused") or o.get("stale_since"):
+            continue
+        try:
+            if (today - datetime.date.fromisoformat(str(o.get("obs_date") or o.get("seen"))[:10])).days > 8:
+                continue
+        except ValueError:
+            continue
+        pool[it.get("brand")].append((it, o))
+    for b in pool:
+        pool[b].sort(key=lambda x: hashlib.sha1(f"{x[0]['id']}|{wk}".encode()).hexdigest())
+    sample, k = [], 0
+    while len(sample) < AUDIT_N and any(len(v) > k for v in pool.values()):
+        for b in sorted(pool):
+            if len(pool[b]) > k and len(sample) < AUDIT_N:
+                sample.append(pool[b][k])
+        k += 1
+    deadline = time.time() + min(left - 30, 240)
+    ok = bad = nf = 0
+    miss = []
+    _STOP.clear()   # SKU 단계가 끝나며 켠 '묶음 멈춤'을 풀어야 요청이 나감(11/23 브랜치 시험에서 20개 모두 못 받음)
+    for it, o in sample:
+        if time.time() > deadline:
+            nf += 1; continue
+        try:
+            url, why = _audit_page(it, o)
+            if not url:
+                nf += 1; miss.append({"id": it["id"], "p": o["p"], "why": why}); continue
+            t = get(url).text
+        except Exception as e:
+            nf += 1
+            w = re.sub(r"https?://\S+", "(주소)", str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)[:80]
+            miss.append({"id": it["id"], "p": o["p"], "why": "페이지 못 받음 — " + w}); continue
+        p_ = int(round(o["p"]))
+        if f"{p_:,}" in t or re.search(rf"[\"':\s]({p_}|{p_ * 100})(?:\.0+)?[\"',\s}}]", t):
+            ok += 1
+        elif not re.search(r"\d{1,3}(?:,\d{3})+\s*원|₩\s*\d|\"priceCurrency\"\s*:\s*\"KRW\"", t):
+            nf += 1; miss.append({"id": it["id"], "p": o["p"], "why": "페이지에 원화 가격 글자 없음(화면 스크립트로 그림) — 대조 못 함"})   # 11/23 톰브라운
+        else:
+            bad += 1; miss.append({"id": it["id"], "p": o["p"], "why": "페이지에 이 정가가 안 보임"})
+    _STOP.set()
+    n = ok + bad
+    if not n:   # 하나도 대조 못 함(모두 못 받음) — 결과를 남기지 않고 다음 실행에 다시(받은 날을 옮기지 않음)
+        log(f"정가 표본 검사: 대조한 값 없음(못 받음 {nf}) — 다음 실행에 다시" + (" · " + miss[0]["why"][:80] if miss else ""))
+        return old_audit
+    au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_N]}
+    log(f"정가 표본 검사: 국내 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 못 받음 {nf}" if nf else "")
+        + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["why"].startswith("페이지에"))[:300] if bad else ""))
+    if n >= 10 and ok / n < 0.8:
+        log(f"[WARN] 정가 표본 검사 일치율 {ok / n:.0%} — 저장된 국내 정가가 공식몰 페이지와 다른 값이 많음(읽는 법 확인)")
+    return au
+
+
 def sku_stage(old, t0, today, td, rep_codes, rep_items):
     """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told})"""
     def age(d): return (today - datetime.date.fromisoformat(str(d)[:10])).days
@@ -3512,6 +3607,16 @@ def main():
                 + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
             sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
             sku_meta = {k: old[k] for k in ("sku_list_fail", "sku_list_told") if k in old}
+    try:   # v1.33 정가 표본 검사(주 1회 · 남은 시간 있을 때) — 오류가 저장을 막지 않게
+        _QUIET[0] = True
+        try:
+            audit = audit_stage(items + sku_items, t0, today, td, old.get("audit"))
+        finally:
+            _QUIET[0] = False
+    except Exception:
+        et, _, tb = sys.exc_info()
+        log(f"[WARN] 정가 표본 검사: 오류 {et.__name__} — " + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
+        audit = old.get("audit")
     out = {"generated_at": now.strftime("%Y-%m-%d %H:%M KST"),
            "fetched": td if ok_run else last,                       # 받은 날 — 잘 끝난 실행만
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
@@ -3519,6 +3624,8 @@ def main():
            "status": "ok" if not stale else "kept", "items": items + sku_items, "failed": list(failed.values()), "host_try": htry,
            "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"}
     out.update(sku_meta)   # v1.29 SKU 단계 상태(목록 못 받은 날만 — 못 찾은 품번은 어디에도 안 남김)
+    if audit:
+        out["audit"] = audit   # v1.33 정가 표본 검사 결과(주 1회 · ERP·수집 상태가 읽음)
     if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
     with open(OUT, "w", encoding="utf-8") as f:
