@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 09:08 KST",
+ "generated_at": "2026-11-23 09:20 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -19971,6 +19971,31 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
+   }
+  },
+  {
+   "id": "s-on-3wf30701200",
+   "brand": "온러닝",
+   "name": "여성 Cloudmonster Hyper PAF",
+   "code": "3WF30701200",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 339000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-hyper-paf-w-3wf3070/womens/white-white-shoes-3WF30701200",
+     "obs": 339000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   },
+   "held": {
+    "US": [
+     280.0,
+     "2026-11-23"
+    ]
    }
   },
   {
