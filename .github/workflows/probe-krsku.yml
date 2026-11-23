@@ -1,0 +1,20 @@
+name: probe-krsku
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths: [probe_krsku.py, .github/workflows/probe-krsku.yml]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: {python-version: "3.12"}
+      - run: pip install -q -r requirements.txt
+      - run: python probe_krsku.py
+        env:
+          ERP_SKU_URL: ${{ secrets.ERP_SKU_URL }}
+          ERP_SKU_TOKEN: ${{ secrets.ERP_SKU_TOKEN }}
