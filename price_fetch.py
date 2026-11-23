@@ -6,7 +6,7 @@ v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU
     공개 파일에 드러나 목록 순서를 짐작할 수 있어 — 검토 11/23). 이미 파일에 있는 상품(해외에서 찾은 공개 품번)에만 붙임 — 어디서도 못 찾은 목록 품번은 지금처럼 파일에 남기지 않음 ·
     한국 값이 생기면 지움 · 그날 묻지 않은 상품은 지난 상태 그대로 · 같은 모델의 국내 모델 단위 값이 있는 색상은 달지 않음(ERP 규칙 ②로 확보).
     "none"은 확실할 때만(검토 11/23 — 잘못된 none이 가장 해로움): 크록스 모델 페이지에 그 색상이 있는데 정가를 못 읽거나 이 모델 변형이 하나도 없으면 unread(__unread__) ·
-    나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 unread(SNKRS 발매 채널·50개 넘는 스타일 미확인) · 색인(킨 한국 목록 넘기기 — 쪽 번호 끝 전에 멈춘 분류가 있으면 ·
+    나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 unread(SNKRS 발매 채널·50개 넘는 스타일 미확인) · 색인(킨 한국 목록 넘기기 — 쪽 번호 끝 전에 멈춘 분류나 품번을 못 읽은 상품 카드가 있으면 ·
     온러닝 사이트맵·쇼피파이 목록 — 한도로 멈춤)이 덜 끝났거나 비었으면 색인에 없는 품번은 unread(_Idx.partial) · 쇼피파이 상품에 색인 품번 변형을 못 읽으면 unread
 v1.36: (대표 결정 2026-11-23 — 90% 분모 = 수집 브랜드 판매 중 품번) ERP 목록 브랜드 표기 'THOM BROWN'(E 빠짐)도 톰브라운으로 알아봄(SKU_ALIAS — 전에는 '감시 브랜드 밖'으로 셈).
 v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 카드(같은 <a> 안 사진 주소 …/{품번}_00.jpg · 이름은 사진 alt)로 색인(_keen_kr_index — 맨 위 분류를 날마다 다른 분류부터 · 쪽 번호 끝·새 상품 없는 쪽에서 분류를 멈춤 · 찾는 품번을 다 찾거나 150초(KR_GAP 3초라 약 50쪽)·단계 마감·한국 묻기 마감이면 멈춤 · 목록 화면 하나가 안 열리면 그 분류만 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 같은 품번 상품 페이지가 여럿(11/23 약 9%)이면 3개까지 받아 정가가 모두 같을 때만 · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(keep — 이번 실행에 색인을 이미 만들었으면 색인으로 대조) · 받아 둔 주소가 다른 상품·없는 페이지일 때만 색인으로 한 번 더(일시 오류는 그대로) · 요약 줄 '(+ 색인 목록 화면 n쪽)' · 독립 검토 13건 반영.
@@ -2780,6 +2780,7 @@ def _keen_kr_index(want=None, stop=None):
     맨 위 분류(3자리)를 날마다 다른 분류부터 쪽마다 넘기고 쪽 번호 끝이나 새 상품이 없는 쪽에서 그 분류를 멈춤 · 찾는 품번(want)을 다 찾거나 stop 시각·KEEN_KR_BUDGET이면 멈춤 ·
     목록 화면 하나가 안 열리면 그 분류만 멈추고 받은 만큼 씀(하나도 못 받으면 실패) · 값은 상품 페이지 품번 칸으로 다시 확인(godo_price — 다르면 실패)"""
     out, want, t0, ok_pages = _Idx(), set(want or ()), time.time(), 0
+    got_g, bad_g = set(), set()   # v1.37 품번을 읽은 상품 번호 · 사진은 있는데 품번을 못 읽은 상품 번호(끝까지 못 읽은 것이 있으면 덜 끝난 색인 — 검토 11/23)
     end = min(t0 + KEEN_KR_BUDGET, stop or float("inf"))
     tops = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d{3})(?!\d)", get(KEEN_KR + "/").text)))
     if not tops:
@@ -2806,9 +2807,12 @@ def _keen_kr_index(want=None, stop=None):
             for k_, m in enumerate(ms):
                 e = t.find("</a>", m.end())
                 seg = t[m.end(): min(x for x in (e if e > 0 else len(t), ms[k_ + 1].start() if k_ + 1 < len(ms) else len(t), m.end() + 1500))]
-                im = re.search(r'<img[^>]+?(?:src|data-[\w-]+)="[^"]*?/(\d{7})_\d+\.(?:jpe?g|png|gif|webp)(?:\?[^"]*)?"[^>]*>', seg)   # v1.37 사진 주소 뒤 ?v= 같은 꼬리도(검토 11/23)
+                im = re.search(r'<img[^>]+?(?:src|data-[\w-]+)="[^"]*?/(\d{7})_\d+\.(?:jpe?g|png|gif|webp)(?:\?[^"]*)?"[^>]*>', seg, re.I)   # v1.37 사진 주소 뒤 ?v= 같은 꼬리·대문자 확장자도(검토 11/23)
                 if not im:
+                    if re.search(r"<img\b", seg, re.I):
+                        bad_g.add(m.group(1))   # 사진은 있는데 품번 꼴이 아님(이름만 있는 고리·추천 칸은 사진이 없어 셈 밖)
                     continue
+                got_g.add(m.group(1))
                 al = re.search(r'alt="([^"]*)"', im.group(0))
                 u = f"{KEEN_KR}/goods/goods_view.php?goodsNo={m.group(1)}"
                 lst_ = out.setdefault(im.group(1), [])
@@ -2822,6 +2826,8 @@ def _keen_kr_index(want=None, stop=None):
             out.partial = True   # v1.37 쪽 한도(199쪽)
     if not ok_pages:
         raise RuntimeError("킨 한국 목록 화면을 하나도 못 받음")
+    if bad_g - got_g:
+        out.partial = True   # v1.37 품번을 못 읽은 상품 카드가 있음 — 그 상품의 품번이 색인에 없을 수 있음
     return out
 
 
