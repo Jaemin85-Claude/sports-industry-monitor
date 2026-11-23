@@ -2605,8 +2605,8 @@ SKU_BRANDS = {
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
     "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
-    "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},
-    "컨버스": {"slug": "converse", "cc": ("KR",), "q": lambda c: c, "rx": r"^[0-9A-Z]{4,7}C$"},   # v1.38 한국 공식몰(카페24) 품번 검색 → 상품 페이지 '스타일' 칸이 같을 때만(converse_price)   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
+    "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
+    "컨버스": {"slug": "converse", "cc": ("KR",), "q": lambda c: c, "rx": r"^[0-9A-Z]{4,7}C$"},   # v1.38 한국 공식몰(카페24) 품번 검색 → 상품 페이지 '스타일' 칸이 같을 때만(converse_price)
 }
 
 
@@ -2791,6 +2791,13 @@ def converse_price(html, code):
     if not p:
         raise RuntimeError("판매가 칸(product:price:amount) 없음")
     lp, sv = cafe24_id_list(html, p)
+    m_ = re.search(r'id="span_product_price_text"', html)
+    if not m_:
+        raise RuntimeError("판매가 칸(span_product_price_text) 없음")
+    blk = html[max(0, m_.start() - 3000): m_.end() + 3000]   # 이 상품 가격 칸 둘레만 — 취소선·'소비자가'·'정상가' 옆에 판매가보다 큰 값이 있는데 못 읽었으면 실패(할인가를 정가로 저장하지 않음 · 검토 11/23)
+    hi = [num(x) for x in re.findall(r'(?:<(?:del|strike|s)\b[^>]*>|line-through[^>]*>|소비자가|정상가)(?:\s*<[^>]+>)*\s*([\d,]+)\s*원', blk)]
+    if any(x and x > p * 1.005 and not (lp and abs(x - lp) < 0.01) for x in hi):
+        raise RuntimeError("할인 표시(취소선·소비자가)가 있는데 소비자가를 못 읽음 — 할인가를 정가로 저장하지 않음")
     full = max(lp or 0, p)
     cur = min(x for x in (s, sv, p) if x)
     return full, {"cur_price": cur, "lst": bool(lp and lp > p * 1.005) or bool(s and s < p * 0.995)}
@@ -3026,9 +3033,14 @@ def _sku_fetch(brand, cc, q, codes, idx):
     if brand == "컨버스":   # v1.38 한국 공식몰 품번 검색(카페24 search.html) → 상품 페이지(같은 품번 여러 개면 정가가 모두 같을 때만)
         r = get(f"{CONVERSE_KR}/product/search.html?keyword={urllib.parse.quote(q)}")
         ls = list(dict.fromkeys(re.findall(r'href="(/product/[^"?#]+?/\d+/)(?:category/\d+/display/\d+/?)?"', r.text)))[:CONVERSE_DUP + 2]
-        vals = []
+        vals, errs = [], []
         for l_ in ls:
-            rr = get(CONVERSE_KR + l_)
+            try:
+                rr = get(CONVERSE_KR + l_)
+            except Exception as e:
+                if _STOP.is_set() or urllib.parse.urlsplit(CONVERSE_KR).netloc in _BLOCKED:
+                    raise
+                errs.append(e); continue   # 품번을 아직 모르는 검색 결과 페이지 — 다른 상품일 수 있어 건너뜀(검토 11/23)
             try:
                 full, ex = converse_price(rr.text, q)
             except RuntimeError as e:
@@ -3039,6 +3051,8 @@ def _sku_fetch(brand, cc, q, codes, idx):
             if len(vals) >= CONVERSE_DUP:
                 break
         if not vals:
+            if errs:
+                raise errs[0]   # 못 읽은 페이지가 이 상품일 수 있음 — '검색에 없음'으로 보지 않음
             return {"__noans__": set(codes)}, True   # 검색에 안 나옴 — 숨긴 상품일 수도 있어 '없음'으로 보지 않음(앞 상태 유지 · 처음이면 unread)
         if max(v[0] for v in vals) > min(v[0] for v in vals) * 1.005:
             raise RuntimeError(f"같은 품번 상품 페이지 {len(vals)}개의 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
