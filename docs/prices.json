@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 09:20 KST",
+ "generated_at": "2026-11-23 13:36 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -50,13 +50,11 @@
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 16500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 2599.0,
@@ -168,10 +166,10 @@
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 15400.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -181,9 +179,7 @@
       ]
      ],
      "sp": 10799.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2599.0,
@@ -272,13 +268,11 @@
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 16500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 2999.0,
@@ -377,10 +371,10 @@
     "JP": {
      "p": 15730.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 15730.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -390,9 +384,7 @@
       ]
      ],
      "sp": 13299.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2499.0,
@@ -478,10 +470,10 @@
     "JP": {
      "p": 13860.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 13860.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -491,9 +483,7 @@
       ]
      ],
      "sp": 11799.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2199.0,
@@ -564,10 +554,10 @@
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 16500.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -577,9 +567,7 @@
       ]
      ],
      "sp": 11499.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2999.0,
@@ -681,13 +669,11 @@
     "JP": {
      "p": 23760.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 23760.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 3699.0,
@@ -767,13 +753,11 @@
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 23100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 3799.0,
@@ -870,13 +854,11 @@
     "JP": {
      "p": 14080.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 14080.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 1999.0,
@@ -957,10 +939,10 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -970,9 +952,7 @@
       ]
      ],
      "sp": 7499.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 1799.0,
@@ -1063,10 +1043,10 @@
     "JP": {
      "p": 6380.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FD4116-001)",
      "obs": 6380.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -1076,9 +1056,7 @@
       ]
      ],
      "sp": 5399.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 1299.0,
@@ -1177,13 +1155,11 @@
     "JP": {
      "p": 4620.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN9675-002)",
      "obs": 4620.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 899.0,
@@ -1291,10 +1267,10 @@
     "JP": {
      "p": 13420.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DA6364-101)",
      "obs": 13420.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -1304,9 +1280,7 @@
       ]
      ],
      "sp": 11399.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2199.0,
@@ -1394,10 +1368,10 @@
     "JP": {
      "p": 16830.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FD0736-100)",
      "obs": 16830.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -1407,9 +1381,7 @@
       ]
      ],
      "sp": 14199.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 2799.0,
@@ -1474,10 +1446,10 @@
     "JP": {
      "p": 23430.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(921826-101)",
      "obs": 23430.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -1487,9 +1459,7 @@
       ]
      ],
      "sp": 19999.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "MX": {
      "p": 4499.0,
@@ -1570,13 +1540,11 @@
     "JP": {
      "p": 11330.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW4555-002)",
      "obs": 11330.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 2299.0,
@@ -1648,13 +1616,11 @@
     "JP": {
      "p": 5060.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(343880-090)",
      "obs": 5060.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 799.0,
@@ -1715,13 +1681,11 @@
     "JP": {
      "p": 17160.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN0149-001)",
      "obs": 17160.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 699.0,
@@ -1782,13 +1746,11 @@
     "JP": {
      "p": 18150.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2289-111)",
      "obs": 18150.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 2799.0,
@@ -1896,13 +1858,11 @@
     "JP": {
      "p": 5170.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(JP)&filter=language(ja)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DC4244-010)",
      "obs": 5170.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "MX": {
      "p": 749.0,
@@ -2013,7 +1973,7 @@
      "sale": false,
      "stale_since": "2026-11-03",
      "why": "HTTP 403(접속 차단 — 우회하지 않음)",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 2199.0,
@@ -2184,7 +2144,7 @@
      "sp_date": "2026-11-03",
      "stale_since": "2026-11-03",
      "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "AE": {
      "p": 449.0,
@@ -2325,7 +2285,7 @@
      "sale": false,
      "stale_since": "2026-11-03",
      "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 2499.0,
@@ -2455,7 +2415,7 @@
      "sale": false,
      "stale_since": "2026-11-03",
      "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 1999.0,
@@ -2580,7 +2540,7 @@
      "sale": false,
      "stale_since": "2026-11-03",
      "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 4999.0,
@@ -2673,7 +2633,7 @@
      "sale": false,
      "stale_since": "2026-11-03",
      "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "paused": "일본 공식몰이 자동 접속을 막음"
     },
     "MX": {
      "p": 1999.0,
@@ -4076,13 +4036,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -4159,13 +4117,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -4226,13 +4182,11 @@
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 23100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 850.0,
@@ -4293,13 +4247,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -4360,13 +4312,11 @@
     "JP": {
      "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
      "obs": 27500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -4416,13 +4366,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 950.0,
@@ -4483,13 +4431,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -4550,13 +4496,11 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 22000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -4617,13 +4561,11 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 22000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 875.0,
@@ -4684,13 +4626,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 850.0,
@@ -4751,13 +4691,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 775.0,
@@ -4818,13 +4756,11 @@
     "JP": {
      "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
      "obs": 27500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 975.0,
@@ -4903,13 +4839,11 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
      "obs": 26400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 950.0,
@@ -4997,10 +4931,10 @@
     "JP": {
      "p": 28600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
      "obs": 28600.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -5010,9 +4944,7 @@
       ]
      ],
      "sp": 22880.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cat": "shoe"
@@ -5080,10 +5012,10 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -5093,9 +5025,7 @@
       ]
      ],
      "sp": 13090.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     },
     "AE": {
      "p": 775.0,
@@ -5156,13 +5086,11 @@
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
      "obs": 23100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 900.0,
@@ -5223,13 +5151,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -5290,13 +5216,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 950.0,
@@ -5357,13 +5281,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.on.com/ja-jp/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 800.0,
@@ -6756,13 +6678,11 @@
     "JP": {
      "p": 26950.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wft1000rma-blk",
      "obs": 26950.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -6803,13 +6723,11 @@
     "JP": {
      "p": 25300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wfs1000rma-blk",
      "obs": 25300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -6850,13 +6768,11 @@
     "JP": {
      "p": 17600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wft2007rma-blk",
      "obs": 17600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -6976,13 +6892,11 @@
     "JP": {
      "p": 26950.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wft1000rgl-blk",
      "obs": 26950.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7050,13 +6964,11 @@
     "JP": {
      "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wfs2200rma-blk",
      "obs": 27500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7151,13 +7063,11 @@
     "JP": {
      "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/ufs7119wwu-blk",
      "obs": 27500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7180,13 +7090,11 @@
     "JP": {
      "p": 31900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/uft7120wwu-blk",
      "obs": 31900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7209,13 +7117,11 @@
     "JP": {
      "p": 29150.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wft2200rma-blk",
      "obs": 29150.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7238,13 +7144,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/wfs2403nre-blk",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7267,13 +7171,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/mfs9022rma-blk",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7332,13 +7234,11 @@
     "JP": {
      "p": 36300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/ufs7123lnr-blk",
      "obs": 36300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7361,13 +7261,11 @@
     "JP": {
      "p": 36300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/ufs7125lea-blk",
      "obs": 36300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7390,13 +7288,11 @@
     "JP": {
      "p": 39600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/uft7101nyl-blk",
      "obs": 39600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "boot"
@@ -7419,13 +7315,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://hunterboots.co.jp/products/uff7146ren-blk",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -9509,13 +9403,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4933-b-b",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -9544,13 +9436,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brw4822-blk",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -9579,10 +9469,10 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm5033-blk-w",
      "obs": 26400.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -9591,9 +9481,7 @@
       ]
      ],
      "sp": 18480.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cc_code": {
@@ -9630,10 +9518,10 @@
     "JP": {
      "p": 29700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4793-b-b",
      "obs": 29700.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -9642,9 +9530,7 @@
       ]
      ],
      "sp": 23760.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cc_code": {
@@ -9673,13 +9559,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4973-blu",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -9723,8 +9607,7 @@
      "obs_date": "2026-11-11",
      "sale": false,
      "stale_since": "2026-11-11",
-     "why": "HTTP 404",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)"
+     "why": "HTTP 404"
     }
    },
    "cc_code": {
@@ -9762,10 +9645,10 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4653-gry",
      "obs": 22000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -9775,9 +9658,7 @@
       ]
      ],
      "sp": 17600.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cc_code": {
@@ -9815,10 +9696,10 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4763-blk",
      "obs": 26400.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -9827,9 +9708,7 @@
       ]
      ],
      "sp": 18480.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cc_code": {
@@ -9858,13 +9737,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/brm4963-blk",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -9893,13 +9770,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://brooksrunning.co.jp/products/bmm4893-gry",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -9968,13 +9843,11 @@
     "JP": {
      "p": 49500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/atom-hoody-m",
      "obs": 49500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10027,13 +9900,11 @@
     "JP": {
      "p": 47300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/atom-jacket-m",
      "obs": 47300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10102,13 +9973,11 @@
     "JP": {
      "p": 33000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/gamma-pant-m",
      "obs": 33000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10177,13 +10046,11 @@
     "JP": {
      "p": 33000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/squamish-hoody-m",
      "obs": 33000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10236,13 +10103,11 @@
     "JP": {
      "p": 68200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/cerium-hoody-m",
      "obs": 68200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10375,13 +10240,11 @@
     "JP": {
      "p": 34100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-ld-4-gtx-m",
      "obs": 34100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10434,13 +10297,11 @@
     "JP": {
      "p": 37400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/sylan-2-m",
      "obs": 37400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10493,13 +10354,11 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/kragg-m",
      "obs": 22000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10552,13 +10411,11 @@
     "JP": {
      "p": 44000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/konseal-trek-m",
      "obs": 44000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10611,13 +10468,11 @@
     "JP": {
      "p": 75900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-jacket-m",
      "obs": 75900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10652,13 +10507,11 @@
     "JP": {
      "p": 28600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-ld-4-m",
      "obs": 28600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10711,13 +10564,11 @@
     "JP": {
      "p": 27500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-7-vest-m",
      "obs": 27500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10761,13 +10612,11 @@
     "JP": {
      "p": 29700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/kopec-gtx-m",
      "obs": 29700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10820,13 +10669,11 @@
     "JP": {
      "p": 22000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/kragg-w",
      "obs": 22000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10927,13 +10774,11 @@
     "JP": {
      "p": 44000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/konseal-trek-w",
      "obs": 44000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -10986,13 +10831,11 @@
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-crew-ls-w",
      "obs": 15400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -11063,13 +10906,11 @@
     "JP": {
      "p": 17600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://arcteryx.jp/products/norvan-downword-logo-ls-m",
      "obs": 17600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cc_code": {
@@ -11178,13 +11019,11 @@
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-newport-h2-triple-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -11242,13 +11081,11 @@
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-newport-h2-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -11298,13 +11135,11 @@
     "JP": {
      "p": 15400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-uneek-monochrome-black-black",
      "obs": 15400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -11370,13 +11205,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-iii-black-black",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11434,13 +11267,11 @@
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-targhee-iv-waterproof-triple-black",
      "obs": 23100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11551,13 +11382,11 @@
     "JP": {
      "p": 11550.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-howser-iii-slide-black-quilted",
      "obs": 11550.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -11615,13 +11444,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-uneek-trekker-black-keen-maple",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11687,13 +11514,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-a86-triple-black",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11733,13 +11558,11 @@
     "JP": {
      "p": 23100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-zionic-waterproof-black-black",
      "obs": 23100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11798,13 +11621,11 @@
     "JP": {
      "p": 18150.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-uneek-wk-black-black",
      "obs": 18150.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -11845,13 +11666,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-wander-black-magnet",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11901,13 +11720,11 @@
     "JP": {
      "p": 25300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-roam-waterproof-black-black",
      "obs": 25300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -11957,10 +11774,10 @@
     "JP": {
      "p": 26400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-seek-safari-black",
      "obs": 26400.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -11970,9 +11787,7 @@
       ]
      ],
      "sp": 18480.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cat": "shoe"
@@ -12031,13 +11846,11 @@
     "JP": {
      "p": 20900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-zionic-magnet-steel-grey",
      "obs": 20900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -12096,13 +11909,11 @@
     "JP": {
      "p": 19030.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-nylon-waterproof-black-black",
      "obs": 19030.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -12161,13 +11972,11 @@
     "JP": {
      "p": 12100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-howser-ii-triple-black",
      "obs": 12100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "sandal"
@@ -12235,13 +12044,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-targhee-iv-oxford-black",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -12282,10 +12089,10 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/all-gender-uneek-lea-perseid-black",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
      "sh": [
       [
@@ -12295,9 +12102,7 @@
       ]
      ],
      "sp": 13860.0,
-     "sp_date": "2026-11-22",
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp_date": "2026-11-23"
     }
    },
    "cat": "sandal"
@@ -12338,13 +12143,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.keenfootwear.jp/products/mens-jasper-merko-black-black",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    },
    "cat": "shoe"
@@ -13101,13 +12904,11 @@
     "JP": {
      "p": 259600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415",
      "obs": 259600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 6400.0,
@@ -13168,13 +12969,11 @@
     "JP": {
      "p": 283800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415",
      "obs": 283800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 6400.0,
@@ -13235,13 +13034,11 @@
     "JP": {
      "p": 205700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415",
      "obs": 205700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5900.0,
@@ -13302,13 +13099,11 @@
     "JP": {
      "p": 217800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415",
      "obs": 217800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5600.0,
@@ -13369,13 +13164,11 @@
     "JP": {
      "p": 187000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415",
      "obs": 187000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4900.0,
@@ -13436,13 +13229,11 @@
     "JP": {
      "p": 196900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/wool-4-bar-pullover-mka189a-00014-415",
      "obs": 196900.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5650.0,
@@ -13503,13 +13294,11 @@
     "JP": {
      "p": 155100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/waffle-4-bar-sweatpants-mjq082a-06452-035",
      "obs": 155100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5300.0,
@@ -13570,13 +13359,11 @@
     "JP": {
      "p": 99000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/oxford-shirt-mwl001a-f0313-100",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2450.0,
@@ -13637,13 +13424,11 @@
     "JP": {
      "p": 170500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001",
      "obs": 170500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4200.0,
@@ -13704,13 +13489,11 @@
     "JP": {
      "p": 176000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001",
      "obs": 176000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4350.0,
@@ -13771,13 +13554,11 @@
     "JP": {
      "p": 462000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001",
      "obs": 462000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 11400.0,
@@ -13838,13 +13619,11 @@
     "JP": {
      "p": 696300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-mr-thom-bag-mag001l-00198-001",
      "obs": 696300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 17150.0,
@@ -13905,13 +13684,11 @@
     "JP": {
      "p": 319000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
      "obs": 319000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 7850.0,
@@ -13972,13 +13749,11 @@
     "JP": {
      "p": 209000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5850.0,
@@ -14095,13 +13870,11 @@
     "JP": {
      "p": 178200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
      "obs": 178200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4400.0,
@@ -14162,13 +13935,11 @@
     "JP": {
      "p": 183700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
      "obs": 183700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4550.0,
@@ -14229,13 +14000,11 @@
     "JP": {
      "p": 246400.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-reporter-bag-mag143b-00198-001",
      "obs": 246400.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 6050.0,
@@ -14296,13 +14065,11 @@
     "JP": {
      "p": 160600.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
      "obs": 160600.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 3950.0,
@@ -14363,13 +14130,11 @@
     "JP": {
      "p": 535700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.thombrowne.com/ja-jp/products/pebble-grain-large-duet-tote-mag228a-00198-001",
      "obs": 535700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 13200.0,
@@ -14430,13 +14195,11 @@
     "JP": {
      "p": 453200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
      "obs": 453200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 10900.0,
@@ -14497,13 +14260,11 @@
     "JP": {
      "p": 630300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
      "obs": 630300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 16500.0,
@@ -14564,13 +14325,11 @@
     "JP": {
      "p": 430100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
      "obs": 430100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 10500.0,
@@ -14631,13 +14390,11 @@
     "JP": {
      "p": 90200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/check-cashmere-scarf-p81250011",
      "obs": 90200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2290.0,
@@ -14698,13 +14455,11 @@
     "JP": {
      "p": 385000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
      "obs": 385000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 9500.0,
@@ -14765,13 +14520,11 @@
     "JP": {
      "p": 385000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
      "obs": 385000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 9500.0,
@@ -14832,13 +14585,11 @@
     "JP": {
      "p": 385000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
      "obs": 385000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 9500.0,
@@ -14899,13 +14650,11 @@
     "JP": {
      "p": 408100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
      "obs": 408100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 9900.0,
@@ -14966,13 +14715,11 @@
     "JP": {
      "p": 100100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/gradient-check-cashmere-scarf-p81348721",
      "obs": 100100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2490.0,
@@ -15033,13 +14780,11 @@
     "JP": {
      "p": 95700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/knight-cashmere-scarf-p81316191",
      "obs": 95700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2390.0,
@@ -15100,13 +14845,11 @@
     "JP": {
      "p": 104500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/reversible-check-cashmere-scarf-p81345821",
      "obs": 104500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2650.0,
@@ -15167,13 +14910,11 @@
     "JP": {
      "p": 111100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/wide-check-cashmere-scarf-p80859311",
      "obs": 111100.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 2790.0,
@@ -15234,13 +14975,11 @@
     "JP": {
      "p": 79200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/narrow-check-cashmere-scarf-p81302831",
      "obs": 79200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 1990.0,
@@ -15292,13 +15031,11 @@
     "JP": {
      "p": 231000.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/small-check-tote-p81314921",
      "obs": 231000.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5900.0,
@@ -15350,13 +15087,11 @@
     "JP": {
      "p": 192500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/small-city-check-clip-messenger-bag-p81315271",
      "obs": 192500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 4990.0,
@@ -15408,13 +15143,11 @@
     "JP": {
      "p": 333300.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
      "obs": 333300.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 7900.0,
@@ -15466,13 +15199,11 @@
     "JP": {
      "p": 250800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jp.burberry.com/nylon-quilted-jacket-p81270131",
      "obs": 250800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "AE": {
      "p": 5900.0,
@@ -15551,13 +15282,11 @@
     "JP": {
      "p": 7700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/crocs-classic/10001.html",
      "obs": 7700.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 3850.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -15565,8 +15294,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 3850.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 54.99,
@@ -15643,13 +15372,11 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/crocs-classic-lined-clog/203591.html",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 3520.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -15657,8 +15384,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 3520.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -15816,13 +15543,11 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/crocs-baya-lined-clog/205969.html",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 5280.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -15830,8 +15555,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 5280.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -15908,13 +15633,11 @@
     "JP": {
      "p": 9900.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/classic-unfurgettable-sueded-clog/212106.html",
      "obs": 9900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 6930.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -15922,8 +15645,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 6930.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 69.99,
@@ -15982,13 +15705,11 @@
     "JP": {
      "p": 11550.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/unfurgettable-platform-clog/214108.html",
      "obs": 11550.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 9240.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -15996,8 +15717,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 9240.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 74.99,
@@ -16074,13 +15795,11 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/crocs-crocband/11016.html",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 6160.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -16088,8 +15807,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 6160.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -16175,13 +15894,11 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/crocs-classic-platform-clog-w/206750.html",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 6160.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -16189,8 +15906,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 6160.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -16258,13 +15975,11 @@
     "JP": {
      "p": 14850.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/chalet-clog/214955.html",
      "obs": 14850.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "DE": {
      "p": 84.99,
@@ -16323,13 +16038,11 @@
     "JP": {
      "p": 12100.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/bae-lined-clog/211753.html",
      "obs": 12100.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 8470.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -16337,8 +16050,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 8470.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 79.99,
@@ -16406,13 +16119,11 @@
     "JP": {
      "p": 8250.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/classic-crafted-clog/211354.html",
      "obs": 8250.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 6600.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -16420,8 +16131,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 6600.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -16480,13 +16191,11 @@
     "JP": {
      "p": 8800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://www.crocs.co.jp/p/bayaband-clog/205089.html",
      "obs": 8800.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-23",
      "sale": true,
-     "sp": 4400.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
@@ -16494,8 +16203,8 @@
        "base"
       ]
      ],
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "sp": 4400.0,
+     "sp_date": "2026-11-23"
     },
     "DE": {
      "p": 59.99,
@@ -16887,13 +16596,11 @@
     "JP": {
      "p": 18700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2620/",
      "obs": 18700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "US": {
      "p": 150.0,
@@ -16928,13 +16635,11 @@
     "JP": {
      "p": 24200.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jpn.mizuno.com/ec/disp/attgrp/J1GM2610/",
      "obs": 24200.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "US": {
      "p": 200.0,
@@ -16978,13 +16683,11 @@
     "JP": {
      "p": 16500.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2644/",
      "obs": 16500.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "US": {
      "p": 150.0,
@@ -17037,13 +16740,11 @@
     "JP": {
      "p": 19800.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jpn.mizuno.com/ec/disp/attgrp/J1GC2502/",
      "obs": 19800.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "US": {
      "p": 180.0,
@@ -17096,13 +16797,11 @@
     "JP": {
      "p": 29700.0,
      "cur": "JPY",
-     "seen": "2026-11-22",
+     "seen": "2026-11-23",
      "url": "https://jpn.mizuno.com/ec/disp/attgrp/U1GD2530/",
      "obs": 29700.0,
-     "obs_date": "2026-11-22",
-     "sale": false,
-     "paused": "수집 중단 — 한국·미국·유럽 위주(대표 결정)",
-     "stale_since": "2026-11-22"
+     "obs_date": "2026-11-23",
+     "sale": false
     },
     "US": {
      "p": 250.0,
@@ -17197,6 +16896,23 @@
      "obs": 119000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 12650.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 12650.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 10799.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       10799.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -17276,6 +16992,50 @@
      "obs": 29000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 2970.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 2970.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 2499.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       2499.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar3565-011",
+   "brand": "나이키",
+   "name": "ナイキ ショックス R4 ウィメンズシューズ",
+   "code": "AR3565-011",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 21230.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 21230.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 17999.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       17999.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -17292,6 +17052,42 @@
      "cur": "KRW",
      "seen": "2026-11-23",
      "obs": 35000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar4997-101",
+   "brand": "나이키",
+   "name": "ナイキ スポーツウェア クラブ メンズ Tシャツ",
+   "code": "AR4997-101",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 5116.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 5116.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar4997-657",
+   "brand": "나이키",
+   "name": "ナイキ スポーツウェア クラブ メンズ Tシャツ",
+   "code": "AR4997-657",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 5116.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 5116.0,
      "obs_date": "2026-11-23",
      "sale": false
     }
@@ -17610,6 +17406,23 @@
      "obs": 90.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 11000.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 11000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 9399.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       9399.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -17634,6 +17447,14 @@
      "cur": "USD",
      "seen": "2026-11-23",
      "obs": 95.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "JP": {
+     "p": 12100.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 12100.0,
      "obs_date": "2026-11-23",
      "sale": false
     }
@@ -17931,6 +17752,32 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 16500.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 16500.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc0774-105",
+   "brand": "나이키",
+   "name": "エア ジョーダン 1 LOW ウィメンズシューズ",
+   "code": "DC0774-105",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 16500.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 16500.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -18020,6 +17867,23 @@
      "obs": 69000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 6600.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 6600.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 3999.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       3999.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -18054,6 +17918,24 @@
      "cur": "KRW",
      "seen": "2026-11-23",
      "obs": 49000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc5357-121",
+   "brand": "나이키",
+   "name": "ナイキ ACG ショートスリーブ Tシャツ",
+   "code": "DC5357-121",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 7480.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 7480.0,
      "obs_date": "2026-11-23",
      "sale": false
     }
@@ -18305,6 +18187,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 6820.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 6820.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -18377,6 +18267,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 3190.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 3190.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -18838,6 +18736,24 @@
        "base"
       ]
      ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd7544-010",
+   "brand": "나이키",
+   "name": "ナイキ スポーツウェア RPM バックパック (26L)",
+   "code": "FD7544-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 13090.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 13090.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -19413,6 +19329,60 @@
    }
   },
   {
+   "id": "s-nike-hj2688-010",
+   "brand": "나이키",
+   "name": "ACG モルフォ メンズ Storm-FIT ADV レインジャケット",
+   "code": "HJ2688-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 40920.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 40920.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 28699.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       28699.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hj7038-100",
+   "brand": "나이키",
+   "name": "ナイキ ズーム フライ 6 \"Eliud Kipchoge\" メンズ ロード レーシングシューズ",
+   "code": "HJ7038-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 19800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 19800.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 16799.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       16799.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "s-nike-hj8082-002",
    "brand": "나이키",
    "name": "나이키 에어 슈퍼플라이 여성 신발",
@@ -19537,6 +19507,33 @@
    }
   },
   {
+   "id": "s-nike-hq1988-101",
+   "brand": "나이키",
+   "name": "ナイキ ショックス R4 メンズシューズ",
+   "code": "HQ1988-101",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 22880.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 22880.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 19499.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       19499.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "s-nike-hq4307-001",
    "brand": "나이키",
    "name": "나이키 마인드 001 남성 프리게임 뮬",
@@ -19648,6 +19645,24 @@
        "base"
       ]
      ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hv5060-003",
+   "brand": "나이키",
+   "name": "ナイキ ReactX リジュビネイト メンズシューズ",
+   "code": "HV5060-003",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "JP": {
+     "p": 11110.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "obs": 11110.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -19989,13 +20004,25 @@
      "obs": 339000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "US": {
+     "p": 280.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.on.com/en-us/products/cloudmonster-hyper-paf-w-3wf3070/womens/white-white-shoes-3WF30701200",
+     "obs": 280.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "JP": {
+     "p": 35200.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.on.com/ja-jp/products/cloudmonster-hyper-paf-w-3wf3070/womens/white-white-shoes-3WF30701200",
+     "obs": 35200.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
-   },
-   "held": {
-    "US": [
-     280.0,
-     "2026-11-23"
-    ]
    }
   },
   {
@@ -20033,6 +20060,24 @@
      "obs": 69900.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 7700.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/10001.html",
+     "obs": 7700.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 6160.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       6160.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -20144,6 +20189,24 @@
      "obs": 54.99,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/11016.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 6160.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       6160.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -20490,6 +20553,15 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 8800.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/205089.html",
+     "obs": 8800.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -20806,6 +20878,24 @@
      "obs": 54900.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 5500.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/206991.html",
+     "obs": 5500.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 4400.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       4400.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -20831,6 +20921,24 @@
       [
        "2026-11-23",
        44900.0,
+       "base"
+      ]
+     ]
+    },
+    "JP": {
+     "p": 6600.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.jp/p/x/207019.html",
+     "obs": 6600.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 3960.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       3960.0,
        "base"
       ]
      ]
@@ -21384,6 +21492,15 @@
      "obs": 120.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 17930.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.jp/products/mens-jasper-rocks-sp-birch-black",
+     "obs": 17930.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -21458,21 +21575,21 @@
  ],
  "failed": [],
  "host_try": {
-  "salomon-xt6 US": "2026-11-22",
-  "salomon-xt6 GB": "2026-11-22",
-  "salomon-xt6 DE": "2026-11-22",
-  "salomon-xt6base US": "2026-11-22",
-  "salomon-xt6base GB": "2026-11-22",
-  "salomon-xt6base DE": "2026-11-22",
-  "salomon-xt4og US": "2026-11-22",
-  "salomon-xt4og GB": "2026-11-22",
-  "salomon-xt4og DE": "2026-11-22",
-  "salomon-xt6expanse US": "2026-11-22",
-  "salomon-xt6expanse GB": "2026-11-22",
-  "salomon-xt6expanse DE": "2026-11-22",
-  "salomon-xt4oggtx US": "2026-11-22",
-  "salomon-xt4oggtx GB": "2026-11-22",
-  "salomon-xt4oggtx DE": "2026-11-22"
+  "salomon-xt6 US": "2026-11-23",
+  "salomon-xt6 GB": "2026-11-23",
+  "salomon-xt6 DE": "2026-11-23",
+  "salomon-xt6base US": "2026-11-23",
+  "salomon-xt6base GB": "2026-11-23",
+  "salomon-xt6base DE": "2026-11-23",
+  "salomon-xt4og US": "2026-11-23",
+  "salomon-xt4og GB": "2026-11-23",
+  "salomon-xt4og DE": "2026-11-23",
+  "salomon-xt6expanse US": "2026-11-23",
+  "salomon-xt6expanse GB": "2026-11-23",
+  "salomon-xt6expanse DE": "2026-11-23",
+  "salomon-xt4oggtx US": "2026-11-23",
+  "salomon-xt4oggtx GB": "2026-11-23",
+  "salomon-xt4oggtx DE": "2026-11-23"
  },
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"
 }
