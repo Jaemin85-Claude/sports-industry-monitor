@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 17:39 KST",
+ "generated_at": "2026-11-23 19:30 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -21601,9 +21601,37 @@
    }
   },
   {
+   "id": "s-keen-1004347",
+   "brand": "킨(KEEN)",
+   "name": "[재스퍼] 밝은 베이지 여성 스니커즈",
+   "code": "1004347",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001000",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "JP": {
+     "p": 16830.0,
+     "cur": "JPY",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.jp/products/womens-jasper-suede-sneakers-silver-mink",
+     "obs": 16830.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-keen-1018206",
    "brand": "킨(KEEN)",
-   "name": "Men's Shanti Clog | Black/Dawn Blue",
+   "name": "[샨티] 블랙 남성 슬라이드",
    "code": "1018206",
    "cat": "sandal",
    "kind": "sku",
@@ -21643,13 +21671,97 @@
        "base"
       ]
      ]
+    },
+    "KR": {
+     "p": 99000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000663",
+     "obs": 99000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1025028",
+   "brand": "킨(KEEN)",
+   "name": "[뉴포트 H2] 블랙 여성 샌들",
+   "code": "1025028",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000417",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 120.0,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.de/en/products/womens-newport-h2-triple-black",
+     "obs": 120.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1026651",
+   "brand": "킨(KEEN)",
+   "name": null,
+   "code": "1026651",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001030",
+     "obs": 149000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1026849",
+   "brand": "킨(KEEN)",
+   "name": "Women's Jasper Sneaker | Hairy Black/Black",
+   "code": "1026849",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000799",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 140.0,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.de/en/products/womens-jasper-suede-sneakers-hairy-black-black",
+     "obs": 140.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
   {
    "id": "s-keen-1027353",
    "brand": "킨(KEEN)",
-   "name": "Women's Newport H2 Sandal | Monochrome/Safari",
+   "name": "[뉴포트 H2] 베이지 여성 샌들",
    "code": "1027353",
    "cat": "sandal",
    "kind": "sku",
@@ -21671,6 +21783,53 @@
        "base"
       ]
      ]
+    },
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000421",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1028661",
+   "brand": "킨(KEEN)",
+   "name": null,
+   "code": "1028661",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000475",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1029737",
+   "brand": "킨(KEEN)",
+   "name": "[재스퍼 ROCKS SP] 아이보리 여성 스니커즈",
+   "code": "1029737",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000445",
+     "obs": 189000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
@@ -21721,9 +21880,28 @@
    }
   },
   {
+   "id": "s-keen-1030558",
+   "brand": "킨(KEEN)",
+   "name": "[샨티] 흰색 여성 슬라이드",
+   "code": "1030558",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000243",
+     "obs": 99000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-keen-1030678",
    "brand": "킨(KEEN)",
-   "name": "Women's Hyperport H2 Sandal | Chipmunk/Birch",
+   "name": "[하이퍼포트 H2] 베이지 여성 샌들",
    "code": "1030678",
    "cat": "sandal",
    "kind": "sku",
@@ -21745,6 +21923,34 @@
        "base"
       ]
      ]
+    },
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000471",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1031341",
+   "brand": "킨(KEEN)",
+   "name": null,
+   "code": "1031341",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001015",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
     }
    }
   },
