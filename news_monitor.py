@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 4: 뉴스 모니터링 (v2)
+v2.18: (대표 지시 2026-11-23 '봇 이름도 일반 이름으로 바꿔주세요') 구글 뉴스 RSS 접속 이름(User-Agent)을 저장소 이름 sports-industry-monitor 대신 일반 이름 market-monitor로.
 v2.17: (대표 지시 2026-10-23 '써코니로 맞추고 검색어도 추가') 써코니 뉴스 이름 '새코니(울버린)' → '써코니(울버린)', 검색어에 써코니 추가(새코니는 그대로) ·
        기사 이름표를 실행마다 지금 이름(BRANDS·INDUSTRY)으로 — news.json·1년 보관 기사에 수집 때 이름이 저장돼, 이름을 바꿔도 옛 기사는 옛 이름이었음
        (보관 중 '새코니(울버린)' 2건 · '호카(데커스)' 54건 → 지금 이름)
@@ -93,7 +94,7 @@ import requests
 
 API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 KST = datetime.timezone(datetime.timedelta(hours=9))
-UA = {"User-Agent": "Mozilla/5.0 (sports-industry-monitor news bot)"}
+UA = {"User-Agent": "Mozilla/5.0 (market-monitor news bot)"}   # v2.18 일반 이름(11-23 전에는 sports-industry-monitor) — 구글 뉴스 RSS에만 씀
 
 # ────────────────────────────────────────────────
 # ① 브랜드 뉴스 — 감시 대상 (slug: [표시명, 검색어])

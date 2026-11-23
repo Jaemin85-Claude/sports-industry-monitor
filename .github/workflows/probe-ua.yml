@@ -1,0 +1,16 @@
+name: probe-ua
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths: [probe_ua.py, .github/workflows/probe-ua.yml]
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: {python-version: "3.12"}
+      - run: pip install -q -r requirements.txt
+      - run: python probe_ua.py
