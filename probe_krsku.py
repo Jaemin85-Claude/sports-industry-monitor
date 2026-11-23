@@ -84,94 +84,36 @@ def is_cov(b, c, sku, model, rep):
 
 
 def work(R):
-    items = raw_list()
-    R["n_items"] = len(items)
-    by = {}
-    for it in items:
-        b = pf._SKU_AL.get(pf._SKU_KEY(it.get("brand")))
-        if b and str(it.get("status") or "").lower() != "planned":
-            by.setdefault(b, []).append(pf._sku_norm(it.get("code")))
-    R["n_by"] = {b: len(v) for b, v in by.items()}
-
-    # A) 킨 한국 — 분류 목록 → 상품 번호 → 상품 페이지 품번 칸(색인을 만들 수 있는지 · 몇 개인지)
-    kn = {"cats": {}, "goods": {}}
+    # 킨 한국 — 분류 목록 화면에 품번(Article No.)이 보이는지 · 맨 위 분류 쪽수
+    K = {"tops": {}, "lists": {}}
     r, err = tryget("https://www.keenfootwear.kr/")
     cats = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d+)", r.text))) if not err else []
-    kn["home_err"], kn["cats_found"] = err, cats[:60]
-    allg = []
-    t0 = time.time()
-    for cd in cats[:40]:
-        if time.time() - t0 > 240:
-            break
-        for page in range(1, 8):
-            r, err = tryget(f"https://www.keenfootwear.kr/goods/goods_list.php?cateCd={cd}&page={page}")
-            if err:
-                kn["cats"][f"{cd}/{page}"] = err; break
-            gs = list(dict.fromkeys(re.findall(r"goodsNo=(\d+)", r.text)))
-            new = [g for g in gs if g not in allg]
-            kn["cats"][f"{cd}/{page}"] = [len(gs), len(new), len(r.text)]
-            allg += new
-            if not new:
-                break
-    kn["n_goods"] = len(allg)
-    want = set(by.get("킨(KEEN)", []))
-    hit = {}
-    t1 = time.time()
-    for g in allg[:400]:
-        if time.time() - t1 > 420:
-            kn["goods_cut"] = True; break
-        p, e2 = tryget(f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={g}")
-        if e2:
-            kn["goods"][g] = e2; continue
-        arts = [a.strip() for a in re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', p.text)]
-        codes = sorted(set(re.findall(r"(?<!\d)(\d{7})(?!\d)", " ".join(arts))))
-        kn["goods"][g] = codes
-        for c in codes:
-            if c in want:
-                try:
-                    v = pf.godo_price(p.text, "KRW", c)[0]
-                except Exception as e3:
-                    v = f"{type(e3).__name__}: {str(e3)[:80]}"
-                hit[c] = [g, v]
-    kn["n_goods_read"] = len(kn["goods"])
-    kn["want"], kn["hit"] = len(want), hit
-    kn["sec"] = round(time.time() - t0)
-    R["keen"] = kn
-
-    # B) 아크테릭스 한국 — 분류 화면이 상품 목록을 어디서 받는지(스크립트 주소·자료 칸 이름만 · 그 주소는 부르지 않음)
-    r, err = tryget("https://arcteryx.co.kr/products/category/97")
-    if err:
-        R["arc"] = err
-    else:
-        t = r.text
-        R["arc"] = {"scripts": re.findall(r'<script[^>]+src="([^"]+)"', t)[:40],
-                    "api": sorted(set(re.findall(r'["\'](/(?:api|ajax|v1|v2|products/(?:list|search|data))[^"\'\s]{0,120})["\']', t)))[:60],
-                    "json_keys": sorted(set(re.findall(r'"(product[A-Za-z_]{0,30}|goods[A-Za-z_]{0,30}|item[A-Za-z_]{0,20})"\s*:', t)))[:60],
-                    "next": ("__NEXT_DATA__" in t, "__NUXT__" in t, "window.__INITIAL" in t),
-                    "x": len(set(re.findall(r"X0000(\d{5})", t))), "kr": len(set(re.findall(r"\b[A-Z]{5}\d{5}\b", t))),
-                    "snip": [t[max(0, m.start() - 150):m.start() + 200] for m in re.finditer(r"axios|fetch\(|\$\.ajax|XMLHttpRequest", t)][:8]}
-
-    # C) 톰브라운 한국 — 쇼피파이 상품 목록에서 스타일-원단으로
-    tb = {"pages": 0, "hit": {}}
-    want = {"-".join(c.split("-")[:2]).lower(): c for c in by.get("톰브라운", [])}
-    allp = []
-    for page in range(1, 25):
-        r, err = tryget(f"https://www.thombrowne.com/ko-kr/products.json?limit=250&page={page}")
+    K["cats"] = cats
+    for cd in [c for c in cats if len(c) == 3][:6]:
+        r, err = tryget(f"https://www.keenfootwear.kr/goods/goods_list.php?cateCd={cd}")
         if err:
-            tb["err"] = err; break
-        ps = r.json().get("products") or []
-        tb["pages"] = page
-        allp += ps
-        if len(ps) < 250:
-            break
-    tb["n_products"] = len(allp)
-    for p in allp:
-        h = str(p.get("handle") or "")
-        for st, c in want.items():
-            if st in h:
-                tb["hit"].setdefault(c, []).append([h[-30:], sorted({(v.get("price"), v.get("compare_at_price")) for v in p.get("variants") or []}, key=str)[:3]])
-    tb["want"] = len(want)
-    R["tb"] = tb
+            K["tops"][cd] = err; continue
+        t = r.text
+        K["tops"][cd] = {"n": len(set(re.findall(r"goodsNo=(\d+)", t))), "pages": sorted({int(x) for x in re.findall(r"[?&]page=(\d+)", t)})[-3:],
+                         "total": re.findall(r"(?:총|전체)\s*<[^>]*>?\s*([0-9,]+)\s*<?[^>]*>?\s*개", t)[:2], "codes7": len(set(re.findall(r"(?<!\d)(\d{7})(?!\d)", t)))}
+    cd = cats[0] if cats else "001001"
+    r, err = tryget(f"https://www.keenfootwear.kr/goods/goods_list.php?cateCd={cd}")
+    if not err:
+        t = r.text
+        gs = list(dict.fromkeys(re.findall(r"goodsNo=(\d+)", t)))
+        K["list_n"] = len(gs)
+        m = re.search(r"goodsNo=" + (gs[0] if gs else "x"), t)
+        K["snip"] = re.sub(r"\s+", " ", t[max(0, m.start() - 1500): m.start() + 2500]) if m else ""
+        K["list_codes7"] = sorted(set(re.findall(r"(?<!\d)(\d{7})(?!\d)", t)))[:80]
+        chk = {}
+        for g in gs[:4]:
+            p, e2 = tryget(f"https://www.keenfootwear.kr/goods/goods_view.php?goodsNo={g}")
+            if e2:
+                chk[g] = e2; continue
+            arts = [a.strip() for a in re.findall(r'(?:ARTICLE</td>|Article No\.</th>)\s*<td[^>]*>\s*([^<]+?)\s*</td>', p.text)]
+            chk[g] = [arts, [a in t for a in arts]]
+        K["chk"] = chk
+    R["keen"] = K
 
 def main():
     R, buf = {"start": time.time()}, io.StringIO()
