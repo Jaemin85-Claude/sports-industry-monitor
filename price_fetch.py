@@ -1,6 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.38: (대표 지시 2026-11-23 '90% 이상' · '스포츠 브랜드가 제일 중요') 컨버스 국내 정가 — ERP 판매 중 품번(감시 브랜드 밖 · SKU_ALIAS '컨버스')을 한국 공식몰(카페24
+    www.converse.co.kr)에서 품번 검색(search.html?keyword=) → 상품 페이지 '스타일 : 품번' 칸(ma_product_code)이 같을 때만 정가(converse_price — meta product:price:amount ·
+    할인가 product:sale_price:amount · 소비자가 칸이 판매가보다 높으면 그것) · 같은 품번 페이지 여러 개면 3개까지 받아 정가가 모두 같을 때만 · 검색에 없으면 __noans__
+    (숨긴 상품일 수 있어 '없음'으로 보지 않음) · 한국만(cc KR) · 요청 간격 KR_GAP(SKU_KR_HOSTS) · 11/23 시험: 품번 검색·스타일 칸·가격 칸 읽힘(A20319C 119,000원)
+v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU 상품에 국내 확인 상태 kr_status — "none"(이번에 국내 공식몰이 답했는데 이 품번이 없음) · "unread"(아직 답을 못 받음 ·
+    국내 몰에 있는데 정가를 확실히 못 읽음 · 보류 · 국내 몰을 읽지 못하는 브랜드) — ERP는 "none"만 '국내 공식 판매 없음'으로 셈. 확인한 날은 싣지 않음(날마다 물은 품번이
+    공개 파일에 드러나 목록 순서를 짐작할 수 있어 — 검토 11/23). 이미 파일에 있는 상품(해외에서 찾은 공개 품번)에만 붙임 — 어디서도 못 찾은 목록 품번은 지금처럼 파일에 남기지 않음 ·
+    한국 값이 생기면 지움 · 그날 묻지 않은 상품은 지난 상태 그대로 · 같은 모델의 국내 모델 단위 값이 있는 색상은 달지 않음(ERP 규칙 ②로 확보).
+    "none"은 확실할 때만(검토 11/23 — 잘못된 none이 가장 해로움): 크록스 모델 페이지에 그 색상이 있는데 정가를 못 읽거나 이 모델 변형이 하나도 없으면 unread(__unread__) ·
+    나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 unread(SNKRS 발매 채널·50개 넘는 스타일 미확인) · 색인(킨 한국 목록 넘기기 — 쪽 번호 끝 전에 멈춘 분류나 품번을 못 읽은 상품 카드가 있으면 ·
+    온러닝 사이트맵·쇼피파이 목록 — 한도로 멈춤)이 덜 끝났거나 비었으면 색인에 없는 품번은 unread(_Idx.partial) · 쇼피파이 상품에 색인 품번 변형을 못 읽으면 unread ·
+    답을 못 받은 날(국내 몰 오류·색인 못 만듦·덜 끝난 색인·크록스 페이지에 변형 데이터 없음 — __noans__)은 앞 상태 유지(처음이면 unread — ERP 요청 11/23) · 온러닝 한국 사이트맵에 없음은 unread · 닥터마틴 한국 품번을 못 읽는 상품(액세서리 빼고)이 있으면 덜 끝난 색인 ·
+    킨 한국 목록 사진·상품 페이지 품번 불일치면 덜 끝난 색인 · 상태는 그 품번 국내 차례 날에만 바꿈 · 파일에 있는 상품의 국내 묻기는 판매 상태로 앞세우지 않음(묻는 날·순서가 드러나지 않게)
 v1.36: (대표 결정 2026-11-23 — 90% 분모 = 수집 브랜드 판매 중 품번) ERP 목록 브랜드 표기 'THOM BROWN'(E 빠짐)도 톰브라운으로 알아봄(SKU_ALIAS — 전에는 '감시 브랜드 밖'으로 셈).
 v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 카드(같은 <a> 안 사진 주소 …/{품번}_00.jpg · 이름은 사진 alt)로 색인(_keen_kr_index — 맨 위 분류를 날마다 다른 분류부터 · 쪽 번호 끝·새 상품 없는 쪽에서 분류를 멈춤 · 찾는 품번을 다 찾거나 150초(KR_GAP 3초라 약 50쪽)·단계 마감·한국 묻기 마감이면 멈춤 · 목록 화면 하나가 안 열리면 그 분류만 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 같은 품번 상품 페이지가 여럿(11/23 약 9%)이면 3개까지 받아 정가가 모두 같을 때만 · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(keep — 이번 실행에 색인을 이미 만들었으면 색인으로 대조) · 받아 둔 주소가 다른 상품·없는 페이지일 때만 색인으로 한 번 더(일시 오류는 그대로) · 요약 줄 '(+ 색인 목록 화면 n쪽)' · 독립 검토 13건 반영.
 v1.34: (ERP 세션 요청 2026-11-23 — 대표 전달) 정가 표본 검사 결과 audit.miss 각 줄에 구분 값 k — "mismatch"(페이지에 이 정가가 안 보임 · 불일치 — n에 셈) · "unread"(페이지 못 받음·페이지 이름 없음·원화 가격 글자 없음 — 대조 못 함 · not_read에 셈) — ERP가 사유 글(why)이 아니라 k로 가르게(why 글은 그대로) · 불일치를 목록 앞에 · 로그 '확인할 값'에 대조 못 함이 섞이던 것 고침.
@@ -2569,7 +2582,8 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "써코니": "saucony|사코니", "살로몬": "salomon", "킨(KEEN)": "keen|킨", "우포스": "oofos", "크록스": "crocs",
     "오니츠카타이거": "onitsukatiger|onitsuka tiger|오니츠카", "미즈노": "mizuno", "닥터마틴": "drmartens|dr.martens|dr martens|닥터마틴스",
     "헌터": "hunter", "드래곤디퓨전": "dragondiffusion|dragon diffusion", "톰브라운": "thombrowne|thom browne|thombrown|thom brown",
-    "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning"}
+    "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning",
+    "컨버스": "converse"}   # v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
 CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de", "JP": "www.crocs.co.jp"}
@@ -2592,6 +2606,7 @@ SKU_BRANDS = {
     "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
     "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
+    "컨버스": {"slug": "converse", "cc": ("KR",), "q": lambda c: c, "rx": r"^[0-9A-Z]{4,7}C$"},   # v1.38 한국 공식몰(카페24) 품번 검색 → 상품 페이지 '스타일' 칸이 같을 때만(converse_price)
 }
 
 
@@ -2716,10 +2731,19 @@ class _SkuIdx:
         return v
 
 
+class _Idx(dict):
+    """v1.37 색인 — partial = 시간·쪽 한도로 덜 끝남(색인에 없는 품번을 '국내 공식몰에 없음'으로 보지 않음)"""
+    partial = False
+
+
+class _IdxL(list):
+    partial = False
+
+
 def _sm_walk(start, host, pre, max_maps=20, budget=90):
-    """사이트맵 → 그 사이트·경로 주소 목록(색인 · 공개 주소만)"""
+    """사이트맵 → 그 사이트·경로 주소 목록(색인 · 공개 주소만) · v1.37 한도로 남은 사이트맵이 있으면 partial"""
     import gzip as _gz
-    queue, out, seen, t0 = list(start), [], 0, time.time()
+    queue, out, seen, t0 = list(start), _IdxL(), 0, time.time()
     while queue and seen < max_maps and time.time() - t0 < budget:
         r = get(queue.pop(0)); seen += 1
         c = r.content
@@ -2730,22 +2754,53 @@ def _sm_walk(start, host, pre, max_maps=20, budget=90):
             kids.sort(key=lambda u: (not any(x in u.lower() for x in ("product", "pdp", "prod")), u))
             queue = kids + queue; continue
         out += [u for u in locs if urllib.parse.urlsplit(u).netloc == host and urllib.parse.urlsplit(u).path.startswith(pre)]
+    out.partial = bool(queue)
     return out
 
 
 def _shop_all(base, pages=12):
     """쇼피파이 몰 상품 목록(products.json · 250개씩)"""
-    out = []
+    out = _IdxL()
     for page in range(1, pages + 1):
         ps = _json(get(f"{base}/products.json?limit=250&page={page}")).get("products") or []
         out += [p for p in ps if isinstance(p, dict)]
         if len(ps) < 250:
             break
+    else:
+        out.partial = True   # v1.37 쪽 한도까지 꽉 참 — 뒤 상품이 더 있을 수 있음
     return out
 
 
 def _robots_maps(host):
     return [l.split(":", 1)[1].strip() for l in get(f"https://{host}/robots.txt").text.splitlines() if l.lower().startswith("sitemap:")]
+
+
+CONVERSE_KR = "https://www.converse.co.kr"
+CONVERSE_DUP = 3   # 같은 품번 상품 페이지가 여럿이면 이만큼까지 받아 정가가 모두 같을 때만(0.5% 안)
+SKU_KR_HOSTS = ("www.converse.co.kr",)   # v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP
+
+
+def converse_price(html, code):
+    """v1.38 컨버스 한국 공식몰(카페24) 상품 페이지 → (정가, extra) — 상품 정보 칸 '스타일 : {품번}'(ma_product_code)이 이 품번일 때만.
+    판매가 = meta product:price:amount · 할인가 = product:sale_price:amount(더 낮으면 지금 값) · 소비자가 칸(span_product_price_custom)이 판매가보다 높으면 그것이 정가(cafe24_id_list —
+    판매가 칸이 이 값과 짝일 때만 · 꼴을 못 읽으면 실패) · 11/23 시험: A20319C 119,000원 · A22161C 85,000원(판매가 = 할인가)"""
+    if not re.search(r'ma_product_code[^"]*"[^>]*>\s*(?:스타일\s*:\s*)?' + re.escape(code) + r'\s*<', html):
+        raise RuntimeError("상품 정보 칸 품번이 다름 — 다른 상품")
+    meta = lambda k: num((re.search(r'<meta\s+property="product:' + k + r':amount"\s+content="([0-9.,]+)"', html) or [None, None])[1])
+    p, s = meta("price"), meta("sale_price")
+    if not p:
+        raise RuntimeError("판매가 칸(product:price:amount) 없음")
+    lp, sv = cafe24_id_list(html, p)
+    m_ = re.search(r'id="span_product_price_text"', html)
+    if not m_:
+        raise RuntimeError("판매가 칸(span_product_price_text) 없음")
+    blk = html[max(0, m_.start() - 3000): m_.end() + 3000]   # 이 상품 가격 칸 둘레만 — 취소선·'소비자가'·'정상가' 옆에 판매가보다 큰 값이 있는데 못 읽었으면 실패(할인가를 정가로 저장하지 않음 · 검토 11/23)
+    hi = [num(x) for x in re.findall(r'(?:<(?:del|strike|s)\b[^>]*>|line-through[^>]*>|소비자가|정상가)(?:\s*<[^>]+>)*\s*([\d,]+)\s*원', blk)]
+    if any(x and x > p * 1.005 and not (lp and abs(x - lp) < 0.01) for x in hi):
+        raise RuntimeError("할인 표시(취소선·소비자가)가 있는데 소비자가를 못 읽음 — 할인가를 정가로 저장하지 않음")
+    full = max(lp or 0, p)
+    cur = min(x for x in (s, sv, p) if x)
+    return full, {"cur_price": cur, "lst": bool(lp and lp > p * 1.005) or bool(s and s < p * 0.995)}
 
 
 KEEN_KR = "https://www.keenfootwear.kr"
@@ -2760,9 +2815,12 @@ def _keen_kr_index(want=None, stop=None):
     품번 검색은 품번을 찾지 못함(검색 결과가 늘 같은 목록 — 11/23 시험) · 사진은 같은 <a> 안에서만(카드의 이름 고리·다음 상품 사진을 잘못 잇지 않게 — 검토 11/23) ·
     맨 위 분류(3자리)를 날마다 다른 분류부터 쪽마다 넘기고 쪽 번호 끝이나 새 상품이 없는 쪽에서 그 분류를 멈춤 · 찾는 품번(want)을 다 찾거나 stop 시각·KEEN_KR_BUDGET이면 멈춤 ·
     목록 화면 하나가 안 열리면 그 분류만 멈추고 받은 만큼 씀(하나도 못 받으면 실패) · 값은 상품 페이지 품번 칸으로 다시 확인(godo_price — 다르면 실패)"""
-    out, want, t0, ok_pages = {}, set(want or ()), time.time(), 0
+    out, want, t0, ok_pages = _Idx(), set(want or ()), time.time(), 0
+    got_g, bad_g = set(), set()   # v1.37 품번을 읽은 상품 번호 · 사진은 있는데 품번을 못 읽은 상품 번호(끝까지 못 읽은 것이 있으면 덜 끝난 색인 — 검토 11/23)
     end = min(t0 + KEEN_KR_BUDGET, stop or float("inf"))
-    tops = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d{3})(?!\d)", get(KEEN_KR + "/").text))) or ["001", "002", "003"]
+    tops = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d{3})(?!\d)", get(KEEN_KR + "/").text)))
+    if not tops:
+        tops, out.partial = ["001", "002", "003"], True   # v1.37 첫 화면에서 분류를 못 찾음 — 덜 끝난 색인
     r0 = datetime.date.today().toordinal() % len(tops)
     for cd in tops[r0:] + tops[:r0]:   # 날마다 다른 분류부터(시간 한도에 걸려도 뒤 분류가 늘 빠지지 않게)
         last = None
@@ -2770,10 +2828,12 @@ def _keen_kr_index(want=None, stop=None):
             if time.time() > end or (want and want <= out.keys()):
                 if not ok_pages:
                     raise RuntimeError("킨 한국 목록 화면을 받기 전에 시간 한도")
+                out.partial = not (want and want <= out.keys())   # v1.37 시간 한도로 멈춤(찾는 품번을 다 찾은 게 아니면) — 덜 끝난 색인
                 return out
             try:
                 t = get(f"{KEEN_KR}/goods/goods_list.php?cateCd={cd}&page={page}").text
             except Exception:
+                out.partial = True   # v1.37 목록 화면 하나가 안 열림 — 덜 끝난 색인
                 break   # 이 분류는 여기까지(받은 만큼 씀 — 하나도 못 받았으면 끝에서 실패)
             ok_pages += 1; _IDX_PAGES[0] += 1
             pn = [int(x) for x in re.findall(r"[?&](?:amp;)?page=(\d+)", t)]
@@ -2783,18 +2843,27 @@ def _keen_kr_index(want=None, stop=None):
             for k_, m in enumerate(ms):
                 e = t.find("</a>", m.end())
                 seg = t[m.end(): min(x for x in (e if e > 0 else len(t), ms[k_ + 1].start() if k_ + 1 < len(ms) else len(t), m.end() + 1500))]
-                im = re.search(r'<img[^>]+?(?:src|data-[\w-]+)="[^"]*?/(\d{7})_\d+\.(?:jpe?g|png|gif|webp)"[^>]*>', seg)
+                im = re.search(r'<img[^>]+?(?:src|data-[\w-]+)="[^"]*?/(\d{7})_\d+\.(?:jpe?g|png|gif|webp)(?:\?[^"]*)?"[^>]*>', seg, re.I)   # v1.37 사진 주소 뒤 ?v= 같은 꼬리·대문자 확장자도(검토 11/23)
                 if not im:
+                    if re.search(r"<img\b", seg, re.I):
+                        bad_g.add(m.group(1))   # 사진은 있는데 품번 꼴이 아님(이름만 있는 고리·추천 칸은 사진이 없어 셈 밖)
                     continue
+                got_g.add(m.group(1))
                 al = re.search(r'alt="([^"]*)"', im.group(0))
                 u = f"{KEEN_KR}/goods/goods_view.php?goodsNo={m.group(1)}"
                 lst_ = out.setdefault(im.group(1), [])
                 if u not in [x[0] for x in lst_]:
                     lst_.append((u, _clean_name(al.group(1)) if al else None)); new += 1
             if not new or (last and page >= last):
+                if not (last and page >= last):
+                    out.partial = True   # v1.37 쪽 번호 끝 전에 멈춤(새 상품 없는 쪽 — 앞 분류와 겹침 등) — 뒤 쪽을 안 봤으니 덜 끝난 색인(검토 11/23)
                 break
+        else:
+            out.partial = True   # v1.37 쪽 한도(199쪽)
     if not ok_pages:
         raise RuntimeError("킨 한국 목록 화면을 하나도 못 받음")
+    if bad_g - got_g:
+        out.partial = True   # v1.37 품번을 못 읽은 상품 카드가 있음 — 그 상품의 품번이 색인에 없을 수 있음
     return out
 
 
@@ -2805,20 +2874,38 @@ def _sku_index(brand, cc, want=None, stop=None):
     if brand == "온러닝":
         loc = ON_LOC[cc]
         us = _sm_walk([f"https://www.on.com/{loc}/products.xml"], "www.on.com", f"/{loc}/products/", max_maps=3)
-        return {urllib.parse.urlsplit(u).path.rsplit("-", 1)[-1].upper(): u for u in us}
+        out = _Idx({urllib.parse.urlsplit(u).path.rsplit("-", 1)[-1].upper(): u for u in us}); out.partial = us.partial
+        return out
     if brand == "닥터마틴" and cc == "KR":
-        out = {}
-        for p in _shop_all("https://www.drmartens.co.kr"):
+        out, ps = _Idx(), _shop_all("https://www.drmartens.co.kr")
+        out.partial = ps.partial
+        by_h = {}   # 상품 주소(handle)의 품번 — 변형 품번으로 찾은 것이 앞섬(다른 상품 주소의 숫자가 그 상품을 가리지 않게 · 검토 11/23)
+        for p in ps:
+            if not p.get("handle"):
+                continue
+            u = f"https://www.drmartens.co.kr/products/{p['handle']}.json"
+            ks = set()
             for v in p.get("variants") or []:
-                s = str(v.get("sku") or "").upper()
-                if re.match(r"\d{8}", s) and p.get("handle"):
-                    out.setdefault(s[:8], f"https://www.drmartens.co.kr/products/{p['handle']}.json")
+                s = str(v.get("sku") or "").strip().upper()
+                if re.match(r"\d{8}", s) and not re.fullmatch(r"\d{12,14}", s):   # 바코드(12~14자리)는 품번이 아님
+                    ks.add(s[:8])
+            hk = set(re.findall(r"(?<!\d)\d{8}(?!\d)", str(p["handle"])))   # 상품 주소의 품번(_shop_price_p도 이것으로 찾음)
+            acc = re.search(r"액세서리|accessor|슈케어|shoecare|(?:^|-)acc(?:-|$)", f"{p.get('product_type') or ''} {p['handle']}", re.I)
+            if (p.get("variants") or []) and not ks and not hk and not acc:
+                out.partial = True   # v1.37 품번을 못 읽은 상품(액세서리 빼고)이 있음 — 색인에 없는 품번을 '없음'으로 보지 않음(검토 11/23)
+            for k_ in ks:
+                out.setdefault(k_, u)
+            for k_ in hk:
+                by_h.setdefault(k_, u)
+        for k_, u in by_h.items():
+            out.setdefault(k_, u)
         return out
     if brand == "닥터마틴":   # 미국·영국은 같은 사이트 — 사이트맵을 한 번만 돌고 나라 경로로 나눔(_sku_idx_web)
         raise RuntimeError("닥터마틴 미국·영국은 _sku_idx_web")
     if brand == "살로몬":
-        out = {}
-        for p in _shop_all("https://salomon.co.kr"):
+        out, ps = _Idx(), _shop_all("https://salomon.co.kr")
+        out.partial = ps.partial
+        for p in ps:
             h = p.get("handle")
             if not h:
                 continue
@@ -2829,8 +2916,10 @@ def _sku_index(brand, cc, want=None, stop=None):
             out.setdefault(str(h).upper(), f"https://salomon.co.kr/products/{h}.json")
         return out
     if brand == "킨(KEEN)":
-        base, out = KEEN_SHOP[cc], {}
-        for p in _shop_all(base):
+        base, out = KEEN_SHOP[cc], _Idx()
+        ps = _shop_all(base)
+        out.partial = ps.partial
+        for p in ps:
             tags = p.get("tags") if isinstance(p.get("tags"), list) else str(p.get("tags") or "").split(",")
             if not p.get("handle"):
                 continue
@@ -2877,7 +2966,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
     if brand == "나이키":
         m, l, _ = MK[cc]
         d = _json(get(NIKE_STYLE.format(m=m, l=l, s=q)))
-        got, mod = {}, {}
+        got, mod, unr = {}, {}, set()
         for o in d.get("objects") or []:
             for pi in o.get("productInfo") or []:
                 mp, mer, pc = pi.get("merchPrice") or {}, pi.get("merchProduct") or {}, pi.get("productContent") or {}
@@ -2887,6 +2976,8 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
                 if sc in codes and fp and mp.get("currency") == cur and sc not in got:
                     got[sc] = (fp, {"cur_price": num(mp.get("currentPrice")), "lst": True}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
+                elif sc in codes:
+                    unr.add(sc)   # v1.37 그 나라 상품 정보에 있는데 정가를 확실히 못 읽음 — '공식몰에 없음'이 아님
                 if sc.startswith(q + "-") and sc not in mod:   # v1.32 이 모델의 그 나라 색상 정가(모델 단위 채우기)
                     mod[sc] = (fp, _clean_name(pc.get("fullTitle") or pc.get("title")), hint) if fp and mp.get("currency") == cur else None
         if cc == "KR" and SKU_BRANDS[brand].get("mfill"):
@@ -2894,6 +2985,9 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 got["__mixed__"] = -1   # 그 나라 몰에 있는 색상인데 정가를 확실히 못 읽음 — 모델 값을 정하지 않음(크록스와 같게 · 검토 11/23)
             else:
                 _sku_mput(got, mod, None)
+        unr |= set(codes)   # v1.37 나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 '없음'으로 보지 않음 — SNKRS(발매) 채널·50개 넘는 스타일을 아직 확인 못 함(검토 11/23)
+        if unr - set(got):
+            got["__unread__"] = unr - set(got)
         return got, not (d.get("objects") or [])
     if brand in ("크록스", "푸마", "언더아머"):
         url = (f"https://{CROCS_HOST[cc]}/p/x/{q}.html" if brand == "크록스" else PUMA_PD[cc].format(m=q) if brand == "푸마"
@@ -2907,12 +3001,16 @@ def _sku_fetch(brand, cc, q, codes, idx):
         got, name = {}, _ld_name(r.text)
         fin = r.url if q in r.url else url
         if brand == "크록스":
+            any_v = re.search(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(q)}-', r.text, re.I)   # v1.37 이 모델 변형이 페이지에 하나도 없으면(화면 데이터 꼴 바뀜·점검 화면) '없음'이 아니라 못 읽음
             for c in codes:
                 try:
                     full, ex = crocs_list(r.text, q, cur, color=c.split("-", 1)[1])
                     got[c] = (full, {**ex, "lst": True}, name, "sandal", fin, None)   # 변형 정가(retailPrice) — 정가 표시 있음
-                except RuntimeError:
-                    pass   # 이 나라 몰에 이 색상 없음(다른 색상만)
+                except RuntimeError:   # 이 나라 몰에 이 색상 없음(다른 색상만) — v1.37 페이지에 그 색상 변형이 있으면 정가를 못 읽은 것(unread)
+                    if not any_v:
+                        got.setdefault("__noans__", set()).add(c)   # v1.37 페이지에 이 모델 변형이 하나도 없음 — 답을 못 받은 것(앞 상태 유지)
+                    elif re.search(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(c)}-', r.text, re.I):
+                        got.setdefault("__unread__", set()).add(c)   # 그 색상은 있는데 정가를 못 읽음 — 국내에 있음(unread)
             if cc == "KR" and SKU_BRANDS[brand].get("mfill"):   # v1.32 이 모델의 국내 색상 정가(모델 단위 채우기)
                 mod = {}
                 for col in sorted({m_.group(1).upper() for m_ in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(q)}-([0-9A-Za-z]{{3}})-', r.text)}):
@@ -2932,9 +3030,39 @@ def _sku_fetch(brand, cc, q, codes, idx):
         for c in codes:   # 모델 단위 브랜드 — 목록 품번이 곧 모델 번호(sku_list)
             got[c] = (full, ex, name, None, fin, "model")
         return got, False
+    if brand == "컨버스":   # v1.38 한국 공식몰 품번 검색(카페24 search.html) → 상품 페이지(같은 품번 여러 개면 정가가 모두 같을 때만)
+        r = get(f"{CONVERSE_KR}/product/search.html?keyword={urllib.parse.quote(q)}")
+        ls = list(dict.fromkeys(re.findall(r'href="(/product/[^"?#]+?/\d+/)(?:category/\d+/display/\d+/?)?"', r.text)))[:CONVERSE_DUP + 2]
+        vals, errs = [], []
+        for l_ in ls:
+            try:
+                rr = get(CONVERSE_KR + l_)
+            except Exception as e:
+                if _STOP.is_set() or urllib.parse.urlsplit(CONVERSE_KR).netloc in _BLOCKED:
+                    raise
+                errs.append(e); continue   # 품번을 아직 모르는 검색 결과 페이지 — 다른 상품일 수 있어 건너뜀(검토 11/23)
+            try:
+                full, ex = converse_price(rr.text, q)
+            except RuntimeError as e:
+                if "품번이 다름" in str(e):
+                    continue   # 검색 결과의 다른 상품
+                raise
+            vals.append((full, ex, _ld_name(rr.text), CONVERSE_KR + l_))
+            if len(vals) >= CONVERSE_DUP:
+                break
+        if not vals:
+            if errs:
+                raise errs[0]   # 못 읽은 페이지가 이 상품일 수 있음 — '검색에 없음'으로 보지 않음
+            return {"__noans__": set(codes)}, True   # 검색에 안 나옴 — 숨긴 상품일 수도 있어 '없음'으로 보지 않음(앞 상태 유지 · 처음이면 unread)
+        if max(v[0] for v in vals) > min(v[0] for v in vals) * 1.005:
+            raise RuntimeError(f"같은 품번 상품 페이지 {len(vals)}개의 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+        full, ex, nm, u = vals[0]
+        return {c: (full, ex, nm, None, u, None) for c in codes}, False
     # 색인으로 찾는 브랜드
     url = idx.get(q) if idx else None
     if not url:
+        if brand == "온러닝":   # v1.37 사이트맵(products.xml)에 없음은 국내 공식몰의 확실한 답이 아님(사이트맵이 늦게 바뀔 수 있음) — unread(검토 11/23)
+            return {"__unread__": set(codes)}, True
         return {}, True
     got = {}
     if brand == "킨(KEEN)" and cc == "KR":   # v1.35 킨 한국 LF 몰(고도몰) — 색인 값은 [(주소, 목록 이름)] · 받아 둔 주소(keep)는 주소 하나
@@ -2960,7 +3088,8 @@ def _sku_fetch(brand, cc, q, codes, idx):
             try:
                 full, ex = _shop_price_p(p, url, c, cur)
             except RuntimeError:
-                continue   # 이 상품에 그 품번 변형이 없음
+                got.setdefault("__unread__", set()).add(c)   # 이 상품에 그 품번 변형이 없거나 못 읽음 — v1.37 색인이 이 상품에 이 품번이 있다고 했으니 '공식몰에 없음'으로 보지 않음
+                continue
             got[c] = (full, ex, name, None, url[:-5], None)
         return got, False
     r = get(url)
@@ -3152,7 +3281,8 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날)
                 kind = "new"
             j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0})
-            j["codes"].add(c); j["st"] = min(j["st"], min(st, 1)); j["ref"] = j["ref"] or kind == "ref"
+            j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"
+            j["st"] = min(j["st"], 1 if (cc == "KR" and iid(b, c) in old_items) else min(st, 1))   # v1.37 이미 파일에 있는 상품의 국내 묻기는 판매 상태와 상관없이 한 차례(예정과 같은 자리 — kr_status가 바뀐 날로 목록 순서가 드러나지 않게 · 아직 못 찾은 판매 중 품번이 먼저 · 검토 11/23)
             if kind == "ref":
                 j["age"] = max(j["age"], age(o.get("obs_date") or o.get("seen") or td))
     # v1.32 같은 열쇠(나이키 스타일·크록스 모델)를 이번에 그 나라에서 묻는 일감이 있으면, 그 열쇠의 아직 못 찾은 다른 품번도 함께 — 같은 응답에서 읽어 요청은 늘지 않음(차례 날을 기다리지 않음)
@@ -3186,6 +3316,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         if (0, b) not in lanes:
             kr_done[b].set()
     idx, res, rlock, cnt = _SkuIdx(say), {}, threading.Lock(), collections.Counter()
+    noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태는 앞 상태 유지 · ERP 요청 11/23)
     pre_by, want_by = {}, collections.defaultdict(set)   # v1.35 받아 둔 상품 주소(keep 나라)로 받는 일감 · 색인으로 찾는 열쇠(그 밖 — 킨 한국 색인이 다 찾으면 멈춤)
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ in SKU_BRANDS.get(b_, {}).get("keep", ()):
@@ -3224,8 +3355,10 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 if SKU_BRANDS[b].get("idx") and pre is None:
                     ix = get_ix()
                     if ix is None:
-                        with rlock: cnt["noidx"] += 1
+                        with rlock:
+                            cnt["noidx"] += 1; noidx_k.add(k)
                         continue
+                used = pre or ix   # v1.37 이번에 쓴 색인(덜 끝난 색인이면 partial)
                 try:
                     try:
                         got, none = _sku_fetch(b, cc, q, j["codes"], pre or ix)
@@ -3237,9 +3370,14 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                             raise   # 받아 둔 주소의 일시 오류(시간 초과·5xx·막힘)는 그대로 — 색인으로 같은 주소를 다시 부르지 않음
                         ix = get_ix()   # 상품이 옮겨짐(다른 상품·없는 페이지) — 색인으로 한 번 더
                         if ix is None or [x[0] for x in (ix.get(q) or [])] in ([], [pre[q]]):
+                            if isinstance(ix, _Idx) and b == "킨(KEEN)" and cc == "KR" and "상품 정보 칸 품번이 다름" in str(e0):
+                                ix.partial = True   # v1.37 색인이 이 품번을 받아 둔 주소로 가리키는데 그 페이지 품번이 다름 — 색인 열쇠를 믿을 수 없음(검토 11/23)
                             raise
+                        used = ix
                         got, none = _sku_fetch(b, cc, q, j["codes"], ix)
                 except Exception as e:
+                    if isinstance(used, _Idx) and b == "킨(KEEN)" and cc == "KR" and "상품 정보 칸 품번이 다름" in str(e):
+                        used.partial = True   # v1.37 목록 사진 품번과 상품 페이지 품번이 다름 — 색인 열쇠를 믿을 수 없어 색인에 없는 품번도 '없음'이 아님(검토 11/23)
                     w = (str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)
                     w = re.sub(r"https?://\S+", "(주소)", w)[:80]
                     with rlock:
@@ -3248,15 +3386,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     continue
                 gx = {cd: v for cd, v in got.items() if not cd.startswith("__")}   # v1.32 __model__·__mixed__(모델 단위)는 품번이 아님
                 with rlock:
-                    cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"])}
-                    cnt["none"] += int(bool(none or not gx) and "__model__" not in got)
-                say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(gx.items())) or "공식몰에 없음")
+                    part = bool(getattr(used, "partial", False)) or (used is not None and not used)
+                    cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"]), "partial": part, "ix": used if isinstance(used, _Idx) else None}
+                    isnone = bool(none or not gx) and "__model__" not in got and not got.get("__unread__") and not got.get("__noans__") and not part
+                    cnt["none"] += int(isnone)
+                say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(gx.items()))
+                                               or ("공식몰에 없음" if isnone else "미확인(" + ("덜 끝난 색인" if part else "정가를 확실히 못 읽음·확인 못 함") + ")"))
+                    + (f" · 미확인 {len(got['__unread__'])}" if gx and got.get("__unread__") else "")
                     + (f" · 모델 단위 {got['__model__'][0]:,g}" if "__model__" in got else (f" · 모델 색상 정가가 서로 다름({got['__mixed__']}색)" if got["__mixed__"] > 0 else " · 정가를 확실히 못 읽은 색상이 있어 모델 값 안 정함") if "__mixed__" in got else ""))
         finally:
             if ph == 0:
                 kr_done[b].set()
             c.sess.close(); _TL.c = None
-    for h_ in _kr_only_hosts(PRODUCTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도
+    for h_ in set(_kr_only_hosts(PRODUCTS)) | set(SKU_KR_HOSTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도 · v1.38 SKU 전용 한국 몰도
         HOST_GAP[h_] = max(HOST_GAP.get(h_, 0), KR_GAP)
     if not _PACE:
         _PACE.update(pace_map(PRODUCTS))
@@ -3361,6 +3503,32 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 it["name"] = name
             if not it.get("cat"):
                 it["cat"] = _sku_cat(name, hint or bcat.get(b, "shoe"))
+        # v1.37 국내 확인 상태(ERP 요청 11/23) — 한국 값이 없을 때만: "none" = 이번에 국내 공식몰이 답했는데 이 품번이 없음 · "unread" = 못 받음·정가를 확실히 못 읽음·
+        # 보류·덜 끝난(또는 빈) 색인·국내 몰을 읽지 못하는 브랜드·아직 못 물음 · 그날 묻지 않았으면 지난 상태 그대로 · 확인한 날은 싣지 않음(날마다 어느 품번을 물었는지가
+        # 공개 파일에 드러나 목록 순서(판매 중 먼저)를 짐작할 수 있어 — 검토 11/23)
+        it.pop("kr_checked", None)
+        if (it["m"].get("KR") or {}).get("p"):
+            it.pop("kr_status", None)
+        else:
+            st_ = it.get("kr_status")
+            r = res.get((b, "KR", q)) if "KR" in h["cc"] else None
+            own = "KR" in h["cc"] and _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today)   # v1.37 그 품번 차례 날에만 상태를 바꿈(같은 열쇠 다른 품번 일감에 섞여 물은 날은 값만 저장 — 묻는 날이 드러나지 않게 · 검토 11/23)
+            # ERP 요청 11/23: 답을 받은 날에만 바꿈 · 못 받은 날(오류·색인 못 만듦·덜 끝난 색인·페이지에 변형 데이터 없음)은 앞 상태 유지(처음이면 unread) —
+            # 확보율 분모가 날마다 흔들리지 않게. 답 = 국내 몰에 있음(정가 못 읽음·보류 → unread) 또는 확실히 없음(none)
+            if own and r and c in r["codes"]:
+                g_ = r.get("got") or {}
+                part_ = r.get("partial") or bool(getattr(r.get("ix"), "partial", False))   # 일감이 끝난 뒤 색인이 덜 끝남으로 바뀐 것도(킨 사진·품번 불일치)
+                if "err" in r or c in (g_.get("__noans__") or ()):
+                    pass   # 못 받음 — 앞 상태 유지
+                elif c in g_ or c in (g_.get("__unread__") or ()) or "KR" in held:
+                    st_ = "unread"   # 국내 몰에 있음(정가를 확실히 못 읽음·보류)
+                elif part_:
+                    pass   # 덜 끝난 색인에 없음 — 답이 아님, 앞 상태 유지
+                else:
+                    st_ = "none"
+            if "KR" not in h["cc"] or st_ not in ("none", "unread"):
+                st_ = "unread"
+            it["kr_status"] = st_
         if it["m"]:
             if held:
                 it["held"] = held   # 정가 확인 보류 중인 나라(값·처음 보류한 날) — ERP는 p만 씀
@@ -3406,6 +3574,9 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             if not it.get("cat"):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
             mout[i] = it
+    for it in items.values():   # v1.37 같은 모델의 국내 모델 단위 값이 있는 색상은 kr_status를 달지 않음(ERP 규칙 ②로 확보 — 한 품번에 두 신호가 겹치지 않게)
+        if it.get("kr_status") and SKU_BRANDS.get(it["brand"], {}).get("mfill") and mid(it["brand"], SKU_BRANDS[it["brand"]]["q"](it["code"])) in mout:
+            it.pop("kr_status", None)
     out = [it for it in list(items.values()) + list(kept.values()) + list(mout.values())
            if alive(it) and (it["id"] in mout or it.get("code") not in rep_codes.get(it.get("brand"), set()))]   # 대표 상품이 된 품번은 뺌(같은 품번 두 줄이 되지 않게) · 모델 단위 상품은 남김(대표 상품 정가는 색상 중 가장 높은 값이라 색상 정가가 갈리는지 확인 안 함 — ERP는 lvl model을 먼저 씀 · 검토 11/23)
     out.sort(key=lambda x: (x["brand"], x["code"]))
@@ -3418,6 +3589,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
         + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
+        + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
     return out, meta
 
