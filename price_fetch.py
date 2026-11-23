@@ -8,7 +8,7 @@ v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU
     "none"은 확실할 때만(검토 11/23 — 잘못된 none이 가장 해로움): 크록스 모델 페이지에 그 색상이 있는데 정가를 못 읽거나 이 모델 변형이 하나도 없으면 unread(__unread__) ·
     나이키는 그 나라 상품 정보(nike.com 채널 · 한 번에 50개)에 없어도 unread(SNKRS 발매 채널·50개 넘는 스타일 미확인) · 색인(킨 한국 목록 넘기기 — 쪽 번호 끝 전에 멈춘 분류나 품번을 못 읽은 상품 카드가 있으면 ·
     온러닝 사이트맵·쇼피파이 목록 — 한도로 멈춤)이 덜 끝났거나 비었으면 색인에 없는 품번은 unread(_Idx.partial) · 쇼피파이 상품에 색인 품번 변형을 못 읽으면 unread ·
-    색인을 못 만든 날 unread(지난 none을 이어 쓰지 않음) · 온러닝 한국 사이트맵에 없음은 unread · 닥터마틴 한국 품번을 못 읽는 상품이 있으면 덜 끝난 색인 ·
+    색인을 못 만든 날 unread(지난 none을 이어 쓰지 않음) · 온러닝 한국 사이트맵에 없음은 unread · 닥터마틴 한국 품번을 못 읽는 상품(액세서리 빼고)이 있으면 덜 끝난 색인 ·
     킨 한국 목록 사진·상품 페이지 품번 불일치면 덜 끝난 색인 · 상태는 그 품번 국내 차례 날에만 바꿈 · 파일에 있는 상품의 국내 묻기는 판매 상태로 앞세우지 않음(묻는 날·순서가 드러나지 않게)
 v1.36: (대표 결정 2026-11-23 — 90% 분모 = 수집 브랜드 판매 중 품번) ERP 목록 브랜드 표기 'THOM BROWN'(E 빠짐)도 톰브라운으로 알아봄(SKU_ALIAS — 전에는 '감시 브랜드 밖'으로 셈).
 v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 카드(같은 <a> 안 사진 주소 …/{품번}_00.jpg · 이름은 사진 alt)로 색인(_keen_kr_index — 맨 위 분류를 날마다 다른 분류부터 · 쪽 번호 끝·새 상품 없는 쪽에서 분류를 멈춤 · 찾는 품번을 다 찾거나 150초(KR_GAP 3초라 약 50쪽)·단계 마감·한국 묻기 마감이면 멈춤 · 목록 화면 하나가 안 열리면 그 분류만 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 같은 품번 상품 페이지가 여럿(11/23 약 9%)이면 3개까지 받아 정가가 모두 같을 때만 · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(keep — 이번 실행에 색인을 이미 만들었으면 색인으로 대조) · 받아 둔 주소가 다른 상품·없는 페이지일 때만 색인으로 한 번 더(일시 오류는 그대로) · 요약 줄 '(+ 색인 목록 화면 n쪽)' · 독립 검토 13건 반영.
@@ -2845,19 +2845,26 @@ def _sku_index(brand, cc, want=None, stop=None):
     if brand == "닥터마틴" and cc == "KR":
         out, ps = _Idx(), _shop_all("https://www.drmartens.co.kr")
         out.partial = ps.partial
+        by_h = {}   # 상품 주소(handle)의 품번 — 변형 품번으로 찾은 것이 앞섬(다른 상품 주소의 숫자가 그 상품을 가리지 않게 · 검토 11/23)
         for p in ps:
             if not p.get("handle"):
                 continue
+            u = f"https://www.drmartens.co.kr/products/{p['handle']}.json"
             ks = set()
             for v in p.get("variants") or []:
                 s = str(v.get("sku") or "").strip().upper()
                 if re.match(r"\d{8}", s) and not re.fullmatch(r"\d{12,14}", s):   # 바코드(12~14자리)는 품번이 아님
                     ks.add(s[:8])
-            ks |= set(re.findall(r"(?<!\d)\d{8}(?!\d)", str(p["handle"])))   # 상품 주소(handle)의 품번(_shop_price_p도 이것으로 찾음)
-            if (p.get("variants") or []) and not ks:
-                out.partial = True   # v1.37 품번을 못 읽은 상품이 있음 — 색인에 없는 품번을 '없음'으로 보지 않음(검토 11/23)
+            hk = set(re.findall(r"(?<!\d)\d{8}(?!\d)", str(p["handle"])))   # 상품 주소의 품번(_shop_price_p도 이것으로 찾음)
+            acc = re.search(r"액세서리|accessor|슈케어|shoecare|(?:^|-)acc(?:-|$)", f"{p.get('product_type') or ''} {p['handle']}", re.I)
+            if (p.get("variants") or []) and not ks and not hk and not acc:
+                out.partial = True   # v1.37 품번을 못 읽은 상품(액세서리 빼고)이 있음 — 색인에 없는 품번을 '없음'으로 보지 않음(검토 11/23)
             for k_ in ks:
-                out.setdefault(k_, f"https://www.drmartens.co.kr/products/{p['handle']}.json")
+                out.setdefault(k_, u)
+            for k_ in hk:
+                by_h.setdefault(k_, u)
+        for k_, u in by_h.items():
+            out.setdefault(k_, u)
         return out
     if brand == "닥터마틴":   # 미국·영국은 같은 사이트 — 사이트맵을 한 번만 돌고 나라 경로로 나눔(_sku_idx_web)
         raise RuntimeError("닥터마틴 미국·영국은 _sku_idx_web")
@@ -3211,7 +3218,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 kind = "new"
             j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0})
             j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"
-            j["st"] = min(j["st"], 0 if (cc == "KR" and iid(b, c) in old_items) else min(st, 1))   # v1.37 이미 파일에 있는 상품의 국내 묻기는 판매 상태로 앞세우지 않음(kr_status가 바뀐 날로 목록 순서가 드러나지 않게 — 검토 11/23)
+            j["st"] = min(j["st"], 1 if (cc == "KR" and iid(b, c) in old_items) else min(st, 1))   # v1.37 이미 파일에 있는 상품의 국내 묻기는 판매 상태와 상관없이 한 차례(예정과 같은 자리 — kr_status가 바뀐 날로 목록 순서가 드러나지 않게 · 아직 못 찾은 판매 중 품번이 먼저 · 검토 11/23)
             if kind == "ref":
                 j["age"] = max(j["age"], age(o.get("obs_date") or o.get("seen") or td))
     # v1.32 같은 열쇠(나이키 스타일·크록스 모델)를 이번에 그 나라에서 묻는 일감이 있으면, 그 열쇠의 아직 못 찾은 다른 품번도 함께 — 같은 응답에서 읽어 요청은 늘지 않음(차례 날을 기다리지 않음)
@@ -3299,6 +3306,8 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                             raise   # 받아 둔 주소의 일시 오류(시간 초과·5xx·막힘)는 그대로 — 색인으로 같은 주소를 다시 부르지 않음
                         ix = get_ix()   # 상품이 옮겨짐(다른 상품·없는 페이지) — 색인으로 한 번 더
                         if ix is None or [x[0] for x in (ix.get(q) or [])] in ([], [pre[q]]):
+                            if isinstance(ix, _Idx) and b == "킨(KEEN)" and cc == "KR" and "상품 정보 칸 품번이 다름" in str(e0):
+                                ix.partial = True   # v1.37 색인이 이 품번을 받아 둔 주소로 가리키는데 그 페이지 품번이 다름 — 색인 열쇠를 믿을 수 없음(검토 11/23)
                             raise
                         used = ix
                         got, none = _sku_fetch(b, cc, q, j["codes"], ix)
