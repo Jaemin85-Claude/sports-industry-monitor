@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.35: (대표 결정 2026-11-23 '국내 MSRP 90%' · ERP 품번 예시 11/23) 킨 한국 SKU 정가 — LF 공식몰(고도몰)은 품번 검색이 품번을 찾지 못해(결과가 늘 같은 목록) 분류 목록 화면의 상품 사진 주소(…/th/{품번}_00.jpg)로 색인(_keen_kr_index — 맨 위 분류를 쪽마다 · 찾는 품번을 다 찾거나 70쪽·150초면 멈춤) → 상품 페이지 품번 칸이 같을 때만 정가(godo_price · 정가 칸이 채워져 있으면 정가 표시) · 받아 둔 한국 상품 주소가 있으면 색인 없이 그 주소부터(안 되면 색인으로 한 번 더 — keep) · 11/23 시험: 상품 페이지 839개 · 페이지마다 품번 하나 · 목록 사진 주소 = 품번 칸.
 v1.34: (ERP 세션 요청 2026-11-23 — 대표 전달) 정가 표본 검사 결과 audit.miss 각 줄에 구분 값 k — "mismatch"(페이지에 이 정가가 안 보임 · 불일치 — n에 셈) · "unread"(페이지 못 받음·페이지 이름 없음·원화 가격 글자 없음 — 대조 못 함 · not_read에 셈) — ERP가 사유 글(why)이 아니라 k로 가르게(why 글은 그대로) · 불일치를 목록 앞에 · 로그 '확인할 값'에 대조 못 함이 섞이던 것 고침.
 v1.33: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터') 정가 표본 검사 audit_stage — 주 1회(AUDIT_DAYS) 남은 시간이 있으면(150초 이상) 국내 정가 20개(대표 상품·SKU·모델 단위 · 브랜드마다 돌아가며 · 주마다 다른 표본 · 이전 값·수집 멈춤·8일 넘은 값 뺌)를 공식몰 상품 페이지에 보이는 가격과 대조 — 일치 = '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 100배 단위 포함) · 나이키는 상품 정보의 페이지 이름으로 nike.com/kr 상품 페이지 · 결과 prices.json 'audit' {date·n·ok·rate·not_read·miss} · 로그 '정가 표본 검사: 국내 n개 중 일치 k(…%)' · 일치율 80% 밑(10개 이상)이면 [WARN] · 페이지에 원화 가격 글자가 아예 없으면(화면 스크립트로 그림 — 톰브라운) 불일치가 아니라 '대조 못 함' · SKU 단계 뒤 멈춤 표시를 풀고 요청 · 하나도 대조 못 하면 결과를 남기지 않고 다음 실행에 · 11/23 브랜치 실측 18개 중 일치 17(94%).
 v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 한 번 만든 모델 상품은 목록과 상관없이 유지(7일마다 그 모델만 다시 받음 — 목록 변화가 파일에 안 드러나게 · 색상 정가가 갈리거나 SKU_DROP일 넘게 이전 값이면 뺌) · 그 나라 몰에 있는 색상의 정가를 확실히 못 읽으면 모델 값 안 정함 · 크록스 대표 상품 모델도 남김 · 할인 가드는 색상 값과 같고 할인 표시는 안 붙임(독립 검토 3건 반영) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
@@ -2589,7 +2590,7 @@ SKU_BRANDS = {
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
     "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
-    "킨(KEEN)": {"slug": "keen", "cc": ("US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True},   # 한국 LF 몰은 품번으로 찾을 길이 없음(다음 차례)
+    "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
 }
 
 
@@ -2742,8 +2743,36 @@ def _robots_maps(host):
     return [l.split(":", 1)[1].strip() for l in get(f"https://{host}/robots.txt").text.splitlines() if l.lower().startswith("sitemap:")]
 
 
-def _sku_index(brand, cc):
-    """색인 → {묻는 열쇠: 주소}"""
+KEEN_KR = "https://www.keenfootwear.kr"
+KEEN_KR_PAGES, KEEN_KR_BUDGET = 70, 150   # v1.35 킨 한국 색인 — 목록 화면 최대 쪽수·초(찾는 품번을 다 찾으면 그 전에 멈춤)
+
+
+def _keen_kr_index(want=None):
+    """v1.35 킨 한국 LF 공식몰(고도몰) — 분류 목록 화면의 상품 사진 주소(…/th/{품번}_00.jpg)로 {품번: 상품 주소}(11/23 시험: 상품 페이지마다 품번 하나 ·
+    목록 사진 주소 = 상품 페이지 품번 칸) · 품번 검색은 품번을 찾지 못함(검색 결과가 늘 같은 목록 — 11/23 시험) · 맨 위 분류(3자리)를 쪽마다 넘기며
+    새 상품이 없는 쪽에서 그 분류를 멈춤 · 찾는 품번(want)을 다 찾거나 쪽수·시간 한도면 멈춤 · 값은 상품 페이지 품번 칸으로 다시 확인(godo_price — 다르면 실패)"""
+    out, want, t0, pages = {}, set(want or ()), time.time(), 0
+    tops = list(dict.fromkeys(re.findall(r"goods_list\.php\?cateCd=(\d{3})(?!\d)", get(KEEN_KR + "/").text))) or ["001", "002", "003"]
+    for cd in tops:
+        for page in range(1, KEEN_KR_PAGES + 1):
+            if pages >= KEEN_KR_PAGES or time.time() - t0 > KEEN_KR_BUDGET or (want and want <= out.keys()):
+                return out
+            t = get(f"{KEEN_KR}/goods/goods_list.php?cateCd={cd}&page={page}").text
+            pages += 1
+            new = 0
+            for m in re.finditer(r'goods_view\.php\?goodsNo=(\d+)', t):
+                im = re.search(r'<img[^>]+?(?:src|data-[\w-]+)="[^"]*?/(\d{7})_\d+\.(?:jpe?g|png|gif|webp)"', t[m.end():m.end() + 800])
+                if im and im.group(1) not in out:
+                    out[im.group(1)] = f"{KEEN_KR}/goods/goods_view.php?goodsNo={m.group(1)}"; new += 1
+            if not new:
+                break
+    return out
+
+
+def _sku_index(brand, cc, want=None):
+    """색인 → {묻는 열쇠: 주소} · want = 이번에 찾는 열쇠(킨 한국만 — 다 찾으면 목록 넘기기를 멈춤)"""
+    if brand == "킨(KEEN)" and cc == "KR":
+        return _keen_kr_index(want)
     if brand == "온러닝":
         loc = ON_LOC[cc]
         us = _sm_walk([f"https://www.on.com/{loc}/products.xml"], "www.on.com", f"/{loc}/products/", max_maps=3)
@@ -2890,6 +2919,13 @@ def _sku_fetch(brand, cc, q, codes, idx):
             got[c] = (full, ex, name, None, url[:-5], None)
         return got, False
     r = get(url)
+    if 'name="set_goods_fixedPrice"' in r.text:   # v1.35 고도몰형 한국 몰(킨 한국) — JSON-LD 없음 · 상품 정보 칸 품번이 이 품번일 때만(godo_price — 다른 상품이면 실패)
+        full, ex = godo_price(r.text, cur, q)
+        fixed = any(num(v) for v in re.findall(r'name="set_goods_fixedPrice"\s+value="([0-9.,]+)"', r.text))   # 정가 칸이 채워져 있으면 정가 표시(lst)
+        name = _ld_name(r.text) or _clean_name((re.search(r"<title>\s*([^<]+?)\s*</title>", r.text) or [None, None])[1])
+        for c in codes:
+            got[c] = (full, {**ex, "lst": fixed}, name, None, url, None)
+        return got, False
     if brand == "온러닝":
         fp = urllib.parse.urlsplit(r.url).path
         if "/products/" not in fp or not fp.upper().endswith(q.upper()):
@@ -3124,20 +3160,39 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     with rlock: cnt["left"] += 1
                     continue
                 _, cc, q = k
-                ix = None
-                if SKU_BRANDS[b].get("idx"):
+                def get_ix():
                     if b == "닥터마틴" and cc != "KR":
                         web = idx.get("닥터마틴 web", _sku_idx_web)
-                        ix = None if web is None else web.get(cc)
+                        ix_ = None if web is None else web.get(cc)
                     else:
-                        ix = idx.get(f"{b} {cc}", lambda: _sku_index(b, cc))
-                    if test and ix is not None and (b, cc) not in shown:
-                        shown.add((b, cc)); say(f"  SKU 색인 {b} {cc}: {len(ix)}개")
+                        want_ = {k2[2] for k2 in jobs if k2[0] == b and k2[1] == cc}   # v1.35 이번에 그 나라에서 찾는 열쇠(킨 한국 색인 — 다 찾으면 멈춤)
+                        ix_ = idx.get(f"{b} {cc}", lambda: _sku_index(b, cc, want_))
+                    if test and ix_ is not None and (b, cc) not in shown:
+                        shown.add((b, cc)); say(f"  SKU 색인 {b} {cc}: {len(ix_)}개")
+                    return ix_
+                pre = None   # v1.35 받아 둔 그 나라 상품 주소(keep — 킨 한국): 있으면 색인 없이 그 주소부터
+                if cc in SKU_BRANDS[b].get("keep", ()):
+                    us_ = {((((old_items.get(iid(b, c_)) or {}).get("m") or {}).get(cc)) or {}).get("url") for c_ in j["codes"]}
+                    if len(us_) == 1 and None not in us_:
+                        pre = {q: us_.pop()}
+                ix = None
+                if SKU_BRANDS[b].get("idx") and pre is None:
+                    ix = get_ix()
                     if ix is None:
                         with rlock: cnt["noidx"] += 1
                         continue
                 try:
-                    got, none = _sku_fetch(b, cc, q, j["codes"], ix)
+                    try:
+                        got, none = _sku_fetch(b, cc, q, j["codes"], pre or ix)
+                        if pre is not None and not any(not cd.startswith("__") for cd in got):
+                            raise LookupError("받아 둔 주소에 이 품번 없음")
+                    except Exception:
+                        if pre is None or not SKU_BRANDS[b].get("idx"):
+                            raise
+                        ix = get_ix()   # 받아 둔 주소가 안 되면(상품 번호가 바뀌었을 수 있음) 색인으로 한 번 더
+                        if ix is None:
+                            raise RuntimeError("색인 못 만듦")
+                        got, none = _sku_fetch(b, cc, q, j["codes"], ix)
                 except Exception as e:
                     w = (str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)
                     w = re.sub(r"https?://\S+", "(주소)", w)[:80]
