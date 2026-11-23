@@ -1,0 +1,28 @@
+name: probe-v140
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths: [.github/workflows/probe-v140.yml]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with: {python-version: "3.12"}
+      - run: pip install -q -r requirements.txt
+      - name: SKU stage with public test codes (29CM)
+        env:
+          ERP_SKU_TEST: '[{"brand":"NEW BALANCE","code":"U740BM2","status":"selling"},{"brand":"NEW BALANCE","code":"SD2205GR","status":"selling"},{"brand":"NEW BALANCE","code":"U530JPB","status":"selling"},{"brand":"ADIDAS","code":"IH3990","status":"selling"},{"brand":"ADIDAS","code":"JS4997","status":"selling"},{"brand":"ADIDAS","code":"HP5055","status":"selling"},{"brand":"ADIDAS","code":"ZZ9999","status":"selling"},{"brand":"VANS","code":"VN000D3HY281","status":"selling"},{"brand":"VANS","code":"VN000VA6BKA1","status":"selling"},{"brand":"VANS","code":"VN000D3HY28","status":"selling"},{"brand":"THE NORTH FACE","code":"NS85S31A","status":"selling"},{"brand":"THE NORTH FACE","code":"NJ3NS66J","status":"selling"}]'
+        run: |
+          python price_fetch.py 2>&1 | grep -E "SKU|29CM|해외 정가:|Traceback|Error" | head -80
+          python - <<'PY'
+          import json
+          d = json.load(open("docs/prices.json"))
+          for it in d["items"]:
+              if it.get("kind") == "sku" and it["brand"] in ("뉴발란스", "아디다스", "반스", "노스페이스"):
+                  print(it["id"], it.get("name"), it.get("cat"), json.dumps(it["m"].get("KR"), ensure_ascii=False), it.get("kr_status"))
+          PY
