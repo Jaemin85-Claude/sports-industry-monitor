@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 5: KOSIS 국내 수요 지표 (v4)
+v5.3: (대표 지시 2026-11-23 '봇 이름도 일반 이름으로 바꿔주세요') 서버 위치 확인(ipinfo.io·api.ipify.org — 정부 사이트가 아닌 IP 조회 서비스)만 일반 이름 market-monitor로(kosis.kr 접속 이름은 그대로).
 v5.2: (대표 지시 2026-10-20 '보완안 3') kosis.kr(국가정보자원관리원 27.101.x)도 공공데이터포털처럼 일부 GitHub 서버(IP)에서만 연결이 안 될 수
       있어(10/20 시험: 서버 7대 중 2대에서 같은 대역 정부 사이트가 막힘) — 시작할 때 kosis.kr에 연결만 먼저 시험(6초 × 2번 · 막히면 60초 ×
       재시도로 작업 20분 제한을 넘기던 것을 바로 멈춤)하고, 막혔거나 연결 오류로 못 받은 지표가 있으면 kosis.yml이 새 서버에서 다시 받음
@@ -44,6 +45,7 @@ import requests
 
 API_KEY = os.environ.get("KOSIS_API_KEY", "")
 UA = {"User-Agent": "sports-industry-monitor kosis"}
+IP_UA = {"User-Agent": "Mozilla/5.0 (market-monitor)"}   # v5.3 서버 위치 확인(ipinfo.io·api.ipify.org — 정부 사이트 아님)은 일반 이름(11-23 대표 지시)
 KST = datetime.timezone(datetime.timedelta(hours=9))
 DATA_URL = "https://kosis.kr/openapi/Param/statisticsParameterData.do"
 MONTHS = 25          # 최근 25개월 (YoY 계산 위해 13개월 이상 필요)
@@ -398,13 +400,13 @@ def runner_where():
     """v5.2 이 GitHub 서버의 공인 IP 앞 두 자리·지역·망(ipinfo.io) — '4.154.x.x · Washington · AS8075 Microsoft Corporation'. 못 읽으면 ''"""
     d = {}
     try:
-        d = requests.get("https://ipinfo.io/json", headers=UA, timeout=5).json()
+        d = requests.get("https://ipinfo.io/json", headers=IP_UA, timeout=5).json()
         d = d if isinstance(d, dict) else {}
     except Exception:
         pass
     if not re.fullmatch(r"\d+(\.\d+){3}", str(d.get("ip") or "")):   # 호출 한도·오류 — IP만이라도
         try:
-            r = requests.get("https://api.ipify.org", headers=UA, timeout=5)
+            r = requests.get("https://api.ipify.org", headers=IP_UA, timeout=5)
             d = {"ip": r.text.strip()} if r.status_code == 200 else {}
         except Exception:
             d = {}
