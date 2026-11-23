@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23 19:51 KST",
+ "generated_at": "2026-11-23 23:02 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -16879,7 +16879,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-554725-078",
@@ -17037,7 +17038,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-ar4076-010",
@@ -17196,7 +17198,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-ba5954-010",
@@ -17275,7 +17278,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-bv3637-100",
@@ -17390,7 +17394,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-cj9179-200",
@@ -17617,7 +17622,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-cu9225-001",
@@ -17635,7 +17641,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-cv5515-001",
@@ -17662,7 +17669,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-cw6109-010",
@@ -17680,7 +17688,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-cw9301-010",
@@ -17796,7 +17805,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-da2776-601",
@@ -17867,7 +17877,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dc3728-001",
@@ -18027,7 +18038,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dc7211-010",
@@ -18106,7 +18118,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dd1503-103",
@@ -18133,7 +18146,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dd4732-073",
@@ -18160,7 +18174,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dd4732-716",
@@ -18187,7 +18202,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dd8959-100",
@@ -18205,7 +18221,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dh1640-100",
@@ -18391,7 +18408,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dq9624-001",
@@ -18444,7 +18462,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dv4130-104",
@@ -18489,7 +18508,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dx0539-716",
@@ -18515,7 +18535,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dx0613-077",
@@ -18533,7 +18554,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dx0990-010",
@@ -18640,7 +18662,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-dx9176-103",
@@ -18684,7 +18707,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fb2207-001",
@@ -18745,7 +18769,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fb5624-010",
@@ -18825,7 +18850,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fd7544-010",
@@ -18843,7 +18869,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fd8311-800",
@@ -18924,7 +18951,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fd8315-800",
@@ -18942,7 +18970,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fj0736-010",
@@ -19013,7 +19042,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fn3343-010",
@@ -19172,7 +19202,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fv2923-001",
@@ -19217,7 +19248,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-fz0627-010",
@@ -19298,7 +19330,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hf3717-068",
@@ -19325,7 +19358,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hf3717-102",
@@ -19449,7 +19483,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hj7038-100",
@@ -19476,7 +19511,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hj8082-002",
@@ -19547,7 +19583,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hm8497-010",
@@ -19573,7 +19610,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hq1988-002",
@@ -19600,7 +19638,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hq1988-101",
@@ -19627,7 +19666,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hq4307-001",
@@ -19697,7 +19737,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hq7901-102",
@@ -19715,7 +19756,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hv4479-004",
@@ -19742,7 +19784,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hv5060-003",
@@ -19760,7 +19803,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-nike-hv5953-001",
@@ -20000,7 +20044,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-drm-11838001",
@@ -20267,7 +20312,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-11016-001",
@@ -20304,7 +20350,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-11016-07w",
@@ -20323,7 +20370,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-11016-100",
@@ -20351,7 +20399,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-11016-1as",
@@ -20417,7 +20466,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-203591-0ex",
@@ -20500,7 +20550,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-203591-2yb",
@@ -20537,7 +20588,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-203591-459",
@@ -20760,7 +20812,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-205942-6wv",
@@ -20853,7 +20906,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-206633-577",
@@ -20881,7 +20935,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-206708-0dd",
@@ -20956,7 +21011,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-206750-2y2",
@@ -21261,7 +21317,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-207937-1ft",
@@ -21308,7 +21365,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-207946-001",
@@ -21560,7 +21618,8 @@
       ]
      ]
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-crocs-210059-001",
@@ -21598,7 +21657,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-keen-1004347",
@@ -21877,7 +21937,8 @@
      "obs_date": "2026-11-23",
      "sale": false
     }
-   }
+   },
+   "kr_status": "unread"
   },
   {
    "id": "s-keen-1030558",
