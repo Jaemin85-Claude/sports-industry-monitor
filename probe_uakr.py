@@ -2,11 +2,12 @@
 import re, time, json, urllib.parse
 import price_fetch as pf
 SITES = {
-  "SSG 판매자관": ["https://m.ssg.com/sellerhome/133919.ssg", "https://www.ssg.com/search.ssg?query=1326413-001"],
-  "롯데ON 롯데백화점": ["https://www.lotteon.com/display/shop/seltBrdShop/2/P2874", "https://www.lotteon.com/p/product/LE1216206083"],
-  "무신사": ["https://www.musinsa.com/brand/underarmour/products", "https://www.musinsa.com/search/goods?keyword=1326413-001"],
-  "이랜드몰": ["https://www.elandmall.co.kr/i/item?itemNo=2209282526&lowerVendNo=LV21032699"],
-  "더현대": ["https://www.thehyundai.com/front/sec/searchList.thd?searchTerm=1326413"],
+  "LF몰(갤러리아)": ["https://m.lfmall.co.kr/app/product/E0TJXX03769", "https://www.lfmall.co.kr/app/product/E0TJXX03769"],
+  "롯데아이몰": ["https://m.lotteimall.com/goods/viewGoodsDetail.lotte?goods_no=2872897689", "https://www.lotteimall.com/goods/viewGoodsDetail.lotte?goods_no=2872897689"],
+  "현대H몰": ["https://www.hmall.com/pd/pda/itemPtc?slitmCd=2141234567", "https://www.hmall.com/p/dpa/searchSpexSectItem.do?searchTerm=1326413"],
+  "AK몰": ["https://www.akmall.com/goods/GoodsDetail.do?goods_id=100000000"],
+  "네이버 브랜드스토어": ["https://brand.naver.com/underarmour", "https://brand.naver.com/underarmour/products/1"],
+  "갤러리아": ["https://www.galleria.co.kr/"],
 }
 def main():
     for name, urls in SITES.items():
