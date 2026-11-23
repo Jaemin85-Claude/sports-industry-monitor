@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.38: (대표 지시 2026-11-23 '90% 이상' · '스포츠 브랜드가 제일 중요') 컨버스 국내 정가 — ERP 판매 중 품번(감시 브랜드 밖 · SKU_ALIAS '컨버스')을 한국 공식몰(카페24
+    www.converse.co.kr)에서 품번 검색(search.html?keyword=) → 상품 페이지 '스타일 : 품번' 칸(ma_product_code)이 같을 때만 정가(converse_price — meta product:price:amount ·
+    할인가 product:sale_price:amount · 소비자가 칸이 판매가보다 높으면 그것) · 같은 품번 페이지 여러 개면 3개까지 받아 정가가 모두 같을 때만 · 검색에 없으면 __noans__
+    (숨긴 상품일 수 있어 '없음'으로 보지 않음) · 한국만(cc KR) · 요청 간격 KR_GAP(SKU_KR_HOSTS) · 11/23 시험: 품번 검색·스타일 칸·가격 칸 읽힘(A20319C 119,000원)
 v1.37: (ERP 세션 요청 2026-11-23 — 대표 전달) 한국 값이 없는 SKU 상품에 국내 확인 상태 kr_status — "none"(이번에 국내 공식몰이 답했는데 이 품번이 없음) · "unread"(아직 답을 못 받음 ·
     국내 몰에 있는데 정가를 확실히 못 읽음 · 보류 · 국내 몰을 읽지 못하는 브랜드) — ERP는 "none"만 '국내 공식 판매 없음'으로 셈. 확인한 날은 싣지 않음(날마다 물은 품번이
     공개 파일에 드러나 목록 순서를 짐작할 수 있어 — 검토 11/23). 이미 파일에 있는 상품(해외에서 찾은 공개 품번)에만 붙임 — 어디서도 못 찾은 목록 품번은 지금처럼 파일에 남기지 않음 ·
@@ -2578,7 +2582,8 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "써코니": "saucony|사코니", "살로몬": "salomon", "킨(KEEN)": "keen|킨", "우포스": "oofos", "크록스": "crocs",
     "오니츠카타이거": "onitsukatiger|onitsuka tiger|오니츠카", "미즈노": "mizuno", "닥터마틴": "drmartens|dr.martens|dr martens|닥터마틴스",
     "헌터": "hunter", "드래곤디퓨전": "dragondiffusion|dragon diffusion", "톰브라운": "thombrowne|thom browne|thombrown|thom brown",
-    "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning"}
+    "버버리": "burberry", "언더아머": "underarmour|under armour", "브룩스": "brooks|brooksrunning",
+    "컨버스": "converse"}   # v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
 CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de", "JP": "www.crocs.co.jp"}
@@ -2600,7 +2605,8 @@ SKU_BRANDS = {
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
     "닥터마틴": {"slug": "drm", "cc": ("KR", "US", "GB"), "q": lambda c: c, "rx": r"^\d{8}$", "idx": True},
     "살로몬": {"slug": "salomon", "cc": ("KR",), "q": lambda c: c, "idx": True},   # 해외(www.salomon.com)는 한 실행 8건 한도라 대표 상품에만
-    "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
+    "킨(KEEN)": {"slug": "keen", "cc": ("KR", "US", "GB", "DE", "JP"), "q": lambda c: c, "rx": r"^\d{7}$", "idx": True, "keep": ("KR",)},
+    "컨버스": {"slug": "converse", "cc": ("KR",), "q": lambda c: c, "rx": r"^[0-9A-Z]{4,7}C$"},   # v1.38 한국 공식몰(카페24) 품번 검색 → 상품 페이지 '스타일' 칸이 같을 때만(converse_price)   # v1.35 한국 LF 몰 = 분류 목록 사진 주소의 품번 색인(_keen_kr_index) · 받아 둔 한국 상품 주소가 있으면 그 주소부터(keep)
 }
 
 
@@ -2767,6 +2773,27 @@ def _shop_all(base, pages=12):
 
 def _robots_maps(host):
     return [l.split(":", 1)[1].strip() for l in get(f"https://{host}/robots.txt").text.splitlines() if l.lower().startswith("sitemap:")]
+
+
+CONVERSE_KR = "https://www.converse.co.kr"
+CONVERSE_DUP = 3   # 같은 품번 상품 페이지가 여럿이면 이만큼까지 받아 정가가 모두 같을 때만(0.5% 안)
+SKU_KR_HOSTS = ("www.converse.co.kr",)   # v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP
+
+
+def converse_price(html, code):
+    """v1.38 컨버스 한국 공식몰(카페24) 상품 페이지 → (정가, extra) — 상품 정보 칸 '스타일 : {품번}'(ma_product_code)이 이 품번일 때만.
+    판매가 = meta product:price:amount · 할인가 = product:sale_price:amount(더 낮으면 지금 값) · 소비자가 칸(span_product_price_custom)이 판매가보다 높으면 그것이 정가(cafe24_id_list —
+    판매가 칸이 이 값과 짝일 때만 · 꼴을 못 읽으면 실패) · 11/23 시험: A20319C 119,000원 · A22161C 85,000원(판매가 = 할인가)"""
+    if not re.search(r'ma_product_code[^"]*"[^>]*>\s*(?:스타일\s*:\s*)?' + re.escape(code) + r'\s*<', html):
+        raise RuntimeError("상품 정보 칸 품번이 다름 — 다른 상품")
+    meta = lambda k: num((re.search(r'<meta\s+property="product:' + k + r':amount"\s+content="([0-9.,]+)"', html) or [None, None])[1])
+    p, s = meta("price"), meta("sale_price")
+    if not p:
+        raise RuntimeError("판매가 칸(product:price:amount) 없음")
+    lp, sv = cafe24_id_list(html, p)
+    full = max(lp or 0, p)
+    cur = min(x for x in (s, sv, p) if x)
+    return full, {"cur_price": cur, "lst": bool(lp and lp > p * 1.005) or bool(s and s < p * 0.995)}
 
 
 KEEN_KR = "https://www.keenfootwear.kr"
@@ -2996,6 +3023,27 @@ def _sku_fetch(brand, cc, q, codes, idx):
         for c in codes:   # 모델 단위 브랜드 — 목록 품번이 곧 모델 번호(sku_list)
             got[c] = (full, ex, name, None, fin, "model")
         return got, False
+    if brand == "컨버스":   # v1.38 한국 공식몰 품번 검색(카페24 search.html) → 상품 페이지(같은 품번 여러 개면 정가가 모두 같을 때만)
+        r = get(f"{CONVERSE_KR}/product/search.html?keyword={urllib.parse.quote(q)}")
+        ls = list(dict.fromkeys(re.findall(r'href="(/product/[^"?#]+?/\d+/)(?:category/\d+/display/\d+/?)?"', r.text)))[:CONVERSE_DUP + 2]
+        vals = []
+        for l_ in ls:
+            rr = get(CONVERSE_KR + l_)
+            try:
+                full, ex = converse_price(rr.text, q)
+            except RuntimeError as e:
+                if "품번이 다름" in str(e):
+                    continue   # 검색 결과의 다른 상품
+                raise
+            vals.append((full, ex, _ld_name(rr.text), CONVERSE_KR + l_))
+            if len(vals) >= CONVERSE_DUP:
+                break
+        if not vals:
+            return {"__noans__": set(codes)}, True   # 검색에 안 나옴 — 숨긴 상품일 수도 있어 '없음'으로 보지 않음(앞 상태 유지 · 처음이면 unread)
+        if max(v[0] for v in vals) > min(v[0] for v in vals) * 1.005:
+            raise RuntimeError(f"같은 품번 상품 페이지 {len(vals)}개의 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+        full, ex, nm, u = vals[0]
+        return {c: (full, ex, nm, None, u, None) for c in codes}, False
     # 색인으로 찾는 브랜드
     url = idx.get(q) if idx else None
     if not url:
@@ -3336,7 +3384,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             if ph == 0:
                 kr_done[b].set()
             c.sess.close(); _TL.c = None
-    for h_ in _kr_only_hosts(PRODUCTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도
+    for h_ in set(_kr_only_hosts(PRODUCTS)) | set(SKU_KR_HOSTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도 · v1.38 SKU 전용 한국 몰도
         HOST_GAP[h_] = max(HOST_GAP.get(h_, 0), KR_GAP)
     if not _PACE:
         _PACE.update(pace_map(PRODUCTS))
