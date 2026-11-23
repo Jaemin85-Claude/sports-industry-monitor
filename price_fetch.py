@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.32: (대표 결정 2026-11-23 '국내기준 msrp 판매중인 상품 대비 90%' · '2가') SKU 단계 모델 단위 국내 정가 — 목록 품번(판매 중·예정)의 그 색상이 국내 공식몰에 없고 같은 모델의 국내 색상 정가가 모두 같으면(색상 하나여도) 모델 번호 한 상품(id s-브랜드-model-모델 · code = 모델 · m.KR.lvl "model")으로 채움 — 나이키(스타일)·크록스(모델) · 요청은 늘지 않음(같은 스타일·모델 페이지에서 읽음) · 국내 색상 정가가 서로 다르면 안 씀 · 그 모델에서 국내 값이 빈 목록 품번이 없어지면 모델 상품도 뺌(색상 값이 앞섬) · ERP는 '품번의 첫 - 앞부분 == code'로 맞춤(푸마·언더아머 모델 단위와 같은 규칙) · 같은 열쇠(스타일·모델)를 그 나라에서 묻는 날이면 그 열쇠의 아직 못 찾은 다른 품번도 같은 응답에서 함께 저장(요청은 늘지 않음 · 품번마다 차례 날을 기다리지 않음).
 v1.31: (대표 지시 2026-11-23 '봇 이름에서 저장소 주소 빼주세요' · '봇 이름도 일반 이름으로 바꿔주세요') 접속 이름(User-Agent)을 'market-monitor price bot'으로 — 저장소 주소·저장소 이름(sports-industry-monitor)을 뺌(봇임은 그대로 밝힘 · robots.txt는 새 이름 BOT으로 맞춤 · 11-23 전에 우리 봇을 막은 사이트는 옛 이름으로도 열려야 다시 넣음 — 이름을 바꿔 막힘을 피하지 않게) · robots.txt는 * 그룹 + 옛 이름(OLD_BOT)·새 이름 그룹을 모두 지킴(하나라도 막으면 막음 — 새 이름 그룹은 다른 봇 것일 수 있어 *보다 넓게 허용 안 함) · 옛 접속 이름 OLD_UA는 수집에 안 씀(막혔던 사이트 다시 시험용).
 v1.30: (대표 결정 2026-11-23 '일본 가격은 추가할게요 정가 수집에서') 일본 수집 재개 — PAUSED_CC = 멕시코·두바이만(일본 값 약 150개는 다음 실행에서 바로 다시 받음 ·
     수집을 멈춘 사이트 jp.puma.com은 그대로) · SKU 단계 나라에 일본(SKU_CC 맨 뒤 — 나이키 상품 정보·크록스 www.crocs.co.jp·온러닝 ja-jp·킨 www.keenfootwear.jp · 푸마는 일본 몰 막힘이라 뺌).
@@ -2579,8 +2580,8 @@ NIKE_STYLE = NIKE_FEED.split("&filter=productInfo")[0] + "&filter=productInfo.me
 # model(모델 페이지 정가만 읽혀 색상을 확인 못 함 → 목록 색상 품번 대신 모델 번호로 한 상품 · 값 lvl "model" — 목록 색상 품번은 파일에 안 남음)
 def _sku_model(c): return c.split("-")[0]
 SKU_BRANDS = {
-    "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c)},
-    "크록스": {"slug": "crocs", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{5,6}-[0-9A-Z]{3}$"},
+    "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c), "mfill": True},
+    "크록스": {"slug": "crocs", "cc": SKU_CC, "q": _sku_model, "rx": r"^\d{5,6}-[0-9A-Z]{3}$", "mfill": True},
     "푸마": {"slug": "puma", "cc": ("KR", "US", "GB", "DE"), "q": _sku_model, "rx": r"^\d{6}(-\d{2})?$", "model": True},   # 일본 몰은 접속 막음(PAUSED jp.puma.com)
     "언더아머": {"slug": "ua", "cc": ("US",), "q": _sku_model, "rx": r"^\d{7}(-\d{3})?$", "model": True},   # 한국·영국·독일 몰은 접속 막음(수집 멈춤)
     "온러닝": {"slug": "on", "cc": SKU_CC, "q": lambda c: c, "idx": True},
@@ -2798,6 +2799,17 @@ def _sku_idx_web():
     return out
 
 
+def _sku_mput(got, mod, url):
+    """v1.32 모델 단위 국내 정가(대표 결정 11-23 '2가') — 그 모델의 국내 색상 정가가 모두 같으면 got["__model__"], 서로 다르면 got["__mixed__"]
+    (색상이 하나뿐이어도 씀 · 값은 정가 표시(나이키 fullPrice·크록스 retailPrice) · 할인 판단은 안 함(cur_price 없음 — 색상마다 다를 수 있어))"""
+    ps = {round(v[0], 2) for v in mod.values()}
+    if len(ps) == 1:
+        sc = sorted(mod)[0]
+        got["__model__"] = (mod[sc][0], {"lst": True}, mod[sc][1], mod[sc][2], url, "model")
+    elif len(ps) > 1:
+        got["__mixed__"] = len(mod)
+
+
 def _sku_fetch(brand, cc, q, codes, idx):
     """묻는 열쇠 하나(나이키 스타일·크록스 모델·…)를 받아 → ({품번: (정가, extra, 이름, 분류 힌트, 주소 또는 None, lvl)}, 공식몰에 없음?)
     공식몰에 그 열쇠가 없으면 ({}, True) · 페이지는 있는데 어떤 품번이 없으면 그 품번만 결과에서 빠짐"""
@@ -2805,16 +2817,20 @@ def _sku_fetch(brand, cc, q, codes, idx):
     if brand == "나이키":
         m, l, _ = MK[cc]
         d = _json(get(NIKE_STYLE.format(m=m, l=l, s=q)))
-        got = {}
+        got, mod = {}, {}
         for o in d.get("objects") or []:
             for pi in o.get("productInfo") or []:
                 mp, mer, pc = pi.get("merchPrice") or {}, pi.get("merchProduct") or {}, pi.get("productContent") or {}
                 sc = _sku_norm(mer.get("styleColor"))
                 fp = num(mp.get("fullPrice"))
+                pt = str(mer.get("productType") or "").upper()
+                hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
                 if sc in codes and fp and mp.get("currency") == cur and sc not in got:
-                    pt = str(mer.get("productType") or "").upper()
-                    hint = {"FOOTWEAR": "shoe", "APPAREL": "wear", "EQUIPMENT": "bag"}.get(pt, "shoe")
                     got[sc] = (fp, {"cur_price": num(mp.get("currentPrice")), "lst": True}, _clean_name(pc.get("fullTitle") or pc.get("title")), hint, None, None)
+                if fp and mp.get("currency") == cur and sc.startswith(q + "-") and sc not in mod:   # v1.32 이 모델의 그 나라 색상 정가(모델 단위 채우기)
+                    mod[sc] = (fp, _clean_name(pc.get("fullTitle") or pc.get("title")), hint)
+        if cc == "KR" and SKU_BRANDS[brand].get("mfill"):
+            _sku_mput(got, mod, None)
         return got, not (d.get("objects") or [])
     if brand in ("크록스", "푸마", "언더아머"):
         url = (f"https://{CROCS_HOST[cc]}/p/x/{q}.html" if brand == "크록스" else PUMA_PD[cc].format(m=q) if brand == "푸마"
@@ -2834,6 +2850,14 @@ def _sku_fetch(brand, cc, q, codes, idx):
                     got[c] = (full, {**ex, "lst": True}, name, "sandal", fin, None)   # 변형 정가(retailPrice) — 정가 표시 있음
                 except RuntimeError:
                     pass   # 이 나라 몰에 이 색상 없음(다른 색상만)
+            if cc == "KR" and SKU_BRANDS[brand].get("mfill"):   # v1.32 이 모델의 국내 색상 정가(모델 단위 채우기)
+                mod = {}
+                for col in sorted({m_.group(1).upper() for m_ in re.finditer(rf'{_JQ}productId{_JQ}\s*:\s*{_JQ}{re.escape(q)}-([0-9A-Za-z]{{3}})-', r.text)}):
+                    try:
+                        mod[f"{q}-{col}"] = (crocs_list(r.text, q, cur, color=col)[0], name, "sandal")
+                    except RuntimeError:
+                        pass   # 그 색상은 정가를 확실히 못 읽음(품절 등) — 모델 값 판단에서 뺌
+                _sku_mput(got, mod, fin)
             return got, False
         full, ex = page_price(r.text, q, cur, [q])
         if ex.get("by") == "이름":
@@ -2901,6 +2925,10 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         return keep, meta
     meta.pop("sku_list_fail", None); meta.pop("sku_list_told", None)
     say = log if test else (lambda *_: None)   # 시험 목록(공개 품번)일 때만 자세히
+    # v1.32 모델 단위 채우기 상품(같은 모델 다른 색상의 국내 정가 — id s-브랜드-model-모델)은 따로 — 아래 목록 품번 규칙과 섞이지 않게
+    def mid(b, m_): return f"s-{SKU_BRANDS[b]['slug']}-model-{re.sub(r'[^0-9a-z]+', '-', m_.lower()).strip('-')}"
+    mitems = {it["id"]: it for it in keep if SKU_BRANDS.get(it.get("brand"), {}).get("mfill") and it["id"] == mid(it["brand"], str(it.get("code") or ""))}
+    keep = [it for it in keep if it["id"] not in mitems]
     # 대상 — 대표 상품과 같은 품번은 뺌(이미 받음) · 감시 브랜드 밖·아직 못 읽는 브랜드는 셈만 · 목록에서 빠진 상품도 같은 규칙으로 계속 받음(st 2 — 묻기 순서에선 예정과 같게)
     tgt, n_out, n_unsup = {}, 0, collections.Counter()
     for it in lst:
@@ -2944,6 +2972,14 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             j["codes"].add(c); j["st"] = min(j["st"], min(st, 1)); j["ref"] = j["ref"] or kind == "ref"
             if kind == "ref":
                 j["age"] = max(j["age"], age(o.get("obs_date") or o.get("seen") or td))
+    # v1.32 같은 열쇠(나이키 스타일·크록스 모델)를 이번에 그 나라에서 묻는 일감이 있으면, 그 열쇠의 아직 못 찾은 다른 품번도 함께 — 같은 응답에서 읽어 요청은 늘지 않음(차례 날을 기다리지 않음)
+    byq = collections.defaultdict(set)
+    for (b, c) in tgt:
+        byq[(b, SKU_BRANDS[b]["q"](c))].add(c)
+    for (b, cc, q), j in jobs.items():
+        for c in byq.get((b, q), ()):
+            if c not in j["codes"] and not ((((old_items.get(iid(b, c)) or {}).get("m") or {}).get(cc)) or {}).get("seen"):
+                j["codes"].add(c)
     ccr = {cc: i for i, cc in enumerate(SKU_CC)}
     rot = lambda k: hashlib.sha1(f"{k}|{td}".encode()).hexdigest()   # 못 찾은 값 묻는 순서 — 날마다 바뀜(뒤쪽 품번도 차례가 옴)
     order = sorted(jobs, key=lambda k: (k[1] != "KR", 0, -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 1, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저
@@ -2988,10 +3024,12 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                         cnt["fail"] += 1; res[k] = {"err": w, "codes": set(j["codes"])}
                     say(f"  SKU {b} {cc} {q}: 못 받음 — {w}")
                     continue
+                gx = {cd: v for cd, v in got.items() if not cd.startswith("__")}   # v1.32 __model__·__mixed__(모델 단위)는 품번이 아님
                 with rlock:
                     cnt["req"] += 1; res[k] = {"got": got, "codes": set(j["codes"])}
-                    cnt["none"] += int(bool(none or not got))
-                say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(got.items())) or "공식몰에 없음"))
+                    cnt["none"] += int(bool(none or not gx))
+                say(f"  SKU {b} {cc} {q}: " + (" · ".join(f"{cd} {v[0]:,g}" + (f"(지금 {v[1]['cur_price']:,g})" if v[1].get("cur_price") and v[1]["cur_price"] < v[0] else "") for cd, v in sorted(gx.items())) or "공식몰에 없음")
+                    + (f" · 모델 단위 {got['__model__'][0]:,g}" if "__model__" in got else f" · 모델 색상 정가가 서로 다름({got['__mixed__']}색)" if "__mixed__" in got else ""))
         finally:
             if ph == 0:
                 kr_done[b].set()
@@ -3108,14 +3146,50 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
             items[i] = it
             kept.pop(i, None)
-    out = [it for it in list(items.values()) + list(kept.values())
+    # v1.32 모델 단위 국내 정가(대표 결정 2026-11-23 '2가') — 목록 품번(판매 중·예정)의 그 색상 국내 값이 없고, 같은 모델의 국내 색상 정가가 모두 같으면
+    # 모델 번호 한 상품(code = 모델 · m.KR.lvl "model")으로 채움. 그 모델에서 국내 값이 빈 목록 품번이 없어지면 모델 상품도 뺌(색상 값이 앞섬) ·
+    # 이번 실행에 그 모델을 국내에서 물었을 때만 새로 씀(빈 색상은 2일마다 묻고 그때 같이) · 국내 색상 정가가 서로 다르면 모델 값을 쓰지 않음(이전 모델 값도 뺌)
+    mout, n_mixed = {}, 0
+    def has_kr(i):
+        x = items.get(i) or kept.get(i) or {}
+        return bool(((x.get("m") or {}).get("KR") or {}).get("p"))
+    need = sorted({(b, SKU_BRANDS[b]["q"](c)) for (b, c), st in tgt.items() if SKU_BRANDS[b].get("mfill") and st <= 1 and "KR" in SKU_BRANDS[b]["cc"] and not has_kr(iid(b, c))})
+    for b, m_ in need:
+        i = mid(b, m_)
+        it = json.loads(json.dumps(mitems.get(i) or {"id": i, "brand": b, "name": None, "code": m_, "cat": None, "kind": "sku", "m": {}}, ensure_ascii=False))
+        it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc == "KR" and isinstance(o, dict)}
+        r = res.get((b, "KR", m_))
+        o = it["m"].get("KR")
+        if r and "got" in r and "__model__" in r["got"]:
+            full, ex, name, hint, url, lvl = r["got"]["__model__"]
+            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)
+            if o2.get("url") is None:
+                o2.pop("url", None)
+            o2["lvl"] = "model"
+            it["m"]["KR"] = o2
+            if name:
+                it["name"] = name
+            if not it.get("cat"):
+                it["cat"] = _sku_cat(name, hint or bcat.get(b, "shoe"))
+        elif r and "got" in r and "__mixed__" in r["got"]:
+            n_mixed += 1
+            continue   # 국내 색상 정가가 서로 다름 — 모델 값을 쓰지 않음
+        elif r and o:   # 이번에 물었는데 국내 몰에 그 모델이 없음·못 받음 — 이전 값
+            o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = r.get("err") or "이번엔 공식몰에서 못 찾음"
+        if it["m"].get("KR"):
+            if not it.get("cat"):
+                it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
+            mout[i] = it
+    out = [it for it in list(items.values()) + list(kept.values()) + list(mout.values())
            if alive(it) and it.get("code") not in rep_codes.get(it.get("brand"), set())]   # 대표 상품이 된 품번은 뺌(같은 품번 두 줄이 되지 않게)
     out.sort(key=lambda x: (x["brand"], x["code"]))
     nv = sum(len(it["m"]) for it in out)
     nb = len({k.split("(")[0] for k in n_unsup})   # 못 읽는 브랜드는 곳 수만(목록 구성은 내부 정보 — 이름은 시험 목록일 때만)
     log(f"SKU 정가: 목록 {band(len(lst))}개(감시 브랜드 밖 {band(n_out)} · 아직 못 읽는 브랜드·품번 모양 {nb}곳 {band(sum(n_unsup.values()))}개"
         + (f" — {', '.join(sorted({k.split('(')[0] for k in n_unsup}))}" if n_unsup and test else "") + ")"
-        + f" · 공식몰에서 찾은 상품 {len(out)}개(값 {nv} · 한국 {sum(1 for it in out if 'KR' in it['m'])})"
+        + f" · 공식몰에서 찾은 상품 {len(out)}개(값 {nv} · 한국 {sum(1 for it in out if 'KR' in it['m'])}"
+        + (f" — 그중 모델 단위 국내 {sum(1 for it in out if it['id'] in mout)}" if mout else "") + ")"
+        + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
         + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번 · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
