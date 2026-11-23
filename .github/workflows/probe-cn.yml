@@ -1,0 +1,24 @@
+name: probe-cn
+
+# 임시 시험(병합하지 않음 · PR 전에 지움) — 중국 공식몰 정가를 우리 봇으로 읽을 수 있는지(probe_cn.py · 공개 주소만). 커밋 메시지에 skip ci가 있으면 안 돎.
+on:
+  push:
+    branches: [claude/sports-industry-monitor-update-j2wty5]
+    paths:
+      - .github/workflows/probe-cn.yml
+      - probe_cn.py
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python probe_cn.py
