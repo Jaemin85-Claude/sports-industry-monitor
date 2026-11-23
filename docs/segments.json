@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-16 06:17 KST",
+ "generated_at": "2026-11-23 07:01 KST",
  "items": {
   "ADS.DE": {
    "error": "EDGAR 미대상(독일 상장)",
@@ -244,56 +244,57 @@
    "error": null
   },
   "AS": {
-   "accession": "0001988894-26-000085",
-   "source": "6-K 2026-08-18 as-2026q2xexx991.htm",
-   "url": "https://www.sec.gov/Archives/edgar/data/1988894/000198889426000085/as-2026q2xexx991.htm",
+   "accession": "0001988894-26-000095",
+   "source": "6-K 2026-11-17 as-2026q3xexx991.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1988894/000198889426000095/as-2026q3xexx991.htm",
    "extract": {
-    "period": "Q2 FY26 ended 2026-06-30",
-    "prev_period": "Q2 FY25 ended 2025-06-30",
+    "period": "Q3 FY26 ended 2026-09-30",
+    "prev_period": "Q3 FY25 ended 2025-09-30",
     "currency": "USD",
     "regions": [
      {
       "name": "Greater China",
-      "revenue": 556.0,
-      "prev_revenue": 410.2,
-      "yoy_pct": 35.5
+      "revenue": 601.6,
+      "prev_revenue": 461.5,
+      "yoy_pct": 30.4
      },
      {
       "name": "Americas",
-      "revenue": 496.7,
-      "prev_revenue": 395.4,
-      "yoy_pct": 25.6
+      "revenue": 701.9,
+      "prev_revenue": 574.2,
+      "yoy_pct": 22.2
      },
      {
       "name": "EMEA",
-      "revenue": 332.3,
-      "prev_revenue": 276.2,
-      "yoy_pct": 20.3
+      "revenue": 582.2,
+      "prev_revenue": 528.5,
+      "yoy_pct": 10.2
      },
      {
       "name": "Asia Pacific",
-      "revenue": 247.6,
-      "prev_revenue": 154.5,
-      "yoy_pct": 60.3
+      "revenue": 283.5,
+      "prev_revenue": 192.1,
+      "yoy_pct": 47.6
      }
     ],
     "channels": [
      {
       "name": "DTC",
-      "revenue": 896.8,
-      "prev_revenue": 640.9,
-      "yoy_pct": 39.9
+      "revenue": 982.6,
+      "prev_revenue": 722.5,
+      "yoy_pct": 36.0
      },
      {
       "name": "Wholesale",
-      "revenue": 735.8,
-      "prev_revenue": 595.4,
-      "yoy_pct": 23.6
+      "revenue": 1186.6,
+      "prev_revenue": 1033.8,
+      "yoy_pct": 14.8
      }
     ],
     "mgmt_notes": [],
-    "notes": "재고·할인·채널 축소 관련 경영진의 행동/계획/이유/전망 문장이 문서에 명시되지 않아 mgmt_notes는 빈 목록으로 처리됨.",
-    "schema_v": 3
+    "notes": "재고·할인·채널 전략에 관한 명시적 행동/계획/이유 문장이 문서에 없어 mgmt_notes는 빈 목록으로 처리됨.",
+    "schema_v": 3,
+    "extracted_at": "2026-11-23 07:02"
    },
    "error": null
   },
@@ -976,10 +977,10 @@
    "since": "2026-10-10"
   },
   "2026-11": {
-   "calls": 11,
-   "in": 73832,
-   "out": 4103,
-   "usd": 0.283,
+   "calls": 12,
+   "in": 93683,
+   "out": 4491,
+   "usd": 0.3484,
    "since": "2026-11-02"
   }
  }

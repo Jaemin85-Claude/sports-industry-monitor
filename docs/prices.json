@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-22 16:05 KST",
+ "generated_at": "2026-11-23 09:20 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -17127,6 +17127,4333 @@
     "US": "411498"
    },
    "cat": "shoe"
+  },
+  {
+   "id": "s-nike-394055-001",
+   "brand": "나이키",
+   "name": "나이키 이니시에이터 남성 신발",
+   "code": "394055-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 109000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 109000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 87200.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       87200.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-415445-102",
+   "brand": "나이키",
+   "name": "Nike Air Monarch IV Workout-Schuh für Herren",
+   "code": "415445-102",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 79.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 79.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 63.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       63.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-554725-078",
+   "brand": "나이키",
+   "name": "조던 1 미드 주니어 신발",
+   "code": "554725-078",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-848386-001",
+   "brand": "나이키",
+   "name": "나이키 에어 리프트 브리드 여성 신발",
+   "code": "848386-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 139000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 97300.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       97300.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-913011-010",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 헤리티지86 퓨추라 워시드 모자",
+   "code": "913011-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 29000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 29000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 19.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 19.95,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 22.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 22.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ao8662-101",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 헤리티지86 여성 캡",
+   "code": "AO8662-101",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 29000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 29000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar4076-010",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 페이버릿 주니어(여아) 레깅스",
+   "code": "AR4076-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 35000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 35000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ar5193-010",
+   "brand": "나이키",
+   "name": "Nike Sportswear Club Men's Long-Sleeve T-Shirt",
+   "code": "AR5193-010",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 37.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 37.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 27.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 27.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 25.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       25.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-ba5954-010",
+   "brand": "나이키",
+   "name": "나이키 브라질리아 트레이닝 백팩(미디엄)",
+   "code": "BA5954-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 55000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 55000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-bq5448-119",
+   "brand": "나이키",
+   "name": "나이키 코트 버로우 로우 2 주니어 신발",
+   "code": "BQ5448-119",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 59000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 65.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 65.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-bv2666-326",
+   "brand": "나이키",
+   "name": "Nike Sportswear Club Men's French Terry Crew",
+   "code": "BV2666-326",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 50.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 50.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 49.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 49.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 34.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       34.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-bv3637-100",
+   "brand": "나이키",
+   "name": "나이키 스우시 여성 미디엄 서포트 일체형 패드 스포츠 브라",
+   "code": "BV3637-100",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 39000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cj0882-102",
+   "brand": "나이키",
+   "name": "나이키 SB 앨리웁 스케이트보드화",
+   "code": "CJ0882-102",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 89000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 89000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cj1288-001",
+   "brand": "나이키",
+   "name": "나이키 에어 줌 스피리돈 케이지 2 남성 신발",
+   "code": "CJ1288-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 209000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 180.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 99.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       99.97,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 169.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 169.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 84.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       84.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cj1288-100",
+   "brand": "나이키",
+   "name": "Nike Air Zoom Spiridon Cage 2 Men's Shoes",
+   "code": "CJ1288-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 180.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 180.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 124.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       124.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cj9179-200",
+   "brand": "나이키",
+   "name": "나이키 에어 포스 1 '07 WB 남성 신발",
+   "code": "CJ9179-200",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 109.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 109.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ck2351-001",
+   "brand": "나이키",
+   "name": "나이키 데이브레이크 여성 신발",
+   "code": "CK2351-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 79.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 79.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 47.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       47.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-ck2351-109",
+   "brand": "나이키",
+   "name": "나이키 데이브레이크 여성 신발",
+   "code": "CK2351-109",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 90.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 90.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ck2351-111",
+   "brand": "나이키",
+   "name": "나이키 데이브레이크 여성 신발",
+   "code": "CK2351-111",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 95.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 95.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cn9675-005",
+   "brand": "나이키",
+   "name": "나이키 빅토리 원 남성 슬라이드",
+   "code": "CN9675-005",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 39000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 33100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       33100.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 34.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 34.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 31.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       31.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cu1450-001",
+   "brand": "나이키",
+   "name": "나이키 폰탄카 엣지 여성 신발",
+   "code": "CU1450-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 169000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 169000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cu1490-094",
+   "brand": "나이키",
+   "name": "Nike Radiate Women's Graphic Training Tote Bag",
+   "code": "CU1490-094",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 55.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 55.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 29.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       29.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cu9225-001",
+   "brand": "나이키",
+   "name": "Nike x Supreme Air Force 1 Low Shoe",
+   "code": "CU9225-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 114.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 114.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cv5515-001",
+   "brand": "나이키",
+   "name": "Nike Canyon Women's Sandals",
+   "code": "CV5515-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 59.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 59.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 47.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       47.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cw6109-010",
+   "brand": "나이키",
+   "name": "Nike Dri-FIT Academy Older Kids' Knit Football Shorts",
+   "code": "CW6109-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 13.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 13.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-cw9301-010",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 퓨추라 365 여성 미니 백팩(6L)",
+   "code": "CW9301-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 45000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 45000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 31500.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       31500.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-cz5478-001",
+   "brand": "나이키",
+   "name": "나이키 빅토리 원 남성 샤워 슬라이드",
+   "code": "CZ5478-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 29000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 29000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 26100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       26100.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 29.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 29.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 26.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       26.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-da2776-001",
+   "brand": "나이키",
+   "name": "Nike Star Runner 3 Older Kids' Road Running Shoes",
+   "code": "DA2776-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 39.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 39.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 27.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       27.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-da2776-601",
+   "brand": "나이키",
+   "name": "나이키 스타 러너 3 주니어 로드 러닝화",
+   "code": "DA2776-601",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc0774-101",
+   "brand": "나이키",
+   "name": "에어 조던 1 로우 여성 신발",
+   "code": "DC0774-101",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 149000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 126600.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       126600.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc3728-001",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 6 남성 로드 러닝화",
+   "code": "DC3728-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 64.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 64.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 45.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       45.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc3728-003",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 6 남성 로드 러닝화",
+   "code": "DC3728-003",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc3729-003",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 6 여성 로드 러닝화",
+   "code": "DC3729-003",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc3729-005",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 6 여성 로드 러닝화",
+   "code": "DC3729-005",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc3729-500",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 6 여성 로드 러닝화",
+   "code": "DC3729-500",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc5357-010",
+   "brand": "나이키",
+   "name": "나이키 ACG 반팔 티셔츠",
+   "code": "DC5357-010",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 49000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 49000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dc7211-010",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 클럽 주니어(여아) 프렌치 테리 팬츠",
+   "code": "DC7211-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 45000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 45000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 37.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 37.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 26.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       26.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd1391-101",
+   "brand": "나이키",
+   "name": "나이키 덩크 로우 레트로 남성 신발",
+   "code": "DD1391-101",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 139000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 115.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd1391-103",
+   "brand": "나이키",
+   "name": "Nike Dunk Low Retro Men's Shoes",
+   "code": "DD1391-103",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 115.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd1503-103",
+   "brand": "나이키",
+   "name": "Nike Dunk Low Damenschuh",
+   "code": "DD1503-103",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 119.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 119.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 59.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       59.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd4732-073",
+   "brand": "나이키",
+   "name": "Nike Sportswear Club Men's Brushed-Back 1/2-Zip Sweatshirt",
+   "code": "DD4732-073",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 64.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 64.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 45.47,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       45.47,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd4732-716",
+   "brand": "나이키",
+   "name": "Nike Sportswear Club Men's Brushed-Back 1/2-Zip Sweatshirt",
+   "code": "DD4732-716",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 64.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 64.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 32.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       32.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dd8959-100",
+   "brand": "나이키",
+   "name": "Nike Air Force 1 '07 Women's Shoes",
+   "code": "DD8959-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 115.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dh1640-100",
+   "brand": "나이키",
+   "name": "나이키 드라이 핏 레거시91 골프 모자",
+   "code": "DH1640-100",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 26000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 26000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 20800.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       20800.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 22.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 22.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 19.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       19.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dh7710-010",
+   "brand": "나이키",
+   "name": "나이키 브라질리아 9.5 트레이닝 더플백(미디엄, 60L)",
+   "code": "DH7710-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 59000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 53100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       53100.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dj1196-100",
+   "brand": "나이키",
+   "name": "나이키 디파이 올 데이 남성 트레이닝화",
+   "code": "DJ1196-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 79000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dm3976-010",
+   "brand": "나이키",
+   "name": "나이키 브라질리아 트레이닝 더플백(스몰, 41L)",
+   "code": "DM3976-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 49000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 49000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 41600.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       41600.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dm3982-010",
+   "brand": "나이키",
+   "name": "나이키 브라질리아 9.5 트레이닝화 가방(11L)",
+   "code": "DM3982-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 29000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 29000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 20300.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       20300.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dm6829-010",
+   "brand": "나이키",
+   "name": "Nike Sportswear Sport Essentials Men's Woven Lined Flow Shorts",
+   "code": "DM6829-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 37.95,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 37.95,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 26.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       26.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dq9624-001",
+   "brand": "나이키",
+   "name": "나이키 오프코트 어저스트 남성 슬라이드",
+   "code": "DQ9624-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 59000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 50100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       50100.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dr6091-010",
+   "brand": "나이키",
+   "name": "Nike Brasilia JDI Kids' Mini Backpack (11L)",
+   "code": "DR6091-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 27.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 27.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 27.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 27.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dv4130-104",
+   "brand": "나이키",
+   "name": "나이키 베이퍼플라이 3 여성 로드 레이싱화",
+   "code": "DV4130-104",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 299000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 299000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx0539-010",
+   "brand": "나이키",
+   "name": "Nike Club Fleece Men's Harrington Jacket",
+   "code": "DX0539-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 74.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 74.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 37.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       37.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx0539-716",
+   "brand": "나이키",
+   "name": "Nike Club Fleece Men's Harrington Jacket",
+   "code": "DX0539-716",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 75.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 75.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 79.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 79.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx0613-077",
+   "brand": "나이키",
+   "name": "Nike Club Men's Woven Cargo Trousers",
+   "code": "DX0613-077",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 64.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 64.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx0990-010",
+   "brand": "나이키",
+   "name": "나이키 드라이 핏 남성 피트니스 티셔츠",
+   "code": "DX0990-010",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 39000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx6013-010",
+   "brand": "나이키",
+   "name": "나이키 드라이 핏 원 여성 미드라이즈 3인치 투인원 쇼츠",
+   "code": "DX6013-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 59000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx7615-102",
+   "brand": "나이키",
+   "name": "나이키 스타 러너 4 주니어 로드 러닝화",
+   "code": "DX7615-102",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 69000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 58600.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       58600.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 57.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 57.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 45.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       45.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx9176-100",
+   "brand": "나이키",
+   "name": "Nike Gamma Force Damenschuh",
+   "code": "DX9176-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 99.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 99.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 59.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       59.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-dx9176-103",
+   "brand": "나이키",
+   "name": "나이키 감마 포스 여성 신발",
+   "code": "DX9176-103",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-dz3279-010",
+   "brand": "나이키",
+   "name": "Nike Sportswear Men's T-Shirt",
+   "code": "DZ3279-010",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 30.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 30.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 27.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 27.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fb2207-001",
+   "brand": "나이키",
+   "name": "나이키 레볼루션 7 남성 로드 러닝화",
+   "code": "FB2207-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 79000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 70.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 70.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 52.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       52.97,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 64.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 64.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fb2207-005",
+   "brand": "나이키",
+   "name": "Nike Revolution 7 Straßenlaufschuh für Herren",
+   "code": "FB2207-005",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 64.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 64.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fb5624-010",
+   "brand": "나이키",
+   "name": "나이키 플라이 드라이 핏 언스트럭처 스우시 캡",
+   "code": "FB5624-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 35000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 35000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 27.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 27.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 25.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       25.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fb5682-010",
+   "brand": "나이키",
+   "name": "나이키 드라이 핏 클럽 언스트럭처 페더라이트 캡",
+   "code": "FB5682-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 39000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fb6533-551",
+   "brand": "나이키",
+   "name": "Nike Dri-FIT Club Unstructured ACG Cap",
+   "code": "FB6533-551",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 32.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 32.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 23.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       23.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd8311-800",
+   "brand": "나이키",
+   "name": "나이키 알파플라이 3 남성 로드 레이싱화",
+   "code": "FD8311-800",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 339000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 339000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd8315-001",
+   "brand": "나이키",
+   "name": "나이키 알파플라이 3 여성 로드 레이싱화",
+   "code": "FD8315-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 339000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 339000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 305100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       305100.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd8315-101",
+   "brand": "나이키",
+   "name": "나이키 알파플라이 3 여성 로드 레이싱화",
+   "code": "FD8315-101",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 339000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 339000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd8315-500",
+   "brand": "나이키",
+   "name": "Nike Alphafly 3 Women's Road Racing Shoes",
+   "code": "FD8315-500",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 284.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 284.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fd8315-800",
+   "brand": "나이키",
+   "name": "Nike Alphafly 3 Damen-Straßenlaufschuh für Wettkämpfe",
+   "code": "FD8315-800",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 309.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 309.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fj0736-010",
+   "brand": "나이키",
+   "name": "나이키 드라이 핏 ADV 플라이 언스트럭처 에어로빌 에어로어댑트 캡",
+   "code": "FJ0736-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 59000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 53100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       53100.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fj3458-160",
+   "brand": "나이키",
+   "name": "Air Jordan 1 Mid SE Men's Shoes",
+   "code": "FJ3458-160",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 134.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 134.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 94.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       94.49,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 149.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 149.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 104.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       104.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fn3343-010",
+   "brand": "나이키",
+   "name": "나이키 스포츠웨어 스우시 남성 오픈 헴 플리스 팬츠",
+   "code": "FN3343-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 139000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 97300.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       97300.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fn3370-011",
+   "brand": "나이키",
+   "name": "나이키 에어로스위프트 남성 드라이 핏 ADV 러닝 하프 타이츠",
+   "code": "FN3370-011",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 95000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 95000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 85500.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       85500.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fn3695-001",
+   "brand": "나이키",
+   "name": "나이키 줌 보메로 5 신발",
+   "code": "FN3695-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 189000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 170.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 170.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fq5815-010",
+   "brand": "나이키",
+   "name": "나이키 키즈 크로스바디 백(1L)",
+   "code": "FQ5815-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 29000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 29000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 24600.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       24600.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 27.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 27.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fv1920-001",
+   "brand": "나이키",
+   "name": "Nike Air Max Muse Women's Shoes",
+   "code": "FV1920-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 144.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 144.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 72.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       72.49,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 159.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 159.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 79.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       79.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fv2923-001",
+   "brand": "나이키",
+   "name": "나이키 ACG 루퍼스 남성 신발",
+   "code": "FV2923-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 139000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-fv6040-001",
+   "brand": "나이키",
+   "name": "Nike Zoom Rival Fly 4 Road Racing Shoes",
+   "code": "FV6040-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 105.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 105.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 68.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       68.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fz0627-010",
+   "brand": "나이키",
+   "name": "나이키 에어 포스 1 '07 남성 신발",
+   "code": "FZ0627-010",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 149000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 126600.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       126600.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-fz5630-001",
+   "brand": "나이키",
+   "name": "나이키 킬샷 2 여성 신발",
+   "code": "FZ5630-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 83300.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       83300.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf0383-429",
+   "brand": "나이키",
+   "name": "Nike Club Unstructured Denim Cap",
+   "code": "HF0383-429",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 36.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 36.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf3717-068",
+   "brand": "나이키",
+   "name": "Nike Icon Air Max 90 Card Wallet",
+   "code": "HF3717-068",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 27.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 27.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 25.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       25.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf3717-102",
+   "brand": "나이키",
+   "name": "나이키 아이콘 에어맥스 90 카드 지갑",
+   "code": "HF3717-102",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 39000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 39000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf6412-001",
+   "brand": "나이키",
+   "name": "나이키 베이퍼플라이 4 여성 로드 레이싱화",
+   "code": "HF6412-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 309000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 309000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf6412-400",
+   "brand": "나이키",
+   "name": "나이키 베이퍼플라이 4 여성 로드 레이싱화",
+   "code": "HF6412-400",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 309000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 309000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hf6414-100",
+   "brand": "나이키",
+   "name": "나이키 베이퍼플라이 4 남성 로드 레이싱화",
+   "code": "HF6414-100",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 309000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 309000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 239.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 239.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 143.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       143.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hj8082-002",
+   "brand": "나이키",
+   "name": "나이키 에어 슈퍼플라이 여성 신발",
+   "code": "HJ8082-002",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 129000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 58000.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       58000.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hj9351-001",
+   "brand": "나이키",
+   "name": "Nike T90 SP Men's Shoes",
+   "code": "HJ9351-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 115.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 115.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 75.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       75.97,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 99.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 99.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 49.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       49.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hm8497-010",
+   "brand": "나이키",
+   "name": "Nike Air Zoom Spiridon Cage 2 Men's Shoes",
+   "code": "HM8497-010",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 154.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 154.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 169.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 169.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hq1988-002",
+   "brand": "나이키",
+   "name": "Nike Shox R4 Men's Shoes",
+   "code": "HQ1988-002",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 155.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 155.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 98.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       98.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hq4307-001",
+   "brand": "나이키",
+   "name": "나이키 마인드 001 남성 프리게임 뮬",
+   "code": "HQ4307-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hq4307-003",
+   "brand": "나이키",
+   "name": "나이키 마인드 001 남성 프리게임 뮬",
+   "code": "HQ4307-003",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 95.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 95.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 79.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 79.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hq4309-101",
+   "brand": "나이키",
+   "name": "Nike Mind 001 Women's Pre-Game Mules",
+   "code": "HQ4309-101",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 79.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 79.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hq7901-102",
+   "brand": "나이키",
+   "name": "Nike V5 RNR Schuh mit reflektierenden Akzenten (Damen)",
+   "code": "HQ7901-102",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 89.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 89.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-hv4479-004",
+   "brand": "나이키",
+   "name": "Nike ReactX Rejuven8 Men's Slides",
+   "code": "HV4479-004",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 54.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 43.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       43.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-hv5953-001",
+   "brand": "나이키",
+   "name": "에어 포스 1 GORE-TEX Vibram® 남성 생활 방수 신발",
+   "code": "HV5953-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 219000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 219000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 197100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       197100.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-ih9256-010",
+   "brand": "나이키",
+   "name": "나이키 ACG 클럽 언스트럭처드 캡",
+   "code": "IH9256-010",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 45000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 45000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 31500.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       31500.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 32.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 32.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-ii1872-683",
+   "brand": "나이키",
+   "name": "FC 바르셀로나 2026/27 스타디움 홈 남성 나이키 드라이 핏 축구 레플리카 저지",
+   "code": "II1872-683",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 135000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 135000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 94500.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       94500.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-im4842-099",
+   "brand": "나이키",
+   "name": "나이키 킬샷 2 PRM 남성 신발",
+   "code": "IM4842-099",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 129000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-im8814-001",
+   "brand": "나이키",
+   "name": "나이키 에어맥스 페노메나 여성 신발",
+   "code": "IM8814-001",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 189000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 170100.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       170100.0,
+       "base"
+      ]
+     ]
+    },
+    "US": {
+     "p": 155.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 155.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-io9573-800",
+   "brand": "나이키",
+   "name": "나이키 알파플라이 3 글램 남성 로드 레이싱화",
+   "code": "IO9573-800",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 349000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 349000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-nike-iq0309-094",
+   "brand": "나이키",
+   "name": "나이키 알파플라이 3 남성 로드 레이싱화",
+   "code": "IQ0309-094",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 349000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 349000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 305.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "obs": 305.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 228.97,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       228.97,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-iv4690-099",
+   "brand": "나이키",
+   "name": "나이키 에어맥스 페노메나 여성 신발",
+   "code": "IV4690-099",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "obs": 189000.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 85000.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       85000.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-nike-sx7677-010",
+   "brand": "나이키",
+   "name": "Nike Everyday Lightweight Trainings-Knöchelsocken (3 Paar)",
+   "code": "SX7677-010",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 15.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "obs": 15.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-drm-11838001",
+   "brand": "닥터마틴",
+   "name": "1461 나파 (무광)",
+   "code": "11838001",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.drmartens.co.kr/products/1461-napa-mugwang",
+     "obs": 229000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-drm-11838201",
+   "brand": "닥터마틴",
+   "name": "1461 크레이지 호스",
+   "code": "11838201",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.drmartens.co.kr/products/boots-1461-lace-shoe-gaucho-crazy-horse",
+     "obs": 229000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   },
+   "held": {
+    "US": [
+     112.0,
+     "2026-11-23"
+    ]
+   }
+  },
+  {
+   "id": "s-drm-24757001",
+   "brand": "닥터마틴",
+   "name": "1461 WS",
+   "code": "24757001",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 229000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.drmartens.co.kr/products/shoes-1461-black-smooth",
+     "obs": 229000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-salomon-412529",
+   "brand": "살로몬",
+   "name": "XT-6",
+   "code": "412529",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 280000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://salomon.co.kr/products/l41252900",
+     "obs": 280000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-on-3wf30701200",
+   "brand": "온러닝",
+   "name": "여성 Cloudmonster Hyper PAF",
+   "code": "3WF30701200",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 339000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.on.com/ko-kr/products/cloudmonster-hyper-paf-w-3wf3070/womens/white-white-shoes-3WF30701200",
+     "obs": 339000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   },
+   "held": {
+    "US": [
+     280.0,
+     "2026-11-23"
+    ]
+   }
+  },
+  {
+   "id": "s-crocs-10001-001",
+   "brand": "크록스",
+   "name": "클래식 클로그",
+   "code": "10001-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/10001.html",
+     "obs": 69900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-10001-100",
+   "brand": "크록스",
+   "name": "클래식 클로그",
+   "code": "10001-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/10001.html",
+     "obs": 69900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-10001-410",
+   "brand": "크록스",
+   "name": "클래식 클로그",
+   "code": "10001-410",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/10001.html",
+     "obs": 69900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 49.99,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.com/p/x/10001.html",
+     "obs": 49.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "DE": {
+     "p": 54.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/10001.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 38.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       38.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-10126-100",
+   "brand": "크록스",
+   "name": "Baya Clog",
+   "code": "10126-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 49.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/10126.html",
+     "obs": 49.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 25.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       25.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 54.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/10126.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 27.5,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       27.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-11016-001",
+   "brand": "크록스",
+   "name": "Crocband™ Clog",
+   "code": "11016-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 54.99,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.com/p/x/11016.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-11016-07w",
+   "brand": "크록스",
+   "name": "Crocband™ Clog",
+   "code": "11016-07W",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 54.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/11016.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-11016-100",
+   "brand": "크록스",
+   "name": "Crocband Clog",
+   "code": "11016-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 59.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/11016.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-11016-1as",
+   "brand": "크록스",
+   "name": "크록스 크록밴드 클로그",
+   "code": "11016-1AS",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/11016.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-12803-730",
+   "brand": "크록스",
+   "name": "핸들 잇 레인 부츠 키즈",
+   "code": "12803-730",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 54900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/12803.html",
+     "obs": 54900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-203591-0ex",
+   "brand": "크록스",
+   "name": "클래식 라인드 클로그",
+   "code": "203591-0EX",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 84900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/203591.html",
+     "obs": 84900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-203591-10m",
+   "brand": "크록스",
+   "name": "Classic Lined Clog",
+   "code": "203591-10M",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 59.99,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.com/p/x/203591.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/203591.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-203591-2yb",
+   "brand": "크록스",
+   "name": "Classic Lined Clog",
+   "code": "203591-2YB",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/203591.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-203591-459",
+   "brand": "크록스",
+   "name": "클래식 라인드 클로그",
+   "code": "203591-459",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 84900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/203591.html",
+     "obs": 84900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205089-066",
+   "brand": "크록스",
+   "name": "바야밴드 클로그",
+   "code": "205089-066",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205089.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 42900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       42900.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 54.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/205089.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 27.5,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       27.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205089-126",
+   "brand": "크록스",
+   "name": "바야밴드 클로그",
+   "code": "205089-126",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205089.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 42900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       42900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205089-1li",
+   "brand": "크록스",
+   "name": "바야밴드 클로그",
+   "code": "205089-1LI",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205089.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 42900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       42900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205089-4cc",
+   "brand": "크록스",
+   "name": "바야밴드 클로그",
+   "code": "205089-4CC",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205089.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205089-6tg",
+   "brand": "크록스",
+   "name": "바야밴드 클로그",
+   "code": "205089-6TG",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205089.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 42900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       42900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205942-0ic",
+   "brand": "크록스",
+   "name": "Classic Glitter Clog",
+   "code": "205942-0IC",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 54.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/205942.html",
+     "obs": 54.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 32.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       32.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-205942-6wv",
+   "brand": "크록스",
+   "name": "클래식 글리터 클로그",
+   "code": "205942-6WV",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/205942.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206302-100",
+   "brand": "크록스",
+   "name": "베이 클로그",
+   "code": "206302-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206302.html",
+     "obs": 99900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 74900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       74900.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 69.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/206302.html",
+     "obs": 69.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 28.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       28.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206633-577",
+   "brand": "크록스",
+   "name": "Baya Lined Fuzz-Strap Clog",
+   "code": "206633-577",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 64.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/206633.html",
+     "obs": 64.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 38.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       38.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206708-0dd",
+   "brand": "크록스",
+   "name": "라이트라이드 360 클로그",
+   "code": "206708-0DD",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 89900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206708.html",
+     "obs": 89900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206750-001",
+   "brand": "크록스",
+   "name": "클래식 플랫폼 클로그 우먼",
+   "code": "206750-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206750.html",
+     "obs": 79900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 52900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       52900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206750-100",
+   "brand": "크록스",
+   "name": "Women's Classic Platform Clog",
+   "code": "206750-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "DE": {
+     "p": 59.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/206750.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 35.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       35.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206750-2y2",
+   "brand": "크록스",
+   "name": "클래식 플랫폼 클로그 우먼",
+   "code": "206750-2Y2",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206750.html",
+     "obs": 79900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 52900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       52900.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 59.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/206750.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 30.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       30.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206990-410",
+   "brand": "크록스",
+   "name": "클래식 클로그 토들러",
+   "code": "206990-410",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 49900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206990.html",
+     "obs": 49900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 34.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/206990.html",
+     "obs": 34.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 24.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       24.49,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 34.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/206990.html",
+     "obs": 34.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 24.49,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       24.49,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-206991-410",
+   "brand": "크록스",
+   "name": "클래식 클로그 키즈",
+   "code": "206991-410",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 54900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/206991.html",
+     "obs": 54900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207019-001",
+   "brand": "크록스",
+   "name": "바야밴드 클로그 키즈",
+   "code": "207019-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 64900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207019.html",
+     "obs": 64900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 44900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       44900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207019-410",
+   "brand": "크록스",
+   "name": "바야밴드 클로그 키즈",
+   "code": "207019-410",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 64900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207019.html",
+     "obs": 64900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 44900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       44900.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 44.99,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/207019.html",
+     "obs": 44.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 22.5,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       22.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207303-001",
+   "brand": "크록스",
+   "name": "클래식 퍼 슈어 클로그",
+   "code": "207303-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 84900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207303.html",
+     "obs": 84900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207521-001",
+   "brand": "크록스",
+   "name": "크러쉬 클로그",
+   "code": "207521-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 89900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207521.html",
+     "obs": 89900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 59900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       59900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207521-100",
+   "brand": "크록스",
+   "name": "Crush Clog",
+   "code": "207521-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 69.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/207521.html",
+     "obs": 69.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 35.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       35.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207937-1ft",
+   "brand": "크록스",
+   "name": "에코 클로그",
+   "code": "207937-1FT",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 94900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207937.html",
+     "obs": 94900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207937-2yj",
+   "brand": "크록스",
+   "name": "Echo Clog",
+   "code": "207937-2YJ",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "GB": {
+     "p": 69.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/207937.html",
+     "obs": 69.99,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 41.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       41.99,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207946-001",
+   "brand": "크록스",
+   "name": "크러쉬 부츠",
+   "code": "207946-001",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207946.html",
+     "obs": 99900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207946-2y2",
+   "brand": "크록스",
+   "name": "크러쉬 부츠",
+   "code": "207946-2Y2",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207946.html",
+     "obs": 99900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-207988-2y2",
+   "brand": "크록스",
+   "name": "메가 크러쉬 클로그",
+   "code": "207988-2Y2",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/207988.html",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "GB": {
+     "p": 79.99,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/207988.html",
+     "obs": 79.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-208188-100",
+   "brand": "크록스",
+   "name": "바야 플랫폼 샌들",
+   "code": "208188-100",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 54900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/208188.html",
+     "obs": 54900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    },
+    "US": {
+     "p": 44.99,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.com/p/x/208188.html",
+     "obs": 44.99,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-208454-1nl",
+   "brand": "크록스",
+   "name": "에코 마블 클로그",
+   "code": "208454-1NL",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/208454.html",
+     "obs": 99900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 64900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       64900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-208590-108",
+   "brand": "크록스",
+   "name": "클래식 플랫폼 쉬머 클로그",
+   "code": "208590-108",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 74900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/208590.html",
+     "obs": 74900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-208708-001",
+   "brand": "크록스",
+   "name": "바야 플랫폼 라인드 클로그",
+   "code": "208708-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 94900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/208708.html",
+     "obs": 94900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-crocs-208776-001",
+   "brand": "크록스",
+   "name": "듀엣 맥스 II 클로그",
+   "code": "208776-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/208776.html",
+     "obs": 79900.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 49900.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       49900.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-209350-001",
+   "brand": "크록스",
+   "name": "Crocs Quick Trail Low",
+   "code": "209350-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 100.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.com/p/x/209350.html",
+     "obs": 100.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 59.99,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       59.99,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 100.0,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.uk/p/x/209350.html",
+     "obs": 100.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 50.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       50.0,
+       "base"
+      ]
+     ]
+    },
+    "DE": {
+     "p": 100.0,
+     "cur": "EUR",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.de/p/x/209350.html",
+     "obs": 100.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 50.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       50.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-crocs-210059-001",
+   "brand": "크록스",
+   "name": "클래식 라인드 오버퍼프 클로그",
+   "code": "210059-001",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 94900.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://www.crocs.co.kr/p/x/210059.html",
+     "obs": 94900.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1018206",
+   "brand": "킨(KEEN)",
+   "name": "Men's Shanti Clog | Black/Dawn Blue",
+   "code": "1018206",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 80.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.com/products/mens-shanti-black-dawn-blue",
+     "obs": 80.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 60.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       60.0,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 65.0,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.co.uk/products/mens-shanti-black-dawn-blue",
+     "obs": 65.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 25.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       25.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-keen-1027353",
+   "brand": "킨(KEEN)",
+   "name": "Women's Newport H2 Sandal | Monochrome/Safari",
+   "code": "1027353",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 130.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.com/products/womens-newport-h2-monochrome-safari",
+     "obs": 130.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 97.5,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       97.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-keen-1030055",
+   "brand": "킨(KEEN)",
+   "name": "Men's Jasper Rocks Sneaker | Birch/Black",
+   "code": "1030055",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 145.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.com/products/mens-jasper-rocks-sp-birch-black",
+     "obs": 145.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 108.75,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       108.75,
+       "base"
+      ]
+     ]
+    },
+    "GB": {
+     "p": 120.0,
+     "cur": "GBP",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.co.uk/products/mens-jasper-rocks-sp-birch-black",
+     "obs": 120.0,
+     "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-keen-1030678",
+   "brand": "킨(KEEN)",
+   "name": "Women's Hyperport H2 Sandal | Chipmunk/Birch",
+   "code": "1030678",
+   "cat": "sandal",
+   "kind": "sku",
+   "m": {
+    "US": {
+     "p": 120.0,
+     "cur": "USD",
+     "seen": "2026-11-23",
+     "url": "https://www.keenfootwear.com/products/womens-hyperport-h2-chipmunk-birch",
+     "obs": 120.0,
+     "obs_date": "2026-11-23",
+     "sale": true,
+     "sp": 90.0,
+     "sp_date": "2026-11-23",
+     "sh": [
+      [
+       "2026-11-23",
+       90.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-puma-392290",
+   "brand": "푸마",
+   "name": "Puma Caven 2.0",
+   "code": "392290",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 79000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://kr.puma.com/kr/ko/pd/puma-caven-2.0/392290.html",
+     "obs": 79000.0,
+     "obs_date": "2026-11-23",
+     "sale": false,
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-puma-406758",
+   "brand": "푸마",
+   "name": "Speedcat Ballet SD Cafe Wns",
+   "code": "406758",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 119000.0,
+     "cur": "KRW",
+     "seen": "2026-11-23",
+     "url": "https://kr.puma.com/kr/ko/pd/speedcat-ballet-sd-cafe-wns/406758.html",
+     "obs": 119000.0,
+     "obs_date": "2026-11-23",
+     "sale": false,
+     "lvl": "model"
+    }
+   }
   }
  ],
  "failed": [],
