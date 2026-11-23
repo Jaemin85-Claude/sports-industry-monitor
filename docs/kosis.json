@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05 07:53 KST",
+ "generated_at": "2026-11-23 15:16 KST",
  "series": {
   "retail_apparel": {
    "label": "소매판매 의복",
@@ -995,17 +995,17 @@
   }
  },
  "conn": {
-  "run": "41929164913",
+  "run": "45123017164",
   "tries": [
    {
     "n": 1,
-    "where": "172.214.x.x · Illinois · AS8075 Microsoft Corporation",
+    "where": "20.29.x.x · Iowa · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
     "reached": true,
-    "at": "11-05 07:54"
+    "at": "11-23 15:17"
    }
   ],
-  "got": "41929164913"
+  "got": "45123017164"
  }
 }
