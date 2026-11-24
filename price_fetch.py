@@ -7,9 +7,11 @@ v1.45: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주�
     (상품마다 다시 받지 않음) 첫 상품 .json의 통화(price_currency KRW)·값이 목록과 같아야 씀 · 가니(www.ganni.com/en-kr — 세계 사이트맵 영국 주소 이름을 한국으로 · 상품 페이지 JSON-LD 변형
     값(변형 품번 = 스타일 + 색상 3자리 + 사이즈 2자리) + 가격 칸(기본 색상 — 할인 중이면 취소선 정가) · 화면 정가보다 비싼 색상이 없을 때 값이 화면 정가이거나 할인 표시가 있고 화면 지금 값과 같은
     색상만 정가 · 404·목록으로 넘김 = 한국 몰에 없음 · 사이트맵에 없는 스타일은 미확인) · 아미·가니는 같은 스타일 국내 색상 정가가 모두 같으면 모델 단위(code = 첫 '-'·'.' 앞 스타일 —
-    ERP 규칙 ②) · 두 쇼피파이 몰은 플랫폼 한 줄(PACE shopify) · 스투시 한국은 한국 몰 간격(KR_GAP) · 독립 검토 11/24: 아미 모델 값은 채울 목록 품번의 원단(가운데 칸)이
-    국내 몰에 있을 때만(원단이 다르면 정가가 다를 수 있어) · 가니가 한국 목록 화면이 아닌 곳(다른 나라·첫 화면·다른 사이트)으로 넘기면 답으로 보지 않음(앞 상태 유지) ·
-    스투시 목록은 멈출 시각을 넘기면 받은 데까지만(덜 끝난 목록) · 통화 확인은 값이 있어야 통과
+    ERP 규칙 ②) · 두 쇼피파이 몰은 플랫폼 한 줄(PACE shopify) · 스투시 한국은 한국 몰 간격(KR_GAP) · 독립 검토 11/24(2차례): 아미 모델 값은 그 스타일에서 자기 국내 값이 없는
+    목록 품번(이번에 묻지 않은 것도)의 원단(가운데 칸)이 모두 국내 몰에 있을 때만(sku_stage — 원단이 다르면 정가가 다를 수 있어 · 자기 국내 값(이전 값 포함)이 있는 품번은 셈 밖) ·
+    가니 '없음'은 넘김 없이 바로 404·410이거나 한국 분류 화면(/en-kr/…/ 꼴)으로 넘길 때만(다른 나라·첫 화면·점검·검색·다른 사이트·넘겨진 곳의 404는 답이 아님 — 앞 상태 유지) ·
+    스투시 목록·가니 사이트맵은 멈출 시각을 넘기면 받은 데까지만(덜 끝난 색인) · 덜 끝난 목록이면 모델 값(스투시·아미 모델 채우기)을 정하지 않음(스타일의 색상을 다 봤는지 몰라) ·
+    통화 확인은 값이 있는 첫 상품으로(0원 상품 건너뜀)
 v1.44: (대표 결정 11/24 '모든 브랜드 사용' — 29CM·a-rt에 없을 때 · 상품정보고시 수입처가 ㈜슈마커여도 씀) 국내 판매처 슈마커 플러스(plus.shoemarker.co.kr · robots.txt 허용) — KR_RETAIL 세 번째(29CM → 그랜드스테이지·ABC마트 → 슈마커 플러스) ·
     홈 화면 검색 칸의 공개 검색 화면(/Product/ProductSearchList?SWord=품번 — 11/24 시험: 품번·모델 번호로 찾힘 · 호카는 '-' 없이 붙여 쓰면 안 찾혀 1147833-BWHT 꼴로 물음 _hoka_q) → 그 브랜드 상품 →
     공개 상품 페이지 품번 칸(item-summary__code — 구분 기호 무시 · 아디다스·반스는 '품번-색상 이름'이라 첫 '-' 앞 smk_cut)이 같을 때 주문 칸 숨은 값 정상가 TagPrice(판매가 SalePrice)가
@@ -2746,9 +2748,10 @@ SKU_BRANDS = {
     "아크테릭스": {"slug": "arc", "cc": ("KR",), "q": lambda c: c, "rx": r"^\d{3,6}$", "norm": _arc_norm, "keep": ("KR",), "fc": True},
     # v1.45 감시 브랜드 밖 국내 공식 온라인몰(원화 · 대표 지시 11/23 '90% 이상') — 스투시 한국 몰(쇼피파이)은 목록 색상 코드(숫자)가 몰 색상 코드(글자)와 달라 모델(스타일) 단위 ·
     #   아미(한국 쇼피파이 /ko-kr)는 몰 품번 UKC408.KN0150.185 = 목록 UKC408-KN0150-185(구분 기호만 다름 — 색상 단위) · 가니(한국 /en-kr 상품 페이지)는 변형 품번 = 스타일 + 색상 3자리 + 사이즈 2자리 ·
-    #   아미·가니는 같은 스타일 국내 색상 정가가 모두 같으면 모델 단위로 채움(mfill — code = 첫 '-' 앞 스타일 · ERP 규칙 ②)
+    #   아미·가니는 같은 스타일 국내 색상 정가가 모두 같으면 모델 단위로 채움(mfill — code = 첫 '-' 앞 스타일 · ERP 규칙 ②) ·
+    #   fab = 품번 가운데 칸이 원단(아미) — 국내 값이 없는 목록 품번의 원단이 모두 국내 몰에 있을 때만 모델 값(원단이 다르면 정가가 다를 수 있어 · sku_stage에서 판단 · 검토 11/24)
     "스투시": {"slug": "stussy", "cc": ("KR",), "q": _sku_model, "rx": r"^\d{6,7}[A-Z]?(-[0-9A-Z]{2,5})?$", "model": True, "idx": True},
-    "아미": {"slug": "ami", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]{3,5}\d{3}[-.](?:[A-Z]{2})?\d{3,4}[-.][A-Z]?\d{3,4}$", "idx": True, "mfill": True},
+    "아미": {"slug": "ami", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]{3,5}\d{3}[-.](?:[A-Z]{2})?\d{3,4}[-.][A-Z]?\d{3,4}$", "idx": True, "mfill": True, "fab": True},
     "가니": {"slug": "ganni", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]\d{4}(?:\d{3})?-[0-9A-Z]{3}$", "idx": True, "mfill": True},
 }
 
@@ -3164,7 +3167,7 @@ def _shop_kr_index(brand, stop=None):
     (정가는 목록 값 — 상품마다 다시 받지 않음) · 목록에는 통화 칸이 없어 첫 상품 .json의 통화(price_currency)·값이 목록과 같아야 씀(쇼피파이 마켓이 서버 나라 통화로 보여 주지 않게)"""
     base, pre, lim = SHOP_KR[brand]
     ps = _shop_all(base + pre, pages=12 if lim else SHOP_KR_PAGES, lim=lim, stop=stop)
-    p0 = next((p for p in ps if p.get("handle") and p.get("variants")), None)
+    p0 = next((p for p in ps if p.get("handle") and any(isinstance(v, dict) and num(v.get("price")) for v in p.get("variants") or [])), None)   # 값이 있는 첫 상품(0원 사은품 등은 건너뜀 · 검토 11/24)
     if p0 is None:
         raise RuntimeError("상품 목록이 비어 있음")
     d = _json(get(f"{base}{pre}/products/{p0['handle']}.json")).get("product") or {}
@@ -3198,12 +3201,14 @@ def _shop_kr_val(vs):
     return min(lst), ex
 
 
-def _shop_kr_pick(brand, q, codes, ents):
+def _shop_kr_pick(brand, q, codes, ents, partial=False):
     """v1.45 한국 쇼피파이 몰 목록 값 → _sku_fetch 결과 — 스투시(model)는 스타일의 모든 색상·사이즈 정가가 같을 때만 모델 값 · 아미는 구분 기호를 뺀 품번이
     같은 변형(색상 단위) + 같은 스타일 국내 색상 정가가 모두 같으면 모델 값(mfill)"""
     key = lambda s_: re.sub(r"[-.\s_]", "", s_)
     vs_all = [(x, e) for e in ents for x in e["vs"] if _seg1(x[0]) == q]
     if SKU_BRANDS[brand].get("model"):
+        if partial:   # 목록이 덜 끝나(시간) 이 스타일의 색상을 다 봤는지 모름 — 모델 값을 정하지 않음(이전 값 · 검토 11/24)
+            raise RuntimeError("국내 몰 목록이 덜 끝나 스타일의 모든 색상을 못 봄 — 이번 실행은 모델 값을 정하지 않음")
         v = _shop_kr_val([x for x, _ in vs_all])
         if not v:
             return {"__unread__": set(codes)}, False   # 국내 몰에 이 스타일은 있는데 색상·사이즈 정가가 갈림 — 모델 값을 정하지 않음(미확인)
@@ -3218,12 +3223,9 @@ def _shop_kr_pick(brand, q, codes, ents):
             got[c] = (v[0], v[1], m[0][1]["title"], "wear", m[0][1]["url"], None)
         else:
             got.setdefault("__unread__", set()).add(c)   # 국내 몰에 있는데 정가가 갈림(미확인)
-    if SKU_BRANDS[brand].get("mfill"):   # 같은 스타일 국내 색상 정가(모델 단위 채우기 — _sku_mput · 정가를 확실히 못 읽은 색상이 있으면 모델 값을 정하지 않음)
-        seg2 = lambda s_: (re.split(r"[-.]", s_) + [""])[1]   # 아미 품번 가운데 칸 = 원단(KN0150 등) — 원단이 다르면 정가가 다를 수 있음
-        fab = {seg2(x[0]) for x, _ in vs_all}
-        if any(seg2(c) not in fab for c in codes if c not in got and c not in (got.get("__unread__") or ())):
-            got["__mixed__"] = -1   # 채울 목록 품번의 원단이 국내 몰에 없음 — 모델 값(첫 칸 스타일 단위 · ERP 규칙 ②)이 다른 원단 정가로 채우지 않게(검토 11/24)
-            return got, False
+    if SKU_BRANDS[brand].get("mfill") and not partial:   # 같은 스타일 국내 색상 정가(모델 단위 채우기 — _sku_mput · 정가를 확실히 못 읽은 색상이 있으면 모델 값을 정하지 않음 · 덜 끝난 목록이면 안 정함)
+        if SKU_BRANDS[brand].get("fab"):
+            got["__fab__"] = {_seg2(x[0]) for x, _ in vs_all}   # 국내 몰에 있는 원단 — 모델 값을 쓸지는 sku_stage가 목록 품번 전체로 판단
         by = collections.defaultdict(list)
         for x, e in vs_all:
             by[key(x[0])].append((x, e))
@@ -3238,9 +3240,15 @@ def _shop_kr_pick(brand, q, codes, ents):
     return got, False
 
 
-def _ganni_index():
+def _seg2(c):
+    """v1.45 품번 둘째 칸(아미 UKC408-KN0150-185 → KN0150 = 원단)"""
+    return (re.split(r"[-.]", c) + [""])[1]
+
+
+def _ganni_index(stop=None):
     """v1.45 가니 세계 사이트맵(상품 주소는 영국 /en-gb/ 꼴) → {스타일: 한국 상품 주소(/en-kr/ 같은 이름)} — 세계 공통 사이트맵이라 한국 몰에 없는 스타일도 있음(받아 보고 판단)"""
-    us = _sm_walk(_robots_maps(GANNI_HOST) or [f"https://{GANNI_HOST}/sitemap_index.xml"], GANNI_HOST, "/", max_maps=12, budget=120)
+    us = _sm_walk(_robots_maps(GANNI_HOST) or [f"https://{GANNI_HOST}/sitemap_index.xml"], GANNI_HOST, "/", max_maps=12,
+                  budget=max(5, min(120, stop - time.time())) if stop else 120)   # 멈출 시각을 넘기지 않게(덜 끝나면 partial · 검토 11/24)
     out = _Idx(); out.partial = us.partial
     rx = re.compile(r"^/[a-z]{2}(?:-[a-z]{2})?/([^/?#]+-([A-Z]\d{4}(?:\d{3})?))\.html$")
     for u in us:
@@ -3324,7 +3332,7 @@ def _sku_index(brand, cc, want=None, stop=None):
     if brand in SHOP_KR and cc == "KR":   # v1.45 스투시·아미 한국 쇼피파이 목록
         return _shop_kr_index(brand, stop)
     if brand == "가니" and cc == "KR":   # v1.45 가니 세계 사이트맵 → 한국 상품 주소
-        return _ganni_index()
+        return _ganni_index(stop)
     if brand == "온러닝":
         loc = ON_LOC[cc]
         us = _sm_walk([f"https://www.on.com/{loc}/products.xml"], "www.on.com", f"/{loc}/products/", max_maps=3)
@@ -3889,7 +3897,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
         ents = (idx or {}).get(q) or []
         if not ents:
             return {}, True   # 국내 몰 목록 전체에 이 스타일 없음(덜 끝난 목록이면 sku_stage가 '없음'으로 보지 않음)
-        return _shop_kr_pick(brand, q, codes, ents)
+        return _shop_kr_pick(brand, q, codes, ents, bool(getattr(idx, "partial", False)))
     if brand == "가니":   # v1.45 가니 한국 상품 페이지(세계 사이트맵의 주소 이름 → /en-kr/)
         url = (idx or {}).get(q)
         if not url:
@@ -3897,12 +3905,12 @@ def _sku_fetch(brand, cc, q, codes, idx):
         try:
             r = get(url)
         except RuntimeError as e:
-            if re.match(r"(?:넘겨진 주소: )?HTTP 4(?:04|10)", str(e)):
-                return {}, True   # 한국 몰에 그 상품 페이지 없음
+            if re.match(r"HTTP 4(?:04|10)", str(e)):
+                return {}, True   # 한국 몰에 그 상품 페이지 없음(넘김 없이 바로 404·410만 — 넘겨진 곳의 404는 답이 아님 · 검토 11/24)
             raise
         fu = urllib.parse.urlsplit(r.url)
         if not fu.path.endswith(f"-{q}.html"):
-            if fu.netloc == GANNI_HOST and fu.path.startswith("/en-kr/") and fu.path.rstrip("/") not in ("/en-kr", "/en-kr/home"):
+            if fu.netloc == GANNI_HOST and re.fullmatch(r"/en-kr/(?:[a-z0-9-]+/)+", fu.path) and fu.path != "/en-kr/home/" and not fu.query:   # 한국 분류 화면(/en-kr/tops/ 꼴)
                 return {}, True   # 한국 몰이 상품 페이지 대신 한국 목록 화면으로 넘김 — 한국에서 안 팜(11/24 시험)
             raise RuntimeError("상품 페이지가 한국 목록 화면이 아닌 곳으로 넘어감 — 이번 실행은 답으로 보지 않음")   # 다른 나라·첫 화면·점검·확인 화면 등(앞 상태 유지 · 검토 11/24)
         return _ganni_pick(ganni_page(r.text, q), codes, url), False
@@ -4647,6 +4655,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc == "KR" and isinstance(o, dict)}
         r = res.get((b, "KR", m_))
         o = it["m"].get("KR")
+        if r and "got" in r and "__model__" in r["got"] and SKU_BRANDS[b].get("fab"):   # v1.45 아미 — 국내 값이 없는 목록 품번(그 스타일 전체 · 이번에 묻지 않은 것도)의 원단이 국내 몰에 없으면
+            fab_ = r["got"].get("__fab__") or set()                                    # 모델 값(스타일 단위 — ERP 규칙 ②로 모든 원단을 덮음)을 쓰지 않음 · 자기 국내 값이 있는 품번(이전 값 포함)은 셈 밖(검토 11/24)
+            if any(_seg2(c) not in fab_ for (b2, c) in tgt if b2 == b and SKU_BRANDS[b]["q"](c) == m_ and not has_kr(iid(b, c))):
+                n_mixed += 1
+                continue
         if r and "got" in r and "__model__" in r["got"]:
             full, ex, name, hint, url, lvl = r["got"]["__model__"]
             o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)   # 색상 값과 같은 가드(나이키 fullPrice는 가드 없음 · 크록스는 120일 할인 가드 — 검토 11/23)
