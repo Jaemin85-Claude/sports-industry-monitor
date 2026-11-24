@@ -17,3 +17,4 @@ print("=== ITEMS ===")
 for it in items:
     print(json.dumps({k: it.get(k) for k in ("id", "code", "name", "cat", "kr_status", "m")}, ensure_ascii=False))
 print("blocked", sorted(pf._BLOCKED), "sec", round(time.time() - t0))
+# 2
