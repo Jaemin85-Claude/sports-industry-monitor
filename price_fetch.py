@@ -13,7 +13,8 @@ v1.45: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주�
     상품 칸이 있는 화면 · 점검·로그인·검색 등 낱말 주소 빼고)으로 넘길 때만이고, 그 실행에서 가니 상품 페이지를 하나도 못 읽었으면 그날 '없음'은 모두 답 없음(몰 전체 404 대비 ·
     실행 끝에 판단) · 다른 나라·첫 화면·다른 사이트·넘겨진 곳의 404는 답이 아님(앞 상태 유지) · 가니 사이트맵은 영어 주소 이름 먼저 · 스투시 목록·가니 사이트맵은 멈출 시각을 넘기면
     받은 데까지만(덜 끝난 색인 — 덜 끝난 사이트맵에 없는 가니 스타일은 답 없음) · 시간·쪽 한도로 덜 끝난 목록이거나 품번 없는 상품의 주소 이름에 그 스타일이 있으면 모델 값(스투시·
-    아미 모델 채우기)을 정하지 않음(품번 없는 사은품 하나로 모든 스타일을 막지 않게) · 통화 확인은 값이 있는 첫 상품으로(0원 상품 건너뜀)
+    아미 모델 채우기)을 정하지 않음(품번 없는 사은품 하나로 모든 스타일을 막지 않게 · 받아 둔 모델 상품의 이전 값 까닭은 '목록이 덜 끝나') · 품번 모양이 달라 단계 밖인 같은 스타일 목록 품번도
+    원단 판단에 넣음(원단 칸이 없으면 막음) · 통화 확인은 값이 있는 첫 상품으로(0원 상품 건너뜀)
 v1.44: (대표 결정 11/24 '모든 브랜드 사용' — 29CM·a-rt에 없을 때 · 상품정보고시 수입처가 ㈜슈마커여도 씀) 국내 판매처 슈마커 플러스(plus.shoemarker.co.kr · robots.txt 허용) — KR_RETAIL 세 번째(29CM → 그랜드스테이지·ABC마트 → 슈마커 플러스) ·
     홈 화면 검색 칸의 공개 검색 화면(/Product/ProductSearchList?SWord=품번 — 11/24 시험: 품번·모델 번호로 찾힘 · 호카는 '-' 없이 붙여 쓰면 안 찾혀 1147833-BWHT 꼴로 물음 _hoka_q) → 그 브랜드 상품 →
     공개 상품 페이지 품번 칸(item-summary__code — 구분 기호 무시 · 아디다스·반스는 '품번-색상 이름'이라 첫 '-' 앞 smk_cut)이 같을 때 주문 칸 숨은 값 정상가 TagPrice(판매가 SalePrice)가
@@ -3234,6 +3235,8 @@ def _shop_kr_pick(brand, q, codes, ents, idx=None):
             got[c] = (v[0], v[1], m[0][1]["title"], "wear", m[0][1]["url"], None)
         else:
             got.setdefault("__unread__", set()).add(c)   # 국내 몰에 있는데 정가가 갈림(미확인)
+    if SKU_BRANDS[brand].get("mfill") and partial:
+        got["__why__"] = "국내 몰 목록이 덜 끝나 이번 실행은 모델 값을 정하지 않음"   # 받아 둔 모델 상품의 이전 값 까닭(검토 11/24)
     if SKU_BRANDS[brand].get("mfill") and not partial:   # 같은 스타일 국내 색상 정가(모델 단위 채우기 — _sku_mput · 정가를 확실히 못 읽은 색상이 있으면 모델 값을 정하지 않음 · 덜 끝난 목록이면 안 정함)
         if SKU_BRANDS[brand].get("fab"):
             got["__fab__"] = {_seg2(x[0]) for x, _ in vs_all}   # 국내 몰에 있는 원단 — 모델 값을 쓸지는 sku_stage가 목록 품번 전체로 판단
@@ -4518,7 +4521,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         for k_, r_ in list(res.items()):
             if k_[0] == "가니" and isinstance(r_.get("got"), dict) and r_["got"].get("__gnone__"):
                 r_["got"] = {"__noans__": set(r_["got"]["__gnone__"])}
-                cnt["none"] -= 1
+                cnt["none"] -= int(not r_.get("partial"))   # 그 결과를 '없음'으로 센 경우만(덜 끝난 색인이면 세지 않았음 · 검토 11/24)
     # 새 값 정가 확인 — 정가 표시(정가 명세·취소선·compare_at·나이키 fullPrice·크록스 retailPrice — lst)가 없는 새 값은 같은 상품의 다른 나라 값(이미 받아 둔 값·이번 정가 표시 값)과
     # 대표 상품의 나라 쌍 정가 비율 가운데값(브랜드별 · 3개 이상)으로 견줘 1.25배(SKU_BF) 넘게 싸 보이면 보류(할인가를 정가로 저장하지 않게 — 한국·해외 모두)
     rat = collections.defaultdict(list)
@@ -4690,8 +4693,10 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             def own_(c):
                 x = items.get(iid(b, c)) or kept.get(iid(b, c))
                 return bool(x and ((x.get("m") or {}).get("KR") or {}).get("p") and alive(x))
-            if fab_ is not None and any(_seg2(c) not in fab_ and (ran or _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today))
-                                        for (b2, c) in tgt if b2 == b and SKU_BRANDS[b]["q"](c) == m_ and not own_(c)):
+            odd_ = [it_["code"] for it_ in lst if it_["brand"] == b and _seg1(it_["code"]) == m_ and not re.match(SKU_BRANDS[b]["rx"], it_["code"])]   # 품번 모양이 달라 단계 밖인
+            # 목록 품번(원단을 확인 못 함 — ERP 규칙 ②로는 이 모델 값에 맞음 · 검토 11/24)
+            if fab_ is not None and any(_seg2(c) not in fab_ and (ran or _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today))   # 원단 칸이 없는 품번(UKC408)도 막힘
+                                        for c in [c_ for (b2, c_) in tgt if b2 == b and SKU_BRANDS[b]["q"](c_) == m_ and not own_(c_)] + odd_):
                 n_fab += 1
                 continue
             if ran:
@@ -4713,7 +4718,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             n_mixed += 1
             continue   # 국내 색상 정가가 서로 다름 — 모델 값을 쓰지 않음
         elif r and o:   # 이번에 물었는데 국내 몰에 그 모델이 없음·못 받음 — 이전 값
-            o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = r.get("err") or "이번엔 공식몰에서 못 찾음"
+            o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = r.get("err") or (r.get("got") or {}).get("__why__") or "이번엔 공식몰에서 못 찾음"
         if it["m"].get("KR"):
             if not it.get("cat"):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
