@@ -8,7 +8,8 @@ v1.46: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주�
     가격 = 이 상품 설정(jsonConfig — 뒤에 이 상품 번호 productId가 오는 optionPrices · 추천 상품 설정은 건너뜀)의 사이즈별 oldPrice(정가)·finalPrice(지금 값) — 사이즈별 정가가 다르거나 지금 값이 정가보다
     비싸거나 화면 가격(meta product:price:amount)이 지금 값과 다르거나 설정 뒤 첫 상품 번호가 이 상품이 아니면 안 씀 · 원화(dataLayer currencyCode KRW)만 · 11/24 GitHub 서버 화면 시험(헤드리스 브라우저 · 우리 봇 이름): 보이는 가격 = finalPrice
     (Global-e 국가를 미국·한국으로 바꿔도 같은 원화 · 할인 중이면 oldPrice 취소선) · 스타일마다 그 스타일 한국 후보 페이지(색상마다 하나)를 MK_MAX 6개까지 받아 찾는 색상 먼저 — 후보를 모두 봤고
-    받은 페이지마다 자기 주소 이름이 자기 상품 이름으로 시작하고(아니면 주소 이름으로 다른 색상을 찾을 수 없음 — 한국어 이름 등) 사이트맵이 새것(색인 lastmod 1일 안 MK_FRESH)이고 끝까지 다 받았으면 없는 색상은 '국내 공식몰에 없음'이고 국내 색상 정가가 모두 같으면 모델 단위(mfill · code = 스타일) · 페이지 하나라도 못 받거나 다른 곳으로
+    받은 페이지마다 자기 주소 이름이 자기 상품 이름으로 시작하고(아니면 주소 이름으로 다른 색상을 찾을 수 없음 — 한국어 이름 등) 상품 이름 앞 세 낱말로 시작하는 주소인데 그림에 품번 꼴이 없는
+    상품을 안 받은 것이 없고(옛 이름 주소로 남은 색상일 수 있어) 사이트맵이 새것(색인 lastmod 1일 안 MK_FRESH)이고 끝까지 다 받았으면 없는 색상은 '국내 공식몰에 없음'이고 국내 색상 정가가 모두 같으면 모델 단위(mfill · code = 스타일) · 페이지 하나라도 못 받거나 다른 곳으로
     넘어가거나 덜 끝난 색인이면 못 찾은 색상은 답 없음(앞 상태) · 후보가 6개 넘으면 못 본 색상은 미확인(모델 값 안 정함) · 사이트맵에서 스타일을 못 찾거나 후보가 이 스타일이 아니면 미확인
     (사이트맵은 늦게 바뀌고 그림 이름이 다를 수 있어 '없음'이 아님 — 온러닝·가니와 같게) · 사이트맵 주소 300개 밑·상품 사이트맵 넷 넘게 나뉨·꼴 다른 주소·끝이 잘림(</urlset> 없음)·오래된 사이트맵·멈출 시각을 넘김이면
     덜 끝난 색인 · 남는 위험: 사이트맵을 다시 만든 뒤(하루 안) 한국 몰에 새로 올라온 색상은 정가가 갈린 스타일이면 하루쯤 '없음'일 수 있음 ·
@@ -19,8 +20,8 @@ v1.46: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주�
     모두 같으면 모델 단위(같은 색상이 두 번 올라와 정상가가 다르면 안 정함 · 스타일만 온 목록 품번도 이것으로 — ERP 규칙 ①) · 목록 쪽마다 전체 수가 다르면(넘기는 사이 바뀜) 덜 끝난 목록 · 코오롱몰은 한국 몰 간격(KR_GAP) ·
     드롤드무슈는 코오롱몰 상품 자료에 브랜드 품번이 없어(코오롱 자체 번호 D0TSW25250… · baseProductCode도 코오롱 것) 넣지 않음 — 이름 맞추기는 틀릴 수 있어 대표 결정 대기 ·
     11/24 GitHub 서버 시험(공개 품번 19개 · 검토 반영 최종 코드): 메종키츠네 받음 7(할인 1 — 정가 508,250 · 지금 355,775) · 모델 단위 6 · 사이트맵에 없는 스타일 2는 미확인 · 팔로마울 받음 8(모두 코오롱몰
-    할인 중 — 정상가) · 모델 단위 7 · 목록에 없는 스타일 1 '국내 공식몰에 없음' · 두 몰 robots.txt 허용 · 막힘 없음 · 약 1분 · 독립 검토 3차례(검토 12건 → 고침 → 재검증 2건 → 고침 → 고친 부분 재검증) 반영 ·
-    고친 안전장치를 하나씩 되돌리면 19개 모두 시험에서 잡힘.
+    할인 중 — 정상가) · 모델 단위 7 · 목록에 없는 스타일 1 '국내 공식몰에 없음' · 두 몰 robots.txt 허용 · 막힘 없음 · 약 1분 · 독립 검토 3차례(검토 12건 → 고침 → 재검증 2건 → 고침 → 고친 부분 재검증 낮은 등급 1건 → 고침) 반영 ·
+    고친 안전장치를 하나씩 되돌리면 20개 모두 시험에서 잡힘.
 v1.45: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주세요') 감시 브랜드 밖 국내 공식 온라인몰(원화) SKU 정가 1차 — 스투시 한국(kr.stussy.com 쇼피파이 ·
     목록 색상 코드(숫자)가 몰 색상 코드(글자)와 달라 스타일 단위 model — 스타일의 모든 색상·사이즈 정가가 같을 때만 · robots.txt가 '.*?limit=' 꼴로 쪽 크기 지정을 막으려 해 몰 기본 쪽 크기로 목록) ·
     아미(www.amiparis.com/ko-kr 쇼피파이 · 몰 품번 UKC408.KN0150.185 = 목록 UKC408-KN0150-185 — 구분 기호를 뺀 품번이 같은 변형) · 두 몰 모두 목록(products.json) 값으로 정가를 읽고
@@ -3389,7 +3390,7 @@ def _ganni_pick(page, codes, url):
 
 def _mk_index(stop=None):
     """v1.46 메종키츠네 한국 상품 사이트맵 → {스타일: [(한국 상품 주소, 그림 파일 이름의 색상)]} — 그림 파일 이름(pm00109kj0119-h170_1.jpg)이 상품 품번(스타일-색상)과
-    같은 꼴이라 후보로만 씀(페이지의 상품 품번으로 다시 확인 · 그림 모두 봄) · out.ents = [(주소, 그림·주소 이름 모두 — 소문자)] — 그림 이름 꼴이 다른 상품
+    같은 꼴이라 후보로만 씀(페이지의 상품 품번으로 다시 확인 · 그림 모두 봄) · out.ents = [(주소, 그림·주소 이름 모두 — 소문자, 그림 이름에 품번 꼴이 없음?)] — 그림 이름 꼴이 다른 상품
     (pm00109kj0119_-p199 · nw00509km03290701 등)도 스타일 글자로 찾음 · 사이트맵이 MK_FRESH일 넘게 다시 만들어지지 않았거나(lastmod) 끝이 잘렸거나 덜 받았으면 partial"""
     t0 = get(MK_SM_IDX).text
     kids = []
@@ -3420,13 +3421,13 @@ def _mk_index(stop=None):
             slug = loc.rsplit("/", 1)[-1].lower()
             imgs = [unescape(x).rsplit("/", 1)[-1].lower() for x in re.findall(r"<image:loc>\s*([^<\s]+)\s*</image:loc>", b)]
             nm = " ".join(imgs + [slug])
-            out.ents.append((loc, nm))
             seen = set()
             for im in imgs:
                 m = re.match(r"([a-z0-9]{6,20})-([a-z0-9]{2,5})(?=[_.-])", im)
                 if m and (m.group(1), m.group(2)) not in seen:
                     seen.add((m.group(1), m.group(2)))
                     out.setdefault(m.group(1).upper(), []).append((loc, m.group(2).upper()))
+            out.ents.append((loc, nm, not seen and not any(re.search(r"[a-z]{2,6}\d{2,5}[a-z]{2}\d{4}", im) for im in imgs)))   # 셋째 = 그림 이름에 품번 꼴이 없는 상품
     if len(kids) > 4 or len(out.ents) < MK_MIN:
         out.partial = True   # 상품 사이트맵이 넷 넘게 나뉨·주소가 너무 적음 — 덜 끝난 색인('없음'으로 보지 않음)
     if not out.ents:
@@ -4168,7 +4169,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
     if brand == "메종키츠네":   # v1.46 한국 상품 페이지(사이트맵 그림·주소 이름으로 고른 후보 — 페이지의 상품 품번으로 확인 · 색상마다 페이지 하나)
         part = bool(getattr(idx, "partial", False))
         ents = list((idx or {}).get(q) or [])
-        ents += [(u, None) for u, nm in getattr(idx, "ents", ()) if q.lower() in nm]   # 그림 이름 꼴이 다른 상품(스타일-색상 사이 '_-' · 붙여 씀 등)도 스타일 글자로 — 늘 함께(검토 11/24)
+        ents += [(u, None) for u, nm, _ in getattr(idx, "ents", ()) if q.lower() in nm]   # 그림 이름 꼴이 다른 상품(스타일-색상 사이 '_-' · 붙여 씀 등)도 스타일 글자로 — 늘 함께(검토 11/24)
         if not ents:   # 사이트맵에서 이 스타일을 못 찾음 — 사이트맵은 늦게 바뀌고 그림 이름이 다를 수 있어 '없음'이 아님(온러닝·가니와 같게 · 검토 11/24)
             return {("__noans__" if part else "__unread__"): set(codes)}, False
         want, su = {c.split("-", 1)[1] for c in codes if "-" in c}, set()
@@ -4197,10 +4198,12 @@ def _sku_fetch(brand, cc, q, codes, idx):
         # 주소 이름이 받은 페이지 상품 이름으로 시작하는 상품 — 그림 이름이 다른 스타일 것(빌려 쓴 사진)·품번 꼴 글자가 없는 같은 스타일 다른 색상일 수 있어 받아 봄(검토 11/24 2차)
         sl = {_mk_slug(v[2]) for v in pages.values()}
         own = bool(pages) and all((lambda x, b: len(x) >= 4 and (b == x or b.startswith(x + "-")))(_mk_slug(v[2]), _mk_base(v[3])) for v in pages.values())   # 받은 페이지 주소가 그 상품 이름으로 시작 — 아니면 주소 이름으로 다른 색상을 찾을 수 없음(한국어 이름 등)
-        extra = [u for u, _ in getattr(idx, "ents", ()) if u not in done and any(len(x) >= 4 and (_mk_base(u) == x or _mk_base(u).startswith(x + "-")) for x in sl)]
+        extra = [u for u, _, _ in getattr(idx, "ents", ()) if u not in done and any(len(x) >= 4 and (_mk_base(u) == x or _mk_base(u).startswith(x + "-")) for x in sl)]
         for u in extra[:max(0, MK_MAX - len(done))]:
             one(u)
-        complete = not errs and len(ents) + len(extra) <= MK_MAX and not part and own   # 이 스타일의 한국 후보 페이지를 모두 봄 · 주소 이름으로 다른 색상을 찾을 수 있음 · 사이트맵이 새것이고 다 받음
+        p3 = {"-".join(x.split("-")[:3]) for x in sl if x.count("-") >= 2}   # 상품 이름 앞 세 낱말 — 주소 이름이 옛 이름으로 남은 색상(그림에 품번 꼴도 없음)이 있으면 다 봤다고 하지 않음(검토 11/24 3차)
+        hid = any(u not in done and blank and any(_mk_base(u) == y or _mk_base(u).startswith(y + "-") for y in p3) for u, _, blank in getattr(idx, "ents", ()))
+        complete = not errs and len(ents) + len(extra) <= MK_MAX and not part and own and not hid   # 이 스타일의 한국 후보 페이지를 모두 봄 · 주소 이름으로 다른 색상을 찾을 수 있음 · 사이트맵이 새것이고 다 받음
         got = {c: (pages[c][0], {"lst": True, "cur_price": pages[c][1]}, pages[c][2], "wear", pages[c][3], None) for c in codes if c in pages}
         miss = set(codes) - set(got)
         if not pages or not complete:   # 후보가 이 스타일이 아니었거나·못 받은 페이지·색상이 많아 다 못 봄·덜 끝난 사이트맵 — 없는 색상은 답이 아님 · 모델 값도 안 정함
