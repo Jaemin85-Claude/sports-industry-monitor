@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.43: (대표 결정 11/24 '진행' · ERP 요청 '판매처 정가의 정확도를 볼 수단') 판매처 정가 재확인 audit_retail_stage — 주 1회(AUDIT_DAYS) 남은 시간이 있으면(90초 이상) 판매처 정가
+    10개(AUDIT_RN · 판매처 29CM·그랜드스테이지·ABC마트마다 돌아가며 · 주마다 다른 표본 · 이전 값·8일 넘은 값 뺌)를 ① 저장한 상품 페이지가 같은 상품일 때(a-rt 상품 번호 · 29CM 상품 이름의 품번)
+    그 상품 가격 칸에 그 정가가 있는지(_retail_page_check — 페이지 글자 전체에서 찾지 않음 · 할인 중 값 via "search"·다른 상품 페이지·a-rt 그사이 할인 시작·검색 못 받음은 '대조 못 함') ② 다른 판매처의 같은 품번 정가와 같은지(29CM 값 ↔ a-rt 검색 자료 정상가 · a-rt 값 ↔ 29CM 검색 정가 칸 — 출처가 다른
+    독립 대조) → prices.json 'audit_retail' {date·n·ok·rate·not_read·miss[id·p·shop·k·why]·shops{판매처: n·ok}·cross{n·same·diff[id·p·shop·other·op]}} — 공식몰 표본 검사(audit)와 따로 ·
+    로그 '판매처 정가 재확인: 페이지 대조 n개 중 일치 k · 대조 못 함 m · 다른 판매처와 같음 x/y' · 일치율 80% 밑(5개 이상)이면 [WARN] · 하나도 대조 못 하면 결과를 남기지 않고 다음 실행에 ·
+    29CM·a-rt 검색 부분을 함수로 뺌(_r29_search·_art_search — 읽는 길과 재확인이 같은 거르기를 씀) · 29CM 요청도 막힘을 요청마다 확인(_r29_get) · 재확인 시작 때 국내 몰 KR_GAP·PACE.
 v1.42: (대표 결정 11/23 3다 '추천대로'·검색 주소 사용 '네' · 대표 지시 11/24 '3번 진행') 국내 판매처 그랜드스테이지·ABC마트(a-rt.com — robots.txt 전부 허용) 국내 정가 —
     화면이 부르는 검색 주소(/display/search-word/result-total/list · 품번으로 상품을 찾는 데만)에서 품번(STYLE_INFO)이 같고 브랜드(BRAND_EN_NAME — SKU_BRANDS art)가 같은 상품만 →
     정상가 칸(NRMAL_AMT)이 모두 같고 할인 중이 아닌(판매가 PRDT_DC_PRICE = 정상가) 상품의 공개 상품 페이지(/product/new?prdtNo=)에 보이는 가격(product:price:amount · 상품 번호
@@ -3184,8 +3190,8 @@ def _sku_mput(got, mod, url):
         got["__mixed__"] = len(mod)
 
 
-def _r29_fetch(brand, q, codes):
-    """v1.40 국내 판매처 29CM — 검색 주소로 품번 → 그 브랜드관 한 상품 → 공개 상품 페이지 정가(검색 결과 정가 칸과 같을 때만) · 다시 받을 때도 같은 길 (v1.42 함수로 뺌)"""
+def _r29_search(brand, q):
+    """v1.43 29CM 검색 주소로 품번 → (그 브랜드관 상품 hit, 그중 한 상품(묶음 아님) single) — _r29_fetch·판매처 정가 재확인이 함께 씀"""
     eng, bno, sellers = SKU_BRANDS[brand]["r29"]
     rx = SKU_BRANDS[brand].get("rx") or r"^$"
     if set(R29_HOSTS) & _BLOCKED:
@@ -3197,7 +3203,14 @@ def _r29_fetch(brand, q, codes):
     its = d.get("data") if isinstance(d.get("data"), list) else []
     hit = [it for it in its if isinstance(it, dict) and str(it.get("frontBrandNameEng") or "").upper() == eng and str(it.get("frontBrandNo") or "") == bno
            and tok.search(str(it.get("itemName") or "").upper()) and re.fullmatch(r"\d{1,12}", str(it.get("itemNo") or ""))]
-    single = [it for it in hit if r29_single(it.get("itemName"), q, rx)]
+    return hit, [it for it in hit if r29_single(it.get("itemName"), q, rx)]
+
+
+def _r29_fetch(brand, q, codes):
+    """v1.40 국내 판매처 29CM — 검색 주소로 품번 → 그 브랜드관 한 상품 → 공개 상품 페이지 정가(검색 결과 정가 칸과 같을 때만) · 다시 받을 때도 같은 길 (v1.42 함수로 뺌)"""
+    eng, bno, sellers = SKU_BRANDS[brand]["r29"]
+    rx = SKU_BRANDS[brand].get("rx") or r"^$"
+    hit, single = _r29_search(brand, q)
     if not single:
         if hit:
             raise _NoConfirm("묶음·세트 상품만 있음 — 한 상품 정가가 아니라 안 씀")
@@ -3217,26 +3230,31 @@ def _r29_fetch(brand, q, codes):
     return {c: (full, ex, nm, None, u, None) for c in codes}, False
 
 
-def _art_fetch(brand, q, codes, pref=None):
-    """v1.42 국내 판매처 그랜드스테이지·ABC마트(a-rt.com) — 검색 주소로 품번(STYLE_INFO)·브랜드(BRAND_EN_NAME)가 같은 상품 → 정상가 칸(NRMAL_AMT)이 모두 같을 때 →
-    ① 할인 중이 아닌(판매가 = 정상가) 상품이 있으면 그 공개 상품 페이지에 보이는 가격(product:price:amount · 상품 번호 product:retailer_item_id가 같을 때)이 정상가와 같을 때 정가 ·
-    ② 할인 중인 상품만 있으면(상품 페이지에는 판매가만 보임) 페이지 가격이 그 상품 검색 자료의 판매가(PRDT_DC_PRICE)와 같을 때 검색 자료의 정상가를 정가로(대표 결정 11/24 '중간안' —
-    값에 via "search" = 정상가는 검색 자료로 확인 · 지금 값 = 판매가). 판매처에 없음은 미확인(__unread__ — 국내 공식 판매 없음이 아님).
-    그랜드스테이지 검색은 늘 하고, 그 검색 결과의 채널 셈(GROUP_COUNT_CHNNL_NO)이 ABC마트를 가리키면 ABC마트도 물어 두 채널 상품을 함께 봄(정상가가 채널끼리 다르면 안 씀) ·
-    색상 단위 브랜드는 ABC마트 검색이 오류여도 그랜드스테이지 상품으로 확인되면 씀(모델 단위는 두 채널 모두 봐야 함) · 모델 단위는 검색 결과가 한 쪽(30개)보다 많으면 안 씀(색상을 다 못 봄) ·
-    페이지는 받아 둔 판매처(pref) 상품부터 · 확인 실패는 _NoConfirm(검토 11/24)"""
+def _art_get(u):
+    """v1.42 a-rt 요청 — 두 주소 중 하나라도 막으면 둘 다 멈춤(요청마다 확인 — 다른 묶음이 막 막힌 경우도 · 검토 11/24)"""
+    if set(ART_HOSTS) & _BLOCKED:
+        raise RuntimeError("이번 실행에서 a-rt가 막음 — 더 요청 안 함")
+    return get(u)
+
+
+def _r29_get(u):
+    """v1.43 29CM 요청 — 두 주소(검색·상품 페이지) 중 하나라도 막으면 둘 다 멈춤(요청마다 확인 · 검토 11/24)"""
+    if set(R29_HOSTS) & _BLOCKED:
+        raise RuntimeError("이번 실행에서 29CM이 막음 — 더 요청 안 함")
+    return get(u)
+
+
+def _art_search(brand, q, pref=None):
+    """v1.43 a-rt 검색 주소로 품번 → (품번·브랜드가 같은 상품 [(행, 주소, shop)], 다른 채널 검색 오류 또는 None) — _art_fetch·판매처 정가 재확인이 함께 씀.
+    그랜드스테이지는 늘 묻고 채널 셈이 ABC마트를 가리키면(또는 받아 둔 판매처가 ABC마트면) ABC마트도 · 모델 단위는 ABC마트 오류·한 쪽 넘는 결과면 오류"""
     eng = SKU_BRANDS[brand]["art"]
     mdl = bool(SKU_BRANDS[brand].get("model"))
-    def aget(u):
-        if set(ART_HOSTS) & _BLOCKED:
-            raise RuntimeError("이번 실행에서 a-rt가 막음 — 더 요청 안 함")   # 두 주소 중 하나라도 막으면 둘 다 멈춤 — 요청마다 확인(다른 묶음이 막 막힌 경우도 · 검토 11/24)
-        return get(u)
     hit, grp, cerr = [], None, None
     for i, (ch, host, shop) in enumerate(ART_CH):
         if grp is not None and not num(grp.get(ch)) and shop != pref:
             continue   # 검색 결과 채널 셈이 이 채널에 없다고 함(채널 셈이 없는 응답이면 다음 채널은 묻지 않음 · 받아 둔 판매처 채널은 늘 물음 — 검토 11/24)
         try:
-            d = _json(aget(ART_SEARCH.format(h=host, q=urllib.parse.quote(q), ch=ch)))
+            d = _json(_art_get(ART_SEARCH.format(h=host, q=urllib.parse.quote(q), ch=ch)))
         except Exception as e:
             if i == 0 or mdl or _STOP.is_set() or set(ART_HOSTS) & _BLOCKED:
                 raise
@@ -3251,6 +3269,21 @@ def _art_fetch(brand, q, codes, pref=None):
         hit += [(x, host, shop) for x in rows if isinstance(x, dict) and _sku_norm(x.get("STYLE_INFO")) == q
                 and str(x.get("BRAND_EN_NAME") or "").strip().upper() == eng and str(x.get("CHNNL_NO") or "") == ch
                 and re.fullmatch(r"\d{6,14}", str(x.get("PRDT_NO") or "")) and num(x.get("NRMAL_AMT"))]
+    return hit, cerr
+
+
+def _art_fetch(brand, q, codes, pref=None):
+    """v1.42 국내 판매처 그랜드스테이지·ABC마트(a-rt.com) — 검색 주소로 품번(STYLE_INFO)·브랜드(BRAND_EN_NAME)가 같은 상품 → 정상가 칸(NRMAL_AMT)이 모두 같을 때 →
+    ① 할인 중이 아닌(판매가 = 정상가) 상품이 있으면 그 공개 상품 페이지에 보이는 가격(product:price:amount · 상품 번호 product:retailer_item_id가 같을 때)이 정상가와 같을 때 정가 ·
+    ② 할인 중인 상품만 있으면(상품 페이지에는 판매가만 보임) 페이지 가격이 그 상품 검색 자료의 판매가(PRDT_DC_PRICE)와 같을 때 검색 자료의 정상가를 정가로(대표 결정 11/24 '중간안' —
+    값에 via "search" = 정상가는 검색 자료로 확인 · 지금 값 = 판매가). 판매처에 없음은 미확인(__unread__ — 국내 공식 판매 없음이 아님).
+    그랜드스테이지 검색은 늘 하고, 그 검색 결과의 채널 셈(GROUP_COUNT_CHNNL_NO)이 ABC마트를 가리키면 ABC마트도 물어 두 채널 상품을 함께 봄(정상가가 채널끼리 다르면 안 씀) ·
+    색상 단위 브랜드는 ABC마트 검색이 오류여도 그랜드스테이지 상품으로 확인되면 씀(모델 단위는 두 채널 모두 봐야 함) · 모델 단위는 검색 결과가 한 쪽(30개)보다 많으면 안 씀(색상을 다 못 봄) ·
+    페이지는 받아 둔 판매처(pref) 상품부터 · 확인 실패는 _NoConfirm(검토 11/24)"""
+    eng = SKU_BRANDS[brand]["art"]
+    mdl = bool(SKU_BRANDS[brand].get("model"))
+    aget = _art_get
+    hit, cerr = _art_search(brand, q, pref)
     def nc(msg):   # 확인 실패 — 다른 채널 검색이 오류였으면 그 오류(일시 오류 — 다른 채널에서 확인됐을 수 있음 · 검토 11/24)
         raise cerr if cerr is not None else _NoConfirm(msg)
     single = [t for t in hit if not R29_BUNDLE.search(str(t[0].get("PRDT_NAME") or "").upper())]
@@ -3641,6 +3674,165 @@ def audit_stage(items_all, t0, today, td, old_audit):
         + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["k"] == "mismatch")[:300] if bad else ""))
     if n >= 10 and ok / n < 0.8:
         log(f"[WARN] 정가 표본 검사 일치율 {ok / n:.0%} — 저장된 국내 정가가 공식몰 페이지와 다른 값이 많음(읽는 법 확인)")
+    return au
+
+
+AUDIT_RN = 10          # v1.43 판매처 정가 재확인 — 한 번에 대조할 판매처 정가 수(대표 결정 11/24 '진행' · ERP 요청)
+AUDIT_R_MIN_LEFT = 90  # 초 — 남은 시간이 이보다 적으면 다음 실행에
+
+
+def _retail_page_check(shop, html, code, url, p):
+    """v1.43 판매처 상품 페이지가 같은 상품인지 보고 그 상품 가격 칸에서만 정가를 대조(검토 11/24 — 다른 상품 값·'199,000' 안의 '99,000'에 맞지 않게) →
+    (True 일치 · False 불일치 · None 대조 못 함, 까닭) · 29CM = JSON-LD 상품 이름에 품번이 낱말로 있는 상품의 판매가·정가 명세 · a-rt = 상품 번호(retailer_item_id)가 주소 prdtNo와 같을 때 보이는 가격"""
+    if SHOP_FAM.get(shop) == "a-rt":
+        pn = re.search(r"prdtNo=(\d+)", url or "")
+        meta = lambda prop: re.findall(r'<meta[^>]+property="' + re.escape(prop) + r'"[^>]+content="([^"]*)"', html)
+        if not pn or set(meta("product:retailer_item_id")) != {pn.group(1)}:
+            return None, "상품 페이지가 다른 상품이거나 상품 번호 없음(내려감·넘겨짐) — 대조 못 함"
+        ps = {num(v) for v in meta("product:price:amount")} - {None}
+        if not ps:
+            return None, "상품 페이지에 가격 칸 없음 — 대조 못 함"
+        return any(abs(x - p) <= p * 0.005 for x in ps), ""
+    tok = re.compile(r"(?<![0-9A-Z])" + re.escape(str(code).upper()) + r"(?![0-9A-Z])")
+    prods = [n for n in _ld_nodes(html) if _types(n) & {"product", "productgroup"} and tok.search(str(n.get("name") or "").upper())]
+    if not prods:
+        return None, "상품 페이지가 다른 상품이거나 상품 정보 없음(내려감·넘겨짐) — 대조 못 함"
+    vals, st = set(), [n.get("offers") for n in prods]
+    while st:
+        x = st.pop()
+        if isinstance(x, list): st.extend(x); continue
+        if not isinstance(x, dict): continue
+        if num(x.get("price")): vals.add(num(x.get("price")))
+        for ps in (x.get("priceSpecification") if isinstance(x.get("priceSpecification"), list) else [x.get("priceSpecification")]):
+            if isinstance(ps, dict) and num(ps.get("price")): vals.add(num(ps.get("price")))
+        if x.get("offers"): st.append(x.get("offers"))
+    if not vals:
+        return None, "상품 페이지에 가격 칸 없음 — 대조 못 함"
+    return any(abs(x - p) <= p * 0.005 for x in vals), ""
+
+
+def _other_retail_price(brand, code, shop):
+    """v1.43 다른 판매처의 정가(같은 품번) — 29CM 값이면 a-rt 검색 자료 정상가, a-rt 값이면 29CM 검색 정가 칸 · (값, 판매처) 또는 (None, 까닭)"""
+    h = SKU_BRANDS.get(brand) or {}
+    if shop == "29cm" and h.get("art"):
+        hit, cerr = _art_search(brand, code)
+        nas = {num(t[0].get("NRMAL_AMT")) for t in hit if not R29_BUNDLE.search(str(t[0].get("PRDT_NAME") or "").upper())} - {None}
+        if cerr is not None and not nas:
+            return None, "a-rt 검색 일부 못 받음"
+        other = sorted({t[2] for t in hit}) or ["a-rt"]
+        return (min(nas), "·".join(other)) if nas and max(nas) <= min(nas) * 1.005 else (None, "a-rt에 없음" if not nas else "a-rt 정상가가 여럿")
+    if SHOP_FAM.get(shop) == "a-rt" and h.get("r29"):
+        hit, single = _r29_search(brand, code)
+        cps = {num(it.get("consumerPrice")) for it in single} - {None, 0}
+        return (min(cps), "29cm") if cps and max(cps) <= min(cps) * 1.005 else (None, "29CM에 없음" if not cps else "29CM 정가가 여럿")
+    return None, "다른 판매처 없음"
+
+
+def audit_retail_stage(items_all, t0, today, td, old_ar):
+    """v1.43 판매처 정가 재확인(대표 결정 11/24 '진행' · ERP 요청 '판매처 정가의 정확도를 볼 수단') — 주 1회 판매처 정가 AUDIT_RN개(판매처마다 돌아가며 · 주마다 다른 표본 ·
+    이전 값·8일 넘은 값 뺌)를 ① 저장한 상품 페이지에 그 정가가 보이는지(할인 중 값 via "search"는 페이지에 정상가가 없어 '대조 못 함') ② 다른 판매처(29CM ↔ a-rt)의 같은 품번 정가와 같은지 대조.
+    돌려줌 prices.json 'audit_retail' {date, n, ok, rate, not_read, miss[{id, p, shop, k, why}], shops{shop: {n, ok}}, cross{n, same, diff[{id, p, shop, other, op}]}} —
+    k = "mismatch"(페이지에 그 정가가 안 보임 — n에 셈) / "unread"(대조 못 함 — not_read) · 공식몰 표본 검사(audit)와 따로"""
+    if isinstance(old_ar, dict) and old_ar.get("date"):
+        try:
+            if (today - datetime.date.fromisoformat(old_ar["date"])).days < AUDIT_DAYS:
+                return old_ar
+        except ValueError:
+            pass
+    left = t0 + TIME_LIMIT - 30 - time.time()
+    if left < AUDIT_R_MIN_LEFT:
+        log(f"판매처 정가 재확인: 남은 시간 부족({max(0, left):.0f}초) — 다음 실행에")
+        return old_ar
+    wk = "%d-%02d" % today.isocalendar()[:2]
+    pool = collections.defaultdict(list)
+    for it in items_all:
+        o = (it.get("m") or {}).get("KR") if isinstance(it, dict) else None
+        if not isinstance(o, dict) or o.get("src") != "retail" or not o.get("p") or o.get("cur") != "KRW" or o.get("stale_since") or not o.get("shop"):
+            continue
+        try:
+            if (today - datetime.date.fromisoformat(str(o.get("obs_date") or o.get("seen"))[:10])).days > 8:
+                continue
+        except ValueError:
+            continue
+        pool[o["shop"]].append((it, o))
+    if not pool:
+        return old_ar
+    for k_ in pool:
+        pool[k_].sort(key=lambda x: hashlib.sha1(f"{x[0]['id']}|{wk}".encode()).hexdigest())
+    sample, k = [], 0
+    while len(sample) < AUDIT_RN and any(len(v) > k for v in pool.values()):
+        for sh in sorted(pool):
+            if len(pool[sh]) > k and len(sample) < AUDIT_RN:
+                sample.append(pool[sh][k])
+        k += 1
+    for h_ in SKU_KR_HOSTS:   # 한국 몰 요청 간격(SKU 단계를 건너뛴 날도 — 검토 11/24)
+        HOST_GAP[h_] = max(HOST_GAP.get(h_, 0), KR_GAP)
+    if not _PACE:
+        _PACE.update(pace_map(PRODUCTS))
+    deadline = time.time() + min(left - 30, 150)
+    ok = bad = nf = 0
+    miss, shops, cross = [], collections.defaultdict(lambda: {"n": 0, "ok": 0}), {"n": 0, "same": 0, "diff": []}
+    _STOP.clear()   # SKU 단계가 끝나며 켠 '묶음 멈춤'을 풀어야 요청이 나감(공식몰 표본 검사와 같게)
+    for it, o in sample:
+        sh, p_ = o["shop"], o["p"]
+        rec = lambda kk, why: miss.append({"id": it["id"], "p": p_, "shop": sh, "k": kk, "why": why})
+        if time.time() > deadline:
+            nf += 1; rec("unread", "시간 부족 — 다음 주"); continue
+        if o.get("via"):
+            nf += 1; rec("unread", "할인 중 값(정상가는 검색 자료로 확인) — 페이지에 정상가가 없어 대조 못 함")
+        else:
+            v, why_ = "err", ""
+            try:
+                u = str(o.get("url") or "")
+                if not u.startswith("http"):
+                    raise RuntimeError("페이지 주소 없음")
+                v, why_ = _retail_page_check(sh, (_art_get(u) if SHOP_FAM.get(sh) == "a-rt" else _r29_get(u) if sh == "29cm" else get(u)).text,
+                                             str(it.get("code") or ""), u, p_)
+            except Exception as e:
+                nf += 1; rec("unread", "페이지 못 받음 — " + re.sub(r"https?://\S+", "(주소)", str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)[:80])
+            if v is False and SHOP_FAM.get(sh) == "a-rt":   # a-rt 상품 페이지는 지금 판매가만 보임 — 그사이 할인이 시작됐는지 검색 자료로 봄(확인 못 하면 불일치로 세지 않음)
+                try:
+                    pn_ = re.search(r"prdtNo=(\d+)", str(o.get("url") or ""))
+                    rows_, cerr_ = _art_search(it.get("brand"), str(it.get("code") or ""), sh)
+                    row_ = [t_[0] for t_ in rows_ if pn_ and t_[2] == sh and str(t_[0].get("PRDT_NO")) == pn_.group(1)]
+                    if row_ and num(row_[0].get("PRDT_DC_PRICE")) and num(row_[0]["PRDT_DC_PRICE"]) < p_ * 0.995 and abs((num(row_[0].get("NRMAL_AMT")) or 0) - p_) <= p_ * 0.005:
+                        v, why_ = None, "지금 할인 중(페이지에 판매가만 · 검색 자료 정상가는 같음) — 대조 못 함"
+                    elif not row_:
+                        v, why_ = None, ("다른 채널 검색 못 받음" if cerr_ is not None else "검색 결과에 이 상품이 없음") + " — 할인 중인지 확인 못 함 · 대조 못 함"
+                except Exception:
+                    v, why_ = None, "페이지 값이 다른데 할인 중인지 확인 못 함 — 대조 못 함"
+            if v is True:
+                ok += 1; shops[sh]["n"] += 1; shops[sh]["ok"] += 1
+            elif v is None:
+                nf += 1; rec("unread", why_)
+            elif v is False:
+                bad += 1; shops[sh]["n"] += 1; rec("mismatch", "페이지에 이 정가가 안 보임")
+        if time.time() > deadline:
+            continue
+        try:
+            op, other = _other_retail_price(it.get("brand"), str(it.get("code") or ""), sh)
+        except Exception:
+            op, other = None, "다른 판매처 못 받음"
+        if op:
+            cross["n"] += 1
+            if abs(op - p_) <= p_ * 0.005:
+                cross["same"] += 1
+            else:
+                cross["diff"].append({"id": it["id"], "p": p_, "shop": sh, "other": other, "op": op})
+    _STOP.set()
+    n = ok + bad
+    if not n:   # 페이지 대조를 하나도 못 함 — 결과를 남기지 않고 다음 실행에 다시(다른 판매처 대조만 된 날도 · 검토 11/24)
+        log(f"판매처 정가 재확인: 대조한 값 없음(대조 못 함 {nf}) — 다음 실행에 다시" + (" · " + miss[0]["why"][:80] if miss else ""))
+        return old_ar
+    miss.sort(key=lambda x: x["k"] != "mismatch")
+    au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_RN],
+          "shops": {k_: dict(v_) for k_, v_ in sorted(shops.items())}, "cross": cross}
+    log(f"판매처 정가 재확인: 페이지 대조 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 대조 못 함 {nf}" if nf else "")
+        + (f" · 다른 판매처와 같음 {cross['same']}/{cross['n']}" if cross["n"] else "")
+        + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["k"] == "mismatch")[:200] if bad else "")
+        + (" · 판매처끼리 다른 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}/{x['op']:,.0f}" for x in cross["diff"])[:200] if cross["diff"] else ""))
+    if n >= 5 and ok / n < 0.8:
+        log(f"[WARN] 판매처 정가 재확인 일치율 {ok / n:.0%} — 저장된 판매처 정가가 페이지와 다른 값이 많음(읽는 법 확인)")
     return au
 
 
@@ -4417,6 +4609,16 @@ def main():
         et, _, tb = sys.exc_info()
         log(f"[WARN] 정가 표본 검사: 오류 {et.__name__} — " + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
         audit = old.get("audit")
+    try:   # v1.43 판매처 정가 재확인(주 1회 · 남은 시간 있을 때 · 공식몰 표본 검사와 따로) — 오류가 저장을 막지 않게
+        _QUIET[0] = True
+        try:
+            audit_r = audit_retail_stage(items + sku_items, t0, today, td, old.get("audit_retail"))
+        finally:
+            _QUIET[0] = False
+    except Exception:
+        et, _, tb = sys.exc_info()
+        log(f"[WARN] 판매처 정가 재확인: 오류 {et.__name__} — " + " ← ".join(f"{os.path.basename(f.filename)}:{f.lineno} {f.name}" for f in reversed(traceback.extract_tb(tb)[-3:])))
+        audit_r = old.get("audit_retail")
     out = {"generated_at": now.strftime("%Y-%m-%d %H:%M KST"),
            "fetched": td if ok_run else last,                       # 받은 날 — 잘 끝난 실행만
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
@@ -4426,6 +4628,8 @@ def main():
     out.update(sku_meta)   # v1.29 SKU 단계 상태(목록 못 받은 날만 — 못 찾은 품번은 어디에도 안 남김)
     if audit:
         out["audit"] = audit   # v1.33 정가 표본 검사 결과(주 1회 · ERP·수집 상태가 읽음)
+    if audit_r:
+        out["audit_retail"] = audit_r   # v1.43 판매처 정가 재확인 결과(주 1회 · ERP·수집 상태가 읽음)
     if again:
         out["tried"] = td                                           # 못 받은 값이 남음 — 다음 날 그 값만 다시
     with open(OUT, "w", encoding="utf-8") as f:

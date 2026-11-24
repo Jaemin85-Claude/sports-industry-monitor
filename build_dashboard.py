@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.43: (price_fetch v1.43 · 대표 결정 11/24 '진행') 수집 상태 '해외 정가' 줄 끝에 '판매처 정가 재확인 m/d 일치 k/n · 다른 판매처와 같음 x/y'(prices.json audit_retail — 화면 자료에는 넣지 않음).
 v33.42: (price_fetch v1.39) prices.json 최상위 kr_none(국내 공식몰에 없음 꼬리표 — ERP용)은 화면 자료에 넣지 않음.
 v33.41: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터' — price_fetch v1.33) 수집 상태 '해외 정가' 줄 끝에 '정가 표본 검사 m/d 일치 k/n'(prices.json audit — 주 1회 국내 정가를 공식몰 페이지와 대조).
 v33.40: (대표 결정 2026-11-22 'ERP 판매·예정 상품 위주로 먼저 수집' — price_fetch v1.29 SKU 단계) prices.json의 kind "sku" 상품(판매·예정 상품 색상 단위 정가 —
@@ -6367,6 +6368,11 @@ def _partial(fn, d):
         au = d.get("audit") if isinstance(d.get("audit"), dict) else None
         if au and au.get("n"):   # v33.41 정가 표본 검사(price_fetch v1.33 — 주 1회 국내 정가를 공식몰 페이지와 대조)
             notes.append(f"정가 표본 검사 {str(au.get('date') or '')[5:].replace('-', '/')} 일치 {au.get('ok', 0)}/{au['n']}")
+        ar = d.get("audit_retail") if isinstance(d.get("audit_retail"), dict) else None
+        if ar and (ar.get("n") or (ar.get("cross") or {}).get("n")):   # v33.43 판매처 정가 재확인(price_fetch v1.43 — 주 1회 판매처 정가를 페이지·다른 판매처와 대조)
+            cr = ar.get("cross") or {}
+            notes.append(f"판매처 정가 재확인 {str(ar.get('date') or '')[5:].replace('-', '/')} 일치 {ar.get('ok', 0)}/{ar.get('n', 0)}"
+                         + (f" · 다른 판매처와 같음 {cr.get('same', 0)}/{cr['n']}" if cr.get("n") else ""))
     else:
         n = len(d.get("failed") or [])   # v32.9 dart_fetch v3.4: 일부 법인 실패(이전 값 유지)
     return n, notes
@@ -6582,7 +6588,7 @@ def main():
                     miss.setdefault(x["id"], []).append(x["cc"])
             prices["missing"] = miss
             prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict) and it.get("kind") != "sku"]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게 · v33.40 SKU 단계 상품은 뺌
-            for k in ("sku_q", "sku_list_fail", "sku_list_told", "kr_none"):   # v33.40 화면에 안 쓰는 SKU 단계 상태 · v33.42 국내 공식몰에 없음 꼬리표(ERP용)
+            for k in ("sku_q", "sku_list_fail", "sku_list_told", "kr_none", "audit_retail"):   # v33.40 화면에 안 쓰는 SKU 단계 상태 · v33.42 국내 공식몰에 없음 꼬리표(ERP용) · v33.43 판매처 정가 재확인(수집 상태 줄은 빌드 때 만듦)
                 prices.pop(k, None)
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
