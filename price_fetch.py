@@ -4,8 +4,11 @@ sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 
 v1.41: (대표 결정 11/23 '2가' — 아크테릭스 한국은 Firecrawl 검색으로 국내 공식몰 상품 페이지 주소만 찾고 정가는 우리 봇 · 정기 SKU 차례 11/24) SKU 단계 '아크테릭스' 국내 정가 —
     목록 품번 = 모델 번호(글로벌 품번 X0000…에서 X와 앞의 0을 뗀 숫자 · X0000… 꼴로 와도 같게 정리 · 대표 상품 모델과 같으면 뺌) → Firecrawl 검색(api.firecrawl.dev/v2/search ·
     'site:arcteryx.co.kr X000010276' 꼴 — 11/24 시험: 글로벌 품번·한국 품번 모두 공식몰 상품 페이지가 나옴) → arcteryx.co.kr/products/view/번호 페이지를 우리 봇이 받아 JSON-LD sku(한국 품번
-    영문 5자 + 모델 번호 — AJQSM10276)가 이 모델일 때만 정가(기존 읽는 법 — 화면 데이터 retail_price) · 같은 모델 시즌 페이지가 여럿이면(26SS·26FW) 3개까지 받아 정가가 모두 같을 때만(주소는 가장 최근 시즌) ·
-    찾은 주소는 저장해 다음부터 검색 없이 그 주소부터(keep · 그 주소가 다른 상품·없는 페이지면 검색으로 다시) · 값 lvl "model"(시즌·색상 구분 없는 모델 정가) · 검색이 못 찾으면 kr_status unread
+    영문 5자 + 모델 번호 — AJQSM10276)가 이 모델일 때만 정가(기존 읽는 법 — 화면 데이터 retail_price · 정가 표시가 없으면 안 씀) · 같은 모델 시즌 페이지가 여럿이면(26SS·26FW) 3개까지 받아
+    가장 최근 시즌 정가(같은 시즌끼리 다르면 안 씀 · 주소도 그 페이지) · 찾은 주소는 저장해 다음부터 검색 없이 그 주소부터(keep) — 그 주소가 없어졌으면 14일마다, 지난 시즌 페이지면 14일마다,
+    잘 열려도 28일마다(FC_RECHECK) 다시 검색해 새 시즌 페이지를 봄(검토 11/24 — 옛 시즌 정가가 남지 않게 · 없어진 주소로 3일마다 크레딧을 쓰지 않게) · 대표 상품 모델(X000010276 = 목록 10276)은
+    꼴이 달라 ERP가 대표 상품으로 맞추지 못하므로 SKU 상품으로도 싣되 검색 없이 대표 상품 한국 주소부터(검토 11/24) · 공식몰이 그 실행에서 막았거나 응답이 없으면 검색하지 않음 ·
+    값 lvl "model"(시즌·색상 구분 없는 모델 정가) · 검색이 못 찾으면 kr_status unread
     ('국내 공식 판매 없음'이 아님 — 꼬리표 안 만듦) · Firecrawl은 검색만(페이지는 Firecrawl로 읽지 않음) · 한 실행 검색 FC_MAX 8번(1번 2크레딧) · 아직 못 찾은 품번은 14일마다(FC_ASK_DAYS) 다시 검색 ·
     키(GitHub Secrets FIRECRAWL_API_KEY — update.yml 해외 정가 단계에만 넘김)가 없으면 새 검색은 건너뛰고 받아 둔 주소만 다시 받음 · 크레딧 부족(HTTP 402)이면 그 실행 검색을 멈춤 · 요약 줄 'Firecrawl 검색 n번'(구간).
 v1.40: (대표 결정 11/23 3다 '추천대로' · 검색 주소 사용 '네' — 공식몰이 우리 봇을 막은 브랜드는 우리 봇을 허용하는 국내 판매처 정가) 국내 판매처 29CM로 뉴발란스·아디다스·반스·노스페이스
@@ -2863,8 +2866,10 @@ ARC_DUP = 3          # 같은 모델 시즌 페이지를 이만큼까지 받아 
 FC_URL = "https://api.firecrawl.dev/v2/search"   # v1.41 Firecrawl 검색 — 국내 공식몰 상품 페이지 주소를 찾는 데만(대표 결정 11/23 '2가' · 페이지는 우리 봇)
 FC_ENV = "FIRECRAWL_API_KEY"
 FC_MAX = 8           # 한 실행 Firecrawl 검색 최대(1번 2크레딧 — 찾은 주소는 저장해 다시 검색하지 않음)
-FC_ASK_DAYS = 14     # 일 — 국내 공식몰 주소를 아직 못 찾은 품번을 다시 검색하는 주기(품번 해시로 정한 날 — 파일에 기록 안 남김)
+FC_ASK_DAYS = 14     # 일 — 국내 공식몰 주소를 아직 못 찾은 품번·받아 둔 주소가 없어졌거나 지난 시즌인 품번을 다시 검색하는 주기(품번 해시로 정한 날 — 파일에 기록 안 남김)
+FC_RECHECK = 28      # 일 — 받아 둔 주소가 잘 열려도 이만큼마다 한 번 다시 검색해 새 시즌 페이지가 있는지 봄(검토 11/24)
 _FC = {"n": 0, "stop": None}
+_SKU_DAY = [None]    # v1.41 SKU 단계의 오늘(차례 날 계산용 — sku_stage가 넣음)
 _FC_LOCK = threading.Lock()
 
 
@@ -2892,8 +2897,17 @@ def _fc_search(query):
         d = r.json()
     except ValueError:
         raise RuntimeError("Firecrawl 검색 응답이 JSON 아님")
+    if not isinstance(d, dict) or d.get("success") is False:
+        raise RuntimeError("Firecrawl 검색 실패 응답")
     web = (d.get("data") or {}).get("web") if isinstance(d.get("data"), dict) else d.get("data")
-    return [str(x.get("url") or "") for x in (web if isinstance(web, list) else []) if isinstance(x, dict)]
+    if not isinstance(web, list):
+        raise RuntimeError("Firecrawl 검색 응답 형식이 다름")
+    return [str(x.get("url") or "") for x in web if isinstance(x, dict)]
+
+
+def _arc_cur_season(day):
+    """v1.41 오늘의 시즌 — SS = 2~7월 · FW = 8~1월(1월은 전해 FW)"""
+    return (day.year, False) if 2 <= day.month <= 7 else ((day.year, True) if day.month >= 8 else (day.year - 1, True))
 
 
 def _arc_season(html):
@@ -3199,9 +3213,10 @@ def _sku_fetch(brand, cc, q, codes, idx):
         for c in codes:   # 모델 단위 브랜드 — 목록 품번이 곧 모델 번호(sku_list)
             got[c] = (full, ex, name, None, fin, "model")
         return got, False
-    if SKU_BRANDS[brand].get("fc"):   # v1.41 아크테릭스 한국 — 받아 둔 주소(keep)부터, 없거나 다른 상품·없는 페이지면 Firecrawl 검색으로 주소만 찾고 → 우리 봇이 상품 페이지 정가
-        mno = int(q); gx = f"X{mno:09d}"
+    if SKU_BRANDS[brand].get("fc"):   # v1.41 아크테릭스 한국 — 받아 둔 주소(keep · 대표 상품 모델은 대표 상품 한국 주소)부터, 없거나 없어졌거나 지난 시즌이면 Firecrawl 검색으로 주소만 찾고 → 우리 봇이 상품 페이지 정가
+        mno = int(q); gx = f"X{mno:09d}"; day = _SKU_DAY[0] or datetime.date.today(); key = f"{brand}|{q}|KR"
         krx = re.compile(rf"^[A-Z]{{4,6}}0*{mno}$")
+        host = urllib.parse.urlsplit(ARC_KR_VIEW).netloc
         def read(vids):
             pages = []
             for vid in vids[:ARC_DUP]:
@@ -3223,21 +3238,32 @@ def _sku_fetch(brand, cc, q, codes, idx):
             return pages
         pre = (idx or {}).get(q) if isinstance(idx, dict) else None
         pv = re.findall(r"/products/view/(\d+)", pre or "")
-        pages, searched = (read(pv[:1]) if pv else []), False
-        if not pages:
-            if not _fc_left():
-                if pv:
-                    raise RuntimeError("받아 둔 주소에 이 모델 정가 없음 — 이번 실행은 검색 안 함")
-                return {"__noans__": set(codes)}, False   # 검색을 못 함(키 없음·한도) — 답을 못 받은 것(앞 상태 유지)
-            urls = _fc_search(f"site:arcteryx.co.kr {gx}"); searched = True
+        pages = read(pv[:1]) if pv else []
+        if not pv:
+            need = True   # 아직 주소를 모름 — 새로 찾기(차례는 sku_stage가 14일마다로 정함)
+        elif not pages:
+            need = _sku_slot(key + "|dead", FC_ASK_DAYS, day)   # 받아 둔 주소가 없어짐 — 다시 찾기는 14일마다(검토 11/24 — 3일마다 크레딧을 쓰지 않게)
+        else:   # 받아 둔 주소가 지난 시즌이면 14일마다, 아니어도 28일마다 한 번 새 시즌 페이지를 찾아봄(검토 11/24 — 옛 시즌 정가가 계속 남지 않게)
+            need = (pages[0][0] < _arc_cur_season(day) and _sku_slot(key + "|old", FC_ASK_DAYS, day)) or _sku_slot(key + "|fc", FC_RECHECK, day)
+        site_ok = host not in _BLOCKED and _DOWN.get(host, 0) < 2 and robots_ok(ARC_KR_VIEW.format(1))[0]
+        if need and _fc_left() and site_ok:   # 공식몰이 이번 실행에서 막았거나 응답이 없으면 검색(크레딧)을 쓰지 않음(검토 11/24)
+            urls = _fc_search(f"site:arcteryx.co.kr {gx}")
             vids = [v for v in dict.fromkeys(re.findall(r"^https://(?:www\.)?arcteryx\.co\.kr/products/view/(\d+)", "\n".join(urls), re.M)) if v not in pv]
-            pages = read(vids)
+            pages += read(vids)
+        elif not pages:
+            if pv:
+                raise RuntimeError("받아 둔 주소에 이 모델 정가 없음 — " + ("다시 찾기는 14일마다" if not need else "이번 실행은 검색 안 함"))
+            return {"__noans__": set(codes)}, False   # 검색을 못 함(키 없음·한도·공식몰 막힘) — 답을 못 받은 것(앞 상태 유지)
         if not pages:
+            if pv:
+                raise RuntimeError("받아 둔 주소·검색 모두 이 모델 정가 없음")
             return {"__unread__": set(codes)}, False   # 검색이 못 찾음 — '국내 공식 판매 없음'이 아님(미확인)
-        ps = [x[1] for x in pages]
+        top = max(x[0] for x in pages)
+        new = [x for x in pages if x[0] == top]   # 시즌 페이지가 여럿이면 가장 최근 시즌 정가(지금 파는 시즌 — 검토 11/24) · 같은 시즌끼리 정가가 다르면 안 씀
+        ps = [x[1] for x in new]
         if max(ps) > min(ps) * 1.005:
-            raise RuntimeError(f"시즌 페이지 {len(pages)}개의 정가가 다름 — 어느 것이 지금 정가인지 몰라 안 씀")
-        sea, full, ex, nm, u = max(pages, key=lambda x: x[0])   # 주소는 가장 최근 시즌 페이지
+            raise RuntimeError(f"같은 시즌 페이지 {len(new)}개의 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+        sea, full, ex, nm, u = new[0]
         return {c: (full, ex, nm, None, u, "model") for c in codes}, False
     if SKU_BRANDS[brand].get("r29"):   # v1.40 국내 판매처 29CM — 검색 주소로 품번 → 그 브랜드관 한 상품 → 공개 상품 페이지 정가(검색 결과 정가 칸과 같을 때만) · 다시 받을 때도 같은 길
         eng, bno, sellers = SKU_BRANDS[brand]["r29"]
@@ -3442,6 +3468,7 @@ def audit_stage(items_all, t0, today, td, old_audit):
 def sku_stage(old, t0, today, td, rep_codes, rep_items):
     """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told, kr_none})"""
     def age(d): return (today - datetime.date.fromisoformat(str(d)[:10])).days
+    _SKU_DAY[0] = today
     def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     old_items = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku" and it.get("id")}
     meta = {k: old[k] for k in SKU_META if k in old}
@@ -3553,11 +3580,21 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     idx, res, rlock, cnt = _SkuIdx(say), {}, threading.Lock(), collections.Counter()
     noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태는 앞 상태 유지 · ERP 요청 11/23)
     pre_by, want_by = {}, collections.defaultdict(set)   # v1.35 받아 둔 상품 주소(keep 나라)로 받는 일감 · 색인으로 찾는 열쇠(그 밖 — 킨 한국 색인이 다 찾으면 멈춤)
+    # v1.41 목록 품번 꼴로 정리한(norm) 대표 상품 모델의 한국 주소(아크테릭스 대표 상품 X000010276 = 목록 모델 번호 10276) — 받아 둔 주소가 없으면 검색 없이 그 주소부터
+    #   (대표 상품 품번과 목록 품번의 꼴이 달라 ERP가 대표 상품으로 맞추지 못함 → SKU 상품으로도 실음 · 검토 11/24)
+    rep_url = {}
+    for it_ in rep_items:
+        h_ = SKU_BRANDS.get(it_.get("brand")) if isinstance(it_, dict) and it_.get("kind") != "sku" else None
+        u_ = (((it_.get("m") or {}).get("KR") or {}).get("url")) if h_ and h_.get("norm") else None
+        if u_:
+            rep_url[(it_["brand"], h_["norm"](_sku_norm(it_.get("code"))))] = u_
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ in SKU_BRANDS.get(b_, {}).get("keep", ()):
             us_ = {((((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get(cc_)) or {}).get("url") for c_ in j_["codes"]}
             if len(us_) == 1 and None not in us_:
                 pre_by[(b_, cc_, q_)] = {q_: us_.pop()}; continue
+            if cc_ == "KR" and (b_, q_) in rep_url:
+                pre_by[(b_, cc_, q_)] = {q_: rep_url[(b_, q_)]}; continue
         want_by[(b_, cc_)].add(q_)
     _IDX_PAGES[0] = 0
     shown = set()
@@ -3594,8 +3631,8 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                         with rlock:
                             cnt["noidx"] += 1; noidx_k.add(k)
                         continue
-                if SKU_BRANDS[b].get("fc") and pre is None and not _fc_left():
-                    with rlock: cnt["left"] += 1   # v1.41 받아 둔 주소가 없고 이번 실행 검색을 더 못 함(한도·크레딧·키) — 다음 실행에
+                if SKU_BRANDS[b].get("fc") and pre is None and (not _fc_left() or urllib.parse.urlsplit(ARC_KR_VIEW).netloc in _BLOCKED):
+                    with rlock: cnt["left"] += 1   # v1.41 받아 둔 주소가 없고 이번 실행 검색을 더 못 함(한도·크레딧·키) 또는 공식몰이 이번 실행에서 막음 — 다음 실행에
                     continue
                 used = pre or ix   # v1.37 이번에 쓴 색인(덜 끝난 색인이면 partial)
                 try:
@@ -4142,8 +4179,6 @@ def main():
     rep_codes = collections.defaultdict(set)
     for p in PRODUCTS:
         rep_codes[p["brand"]].add(_sku_norm(p["code"]))
-        if SKU_BRANDS.get(p["brand"], {}).get("norm"):   # v1.41 목록 품번과 같은 꼴로도(아크테릭스 대표 상품 X000010276 = 목록 모델 번호 10276)
-            rep_codes[p["brand"]].add(SKU_BRANDS[p["brand"]]["norm"](_sku_norm(p["code"])))
     if busy:
         log("SKU 정가: 대표 상품 묶음이 안 끝나 이번 실행은 건너뜀 — 받아 둔 상품은 그대로")
         sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
