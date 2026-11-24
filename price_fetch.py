@@ -9,13 +9,14 @@ v1.42: (대표 결정 11/23 3다 '추천대로'·검색 주소 사용 '네' · �
     그랜드스테이지(채널 10002)는 늘 묻고 그 검색 결과의 채널 셈(GROUP_COUNT_CHNNL_NO)이 ABC마트(10001)를 가리키면 ABC마트도 물어 두 채널 상품을 함께 봄(정상가가 채널끼리 다르면 안 씀) ·
     값 m.KR.src "retail" · shop "grandstage"·"abcmart" · 받아 둔 값이 있으면 그 판매처부터 묻고 그 판매처가 못 받으면(오류) 이전 값 그대로 — 그 판매처에 없을 때만 다른 판매처 ·
     판매처가 바뀌면(29CM ↔ a-rt · 그랜드스테이지·ABC마트끼리는 같은 판매처 SHOP_FAM) 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 — 판매처끼리 정가 차이가 가짜 할인이 되지 않게) ·
-    받아 둔 값이 차례의 첫 판매처 것이면 그 판매처부터(고정) — 답은 했는데 정가를 확인 못 하면(_NoConfirm — 할인·묶음·정가 다름·판매자 다름·페이지 대조 실패) 다른 판매처로,
-    일시 오류(연결·5xx·막힘·오류 응답)는 이전 값 그대로이되 실패한 지 KR_PIN_DAYS(7)일을 넘으면 다른 판매처도 물음 · 29CM 브랜드인데 a-rt 값이면 고정 안 함(29CM 먼저 다시) ·
+    받아 둔 값이 차례의 첫 판매처 것이면 그 판매처부터(고정) — 그 판매처가 못 받거나(일시 오류·오류 응답) 정가를 확인 못 하거나(_NoConfirm) 못 찾으면 이전 값 그대로이되
+    실패한 지 KR_PIN_DAYS(7)일을 넘으면 다른 판매처도 물음(하루 실패로 판매처가 오가며 기록이 지워지지 않게) · 29CM 브랜드인데 a-rt 값이면 고정 안 함(29CM 먼저 다시) ·
+    판매처가 바뀌어도 1.5배 넘게 다르면 앞 값으로 보류(다음 확인 때 비슷하면 반영) · 언더아머 한국은 a-rt 묶음을 따로(해외 묶음이 아식스를 기다리지 않게) ·
     판매처 값은 정상가 칸을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 1.5배 넘게 바뀌면 다음 확인) · 출처 표시(src·shop·via)·주소는
     받아들인 정가 것(크게 바뀜 보류 날은 앞 정가 것 · 전에 페이지로 확인한 같은 정가엔 via 안 붙임) · 중간안은 다른 채널 검색이 오류이거나 정상가보다 비싸게 파는 상품이 있으면 안 씀 ·
     색상 단위는 ABC마트 검색 오류여도 그랜드스테이지 정가 상품으로 확인되면 씀 · 모델 단위는 검색 결과가 한 쪽(30개)보다 많으면 안 씀 · 검색 응답이 200인데 목록이 없으면 '없음'이 아니라 못 받음 ·
-    같은 묶음 안 브랜드마다 마지막 한국 일감이 끝나면 그 브랜드 해외 묶음 시작(해외 나라가 있는 브랜드 일감 먼저) · 요약 줄 끝 '29CM·a-rt 연결 안 됨·막음(이번 실행)'(대표 결정 11/24 —
-    일부 GitHub 서버에서 a-rt 연결 시간 초과 · 다음 실행에 다시 받으니 지켜보고, 잦으면 새 서버에서 다시 받기) · 독립 검토 4차례 반영 ·
+    같은 묶음 안 브랜드마다 마지막 한국 일감이 끝나면 그 브랜드 해외 묶음 시작 · 요약 줄 끝 '29CM·a-rt 연결 안 됨·막음(이번 실행)'(대표 결정 11/24 —
+    일부 GitHub 서버에서 a-rt 연결 시간 초과 · 다음 실행에 다시 받으니 지켜보고, 잦으면 새 서버에서 다시 받기) · 독립 검토 4차례 반영(지적 18건 고침) ·
     29CM 브랜드(뉴발란스·아디다스·반스)는 29CM 먼저, 29CM이 못 찾거나 못 받으면 a-rt(KR_RETAIL 순서) · 언더아머 한국(공식몰 접속 막음)·아식스(감시 브랜드 · 공식몰 접속 막음 —
     10/21 시험)는 a-rt만(모델 단위 — a-rt 품번 칸이 모델 번호 · 값 lvl "model" · 아식스 품번 = 신발 1xxx·옷 2xxx·가방·용품 3xxx + 영문 + 세 자리 숫자 + '-'·'.' 색상 — 구분 기호 없는 꼴은 받지 않음 · ERP 규칙 ② '첫 - 또는 . 앞부분') · 판매처에 없음은 kr_status unread(국내 공식 판매 없음이 아님) · 두 주소 한 줄(PACE a-rt ·
     주소마다 KR_GAP) · 하나라도 막으면 그 실행에서 a-rt 요청을 멈춤 · 요약 줄 '국내 판매처 정가 n(29CM a · ABC마트 b · 그랜드스테이지 c)' · 슈마커 플러스는 대표 결정 11/24 '모든 브랜드 사용' —
@@ -3316,8 +3317,8 @@ def _retail_net():
 def _kr_retail(brand, q, codes):
     """v1.42 국내 판매처 차례(KR_RETAIL — 29CM → 그랜드스테이지·ABC마트, 브랜드에 있는 것만) — 앞 판매처가 값을 주면 그것 ·
     못 찾음(미확인)·못 받음(오류)이면 다음 판매처 · 끝까지 값이 없으면 못 받음(오류)이 하나라도 있으면 첫 오류(이전 값 그대로 · 국내 상태 앞 상태), 아니면 미확인.
-    받아 둔 값이 차례의 첫 판매처 것이면 고정(_KR_PREF) — 그 판매처의 일시 오류(연결·5xx·막힘·오류 응답)는 그대로 오류(이전 값 · 판매처가 오가지 않게)이되 실패한 지
-    KR_PIN_DAYS일을 넘으면 다른 판매처도 물음 · 그 판매처가 답은 했는데 정가를 확인 못 함(_NoConfirm — 할인·묶음·정가 다름 등)·없음이면 다른 판매처(판매처가 바뀌면 새 값 — sku_stage) ·
+    받아 둔 값이 차례의 첫 판매처 것이면 고정(_KR_PREF) — 그 판매처가 못 받거나(일시 오류·오류 응답) 답은 했는데 정가를 확인 못 하거나(_NoConfirm) 못 찾으면 이전 값 그대로이되
+    실패한 지 KR_PIN_DAYS일을 넘으면 다른 판매처도 물음(판매처가 바뀌면 새 값 — sku_stage · 1.5배 넘게 바뀌면 다음 확인) ·
     뒤 판매처 값(29CM 브랜드인데 a-rt)이면 고정하지 않고 차례대로(29CM이 다시 되면 29CM으로 · 검토 11/24)"""
     h = SKU_BRANDS[brand]
     pref, pin_age = _KR_PREF.get((brand, q)) or (None, 0)
@@ -3330,12 +3331,14 @@ def _kr_retail(brand, q, codes):
         try:
             got, none = (_r29_fetch(brand, q, codes) if src == "r29" else _art_fetch(brand, q, codes, pref))
         except Exception as e:
-            if _STOP.is_set() or (src == psrc and not isinstance(e, _NoConfirm) and pin_age < KR_PIN_DAYS):
-                raise
+            if _STOP.is_set() or (src == psrc and pin_age < KR_PIN_DAYS):
+                raise   # 받아 둔 첫 판매처의 일시 오류·확인 실패는 실패한 지 KR_PIN_DAYS일까지 이전 값(판매처가 하루 만에 오가며 기록이 지워지지 않게 · 검토 11/24)
             err = err or e
             continue
         if any(not k.startswith("__") for k in got):
             return got, none
+        if src == psrc and pin_age < KR_PIN_DAYS:
+            raise RuntimeError("받아 둔 판매처에서 이번에 못 찾음 — 이전 값(실패한 지 7일 넘으면 다른 판매처)")
         ans = ans or (got, none)
     if err is not None:
         raise err
@@ -3757,10 +3760,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     order = sorted(jobs, key=lambda k: (k[1] != "KR", 0, -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 1, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저
     lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국, 1 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤에 시작)
     for k in order:
-        lanes.setdefault((0 if k[1] == "KR" else 1, ("29cm" if SKU_BRANDS[k[0]].get("r29") else "a-rt" if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
-    for (ph_, lk_), ks_ in lanes.items():   # v1.42 함께 쓰는 한국 묶음('29cm'·'a-rt') — 다시 받기 다음엔 해외 나라가 있는 브랜드(언더아머) 일감 먼저(그 브랜드 해외 묶음이 늦게 시작하지 않게 · 검토 11/24)
-        if ph_ == 0 and lk_ in ("29cm", "a-rt"):
-            ks_.sort(key=lambda k: (not jobs[k]["ref"], len(SKU_BRANDS[k[0]]["cc"]) == 1))
+        lanes.setdefault((0 if k[1] == "KR" else 1, ("29cm" if SKU_BRANDS[k[0]].get("r29") else ("a-rt" if len(SKU_BRANDS[k[0]]["cc"]) == 1 else "a-rt " + k[0]) if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.42 a-rt만 읽는 브랜드 중 해외 나라가 있는 브랜드(언더아머)는 한국 묶음을 따로(그 브랜드 해외 묶음이 아식스 한국 일감을 기다리지 않게 · 같은 PACE a-rt 줄이라 요청 빠르기는 그대로 · 검토 11/24)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
     kr_done = {b: threading.Event() for b in SKU_BRANDS}
     kr_b = {k[0] for (ph_, _), ks_ in lanes.items() if ph_ == 0 for k in ks_}   # v1.42 한국 일감이 '29cm'·'a-rt' 묶음에 있는 브랜드도 — 그 묶음이 끝나야 해외 묶음 시작(검토 11/24)
     for b in SKU_BRANDS:
@@ -3975,7 +3975,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             was_new = not o
             fam = lambda x: SHOP_FAM.get(x, x)
             if o and (o.get("shop") or ex.get("shop")) and (o.get("src"), fam(o.get("shop"))) != (ex.get("src"), fam(ex.get("shop"))):
-                o = {}   # v1.42 판매처가 바뀜(29CM ↔ a-rt · 공식몰 ↔ 판매처 — 그랜드스테이지·ABC마트끼리는 같은 판매처) — 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 · 검토 11/24)
+                f_ = round(full, 2)
+                big_ = (o.get("p") and o.get("cur") == cur and (f_ > o["p"] * JUMP or f_ < o["p"] / JUMP)
+                        and not (o.get("cand") and abs(o["cand"] - f_) <= o["cand"] * 0.10))
+                if not big_:   # 1.5배 넘게 다르면 앞 값으로 보류(다음 확인 때 비슷하면 반영 — 판매처가 바뀌어도 크게 바뀜 확인은 그대로 · 검토 11/24)
+                    o = {}   # v1.42 판매처가 바뀜(29CM ↔ a-rt · 공식몰 ↔ 판매처 — 그랜드스테이지·ABC마트끼리는 같은 판매처) — 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 · 검토 11/24)
             rtl = ex.get("src") == "retail" or o.get("src") == "retail"
             o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키" or ex.get("src") == "retail", url, age)   # v1.42 판매처 값은 정상가 칸(29CM consumerPrice·a-rt NRMAL_AMT)을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 크게 바뀜은 다음 확인 — 검토 11/24)
             acc = o2.get("p") == round(full, 2)   # v1.42 이번 값을 정가로 받아들였는지(크게 바뀜 보류면 앞 정가 그대로)
