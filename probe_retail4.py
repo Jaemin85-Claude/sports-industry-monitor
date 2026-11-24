@@ -141,41 +141,25 @@ def art_page(host, row):
 
 
 
-def art(R):
-    qs = ["U740BM2", "M10804O2", "MR530SG", "HOKA", "THE NORTH FACE", "NORTHFACE", "3027341", "1372586", "1384672", "6005377", "1011B867", "1011B867-001", "1011B867.001", "1203A591", "JR3732", "VN0010CDH89", "IH3990"]
-    for host, ch in (("grandstage.a-rt.com", "10002"), ("abcmart.a-rt.com", "10001")):
-        H = R.setdefault(host, {})
-        for w in qs:
-            res, e = art_rows(host, ch, w)
-            if e:
-                H[w] = e; continue
-            rows = res["rows"]
-            H[w] = {"count": res["count"], "grp": res["group"], "rows": [[str(x.get(k)) for k in ("STYLE_INFO", "BRAND_EN_NAME", "NRMAL_AMT", "PRDT_DC_PRICE", "PRDT_NAME", "PRDT_NO", "VNDR_NO", "SELL_STAT_CODE", "CHNNL_NO")] for x in rows[:5]]}
+def realrun(R):
+    cases = [("뉴발란스", "U740BM2"), ("뉴발란스", "MR530SG"), ("뉴발란스", "M10804O2"), ("아디다스", "JR3732"), ("아디다스", "IH3990"), ("반스", "VN0010CDH89"),
+             ("언더아머", "6005377"), ("아식스", "1203A591"), ("아식스", "2011D580"), ("아식스", "1201A256"), ("노스페이스", "NS85S31A")]
+    out = []
+    for h_ in pf.SKU_KR_HOSTS:
+        pf.HOST_GAP[h_] = max(pf.HOST_GAP.get(h_, 0), pf.KR_GAP)
+    pf._PACE.update(pf.pace_map(pf.PRODUCTS))
+    R["pace"] = {h: pf._PACE.get(h) for h in pf.ART_HOSTS + pf.R29_HOSTS}
+    for b, q in cases:
+        t0 = time.time()
+        try:
+            got, none = pf._sku_fetch(b, "KR", q, {q}, None)
+            out.append([b, q, round(time.time() - t0, 1), {k: (list(v) if isinstance(v, set) else [v[0], v[1], v[2], v[3], v[4], v[5]]) for k, v in got.items()}, none])
+        except Exception as e:
+            out.append([b, q, round(time.time() - t0, 1), "ERR " + str(e)[:160]])
+    R["out"] = out
 
 
-def smplus(R):
-    b = "https://plus.shoemarker.co.kr"
-    for pc in ["55850", "55849", "55824", "55623", "55919", "56205"]:
-        y = page(f"{b}/Product/ProductDetail?ProductCode={pc}")
-        if not isinstance(y, tuple):
-            R[pc] = y; continue
-        tt = y[1]
-        R[pc] = {"hidden": re.findall(r'<input type="hidden" name="([^"]+)" value="([^"]{0,60})"', tt)[:60],
-                 "num7": sorted(set(re.findall(r"(?<![0-9A-Za-z])1\d{6}(?![0-9])", tt)))[:20],
-                 "asics": sorted(set(re.findall(r"(?<![0-9A-Z])1[0-2]\d{2}[A-Z]\d{3}(?:[-._]\d{3})?(?![0-9A-Z])", tt)))[:20],
-                 "imgs": sorted(set(re.findall(r'https?://cdn\.shoemarker\.co\.kr/[^"\'\s]+', tt)))[:12],
-                 "ajax": sorted(set(re.findall(r'["\'](/(?:Product|product|api|Api)/[A-Za-z/]+)["\'?]', tt)))[:40],
-                 "notice": sn(tt, r"상품\s*정보\s*제공|정보고시|제품\s*소재|제조국|제조자", 4, 300, 60)}
-    for q in ["1155113", "1127895", "1012C071", "1203A591", "1011B867", "U740BM2", "IH3990", "JR3732"]:
-        z = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(q)}")
-        if isinstance(z, tuple):
-            cc = re.findall(r'ProductCode=(\d+)"[^>]*>\s*<div class="product-card__info">\s*<span class="product-card__brand">([^<]*)</span>\s*<span class="product-card__name">([^<]*)</span>', z[1])
-            R["q_" + q] = sorted({(c[0], c[1], c[2]) for c in cc})[:6]
-        else:
-            R["q_" + q] = z
-
-
-SITES2 = {"그랜드·ABC": art, "슈마커플러스": smplus}
+SITES2 = {"real": realrun}
 
 def work(R):
     pf._PACE.clear()
