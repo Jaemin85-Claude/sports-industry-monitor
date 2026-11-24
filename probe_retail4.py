@@ -107,169 +107,75 @@ def links(t, base, rx, n=10):
 
 
 
-def smarket(R):
-    b = "https://www.smarket.co.kr"
-    t = T(b + "/goods/brand.php")
-    R["brands"] = sorted(set(re.findall(r'brandCd=\w+[^>]*>\s*([^<]{2,40}?)\s*<', t)))[:120]
-    R["brand_names_any"] = [x for x in ["나이키", "NIKE", "아디다스", "ADIDAS", "뉴발란스", "NEW BALANCE", "반스", "VANS", "컨버스", "CONVERSE", "푸마", "PUMA", "아식스", "ASICS", "크록스", "CROCS", "호카", "HOKA"] if re.search(re.escape(x), t, re.I)]
-    R["search"] = []
-    for c in ["아디다스", "나이키", "뉴발란스", "반스"]:
-        u = f"{b}/goods/goods_search.php?keyword={urllib.parse.quote(c)}"
-        x = page(u)
-        if not isinstance(x, tuple):
-            R["search"].append(x); continue
-        d, tt = x
-        d["plinks"] = links(tt, u, r"goods_view\.php\?goodsNo=\d+", 12)
-        d["nores"] = bool(re.search(r"검색결과가 없|검색된 상품이 없|0개의 상품", tt))
-        d["cnt"] = sn(tt, r"검색결과|개의 상품|총\s*<", 3, 140, 30)
-        d.pop("fields", None); d.pop("codes", None)
-        R["search"].append(d)
-    R["pages"] = []
-    for s in R["search"][:3]:
-        for lu in (s.get("plinks") or [])[:1]:
-            R["pages"].append(P(lu))
-
 
 def shoemarker(R):
     b = "https://www.shoemarker.co.kr"
-    js = T(f"{b}/ASP/Product/JS/SearchProductList.js") + T(f"{b}/ASP/Product/JS/SearchProduct.js")
-    R["ajax_urls"] = sorted(set(re.findall(r'url\s*:\s*["\']([^"\']+)["\']', js)))
-    R["ajax_snips"] = sn(js, r'url\s*:\s*["\'][^"\']*(?:ProductList|List_Ajax|ListAjax|Search)', 8, 260, 120)
-    u = f"{b}/ASP/Product/SearchProductList.asp?SearchWord=B75806"
-    x = page(u)
-    if isinstance(x, tuple):
-        t = x[1]
-        fm = re.search(r'<form[^>]*(?:name|id)="frm"[^>]*>(.*?)</form>', t, re.S | re.I)
-        R["frm"] = re.findall(r'<input[^>]*name="([^"]+)"[^>]*value="([^"]*)"', fm.group(1))[:40] if fm else None
-        R["list_markers"] = sn(t, r'id="SearchProductList"|id="SearchProductNone"|SearchProductList_Ajax|ProductList_Ajax', 4, 240, 60)
-    cand = [a for a in R["ajax_urls"] if re.search(r"Product.*List|List.*Product", a, re.I) and not re.search(r"Category|Brand|Size|Color|Price", a, re.I)]
-    R["cand"] = cand
+    pu = b + "/ASP/Product/Ajax/SearchProductList.asp"
+    x = page(f"{b}/ASP/Product/SearchProductList.asp?SearchWord=MR530SG")
+    t = x[1] if isinstance(x, tuple) else ""
+    fm = re.search(r'<form[^>]*(?:name|id)="frm"[^>]*>(.*?)</form>', t, re.S | re.I)
+    base = dict(re.findall(r'<input[^>]*name="([^"]+)"[^>]*value="([^"]*)"', fm.group(1))) if fm else {}
+    js = T(f"{b}/ASP/Product/JS/SearchProductList.js")
+    R["list_fn"] = sn(js, r'SearchProductList\.asp', 3, 500, 400)
     R["post"] = []
-    for a in cand[:2]:
-        pu = urllib.parse.urljoin(b + "/ASP/Product/", a)
-        ok, why = pf.robots_ok(pu)
-        if not ok:
-            R["post"].append([pu, why]); continue
-        data = dict(R.get("frm") or [])
-        data["SearchWord"] = "B75806"
+    ok, why = pf.robots_ok(pu)
+    if not ok:
+        R["post"] = why; return
+    for c in ["MR530SG", "U740BM2", "1203A243", "뉴발란스", "나이키"]:
+        data = dict(base); data["SearchWord"] = c
         try:
-            time.sleep(1.5)
-            rr = pf._ctx().sess.post(pu, data=data, headers=pf.HDR, timeout=25, allow_redirects=False)
+            time.sleep(2)
+            rr = pf._ctx().sess.post(pu, data=data, headers={**pf.HDR, "X-Requested-With": "XMLHttpRequest", "Referer": f"{b}/ASP/Product/SearchProductList.asp?SearchWord={urllib.parse.quote(c)}"}, timeout=25, allow_redirects=False)
             tt = rr.text
             pl = links(tt, pu, r"ProductDetail\.asp\?ProductCode=\d+", 6)
-            R["post"].append({"u": pu[-100:], "st": rr.status_code, "len": len(tt), "hits": len(re.findall("B75806", tt)), "plinks": pl, "snip": sn(tt, r"B75806|ProductCode=", 3, 200, 80)})
-            if pl:
-                R["page"] = P(pl[0], "B75806")
-                break
+            R["post"].append({"c": c, "st": rr.status_code, "len": len(tt), "hits": len(re.findall(re.escape(c), tt)), "plinks": pl, "head": tt[:300]})
+            if pl and "page" not in R and re.match(r"[A-Z0-9]", c):
+                R["page"] = P(pl[0], c)
         except Exception as e:
-            R["post"].append([pu, f"{type(e).__name__}: {str(e)[:120]}"])
-
-
-def folder(R):
-    b = "https://www.folderstyle.com"
-    x = page(f"{b}/shop/shopbrand.html?search=B75806&type=Y")
-    if isinstance(x, tuple):
-        pl = links(x[1], b + "/shop/", r"shopdetail\.html\?branduid=\d+", 3)
-        R["plinks"] = pl
-        if pl:
-            R["page_full"] = P(pl[0], "B75806")
-            bu = re.search(r"branduid=(\d+)", pl[0]).group(1)
-            R["page_bare"] = P(f"{b}/shop/shopdetail.html?branduid={bu}", "B75806")
-    else:
-        R["err"] = x
+            R["post"].append([c, f"{type(e).__name__}: {str(e)[:120]}"])
+    if "page" not in R:
+        for p in R["post"]:
+            if isinstance(p, dict) and p.get("plinks"):
+                R["page_kw"] = P(p["plinks"][0]); break
 
 
 def art(R, host, ch):
     b = f"https://{host}"
-    R["tries"] = []
-    for path in ["/display/search-word/result-total/list", "/display/search-word/result/list"]:
-        u = f"{b}{path}?searchWord=B75806&page=1&perPage=30&tabGubun=total&sort=&chnnlNo={ch}&channel={ch}"
-        r, e = tg(u)
-        if e:
-            R["tries"].append([u[-120:], e]); continue
-        t = r.text
-        d = {"u": u[-120:], "st": r.status_code, "len": len(t), "ctype": r.headers.get("Content-Type"), "hits": len(re.findall("B75806", t)), "head": t[:600]}
-        try:
-            j = r.json()
-            d["keys"] = list(j.keys())[:40] if isinstance(j, dict) else type(j).__name__
-            def walk(o, path=""):
-                if isinstance(o, dict):
-                    for k, v in o.items():
-                        if isinstance(v, list) and v and isinstance(v[0], dict) and any(re.search(r"prdt|product", kk, re.I) for kk in v[0].keys()):
-                            return path + "/" + k, v
-                        got = walk(v, path + "/" + k)
-                        if got: return got
-                return None
-            got = walk(j)
-            if got:
-                d["list_path"], lst = got[0], got[1]
-                d["n"] = len(lst); d["first_keys"] = list(lst[0].keys())[:80]
-                d["first"] = {k: lst[0][k] for k in list(lst[0].keys()) if re.search(r"prdt|name|nm|amt|price|style|model|brand|code|no$|Rt|rate", k, re.I)}
-                d["first"] = {k: str(v)[:80] for k, v in list(d["first"].items())[:40]}
-                d["prdtNos"] = [str(x.get("prdtNo") or x.get("productNo") or "") for x in lst[:5]]
-        except Exception as ee:
-            d["json_err"] = f"{type(ee).__name__}"
-            d["plinks"] = links(t, u, r"prdtNo=\d+", 5)
-        R["tries"].append(d)
-        if d.get("prdtNos") or d.get("plinks"):
-            pn = (d.get("prdtNos") or [None])[0] or re.search(r"prdtNo=(\d+)", d["plinks"][0]).group(1)
-            R["page"] = P(f"{b}/product/new?prdtNo={pn}", "B75806")
-            break
+    u = f"{b}/display/search-word/result-total/list?searchWord=B75806&page=1&perPage=30&tabGubun=total&sort=&chnnlNo={ch}&channel={ch}"
+    r, e = tg(u)
+    if e:
+        R["err"] = e; return
+    j = r.json()
+    R["SEARCH"] = json.dumps(j.get("SEARCH"), ensure_ascii=False)[:3500]
+    R["SEARCH_COUNT"] = j.get("SEARCH_COUNT"); R["GROUP"] = j.get("GROUP_COUNT_CHNNL_NO"); R["PAGE"] = str(j.get("PAGE"))[:300]
+    R["SEARCH_VO"] = json.dumps(j.get("SEARCH_VO"), ensure_ascii=False)[:600]
+    pn = re.findall(r'"(?:prdtNo|PRDT_NO|productNo)"\s*:\s*"?(\d+)', json.dumps(j))
+    R["prdtNos"] = pn[:6]
+    if pn:
+        R["page"] = P(f"{b}/product/new?prdtNo={pn[0]}", "B75806")
 
 
 def kasina(R):
     b = "https://www.kasina.co.kr"
-    x = page(b + "/")
-    t = x[1] if isinstance(x, tuple) else ""
-    R["scripts"] = re.findall(r'<script[^>]*src="([^"]+)"', t)[:30]
-    bid = (re.search(r'"buildId"\s*:\s*"([^"]+)"', t) or [None, None])[1]
-    mf = [s for s in R["scripts"] if "_buildManifest" in s]
-    mu = urllib.parse.urljoin(b + "/", mf[0]) if mf else f"{b}/_next/static/{bid}/_buildManifest.js"
-    r, e = tg(mu)
-    R["manifest"] = {"u": mu[-100:], "err": e, "len": len(r.text) if not e else None}
-    if not e:
-        R["routes"] = sorted(set(re.findall(r'"(/[^"]*)"\s*:', r.text)))[:150]
-        R["routes2"] = sorted(set(re.findall(r'(/[a-z\-\[\]]+(?:/[a-z\-\[\]]+)*)', r.text)))[:150]
-    rts = (R.get("routes") or []) + (R.get("routes2") or [])
-    R["search_tries"] = []
-    for rt in [r for r in dict.fromkeys(rts) if "search" in r.lower()][:3]:
-        u = b + re.sub(r"\[[^\]]+\]", "B75806", rt) + ("" if "[" in rt else "?keyword=B75806")
+    R["list"] = []
+    for u in [f"{b}/products?keyword=B75806", f"{b}/products?searchKeyword=B75806", f"{b}/products"]:
         x = page(u, "B75806")
-        d = x[0] if isinstance(x, tuple) else x
-        if isinstance(x, tuple):
-            d["plinks"] = links(x[1], u, r"/products?/\d+|/goods/\d+", 6); d.pop("fields", None)
-        R["search_tries"].append(d)
-    pl = [lu for s in R["search_tries"] for lu in (s.get("plinks") or [])]
-    if pl:
-        R["page"] = P(pl[0], "B75806")
-
-
-def kream(R):
-    b = "https://kream.co.kr"
-    R["items"] = []
-    for c in ["MR530SG", "DD1391-100", "U740BM2"]:
-        x = page(f"{b}/search?keyword={urllib.parse.quote(c)}", c)
         if not isinstance(x, tuple):
-            R["items"].append(x); continue
+            R["list"].append(x); continue
         d, t = x
-        ids = list(dict.fromkeys(re.findall(r"/products/(\d+)", t)))[:6]
-        it = {"c": c, "ids": ids}
-        for pid in ids[:3]:
-            pp = page(f"{b}/products/{pid}", c)
-            if isinstance(pp, tuple):
-                dd, tt = pp
-                rel = sn(tt, r"발매가|모델번호", 6, 60, 0)
-                if dd.get("code_hits"):
-                    it["page"] = {"pid": pid, "title": dd["title"], "ld": dd["ld"], "rel": rel}
-                    break
-                it.setdefault("miss", []).append([pid, dd["title"][:60], rel[:2]])
-            else:
-                it.setdefault("miss", []).append([pid, pp])
-        R["items"].append(it)
+        d["pd"] = list(dict.fromkeys(re.findall(r"/product-detail/(\d+)", t)))[:6]
+        d["nd"] = sn(t, r"productNo|salePrice|immediateDiscount|productName|productManagementCd|hsCode|modelNo|styleCode", 8, 160, 30)
+        d.pop("fields", None)
+        R["list"].append(d)
+        if d["pd"]:
+            R["page"] = P(f"{b}/product-detail/{d['pd'][0]}")
+            pt = T(f"{b}/product-detail/{d['pd'][0]}")
+            R["page_nd"] = sn(pt, r"productManagementCd|productNo|salePrice|immediateDiscountAmt|listPrice|originPrice|modelNo|styleCode|productCode|optionManagementCd|consumerPrice", 14, 180, 40)
+            break
 
 
-SITES2 = {"에스마켓": smarket, "슈마커": shoemarker, "폴더": folder, "ABC마트": lambda R: art(R, "abcmart.a-rt.com", "10001"),
-          "그랜드스테이지": lambda R: art(R, "grandstage.a-rt.com", "10002"), "카시나": kasina, "크림": kream}
+SITES2 = {"슈마커": shoemarker, "ABC마트": lambda R: art(R, "abcmart.a-rt.com", "10001"),
+          "그랜드스테이지": lambda R: art(R, "grandstage.a-rt.com", "10002"), "카시나": kasina}
 
 def work(R):
     pf._PACE.clear()
