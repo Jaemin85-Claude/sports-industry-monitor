@@ -1,135 +1,137 @@
-# 임시 시험(병합 안 함 · 끝나면 바로 지움): 2차 그 밖 브랜드(메종키츠네·드롤드무슈·팔로마울) 국내 공식몰 구조 진단 — 우리 봇 이름 · robots.txt 준수 · 막히면 멈춤(우회 없음) · 공개 상품 정보만
+# 임시 시험(병합 안 함 · 끝나면 바로 지움) 2회: 메종키츠네 한국 사이트맵 그림 품번·상품 페이지 가격 칸 · 코오롱몰 드롤드무슈·팔로마울 상품 자료 칸 · 글로벌몰 목록 — 우리 봇 이름 · robots.txt 준수 · 공개 상품 정보만
 import json, re, time
 import price_fetch as pf
 
 T0 = time.time()
-CODE_MK = r"\b[A-Z]{2,5}\d{2,5}[A-Z]{2}\d{4}(?:[-_ ]?[A-Z]?\d{3,4})?\b"          # 메종키츠네 글로벌 품번 꼴
-CODE_DM = r"\b[A-Z]{2,3}\d{3}[-_ ]?[A-Z]{2}\d{3}(?:[-_ ]?[A-Z]{2,3})?\b"        # 드롤드무슈 글로벌 품번 꼴
-CODE_PW = r"\b[A-Z]{2}\d{4}(?:[-_ ]?\d{3})?\b"                                  # 팔로마울 꼴
 
 
 def out(tag, obj):
-    print("PB2 " + json.dumps({"t": tag, "d": obj}, ensure_ascii=False, default=str)[:20000], flush=True)
+    print("PB2 " + json.dumps({"t": tag, "d": obj}, ensure_ascii=False, default=str)[:30000], flush=True)
 
 
 def fetch(u):
     try:
-        r = pf.get(u)
-        return r, None
+        return pf.get(u), None
     except Exception as e:
         return None, f"{type(e).__name__}: {str(e)[:200]}"
 
 
-def sn(t, rx, n=6, w=220, b=40):
+def sn(t, rx, n=4, w=300, b=60):
     o = []
-    for m in re.finditer(rx, t, re.I | re.S):
+    for m in re.finditer(rx, t, re.S):
         o.append(re.sub(r"\s+", " ", t[max(0, m.start() - b): m.start() + w]))
         if len(o) >= n:
             break
     return o
 
 
-def uniq(xs, n=30):
-    s, o = set(), []
-    for x in xs:
-        if x not in s:
-            s.add(x); o.append(x)
-        if len(o) >= n:
-            break
-    return o
+# ── 메종키츠네: 한국 상품 사이트맵의 (주소, 그림 파일 이름) 모두 ──
+r, e = fetch("https://maisonkitsune.com/media/sitemap/sitemap_kr_en_product.xml")
+pairs = []
+if r:
+    for b in re.findall(r"<url>.*?</url>", r.text, re.S):
+        loc = (re.search(r"<loc>([^<]+)</loc>", b) or [None, ""])[1]
+        imgs = re.findall(r"<image:loc>([^<]+)</image:loc>", b)
+        lm = (re.search(r"<lastmod>([^<]+)</lastmod>", b) or [None, ""])[1][:10]
+        pairs.append([loc.rsplit("/", 1)[-1], [i.rsplit("/", 1)[-1] for i in imgs][:3], lm])
+    for i in range(0, len(pairs), 150):
+        out("mk_pairs", pairs[i:i + 150])
+else:
+    out("mk_pairs_err", e)
+
+# 상품 페이지 12개 — 옷·가방·가니 여러 분류(사이트맵 차례대로 고르되 이름에 jumper/tee/shirt/cardigan/sweatshirt/bag/cap 있는 것)
+pick, seen = [], set()
+for loc, imgs, lm in pairs:
+    k = next((w for w in ("jumper", "tee-shirt", "sweatshirt", "cardigan", "shirt", "jacket", "bag", "cap", "polo", "hoodie", "pants", "dress") if w in loc), None)
+    if k and k not in seen:
+        seen.add(k); pick.append(loc)
+    if len(pick) >= 12:
+        break
 
 
-def page(tag, u, code_rx, extra=(), n=4):
+def mk_page(u):
+    r, e = fetch("https://maisonkitsune.com/kr/" + u)
+    if not r:
+        return {"u": u, "err": e}
+    t = r.text
+    d = {"u": u, "final": r.url.rsplit("/", 1)[-1]}
+    m = re.search(r'"event":"productPage","product":(\{.*?\})\}\);', t)
+    d["dl"] = m.group(1)[:600] if m else None
+    d["meta_price"] = re.findall(r'property="product:price:amount"\s+content="([^"]+)"', t)[:3]
+    d["opt"] = sn(t, r'"optionPrices":\{', 2, 900, 0)
+    d["skus"] = re.findall(r'"sku":"([^"]+)"', t)[:30]
+    d["fp"] = re.findall(r"data-fp='([^']*)'", t)[:3]
+    d["vat"] = re.findall(r'product-vat="([^"]+)"', t)[:3]
+    d["ge"] = sn(t, r"GlobalE|globale|Global-e", 3, 200, 30)
+    d["price_html"] = sn(t, r'class="[^"]*price[^"]*"[^>]*>\s*[₩\d]', 4, 200, 20)
+    d["won_txt"] = re.findall(r"₩\s?[\d,]{4,}", t)[:8]
+    d["special"] = sn(t, r'special_price|"special"', 2, 200, 20)
+    return d
+
+
+for u in pick:
+    out("mk_page", mk_page(u))
+
+# ── 코오롱몰 드롤드무슈: 상품 자료 칸 이름(브랜드 품번이 들어 있는 칸이 있는지) ──
+r, e = fetch("https://www.kolonmall.com/Product/D0TSW25250BRD")
+if r:
+    t = r.text
+    keys = sorted(set(re.findall(r'\\?"([a-zA-Z]{4,40})\\?":', t)))
+    out("km_keys", [k for k in keys if re.search(r"code|no$|No|model|style|sku|item|origin|vendor|supplier|maker|partner|ref|barcode|ean|gtin", k, re.I)][:200])
+    out("km_code_ctx", sn(t, r"D0TSW25250", 8, 260, 120))
+    out("km_info", sn(t, r"상품정보|제조자|수입자|품번|모델", 6, 260, 40))
+    out("km_wish", sn(t, r'"wishPrice"', 3, 160, 160))
+else:
+    out("km_keys", e)
+
+# 코오롱몰 드롤드무슈 목록 — 몇 쪽·몇 개
+for u in ("https://www.kolonmall.com/Brands/DROLEDEMONSIEUR/List/133020164007", "https://www.kolonmall.com/Brands/DROLEDEMONSIEUR/List/133020164007?page=2",
+          "https://www.kolonmall.com/Brands/DROLEDEMONSIEUR/List/133020000136"):
     r, e = fetch(u)
     if not r:
-        out(tag, {"u": u, "err": e}); return None
+        out("km_list", {"u": u, "err": e}); continue
     t = r.text
-    d = {"u": u, "final": r.url, "st": r.status_code, "len": len(t), "title": (re.search(r"<title[^>]*>(.*?)</title>", t, re.S | re.I) or [None, ""])[1][:160],
-         "codes": uniq(re.findall(code_rx, t)), "ld": [], "shopify": "cdn.shopify.com" in t, "magento": "Magento" in t or "mage/" in t,
-         "hreflang": uniq(re.findall(r'hreflang="([^"]+)"\s+href="([^"]+)"', t) or re.findall(r'href="([^"]+)"\s+hreflang="([^"]+)"', t), 40)}
-    try:
-        for nd in pf._ld_nodes(t):
-            ty = pf._types(nd)
-            if ty & {"product", "productgroup"}:
-                of = nd.get("offers"); ofl = of if isinstance(of, list) else [of] if isinstance(of, dict) else []
-                d["ld"].append({"name": str(nd.get("name"))[:100], "sku": str(nd.get("sku"))[:40], "mpn": str(nd.get("mpn"))[:40],
-                                "off": [[str((o or {}).get("price")), str((o or {}).get("priceCurrency")), str((o or {}).get("priceSpecification"))[:200]] for o in ofl[:4]]})
-    except Exception as e2:
-        d["ld_err"] = str(e2)[:100]
-    for k, rx in extra:
-        d[k] = sn(t, rx, n)
-    out(tag, d)
-    return t
+    tc = re.findall(r'"page":\{"__typename":"page","totalCount":(\d+),"currentPage":(\w+)\}', t)[:4]
+    prods = []
+    for m in re.finditer(r'"code":"([A-Z0-9]{10,16})","name":"([^"]{2,120})"', t):
+        prods.append([m.group(1), m.group(2)])
+    seen2, uniq = set(), []
+    for c, n in prods:
+        if c not in seen2:
+            seen2.add(c); uniq.append([c, n])
+    out("km_list", {"u": u, "tc": tc, "n_prod_links": len(set(re.findall(r"/Product/([A-Z0-9]{10,16})", t))), "codes_names": uniq[:80],
+                    "wish": re.findall(r'"price":(\d+),"wishPrice":(\d+)', t)[:10], "brand_codes": sorted(set(re.findall(r'"brandCode":"(\d+)"', t)))[:10]})
 
-
-# ── 메종키츠네 한국(maisonkitsune.com/kr — Magento) ──
-r, e = fetch("https://maisonkitsune.com/robots.txt")
-out("mk_robots", {"err": e, "txt": (r.text[:4000] if r else "")})
-for u in ("https://maisonkitsune.com/kr/catalogsearch/result/?q=fox", "https://maisonkitsune.com/kr/woman/ready-to-wear/sweaters-cardigans.html?p=2",
-          "https://maisonkitsune.com/kr/woman/ready-to-wear/sweaters-cardigans.html?product_list_limit=36", "https://maisonkitsune.com/kr/sale.html"):
-    out("mk_robots_ok", [u, pf.robots_ok(u)])
-sm = []
-for u in ("https://maisonkitsune.com/media/sitemap/sitemap_kr.xml", "https://maisonkitsune.com/media/sitemap/sitemap_kr_ko.xml", "https://maisonkitsune.com/media/sitemap/sitemap_kr_en_product.xml"):
-    r, e = fetch(u)
+# ── 드롤드무슈 글로벌몰(쇼피파이) 목록 크기·이름·품번 꼴 ──
+allp = []
+for pg in range(1, 6):
+    r, e = fetch(f"https://droledemonsieur.com/products.json?limit=250&page={pg}")
     if not r:
-        out("mk_sm", {"u": u, "err": e}); continue
+        out("dm_pj_err", {"pg": pg, "err": e}); break
+    ps = (r.json() or {}).get("products") or []
+    allp += [[p.get("title"), p.get("handle"), [v.get("sku") for v in (p.get("variants") or [])][:2], (p.get("variants") or [{}])[0].get("price"),
+              [o.get("values") for o in (p.get("options") or []) if (o.get("name") or "").lower() in ("color", "colour", "couleur")][:1]] for p in ps]
+    if len(ps) < 250:
+        break
+out("dm_pj_n", len(allp))
+for i in range(0, len(allp), 120):
+    out("dm_pj", allp[i:i + 120])
+
+# ── 팔로마울: 코오롱몰 8개 정가 · 글로벌몰 품번 꼴 ──
+r, e = fetch("https://www.kolonmall.com/Brands/PALOMAWOOL/List/133020162660")
+if r:
     t = r.text
-    locs = re.findall(r"<loc>([^<]+)</loc>", t)
-    blocks = re.findall(r"<url>.*?</url>", t, re.S)[:3]
-    out("mk_sm", {"u": u, "len": len(t), "n_loc": len(locs), "head": t[:600], "blocks": [b[:1500] for b in blocks],
-                  "img_codes": uniq(re.findall(CODE_MK, t), 20), "n_img": t.count("<image:loc>")})
-    sm += [l for l in locs if "/kr/" in l and l.endswith(".html")]
-prod = [l for l in sm if re.search(r"-[0-9a-f]{13}\.html$", l)]
-out("mk_sm_prod", {"n": len(prod), "head": prod[:5]})
-MK_EX = (("sku", r'"sku"\s*:'), ("jsoncfg", r'jsonConfig|spConfig|"optionPrices"'), ("price_amt", r'data-price-amount'), ("old", r'oldPrice|old-price|regularPrice|basePrice'),
-         ("final", r'finalPrice|special-price'), ("dl", r'dataLayer|ecommerce|item_id|"id"\s*:\s*"[A-Z]'), ("ref", r'R[ée]f[ée]rence|참조|Ref\.|품번|style'),
-         ("pid", r'data-product-id|product_id|"productId"'), ("krw", r'₩|KRW|원<'))
-for i, u in enumerate((prod[:2] or ["https://maisonkitsune.com/kr/resort-shirt-feather-beige-6a31e8374476c.html"])):
-    page(f"mk_page{i}", u, CODE_MK, MK_EX)
-for i, u in enumerate(("https://maisonkitsune.com/kr/woman/ready-to-wear/sweaters-cardigans.html", "https://maisonkitsune.com/kr/sale.html")):
-    t = page(f"mk_cat{i}", u, CODE_MK, MK_EX + (("tile", r'class="[^"]*product-item[^"]*"'), ("pager", r'toolbar-amount|pages-item|action\s+next|limiter')), 3)
-    if t:
-        out(f"mk_cat{i}_n", {"n_tiles": len(re.findall(r'class="[^"]*product-item-info', t)), "n_links": len(set(re.findall(r'href="(https://maisonkitsune\.com/kr/[^"]+-[0-9a-f]{13}\.html)"', t))),
-                             "n_price_amt": t.count("data-price-amount"), "n_old": t.count('data-price-type="oldPrice"'), "n_final": t.count('data-price-type="finalPrice"')})
-
-# ── 코오롱몰(드롤드무슈·팔로마울 국내 수입사몰) ──
-r, e = fetch("https://www.kolonmall.com/robots.txt")
-out("km_robots", {"err": e, "txt": (r.text[:3000] if r else "")})
-KM_EX = (("pum", r'품번|모델명|모델번호|상품코드|스타일'), ("price", r'consumerPrice|normalPrice|salePrice|retailPrice|"price"\s*:'), ("brandList", r'/Brands/[A-Z_]+/List/\d+'))
-for i, u in enumerate(("https://www.kolonmall.com/Product/D0TSW25250BRD", "https://www.kolonmall.com/Product/SVTAW25853WHX")):
-    page(f"km_dm_page{i}", u, CODE_DM, KM_EX)
-for b, rx in (("DROLEDEMONSIEUR", CODE_DM), ("PALOMAWOOL", CODE_PW)):
-    t = page(f"km_brand_{b}", f"https://www.kolonmall.com/Brands/{b}", rx, KM_EX, 8)
-    if t:
-        lst = uniq(re.findall(rf'/Brands/{b}/List/\d+', t), 10)
-        out(f"km_brand_{b}_lists", lst)
-        for j, l in enumerate(lst[:2]):
-            t2 = page(f"km_list_{b}{j}", "https://www.kolonmall.com" + l, rx, (("name", r'"name"\s*:\s*"'), ("pg", r'page=\d+|"totalCount"|totalElements')), 6)
-            if t2:
-                out(f"km_list_{b}{j}_n", {"prod": len(set(re.findall(r"/Product/([A-Z0-9]{8,20})", t2))), "names": uniq(re.findall(r'\(PALOMA WOOL\)[^"<]{0,80}|DROLE DE MONSIEUR[^"<]{0,80}', t2), 12)})
-page("km_pw_page0", "https://www.kolonmall.com/Product/W1WAX25213NYX", CODE_PW, KM_EX)
-
-# ── 브랜드 글로벌몰 한국 경로 ──
-for host in ("https://droledemonsieur.com", "https://www.palomawool.com"):
-    r, e = fetch(host + "/robots.txt")
-    out("gl_robots", {"h": host, "err": e, "txt": (r.text[:2500] if r else "")})
-    page("gl_home", host + "/", CODE_DM if "drole" in host else CODE_PW, (("loc", r'ko-kr|en-kr|/kr/|Korea|KRW|₩'),), 6)
-    for pth in ("/ko-kr", "/en-kr", "/kr", "/ko"):
-        r, e = fetch(host + pth)
-        out("gl_path", {"u": host + pth, "err": e, "final": (r.url if r else None), "st": (r.status_code if r else None), "krw": (len(re.findall(r"₩|KRW", r.text)) if r else None)})
-    r, e = fetch(host + "/products.json?limit=3")
-    if r:
-        try:
-            ps = r.json().get("products") or []
-            out("gl_pj", {"h": host, "n": len(ps), "p": [{"h": p.get("handle"), "t": p.get("title"), "v": [[v.get("sku"), v.get("price"), v.get("compare_at_price")] for v in (p.get("variants") or [])[:4]]} for p in ps]})
-            if ps:
-                for pth in ("/ko-kr", "/en-kr", ""):
-                    r2, e2 = fetch(f"{host}{pth}/products/{ps[0]['handle']}.json")
-                    out("gl_pjson", {"u": f"{host}{pth}/products/{ps[0]['handle']}.json", "err": e2, "final": (r2.url if r2 else None),
-                                     "cur": (re.findall(r'"price_currency"\s*:\s*"([A-Z]{3})"', r2.text)[:2] if r2 else None),
-                                     "v": (r2.json().get("product", {}).get("variants", [{}])[0].get("price") if r2 and r2.headers.get("content-type", "").startswith("application/json") else None)})
-        except Exception as e3:
-            out("gl_pj", {"h": host, "err": str(e3)[:200]})
-    else:
-        out("gl_pj", {"h": host, "err": e})
-out("done", {"sec": round(time.time() - T0), "blocked": sorted(pf._BLOCKED)})
+    out("pw_km", {"names": re.findall(r'\(PALOMA WOOL\)[^"]{0,90}', t)[:20], "wish": re.findall(r'"price":(\d+),"wishPrice":(\d+)', t)[:12],
+                  "gt": sn(t, r"GT2160", 3, 200, 200)})
+pw = []
+for pg in range(1, 4):
+    r, e = fetch(f"https://www.palomawool.com/products.json?limit=250&page={pg}")
+    if not r:
+        out("pw_pj_err", e); break
+    ps = (r.json() or {}).get("products") or []
+    pw += [[p.get("title"), [v.get("sku") for v in (p.get("variants") or [])][:2]] for p in ps]
+    if len(ps) < 250:
+        break
+out("pw_pj_n", len(pw)); out("pw_pj", pw[:150])
+open("/tmp/pick.json", "w").write(json.dumps(pick[:3]))
+out("done", {"sec": round(time.time() - T0), "blocked": sorted(pf._BLOCKED), "pick": pick})
