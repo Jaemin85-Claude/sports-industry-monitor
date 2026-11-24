@@ -108,74 +108,78 @@ def links(t, base, rx, n=10):
 
 
 
-def shoemarker(R):
-    b = "https://www.shoemarker.co.kr"
-    pu = b + "/ASP/Product/Ajax/SearchProductList.asp"
-    x = page(f"{b}/ASP/Product/SearchProductList.asp?SearchWord=MR530SG")
-    t = x[1] if isinstance(x, tuple) else ""
-    fm = re.search(r'<form[^>]*(?:name|id)="frm"[^>]*>(.*?)</form>', t, re.S | re.I)
-    base = dict(re.findall(r'<input[^>]*name="([^"]+)"[^>]*value="([^"]*)"', fm.group(1))) if fm else {}
-    js = T(f"{b}/ASP/Product/JS/SearchProductList.js")
-    R["list_fn"] = sn(js, r'SearchProductList\.asp', 3, 500, 400)
-    R["post"] = []
-    ok, why = pf.robots_ok(pu)
-    if not ok:
-        R["post"] = why; return
-    for c in ["MR530SG", "U740BM2", "1203A243", "뉴발란스", "나이키"]:
-        data = dict(base); data["SearchWord"] = c
-        try:
-            time.sleep(2)
-            rr = pf._ctx().sess.post(pu, data=data, headers={**pf.HDR, "X-Requested-With": "XMLHttpRequest", "Referer": f"{b}/ASP/Product/SearchProductList.asp?SearchWord={urllib.parse.quote(c)}"}, timeout=25, allow_redirects=False)
-            tt = rr.text
-            pl = links(tt, pu, r"ProductDetail\.asp\?ProductCode=\d+", 6)
-            R["post"].append({"c": c, "st": rr.status_code, "len": len(tt), "hits": len(re.findall(re.escape(c), tt)), "plinks": pl, "head": tt[:300]})
-            if pl and "page" not in R and re.match(r"[A-Z0-9]", c):
-                R["page"] = P(pl[0], c)
-        except Exception as e:
-            R["post"].append([c, f"{type(e).__name__}: {str(e)[:120]}"])
-    if "page" not in R:
-        for p in R["post"]:
-            if isinstance(p, dict) and p.get("plinks"):
-                R["page_kw"] = P(p["plinks"][0]); break
 
-
-def art(R, host, ch):
-    b = f"https://{host}"
-    u = f"{b}/display/search-word/result-total/list?searchWord=B75806&page=1&perPage=30&tabGubun=total&sort=&chnnlNo={ch}&channel={ch}"
-    r, e = tg(u)
-    if e:
-        R["err"] = e; return
-    j = r.json()
-    R["SEARCH"] = json.dumps(j.get("SEARCH"), ensure_ascii=False)[:3500]
-    R["SEARCH_COUNT"] = j.get("SEARCH_COUNT"); R["GROUP"] = j.get("GROUP_COUNT_CHNNL_NO"); R["PAGE"] = str(j.get("PAGE"))[:300]
-    R["SEARCH_VO"] = json.dumps(j.get("SEARCH_VO"), ensure_ascii=False)[:600]
-    pn = re.findall(r'"(?:prdtNo|PRDT_NO|productNo)"\s*:\s*"?(\d+)', json.dumps(j))
-    R["prdtNos"] = pn[:6]
-    if pn:
-        R["page"] = P(f"{b}/product/new?prdtNo={pn[0]}", "B75806")
+def smarket(R):
+    b = "https://www.smarket.co.kr"
+    R["s"] = []
+    for c in ["HM5737", "B75806", "IE3437", "MR530SG", "아디다스 삼바"]:
+        u = f"{b}/goods/goods_search.php?keyword={urllib.parse.quote(c)}"
+        x = page(u, c)
+        if not isinstance(x, tuple):
+            R["s"].append(x); continue
+        d, t = x
+        m = re.search(r'검색결과\s*([\d,]+)\s*개', t)
+        blk = t[t.find("goods_list"):] if "goods_list" in t else t
+        items = re.findall(r'goods_view\.php\?goodsNo=(\d+)[^>]*>(?:(?!</a>).){0,400}?(?:<strong[^>]*>|<span[^>]*class="[^"]*item_name[^"]*"[^>]*>)\s*([^<]{2,80})', blk, re.S)
+        R["s"].append({"c": c, "cnt": m.group(1) if m else None, "items": items[:8], "near": sn(t, r'class="item_name"|class="item_tit_box"', 4, 260, 20)})
+    for it in R["s"]:
+        if it.get("items"):
+            gno = it["items"][0][0]
+            pt = T(f"{b}/goods/goods_view.php?goodsNo={gno}")
+            R.setdefault("pages", []).append({"gno": gno, "c": it["c"], "name": sn(pt, r'<h3|class="item_detail_tit"|goods_name', 2, 200, 10),
+                                               "codes": sn(pt, r"<dt>자체상품코드</dt>|<dt>모델명</dt>|<dt>브랜드</dt>|<dt>제조사</dt>", 4, 160, 0),
+                                               "fixed": sn(pt, r'id="set_goods_fixedPrice"|id="set_goods_price"|name="set_goods_price"', 3, 160, 30)})
+            if len(R["pages"]) >= 3:
+                break
 
 
 def kasina(R):
     b = "https://www.kasina.co.kr"
-    R["list"] = []
-    for u in [f"{b}/products?keyword=B75806", f"{b}/products?searchKeyword=B75806", f"{b}/products"]:
-        x = page(u, "B75806")
+    R["tries"] = []
+    for u in [f"{b}/brands/nike", f"{b}/launches", f"{b}/best"]:
+        x = page(u)
         if not isinstance(x, tuple):
-            R["list"].append(x); continue
+            R["tries"].append(x); continue
         d, t = x
-        d["pd"] = list(dict.fromkeys(re.findall(r"/product-detail/(\d+)", t)))[:6]
-        d["nd"] = sn(t, r"productNo|salePrice|immediateDiscount|productName|productManagementCd|hsCode|modelNo|styleCode", 8, 160, 30)
-        d.pop("fields", None)
-        R["list"].append(d)
-        if d["pd"]:
-            R["page"] = P(f"{b}/product-detail/{d['pd'][0]}")
-            pt = T(f"{b}/product-detail/{d['pd'][0]}")
-            R["page_nd"] = sn(pt, r"productManagementCd|productNo|salePrice|immediateDiscountAmt|listPrice|originPrice|modelNo|styleCode|productCode|optionManagementCd|consumerPrice", 14, 180, 40)
+        pd = list(dict.fromkeys(re.findall(r"product-detail/(\d+)|\"productNo\"\s*:\s*(\d+)", t)))
+        pd = [a or b_ for a, b_ in pd][:6]
+        R["tries"].append({"u": u, "st": d["st"], "len": d["len"], "pd": pd, "nd": sn(t, r"productNo|salePrice|productName", 4, 140, 20)})
+        if pd:
+            x2 = page(f"{b}/product-detail/{pd[0]}")
+            if isinstance(x2, tuple):
+                d2, t2 = x2
+                R["page"] = {"u": d2["u"], "st": d2["st"], "len": d2["len"], "title": d2["title"], "ld": d2["ld"], "meta": d2["meta"][:3],
+                             "nd": sn(t2, r"productManagementCd|salePrice|immediateDiscountAmt|productName|modelNo|styleCode|hsCode|optionManagementCd", 12, 180, 40)}
+            else:
+                R["page"] = x2
             break
+    app = [s for s in re.findall(r'<script[^>]*src="([^"]+_app-[^"]+)"', T(b + "/"))][:1]
+    if app:
+        js = T(app[0])
+        R["api_hosts"] = sorted(set(re.findall(r"https://[a-z0-9.\-]+(?:api|shop|e-ncp|shopby)[a-z0-9.\-]*\.[a-z.]+", js)))[:20]
+        for h in R["api_hosts"][:3]:
+            try:
+                rr = pf.requests.get(h + "/robots.txt", headers=pf.HDR, timeout=15, allow_redirects=False)
+                R.setdefault("api_robots", []).append([h, rr.status_code, rr.text[:200]])
+            except Exception as e:
+                R.setdefault("api_robots", []).append([h, type(e).__name__])
 
 
-SITES2 = {"슈마커": shoemarker, "ABC마트": lambda R: art(R, "abcmart.a-rt.com", "10001"),
-          "그랜드스테이지": lambda R: art(R, "grandstage.a-rt.com", "10002"), "카시나": kasina}
+def folder(R):
+    b = "https://www.folderstyle.com"
+    x = page(f"{b}/shop/shopbrand.html?search=B75806&type=Y")
+    if not isinstance(x, tuple):
+        R["err"] = x; return
+    pl = links(x[1], b + "/shop/", r"shopdetail\.html\?branduid=\d+", 3)
+    R["plinks"] = pl
+    if pl:
+        bu = re.search(r"branduid=(\d+)", pl[0]).group(1)
+        for u in [f"{b}/shop/shopdetail.html?branduid={bu}", pl[0]]:
+            p = page(u, "B75806")
+            R.setdefault("pages", []).append(p[0] if isinstance(p, tuple) else p)
+
+
+SITES2 = {"에스마켓": smarket, "카시나": kasina, "폴더": folder}
 
 def work(R):
     pf._PACE.clear()
