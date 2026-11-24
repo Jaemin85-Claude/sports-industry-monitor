@@ -146,6 +146,11 @@ def work(R):
                                    time.time(), today, today.isoformat(), None)
     R["audit_log"] = buf2.getvalue()[-3000:]
     R["audit"] = au
+    t_ = T(f"{B}/Product/ProductSearchList?SWord=1147833-BWHT")[0] or ""
+    i_ = t_.find("search_rec_cnt")
+    R["raw_cnt"] = t_[max(0, i_ - 300): i_ + 300]
+    j_ = t_.find("product-card__info")
+    R["raw_card"] = t_[max(0, j_ - 600): j_ + 500]
     R["blocked"] = sorted(pf._BLOCKED)
 
 

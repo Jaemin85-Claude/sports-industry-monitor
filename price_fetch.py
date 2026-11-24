@@ -3361,7 +3361,8 @@ def _smk_search(brand, q):
     """v1.44 슈마커 플러스 검색 화면(홈 화면 검색 칸의 공개 화면 · robots.txt 허용)으로 품번 → (그 브랜드 상품 [(상품 번호, 이름)], 검색 결과 수, 이 쪽 상품 수) ·
     화면 형식이 다르면(결과 수·'결과 없음' 글이 모두 없음 · 결과 수는 있는데 상품 칸을 못 읽음) 오류 — '판매처에 없음'으로 보지 않음"""
     t = get(SMK_SEARCH.format(q=urllib.parse.quote(q))).text
-    m = re.search(r'search_rec_cnt">\s*([\d,]+)\s*개', t)
+    m = (re.search(r'search_rec_cnt"[^>]*>\s*([\d,]+)\s*(?:</span>\s*)?개', t)
+         or re.search(r'brand-content__count-num"[^>]*>\s*([\d,]+)\s*</span>\s*개', t))   # 결과 수 — '<span class="… search_rec_cnt">1</span>개의 검색 결과'(11/24 실제 화면 · 숫자만 칸 안)
     if not m and "검색 결과가 없습니다" not in t:
         raise RuntimeError("슈마커 플러스 검색 화면 형식이 다름")
     total = int(m.group(1).replace(",", "")) if m else 0
