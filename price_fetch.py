@@ -3433,7 +3433,7 @@ def mk_page(html):
 
 
 def _kolon_index(brand, stop=None):
-    """v1.46 코오롱몰 목록 화면 → {스타일: [{"k": 코오롱 상품 번호, "c": 색상(이름 안 품번 끝 3자리), "w": 색상 이름, "p": 판매가, "t": 정상가, "n": 이름}]} ·
+    """v1.46 코오롱몰 목록 화면 → {스타일: [{"k": 코오롱 상품 번호, "c": 색상(이름 안 품번 끝 3자리), "w": 색상 이름, "p": 목록 판매가, "t": 정상가, "n": 이름}]} ·
     판매처 브랜드 이름이 그 브랜드인 상품만 · 이름에 품번이 없는 상품·정가를 못 읽은 상품이 있거나 다 넘기지 못하면 덜 끝난 색인(nosku · '없음'으로 보지 않음)"""
     path, sbn, crx = KOLON_BRAND[brand]
     out, seen, total, dec = _Idx(), set(), None, json.JSONDecoder()
@@ -3482,15 +3482,34 @@ def _kolon_index(brand, stop=None):
 
 
 def kolon_page(html, kcode):
-    """v1.46 코오롱몰 상품 페이지 → (판매가, 이름) — JSON-LD 상품(sku = 코오롱 상품 번호)의 원화 판매가(목록 판매가와 같아야 목록 정상가를 씀)"""
+    """v1.46 코오롱몰 상품 페이지 → (판매가 P, 정상가 W, 이름) — JSON-LD 상품(sku = 코오롱 상품 번호)의 원화 판매가 P와, 페이지 상품 자료 중 이 상품 번호의
+    가격 칸(price = P인 것 — 정상가 wishPrice가 하나일 때만) · 목록 화면의 판매가는 다른 혜택이 붙어 페이지와 다를 수 있음(11/24 시험 — 목록 141,300 · 페이지 157,000 · 정상가 314,000 같음)"""
     lds = [n for n in _ld_nodes(html) if "product" in _types(n) and str(n.get("sku") or "") == kcode]
     if len(lds) != 1:
         raise RuntimeError("페이지 상품 번호가 다름")
     offs = lds[0].get("offers")
     o = offs[0] if isinstance(offs, list) and offs else offs
-    if not isinstance(o, dict) or o.get("priceCurrency") != "KRW" or not num(o.get("price")):
+    P = num(o.get("price")) if isinstance(o, dict) and o.get("priceCurrency") == "KRW" else None
+    if not P:
         raise RuntimeError("원화 가격 없음")
-    return num(o.get("price")), _ld_name(html)
+    t, dec, ws = html.replace('\\"', '"'), json.JSONDecoder(), set()
+    for mm in re.finditer(rf'"code":"{re.escape(kcode)}"', t):
+        seg = t[mm.end(): mm.end() + 400]
+        k = seg.find('"price":{')
+        if k < 0 or '"code":"' in seg[:k]:
+            continue
+        try:
+            pr, _ = dec.raw_decode(t, mm.end() + k + len('"price":'))
+        except ValueError:
+            continue
+        if isinstance(pr, dict) and pr.get("currencyIso") in (None, "KRW") and num(pr.get("price")) and abs(num(pr["price"]) - P) <= 0.5 and num(pr.get("wishPrice")):
+            ws.add(num(pr["wishPrice"]))
+    if len(ws) != 1:
+        raise RuntimeError("이 상품 번호의 정상가를 못 읽음" if not ws else "이 상품 번호의 정상가가 여러 가지")
+    W = ws.pop()
+    if W < P:
+        raise RuntimeError("정상가가 판매가보다 낮음")
+    return P, W, _ld_name(html)
 
 
 def _sku_index(brand, cc, want=None, stop=None):
@@ -4128,7 +4147,7 @@ def _sku_fetch(brand, cc, q, codes, idx):
         elif pages:   # 이 스타일 한국 색상 페이지를 모두 봄 — 국내 색상 정가가 모두 같으면 모델 단위(없는 색상은 '국내 공식몰에 없음')
             _sku_mput(got, {k: (v[0], v[2], "wear") for k, v in pages.items()}, pages[sorted(pages)[0]][3])
         return got, False
-    if brand in KOLON_BRAND:   # v1.46 코오롱몰 목록 값(이름 안 품번 · 정상가 wishPrice) — 고른 상품 페이지의 판매가가 목록과 같을 때만
+    if brand in KOLON_BRAND:   # v1.46 코오롱몰 목록(이름 안 품번)으로 상품을 고르고 상품 페이지의 판매가·정상가(wishPrice — 목록 정상가와 같을 때만)
         ents = (idx or {}).get(q) or []
         part = bool(getattr(idx, "partial", False))
         if not ents:
@@ -4143,15 +4162,15 @@ def _sku_fetch(brand, cc, q, codes, idx):
                 if part:
                     got.setdefault("__noans__", set()).add(c)   # 덜 끝난 목록 — 이름에 품번이 없는 상품이 이 색상일 수 있음
                 continue   # 국내 수입사몰에 이 색상 없음
-            if len({(e["t"], e["p"]) for e in es}) != 1:
-                got.setdefault("__unread__", set()).add(c); continue   # 같은 색상 상품이 여럿인데 값이 다름 — 어느 것인지 몰라 미확인
+            if len({e["t"] for e in es}) != 1:
+                got.setdefault("__unread__", set()).add(c); continue   # 같은 색상 상품이 여럿인데 정상가가 다름 — 어느 것인지 몰라 미확인
             e = es[0]
             if e["k"] not in nmk:
-                p_, nm_ = kolon_page(get(f"{KOLON}/Product/{e['k']}").text, e["k"])
-                if abs(p_ - e["p"]) > 0.5:
-                    raise RuntimeError("상품 페이지 판매가가 목록과 다름 — 그사이 바뀜(다음에 다시)")
-                nmk[e["k"]] = nm_ or e["n"]
-            got[c] = (e["t"], {"lst": True, "cur_price": e["p"]}, nmk[e["k"]], "wear", f"{KOLON}/Product/{e['k']}", None)
+                p_, w_, nm_ = kolon_page(get(f"{KOLON}/Product/{e['k']}").text, e["k"])
+                if abs(w_ - e["t"]) > 0.5:
+                    raise RuntimeError("상품 페이지 정상가가 목록과 다름 — 그사이 바뀜(다음에 다시)")
+                nmk[e["k"]] = (p_, nm_ or e["n"])
+            got[c] = (e["t"], {"lst": True, "cur_price": nmk[e["k"]][0]}, nmk[e["k"]][1], "wear", f"{KOLON}/Product/{e['k']}", None)
         if not part:   # 목록을 다 봄 — 이 스타일 국내 색상 정상가가 모두 같으면 모델 단위
             _sku_mput(got, {f'{q}-{e["c"]}': (e["t"], e["n"], "wear") for e in ents}, f"{KOLON}/Product/{ents[0]['k']}")
         if "__model__" not in got:
