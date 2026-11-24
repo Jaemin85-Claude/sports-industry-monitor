@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 11:16 KST",
+ "generated_at": "2026-11-24 13:19 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -8379,7 +8379,8 @@
    }
   ],
   "fetched": "2026-11-24",
-  "label": "해협 통과"
+  "label": "해협 통과",
+  "stale_since": "2026-11-24"
  },
  "ports": {
   "fields": [
@@ -10785,7 +10786,8 @@
    }
   ],
   "fetched": "2026-11-24",
-  "label": "항만 입항"
+  "label": "항만 입항",
+  "stale_since": "2026-11-24"
  },
  "hubs": {
   "fields": [
@@ -17983,7 +17985,8 @@
    }
   ],
   "fetched": "2026-11-24",
-  "label": "적출 거점 입항"
+  "label": "적출 거점 입항",
+  "stale_since": "2026-11-24"
  },
  "glp": {
   "months": [
@@ -23545,7 +23548,8 @@
    "odd_seen": []
   },
   "fetched": "2026-11-24",
-  "label": "관세청 국가별 수입 물동량"
+  "label": "관세청 국가별 수입 물동량",
+  "stale_since": "2026-11-24"
  },
  "vol_out": {
   "dataset": "15151809",
@@ -28953,7 +28957,8 @@
    "odd_seen": []
   },
   "fetched": "2026-11-24",
-  "label": "관세청 국가별 수출 물동량"
+  "label": "관세청 국가별 수출 물동량",
+  "stale_since": "2026-11-24"
  },
  "busan_calls": {
   "days": [
@@ -35107,37 +35112,43 @@
   "missing": 0,
   "stay_cap": 96,
   "fetched": "2026-11-24",
-  "label": "부산 입항 선박"
+  "label": "부산 입항 선박",
+  "stale_since": "2026-11-24"
  },
  "status": {
   "ok": [
    "KCCI 부산발 운임",
-   "해협 통과",
-   "항만 입항",
-   "적출 거점 입항",
-   "전 세계 정시율",
-   "관세청 국가별 수입 물동량",
-   "관세청 국가별 수출 물동량",
-   "부산 입항 선박"
+   "전 세계 정시율"
   ],
   "kept": [
    "관세청 해상 수입",
    "관세청 해상 수출",
-   "관세청 항공 수입"
+   "관세청 항공 수입",
+   "해협 통과",
+   "항만 입항",
+   "적출 거점 입항",
+   "관세청 국가별 수입 물동량",
+   "관세청 국가별 수출 물동량",
+   "부산 입항 선박"
   ],
   "failed": []
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45310873799",
+  "run": "45325222616",
   "tries": [
    {
     "n": 1,
-    "where": "40.80.x.x · Texas · AS8075 Microsoft Corporation",
-    "ok": true,
-    "blocked": false,
-    "at": "11-24 11:20"
+    "where": "104.40.x.x · California · AS8075 Microsoft Corporation",
+    "ok": false,
+    "blocked": true,
+    "at": "11-24 13:19"
    }
+  ],
+  "keys": [
+   "vol_in",
+   "vol_out",
+   "busan_calls"
   ]
  },
  "gap_told": {
