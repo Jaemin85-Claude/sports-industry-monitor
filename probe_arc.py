@@ -17,3 +17,4 @@ for it in items:
     k = it["m"].get("KR") or {}
     print(it["id"], it.get("name"), "SKU", k.get("p"), "· 대표 상품", repp.get(it["code"]), "· 같음" if k.get("p") == repp.get(it["code"]) else "· 다름", k.get("lvl"), (k.get("url") or "")[-30:])
 print("Firecrawl 검색", pf._FC["n"])
+# rerun 1795485894
