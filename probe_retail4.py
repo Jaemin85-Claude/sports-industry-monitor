@@ -142,56 +142,37 @@ def art_page(host, row):
 
 
 def art(R):
-    words = ["아식스", "호카", "언더아머", "반스", "노스페이스", "살로몬", "크록스", "온러닝", "스케쳐스"]
+    qs = ["U740BM2", "M10804O2", "MR530SG", "HOKA", "THE NORTH FACE", "NORTHFACE", "3027341", "1372586", "1384672", "6005377", "1011B867", "1011B867-001", "1011B867.001", "1203A591", "JR3732", "VN0010CDH89", "IH3990"]
     for host, ch in (("grandstage.a-rt.com", "10002"), ("abcmart.a-rt.com", "10001")):
         H = R.setdefault(host, {})
-        for w in words:
+        for w in qs:
             res, e = art_rows(host, ch, w)
             if e:
                 H[w] = e; continue
             rows = res["rows"]
-            H[w] = {"count": res["count"], "brands": sorted({(str(x.get("BRAND_EN_NAME")), str(x.get("BRAND_NAME")), str(x.get("MNFTR_NAME"))) for x in rows})[:6],
-                    "styles": [str(x.get("STYLE_INFO")) for x in rows[:6]]}
-            if w == "아식스" and rows:
-                H["keys"] = sorted(rows[0].keys())
-            for x in rows[:1]:
-                st = str(x.get("STYLE_INFO") or "")
-                if st:
-                    r2, e2 = art_rows(host, ch, st)
-                    H[w]["rt"] = e2 or {"count": r2["count"], "styles": [str(y.get("STYLE_INFO")) for y in r2["rows"][:5]], "brands": sorted({str(y.get("BRAND_EN_NAME")) for y in r2["rows"]})}
+            H[w] = {"count": res["count"], "grp": res["group"], "rows": [[str(x.get(k)) for k in ("STYLE_INFO", "BRAND_EN_NAME", "NRMAL_AMT", "PRDT_DC_PRICE", "PRDT_NAME", "PRDT_NO", "VNDR_NO", "SELL_STAT_CODE", "CHNNL_NO")] for x in rows[:5]]}
 
 
 def smplus(R):
     b = "https://plus.shoemarker.co.kr"
-    for w in ["호카", "아식스", "아디다스", "반스", "노스페이스", "언더아머", "살로몬", "뉴발란스", "온러닝"]:
-        x = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(w)}")
-        W = R.setdefault(w, {})
-        if not isinstance(x, tuple):
-            W["err"] = x; continue
-        t = x[1]
-        cards = re.findall(r'ProductCode=(\d+)"[^>]*>\s*<div class="product-card__info">\s*<span class="product-card__brand">([^<]*)</span>\s*<span class="product-card__name">([^<]*)</span>', t)
-        W["n"] = len(set(c[0] for c in cards)); W["brands"] = sorted({c[1] for c in cards})[:8]; W["names"] = [c[2] for c in cards[:6]]
-        W["total"] = sn(t, r"총\s*<|검색결과|total", 2, 120, 40)
-        W["pages"] = []
-        for pc in list(dict.fromkeys(c[0] for c in cards))[:2]:
-            y = page(f"{b}/Product/ProductDetail?ProductCode={pc}")
-            if not isinstance(y, tuple):
-                W["pages"].append([pc, y]); continue
-            tt = y[1]
-            pn = (re.search(r'name="ProductName"\s+value="([^"]*)"', tt) or [None, ""])[1]
-            bn = (re.search(r'name="BrandName"\s+value="([^"]*)"', tt) or [None, ""])[1]
-            bc = (re.search(r'class="brand_code">([^<]*)<', tt) or [None, ""])[1]
-            po = (re.search(r'class="price__origin">\s*<span class="price__num">([\d,]+)<', tt) or [None, ""])[1]
-            pcur = (re.search(r'class="price__current">\s*<span class="price__num">([\d,]+)<', tt) or [None, ""])[1]
-            W["pages"].append({"pc": pc, "pn": pn, "bn": bn, "bc": bc, "origin": po, "cur": pcur,
-                               "info": sn(tt, r"품번|모델명|모델번호|제품번호|스타일|상품코드", 6, 160, 40),
-                               "seller": sn(tt, r"판매자|상호|입점|사업자|공급사|업체명|배송\s*업체|판매원", 6, 160, 40)})
-            code = pn.split("|")[-1].strip() if "|" in pn else bc
-            if code:
-                z = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(code)}")
-                if isinstance(z, tuple):
-                    cc = re.findall(r'ProductCode=(\d+)"[^>]*>\s*<div class="product-card__info">\s*<span class="product-card__brand">([^<]*)</span>\s*<span class="product-card__name">([^<]*)</span>', z[1])
-                    W["pages"][-1]["rt"] = {"q": code, "hits": sorted({(c[0], c[2]) for c in cc})[:6]}
+    for pc in ["55850", "55849", "55824", "55623", "55919", "56205"]:
+        y = page(f"{b}/Product/ProductDetail?ProductCode={pc}")
+        if not isinstance(y, tuple):
+            R[pc] = y; continue
+        tt = y[1]
+        R[pc] = {"hidden": re.findall(r'<input type="hidden" name="([^"]+)" value="([^"]{0,60})"', tt)[:60],
+                 "num7": sorted(set(re.findall(r"(?<![0-9A-Za-z])1\d{6}(?![0-9])", tt)))[:20],
+                 "asics": sorted(set(re.findall(r"(?<![0-9A-Z])1[0-2]\d{2}[A-Z]\d{3}(?:[-._]\d{3})?(?![0-9A-Z])", tt)))[:20],
+                 "imgs": sorted(set(re.findall(r'https?://cdn\.shoemarker\.co\.kr/[^"\'\s]+', tt)))[:12],
+                 "ajax": sorted(set(re.findall(r'["\'](/(?:Product|product|api|Api)/[A-Za-z/]+)["\'?]', tt)))[:40],
+                 "notice": sn(tt, r"상품\s*정보\s*제공|정보고시|제품\s*소재|제조국|제조자", 4, 300, 60)}
+    for q in ["1155113", "1127895", "1012C071", "1203A591", "1011B867", "U740BM2", "IH3990", "JR3732"]:
+        z = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(q)}")
+        if isinstance(z, tuple):
+            cc = re.findall(r'ProductCode=(\d+)"[^>]*>\s*<div class="product-card__info">\s*<span class="product-card__brand">([^<]*)</span>\s*<span class="product-card__name">([^<]*)</span>', z[1])
+            R["q_" + q] = sorted({(c[0], c[1], c[2]) for c in cc})[:6]
+        else:
+            R["q_" + q] = z
 
 
 SITES2 = {"그랜드·ABC": art, "슈마커플러스": smplus}
