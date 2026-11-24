@@ -1,8 +1,8 @@
-name: probe-other4
+name: probe-v145
 on:
   push:
     branches: [claude/sports-industry-monitor-update-j2wty5]
-    paths: [probe_other4.py, .github/workflows/probe-other4.yml]
+    paths: [probe_v145.py, .github/workflows/probe-v145.yml]
 permissions:
   contents: read
 jobs:
@@ -14,4 +14,4 @@ jobs:
       - uses: actions/setup-python@v7
         with: {python-version: "3.12"}
       - run: pip install -q -r requirements.txt
-      - run: python probe_other4.py
+      - run: python probe_v145.py
