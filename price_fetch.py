@@ -305,7 +305,7 @@ PACE_EXTRA = {"arcteryx.jp": "shopify", "dragondiffusion.com": "shopify",   # v1
               "saucony.co.kr": "cafe24", "brooksrunning.co.kr": "cafe24", "kor.mizuno.com": "cafe24",   # (쇼피파이 .json 상품 주소의 사이트는 저절로 shopify) · v1.27 미즈노 한국 카페24
               "www.keenfootwear.kr": "godo", "www.oofos.co.kr": "godo",
               "search-api.29cm.co.kr": "29cm", "www.29cm.co.kr": "29cm",
-              "grandstage.a-rt.com": "a-rt", "abcmart.a-rt.com": "a-rt"}   # v1.42 국내 판매처 그랜드스테이지·ABC마트(같은 회사 a-rt.com — 한 줄) · v1.40 국내 판매처 29CM(검색 주소·상품 페이지) — 두 주소를 한 줄로     # SFCC형 몰(푸마·언더아머·써코니 해외)은 브랜드마다 따로 운영(자체 CDN)이라 넣지 않음 — 사이트별 간격만
+              "grandstage.a-rt.com": "a-rt", "abcmart.a-rt.com": "a-rt", "plus.shoemarker.co.kr": "smk"}   # v1.42 국내 판매처 그랜드스테이지·ABC마트(같은 회사 a-rt.com — 한 줄) · v1.40 국내 판매처 29CM(검색 주소·상품 페이지) — 두 주소를 한 줄로     # SFCC형 몰(푸마·언더아머·써코니 해외)은 브랜드마다 따로 운영(자체 CDN)이라 넣지 않음 — 사이트별 간격만
 HOST_GAP = {"www.salomon.com": 8}   # 초 — 같은 사이트 요청 사이 최소 간격(v1.3 · 10/22 브랜치 시험에서 살로몬 해외가 9번째 요청 뒤 403 — 천천히 요청)
 HOST_CAP = {"www.salomon.com": 8}   # v1.8 한 실행에서 그 사이트에 보낼 상품 페이지 요청 수 — 살로몬 해외는 간격과 상관없이 10번째 요청에서 403(10/22·10/23·10/26 실행 4번 모두)
                                     # → 8건까지만 받고 나머지는 다음 실행(다음 날 다시 받기)으로 미룸 — 차단을 일으키지 않게(우회 아님 · 실패로 세지 않음)
@@ -2666,7 +2666,7 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "컨버스": "converse",
     "뉴발란스": "newbalance|new balance|nb|뉴발란스", "아디다스": "adidas|아디다스", "반스": "vans|반스",
     "노스페이스": "thenorthface|the north face|northface|tnf|노스페이스|더노스페이스",
-    "아식스": "asics|아식스"}   # v1.40 국내 판매처(29CM) 정가로 읽는 브랜드(공식몰이 우리 봇을 막음 — 대표 결정 11/23 3다 '추천대로') · v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
+    "아식스": "asics|아식스", "호카": "hoka|hokaoneone|hoka one one|호카|호카오네오네"}   # v1.40 국내 판매처(29CM) 정가로 읽는 브랜드(공식몰이 우리 봇을 막음 — 대표 결정 11/23 3다 '추천대로') · v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
 CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de", "JP": "www.crocs.co.jp"}
@@ -2687,6 +2687,10 @@ def _arc_norm(c):
 
 
 def _sku_model(c): return c.split("-")[0]
+def _hoka_q(c):
+    """v1.44 호카 품번(1147833-BWHT · 1147833BWHT · 1147833_BWHT) → 슈마커 플러스 검색 열쇠 1147833-BWHT(붙여 쓴 꼴은 검색에 안 걸림 — 11/24 시험) · 모델 번호만 오면 그대로(모델 단위)"""
+    m = re.fullmatch(r"(1\d{6})[-_]?([A-Z]{2,5})", c)
+    return f"{m.group(1)}-{m.group(2)}" if m else c
 def _asics_model(c):
     """v1.42 아식스 품번(1203A591-020 · 1203A591.020 · 옷 2011D580 · 가방·용품 3033A…) → 모델 번호(1203A591 — a-rt 품번 칸이 모델 단위) ·
     구분 기호 없는 꼴(1203A591020)은 받지 않음(ERP 규칙 ② = 품번의 첫 '-' 또는 '.' 앞부분 == code — 검토 11/24)"""
@@ -2705,11 +2709,14 @@ SKU_BRANDS = {
     # v1.40 국내 판매처 정가(대표 결정 11/23 3다 '추천대로' — 공식몰이 우리 봇을 막은 브랜드는 우리 봇을 허용하는 국내 판매처 정가 · 값 m.KR.src "retail" · shop "29cm") ·
     # r29 = (29CM 영문 브랜드, 브랜드관 번호, 판매자(상호명) — 그 브랜드관·그 판매자 상품만: 뉴발란스 (주)이랜드 · 노스페이스 (주)영원 · 아디다스·반스 29CM 직접 판매 — 11/24 임시 시험)
     # v1.42 art = 그랜드스테이지·ABC마트(a-rt) 검색 결과의 영문 브랜드(BRAND_EN_NAME) — 29CM 브랜드는 29CM이 못 찾거나 못 받을 때만(KR_RETAIL 순서)
-    "뉴발란스": {"slug": "nb", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,3}\d{3,4}[A-Z0-9]{1,5}$", "r29": ("NEW BALANCE", "2177", ("이랜드",)), "art": "NEW BALANCE"},
-    "아디다스": {"slug": "adidas", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,2}\d{4,5}$", "r29": ("ADIDAS", "2178", ("29CM", "아디다스")), "art": "ADIDAS"},
-    "반스": {"slug": "vans", "cc": ("KR",), "q": lambda c: c, "rx": r"^VN[0-9A-Z]{8,12}$", "r29": ("VANS", "2313", ("29CM", "브이에프", "VF")), "art": "VANS"},
+    # v1.44 smk = 슈마커 플러스 상품 페이지 브랜드(BrandName) — 29CM·a-rt가 못 찾거나 못 받을 때만 · smk_cut = 슈마커 플러스 품번 칸이 '품번-색상 이름'(아디다스 KC8050-BLACK · 반스 VN0A38ENMR2-… BLACK)이라 첫 '-' 앞으로 비교 ·
+    #   smk_cm = 색상 단위 품번 모양(아니면 모델 단위)
+    "뉴발란스": {"slug": "nb", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,3}\d{3,4}[A-Z0-9]{1,5}$", "r29": ("NEW BALANCE", "2177", ("이랜드",)), "art": "NEW BALANCE", "smk": "NEW BALANCE"},
+    "아디다스": {"slug": "adidas", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,2}\d{4,5}$", "r29": ("ADIDAS", "2178", ("29CM", "아디다스")), "art": "ADIDAS", "smk": "ADIDAS", "smk_cut": True},
+    "반스": {"slug": "vans", "cc": ("KR",), "q": lambda c: c, "rx": r"^VN[0-9A-Z]{8,12}$", "r29": ("VANS", "2313", ("29CM", "브이에프", "VF")), "art": "VANS", "smk": "VANS", "smk_cut": True},
     "노스페이스": {"slug": "tnf", "cc": ("KR",), "q": lambda c: c, "rx": r"^N[A-Z0-9]{6,9}$", "r29": ("THE NORTH FACE", "7789", ("영원",))},   # a-rt에 없음(11/24 시험)
-    "아식스": {"slug": "asics", "cc": ("KR",), "q": _asics_model, "rx": r"^[1-3]\d{3}[A-Z]\d{3}([-.][0-9A-Z]{3})?$", "model": True, "art": "ASICS"},   # v1.42 감시 브랜드 · 한국 공식몰 접속 막음(10/21) — a-rt 모델 단위만
+    "아식스": {"slug": "asics", "cc": ("KR",), "q": _asics_model, "rx": r"^[1-3]\d{3}[A-Z]\d{3}([-.][0-9A-Z]{3})?$", "model": True, "art": "ASICS", "smk": "ASICS"},   # v1.42 감시 브랜드 · 한국 공식몰 접속 막음(10/21) — a-rt 모델 단위만 · v1.44 a-rt에 없으면 슈마커 플러스(모델 단위)
+    "호카": {"slug": "hoka", "cc": ("KR",), "q": _hoka_q, "rx": r"^1\d{6}(?:[-_]?[A-Z]{2,5})?$", "smk": "HOKA", "smk_cm": r"^1\d{6}-[A-Z]{2,5}$"},   # v1.44 한국 공식 온라인몰 없음 · 29CM·a-rt에 없음 — 슈마커 플러스만(품번 1147833-BWHT · 목록 품번에 색상이 없으면 모델 단위)
     # v1.41 아크테릭스 한국(대표 결정 11/23 '2가') — 목록 품번 = 모델 번호(norm) · Firecrawl 검색으로 공식몰 상품 페이지 주소 → 우리 봇이 정가 · 찾은 주소는 keep
     "아크테릭스": {"slug": "arc", "cc": ("KR",), "q": lambda c: c, "rx": r"^\d{3,6}$", "norm": _arc_norm, "keep": ("KR",), "fc": True},
 }
@@ -2891,7 +2898,7 @@ def _robots_maps(host):
 
 CONVERSE_KR = "https://www.converse.co.kr"
 CONVERSE_DUP = 3   # 같은 품번 상품 페이지가 여럿이면 이만큼까지 받아 정가가 모두 같을 때만(0.5% 안)
-SKU_KR_HOSTS = ("www.converse.co.kr", "search-api.29cm.co.kr", "www.29cm.co.kr", "grandstage.a-rt.com", "abcmart.a-rt.com")   # v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP · v1.40 29CM
+SKU_KR_HOSTS = ("www.converse.co.kr", "search-api.29cm.co.kr", "www.29cm.co.kr", "grandstage.a-rt.com", "abcmart.a-rt.com", "plus.shoemarker.co.kr")   # v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP · v1.40 29CM
 R29_SEARCH = "https://search-api.29cm.co.kr/api/v4/products?keyword={}"   # v1.40 29CM 화면이 부르는 검색 주소 — 품번으로 상품을 찾는 데만(대표 결정 11/23 '네' · robots.txt 없음(404) = 허용)
 R29_WWW = "https://www.29cm.co.kr"
 R29_HOSTS = ("search-api.29cm.co.kr", "www.29cm.co.kr")
@@ -2905,10 +2912,15 @@ ART_CH = (("10002", "grandstage.a-rt.com", "grandstage"), ("10001", "abcmart.a-r
 ART_SEARCH = "https://{h}/display/search-word/result-total/list?searchWord={q}&page=1&perPage=30&tabGubun=total&sort=&chnnlNo={ch}&channel={ch}"   # 화면이 부르는 검색 주소 — 품번으로 상품을 찾는 데만
 ART_PAGE = "https://{h}/product/new?prdtNo={n}"   # 공개 상품 페이지 — 정가는 여기 보이는 가격(product:price:amount)으로 확인
 ART_HOSTS = tuple(x[1] for x in ART_CH)
-SHOP_KO = {"29cm": "29CM", "grandstage": "그랜드스테이지", "abcmart": "ABC마트"}   # v1.42 요약 줄 판매처 이름
+SMK_HOST = "plus.shoemarker.co.kr"   # v1.44 국내 판매처 슈마커 플러스(대표 결정 11/24 '모든 브랜드 사용' — 29CM·a-rt에 없을 때 · 상품정보고시 수입처가 ㈜슈마커여도 씀)
+SMK_SEARCH = "https://" + SMK_HOST + "/Product/ProductSearchList?SWord={q}"   # 홈 화면 검색 칸(form action)의 공개 검색 화면 — 품번으로 찾음(11/24 시험: 품번·모델 번호로 찾힘)
+SMK_PAGE = "https://" + SMK_HOST + "/Product/ProductDetail?ProductCode={n}"   # 공개 상품 페이지 — 품번 칸(item-summary__code)·정상가(TagPrice)·판매가(SalePrice)
+SMK_DUP = 3          # 색상 단위 — 같은 품번 상품 페이지를 이만큼까지 받아 정가가 모두 같을 때만
+SMK_MODEL_MAX = 8    # 모델 단위 — 검색 결과(그 브랜드) 상품이 이보다 많으면 색상을 다 못 봐 모델 값 안 씀
+SHOP_KO = {"29cm": "29CM", "grandstage": "그랜드스테이지", "abcmart": "ABC마트", "shoemarker": "슈마커 플러스"}   # v1.42 요약 줄 판매처 이름 · v1.44 슈마커 플러스
 SHOP_FAM = {"grandstage": "a-rt", "abcmart": "a-rt"}   # v1.42 같은 판매처(같은 회사 · 두 채널 정상가를 함께 대조) — 채널이 바뀌어도 새 값으로 보지 않음(검토 11/24)
 KR_PIN_DAYS = 7   # v1.42 받아 둔 판매처가 일시 오류로 이만큼 넘게 이전 값이면 다른 판매처도 물음
-KR_RETAIL = ("r29", "art")   # v1.42 국내 판매처 차례 — 29CM → 그랜드스테이지·ABC마트(브랜드에 있는 것만)
+KR_RETAIL = ("r29", "art", "smk")   # v1.42 국내 판매처 차례 — 29CM → 그랜드스테이지·ABC마트(브랜드에 있는 것만) · v1.44 → 슈마커 플러스
 ARC_KR_VIEW = "https://arcteryx.co.kr/products/view/{}"   # v1.41 아크테릭스 한국 공식몰 상품 페이지(대표 상품과 같은 읽는 법)
 ARC_DUP = 3          # 같은 모델 시즌 페이지를 이만큼까지 받아 정가가 모두 같을 때만(0.5% 안)
 FC_URL = "https://api.firecrawl.dev/v2/search"   # v1.41 Firecrawl 검색 — 국내 공식몰 상품 페이지 주소를 찾는 데만(대표 결정 11/23 '2가' · 페이지는 우리 봇)
@@ -3332,6 +3344,126 @@ def _art_fetch(brand, q, codes, pref=None):
     return {c: (na, ex, nm, hint, u, "model" if mdl else None) for c in codes}, False
 
 
+_SMK_CARD = re.compile(r'ProductCode=(\d{1,10})"[^>]*>\s*<div class="product-card__info">\s*<span class="product-card__brand">([^<]*)</span>\s*<span class="product-card__name">([^<]*)</span>')
+_smk_key = lambda c: re.sub(r"[^0-9A-Z]", "", str(c or "").upper())   # 품번 비교 — 구분 기호·빈칸 무시(슈마커 플러스 품번 칸 U740-BM2 = 목록 U740BM2)
+_smk_mdl = lambda c: re.split(r"[-.\s]", str(c or "").strip().upper())[0]   # 모델 번호 — 품번의 첫 '-'·'.' 앞(ERP 규칙 ②와 같게 · 아식스 1203B049-021 → 1203B049 · 호카 1147833-AFF → 1147833)
+
+
+def _smk_search(brand, q):
+    """v1.44 슈마커 플러스 검색 화면(홈 화면 검색 칸의 공개 화면 · robots.txt 허용)으로 품번 → (그 브랜드 상품 [(상품 번호, 이름)], 검색 결과 수, 이 쪽 상품 수) ·
+    화면 형식이 다르면(결과 수·'결과 없음' 글이 모두 없음 · 결과 수는 있는데 상품 칸을 못 읽음) 오류 — '판매처에 없음'으로 보지 않음"""
+    t = get(SMK_SEARCH.format(q=urllib.parse.quote(q))).text
+    m = re.search(r'search_rec_cnt">\s*([\d,]+)\s*개', t)
+    if not m and "검색 결과가 없습니다" not in t:
+        raise RuntimeError("슈마커 플러스 검색 화면 형식이 다름")
+    total = int(m.group(1).replace(",", "")) if m else 0
+    allc = _SMK_CARD.findall(t)
+    if total and not allc:
+        raise RuntimeError("슈마커 플러스 검색 결과 형식이 다름")
+    lab = SKU_BRANDS[brand]["smk"]
+    seen, out = set(), []
+    for pc, br, nm in allc:
+        if pc not in seen and unescape(br).strip().upper() == lab:
+            seen.add(pc); out.append((pc, _clean_name(nm) or ""))
+    return out, total, len({c[0] for c in allc})
+
+
+def _smk_head(html):
+    """v1.44 슈마커 플러스 상품 페이지 → (품번 칸 item-summary__code 또는 None, 브랜드 BrandName, 이름 ProductName, 숨은 값 dict)"""
+    hid = {}
+    for tag_ in re.findall(r"<input\b[^>]*>", html):
+        at = dict(re.findall(r'\b(name|value|type)="([^"]*)"', tag_))
+        if at.get("type", "").lower() == "hidden" and at.get("name") and at["name"] not in hid:
+            hid[at["name"]] = unescape(at.get("value", ""))
+    code = {unescape(x).strip().upper() for x in re.findall(r'class="item-summary__code">\s*([^<]*?)\s*<', html)} - {""}
+    return (code.pop() if len(code) == 1 else None), str(hid.get("BrandName") or "").strip().upper(), _clean_name(hid.get("ProductName")) or "", hid
+
+
+def smk_parse(html):
+    """v1.44 슈마커 플러스 상품 페이지 → {code, brand, name, tag, sale} — 정상가 = 주문 칸 숨은 값 TagPrice · 판매가 = SalePrice이고,
+    보이는 가격 칸과 맞아야(할인 중이면 정상가 칸 price__origin = TagPrice · 판매가 칸 price__current = SalePrice / 아니면 price__current = TagPrice = SalePrice) ·
+    품번 칸이 없거나 여럿 · 가격 칸이 안 맞거나 없으면 _NoConfirm(할인가·다른 상품 값을 정가로 저장하지 않음 — 11/24 시험: U740BM2 TagPrice 149,000 · SalePrice 142,000 · 정상가 칸 149,000)"""
+    code, brand, name, hid = _smk_head(html)
+    if not code:
+        raise _NoConfirm("상품 페이지에 품번 칸이 없거나 여럿 — 안 씀")
+    tag, sale = num(hid.get("TagPrice")), num(hid.get("SalePrice"))
+    if not tag or not sale:
+        raise _NoConfirm("상품 페이지에 정상가·판매가 칸이 없음 — 안 씀")
+    i = html.find('<div class="price">')
+    j = html.find('<div class="benefit"', i) if i >= 0 else -1
+    blk = html[i:j] if i >= 0 and j > i else ""
+    org = [num(x) for x in re.findall(r'class="price__origin">\s*<span class="price__num">([\d,]+)<', blk)]
+    cur = [num(x) for x in re.findall(r'class="price__current">\s*(?:<span class="price__rate">[^<]*</span>\s*)?<span class="price__num">([\d,]+)<', blk)]
+    near = lambda a, b: bool(a) and bool(b) and abs(a - b) <= b * 0.005
+    if len(cur) != 1 or len(org) > 1:
+        raise _NoConfirm("상품 페이지 가격 칸을 못 읽음 — 안 씀")
+    if org:
+        ok = near(org[0], tag) and near(cur[0], sale) and sale < tag * 0.995
+    else:
+        ok = near(cur[0], tag) and near(sale, tag)
+    if not ok:
+        raise _NoConfirm("상품 페이지 가격 칸이 정상가·판매가와 다름 — 안 씀")
+    if not tag <= sale * 5:
+        raise _NoConfirm("정상가가 판매가보다 너무 높음 — 안 씀")
+    return {"code": code, "brand": brand, "name": name, "tag": tag, "sale": sale}
+
+
+SMK_OPEN = 5         # 색상 단위 — 검색 결과에서 상품 페이지를 이만큼까지 열어 봄(품번 검색은 보통 그 상품만 나옴 · 11/24 시험)
+
+
+def _smk_fetch(brand, q, codes, pref=None):
+    """v1.44 국내 판매처 슈마커 플러스(대표 결정 11/24 '모든 브랜드 사용' — 29CM·a-rt에 없을 때 · 상품정보고시 수입처가 ㈜슈마커여도 씀) — 검색 화면으로 품번 → 그 브랜드 상품 →
+    공개 상품 페이지의 품번 칸(item-summary__code — 구분 기호 무시)이 같은 상품의 정상가(TagPrice — 보이는 가격 칸과 맞을 때만, smk_parse).
+    색상 단위: 이름에 품번이 있는 상품부터 SMK_OPEN개까지 열어 같은 품번 상품(SMK_DUP개까지)의 정상가가 모두 같을 때만 · 모델 단위(모델 번호 브랜드 — 아식스 · 호카는 목록 품번에
+    색상이 없을 때): 검색 결과가 한 쪽에 다 보이고 그 브랜드 상품이 SMK_MODEL_MAX개 안일 때 모두 열어 품번의 모델 번호(첫 '-'·'.' 앞)가 같은 색상 정상가가 모두 같을 때만(값 lvl "model").
+    판매처에 없음은 미확인(__unread__ — 국내 공식 판매 없음이 아님) · 다 못 본 채 못 찾으면 _NoConfirm"""
+    h = SKU_BRANDS[brand]
+    lab = h["smk"]
+    mdl = bool(h.get("model")) or bool(h.get("smk_cm") and not re.match(h["smk_cm"], q))
+    if SMK_HOST in _BLOCKED:
+        raise RuntimeError("이번 실행에서 슈마커 플러스가 막음 — 더 요청 안 함")
+    cards, total, n_page = _smk_search(brand, q)
+    if mdl and total > n_page:
+        raise _NoConfirm("검색 결과가 한 쪽보다 많아 모델 색상을 다 못 봄 — 모델 값 안 씀")
+    if not cards:
+        if total > n_page:
+            raise _NoConfirm("검색 결과가 한 쪽보다 많아 다 못 봄 — 안 씀")
+        return {"__unread__": set(codes)}, True
+    if mdl and len(cards) > SMK_MODEL_MAX:
+        raise _NoConfirm("검색 결과가 많아 모델 색상을 다 못 봄 — 모델 값 안 씀")
+    tok = re.compile(r"(?<![0-9A-Z])" + re.escape(q.upper()) + r"(?![0-9A-Z])")
+    want = ((lambda c_: _smk_mdl(c_) == _smk_mdl(q)) if mdl
+            else (lambda c_: _smk_key(c_) == _smk_key(q) or bool(h.get("smk_cut")) and _smk_key(c_.split("-")[0]) == _smk_key(q)))   # 뉴발란스 M1080-4O2 = M10804O2 · 아디다스 KC8050-BLACK = KC8050
+    todo = cards if mdl else sorted(cards, key=lambda x: not tok.search(x[1].upper()))[:SMK_OPEN]   # 이름에 품번이 있는 상품부터(뉴발란스 '모델 | 품번')
+    pages, unk = [], 0
+    for pc, _nm in todo:
+        if not mdl and len(pages) >= SMK_DUP:
+            break
+        u = SMK_PAGE.format(n=pc)
+        t = get(u).text
+        code, br, nm, _h = _smk_head(t)
+        if code is None:
+            unk += 1; continue   # 품번 칸이 없음 — 이 상품인지 모름
+        if br != lab or not want(code) or R29_BUNDLE.search(nm.upper()):
+            continue
+        pages.append((smk_parse(t), u))
+    if mdl and unk:
+        raise _NoConfirm("품번 칸이 없는 색상 상품이 있어 모델 색상을 다 못 봄 — 모델 값 안 씀")
+    if not pages:
+        if unk or (not mdl and (len(cards) > len(todo) or total > n_page)):
+            raise _NoConfirm("같은 품번 상품을 다 확인하지 못함 — 안 씀")
+        return {"__unread__": set(codes)}, True
+    tags = [pg["tag"] for pg, _ in pages]
+    if max(tags) > min(tags) * 1.005:
+        raise _NoConfirm(f"같은 {'모델' if mdl else '품번'} 상품 {len(pages)}개의 정상가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+    pages.sort(key=lambda x: (abs(x[0]["sale"] - x[0]["tag"]) > x[0]["tag"] * 0.005, x[1] != (pref or "")))   # 할인 아닌 상품 → 받아 둔 주소
+    pg, u = pages[0]
+    nm = _clean_name(pg["name"].split("|")[0]) if mdl else _clean_name(pg["name"])
+    ex = {"lst": True, "cur_price": pg["sale"], "src": "retail", "shop": "shoemarker"}
+    return {c: (pg["tag"], ex, nm, _sku_cat(pg["name"], None), u, "model" if mdl else None) for c in codes}, False
+
+
+_KR_URL = {}    # v1.44 (브랜드, 묻는 열쇠) → 받아 둔 한국 값의 주소(슈마커 플러스 — 같은 품번 상품이 여럿이면 그 상품을 먼저)
 _KR_PREF = {}   # v1.42 (브랜드, 묻는 열쇠) → (받아 둔 한국 값의 판매처 shop, 그 값이 이전 값인 날 수) — 그 판매처부터 묻기(검토 11/24)
 
 
@@ -3339,7 +3471,7 @@ def _retail_net():
     """v1.42 요약 줄 — 이번 실행에서 국내 판매처에 연결이 안 됐거나(robots.txt를 못 받음·연결 시간 초과) 막혔으면 한 마디(대표 결정 11/24 '추천대로' — 일부 GitHub 서버에서
     a-rt 연결 시간 초과(11/24 임시 시험 7번 중 1번) · 하루 못 받아도 다음 실행에 다시 받으니 일단 지켜보고 잦으면 새 서버에서 다시 받기를 붙임)"""
     out = []
-    for nm, ga, hosts in (("29CM", "이", R29_HOSTS), ("a-rt", "가", ART_HOSTS)):
+    for nm, ga, hosts in (("29CM", "이", R29_HOSTS), ("a-rt", "가", ART_HOSTS), ("슈마커 플러스", "가", (SMK_HOST,))):
         if set(hosts) & _BLOCKED:
             out.append(f"{nm}{ga} 막음(이번 실행)")
         elif any(isinstance(_ROB.get("https://" + h), str) or _DOWN.get(h, 0) > 0 for h in hosts):
@@ -3356,13 +3488,14 @@ def _kr_retail(brand, q, codes):
     h = SKU_BRANDS[brand]
     pref, pin_age = _KR_PREF.get((brand, q)) or (None, 0)
     srcs = [x for x in KR_RETAIL if h.get(x)]
-    psrc = "r29" if pref == "29cm" else "art" if SHOP_FAM.get(pref) == "a-rt" else None
+    psrc = "r29" if pref == "29cm" else "art" if SHOP_FAM.get(pref) == "a-rt" else "smk" if pref == "shoemarker" else None
     if psrc != srcs[0]:
         psrc = None   # 받아 둔 판매처가 차례의 첫 판매처가 아니면(29CM 브랜드인데 a-rt 값) 고정하지 않음 — 29CM(공식 판매자 확인)을 다시 먼저 물음(검토 11/24)
     err, ans = None, None
     for src in sorted(srcs, key=lambda x: x != psrc):
         try:
-            got, none = (_r29_fetch(brand, q, codes) if src == "r29" else _art_fetch(brand, q, codes, pref))
+            got, none = (_r29_fetch(brand, q, codes) if src == "r29" else _art_fetch(brand, q, codes, pref) if src == "art"
+                         else _smk_fetch(brand, q, codes, _KR_URL.get((brand, q))))
         except Exception as e:
             if _STOP.is_set() or (src == psrc and pin_age < KR_PIN_DAYS):
                 raise   # 받아 둔 첫 판매처의 일시 오류·확인 실패는 실패한 지 KR_PIN_DAYS일까지 이전 값(판매처가 하루 만에 오가며 기록이 지워지지 않게 · 검토 11/24)
@@ -3684,6 +3817,15 @@ AUDIT_R_MIN_LEFT = 90  # 초 — 남은 시간이 이보다 적으면 다음 실
 def _retail_page_check(shop, html, code, url, p):
     """v1.43 판매처 상품 페이지가 같은 상품인지 보고 그 상품 가격 칸에서만 정가를 대조(검토 11/24 — 다른 상품 값·'199,000' 안의 '99,000'에 맞지 않게) →
     (True 일치 · False 불일치 · None 대조 못 함, 까닭) · 29CM = JSON-LD 상품 이름에 품번이 낱말로 있는 상품의 판매가·정가 명세 · a-rt = 상품 번호(retailer_item_id)가 주소 prdtNo와 같을 때 보이는 가격"""
+    if shop == "shoemarker":   # v1.44 슈마커 플러스 — 품번 칸이 이 상품이고 보이는 가격 칸과 맞는 정상가(TagPrice · 할인 중에도 정상가 칸이 보임)
+        try:
+            pg = smk_parse(html)
+        except _NoConfirm as e:
+            return None, f"{e} — 대조 못 함"
+        k_ = _smk_key(code)
+        if not re.search(r"ProductCode=\d+", url or "") or not (_smk_key(pg["code"]) == k_ or _smk_key(pg["code"].split("-")[0]) == k_ or _smk_mdl(pg["code"]) == str(code).upper()):
+            return None, "상품 페이지가 다른 상품이거나 품번 칸이 다름(내려감·넘겨짐) — 대조 못 함"
+        return abs(pg["tag"] - p) <= p * 0.005, ""
     if SHOP_FAM.get(shop) == "a-rt":
         pn = re.search(r"prdtNo=(\d+)", url or "")
         meta = lambda prop: re.findall(r'<meta[^>]+property="' + re.escape(prop) + r'"[^>]+content="([^"]*)"', html)
@@ -3712,19 +3854,27 @@ def _retail_page_check(shop, html, code, url, p):
 
 
 def _other_retail_price(brand, code, shop):
-    """v1.43 다른 판매처의 정가(같은 품번) — 29CM 값이면 a-rt 검색 자료 정상가, a-rt 값이면 29CM 검색 정가 칸 · (값, 판매처) 또는 (None, 까닭)"""
+    """v1.43 다른 판매처의 정가(같은 품번) — 29CM 값이면 a-rt 검색 자료 정상가, a-rt 값이면 29CM 검색 정가 칸 · (값, 판매처) 또는 (None, 까닭) ·
+    v1.44 슈마커 플러스 값이면 a-rt(없으면 29CM) · 29CM이 없는 브랜드의 a-rt 값(아식스)이면 슈마커 플러스"""
     h = SKU_BRANDS.get(brand) or {}
-    if shop == "29cm" and h.get("art"):
+    if shop in ("29cm", "shoemarker") and h.get("art"):
         hit, cerr = _art_search(brand, code)
         nas = {num(t[0].get("NRMAL_AMT")) for t in hit if not R29_BUNDLE.search(str(t[0].get("PRDT_NAME") or "").upper())} - {None}
         if cerr is not None and not nas:
             return None, "a-rt 검색 일부 못 받음"
         other = sorted({t[2] for t in hit}) or ["a-rt"]
         return (min(nas), "·".join(other)) if nas and max(nas) <= min(nas) * 1.005 else (None, "a-rt에 없음" if not nas else "a-rt 정상가가 여럿")
-    if SHOP_FAM.get(shop) == "a-rt" and h.get("r29"):
+    if (SHOP_FAM.get(shop) == "a-rt" or shop == "shoemarker") and h.get("r29"):
         hit, single = _r29_search(brand, code)
         cps = {num(it.get("consumerPrice")) for it in single} - {None, 0}
         return (min(cps), "29cm") if cps and max(cps) <= min(cps) * 1.005 else (None, "29CM에 없음" if not cps else "29CM 정가가 여럿")
+    if SHOP_FAM.get(shop) == "a-rt" and h.get("smk"):
+        try:
+            got, _ = _smk_fetch(brand, h["q"](code), [code])
+        except _NoConfirm:
+            return None, "슈마커 플러스 정가를 확인 못 함"
+        v_ = got.get(code)
+        return (v_[0], "shoemarker") if v_ else (None, "슈마커 플러스에 없음")
     return None, "다른 판매처 없음"
 
 
@@ -3970,10 +4120,14 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 pre_by[(b_, cc_, q_)] = {q_: rep_url[(b_, q_)]}; continue
         want_by[(b_, cc_)].add(q_)
     _KR_PREF.clear()   # v1.42 받아 둔 한국 값의 판매처(국내 판매처 브랜드) — 그 판매처부터
+    _KR_URL.clear()
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ == "KR" and any(SKU_BRANDS[b_].get(x) for x in KR_RETAIL):
             os_ = [(((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get("KR")) or {} for c_ in j_["codes"]]
             sh_ = {o_.get("shop") for o_ in os_} - {None}
+            us_ = {o_.get("url") for o_ in os_ if o_.get("shop") == "shoemarker"} - {None}
+            if len(us_) == 1:
+                _KR_URL[(b_, q_)] = us_.pop()   # v1.44 슈마커 플러스 — 같은 품번 상품이 여럿이면 받아 둔 상품을 먼저
             if len(sh_) == 1:
                 _KR_PREF[(b_, q_)] = (sh_.pop(), max((max(0, age(o_["stale_since"]) - SKU_DAYS) for o_ in os_ if o_.get("stale_since")), default=0))   # 실패한 지 날 수(stale_since = 마지막으로 받은 날 · 다시 받기는 SKU_DAYS 뒤부터 — 검토 11/24)
     _IDX_PAGES[0] = 0

@@ -110,40 +110,42 @@ def product(pc):
     return d
 
 
-def mini(pc):
-    t, u, st = T(f"{B}/Product/ProductDetail?ProductCode={pc}")
-    if t is None:
-        return {"pc": pc, "err": u}
-    g = lambda rx: re.findall(rx, t)
-    hid = dict(re.findall(r'<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]*value="([^"]*)"', t))
-    return {"pc": pc, "st": st, "final": str(u)[-120:], "len": len(t),
-            "isc": g(r'class="item-summary__code">([^<]*)<'), "isc_ctx": sn(t, r"item-summary__code", 2, 200, 200),
-            "bcode": g(r'class="brand_code">([^<]*)<'), "pcode": [x for x in re.findall(r"<th[^>]*>\s*제품코드\s*</th>\s*<td[^>]*>([^<]*)<", t)],
-            "brand": hid.get("BrandName"), "name": hid.get("ProductName"), "tag": hid.get("TagPrice"), "sale": hid.get("SalePrice"),
-            "grp": hid.get("GroupProductCode"), "pcode_hidden": [k for k in hid if "code" in k.lower()][:12],
-            "origin": g(r'class="price__origin">\s*<span class="price__num">([\d,]+)<'),
-            "current": g(r'class="price__current">\s*(?:<span class="price__rate">[^<]*</span>\s*)?<span class="price__num">([\d,]+)<'),
-            "cmt": g(r'<!--<span>\(([^)]{0,12})\)</span>-->'), "title": (re.search(r"<title[^>]*>([^<]{0,80})", t) or [None, ""])[1]}
+LIST = [("NEW BALANCE", "U204L3NE"), ("NEW BALANCE", "M108098N"), ("NEW BALANCE", "U740BM2"),
+        ("ADIDAS", "KJ7583"), ("ADIDAS", "KC8050"), ("ADIDAS", "IH7171"), ("ADIDAS", "KJ3924"), ("ADIDAS", "KI7111"), ("ADIDAS", "JZ9999"),
+        ("VANS", "VN0A38ENMR2"), ("VANS", "VN0A4BVBOIU"),
+        ("HOKA", "1147833-BWHT"), ("HOKA", "1147833AFF"), ("HOKA", "1162032-AYNN"), ("HOKA", "1155118-RRMR"), ("HOKA", "1147790-SCCG"), ("HOKA", "1147833"),
+        ("ASICS", "1203B049-021"), ("ASICS", "1012C008-102")]
 
 
 def work(R):
-    pf.HOST_GAP["plus.shoemarker.co.kr"] = pf.KR_GAP
-    R["pages"] = [mini(pc) for pc in ["56205", "55824", "55919", "55918", "30801", "55428", "54807", "99999999"]]
-    ad = []
-    for pg in (1, 2, 3):
-        ad += [c[0] for c in (search("아디다스", f"&Page={pg}").get("cards") or [])]
-    R["ad_list_n"] = len(ad)
-    R["ad_pages"] = [mini(pc) for pc in ad[3:9] + ad[40:43]]
-    vs = search("반스")
-    R["vans_list"] = vs
-    R["vans_pages"] = [mini(c[0]) for c in (vs.get("cards") or [])[:2]]
-    codes = []
-    for p_ in R["pages"] + R["ad_pages"] + R["vans_pages"]:
-        for c in (p_.get("isc") or [])[:1]:
-            if c and c not in codes:
-                codes.append(c)
-    R["code_search"] = [search(c) for c in codes[:12]]
-    R["fmt"] = [search(q) for q in ["1147833-AFF", "1147833AFF", "1147833 AFF", "U740BM2 ", "u740bm2", "M2002RXD"]]
+    import datetime as _dt
+    os.environ["ERP_SKU_TEST"] = json.dumps([{"brand": b, "code": c, "status": "selling"} for b, c in LIST])
+    for k in ("ERP_SKU_URL", "ERP_SKU_TOKEN", "FIRECRAWL_API_KEY"):
+        os.environ.pop(k, None)
+    pf._sku_slot = lambda *a: True
+    for h_ in pf.SKU_KR_HOSTS:
+        pf.HOST_GAP[h_] = max(pf.HOST_GAP.get(h_, 0), pf.KR_GAP)
+    pf._PACE.update(pf.pace_map(pf.PRODUCTS))
+    d = requests.get("https://raw.githubusercontent.com/Jaemin85-Claude/sports-industry-monitor/main/docs/prices.json", timeout=30).json()
+    today = _dt.date(2026, 11, 24)
+    buf = io.StringIO()
+    t0 = time.time()
+    with contextlib.redirect_stdout(buf):
+        items, meta = pf.sku_stage(d, time.time(), today, today.isoformat(), {}, [])
+    R["sku_sec"] = round(time.time() - t0)
+    R["sku_log"] = [l for l in buf.getvalue().splitlines() if "SKU" in l][-80:]
+    codes = {pf._sku_norm(c) for _, c in LIST}
+    R["items"] = [{"id": it["id"], "brand": it.get("brand"), "code": it.get("code"), "name": it.get("name"), "kr_status": it.get("kr_status"),
+                   "KR": {k: v for k, v in ((it.get("m") or {}).get("KR") or {}).items() if k in ("p", "sp", "cur", "shop", "src", "via", "lvl", "url", "stale_since", "why", "obs")}}
+                  for it in items if it.get("code") in codes or any(str(it.get("code", "")).startswith(c[:7]) for c in codes)]
+    R["n_smk"] = sum(1 for it in items if ((it.get("m") or {}).get("KR") or {}).get("shop") == "shoemarker")
+    pf._BLOCKED.clear()
+    buf2 = io.StringIO()
+    with contextlib.redirect_stdout(buf2):
+        au = pf.audit_retail_stage([it for it in items if ((it.get("m") or {}).get("KR") or {}).get("shop") == "shoemarker"] + [it for it in items if ((it.get("m") or {}).get("KR") or {}).get("shop") not in (None, "shoemarker")][:6],
+                                   time.time(), today, today.isoformat(), None)
+    R["audit_log"] = buf2.getvalue()[-3000:]
+    R["audit"] = au
     R["blocked"] = sorted(pf._BLOCKED)
 
 
