@@ -143,6 +143,7 @@ def art_page(host, row):
 
 
 def realrun(R):
+    R['rev'] = 'v142-round3'
     try:
         import socket; R['ip'] = '.'.join(requests.get('https://api.ipify.org', timeout=6).text.split('.')[:2])
     except Exception as e:
