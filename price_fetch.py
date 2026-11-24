@@ -2693,7 +2693,8 @@ SKU_ALIAS = {   # 목록의 브랜드 표기(띄어쓰기·기호·대소문자 
     "뉴발란스": "newbalance|new balance|nb|뉴발란스", "아디다스": "adidas|아디다스", "반스": "vans|반스",
     "노스페이스": "thenorthface|the north face|northface|tnf|노스페이스|더노스페이스",
     "아식스": "asics|아식스", "호카": "hoka|hokaoneone|hoka one one|호카|호카오네오네",
-    "스투시": "stussy|stüssy|스투시", "아미": "ami|amiparis|ami paris|아미|아미파리스", "가니": "ganni|가니"}   # v1.45 감시 브랜드 밖 — 국내 공식 온라인몰(원화)을 읽는 브랜드(대표 지시 11/23 '90% 이상') · v1.40 국내 판매처(29CM) 정가로 읽는 브랜드(공식몰이 우리 봇을 막음 — 대표 결정 11/23 3다 '추천대로') · v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
+    "스투시": "stussy|stüssy|스투시", "아미": "ami|amiparis|ami paris|아미|아미파리스", "가니": "ganni|가니",
+    "메종키츠네": "maisonkitsune|maison kitsune|maisonkitsuné|maison kitsuné|kitsune|메종키츠네|메종 키츠네", "팔로마울": "palomawool|paloma wool|팔로마울|팔로마 울"}   # v1.45 감시 브랜드 밖 — 국내 공식 온라인몰(원화)을 읽는 브랜드(대표 지시 11/23 '90% 이상') · v1.40 국내 판매처(29CM) 정가로 읽는 브랜드(공식몰이 우리 봇을 막음 — 대표 결정 11/23 3다 '추천대로') · v1.38 감시 브랜드 밖이지만 국내 공식몰을 읽는 브랜드(ERP 판매 중 품번 — 대표 지시 11/23 '스포츠 브랜드가 제일 중요')
 _SKU_KEY = lambda s: re.sub(r"[\s\-_.'’()]+", "", str(s or "")).lower()
 _SKU_AL = {_SKU_KEY(a): k for k, v in SKU_ALIAS.items() for a in [k] + v.split("|")}
 CROCS_HOST = {"KR": "www.crocs.co.kr", "US": "www.crocs.com", "GB": "www.crocs.co.uk", "DE": "www.crocs.de", "JP": "www.crocs.co.jp"}
@@ -2756,6 +2757,10 @@ SKU_BRANDS = {
     "스투시": {"slug": "stussy", "cc": ("KR",), "q": _sku_model, "rx": r"^\d{6,7}[A-Z]?(-[0-9A-Z]{2,5})?$", "model": True, "idx": True},
     "아미": {"slug": "ami", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]{3,5}\d{3}[-.](?:[A-Z]{2})?\d{3,4}[-.][A-Z]?\d{3,4}$", "idx": True, "mfill": True, "fab": True},
     "가니": {"slug": "ganni", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]\d{4}(?:\d{3})?-[0-9A-Z]{3}$", "idx": True, "mfill": True},
+    # v1.46 2차 — 메종키츠네 한국(maisonkitsune.com/kr · 한국 상품 사이트맵의 그림 파일 이름 = 상품 품번 '스타일-색상' → 상품 페이지 상품 품번·가격 칸 · 색상마다 상품 페이지 하나) ·
+    #   팔로마울(코오롱몰 — 국내 수입사몰 · 목록 화면 상품 이름 안 품번 'TJ9005135' = 목록 TJ9005-135 · 정가 = 코오롱몰 정상가 wishPrice) · 둘 다 스타일 단위로 묻고 국내 색상 정가가 모두 같으면 모델 단위(mfill)
+    "메종키츠네": {"slug": "kitsune", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]{2,6}\d{2,5}[A-Z]{2}\d{4}-[A-Z]?\d{3,4}$", "idx": True, "mfill": True},
+    "팔로마울": {"slug": "palomawool", "cc": ("KR",), "q": _seg1, "rx": r"^[A-Z]{2}\d{4}(?:-(?:\d{3}|[A-Z]{3,12}))?$", "idx": True, "mfill": True},
 }
 
 
@@ -2952,7 +2957,14 @@ GANNI_HOST = "www.ganni.com"   # v1.45 가니 — 세계 사이트맵(영국 /en
 GANNI_PB = re.compile(r'<span class="product-price__sales js-pdp-sales-price( d-none)?"[^>]*>([^<]*)</span>\s*'
                       r'<span class="product-price__normal js-pdp-normal-price"[^>]*>([^<]*)</span>\s*'
                       r'<span class="product-price__discount js-pdp-discount( d-none)?"[^>]*>[^<]*</span>')
-SKU_KR_HOSTS = ("www.converse.co.kr", "search-api.29cm.co.kr", "www.29cm.co.kr", "grandstage.a-rt.com", "abcmart.a-rt.com", "plus.shoemarker.co.kr", "kr.stussy.com")   # v1.45 스투시 한국 몰 · v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP · v1.40 29CM
+MK_HOST = "maisonkitsune.com"   # v1.46 메종키츠네 한국(/kr — 원화) · 한국 상품 사이트맵은 색인(sitemap_kr_en_index.xml)의 상품 사이트맵(주소는 /kr/ 꼴)
+MK_SM_IDX = f"https://{MK_HOST}/media/sitemap/sitemap_kr_en_index.xml"
+MK_MAX = 6    # v1.46 한 스타일에서 받는 한국 상품 페이지 최대(색상마다 페이지 하나 — 넘으면 그 스타일의 다른 색상은 미확인 · 11/24 한국 1,005개 · 스타일 480개 · 색상 둘 넘는 스타일 드묾)
+MK_MIN = 300  # v1.46 한국 상품 사이트맵 주소가 이보다 적으면 덜 끝난 색인(사이트맵 고장일 수 있어 '없음'으로 보지 않음)
+KOLON = "https://www.kolonmall.com"   # v1.46 코오롱몰(국내 수입사몰) 목록 화면 — 상품 자료(productSearchCodes results: 코오롱 상품 번호·색상·이름·판매처 브랜드 이름·판매가 price·정상가 wishPrice)
+KOLON_BRAND = {"팔로마울": ("/Brands/PALOMAWOOL/List/133020162660", "팔로마 울", re.compile(r"(?<![A-Z0-9])([A-Z]{2}\d{4})(\d{3})(?![0-9])"))}   # (목록 주소, 판매처 브랜드 이름, 이름 안 품번)
+KOLON_PAGES = 10   # v1.46 목록 쪽 한도(쪽마다 60개 — 넘으면 덜 끝난 색인)
+SKU_KR_HOSTS = ("www.converse.co.kr", "search-api.29cm.co.kr", "www.29cm.co.kr", "grandstage.a-rt.com", "abcmart.a-rt.com", "plus.shoemarker.co.kr", "kr.stussy.com", "www.kolonmall.com")   # v1.46 코오롱몰 · v1.45 스투시 한국 몰 · v1.38 SKU 단계에서만 읽는 한국 몰 — 요청 간격 KR_GAP · v1.40 29CM
 R29_SEARCH = "https://search-api.29cm.co.kr/api/v4/products?keyword={}"   # v1.40 29CM 화면이 부르는 검색 주소 — 품번으로 상품을 찾는 데만(대표 결정 11/23 '네' · robots.txt 없음(404) = 허용)
 R29_WWW = "https://www.29cm.co.kr"
 R29_HOSTS = ("search-api.29cm.co.kr", "www.29cm.co.kr")
@@ -3343,6 +3355,144 @@ def _ganni_pick(page, codes, url):
     return got
 
 
+def _mk_index(stop=None):
+    """v1.46 메종키츠네 한국 상품 사이트맵 → {스타일: [(한국 상품 주소, 그림 파일 이름의 색상)]} · 그림 파일 이름(pm00109kj0119-h170_1.jpg)이 상품 품번(스타일-색상)과 같은 꼴이라
+    후보로만 씀(페이지의 상품 품번으로 다시 확인) · out.ents = [(주소, 그림·주소 이름 모두 — 소문자)] — 그림 이름 꼴이 다른 상품도 스타일 글자로 찾음(어디에도 없으면 한국 몰에 없음)"""
+    kids = [unescape(x) for x in re.findall(r"<loc>\s*([^<\s]+)\s*</loc>", get(MK_SM_IDX).text)]
+    kids = [k for k in kids if "product" in k.rsplit("/", 1)[-1] and urllib.parse.urlsplit(k).netloc == MK_HOST]
+    if not kids:
+        raise RuntimeError("사이트맵 색인에 상품 사이트맵 없음")
+    out = _Idx(); out.ents = []
+    for k in kids[:4]:
+        if stop and time.time() > stop:
+            out.partial = True   # 멈출 시각을 넘김 — 받은 데까지만(덜 끝난 색인)
+            break
+        for b in re.findall(r"<url>.*?</url>", get(k).text, re.S):
+            loc = unescape((re.search(r"<loc>\s*([^<\s]+)\s*</loc>", b) or [None, ""])[1])
+            if not re.fullmatch(rf"https://{re.escape(MK_HOST)}/kr/[^/?#]+\.html", loc):
+                continue
+            imgs = [unescape(x).rsplit("/", 1)[-1].lower() for x in re.findall(r"<image:loc>\s*([^<\s]+)\s*</image:loc>", b)]
+            out.ents.append((loc, " ".join(imgs + [loc.rsplit("/", 1)[-1].lower()])))
+            m = re.match(r"([a-z0-9]{6,20})-([a-z0-9]{2,5})(?=[_.-])", imgs[0]) if imgs else None
+            if m:
+                out.setdefault(m.group(1).upper(), []).append((loc, m.group(2).upper()))
+    if len(kids) > 4 or len(out.ents) < MK_MIN:
+        out.partial = True   # 상품 사이트맵이 넷 넘게 나뉨·주소가 너무 적음 — 덜 끝난 색인('없음'으로 보지 않음)
+    if not out.ents:
+        raise RuntimeError("한국 상품 사이트맵에 상품 주소 없음")
+    return out
+
+
+def mk_page(html):
+    """v1.46 메종키츠네 한국 상품 페이지 → (상품 품번 parent_sku, 정가 T, 지금 값 cur, 이름) · 원화(dataLayer currencyCode KRW)만 ·
+    가격 = 이 상품 설정(jsonConfig — 뒤에 이 상품 번호 productId가 오는 optionPrices)의 사이즈별 oldPrice(정가)·finalPrice(지금 값) — 사이즈별 정가가 다르거나
+    지금 값이 정가보다 비싸면 실패 · 화면 가격(meta product:price:amount)이 지금 값 중 하나와 같아야(11/24 화면 시험: 보이는 가격 = finalPrice · 할인 중이면 oldPrice 취소선)"""
+    if '"ecommerce":{"currencyCode":"KRW"}' not in html:
+        raise RuntimeError("원화 가격 아님")
+    m = re.search(r'"event":"productPage","product":(\{.*?\})\}\);', html)
+    try:
+        dl = json.loads(m.group(1)) if m else None
+    except ValueError:
+        dl = None
+    if not isinstance(dl, dict):
+        raise RuntimeError("상품 자료(dataLayer) 없음")
+    ps, pid = str(dl.get("parent_sku") or dl.get("sku") or "").strip().upper(), str(dl.get("id") or "").strip()
+    if not ps or not re.fullmatch(r"\d{1,9}", pid):
+        raise RuntimeError("상품 품번·번호 없음")
+    dec = json.JSONDecoder()
+    def cfg(key, stops):   # 이 상품 설정 칸 — 뒤 4,000자 안에 이 상품 번호(productId)가 오고 그 사이에 다른 설정 칸이 없을 때만(추천 상품 설정이 섞이지 않게)
+        for mm in re.finditer(rf'"{key}":\s*', html):
+            try:
+                o_, end = dec.raw_decode(html, mm.end())
+            except ValueError:
+                continue
+            j = html.find(f'"productId":"{pid}"', end)
+            nxt = [x for x in (html.find(f'"{k_}":', end) for k_ in stops) if x >= 0]
+            if isinstance(o_, dict) and 0 <= j and j - end <= 4000 and not (nxt and min(nxt) < j):
+                return o_
+        return None
+    olds, fins = [], []
+    op = cfg("optionPrices", ("optionPrices",))
+    for v in (op or {}).values():
+        olds.append(num(((v or {}).get("oldPrice") or {}).get("amount"))); fins.append(num(((v or {}).get("finalPrice") or {}).get("amount")))
+    if op is None:   # 사이즈 없는 상품 — 이 상품 설정의 prices 칸
+        pr = cfg("prices", ("prices", "optionPrices"))
+        if pr:
+            olds, fins = [num((pr.get("oldPrice") or {}).get("amount"))], [num((pr.get("finalPrice") or {}).get("amount"))]
+    if not olds or None in olds or None in fins:
+        raise RuntimeError("이 상품의 가격 설정을 못 읽음")
+    T, cur = max(olds), min(fins)
+    if min(olds) < T * 0.995:
+        raise RuntimeError("사이즈별 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+    if max(fins) > T * 1.005:
+        raise RuntimeError("지금 값이 정가보다 비쌈 — 정가를 확실히 못 읽음")
+    mp = {num(x) for x in re.findall(r'property="product:price:amount"\s+content="([^"]+)"', html)} - {None}
+    if not any(abs(x - f) <= max(1, f * 0.005) for x in mp for f in fins):
+        raise RuntimeError("화면 가격이 이 상품 설정 값과 다름")
+    return ps, T, cur, _clean_name(dl.get("name"))
+
+
+def _kolon_index(brand, stop=None):
+    """v1.46 코오롱몰 목록 화면 → {스타일: [{"k": 코오롱 상품 번호, "c": 색상(이름 안 품번 끝 3자리), "w": 색상 이름, "p": 판매가, "t": 정상가, "n": 이름}]} ·
+    판매처 브랜드 이름이 그 브랜드인 상품만 · 이름에 품번이 없는 상품·정가를 못 읽은 상품이 있거나 다 넘기지 못하면 덜 끝난 색인(nosku · '없음'으로 보지 않음)"""
+    path, sbn, crx = KOLON_BRAND[brand]
+    out, seen, total, dec = _Idx(), set(), None, json.JSONDecoder()
+    for page in range(1, KOLON_PAGES + 1):
+        if stop and time.time() > stop:
+            out.partial = True
+            break
+        t = get(KOLON + path + (f"?page={page}" if page > 1 else "")).text.replace('\\"', '"')
+        res = None
+        for mm in re.finditer(r'"productSearchCodes":\s*', t):
+            try:
+                d, _ = dec.raw_decode(t, mm.end())
+            except ValueError:
+                continue
+            if isinstance(d, dict) and isinstance(d.get("results"), list):
+                res = d; break
+        if res is None:
+            raise RuntimeError("목록 화면에 상품 자료 없음")
+        tc = num(((res.get("page") or {}).get("totalCount")))
+        total = int(tc) if tc else (0 if not res["results"] else total)
+        new = 0
+        for r_ in res["results"]:
+            k = str((r_ or {}).get("code") or "")
+            if not re.fullmatch(r"[A-Z0-9]{8,20}", k) or k in seen:
+                continue
+            seen.add(k); new += 1
+            if str(r_.get("supplierBrandName") or "").strip() != sbn:
+                out.partial = True; continue   # 다른 브랜드 상품이 섞임 — 목록이 이 브랜드만이 아닐 수 있어 '없음'으로 보지 않음
+            pr = r_.get("price") or {}
+            cs = {(a, b) for a, b in crx.findall(str(r_.get("name") or ""))}
+            p_, t_ = num(pr.get("price")), num(pr.get("wishPrice"))
+            if len(cs) != 1 or pr.get("currencyIso") not in (None, "KRW") or not p_ or not t_ or t_ < p_:
+                out.partial = True; continue   # 이름에 품번이 없거나 여럿 · 정가를 못 읽음 — 이 상품이 찾는 품번일 수 있음
+            st_, co_ = cs.pop()
+            out.setdefault(st_, []).append({"k": k, "c": co_, "w": re.sub(r"[^A-Z]", "", str(r_.get("color") or "").upper()), "p": p_, "t": t_,
+                                            "n": _clean_name(r_.get("name"))})
+        if not new or (total is not None and len(seen) >= total):
+            break
+    else:
+        out.partial = True   # 쪽 한도까지 꽉 참
+    if total is None or len(seen) < total:
+        out.partial = True
+    if not seen:
+        raise RuntimeError("목록에 상품 없음")
+    return out
+
+
+def kolon_page(html, kcode):
+    """v1.46 코오롱몰 상품 페이지 → (판매가, 이름) — JSON-LD 상품(sku = 코오롱 상품 번호)의 원화 판매가(목록 판매가와 같아야 목록 정상가를 씀)"""
+    lds = [n for n in _ld_nodes(html) if "product" in _types(n) and str(n.get("sku") or "") == kcode]
+    if len(lds) != 1:
+        raise RuntimeError("페이지 상품 번호가 다름")
+    offs = lds[0].get("offers")
+    o = offs[0] if isinstance(offs, list) and offs else offs
+    if not isinstance(o, dict) or o.get("priceCurrency") != "KRW" or not num(o.get("price")):
+        raise RuntimeError("원화 가격 없음")
+    return num(o.get("price")), _ld_name(html)
+
+
 def _sku_index(brand, cc, want=None, stop=None):
     """색인 → {묻는 열쇠: 주소} · want = 이번에 찾는 열쇠 · stop = 멈출 시각(킨 한국만 — 다 찾거나 그 시각이면 목록 넘기기를 멈춤)"""
     if brand == "킨(KEEN)" and cc == "KR":
@@ -3351,6 +3501,10 @@ def _sku_index(brand, cc, want=None, stop=None):
         return _shop_kr_index(brand, stop)
     if brand == "가니" and cc == "KR":   # v1.45 가니 세계 사이트맵 → 한국 상품 주소
         return _ganni_index(stop)
+    if brand == "메종키츠네" and cc == "KR":   # v1.46 한국 상품 사이트맵 그림 품번
+        return _mk_index(stop)
+    if brand in KOLON_BRAND and cc == "KR":   # v1.46 코오롱몰 목록 화면
+        return _kolon_index(brand, stop)
     if brand == "온러닝":
         loc = ON_LOC[cc]
         us = _sm_walk([f"https://www.on.com/{loc}/products.xml"], "www.on.com", f"/{loc}/products/", max_maps=3)
@@ -3937,6 +4091,73 @@ def _sku_fetch(brand, cc, q, codes, idx):
             raise RuntimeError("상품 페이지가 한국 분류 화면이 아닌 곳으로 넘어감 — 이번 실행은 답으로 보지 않음")   # 다른 나라·첫 화면·점검·로그인·검색·확인 화면 등(앞 상태 유지 · 검토 11/24)
         got = _ganni_pick(ganni_page(r.text, q), codes, url)
         _GANNI_OK[0] = True   # 이번 실행에서 한국 상품 페이지를 제대로 읽음
+        return got, False
+    if brand == "메종키츠네":   # v1.46 한국 상품 페이지(사이트맵 그림 품번으로 고른 후보 — 페이지의 상품 품번으로 확인 · 색상마다 페이지 하나)
+        ents = list((idx or {}).get(q) or [])
+        if not ents:
+            ents = [(u, None) for u, nm in getattr(idx, "ents", ()) if q.lower() in nm]   # 그림 이름 꼴이 다른 상품 — 스타일 글자로
+        if not ents:
+            return ({"__noans__": set(codes)}, False) if getattr(idx, "partial", False) else ({}, True)   # 한국 상품 사이트맵 어디에도 이 스타일 없음
+        want = {c.split("-", 1)[1] for c in codes if "-" in c}
+        ents = sorted(dict.fromkeys(ents), key=lambda e: (e[1] not in want, e[0]))   # 찾는 색상 먼저
+        pages, errs = {}, 0
+        for u, _ in ents[:MK_MAX]:
+            try:
+                r = get(u)
+            except RuntimeError:
+                if _STOP.is_set() or MK_HOST in _BLOCKED:
+                    raise
+                errs += 1; continue   # 이 페이지만 못 받음(없어진 상품·일시 오류) — 이 스타일 답은 덜 끝남
+            fu = urllib.parse.urlsplit(r.url)
+            if fu.netloc != MK_HOST or not re.fullmatch(r"/kr/[^/?#]+\.html", fu.path):
+                errs += 1; continue   # 다른 곳으로 넘어감(한국 몰에서 빠짐·점검 화면 등) — 답으로 보지 않음
+            ps, T, cur, nm = mk_page(r.text)
+            if not ps.startswith(q + "-"):
+                continue   # 그림 이름만 비슷한 다른 스타일 상품
+            if ps in pages and abs(pages[ps][0] - T) > T * 0.005:
+                raise RuntimeError("같은 품번 상품 페이지 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+            pages.setdefault(ps, (T, cur, nm, u))
+        got = {c: (pages[c][0], {"lst": True, "cur_price": pages[c][1]}, pages[c][2], "wear", pages[c][3], None) for c in codes if c in pages}
+        miss = set(codes) - set(got)
+        if errs:
+            if miss:
+                got["__noans__"] = miss   # 못 받은 페이지가 그 색상일 수 있음 — 답이 아님(앞 상태 유지)
+        elif len(ents) > MK_MAX:
+            if miss:
+                got["__unread__"] = miss   # 색상이 많아 다 못 봄 — 한국 몰에 이 스타일은 있음(미확인)
+        elif pages:   # 이 스타일 한국 색상 페이지를 모두 봄 — 국내 색상 정가가 모두 같으면 모델 단위(없는 색상은 '국내 공식몰에 없음')
+            _sku_mput(got, {k: (v[0], v[2], "wear") for k, v in pages.items()}, pages[sorted(pages)[0]][3])
+        return got, False
+    if brand in KOLON_BRAND:   # v1.46 코오롱몰 목록 값(이름 안 품번 · 정상가 wishPrice) — 고른 상품 페이지의 판매가가 목록과 같을 때만
+        ents = (idx or {}).get(q) or []
+        part = bool(getattr(idx, "partial", False))
+        if not ents:
+            return ({"__noans__": set(codes)}, False) if part else ({}, True)   # 국내 수입사몰 목록 전체에 이 스타일 없음
+        got, nmk = {}, {}
+        for c in codes:
+            col = c.split("-", 1)[1] if "-" in c else None
+            if col is None:
+                continue   # 스타일만 온 품번 — 모델 단위 값(code = 스타일 · ERP 규칙 ①)으로 맞춤
+            es = [e for e in ents if (e["c"] == col if col.isdigit() else e["w"] == col)]
+            if not es:
+                if part:
+                    got.setdefault("__noans__", set()).add(c)   # 덜 끝난 목록 — 이름에 품번이 없는 상품이 이 색상일 수 있음
+                continue   # 국내 수입사몰에 이 색상 없음
+            if len({(e["t"], e["p"]) for e in es}) != 1:
+                got.setdefault("__unread__", set()).add(c); continue   # 같은 색상 상품이 여럿인데 값이 다름 — 어느 것인지 몰라 미확인
+            e = es[0]
+            if e["k"] not in nmk:
+                p_, nm_ = kolon_page(get(f"{KOLON}/Product/{e['k']}").text, e["k"])
+                if abs(p_ - e["p"]) > 0.5:
+                    raise RuntimeError("상품 페이지 판매가가 목록과 다름 — 그사이 바뀜(다음에 다시)")
+                nmk[e["k"]] = nm_ or e["n"]
+            got[c] = (e["t"], {"lst": True, "cur_price": e["p"]}, nmk[e["k"]], "wear", f"{KOLON}/Product/{e['k']}", None)
+        if not part:   # 목록을 다 봄 — 이 스타일 국내 색상 정상가가 모두 같으면 모델 단위
+            _sku_mput(got, {f'{q}-{e["c"]}': (e["t"], e["n"], "wear") for e in ents}, f"{KOLON}/Product/{ents[0]['k']}")
+        if "__model__" not in got:
+            for c in codes:
+                if "-" not in c:
+                    got.setdefault("__unread__" if not part else "__noans__", set()).add(c)   # 스타일만 온 품번 — 국내 몰에 이 스타일은 있음(모델 값을 못 정함)
         return got, False
     # 색인으로 찾는 브랜드
     url = idx.get(q) if idx else None

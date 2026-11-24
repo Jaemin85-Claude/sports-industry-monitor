@@ -1,48 +1,19 @@
-# 임시 시험(병합 안 함 · 끝나면 바로 지움) 3회: 코오롱몰 목록 화면의 상품 자료 꼴 · 드롤드무슈 상품 자료 칸 값 · 메종키츠네 사이트맵 색인 — 우리 봇 이름 · robots.txt 준수 · 공개 상품 정보만
-import json, re, time
+# 임시 시험(병합 안 함 · 끝나면 바로 지움): v1.46 메종키츠네 한국·팔로마울(코오롱몰) SKU 정가 — 공개 품번 시험 목록(ERP_SKU_TEST) · 우리 봇 이름 · robots.txt 준수
+import datetime, json, os, time
 import price_fetch as pf
-
-T0 = time.time()
-
-
-def out(tag, obj):
-    print("PB2 " + json.dumps({"t": tag, "d": obj}, ensure_ascii=False, default=str)[:30000], flush=True)
-
-
-def fetch(u):
-    try:
-        return pf.get(u), None
-    except Exception as e:
-        return None, f"{type(e).__name__}: {str(e)[:200]}"
-
-
-def sn(t, rx, n=4, w=300, b=60):
-    o = []
-    for m in re.finditer(rx, t, re.S):
-        o.append(re.sub(r"\s+", " ", t[max(0, m.start() - b): m.start() + w]))
-        if len(o) >= n:
-            break
-    return o
-
-
-for u in ("https://www.kolonmall.com/Brands/PALOMAWOOL/List/133020162660", "https://www.kolonmall.com/Brands/HUNTER/List/133010071605"):
-    r, e = fetch(u)
-    if not r:
-        out("km_list", {"u": u, "err": e}); continue
-    t = r.text.replace('\\"', '"')
-    out("km_list", {"u": u, "len": len(t), "tc": re.findall(r'"totalCount":(\d+),"currentPage":(\w+)', t)[:6],
-                    "links": sorted(set(re.findall(r"/Product/([A-Z0-9]{8,20})", t)))[:80],
-                    "name_ctx": sn(t, r'"name":"(?:\(PALOMA WOOL\)|HUNTER|헌터)', 3, 900, 700),
-                    "hunter_codes": sorted(set(re.findall(r"\b[A-Z]{3}\d{4}[A-Z]{3}[A-Z]{2,3}\b", t)))[:60]})
-r, e = fetch("https://www.kolonmall.com/Product/D0TSW25250BRD")
-if r:
-    t = r.text.replace('\\"', '"')
-    d = {}
-    for k in ("styleCode", "baseProductCode", "productReferences", "mdNote", "mdsNote", "supplierBrandCode", "productNoteDescription", "supplierCode", "sizeProductCodes", "duplicateGroupCodes"):
-        d[k] = sorted(set(re.findall(rf'"{k}":("[^"]{{0,120}}"|\[[^\]]{{0,300}}\]|null|\{{[^}}]{{0,300}}\}})', t)))[:6]
-    out("km_dm_fields", d)
-r, e = fetch("https://maisonkitsune.com/media/sitemap/sitemap_kr_en_index.xml")
-out("mk_idx", {"err": e, "txt": (r.text[:1500] if r else "")})
-r, e = fetch("https://maisonkitsune.com/media/sitemap/sitemap_kr_index.xml")
-out("mk_idx2", {"err": e, "txt": (r.text[:1500] if r else "")})
-out("done", {"sec": round(time.time() - T0), "blocked": sorted(pf._BLOCKED)})
+C = [("MAISON KITSUNE", "PM00109KJ0119-H170"), ("MAISON KITSUNE", "PM00109KJ0119-P999"), ("MAISON KITSUNE", "MRMWP02WF4082-0553"), ("MAISON KITSUNE", "QW01650KA0033-P199"),
+     ("MAISON KITSUNE", "PU00301KM0330-0472"), ("MAISON KITSUNE", "MRUKC00KT1006-P623"), ("MAISON KITSUNE", "QM00425WD4033-0603"), ("MAISON KITSUNE", "LM99999KM0001-P199"),
+     ("MAISON KITSUNE", "LM00101KM0001-P199"),
+     ("PALOMA WOOL", "RJ9022-247"), ("PALOMA WOOL", "RJ9022-135"), ("PALOMA WOOL", "RJ9022-999"), ("PALOMA WOOL", "TJ9005-135"), ("PALOMA WOOL", "TV4003-134"),
+     ("PALOMA WOOL", "RJ9025-200"), ("PALOMA WOOL", "XP6002-246"), ("PALOMA WOOL", "TJ0810-120"), ("PALOMA WOOL", "RJ9023-203"), ("PALOMA WOOL", "TJ0813-248")]
+os.environ["ERP_SKU_TEST"] = json.dumps([{"brand": b, "code": c, "status": "selling"} for b, c in C])
+pf._sku_slot = lambda *a: True
+for u in (pf.MK_SM_IDX, "https://maisonkitsune.com/kr/fox-head-oversize-tee-shirt-dark-grey-melange-6855fab7d56bc.html", "https://www.kolonmall.com/Brands/PALOMAWOOL/List/133020162660",
+          "https://www.kolonmall.com/Product/W1WAX25213NYX"):
+    print("robots", u, pf.robots_ok(u))
+t0 = time.time(); td = datetime.date.today()
+items, meta = pf.sku_stage({"items": []}, time.time(), td, td.isoformat(), {}, [])
+print("=== ITEMS ===")
+for it in items:
+    print(json.dumps({k: it.get(k) for k in ("id", "code", "name", "cat", "kr_status", "m")}, ensure_ascii=False))
+print("blocked", sorted(pf._BLOCKED), "sec", round(time.time() - t0))
