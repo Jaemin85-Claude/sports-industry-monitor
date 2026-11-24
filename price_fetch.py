@@ -7,11 +7,13 @@ v1.45: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주�
     (상품마다 다시 받지 않음) 첫 상품 .json의 통화(price_currency KRW)·값이 목록과 같아야 씀 · 가니(www.ganni.com/en-kr — 세계 사이트맵 영국 주소 이름을 한국으로 · 상품 페이지 JSON-LD 변형
     값(변형 품번 = 스타일 + 색상 3자리 + 사이즈 2자리) + 가격 칸(기본 색상 — 할인 중이면 취소선 정가) · 화면 정가보다 비싼 색상이 없을 때 값이 화면 정가이거나 할인 표시가 있고 화면 지금 값과 같은
     색상만 정가 · 404·목록으로 넘김 = 한국 몰에 없음 · 사이트맵에 없는 스타일은 미확인) · 아미·가니는 같은 스타일 국내 색상 정가가 모두 같으면 모델 단위(code = 첫 '-'·'.' 앞 스타일 —
-    ERP 규칙 ②) · 두 쇼피파이 몰은 플랫폼 한 줄(PACE shopify) · 스투시 한국은 한국 몰 간격(KR_GAP) · 독립 검토 11/24(2차례): 아미 모델 값은 그 스타일에서 자기 국내 값이 없는
-    목록 품번(이번에 묻지 않은 것도)의 원단(가운데 칸)이 모두 국내 몰에 있을 때만(sku_stage — 원단이 다르면 정가가 다를 수 있어 · 자기 국내 값(이전 값 포함)이 있는 품번은 셈 밖) ·
-    가니 '없음'은 넘김 없이 바로 404·410이거나 한국 분류 화면(/en-kr/…/ 꼴)으로 넘길 때만(다른 나라·첫 화면·점검·검색·다른 사이트·넘겨진 곳의 404는 답이 아님 — 앞 상태 유지) ·
-    스투시 목록·가니 사이트맵은 멈출 시각을 넘기면 받은 데까지만(덜 끝난 색인) · 덜 끝난 목록이면 모델 값(스투시·아미 모델 채우기)을 정하지 않음(스타일의 색상을 다 봤는지 몰라) ·
-    통화 확인은 값이 있는 첫 상품으로(0원 상품 건너뜀)
+    ERP 규칙 ②) · 두 쇼피파이 몰은 플랫폼 한 줄(PACE shopify) · 스투시 한국은 한국 몰 간격(KR_GAP) · 독립 검토 11/24(3차례) 반영: 아미 모델 값은 그 스타일에서 자기 국내 값
+    (이번 실행 뒤에도 남는 값 — 이전 값 포함)이 없는 목록 품번(이번에 묻지 않은 것도)의 원단(가운데 칸)이 모두 국내 몰에 있을 때만(sku_stage · fab — 원단이 다르면 정가가 다를 수 있어 ·
+    국내 원단 목록은 모델 상품 fab에 남겨 그 스타일을 묻지 않은 날에도 그 품번의 국내 차례 날에 판단) · 가니 '없음'은 넘김 없이 바로 404·410이거나 한국 분류 화면(/en-kr/…/ 꼴 ·
+    상품 칸이 있는 화면 · 점검·로그인·검색 등 낱말 주소 빼고)으로 넘길 때만이고, 그 실행에서 가니 상품 페이지를 하나도 못 읽었으면 그날 '없음'은 모두 답 없음(몰 전체 404 대비 ·
+    실행 끝에 판단) · 다른 나라·첫 화면·다른 사이트·넘겨진 곳의 404는 답이 아님(앞 상태 유지) · 가니 사이트맵은 영어 주소 이름 먼저 · 스투시 목록·가니 사이트맵은 멈출 시각을 넘기면
+    받은 데까지만(덜 끝난 색인 — 덜 끝난 사이트맵에 없는 가니 스타일은 답 없음) · 시간·쪽 한도로 덜 끝난 목록이거나 품번 없는 상품의 주소 이름에 그 스타일이 있으면 모델 값(스투시·
+    아미 모델 채우기)을 정하지 않음(품번 없는 사은품 하나로 모든 스타일을 막지 않게) · 통화 확인은 값이 있는 첫 상품으로(0원 상품 건너뜀)
 v1.44: (대표 결정 11/24 '모든 브랜드 사용' — 29CM·a-rt에 없을 때 · 상품정보고시 수입처가 ㈜슈마커여도 씀) 국내 판매처 슈마커 플러스(plus.shoemarker.co.kr · robots.txt 허용) — KR_RETAIL 세 번째(29CM → 그랜드스테이지·ABC마트 → 슈마커 플러스) ·
     홈 화면 검색 칸의 공개 검색 화면(/Product/ProductSearchList?SWord=품번 — 11/24 시험: 품번·모델 번호로 찾힘 · 호카는 '-' 없이 붙여 쓰면 안 찾혀 1147833-BWHT 꼴로 물음 _hoka_q) → 그 브랜드 상품 →
     공개 상품 페이지 품번 칸(item-summary__code — 구분 기호 무시 · 아디다스·반스는 '품번-색상 이름'이라 첫 '-' 앞 smk_cut)이 같을 때 주문 칸 숨은 값 정상가 TagPrice(판매가 SalePrice)가
@@ -2941,6 +2943,10 @@ CONVERSE_DUP = 3   # 같은 품번 상품 페이지가 여럿이면 이만큼까
 #   몰 기본 쪽 크기 30개 · 11/24 1,211개 = 41쪽) · 아미는 한국 경로(/ko-kr)의 목록이 원화(11/24 GitHub 서버 시험)
 SHOP_KR = {"스투시": ("https://kr.stussy.com", "", None), "아미": ("https://www.amiparis.com", "/ko-kr", 250)}
 SHOP_KR_PAGES = 80   # 쪽 크기를 정하지 않을 때 쪽 한도(넘으면 덜 끝난 색인)
+_GANNI_OK = [False]   # v1.45 이번 실행에서 가니 한국 상품 페이지를 제대로 읽었는지 — 하나도 못 읽었으면 그날 가니 '없음'(404·분류 화면 — __gnone__)을 답 없음으로 돌림
+                      #   (몰 전체 404·한국 경로 꺼짐·배포 오류일 수 있어 · 일감 순서와 상관없이 실행 끝에 판단 · sku_stage가 실행마다 지움 · 검토 11/24)
+GANNI_NOT_LIST = {"home", "homepage", "search", "account", "login", "register", "cart", "checkout", "maintenance", "error", "page-not-found", "404",
+                  "country-selector", "stores", "coming-soon", "wishlist", "customer-service", "help"}   # 분류 화면이 아닌 /en-kr/…/ 주소 낱말
 GANNI_HOST = "www.ganni.com"   # v1.45 가니 — 세계 사이트맵(영국 /en-gb/ 주소)의 상품 주소 이름을 한국(/en-kr/)으로 · 상품 페이지 JSON-LD 변형 값 + 가격 칸(기본 색상)
 GANNI_PB = re.compile(r'<span class="product-price__sales js-pdp-sales-price( d-none)?"[^>]*>([^<]*)</span>\s*'
                       r'<span class="product-price__normal js-pdp-normal-price"[^>]*>([^<]*)</span>\s*'
@@ -3175,7 +3181,8 @@ def _shop_kr_index(brand, stop=None):
     if not any(str(v.get("id")) in v1 and v1[str(v.get("id"))].get("price_currency") == "KRW" and num(v.get("price"))
                and num(v1[str(v.get("id"))].get("price")) == num(v.get("price")) for v in p0["variants"] if isinstance(v, dict)):
         raise RuntimeError("목록 값이 원화인지 확인 못 함(첫 상품 .json 통화·값이 다름)")
-    out = _Idx(); out.partial = ps.partial
+    out = _Idx(); out.partial = out.cut = ps.partial   # cut = 시간·쪽 한도로 덜 끝남(모델 값도 안 정함)
+    out.nosku = []
     for p in ps:
         h = p.get("handle")
         if not h:
@@ -3184,6 +3191,7 @@ def _shop_kr_index(brand, stop=None):
         ks = {_seg1(x[0]) for x in vs if x[0]}
         if vs and not ks:
             out.partial = True   # 품번을 못 읽은 상품이 있음 — 색인에 없는 품번을 '국내 공식몰에 없음'으로 보지 않음
+            out.nosku.append(str(h).lower())   # 그 상품 주소 이름(스투시는 스타일 번호로 시작 · 아미는 품번으로 끝남) — 이 스타일 상품일 수 있으면 모델 값을 정하지 않음(검토 11/24)
         for k in ks:
             out.setdefault(k, []).append({"url": f"{base}{pre}/products/{h}", "title": _clean_name(p.get("title")), "vs": [x for x in vs if x[0] and _seg1(x[0]) == k]})
     return out
@@ -3201,11 +3209,14 @@ def _shop_kr_val(vs):
     return min(lst), ex
 
 
-def _shop_kr_pick(brand, q, codes, ents, partial=False):
+def _shop_kr_pick(brand, q, codes, ents, idx=None):
     """v1.45 한국 쇼피파이 몰 목록 값 → _sku_fetch 결과 — 스투시(model)는 스타일의 모든 색상·사이즈 정가가 같을 때만 모델 값 · 아미는 구분 기호를 뺀 품번이
     같은 변형(색상 단위) + 같은 스타일 국내 색상 정가가 모두 같으면 모델 값(mfill)"""
     key = lambda s_: re.sub(r"[-.\s_]", "", s_)
     vs_all = [(x, e) for e in ents for x in e["vs"] if _seg1(x[0]) == q]
+    # 모델 값은 그 스타일의 국내 색상을 다 봤을 때만 — 시간·쪽 한도로 덜 끝난 목록이거나, 품번을 못 읽은 상품의 주소 이름에 이 스타일이 있으면 안 정함
+    #   (품번 없는 사은품 같은 다른 상품 하나 때문에 모든 스타일을 막지 않게 · 검토 11/24)
+    partial = bool(getattr(idx, "cut", False)) or any(q.lower() in h for h in (getattr(idx, "nosku", None) or ()))
     if SKU_BRANDS[brand].get("model"):
         if partial:   # 목록이 덜 끝나(시간) 이 스타일의 색상을 다 봤는지 모름 — 모델 값을 정하지 않음(이전 값 · 검토 11/24)
             raise RuntimeError("국내 몰 목록이 덜 끝나 스타일의 모든 색상을 못 봄 — 이번 실행은 모델 값을 정하지 않음")
@@ -3250,11 +3261,15 @@ def _ganni_index(stop=None):
     us = _sm_walk(_robots_maps(GANNI_HOST) or [f"https://{GANNI_HOST}/sitemap_index.xml"], GANNI_HOST, "/", max_maps=12,
                   budget=max(5, min(120, stop - time.time())) if stop else 120)   # 멈출 시각을 넘기지 않게(덜 끝나면 partial · 검토 11/24)
     out = _Idx(); out.partial = us.partial
-    rx = re.compile(r"^/[a-z]{2}(?:-[a-z]{2})?/([^/?#]+-([A-Z]\d{4}(?:\d{3})?))\.html$")
+    rx = re.compile(r"^/([a-z]{2}(?:-[a-z]{2})?)/([^/?#]+-([A-Z]\d{4}(?:\d{3})?))\.html$")
+    best = {}
     for u in us:
         m = rx.match(urllib.parse.urlsplit(u).path)
         if m:
-            out.setdefault(m.group(2), f"https://{GANNI_HOST}/en-kr/{m.group(1)}.html")
+            rank = 0 if m.group(1) == "en-gb" else 1 if m.group(1).startswith("en") else 2   # 영어 주소 이름 먼저(다른 말 주소 이름은 한국 몰에서 안 열릴 수 있음 · 검토 11/24)
+            if m.group(3) not in best or rank < best[m.group(3)][0]:
+                best[m.group(3)] = (rank, f"https://{GANNI_HOST}/en-kr/{m.group(2)}.html")
+    out.update({k: v[1] for k, v in best.items()})
     if not out:
         raise RuntimeError("사이트맵에 상품 주소 없음")
     return out
@@ -3897,23 +3912,29 @@ def _sku_fetch(brand, cc, q, codes, idx):
         ents = (idx or {}).get(q) or []
         if not ents:
             return {}, True   # 국내 몰 목록 전체에 이 스타일 없음(덜 끝난 목록이면 sku_stage가 '없음'으로 보지 않음)
-        return _shop_kr_pick(brand, q, codes, ents, bool(getattr(idx, "partial", False)))
+        return _shop_kr_pick(brand, q, codes, ents, idx)
     if brand == "가니":   # v1.45 가니 한국 상품 페이지(세계 사이트맵의 주소 이름 → /en-kr/)
         url = (idx or {}).get(q)
         if not url:
+            if getattr(idx, "partial", False):
+                return {"__noans__": set(codes)}, False   # 덜 끝난 사이트맵에 없음 — 답이 아님(앞 상태 유지 · 검토 11/24)
             return {"__unread__": set(codes)}, False   # 세계 사이트맵에 없는 스타일 — 한국 몰에 없다는 답이 아님(미확인)
         try:
             r = get(url)
         except RuntimeError as e:
-            if re.match(r"HTTP 4(?:04|10)", str(e)):
-                return {}, True   # 한국 몰에 그 상품 페이지 없음(넘김 없이 바로 404·410만 — 넘겨진 곳의 404는 답이 아님 · 검토 11/24)
+            if re.match(r"HTTP 4(?:04|10)", str(e)):   # 넘김 없이 바로 404·410만 — 넘겨진 곳의 404는 답이 아님
+                return {"__gnone__": set(codes)}, True   # 한국 몰에 그 상품 페이지 없음(이번 실행에서 가니 상품 페이지를 하나도 못 읽었으면 sku_stage가 답 없음으로 돌림)
             raise
         fu = urllib.parse.urlsplit(r.url)
         if not fu.path.endswith(f"-{q}.html"):
-            if fu.netloc == GANNI_HOST and re.fullmatch(r"/en-kr/(?:[a-z0-9-]+/)+", fu.path) and fu.path != "/en-kr/home/" and not fu.query:   # 한국 분류 화면(/en-kr/tops/ 꼴)
-                return {}, True   # 한국 몰이 상품 페이지 대신 한국 목록 화면으로 넘김 — 한국에서 안 팜(11/24 시험)
-            raise RuntimeError("상품 페이지가 한국 목록 화면이 아닌 곳으로 넘어감 — 이번 실행은 답으로 보지 않음")   # 다른 나라·첫 화면·점검·확인 화면 등(앞 상태 유지 · 검토 11/24)
-        return _ganni_pick(ganni_page(r.text, q), codes, url), False
+            seg = [x for x in fu.path.split("/") if x]
+            if (fu.netloc == GANNI_HOST and re.fullmatch(r"/en-kr/(?:[a-z0-9-]+/)+", fu.path) and not fu.query and not set(seg[1:]) & GANNI_NOT_LIST
+                    and len(re.findall(r'class="b-tile[ _"]', r.text)) >= 2):   # 한국 분류 화면(/en-kr/tops/ 꼴 · 상품 칸이 있는 화면)
+                return {"__gnone__": set(codes)}, True   # 한국 몰이 상품 페이지 대신 한국 분류 화면으로 넘김 — 한국에서 안 팜(11/24 시험)
+            raise RuntimeError("상품 페이지가 한국 분류 화면이 아닌 곳으로 넘어감 — 이번 실행은 답으로 보지 않음")   # 다른 나라·첫 화면·점검·로그인·검색·확인 화면 등(앞 상태 유지 · 검토 11/24)
+        got = _ganni_pick(ganni_page(r.text, q), codes, url)
+        _GANNI_OK[0] = True   # 이번 실행에서 한국 상품 페이지를 제대로 읽음
+        return got, False
     # 색인으로 찾는 브랜드
     url = idx.get(q) if idx else None
     if not url:
@@ -4370,6 +4391,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             if cc_ == "KR" and (b_, q_) in rep_url:
                 pre_by[(b_, cc_, q_)] = {q_: rep_url[(b_, q_)]}; continue
         want_by[(b_, cc_)].add(q_)
+    _GANNI_OK[0] = False   # v1.45
     _KR_PREF.clear()   # v1.42 받아 둔 한국 값의 판매처(국내 판매처 브랜드) — 그 판매처부터
     _KR_URL.clear()
     for (b_, cc_, q_), j_ in jobs.items():
@@ -4492,6 +4514,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     for th in ths: th.start()
     for th in ths: th.join(max(0.0, deadline + 60 - time.time()))
     _STOP.set()
+    if not _GANNI_OK[0]:   # v1.45 가니 상품 페이지를 하나도 못 읽은 실행 — 그날 가니 '없음'은 답이 아님(앞 상태 유지)
+        for k_, r_ in list(res.items()):
+            if k_[0] == "가니" and isinstance(r_.get("got"), dict) and r_["got"].get("__gnone__"):
+                r_["got"] = {"__noans__": set(r_["got"]["__gnone__"])}
+                cnt["none"] -= 1
     # 새 값 정가 확인 — 정가 표시(정가 명세·취소선·compare_at·나이키 fullPrice·크록스 retailPrice — lst)가 없는 새 값은 같은 상품의 다른 나라 값(이미 받아 둔 값·이번 정가 표시 값)과
     # 대표 상품의 나라 쌍 정가 비율 가운데값(브랜드별 · 3개 이상)으로 견줘 1.25배(SKU_BF) 넘게 싸 보이면 보류(할인가를 정가로 저장하지 않게 — 한국·해외 모두)
     rat = collections.defaultdict(list)
@@ -4642,7 +4669,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     # v1.32 모델 단위 국내 정가(대표 결정 2026-11-23 '2가') — 목록 품번(판매 중·예정)의 그 색상 국내 값이 없고, 같은 모델의 국내 색상 정가가 모두 같으면
     # 모델 번호 한 상품(code = 모델 · m.KR.lvl "model")으로 채움. 그 모델에서 국내 값이 빈 목록 품번이 없어지면 모델 상품도 뺌(색상 값이 앞섬) ·
     # 이번 실행에 그 모델을 국내에서 물었을 때만 새로 씀(빈 색상은 2일마다 묻고 그때 같이) · 국내 색상 정가가 서로 다르면 모델 값을 쓰지 않음(이전 모델 값도 뺌)
-    mout, n_mixed = {}, 0
+    mout, n_mixed, n_fab = {}, 0, 0
     def has_kr(i):
         x = items.get(i) or kept.get(i) or {}
         return bool(((x.get("m") or {}).get("KR") or {}).get("p"))
@@ -4655,11 +4682,20 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc == "KR" and isinstance(o, dict)}
         r = res.get((b, "KR", m_))
         o = it["m"].get("KR")
-        if r and "got" in r and "__model__" in r["got"] and SKU_BRANDS[b].get("fab"):   # v1.45 아미 — 국내 값이 없는 목록 품번(그 스타일 전체 · 이번에 묻지 않은 것도)의 원단이 국내 몰에 없으면
-            fab_ = r["got"].get("__fab__") or set()                                    # 모델 값(스타일 단위 — ERP 규칙 ②로 모든 원단을 덮음)을 쓰지 않음 · 자기 국내 값이 있는 품번(이전 값 포함)은 셈 밖(검토 11/24)
-            if any(_seg2(c) not in fab_ for (b2, c) in tgt if b2 == b and SKU_BRANDS[b]["q"](c) == m_ and not has_kr(iid(b, c))):
-                n_mixed += 1
+        if SKU_BRANDS[b].get("fab"):   # v1.45 아미 — 국내 값이 없는 목록 품번(그 스타일 전체 · 이번에 묻지 않은 것도)의 원단이 국내 몰에 없으면 모델 값(스타일 단위 — ERP 규칙 ②로
+            # 모든 원단을 덮음)을 쓰지 않고 받아 둔 모델 상품도 뺌 · 국내 원단 목록은 이번에 받은 것, 없으면 모델 상품에 남긴 것(fab) — 그 스타일을 묻지 않은 날은 그 품번의 국내 차례 날에만
+            # 판단(상태를 바꾸는 날이 차례 날이게) · 자기 국내 값(이번 실행 뒤에도 남는 값 — 이전 값 포함)이 있는 품번은 셈 밖(검토 11/24)
+            ran = bool(r and "got" in r and "__model__" in r["got"])
+            fab_ = set(r["got"].get("__fab__") or ()) if ran else (set(it["fab"]) if isinstance(it.get("fab"), list) else None)
+            def own_(c):
+                x = items.get(iid(b, c)) or kept.get(iid(b, c))
+                return bool(x and ((x.get("m") or {}).get("KR") or {}).get("p") and alive(x))
+            if fab_ is not None and any(_seg2(c) not in fab_ and (ran or _sku_slot(f"{b}|{c}|KR", SKU_ASK_KR, today))
+                                        for (b2, c) in tgt if b2 == b and SKU_BRANDS[b]["q"](c) == m_ and not own_(c)):
+                n_fab += 1
                 continue
+            if ran:
+                it["fab"] = sorted(fab_)   # 국내 몰에 있는 원단(공개 상품 정보) — 묻지 않은 날 판단용
         if r and "got" in r and "__model__" in r["got"]:
             full, ex, name, hint, url, lvl = r["got"]["__model__"]
             o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)   # 색상 값과 같은 가드(나이키 fullPrice는 가드 없음 · 크록스는 120일 할인 가드 — 검토 11/23)
@@ -4709,6 +4745,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         + (lambda sh: f" · 국내 판매처 정가 {sum(sh.values())}(" + " · ".join(f"{SHOP_KO.get(k, k)} {v}" for k, v in sorted(sh.items())) + ")" if sh else "")(
             collections.Counter(str((it['m'].get('KR') or {}).get('shop') or '?') for it in out if (it['m'].get('KR') or {}).get('src') == 'retail')) + ")"   # v1.42 판매처별
         + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
+        + (f" · 원단이 국내 몰에 없어 모델 값 안 씀 {band(n_fab)}" if n_fab else "")
         + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + (f" · Firecrawl 검색 {band(_FC['n'])}번" + (f"({_FC['stop']})" if _FC["stop"] else "") if _FC["n"] or _FC["stop"] else "") + _retail_net() + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
