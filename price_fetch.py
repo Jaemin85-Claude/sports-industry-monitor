@@ -3276,7 +3276,7 @@ def _art_fetch(brand, q, codes, pref=None):
     if not na <= sale * 5:
         raise _NoConfirm("정상가가 판매가보다 너무 높음 — 안 씀")
     nm = _clean_name(x.get("PRDT_NAME") or x.get("ENG_PRDT_NAME"))
-    hint = _sku_cat(" ".join(str(x.get(k) or "") for k in ("PRDT_NAME", "ENG_PRDT_NAME", "SY_CTGR_NAME", "ITEM_NAME", "CTGR_NAME_ALL")), None)
+    hint = _sku_cat(" ".join(str(x.get(k) or "") for k in ("PRDT_NAME", "ENG_PRDT_NAME")), None)   # 상품 이름으로만(분류 칸은 여러 분류가 섞여 '캠퍼스 00s 윈터 로우'가 샌들로 잡힘 — 11/24 실제 시험)
     ex = {"lst": True, "cur_price": sale, "src": "retail", "shop": shop}
     if not full_ok:
         ex["via"] = "search"   # 대표 결정 11/24 '중간안' — 정상가는 판매처 검색 자료(NRMAL_AMT)로 확인(상품 페이지에는 판매가만)
