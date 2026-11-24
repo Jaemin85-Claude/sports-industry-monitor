@@ -139,54 +139,50 @@ def art_page(host, row):
             "challenge": bool(re.search(r"turnstile|cf-chl|netfunnel", t[:20000], re.I))}
 
 
+
 def art(R):
-    for host, ch in (("grandstage.a-rt.com", "10002"), ("abcmart.a-rt.com", "10001")):
-        H = R.setdefault(host, {})
-        disc, full = [], []
-        for word in ["뉴발란스", "아디다스", "호카", "나이키", "반스"]:
-            res, e = art_rows(host, ch, word)
+    for host, ch, words in (("grandstage.a-rt.com", "10002", ["뉴발란스", "나이키"]), ("abcmart.a-rt.com", "10001", ["아디다스", "뉴발란스"])):
+        H = R.setdefault(host, {}); rows = []
+        for w in words:
+            res, e = art_rows(host, ch, w)
+            if not e:
+                rows += res["rows"]
+        disc = [x for x in rows if str(x.get("DISCOUNT_RATE") or "0") not in ("0", "")][:2]
+        full = [x for x in rows if str(x.get("DISCOUNT_RATE") or "0") in ("0", "")][:1]
+        H["pages"] = []
+        for x in disc + full:
+            u = f"https://{host}/product/new?prdtNo={x.get('PRDT_NO')}"
+            r, e = tg(u)
             if e:
-                H[word] = e; continue
-            rows = res["rows"]
-            H[word] = {"count": res["count"], "group": res["group"], "n": len(rows),
-                       "brands": sorted({str(x.get("BRAND_EN_NAME") or "") for x in rows})[:6], "mnftr": sorted({str(x.get("MNFTR_NAME") or "") for x in rows})[:6],
-                       "keys": sorted(k for k in (rows[0].keys() if rows else []) if PRICE_KEYS.search(k))}
-            for x in rows:
-                try:
-                    na, dc = float(x.get("NRMAL_AMT") or 0), float(x.get("PRDT_DC_PRICE") or 0)
-                except ValueError:
-                    continue
-                item = {k: str(x.get(k))[:60] for k in x if PRICE_KEYS.search(k)}
-                (disc if 0 < dc < na else full).append(item)
-        H["disc_n"], H["full_n"] = len(disc), len(full)
-        H["disc"] = disc[:4]; H["full"] = full[:2]
-        H["pages"] = [art_page(host, x) for x in (disc[:3] + full[:1])]
-        rt = []
-        for x in (disc[:2] + full[:1]):   # 품번으로 다시 검색해 같은 행이 나오는지
-            res, e = art_rows(host, ch, x.get("STYLE_INFO") or "")
-            rt.append([x.get("STYLE_INFO"), e or (res["count"], [str(y.get("STYLE_INFO")) for y in res["rows"][:5]], res["group"])])
-        H["roundtrip"] = rt
+                H["pages"].append({"u": u, "err": e}); continue
+            t = r.text
+            na, dc = str(x.get("NRMAL_AMT")), str(x.get("PRDT_DC_PRICE"))
+            H["pages"].append({"row": {k: str(x.get(k)) for k in ("STYLE_INFO", "NRMAL_AMT", "PRDT_DC_PRICE", "DISCOUNT_RATE")},
+                               "na_plain": t.count(na), "dc_plain": t.count(dc), "na_snip": sn(t, re.escape(na), 6, 200, 160), "dc_snip": sn(t, re.escape(dc), 4, 160, 120),
+                               "vars": sn(t, r"nrmal|normalAmt|nrmlAmt|prdtPrice|sellPrice|sellAmt|dcPrice|dscntRate|prdtDcPrice|NRMAL_AMT|PRDT_DC", 10, 200, 60),
+                               "ld": ld_all(t)[:1]})
 
 
 def smplus(R):
     b = "https://plus.shoemarker.co.kr"
-    for c in ["U740BM2", "뉴발란스", "아디다스"]:
-        x = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(c)}")
-        if not isinstance(x, tuple):
-            R[c] = x; continue
-        d, t = x
-        pl = list(dict.fromkeys(re.findall(r"/Product/ProductDetail\?ProductCode=(\d+)", t)))
-        R[c] = {"n": len(pl), "pl": pl[:6], "list_prices": sn(t, r"<del|line-through|price|원</", 8, 200, 80)}
-    pls = (R.get("뉴발란스") or {}).get("pl", [])[:3] + (R.get("U740BM2") or {}).get("pl", [])[:1]
+    pcs = ["55428"]
+    for w in ["뉴발란스", "나이키", "아식스"]:
+        x = page(f"{b}/Product/ProductSearchList?SWord={urllib.parse.quote(w)}")
+        if isinstance(x, tuple):
+            t = x[1]
+            pcs += list(dict.fromkeys(re.findall(r"/Product/ProductDetail\?ProductCode=(\d+)", t)))[:4]
+            R.setdefault("list_cards", []).extend(sn(t, r"ProductDetail\?ProductCode=\d+", 2, 900, 0))
     R["pages"] = []
-    for pc in pls:
+    for pc in list(dict.fromkeys(pcs))[:10]:
         x = page(f"{b}/Product/ProductDetail?ProductCode={pc}")
         if not isinstance(x, tuple):
-            R["pages"].append(x); continue
-        d, t = x
-        R["pages"].append({"pc": pc, "title_name": sn(t, r'name="ProductName"', 1, 160, 10), "code": sn(t, r"brand_code|품번", 3, 160, 30),
-                           "prices": sn(t, r"정상가|판매가|최종 판매가|소비자가|할인|<del|line-through|price-num|benefit-detail__price|item-summary__price|itemprop=\"price\"|ProductPrice|SalePrice|ConsumerPrice", 16, 220, 60),
-                           "hidden": re.findall(r'<input type="hidden" name="(\w*(?:Price|Amt|Cost)\w*)" value="([^"]*)"', t)[:12]})
+            R["pages"].append([pc, x]); continue
+        t = x[1]
+        i = t.find("price__unit")
+        R["pages"].append({"pc": pc, "name": (re.search(r'name="ProductName" value="([^"]*)"', t) or [None, ""])[1], "code": (re.search(r'class="brand_code">([^<]*)<', t) or [None, ""])[1],
+                           "before_unit": re.sub(r"\s+", " ", t[max(0, i - 900): i + 120]) if i >= 0 else None,
+                           "price_cls": sorted(set(re.findall(r'class="(price[^"]*|item-summary__price[^"]*|sale[^"]*|discount[^"]*|origin[^"]*)"', t)))[:30],
+                           "meta": sn(t, r'itemprop="price"|product:price|og:price', 3, 140, 20)})
 
 
 SITES2 = {"그랜드·ABC": art, "슈마커플러스": smplus}
