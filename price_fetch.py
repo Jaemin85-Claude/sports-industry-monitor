@@ -9,9 +9,13 @@ v1.42: (대표 결정 11/23 3다 '추천대로'·검색 주소 사용 '네' · �
     그랜드스테이지(채널 10002)는 늘 묻고 그 검색 결과의 채널 셈(GROUP_COUNT_CHNNL_NO)이 ABC마트(10001)를 가리키면 ABC마트도 물어 두 채널 상품을 함께 봄(정상가가 채널끼리 다르면 안 씀) ·
     값 m.KR.src "retail" · shop "grandstage"·"abcmart" · 받아 둔 값이 있으면 그 판매처부터 묻고 그 판매처가 못 받으면(오류) 이전 값 그대로 — 그 판매처에 없을 때만 다른 판매처 ·
     판매처가 바뀌면(29CM ↔ a-rt · 그랜드스테이지·ABC마트끼리는 같은 판매처 SHOP_FAM) 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 — 판매처끼리 정가 차이가 가짜 할인이 되지 않게) ·
-    받아 둔 판매처가 답은 했는데 정가를 확인 못 하면(_NoConfirm — 할인·묶음·정가 다름·판매자 다름·페이지 대조 실패) 다른 판매처로, 일시 오류(연결·5xx·막힘)는 이전 값 그대로이되
-    이전 값이 KR_PIN_DAYS(7)일을 넘으면 다른 판매처도 물음 · 색상 단위는 ABC마트 검색 오류여도 그랜드스테이지로 확인되면 씀 · 모델 단위는 검색 결과가 한 쪽(30개)보다 많으면 안 씀 ·
-    같은 묶음 안 브랜드마다 마지막 한국 일감이 끝나면 그 브랜드 해외 묶음 시작(언더아머 해외가 아식스 한국 일감을 기다리지 않게) · 독립 검토 3차례 반영 ·
+    받아 둔 값이 차례의 첫 판매처 것이면 그 판매처부터(고정) — 답은 했는데 정가를 확인 못 하면(_NoConfirm — 할인·묶음·정가 다름·판매자 다름·페이지 대조 실패) 다른 판매처로,
+    일시 오류(연결·5xx·막힘·오류 응답)는 이전 값 그대로이되 실패한 지 KR_PIN_DAYS(7)일을 넘으면 다른 판매처도 물음 · 29CM 브랜드인데 a-rt 값이면 고정 안 함(29CM 먼저 다시) ·
+    판매처 값은 정상가 칸을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 1.5배 넘게 바뀌면 다음 확인) · 출처 표시(src·shop·via)·주소는
+    받아들인 정가 것(크게 바뀜 보류 날은 앞 정가 것 · 전에 페이지로 확인한 같은 정가엔 via 안 붙임) · 중간안은 다른 채널 검색이 오류이거나 정상가보다 비싸게 파는 상품이 있으면 안 씀 ·
+    색상 단위는 ABC마트 검색 오류여도 그랜드스테이지 정가 상품으로 확인되면 씀 · 모델 단위는 검색 결과가 한 쪽(30개)보다 많으면 안 씀 · 검색 응답이 200인데 목록이 없으면 '없음'이 아니라 못 받음 ·
+    같은 묶음 안 브랜드마다 마지막 한국 일감이 끝나면 그 브랜드 해외 묶음 시작(해외 나라가 있는 브랜드 일감 먼저) · 요약 줄 끝 '29CM·a-rt 연결 안 됨·막음(이번 실행)'(대표 결정 11/24 —
+    일부 GitHub 서버에서 a-rt 연결 시간 초과 · 다음 실행에 다시 받으니 지켜보고, 잦으면 새 서버에서 다시 받기) · 독립 검토 4차례 반영 ·
     29CM 브랜드(뉴발란스·아디다스·반스)는 29CM 먼저, 29CM이 못 찾거나 못 받으면 a-rt(KR_RETAIL 순서) · 언더아머 한국(공식몰 접속 막음)·아식스(감시 브랜드 · 공식몰 접속 막음 —
     10/21 시험)는 a-rt만(모델 단위 — a-rt 품번 칸이 모델 번호 · 값 lvl "model" · 아식스 품번 = 신발 1xxx·옷 2xxx·가방·용품 3xxx + 영문 + 세 자리 숫자 + '-'·'.' 색상 — 구분 기호 없는 꼴은 받지 않음 · ERP 규칙 ② '첫 - 또는 . 앞부분') · 판매처에 없음은 kr_status unread(국내 공식 판매 없음이 아님) · 두 주소 한 줄(PACE a-rt ·
     주소마다 KR_GAP) · 하나라도 막으면 그 실행에서 a-rt 요청을 멈춤 · 요약 줄 '국내 판매처 정가 n(29CM a · ABC마트 b · 그랜드스테이지 c)' · 슈마커 플러스는 대표 결정 11/24 '모든 브랜드 사용' —
@@ -3187,6 +3191,8 @@ def _r29_fetch(brand, q, codes):
         raise RuntimeError("이번 실행에서 29CM이 막음 — 더 요청 안 함")   # 두 주소 중 하나라도 막으면 둘 다 멈춤(검토 11/24)
     tok = re.compile(r"(?<![0-9A-Z])" + re.escape(q) + r"(?![0-9A-Z])")
     d = _json(get(R29_SEARCH.format(urllib.parse.quote(q))))
+    if d.get("result") not in (None, "SUCCESS"):
+        raise RuntimeError("29CM 검색 응답이 성공이 아님")   # v1.42 200인데 오류 응답 — '판매처에 없음'으로 보지 않음(검토 11/24)
     its = d.get("data") if isinstance(d.get("data"), list) else []
     hit = [it for it in its if isinstance(it, dict) and str(it.get("frontBrandNameEng") or "").upper() == eng and str(it.get("frontBrandNo") or "") == bno
            and tok.search(str(it.get("itemName") or "").upper()) and re.fullmatch(r"\d{1,12}", str(it.get("itemNo") or ""))]
@@ -3226,14 +3232,16 @@ def _art_fetch(brand, q, codes, pref=None):
         return get(u)
     hit, grp, cerr = [], None, None
     for i, (ch, host, shop) in enumerate(ART_CH):
-        if grp is not None and not num(grp.get(ch)):
-            continue   # 검색 결과 채널 셈이 이 채널에 없다고 함(채널 셈이 없는 응답이면 다음 채널은 묻지 않음)
+        if grp is not None and not num(grp.get(ch)) and shop != pref:
+            continue   # 검색 결과 채널 셈이 이 채널에 없다고 함(채널 셈이 없는 응답이면 다음 채널은 묻지 않음 · 받아 둔 판매처 채널은 늘 물음 — 검토 11/24)
         try:
             d = _json(aget(ART_SEARCH.format(h=host, q=urllib.parse.quote(q), ch=ch)))
         except Exception as e:
             if i == 0 or mdl or _STOP.is_set() or set(ART_HOSTS) & _BLOCKED:
                 raise
             cerr = e; continue   # 색상 단위 — 앞 채널 상품으로 확인되면 씀(아래)
+        if not isinstance(d.get("SEARCH"), list) and d.get("SEARCH_COUNT") not in (0, "0"):
+            raise RuntimeError("a-rt 검색 응답 형식이 다름")   # 200인데 목록이 없음(오류 응답·형식 바뀜) — '판매처에 없음'으로 보지 않음(검토 11/24)
         if grp is None:
             grp = d.get("GROUP_COUNT_CHNNL_NO") if isinstance(d.get("GROUP_COUNT_CHNNL_NO"), dict) else {}
         rows = d.get("SEARCH") if isinstance(d.get("SEARCH"), list) else []
@@ -3242,6 +3250,8 @@ def _art_fetch(brand, q, codes, pref=None):
         hit += [(x, host, shop) for x in rows if isinstance(x, dict) and _sku_norm(x.get("STYLE_INFO")) == q
                 and str(x.get("BRAND_EN_NAME") or "").strip().upper() == eng and str(x.get("CHNNL_NO") or "") == ch
                 and re.fullmatch(r"\d{6,14}", str(x.get("PRDT_NO") or "")) and num(x.get("NRMAL_AMT"))]
+    def nc(msg):   # 확인 실패 — 다른 채널 검색이 오류였으면 그 오류(일시 오류 — 다른 채널에서 확인됐을 수 있음 · 검토 11/24)
+        raise cerr if cerr is not None else _NoConfirm(msg)
     single = [t for t in hit if not R29_BUNDLE.search(str(t[0].get("PRDT_NAME") or "").upper())]
     if not single:
         if cerr is not None:
@@ -3251,30 +3261,35 @@ def _art_fetch(brand, q, codes, pref=None):
         return {"__unread__": set(codes)}, True   # 판매처에 없음은 '국내 공식 판매 없음'이 아님 — 미확인
     nas = {num(t[0].get("NRMAL_AMT")) for t in single}
     if max(nas) > min(nas) * 1.005:
-        raise _NoConfirm(f"같은 품번 상품 {len(single)}개의 정상가가 다름 — 어느 것이 정가인지 몰라 안 씀")
+        nc(f"같은 품번 상품 {len(single)}개의 정상가가 다름 — 어느 것이 정가인지 몰라 안 씀")
     na = min(nas)
     dc = lambda t: num(t[0].get("PRDT_DC_PRICE"))
     order = [c[2] for c in ART_CH]
     cand = [t for t in single if dc(t) and dc(t) <= na * 1.005]
     cand.sort(key=lambda t: (abs(dc(t) - na) > na * 0.005, t[2] != pref, order.index(t[2])))   # 할인 아닌 상품 → 받아 둔 판매처 → 그랜드스테이지
     if not cand:
-        raise _NoConfirm("검색 결과에 판매가 칸이 없음 — 안 씀")
+        nc("검색 결과에 판매가 칸이 없음 — 안 씀")
     x, host, shop = cand[0]
     sale = dc(cand[0])
     full_ok = abs(sale - na) <= na * 0.005
+    if not full_ok:   # 중간안(정상가는 검색 자료로만) — 더 엄격하게(검토 11/24)
+        if cerr is not None:
+            raise cerr   # 다른 채널 정상가와 대조하지 못함
+        if any(not dc(t) or dc(t) > na * 1.005 for t in single):
+            raise _NoConfirm("판매가 칸이 없거나 정상가보다 비싸게 파는 상품이 있어 검색 자료 정상가를 믿지 않음 — 안 씀")
     pn = str(x["PRDT_NO"])
     u = ART_PAGE.format(h=host, n=pn)
     t = aget(u).text
     meta = lambda prop: re.findall(r'<meta[^>]+property="' + re.escape(prop) + r'"[^>]+content="([^"]*)"', t)
     ids, ps, curs = set(meta("product:retailer_item_id")), {num(v) for v in meta("product:price:amount")} - {None}, set(meta("product:price:currency"))
     if ids != {pn}:
-        raise _NoConfirm("상품 페이지 상품 번호가 다름 — 다른 상품")
+        nc("상품 페이지 상품 번호가 다름 — 다른 상품")
     if len(ps) != 1 or curs - {"KRW"}:
-        raise _NoConfirm("상품 페이지 가격이 없거나 여럿 — 안 씀")
+        nc("상품 페이지 가격이 없거나 여럿 — 안 씀")
     if abs(next(iter(ps)) - sale) > sale * 0.005:
-        raise _NoConfirm("상품 페이지 가격과 검색 결과 " + ("정상가" if full_ok else "판매가") + "가 다름 — 안 씀")
+        nc("상품 페이지 가격과 검색 결과 " + ("정상가" if full_ok else "판매가") + "가 다름 — 안 씀")
     if not na <= sale * 5:
-        raise _NoConfirm("정상가가 판매가보다 너무 높음 — 안 씀")
+        nc("정상가가 판매가보다 너무 높음 — 안 씀")
     nm = _clean_name(x.get("PRDT_NAME") or x.get("ENG_PRDT_NAME"))
     hint = _sku_cat(" ".join(str(x.get(k) or "") for k in ("PRDT_NAME", "ENG_PRDT_NAME")), None)   # 상품 이름으로만(분류 칸은 여러 분류가 섞여 '캠퍼스 00s 윈터 로우'가 샌들로 잡힘 — 11/24 실제 시험)
     ex = {"lst": True, "cur_price": sale, "src": "retail", "shop": shop}
@@ -3286,16 +3301,32 @@ def _art_fetch(brand, q, codes, pref=None):
 _KR_PREF = {}   # v1.42 (브랜드, 묻는 열쇠) → (받아 둔 한국 값의 판매처 shop, 그 값이 이전 값인 날 수) — 그 판매처부터 묻기(검토 11/24)
 
 
+def _retail_net():
+    """v1.42 요약 줄 — 이번 실행에서 국내 판매처에 연결이 안 됐거나(robots.txt를 못 받음·연결 시간 초과) 막혔으면 한 마디(대표 결정 11/24 '추천대로' — 일부 GitHub 서버에서
+    a-rt 연결 시간 초과(11/24 임시 시험 7번 중 1번) · 하루 못 받아도 다음 실행에 다시 받으니 일단 지켜보고 잦으면 새 서버에서 다시 받기를 붙임)"""
+    out = []
+    for nm, ga, hosts in (("29CM", "이", R29_HOSTS), ("a-rt", "가", ART_HOSTS)):
+        if set(hosts) & _BLOCKED:
+            out.append(f"{nm}{ga} 막음(이번 실행)")
+        elif any(isinstance(_ROB.get("https://" + h), str) or _DOWN.get(h, 0) > 0 for h in hosts):
+            out.append(f"{nm} 연결 안 됨(이번 실행)")
+    return "".join(" · " + x for x in out)
+
+
 def _kr_retail(brand, q, codes):
     """v1.42 국내 판매처 차례(KR_RETAIL — 29CM → 그랜드스테이지·ABC마트, 브랜드에 있는 것만) — 앞 판매처가 값을 주면 그것 ·
     못 찾음(미확인)·못 받음(오류)이면 다음 판매처 · 끝까지 값이 없으면 못 받음(오류)이 하나라도 있으면 첫 오류(이전 값 그대로 · 국내 상태 앞 상태), 아니면 미확인.
-    받아 둔 값이 있으면 그 판매처부터 묻고(_KR_PREF) — 그 판매처의 일시 오류(연결·5xx·막힘)는 그대로 오류(이전 값 · 판매처가 오가지 않게)이되 이전 값이 KR_PIN_DAYS일을 넘으면
-    다른 판매처도 물음 · 그 판매처가 답은 했는데 정가를 확인 못 함(_NoConfirm — 할인·묶음·정가 다름 등)·없음이면 다른 판매처(판매처가 바뀌면 새 값 — sku_stage · 검토 11/24)"""
+    받아 둔 값이 차례의 첫 판매처 것이면 고정(_KR_PREF) — 그 판매처의 일시 오류(연결·5xx·막힘·오류 응답)는 그대로 오류(이전 값 · 판매처가 오가지 않게)이되 실패한 지
+    KR_PIN_DAYS일을 넘으면 다른 판매처도 물음 · 그 판매처가 답은 했는데 정가를 확인 못 함(_NoConfirm — 할인·묶음·정가 다름 등)·없음이면 다른 판매처(판매처가 바뀌면 새 값 — sku_stage) ·
+    뒤 판매처 값(29CM 브랜드인데 a-rt)이면 고정하지 않고 차례대로(29CM이 다시 되면 29CM으로 · 검토 11/24)"""
     h = SKU_BRANDS[brand]
     pref, pin_age = _KR_PREF.get((brand, q)) or (None, 0)
+    srcs = [x for x in KR_RETAIL if h.get(x)]
     psrc = "r29" if pref == "29cm" else "art" if SHOP_FAM.get(pref) == "a-rt" else None
+    if psrc != srcs[0]:
+        psrc = None   # 받아 둔 판매처가 차례의 첫 판매처가 아니면(29CM 브랜드인데 a-rt 값) 고정하지 않음 — 29CM(공식 판매자 확인)을 다시 먼저 물음(검토 11/24)
     err, ans = None, None
-    for src in sorted([x for x in KR_RETAIL if h.get(x)], key=lambda x: x != psrc):
+    for src in sorted(srcs, key=lambda x: x != psrc):
         try:
             got, none = (_r29_fetch(brand, q, codes) if src == "r29" else _art_fetch(brand, q, codes, pref))
         except Exception as e:
@@ -3727,6 +3758,9 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국, 1 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤에 시작)
     for k in order:
         lanes.setdefault((0 if k[1] == "KR" else 1, ("29cm" if SKU_BRANDS[k[0]].get("r29") else "a-rt" if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
+    for (ph_, lk_), ks_ in lanes.items():   # v1.42 함께 쓰는 한국 묶음('29cm'·'a-rt') — 다시 받기 다음엔 해외 나라가 있는 브랜드(언더아머) 일감 먼저(그 브랜드 해외 묶음이 늦게 시작하지 않게 · 검토 11/24)
+        if ph_ == 0 and lk_ in ("29cm", "a-rt"):
+            ks_.sort(key=lambda k: (not jobs[k]["ref"], len(SKU_BRANDS[k[0]]["cc"]) == 1))
     kr_done = {b: threading.Event() for b in SKU_BRANDS}
     kr_b = {k[0] for (ph_, _), ks_ in lanes.items() if ph_ == 0 for k in ks_}   # v1.42 한국 일감이 '29cm'·'a-rt' 묶음에 있는 브랜드도 — 그 묶음이 끝나야 해외 묶음 시작(검토 11/24)
     for b in SKU_BRANDS:
@@ -3749,7 +3783,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             os_ = [(((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get("KR")) or {} for c_ in j_["codes"]]
             sh_ = {o_.get("shop") for o_ in os_} - {None}
             if len(sh_) == 1:
-                _KR_PREF[(b_, q_)] = (sh_.pop(), max((age(o_["stale_since"]) for o_ in os_ if o_.get("stale_since")), default=0))
+                _KR_PREF[(b_, q_)] = (sh_.pop(), max((max(0, age(o_["stale_since"]) - SKU_DAYS) for o_ in os_ if o_.get("stale_since")), default=0))   # 실패한 지 날 수(stale_since = 마지막으로 받은 날 · 다시 받기는 SKU_DAYS 뒤부터 — 검토 11/24)
     _IDX_PAGES[0] = 0
     shown = set()
     s0 = time.time()
@@ -3942,18 +3976,29 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             fam = lambda x: SHOP_FAM.get(x, x)
             if o and (o.get("shop") or ex.get("shop")) and (o.get("src"), fam(o.get("shop"))) != (ex.get("src"), fam(ex.get("shop"))):
                 o = {}   # v1.42 판매처가 바뀜(29CM ↔ a-rt · 공식몰 ↔ 판매처 — 그랜드스테이지·ABC마트끼리는 같은 판매처) — 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 · 검토 11/24)
-            o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키", url, age)
+            rtl = ex.get("src") == "retail" or o.get("src") == "retail"
+            o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키" or ex.get("src") == "retail", url, age)   # v1.42 판매처 값은 정상가 칸(29CM consumerPrice·a-rt NRMAL_AMT)을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 크게 바뀜은 다음 확인 — 검토 11/24)
+            acc = o2.get("p") == round(full, 2)   # v1.42 이번 값을 정가로 받아들였는지(크게 바뀜 보류면 앞 정가 그대로)
             if o2.get("url") is None:
                 o2.pop("url", None)
             if lvl:
                 o2["lvl"] = lvl   # 모델 정가(색상별로 다를 수 있음 — 페이지가 모델 단위)
             else:
                 o2.pop("lvl", None)
-            for k_ in ("src", "shop", "via"):   # v1.40 국내 판매처 정가 표시(m.KR.src "retail" · shop "29cm" — 없으면 공식몰 정가) · v1.42 via "search"(정상가는 판매처 검색 자료로 확인)
-                if ex.get(k_):
-                    o2[k_] = ex[k_]
-                else:
-                    o2.pop(k_, None)
+            if acc or not rtl:
+                keep_conf = bool(o) and not o.get("via") and abs((o.get("p") or 0) - full) <= full * 0.005 and fam(o.get("shop")) == fam(ex.get("shop"))
+                for k_ in ("src", "shop", "via"):   # v1.40 국내 판매처 정가 표시(m.KR.src "retail" · shop "29cm" — 없으면 공식몰 정가) · v1.42 via "search"(정상가는 판매처 검색 자료로 확인)
+                    v_ = None if (k_ == "via" and keep_conf) else ex.get(k_)   # 전에 페이지로 확인한 같은 정가에는 via를 붙이지 않음
+                    if v_:
+                        o2[k_] = v_
+                    else:
+                        o2.pop(k_, None)
+            else:
+                for k_ in ("src", "shop", "via", "url"):   # v1.42 앞 정가를 지킨 날(크게 바뀜 보류) — 출처 표시·주소도 앞 정가 것 그대로(검토 11/24)
+                    if o.get(k_):
+                        o2[k_] = o[k_]
+                    else:
+                        o2.pop(k_, None)
             it["m"][cc] = o2; n_ok += 1; n_new += int(was_new); n_kr += int(cc == "KR")
             if name and (cc == "KR" or not it.get("name")):
                 it["name"] = name
@@ -4058,7 +4103,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         + (lambda sh: f" · 국내 판매처 정가 {sum(sh.values())}(" + " · ".join(f"{SHOP_KO.get(k, k)} {v}" for k, v in sorted(sh.items())) + ")" if sh else "")(
             collections.Counter(str((it['m'].get('KR') or {}).get('shop') or '?') for it in out if (it['m'].get('KR') or {}).get('src') == 'retail')) + ")"   # v1.42 판매처별
         + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
-        + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + (f" · Firecrawl 검색 {band(_FC['n'])}번" + (f"({_FC['stop']})" if _FC["stop"] else "") if _FC["n"] or _FC["stop"] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
+        + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + (f" · Firecrawl 검색 {band(_FC['n'])}번" + (f"({_FC['stop']})" if _FC["stop"] else "") if _FC["n"] or _FC["stop"] else "") + _retail_net() + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
