@@ -83,6 +83,8 @@ jobs:
           # v2026-11-22 price_fetch v1.29 SKU 단계: 판매·예정 상품 비공개 목록(주소·토큰은 Secrets에만 · 이 단계에만 넘김 · 로그에 안 찍음) — 없으면 건너뜀
           ERP_SKU_URL: ${{ secrets.ERP_SKU_URL }}
           ERP_SKU_TOKEN: ${{ secrets.ERP_SKU_TOKEN }}
+          # v2026-11-24 price_fetch v1.41: 아크테릭스 한국 공식몰 상품 페이지 주소 검색(Firecrawl — 검색만 · 키는 이 단계에만 넘김 · 로그에 안 찍음) — 없으면 새 검색은 건너뜀
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: python price_fetch.py
       - name: Note price failure
         if: steps.price.outcome == 'failure'

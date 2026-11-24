@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.41: (대표 결정 11/23 '2가' — 아크테릭스 한국은 Firecrawl 검색으로 국내 공식몰 상품 페이지 주소만 찾고 정가는 우리 봇 · 정기 SKU 차례 11/24) SKU 단계 '아크테릭스' 국내 정가 —
+    목록 품번 = 모델 번호(글로벌 품번 X0000…에서 X와 앞의 0을 뗀 숫자 · X0000… 꼴로 와도 같게 정리 · 대표 상품 모델과 같으면 뺌) → Firecrawl 검색(api.firecrawl.dev/v2/search ·
+    'site:arcteryx.co.kr X000010276' 꼴 — 11/24 시험: 글로벌 품번·한국 품번 모두 공식몰 상품 페이지가 나옴) → arcteryx.co.kr/products/view/번호 페이지를 우리 봇이 받아 JSON-LD sku(한국 품번
+    영문 5자 + 모델 번호 — AJQSM10276)가 이 모델일 때만 정가(기존 읽는 법 — 화면 데이터 retail_price) · 같은 모델 시즌 페이지가 여럿이면(26SS·26FW) 3개까지 받아 정가가 모두 같을 때만(주소는 가장 최근 시즌) ·
+    찾은 주소는 저장해 다음부터 검색 없이 그 주소부터(keep · 그 주소가 다른 상품·없는 페이지면 검색으로 다시) · 값 lvl "model"(시즌·색상 구분 없는 모델 정가) · 검색이 못 찾으면 kr_status unread
+    ('국내 공식 판매 없음'이 아님 — 꼬리표 안 만듦) · Firecrawl은 검색만(페이지는 Firecrawl로 읽지 않음) · 한 실행 검색 FC_MAX 8번(1번 2크레딧) · 아직 못 찾은 품번은 14일마다(FC_ASK_DAYS) 다시 검색 ·
+    키(GitHub Secrets FIRECRAWL_API_KEY — update.yml 해외 정가 단계에만 넘김)가 없으면 새 검색은 건너뛰고 받아 둔 주소만 다시 받음 · 크레딧 부족(HTTP 402)이면 그 실행 검색을 멈춤 · 요약 줄 'Firecrawl 검색 n번'(구간).
 v1.40: (대표 결정 11/23 3다 '추천대로' · 검색 주소 사용 '네' — 공식몰이 우리 봇을 막은 브랜드는 우리 봇을 허용하는 국내 판매처 정가) 국내 판매처 29CM로 뉴발란스·아디다스·반스·노스페이스
     국내 정가(SKU 단계 · 한국만) — 29CM 화면이 부르는 검색 주소(search-api.29cm.co.kr · robots.txt 없음 = 허용)로 품번 → 그 브랜드관 상품(SKU_BRANDS r29 = 영문 브랜드·브랜드관 번호 —
     뉴발란스 (주)이랜드 · 노스페이스 (주)영원 · 아디다스·반스 29CM 직접 판매 · 상품 이름에 품번이 낱말로 있을 때만 · 같은 품번 여러 상품이면 정가 칸이 모두 같을 때만) → 공개 상품 페이지
@@ -2641,6 +2648,13 @@ NIKE_STYLE = NIKE_FEED.split("&filter=productInfo")[0] + "&filter=productInfo.me
 
 # 브랜드 → slug(id 앞머리) · cc(받는 나라) · q(품번 → 묻는 열쇠) · rx(받을 품번 모양) · norm(품번 정리) · idx(색인으로 찾음) ·
 # model(모델 페이지 정가만 읽혀 색상을 확인 못 함 → 목록 색상 품번 대신 모델 번호로 한 상품 · 값 lvl "model" — 목록 색상 품번은 파일에 안 남음)
+def _arc_norm(c):
+    """v1.41 아크테릭스 목록 품번 → 모델 번호(X0000…·앞의 0을 뗀 숫자 · 색상이 붙어 오면(29582-BLACK) 모델 번호만 — 값은 모델 단위 lvl "model"이라 ERP 규칙 ②로 맞음) —
+    숫자 모델 꼴이 아니면 그대로(품번 모양이 다름으로 셈)"""
+    m = re.fullmatch(r"X?0*(\d{3,6})(?:[-_/][0-9A-Z][0-9A-Z \-_/]*)?", str(c or "").upper())
+    return str(int(m.group(1))) if m else str(c or "").upper()
+
+
 def _sku_model(c): return c.split("-")[0]
 SKU_BRANDS = {
     "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c), "mfill": True},
@@ -2658,6 +2672,8 @@ SKU_BRANDS = {
     "아디다스": {"slug": "adidas", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,2}\d{4,5}$", "r29": ("ADIDAS", "2178", ("29CM", "아디다스"))},
     "반스": {"slug": "vans", "cc": ("KR",), "q": lambda c: c, "rx": r"^VN[0-9A-Z]{8,12}$", "r29": ("VANS", "2313", ("29CM", "브이에프", "VF"))},
     "노스페이스": {"slug": "tnf", "cc": ("KR",), "q": lambda c: c, "rx": r"^N[A-Z0-9]{6,9}$", "r29": ("THE NORTH FACE", "7789", ("영원",))},
+    # v1.41 아크테릭스 한국(대표 결정 11/23 '2가') — 목록 품번 = 모델 번호(norm) · Firecrawl 검색으로 공식몰 상품 페이지 주소 → 우리 봇이 정가 · 찾은 주소는 keep
+    "아크테릭스": {"slug": "arc", "cc": ("KR",), "q": lambda c: c, "rx": r"^\d{3,6}$", "norm": _arc_norm, "keep": ("KR",), "fc": True},
 }
 
 
@@ -2842,6 +2858,49 @@ R29_SEARCH = "https://search-api.29cm.co.kr/api/v4/products?keyword={}"   # v1.4
 R29_WWW = "https://www.29cm.co.kr"
 R29_HOSTS = ("search-api.29cm.co.kr", "www.29cm.co.kr")
 R29_BUNDLE = re.compile(r"(?i)(?:(?<![A-Z])SET(?![A-Z])|세트|셋업|기획|묶음|\d+\s*\+\s*\d+|\d+\s*(?:PACK|팩|P)(?![A-Z0-9])|패키지|PACKAGE)")   # v1.40 묶음·세트 상품(정가가 한 상품 값이 아님 — 검토 11/24)
+ARC_KR_VIEW = "https://arcteryx.co.kr/products/view/{}"   # v1.41 아크테릭스 한국 공식몰 상품 페이지(대표 상품과 같은 읽는 법)
+ARC_DUP = 3          # 같은 모델 시즌 페이지를 이만큼까지 받아 정가가 모두 같을 때만(0.5% 안)
+FC_URL = "https://api.firecrawl.dev/v2/search"   # v1.41 Firecrawl 검색 — 국내 공식몰 상품 페이지 주소를 찾는 데만(대표 결정 11/23 '2가' · 페이지는 우리 봇)
+FC_ENV = "FIRECRAWL_API_KEY"
+FC_MAX = 8           # 한 실행 Firecrawl 검색 최대(1번 2크레딧 — 찾은 주소는 저장해 다시 검색하지 않음)
+FC_ASK_DAYS = 14     # 일 — 국내 공식몰 주소를 아직 못 찾은 품번을 다시 검색하는 주기(품번 해시로 정한 날 — 파일에 기록 안 남김)
+_FC = {"n": 0, "stop": None}
+_FC_LOCK = threading.Lock()
+
+
+def _fc_left():
+    return bool(os.environ.get(FC_ENV, "").strip()) and _FC["n"] < FC_MAX and not _FC["stop"]
+
+
+def _fc_search(query):
+    """v1.41 Firecrawl 검색 → 결과 주소 목록. 키·검색어·응답 글은 찍지 않음(오류는 HTTP 코드·종류만) · 한 실행 FC_MAX번 · 402(크레딧 부족)·401/403(키 오류)이면 그 실행 검색을 멈춤"""
+    key = os.environ.get(FC_ENV, "").strip()
+    with _FC_LOCK:
+        if not key or _FC["stop"] or _FC["n"] >= FC_MAX:
+            raise Skip("Firecrawl 검색 안 함(" + ("키 없음" if not key else _FC["stop"] or "이번 실행 한도") + ")")
+        _FC["n"] += 1
+    try:
+        r = requests.post(FC_URL, json={"query": query, "limit": 5, "sources": [{"type": "web"}]},
+                          headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": UA}, timeout=60)
+    except requests.RequestException as e:
+        raise RuntimeError(f"Firecrawl 검색 연결 오류({type(e).__name__})")
+    if r.status_code in (401, 402, 403):
+        _FC["stop"] = {401: "키 오류(HTTP 401)", 402: "크레딧 부족(HTTP 402)", 403: "키 오류(HTTP 403)"}[r.status_code]
+    if r.status_code != 200:
+        raise RuntimeError(f"Firecrawl 검색 HTTP {r.status_code}")
+    try:
+        d = r.json()
+    except ValueError:
+        raise RuntimeError("Firecrawl 검색 응답이 JSON 아님")
+    web = (d.get("data") or {}).get("web") if isinstance(d.get("data"), dict) else d.get("data")
+    return [str(x.get("url") or "") for x in (web if isinstance(web, list) else []) if isinstance(x, dict)]
+
+
+def _arc_season(html):
+    m = re.search(r'season\\*"\s*:\s*\\*"(\d{4})/(SS|FW)', html)
+    return (int(m.group(1)), m.group(2) == "FW") if m else (0, False)
+
+
 
 
 def r29_single(name, code, rx):
@@ -3140,6 +3199,46 @@ def _sku_fetch(brand, cc, q, codes, idx):
         for c in codes:   # 모델 단위 브랜드 — 목록 품번이 곧 모델 번호(sku_list)
             got[c] = (full, ex, name, None, fin, "model")
         return got, False
+    if SKU_BRANDS[brand].get("fc"):   # v1.41 아크테릭스 한국 — 받아 둔 주소(keep)부터, 없거나 다른 상품·없는 페이지면 Firecrawl 검색으로 주소만 찾고 → 우리 봇이 상품 페이지 정가
+        mno = int(q); gx = f"X{mno:09d}"
+        krx = re.compile(rf"^[A-Z]{{4,6}}0*{mno}$")
+        def read(vids):
+            pages = []
+            for vid in vids[:ARC_DUP]:
+                u = ARC_KR_VIEW.format(vid)
+                try:
+                    r = get(u)
+                except RuntimeError as e:
+                    if re.match(r"(?:넘겨진 주소: )?HTTP 40[4]|(?:넘겨진 주소: )?HTTP 410", str(e)):
+                        continue   # 없는 페이지(시즌이 지나 빠짐) — 다른 후보로
+                    raise
+                ks = sorted({str(n.get("sku") or "").upper() for n in _ld_nodes(r.text)
+                             if _types(n) & {"product", "productgroup"} and krx.match(str(n.get("sku") or "").upper())})
+                if len(ks) != 1:
+                    continue   # 이 모델 페이지가 아님(다른 모델·한국 품번이 여럿)
+                full, ex = page_price(r.text, ks[0], "KRW", [ks[0].lower()])
+                if not ex.get("lst"):
+                    raise RuntimeError("화면 데이터 정가(retail_price)를 못 읽음 — 판매가를 정가로 쓰지 않음")
+                pages.append((_arc_season(r.text), full, ex, _ld_name(r.text), r.url if f"/products/view/{vid}" in r.url else u))
+            return pages
+        pre = (idx or {}).get(q) if isinstance(idx, dict) else None
+        pv = re.findall(r"/products/view/(\d+)", pre or "")
+        pages, searched = (read(pv[:1]) if pv else []), False
+        if not pages:
+            if not _fc_left():
+                if pv:
+                    raise RuntimeError("받아 둔 주소에 이 모델 정가 없음 — 이번 실행은 검색 안 함")
+                return {"__noans__": set(codes)}, False   # 검색을 못 함(키 없음·한도) — 답을 못 받은 것(앞 상태 유지)
+            urls = _fc_search(f"site:arcteryx.co.kr {gx}"); searched = True
+            vids = [v for v in dict.fromkeys(re.findall(r"^https://(?:www\.)?arcteryx\.co\.kr/products/view/(\d+)", "\n".join(urls), re.M)) if v not in pv]
+            pages = read(vids)
+        if not pages:
+            return {"__unread__": set(codes)}, False   # 검색이 못 찾음 — '국내 공식 판매 없음'이 아님(미확인)
+        ps = [x[1] for x in pages]
+        if max(ps) > min(ps) * 1.005:
+            raise RuntimeError(f"시즌 페이지 {len(pages)}개의 정가가 다름 — 어느 것이 지금 정가인지 몰라 안 씀")
+        sea, full, ex, nm, u = max(pages, key=lambda x: x[0])   # 주소는 가장 최근 시즌 페이지
+        return {c: (full, ex, nm, None, u, "model") for c in codes}, False
     if SKU_BRANDS[brand].get("r29"):   # v1.40 국내 판매처 29CM — 검색 주소로 품번 → 그 브랜드관 한 상품 → 공개 상품 페이지 정가(검색 결과 정가 칸과 같을 때만) · 다시 받을 때도 같은 길
         eng, bno, sellers = SKU_BRANDS[brand]["r29"]
         rx = SKU_BRANDS[brand].get("rx") or r"^$"
@@ -3411,8 +3510,10 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     continue   # 이전 값 — 3일마다
                 kind = "ref"
             else:
-                if not _sku_slot(key, SKU_ASK_KR if cc == "KR" else SKU_ASK_DAYS, today):
-                    continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날)
+                if not _sku_slot(key, (FC_ASK_DAYS if h.get("fc") else SKU_ASK_KR) if cc == "KR" else SKU_ASK_DAYS, today):
+                    continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날) · v1.41 Firecrawl 검색으로 찾는 브랜드는 14일마다
+                if h.get("fc") and not os.environ.get(FC_ENV, "").strip():
+                    continue   # v1.41 검색 키가 없으면 새로 찾지 않음(받아 둔 주소만 다시 받음)
                 kind = "new"
             j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0})
             j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"
@@ -3493,6 +3594,9 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                         with rlock:
                             cnt["noidx"] += 1; noidx_k.add(k)
                         continue
+                if SKU_BRANDS[b].get("fc") and pre is None and not _fc_left():
+                    with rlock: cnt["left"] += 1   # v1.41 받아 둔 주소가 없고 이번 실행 검색을 더 못 함(한도·크레딧·키) — 다음 실행에
+                    continue
                 used = pre or ix   # v1.37 이번에 쓴 색인(덜 끝난 색인이면 partial)
                 try:
                     try:
@@ -3755,7 +3859,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         + (f" — 그중 모델 단위 국내 {sum(1 for it in out if it['id'] in mout)}" if mout else "")
         + (lambda nr: f" · 국내 판매처 정가 {nr}" if nr else "")(sum(1 for it in out if ((it['m'].get('KR') or {}).get('src') == 'retail'))) + ")"
         + (f" · 모델 색상 정가가 달라 모델 값 안 씀 {band(n_mixed)}" if n_mixed else "")
-        + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
+        + f" · 이번 실행 요청 {band(cnt['req'] + cnt['fail'])}번" + (f"(+ 색인 목록 화면 {band(_IDX_PAGES[0])}쪽)" if _IDX_PAGES[0] else "") + (f" · Firecrawl 검색 {band(_FC['n'])}번" + (f"({_FC['stop']})" if _FC["stop"] else "") if _FC["n"] or _FC["stop"] else "") + f" · 받음 {n_ok}(새 값 {n_new} · 한국 {n_kr}) · 못 받음 {band(cnt['fail'])} · 공식몰에 없음 {band(cnt['none'])}묶음"
         + (f" · 정가 확인 보류 {band(n_hold)}" if n_hold else "") + (f" · 남은 차례 {band(cnt['left'])}(다음 실행)" if cnt["left"] else "")
         + (lambda ks: f" · 한국 값 없는 상품 {len(ks)}(국내 공식몰에 없음 {ks.count('none')} · 미확인 {ks.count('unread')})" if ks else "")([it["kr_status"] for it in out if it.get("kr_status")])
         + (f" · 색인 못 만듦 {band(cnt['noidx'])}" if cnt["noidx"] else "") + f" · 약 {-(-int(time.time() - s0) // 60)}분" + (" · 시험 목록" if test else ""))
@@ -4038,6 +4142,8 @@ def main():
     rep_codes = collections.defaultdict(set)
     for p in PRODUCTS:
         rep_codes[p["brand"]].add(_sku_norm(p["code"]))
+        if SKU_BRANDS.get(p["brand"], {}).get("norm"):   # v1.41 목록 품번과 같은 꼴로도(아크테릭스 대표 상품 X000010276 = 목록 모델 번호 10276)
+            rep_codes[p["brand"]].add(SKU_BRANDS[p["brand"]]["norm"](_sku_norm(p["code"])))
     if busy:
         log("SKU 정가: 대표 상품 묶음이 안 끝나 이번 실행은 건너뜀 — 받아 둔 상품은 그대로")
         sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
