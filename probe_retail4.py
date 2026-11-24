@@ -3,6 +3,7 @@ import base64, contextlib, io, json, os, re, subprocess, tempfile, time, traceba
 from html import unescape
 from concurrent.futures import ThreadPoolExecutor
 import price_fetch as pf
+import requests
 
 PUB = """-----BEGIN PUBLIC KEY-----
 MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAv/mmzIlXG45XqvFPyeSc
@@ -142,6 +143,10 @@ def art_page(host, row):
 
 
 def realrun(R):
+    try:
+        import socket; R['ip'] = '.'.join(requests.get('https://api.ipify.org', timeout=6).text.split('.')[:2])
+    except Exception as e:
+        R['ip'] = type(e).__name__
     for h_ in pf.SKU_KR_HOSTS:
         pf.HOST_GAP[h_] = max(pf.HOST_GAP.get(h_, 0), pf.KR_GAP)
     pf._PACE.update(pf.pace_map(pf.PRODUCTS))
