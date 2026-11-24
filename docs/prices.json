@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 13:19 KST",
+ "generated_at": "2026-11-24 14:23 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -23660,6 +23660,27 @@
    }
   },
   {
+   "id": "s-nb-mr530ad",
+   "brand": "뉴발란스",
+   "name": "MR530AD",
+   "code": "MR530AD",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://abcmart.a-rt.com/product/new?prdtNo=1010097176",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "abcmart"
+    }
+   }
+  },
+  {
    "id": "s-nb-mr530ka",
    "brand": "뉴발란스",
    "name": "NBPDGF718S / MR530KA (SILVER)",
@@ -23702,6 +23723,27 @@
    }
   },
   {
+   "id": "s-nb-mr530ta",
+   "brand": "뉴발란스",
+   "name": "MR530TA",
+   "code": "MR530TA",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://abcmart.a-rt.com/product/new?prdtNo=1010098634",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "abcmart"
+    }
+   }
+  },
+  {
    "id": "s-nb-u204lmmc",
    "brand": "뉴발란스",
    "name": "NBPDGF766I / U204LMMC (IVORY)",
@@ -23719,6 +23761,79 @@
      "sale": false,
      "src": "retail",
      "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u204lswd",
+   "brand": "뉴발란스",
+   "name": "U204LSWD",
+   "code": "U204LSWD",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020119702",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 104000.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       104000.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "grandstage",
+     "via": "search"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u5097n5",
+   "brand": "뉴발란스",
+   "name": "U5097N5",
+   "code": "U5097N5",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020131377",
+     "obs": 139000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u509e3d9",
+   "brand": "뉴발란스",
+   "name": "U509E3D9",
+   "code": "U509E3D9",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020122388",
+     "obs": 139000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
     }
    }
   },
@@ -23765,6 +23880,27 @@
    }
   },
   {
+   "id": "s-nb-u740wm2",
+   "brand": "뉴발란스",
+   "name": "U740WM2",
+   "code": "U740WM2",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020111720",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
    "id": "s-nb-wl574evg",
    "brand": "뉴발란스",
    "name": "NBP7GF720G / WL574EVG (GRAY)",
@@ -23782,6 +23918,27 @@
      "sale": false,
      "src": "retail",
      "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-wl574evw",
+   "brand": "뉴발란스",
+   "name": "WL574EVW",
+   "code": "WL574EVW",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020089471",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
     }
    }
   },
@@ -24184,6 +24341,37 @@
    }
   },
   {
+   "id": "s-adidas-ih3993",
+   "brand": "아디다스",
+   "name": "도쿄",
+   "code": "IH3993",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020126643",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 69000.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       69000.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "grandstage",
+     "via": "search"
+    }
+   }
+  },
+  {
    "id": "s-adidas-ji0182",
    "brand": "아디다스",
    "name": "도쿄 - 베이지:블랙 / JI0182",
@@ -24240,6 +24428,27 @@
      ],
      "src": "retail",
      "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-jp7147",
+   "brand": "아디다스",
+   "name": "아디제로 EVO SL",
+   "code": "JP7147",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 209000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020114550",
+     "obs": 209000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
     }
    }
   },
@@ -24333,6 +24542,72 @@
      "sale": false,
      "src": "retail",
      "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-asics-1201a256",
+   "brand": "아식스",
+   "name": "젤-1130",
+   "code": "1201A256",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020116497",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "lvl": "model",
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
+   "id": "s-ua-1361524",
+   "brand": "언더아머",
+   "name": "히트기어 아머 컴프레션 긴팔",
+   "code": "1361524",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 49000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020129798",
+     "obs": 49000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "lvl": "model",
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
+   "id": "s-ua-1369221",
+   "brand": "언더아머",
+   "name": "언디나이어벌 5.0 XS 더플백",
+   "code": "1369221",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 59000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020132203",
+     "obs": 59000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "lvl": "model",
+     "src": "retail",
+     "shop": "grandstage"
     }
    }
   },
@@ -27149,6 +27424,15 @@
        "base"
       ]
      ]
+    },
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-24",
+     "url": "https://www.crocs.co.uk/p/x/208776.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-24",
+     "sale": false
     }
    }
   },
@@ -27177,6 +27461,15 @@
        "base"
       ]
      ]
+    },
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-24",
+     "url": "https://www.crocs.co.uk/p/x/208776.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-24",
+     "sale": false
     }
    }
   },
@@ -28069,59 +28362,59 @@
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "kr_none": {
   "v": 1,
-  "d": "2026-11-24.cb39428d",
-  "kc": "c295d89c3e2b73f5",
+  "d": "2026-11-24.ce49de2f",
+  "kc": "0d6c0586d882ad4c",
   "tags": [
-   "0c3662c00d97ddb1",
-   "1236af51fb1c68ff",
-   "161ff6a8e197c20b",
-   "1969cfe266f5c36b",
-   "2803798bf113efd1",
-   "343c4d8110b9b3c5",
-   "355a0f904e94eb56",
-   "36d7f860b22eb38d",
-   "3c1f189222a9dd56",
-   "3f280fe152a8ae83",
-   "40319ae22e12d982",
-   "41280a7a5469dccf",
-   "415f4809cc825050",
-   "454614eeb347f1de",
-   "45a78dcfdbf6b7ef",
-   "4912c4f1d379a85a",
-   "5163dc30eb08946e",
-   "542c4c1f0d6b766b",
-   "55c0b1d61b35bc72",
-   "5b7772d4ed4185ae",
-   "5d427d69ef361f7f",
-   "5e44bc7594ebc9b5",
-   "5ec5100e432254a5",
-   "612ed498560cd456",
-   "62b44d78af88c7c9",
-   "6f9100309c4163c0",
-   "703ce3582e9f956d",
-   "71464a4828d63466",
-   "7b6775dfa534a557",
-   "8bd0cf922270f25b",
-   "919b088fe5028d84",
-   "96c3b24dbdaad097",
-   "98a664481a0fb274",
-   "9e726697862f1659",
-   "a5d21ccc327899f6",
-   "a709d1d6fb8c8ef6",
-   "a978f362f55fff4d",
-   "aaca947b5364f25d",
-   "af48ee27088d887c",
-   "b202c61fd41173bb",
-   "b477d5b6dcdfe06d",
-   "b9667cba5f4b17fb",
-   "c206cf5d13d19a00",
-   "c48c072beb2d8736",
-   "c4ea5d8ce9ba401b",
-   "e72fe7d1f0124e64",
-   "e8f2340e320002f9",
-   "ecfa9a341c8484f8",
-   "f432de28ce260728",
-   "f5c7c4c590a85f90"
+   "12cd0716a17dd364",
+   "130a373e5424f2bc",
+   "1e5faabafb0472a7",
+   "260f2283a8c630ae",
+   "2b68fbe2e64d0839",
+   "2c40181975b11744",
+   "31d142c4f0b15d90",
+   "3615978263333f4f",
+   "38534d17315fb208",
+   "3c034a7cfeca7b2b",
+   "3e093426aa845a80",
+   "460890ab18998b27",
+   "56eb5ddfd3b6b7fd",
+   "5939ad75dc5282e9",
+   "5db28733b7659381",
+   "6a7c2839ce1cda3a",
+   "6c42d133662ab0cf",
+   "725db4a7f9939903",
+   "728a15ffc378df24",
+   "72c8015373f51541",
+   "78889d93e80d127b",
+   "93323aa9311437ed",
+   "a93a3afd9b316c3e",
+   "aa96af1878804a07",
+   "ab851ea294ec525d",
+   "acef5cf0f9a9610e",
+   "aef8941ffd3105b5",
+   "b678ec252cc65acf",
+   "bc26a8db9284c34a",
+   "bcb72267e2991586",
+   "bcc8a48b6682d840",
+   "be9e17becbe1124e",
+   "c2dfd61ab5fe9940",
+   "c38d58c49a410058",
+   "cfec5587ec032a95",
+   "d4d552f51fea0ad2",
+   "d889836023a2700e",
+   "d98a83a1aeed4102",
+   "dcc5fbe92c16ad36",
+   "e06485f479246d6b",
+   "e29cd154af97cc49",
+   "e34b7b3962ac95ef",
+   "e45a93bd06c5907b",
+   "ec149df50a2734be",
+   "f13a403172c69eb3",
+   "f159d15724709436",
+   "f274125bfa443b90",
+   "f35bb0abb66e7e60",
+   "f76afe602c00c415",
+   "fbbeea3bc8a519ac"
   ]
  },
  "audit": {
@@ -28150,5 +28443,40 @@
     "k": "unread"
    }
   ]
+ },
+ "audit_retail": {
+  "date": "2026-11-24",
+  "n": 9,
+  "ok": 9,
+  "rate": 1.0,
+  "not_read": 1,
+  "miss": [
+   {
+    "id": "s-nb-u204lswd",
+    "p": 149000.0,
+    "shop": "grandstage",
+    "k": "unread",
+    "why": "할인 중 값(정상가는 검색 자료로 확인) — 페이지에 정상가가 없어 대조 못 함"
+   }
+  ],
+  "shops": {
+   "29cm": {
+    "n": 4,
+    "ok": 4
+   },
+   "abcmart": {
+    "n": 2,
+    "ok": 2
+   },
+   "grandstage": {
+    "n": 3,
+    "ok": 3
+   }
+  },
+  "cross": {
+   "n": 2,
+   "same": 2,
+   "diff": []
+  }
  }
 }
