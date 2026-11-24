@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 13:28 KST",
+ "generated_at": "2026-11-24 14:23 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -23796,6 +23796,27 @@
    }
   },
   {
+   "id": "s-nb-u5097n5",
+   "brand": "뉴발란스",
+   "name": "U5097N5",
+   "code": "U5097N5",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020131377",
+     "obs": 139000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
    "id": "s-nb-u509e3d9",
    "brand": "뉴발란스",
    "name": "U509E3D9",
@@ -27403,6 +27424,15 @@
        "base"
       ]
      ]
+    },
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-24",
+     "url": "https://www.crocs.co.uk/p/x/208776.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-24",
+     "sale": false
     }
    }
   },
@@ -27431,6 +27461,15 @@
        "base"
       ]
      ]
+    },
+    "GB": {
+     "p": 59.99,
+     "cur": "GBP",
+     "seen": "2026-11-24",
+     "url": "https://www.crocs.co.uk/p/x/208776.html",
+     "obs": 59.99,
+     "obs_date": "2026-11-24",
+     "sale": false
     }
    }
   },
@@ -28323,59 +28362,59 @@
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "kr_none": {
   "v": 1,
-  "d": "2026-11-24.cd4cf1db",
-  "kc": "cdbebee3b0fc9ebc",
+  "d": "2026-11-24.ce49de2f",
+  "kc": "0d6c0586d882ad4c",
   "tags": [
-   "0c6dd4f4af856bd3",
-   "1485f2d44ab655f0",
-   "1732cfd18324337b",
-   "1b6bea136c1935dd",
-   "1f0ed06ff29a9472",
-   "205dd312e93df2df",
-   "276344a5226e4b1e",
-   "27dcf9354fb8768c",
-   "2fd1647f2f2201f6",
-   "300754e754931f88",
-   "30142eee29553bd2",
-   "3356ee9df4a0d898",
-   "3b8bdac7e6c48cc8",
-   "4e9a95c939423e6e",
-   "4f072b7b03c803a9",
-   "52473e99a513977a",
-   "6238b1781ebdeeb4",
-   "62c138c3bff43dce",
-   "6f4cc1b986f34107",
-   "6f7d47a885484792",
-   "770b0afb437c49e4",
-   "83dcc858368922d3",
-   "9bf4896e4b4a1186",
-   "9d8b62ce0bbc2fd4",
-   "a14e592391671dc6",
-   "a1cf4fbfb15c405e",
-   "aa5ff8cb3a8c4dac",
-   "aa694ac54f0996e5",
-   "b4dfbfb80a05c068",
-   "b4f3cb6c040dfbd9",
-   "b61b94c6e36e0ef6",
-   "b895966193ac763d",
-   "c3dcd84ad6701eea",
-   "c4d907150ce2194d",
-   "c8c856026d6516cc",
-   "d0b2760fd5281236",
-   "d7087ed171592899",
-   "d72892ea22c13bd2",
-   "df790494a32be242",
-   "e18c2a39f2941ce3",
-   "eb8cd26a08685da5",
-   "ec0f9bcde0049ba1",
-   "edc0f95146752eb2",
-   "f0deccee97f19a0c",
-   "f18bf4c263e090d8",
-   "f468ffc325c26968",
-   "fa4e8cee005b46ab",
-   "faaad4e872974fae",
-   "fbd8ab0c20f7cae0",
-   "fc0eb15c411c67fd"
+   "12cd0716a17dd364",
+   "130a373e5424f2bc",
+   "1e5faabafb0472a7",
+   "260f2283a8c630ae",
+   "2b68fbe2e64d0839",
+   "2c40181975b11744",
+   "31d142c4f0b15d90",
+   "3615978263333f4f",
+   "38534d17315fb208",
+   "3c034a7cfeca7b2b",
+   "3e093426aa845a80",
+   "460890ab18998b27",
+   "56eb5ddfd3b6b7fd",
+   "5939ad75dc5282e9",
+   "5db28733b7659381",
+   "6a7c2839ce1cda3a",
+   "6c42d133662ab0cf",
+   "725db4a7f9939903",
+   "728a15ffc378df24",
+   "72c8015373f51541",
+   "78889d93e80d127b",
+   "93323aa9311437ed",
+   "a93a3afd9b316c3e",
+   "aa96af1878804a07",
+   "ab851ea294ec525d",
+   "acef5cf0f9a9610e",
+   "aef8941ffd3105b5",
+   "b678ec252cc65acf",
+   "bc26a8db9284c34a",
+   "bcb72267e2991586",
+   "bcc8a48b6682d840",
+   "be9e17becbe1124e",
+   "c2dfd61ab5fe9940",
+   "c38d58c49a410058",
+   "cfec5587ec032a95",
+   "d4d552f51fea0ad2",
+   "d889836023a2700e",
+   "d98a83a1aeed4102",
+   "dcc5fbe92c16ad36",
+   "e06485f479246d6b",
+   "e29cd154af97cc49",
+   "e34b7b3962ac95ef",
+   "e45a93bd06c5907b",
+   "ec149df50a2734be",
+   "f13a403172c69eb3",
+   "f159d15724709436",
+   "f274125bfa443b90",
+   "f35bb0abb66e7e60",
+   "f76afe602c00c415",
+   "fbbeea3bc8a519ac"
   ]
  },
  "audit": {
@@ -28404,5 +28443,40 @@
     "k": "unread"
    }
   ]
+ },
+ "audit_retail": {
+  "date": "2026-11-24",
+  "n": 9,
+  "ok": 9,
+  "rate": 1.0,
+  "not_read": 1,
+  "miss": [
+   {
+    "id": "s-nb-u204lswd",
+    "p": 149000.0,
+    "shop": "grandstage",
+    "k": "unread",
+    "why": "할인 중 값(정상가는 검색 자료로 확인) — 페이지에 정상가가 없어 대조 못 함"
+   }
+  ],
+  "shops": {
+   "29cm": {
+    "n": 4,
+    "ok": 4
+   },
+   "abcmart": {
+    "n": 2,
+    "ok": 2
+   },
+   "grandstage": {
+    "n": 3,
+    "ok": 3
+   }
+  },
+  "cross": {
+   "n": 2,
+   "same": 2,
+   "diff": []
+  }
  }
 }

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 13:27 KST",
+ "generated_at": "2026-11-24 14:22 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -35132,14 +35132,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45326315399",
+  "run": "45332618621",
   "tries": [
    {
     "n": 1,
-    "where": "3.42.x.x · Oregon · AS16509 Amazon.com, Inc.",
+    "where": "172.184.x.x · California · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-24 13:28"
+    "at": "11-24 14:23"
    }
   ]
  },
