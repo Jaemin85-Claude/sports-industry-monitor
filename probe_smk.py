@@ -1,4 +1,4 @@
-# 임시 시험(병합 안 함 · 끝나면 바로 지움): 슈마커 플러스 품번 검색·목록 쪽 넘김·상품 페이지 정가·품번 칸 — 우리 봇 이름 · robots.txt 준수 · 봇 확인 화면이면 멈춤(우회 없음) · 공개 상품 정보만 · 결과는 암호화해서만 찍음
+# 임시 시험(병합 안 함 · 끝나면 바로 지움): 슈마커 플러스 품번 검색·목록 쪽 넘김·상품 페이지 정가·품번 칸 — 우리 봇 이름 · robots.txt 준수 · 봇 확인 화면이면 멈춤(우회 없음) · 공개 상품 정보만 · 결과는 암호화해서만 찍음 · 4차(검토 반영 코드)
 import base64, contextlib, io, json, os, re, subprocess, tempfile, time, traceback, urllib.parse, zlib
 from html import unescape
 from concurrent.futures import ThreadPoolExecutor
