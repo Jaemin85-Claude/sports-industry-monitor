@@ -131,9 +131,9 @@ def work(R):
     buf = io.StringIO()
     t0 = time.time()
     with contextlib.redirect_stdout(buf):
-        items, meta = pf.sku_stage(d, time.time(), today, today.isoformat(), {}, [])
+        items, meta = pf.sku_stage({"items": []}, time.time(), today, today.isoformat(), {}, [])   # 받아 둔 SKU 상품 없이(시험 품번만 받음)
     R["sku_sec"] = round(time.time() - t0)
-    R["sku_log"] = [l for l in buf.getvalue().splitlines() if "SKU" in l][-80:]
+    R["sku_log"] = [l for l in buf.getvalue().splitlines() if "SKU" in l or "슈마커" in l][-120:]
     codes = {pf._sku_norm(c) for _, c in LIST}
     R["items"] = [{"id": it["id"], "brand": it.get("brand"), "code": it.get("code"), "name": it.get("name"), "kr_status": it.get("kr_status"),
                    "KR": {k: v for k, v in ((it.get("m") or {}).get("KR") or {}).items() if k in ("p", "sp", "cur", "shop", "src", "via", "lvl", "url", "stale_since", "why", "obs")}}
