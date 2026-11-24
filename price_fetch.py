@@ -2671,8 +2671,8 @@ def _arc_norm(c):
 
 def _sku_model(c): return c.split("-")[0]
 def _asics_model(c):
-    """v1.42 아식스 품번(1203A591-020 · 1203A591.020 · 1203A591020) → 모델 번호(1203A591 — a-rt 품번 칸이 모델 단위)"""
-    m = re.match(r"^(1[0-2]\d{2}[A-Z]\d{3})", c)
+    """v1.42 아식스 품번(1203A591-020 · 1203A591.020 · 1203A591020 · 옷 2011D580 · 가방·용품 3033A…) → 모델 번호(1203A591 — a-rt 품번 칸이 모델 단위)"""
+    m = re.match(r"^([1-3]\d{3}[A-Z]\d{3})", c)
     return m.group(1) if m else c
 SKU_BRANDS = {
     "나이키": {"slug": "nike", "cc": SKU_CC, "q": lambda c: c.split("-")[0], "norm": lambda c: re.sub(r"^[A-Z]{2,4}_", "", c), "mfill": True},
@@ -2691,7 +2691,7 @@ SKU_BRANDS = {
     "아디다스": {"slug": "adidas", "cc": ("KR",), "q": lambda c: c, "rx": r"^[A-Z]{1,2}\d{4,5}$", "r29": ("ADIDAS", "2178", ("29CM", "아디다스")), "art": "ADIDAS"},
     "반스": {"slug": "vans", "cc": ("KR",), "q": lambda c: c, "rx": r"^VN[0-9A-Z]{8,12}$", "r29": ("VANS", "2313", ("29CM", "브이에프", "VF")), "art": "VANS"},
     "노스페이스": {"slug": "tnf", "cc": ("KR",), "q": lambda c: c, "rx": r"^N[A-Z0-9]{6,9}$", "r29": ("THE NORTH FACE", "7789", ("영원",))},   # a-rt에 없음(11/24 시험)
-    "아식스": {"slug": "asics", "cc": ("KR",), "q": _asics_model, "rx": r"^1[0-2]\d{2}[A-Z]\d{3}([-._]?\d{3})?$", "model": True, "art": "ASICS"},   # v1.42 감시 브랜드 · 한국 공식몰 접속 막음(10/21) — a-rt 모델 단위만
+    "아식스": {"slug": "asics", "cc": ("KR",), "q": _asics_model, "rx": r"^[1-3]\d{3}[A-Z]\d{3}([-._]?[0-9A-Z]{3})?$", "model": True, "art": "ASICS"},   # v1.42 감시 브랜드 · 한국 공식몰 접속 막음(10/21) — a-rt 모델 단위만
     # v1.41 아크테릭스 한국(대표 결정 11/23 '2가') — 목록 품번 = 모델 번호(norm) · Firecrawl 검색으로 공식몰 상품 페이지 주소 → 우리 봇이 정가 · 찾은 주소는 keep
     "아크테릭스": {"slug": "arc", "cc": ("KR",), "q": lambda c: c, "rx": r"^\d{3,6}$", "norm": _arc_norm, "keep": ("KR",), "fc": True},
 }
@@ -3188,32 +3188,37 @@ def _r29_fetch(brand, q, codes):
         raise RuntimeError(f"같은 품번 상품 {len(single)}개의 정가가 다름 — 어느 것이 정가인지 몰라 안 씀")
     cp = min(cps)
     u = f"{R29_WWW}/products/{single[0]['itemNo']}"
+    if set(R29_HOSTS) & _BLOCKED:
+        raise RuntimeError("이번 실행에서 29CM이 막음 — 더 요청 안 함")   # v1.42 다른 묶음이 그사이 막힌 경우도(검토 11/24)
     full, ex, nm = r29_price(get(u).text, q, rx, sellers)
     if abs(full - cp) > cp * 0.005:
         raise RuntimeError("검색 결과 정가와 상품 페이지 정가가 다름 — 안 씀")
     return {c: (full, ex, nm, None, u, None) for c in codes}, False
 
 
-def _art_fetch(brand, q, codes):
+def _art_fetch(brand, q, codes, pref=None):
     """v1.42 국내 판매처 그랜드스테이지·ABC마트(a-rt.com) — 검색 주소로 품번(STYLE_INFO)·브랜드(BRAND_EN_NAME)가 같은 상품 → 정상가 칸(NRMAL_AMT)이 모두 같고,
     할인 중이 아닌(판매가 = 정상가) 상품의 공개 상품 페이지에 보이는 가격(product:price:amount · 상품 번호 product:retailer_item_id가 같을 때)이 정상가와 같을 때만 정가.
-    할인 중인 상품만 있으면 상품 페이지에 정상가가 없어(판매가만 — 11/24 임시 시험) 안 씀 · 판매처에 없음은 미확인(__unread__ — 국내 공식 판매 없음이 아님)"""
+    할인 중인 상품만 있으면 상품 페이지에 정상가가 없어(판매가만 — 11/24 임시 시험) 안 씀 · 판매처에 없음은 미확인(__unread__ — 국내 공식 판매 없음이 아님).
+    그랜드스테이지 검색은 늘 하고, 그 검색 결과의 채널 셈(GROUP_COUNT_CHNNL_NO)이 ABC마트를 가리키면 ABC마트도 물어 두 채널 상품을 함께 봄(정상가가 채널끼리 다르면 안 씀 —
+    모델 단위 색상 정가 대조가 한 채널만 보지 않게 · 한 채널에서 할인 중이어도 다른 채널 정가 상품으로 확인 — 검토 11/24) · 페이지는 받아 둔 판매처(pref) 상품부터"""
     eng = SKU_BRANDS[brand]["art"]
     lvl = "model" if SKU_BRANDS[brand].get("model") else None
-    if set(ART_HOSTS) & _BLOCKED:
-        raise RuntimeError("이번 실행에서 a-rt가 막음 — 더 요청 안 함")   # 두 주소 중 하나라도 막으면 둘 다 멈춤(29CM과 같게)
-    hit, grp = [], {}
+    def aget(u):
+        if set(ART_HOSTS) & _BLOCKED:
+            raise RuntimeError("이번 실행에서 a-rt가 막음 — 더 요청 안 함")   # 두 주소 중 하나라도 막으면 둘 다 멈춤 — 요청마다 확인(다른 묶음이 막 막힌 경우도 · 검토 11/24)
+        return get(u)
+    hit, grp = [], None
     for ch, host, shop in ART_CH:
-        if hit or (grp and not num(grp.get(ch))):
-            break   # 앞 채널에서 찾았거나, 검색 결과 채널 셈이 이 채널에 없다고 함
-        d = _json(get(ART_SEARCH.format(h=host, q=urllib.parse.quote(q), ch=ch)))
-        grp = d.get("GROUP_COUNT_CHNNL_NO") if isinstance(d.get("GROUP_COUNT_CHNNL_NO"), dict) else {}
+        if grp is not None and not num(grp.get(ch)):
+            continue   # 검색 결과 채널 셈이 이 채널에 없다고 함(채널 셈이 없는 응답이면 다음 채널은 묻지 않음)
+        d = _json(aget(ART_SEARCH.format(h=host, q=urllib.parse.quote(q), ch=ch)))
+        if grp is None:
+            grp = d.get("GROUP_COUNT_CHNNL_NO") if isinstance(d.get("GROUP_COUNT_CHNNL_NO"), dict) else {}
         rows = d.get("SEARCH") if isinstance(d.get("SEARCH"), list) else []
-        hit = [(x, host, shop) for x in rows if isinstance(x, dict) and _sku_norm(x.get("STYLE_INFO")) == q
-               and str(x.get("BRAND_EN_NAME") or "").strip().upper() == eng and str(x.get("CHNNL_NO") or "") == ch
-               and re.fullmatch(r"\d{6,14}", str(x.get("PRDT_NO") or "")) and num(x.get("NRMAL_AMT"))]
-        if not grp:
-            grp = {"_": 0}   # 채널 셈이 없는 응답이면 다음 채널은 묻지 않음
+        hit += [(x, host, shop) for x in rows if isinstance(x, dict) and _sku_norm(x.get("STYLE_INFO")) == q
+                and str(x.get("BRAND_EN_NAME") or "").strip().upper() == eng and str(x.get("CHNNL_NO") or "") == ch
+                and re.fullmatch(r"\d{6,14}", str(x.get("PRDT_NO") or "")) and num(x.get("NRMAL_AMT"))]
     single = [t for t in hit if not R29_BUNDLE.search(str(t[0].get("PRDT_NAME") or "").upper())]
     if not single:
         if hit:
@@ -3226,10 +3231,12 @@ def _art_fetch(brand, q, codes):
     full_rows = [t for t in single if num(t[0].get("PRDT_DC_PRICE")) and abs(num(t[0]["PRDT_DC_PRICE"]) - na) <= na * 0.005]
     if not full_rows:
         raise RuntimeError("할인 중이라 상품 페이지에서 정상가를 확인 못 함 — 안 씀")   # 상품 페이지에는 판매가만 보임 — 검색 결과 정상가만으로는 저장하지 않음
+    order = [c[2] for c in ART_CH]
+    full_rows.sort(key=lambda t: (t[2] != pref, order.index(t[2])))   # 받아 둔 판매처 → 그랜드스테이지 → ABC마트
     x, host, shop = full_rows[0]
     pn = str(x["PRDT_NO"])
     u = ART_PAGE.format(h=host, n=pn)
-    t = get(u).text
+    t = aget(u).text
     meta = lambda prop: re.findall(r'<meta[^>]+property="' + re.escape(prop) + r'"[^>]+content="([^"]*)"', t)
     ids, ps, curs = set(meta("product:retailer_item_id")), {num(v) for v in meta("product:price:amount")} - {None}, set(meta("product:price:currency"))
     if ids != {pn}:
@@ -3243,18 +3250,23 @@ def _art_fetch(brand, q, codes):
     return {c: (na, {"lst": True, "cur_price": na, "src": "retail", "shop": shop}, nm, hint, u, lvl) for c in codes}, False
 
 
+_KR_PREF = {}   # v1.42 (브랜드, 묻는 열쇠) → 받아 둔 한국 값의 판매처(shop) — 그 판매처부터 묻고, 그 판매처가 못 받으면(오류) 다른 판매처로 넘어가지 않음(검토 11/24)
+
+
 def _kr_retail(brand, q, codes):
     """v1.42 국내 판매처 차례(KR_RETAIL — 29CM → 그랜드스테이지·ABC마트, 브랜드에 있는 것만) — 앞 판매처가 값을 주면 그것 ·
-    못 찾음(미확인)·못 받음(오류)이면 다음 판매처 · 끝까지 값이 없으면 못 받음(오류)이 하나라도 있으면 첫 오류(이전 값 그대로 · 국내 상태 앞 상태), 아니면 미확인"""
+    못 찾음(미확인)·못 받음(오류)이면 다음 판매처 · 끝까지 값이 없으면 못 받음(오류)이 하나라도 있으면 첫 오류(이전 값 그대로 · 국내 상태 앞 상태), 아니면 미확인.
+    받아 둔 값이 있으면 그 판매처부터 묻고(_KR_PREF) — 그 판매처가 오류면 그대로 오류(이전 값 · 판매처끼리 정가가 조금 달라 값이 오가며 가짜 할인·정가 변동이 생기지 않게),
+    그 판매처에 없을 때(미확인)만 다음 판매처(판매처가 바뀌면 새 값으로 — sku_stage)"""
     h = SKU_BRANDS[brand]
+    pref = _KR_PREF.get((brand, q))
+    psrc = "r29" if pref == "29cm" else "art" if pref in [c[2] for c in ART_CH] else None
     err, ans = None, None
-    for src in KR_RETAIL:
-        if not h.get(src):
-            continue
+    for src in sorted([x for x in KR_RETAIL if h.get(x)], key=lambda x: x != psrc):
         try:
-            got, none = (_r29_fetch if src == "r29" else _art_fetch)(brand, q, codes)
+            got, none = (_r29_fetch(brand, q, codes) if src == "r29" else _art_fetch(brand, q, codes, pref))
         except Exception as e:
-            if _STOP.is_set():
+            if _STOP.is_set() or src == psrc:
                 raise
             err = err or e
             continue
@@ -3683,8 +3695,9 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     for k in order:
         lanes.setdefault((0 if k[1] == "KR" else 1, ("29cm" if SKU_BRANDS[k[0]].get("r29") else "a-rt" if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
     kr_done = {b: threading.Event() for b in SKU_BRANDS}
+    kr_b = {k[0] for (ph_, _), ks_ in lanes.items() if ph_ == 0 for k in ks_}   # v1.42 한국 일감이 '29cm'·'a-rt' 묶음에 있는 브랜드도 — 그 묶음이 끝나야 해외 묶음 시작(검토 11/24)
     for b in SKU_BRANDS:
-        if (0, b) not in lanes:
+        if b not in kr_b:
             kr_done[b].set()
     idx, res, rlock, cnt = _SkuIdx(say), {}, threading.Lock(), collections.Counter()
     noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태는 앞 상태 유지 · ERP 요청 11/23)
@@ -3697,6 +3710,12 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             if cc_ == "KR" and (b_, q_) in rep_url:
                 pre_by[(b_, cc_, q_)] = {q_: rep_url[(b_, q_)]}; continue
         want_by[(b_, cc_)].add(q_)
+    _KR_PREF.clear()   # v1.42 받아 둔 한국 값의 판매처(국내 판매처 브랜드) — 그 판매처부터
+    for (b_, cc_, q_), j_ in jobs.items():
+        if cc_ == "KR" and any(SKU_BRANDS[b_].get(x) for x in KR_RETAIL):
+            sh_ = {((((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get("KR")) or {}).get("shop") for c_ in j_["codes"]} - {None}
+            if len(sh_) == 1:
+                _KR_PREF[(b_, q_)] = sh_.pop()
     _IDX_PAGES[0] = 0
     shown = set()
     s0 = time.time()
@@ -3882,6 +3901,8 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     continue
             held.pop(cc, None)
             o = it["m"].get(cc) or {}
+            if o and (o.get("shop") or ex.get("shop")) and (o.get("src"), o.get("shop")) != (ex.get("src"), ex.get("shop")):
+                o = {}   # v1.42 판매처가 바뀜 — 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 — 판매처끼리 정가 차이가 가짜 할인·변동이 되지 않게 · 검토 11/24)
             o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키", url, age)
             if o2.get("url") is None:
                 o2.pop("url", None)
