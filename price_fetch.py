@@ -323,7 +323,7 @@ v1: (대표 지시 2026-10-21 '국가별 브랜드 대표상품 소비자가격 
     weekly_digest CC_KO·CUR_SYM + (새 통화면) fetch_data FX·build_dashboard FX_LBL를 함께 고친다.
     (v1.17 나이키 상품 정보에 없는 나라는 MK 첫 칸을 None으로 두고 나이키 상품 urls에 그 나라 페이지 주소)
 """
-import collections, contextlib, datetime, hashlib, hmac, json, os, re, sys, threading, time, traceback, urllib.error, urllib.parse, urllib.request
+import collections, contextlib, datetime, hashlib, hmac, json, os, re, sys, threading, time, traceback, unicodedata, urllib.error, urllib.parse, urllib.request
 from html import unescape
 import requests
 
@@ -2979,7 +2979,18 @@ MK_HOST = "maisonkitsune.com"   # v1.46 메종키츠네 한국(/kr — 원화) �
 MK_SM_IDX = f"https://{MK_HOST}/media/sitemap/sitemap_kr_en_index.xml"
 MK_MAX = 6    # v1.46 한 스타일에서 받는 한국 상품 페이지 최대(색상마다 페이지 하나 — 넘으면 그 스타일의 다른 색상은 미확인 · 11/24 한국 1,005개 · 스타일 480개 · 색상 둘 넘는 스타일 드묾)
 MK_MIN = 300  # v1.46 한국 상품 사이트맵 주소가 이보다 적으면 덜 끝난 색인(사이트맵 고장일 수 있어 '없음'으로 보지 않음)
-MK_FRESH = 3  # v1.46 한국 상품 사이트맵을 다시 만든 지(색인 lastmod) 이 일수가 넘으면 덜 끝난 색인(11/24 색인 lastmod는 그날 — 날마다 만듦)
+MK_FRESH = 1  # v1.46 한국 상품 사이트맵을 다시 만든 지(색인 lastmod) 이 일수가 넘으면 덜 끝난 색인(11/24 색인 lastmod는 그날 — 날마다 만듦 · 검토 11/24: 3일이면 새 색상이 빠진 채 '없음'이 될 수 있어 1일)
+
+
+def _mk_base(u):
+    """v1.46 메종키츠네 한국 상품 주소 → 주소 이름 앞부분(끝 13자리 번호·.html 뺌 — 'fox-head-oversize-tee-shirt-black')"""
+    return re.sub(r"(?:-[0-9a-f]{13})?\.html$", "", str(u).rsplit("/", 1)[-1].lower())
+
+
+def _mk_slug(name):
+    """v1.46 상품 이름 → 주소 이름 꼴('FOX HEAD OVERSIZE TEE-SHIRT' → 'fox-head-oversize-tee-shirt' · 악센트는 뗌)"""
+    t = unicodedata.normalize("NFKD", str(name or "")).encode("ascii", "ignore").decode().lower()
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")
 KOLON = "https://www.kolonmall.com"   # v1.46 코오롱몰(국내 수입사몰) 목록 화면 — 상품 자료(productSearchCodes results: 코오롱 상품 번호·색상·이름·판매처 브랜드 이름·판매가 price·정상가 wishPrice)
 KOLON_BRAND = {"팔로마울": ("/Brands/PALOMAWOOL/List/133020162660", "팔로마 울", re.compile(r"(?<![A-Z0-9])([A-Z]{2}\d{4})(\d{3})(?![0-9])"))}   # (목록 주소, 판매처 브랜드 이름, 이름 안 품번)
 KOLON_PAGES = 10   # v1.46 목록 쪽 한도(쪽마다 60개 — 넘으면 덜 끝난 색인)
@@ -3377,8 +3388,7 @@ def _ganni_pick(page, codes, url):
 def _mk_index(stop=None):
     """v1.46 메종키츠네 한국 상품 사이트맵 → {스타일: [(한국 상품 주소, 그림 파일 이름의 색상)]} — 그림 파일 이름(pm00109kj0119-h170_1.jpg)이 상품 품번(스타일-색상)과
     같은 꼴이라 후보로만 씀(페이지의 상품 품번으로 다시 확인 · 그림 모두 봄) · out.ents = [(주소, 그림·주소 이름 모두 — 소문자)] — 그림 이름 꼴이 다른 상품
-    (pm00109kj0119_-p199 · nw00509km03290701 등)도 스타일 글자로 찾음 · out.unk = [(주소, 주소 이름 앞부분)] — 그림·주소 이름에 품번 꼴 글자가 없는 상품(협업·이미지 없는 상품 등 —
-    상품 이름이 같은 스타일의 색상일 수 있어 받아 봄) · 사이트맵이 3일 넘게 다시 만들어지지 않았거나(lastmod) 덜 받았으면 partial"""
+    (pm00109kj0119_-p199 · nw00509km03290701 등)도 스타일 글자로 찾음 · 사이트맵이 MK_FRESH일 넘게 다시 만들어지지 않았거나(lastmod) 끝이 잘렸거나 덜 받았으면 partial"""
     t0 = get(MK_SM_IDX).text
     kids = []
     for blk in re.findall(r"<sitemap>.*?</sitemap>", t0, re.S):
@@ -3387,7 +3397,7 @@ def _mk_index(stop=None):
             kids.append((k, (re.search(r"<lastmod>\s*(\d{4}-\d{2}-\d{2})", blk) or [None, ""])[1]))
     if not kids:
         raise RuntimeError("사이트맵 색인에 상품 사이트맵 없음")
-    out = _Idx(); out.ents, out.unk = [], []
+    out = _Idx(); out.ents = []
     day = _SKU_DAY[0] or datetime.date.today()
     for k, lm in kids[:4]:
         try:
@@ -3398,7 +3408,10 @@ def _mk_index(stop=None):
         if stop and time.time() > stop:
             out.partial = True   # 멈출 시각을 넘김 — 받은 데까지만(덜 끝난 색인)
             break
-        for b in re.findall(r"<url>.*?</url>", get(k).text, re.S):
+        tx = get(k).text
+        if "</urlset>" not in tx[-2000:]:
+            out.partial = True   # 끝이 잘린 사이트맵(다시 쓰는 중 등) — 뒤 상품이 빠졌을 수 있음(검토 11/24)
+        for b in re.findall(r"<url>.*?</url>", tx, re.S):
             loc = unescape((re.search(r"<loc>\s*([^<\s]+)\s*</loc>", b) or [None, ""])[1])
             if not re.fullmatch(rf"https://{re.escape(MK_HOST)}/kr/[^/?#]+\.html", loc):
                 out.partial = True; continue   # 꼴이 다른 주소 — 이 상품을 볼 수 없음
@@ -3412,8 +3425,6 @@ def _mk_index(stop=None):
                 if m and (m.group(1), m.group(2)) not in seen:
                     seen.add((m.group(1), m.group(2)))
                     out.setdefault(m.group(1).upper(), []).append((loc, m.group(2).upper()))
-            if not seen and not re.search(r"[a-z]{2,6}\d{2,5}[a-z]{2}\d{4}", nm):
-                out.unk.append((loc, re.sub(r"-[0-9a-f]{13}\.html$", "", slug)))   # 품번 꼴 글자가 없는 상품
     if len(kids) > 4 or len(out.ents) < MK_MIN:
         out.partial = True   # 상품 사이트맵이 넷 넘게 나뉨·주소가 너무 적음 — 덜 끝난 색인('없음'으로 보지 않음)
     if not out.ents:
@@ -3491,7 +3502,10 @@ def _kolon_index(brand, stop=None):
         if res is None:
             raise RuntimeError("목록 화면에 상품 자료 없음")
         tc = num(((res.get("page") or {}).get("totalCount")))
-        total = int(tc) if tc else (0 if not res["results"] else total)
+        if page == 1:
+            total = int(tc) if tc else (0 if not res["results"] else None)
+        elif not tc or int(tc) != total:
+            out.partial = True   # 쪽마다 전체 수가 다름·없음 — 넘기는 사이 목록이 바뀜(빠진 상품이 있을 수 있음 · 검토 11/24 2차)
         new = 0
         for r_ in res["results"]:
             k = str((r_ or {}).get("code") or "")
@@ -4178,12 +4192,13 @@ def _sku_fetch(brand, cc, q, codes, idx):
             pages.setdefault(ps, (T, cur, nm, u))
         for u, _ in ents[:MK_MAX]:
             one(u)
-        # 그림·주소 이름에 품번 꼴 글자가 없는 상품 중 상품 이름(주소 앞부분)이 이 스타일 이름과 같은 것 — 같은 스타일의 다른 색상일 수 있어 받아 봄(검토 11/24)
-        sl = {x for x in (re.sub(r"[^a-z0-9]+", "-", str(v[2] or "").lower()).strip("-") for v in pages.values()) if len(x) >= 4}
-        extra = [u for u, base in getattr(idx, "unk", ()) if u not in done and any(base == x or base.startswith(x + "-") for x in sl)]
+        # 주소 이름이 받은 페이지 상품 이름으로 시작하는 상품 — 그림 이름이 다른 스타일 것(빌려 쓴 사진)·품번 꼴 글자가 없는 같은 스타일 다른 색상일 수 있어 받아 봄(검토 11/24 2차)
+        sl = {_mk_slug(v[2]) for v in pages.values()}
+        own = bool(pages) and all((lambda x, b: len(x) >= 4 and (b == x or b.startswith(x + "-")))(_mk_slug(v[2]), _mk_base(v[3])) for v in pages.values())   # 받은 페이지 주소가 그 상품 이름으로 시작 — 아니면 주소 이름으로 다른 색상을 찾을 수 없음(한국어 이름 등)
+        extra = [u for u, _ in getattr(idx, "ents", ()) if u not in done and any(len(x) >= 4 and (_mk_base(u) == x or _mk_base(u).startswith(x + "-")) for x in sl)]
         for u in extra[:max(0, MK_MAX - len(done))]:
             one(u)
-        complete = not errs and len(ents) + len(extra) <= MK_MAX and not part   # 이 스타일의 한국 후보 페이지를 모두 봄 · 사이트맵이 새것이고 다 받음
+        complete = not errs and len(ents) + len(extra) <= MK_MAX and not part and own   # 이 스타일의 한국 후보 페이지를 모두 봄 · 주소 이름으로 다른 색상을 찾을 수 있음 · 사이트맵이 새것이고 다 받음
         got = {c: (pages[c][0], {"lst": True, "cur_price": pages[c][1]}, pages[c][2], "wear", pages[c][3], None) for c in codes if c in pages}
         miss = set(codes) - set(got)
         if not pages or not complete:   # 후보가 이 스타일이 아니었거나·못 받은 페이지·색상이 많아 다 못 봄·덜 끝난 사이트맵 — 없는 색상은 답이 아님 · 모델 값도 안 정함
