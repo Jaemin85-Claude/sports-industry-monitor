@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 07:24 KST",
+ "generated_at": "2026-11-24 11:20 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -23618,6 +23618,174 @@
    }
   },
   {
+   "id": "s-nb-m1906reh",
+   "brand": "뉴발란스",
+   "name": "NBPDGF703S / M1906REH (SILVER)",
+   "code": "M1906REH",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3697250",
+     "obs": 189000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-ml574evb",
+   "brand": "뉴발란스",
+   "name": "NBP7GF719B / ML574EVB (BLACK)",
+   "code": "ML574EVB",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3617855",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-mr530ka",
+   "brand": "뉴발란스",
+   "name": "NBPDGF718S / MR530KA (SILVER)",
+   "code": "MR530KA",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3031477",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-mr530lg",
+   "brand": "뉴발란스",
+   "name": "NBPDGF719S / MR530LG (SILVER)",
+   "code": "MR530LG",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3281144",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u204lmmc",
+   "brand": "뉴발란스",
+   "name": "NBPDGF766I / U204LMMC (IVORY)",
+   "code": "U204LMMC",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 159000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3759624",
+     "obs": 159000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u740bm2",
+   "brand": "뉴발란스",
+   "name": "NBPDGF733B / U740BM2 (BLACK)",
+   "code": "U740BM2",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3584108",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u740bo2",
+   "brand": "뉴발란스",
+   "name": "NBPDGF734B / U740BO2 (BLACK)",
+   "code": "U740BO2",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4151743",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-wl574evg",
+   "brand": "뉴발란스",
+   "name": "NBP7GF720G / WL574EVG (GRAY)",
+   "code": "WL574EVG",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4305506",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
    "id": "s-drm-11838001",
    "brand": "닥터마틴",
    "name": "1461 나파 (무광)",
@@ -23677,6 +23845,96 @@
      "obs": 229000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-vans-vn000d3hy281",
+   "brand": "반스",
+   "name": "올드스쿨 - 블랙 / VN000D3HY281",
+   "code": "VN000D3HY281",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 85000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/1657284",
+     "obs": 85000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 59500.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       59500.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-vans-vn000ee3blk1",
+   "brand": "반스",
+   "name": "어센틱 - 블랙 / VN000EE3BLK1",
+   "code": "VN000EE3BLK1",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/1657289",
+     "obs": 69000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 48300.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       48300.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-vans-vn000eyebww1",
+   "brand": "반스",
+   "name": "클래식 슬립온 - (체커보드) 블랙:화이트 / VN000EYEBWW1",
+   "code": "VN000EYEBWW1",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/1657278",
+     "obs": 69000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 48300.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       48300.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
     }
    }
   },
@@ -23772,6 +24030,309 @@
      "obs": 150000.0,
      "obs_date": "2026-11-24",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-adidas-b75807",
+   "brand": "아디다스",
+   "name": "삼바 OG - 블랙 / B75807",
+   "code": "B75807",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3175105",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 126600.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       126600.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-id0478",
+   "brand": "아디다스",
+   "name": "삼바 OG ID0478",
+   "code": "ID0478",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3279965",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 89400.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       89400.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-ie5897",
+   "brand": "아디다스",
+   "name": "핸드볼 스페지알 IE5897",
+   "code": "IE5897",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4244409",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 59600.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       59600.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-if6561",
+   "brand": "아디다스",
+   "name": "핸드볼 스페지알 IF6561",
+   "code": "IF6561",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4244415",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 59600.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       59600.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-if6562",
+   "brand": "아디다스",
+   "name": "핸드볼 스페지알 IF6562",
+   "code": "IF6562",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4292029",
+     "obs": 149000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 74500.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       74500.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-ji0182",
+   "brand": "아디다스",
+   "name": "도쿄 - 베이지:블랙 / JI0182",
+   "code": "JI0182",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3725459",
+     "obs": 139000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 74880.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       74880.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-ji0183",
+   "brand": "아디다스",
+   "name": "도쿄 - 블랙 / JI0183",
+   "code": "JI0183",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3711678",
+     "obs": 139000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 68040.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       68040.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-js1194",
+   "brand": "아디다스",
+   "name": "태권도 레이스 - 화이트 / JS1194",
+   "code": "JS1194",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/3342386",
+     "obs": 129000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-kd5569",
+   "brand": "아디다스",
+   "name": "파이어버드 클래식 숏 팬츠 - 블랙:화이트 / KD5569",
+   "code": "KD5569",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 55000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4014968",
+     "obs": 55000.0,
+     "obs_date": "2026-11-24",
+     "sale": true,
+     "sp": 38500.0,
+     "sp_date": "2026-11-24",
+     "sh": [
+      [
+       "2026-11-24",
+       38500.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-ke3526",
+   "brand": "아디다스",
+   "name": "클래식 트랙탑 - 나이트인디고:화이트 / KE3526",
+   "code": "KE3526",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 109000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4014969",
+     "obs": 109000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-ke3527",
+   "brand": "아디다스",
+   "name": "클래식 트랙탑 - 블랙:화이트 / KE3527",
+   "code": "KE3527",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 109000.0,
+     "cur": "KRW",
+     "seen": "2026-11-24",
+     "url": "https://www.29cm.co.kr/products/4014970",
+     "obs": 109000.0,
+     "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
     }
    }
   },
@@ -27508,59 +28069,59 @@
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "kr_none": {
   "v": 1,
-  "d": "2026-11-24.354ec10b",
-  "kc": "42e3c2f66467a5c6",
+  "d": "2026-11-24.f9603313",
+  "kc": "76c61730ebcd3185",
   "tags": [
-   "014ad60e47d62722",
-   "079ff019e99bd0f5",
-   "084e06db49cb8e9b",
-   "1074832b31c655c6",
-   "18af764c55abcf70",
-   "1f5e6c505ded24b8",
-   "1fbdaa858e8c8035",
-   "23f149dd1c5c44ce",
-   "23f2b6b713b74ac8",
-   "260138cae98077ad",
-   "29955cc14684fe10",
-   "34d7f4178b840a76",
-   "3db523ab3722bd01",
-   "4fc125c729f83852",
-   "50dcf147740b1039",
-   "534c4675a650c5ec",
-   "54d87f4f4ea173f1",
-   "550239f85760272a",
-   "58fe2628729cc1e7",
-   "596f5420049730f5",
-   "5f669a0732f4c797",
-   "62745f0f623363f7",
-   "66dc50a271b22488",
-   "676c0c3a9205c4ac",
-   "699bb280fdc8c5de",
-   "6bffbbf34a11f7d4",
-   "7420ea42fe2e410e",
-   "7542a68e4baf098f",
-   "7d806cd68796a377",
-   "99b3a0309064547e",
-   "9cb5ff674f5de799",
-   "9fe64a9f5d0fa098",
-   "a9f195d16b20298d",
-   "b13263d64e93b525",
-   "b6b8282ab5ed613b",
-   "b8cc927c56316c2f",
-   "be3c711ce5e9a41b",
-   "bf97e066baa34036",
-   "c201e4d3130dda05",
-   "c5cfa11316b20f15",
-   "c7bedda84a3112b8",
-   "cf65e0bf65063e5f",
-   "d45264cd783ef7aa",
-   "dab098a113711e9a",
-   "db77d21b5643a11b",
-   "dd866bfc316a2903",
-   "e12a0429f2c93fe2",
-   "f970025d05733d3d",
-   "fa2dd2be2ed25d1b",
-   "ffa7ea4fe03abaf0"
+   "0318a5be6f49b921",
+   "0413b3b0b4d0c03d",
+   "070a929b458eb7a9",
+   "0a8ddd5650637871",
+   "0ac495f6afb2564b",
+   "0b6bdcdb38abe964",
+   "0cb4ea393e2b78e1",
+   "14e8bc3f33145eba",
+   "153d70e3fff818fa",
+   "1758021288073fac",
+   "18c34b32d2840d07",
+   "1ca67bbbcbce83b2",
+   "22bb084e8b133c64",
+   "2556dc50824b0e9c",
+   "26f66f64797e26be",
+   "2de10302d68290d2",
+   "354f19b39c30c4c9",
+   "383148893cde4293",
+   "42eeecfc58cf63bc",
+   "493f9856923ba4e5",
+   "4d7a54304ade0fc9",
+   "4ede5c704d3ad353",
+   "50f6e300f93add1d",
+   "58adc9a617e14181",
+   "58c1ee8055ea335d",
+   "5a96f3272ff6b660",
+   "5be0ae0d855940c0",
+   "5f5bd6de406ed5c7",
+   "66ebd97bdba13472",
+   "67030f04a191de02",
+   "750516f7e38c7093",
+   "797001e105434adc",
+   "7b1c03fcf87b4f30",
+   "7e12bb4561d01f23",
+   "867bab6ccbdeb064",
+   "8f5290a7a16a0ae0",
+   "916d099081244d49",
+   "9219407f7d153921",
+   "96b7bcb2e76d188d",
+   "9f148b390f911b56",
+   "ab5c51d8fdaf9fb1",
+   "b453ce0acd817d0e",
+   "cd2a90af6662becd",
+   "cd503d098b668ba9",
+   "d1b5cf760845ec9d",
+   "e5fe874dea337d5d",
+   "e674e405cccabd9b",
+   "ecca70e0f51df21d",
+   "f49fdf4594aefafc",
+   "f7618e3f9112ce8f"
   ]
  },
  "audit": {

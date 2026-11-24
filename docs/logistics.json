@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-24 07:21 KST",
+ "generated_at": "2026-11-24 11:16 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -35069,7 +35069,7 @@
      "AU": 1,
      "VN": 1
     },
-    788.3,
+    789.7,
     29
    ],
    [
@@ -35084,7 +35084,7 @@
      "TW": 1,
      "SG": 1
     },
-    985.6,
+    989.5,
     34
    ],
    [
@@ -35099,7 +35099,7 @@
      "MY": 1,
      "FM": 1
     },
-    854.2,
+    900.7,
     30
    ]
   ],
@@ -35129,14 +35129,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45278427986",
+  "run": "45310873799",
   "tries": [
    {
     "n": 1,
-    "where": "40.74.x.x · Texas · AS8075 Microsoft Corporation",
+    "where": "40.80.x.x · Texas · AS8075 Microsoft Corporation",
     "ok": true,
     "blocked": false,
-    "at": "11-24 07:24"
+    "at": "11-24 11:20"
    }
   ]
  },
