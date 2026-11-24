@@ -3522,6 +3522,14 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         b, c = it.get("brand"), it.get("code")
         if b in SKU_BRANDS and c and (b, c) not in tgt and c not in rep_codes.get(b, set()) and iid(b, c) == it["id"]:
             tgt[(b, c)] = 2   # 목록에서 빠진 상품 — 목록에 있는 상품과 같은 규칙(빠진 날이 파일에 드러나지 않게)
+    # v1.41 목록 품번 꼴로 정리한(norm) 대표 상품 모델의 한국 주소(아크테릭스 대표 상품 X000010276 = 목록 모델 번호 10276) — 받아 둔 주소가 없으면 검색 없이 그 주소부터
+    #   (대표 상품 품번과 목록 품번의 꼴이 달라 ERP가 대표 상품으로 맞추지 못함 → SKU 상품으로도 실음 · 검토 11/24)
+    rep_url = {}
+    for it_ in rep_items:
+        h_ = SKU_BRANDS.get(it_.get("brand")) if isinstance(it_, dict) and it_.get("kind") != "sku" else None
+        u_ = (((it_.get("m") or {}).get("KR") or {}).get("url")) if h_ and h_.get("norm") else None
+        if u_:
+            rep_url[(it_["brand"], h_["norm"](_sku_norm(it_.get("code"))))] = u_
     # 일감 = (브랜드, 나라, 묻는 열쇠) — 그 열쇠의 품번들을 한 번에 · 받을 때가 된 값이 있는 것만.
     # 받아 둔 값 다시 받기(ref)가 먼저(오래된 것부터 · 판매 상태와 상관없이 — 순서로 상태가 드러나지 않게), 아직 못 찾은 값 묻기(new)는 그 뒤(판매 중 먼저 · 날마다 돌아가는 순서)
     jobs = {}
@@ -3537,10 +3545,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     continue   # 이전 값 — 3일마다
                 kind = "ref"
             else:
-                if not _sku_slot(key, (FC_ASK_DAYS if h.get("fc") else SKU_ASK_KR) if cc == "KR" else SKU_ASK_DAYS, today):
-                    continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날) · v1.41 Firecrawl 검색으로 찾는 브랜드는 14일마다
-                if h.get("fc") and not os.environ.get(FC_ENV, "").strip():
-                    continue   # v1.41 검색 키가 없으면 새로 찾지 않음(받아 둔 주소만 다시 받음)
+                fc_new = h.get("fc") and (b, q) not in rep_url   # v1.41 검색이 필요한 새 값(대표 상품 한국 주소가 있는 모델은 검색 없이 받음)
+                if not _sku_slot(key, (FC_ASK_DAYS if fc_new else SKU_ASK_KR) if cc == "KR" else SKU_ASK_DAYS, today):
+                    continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날) · v1.41 Firecrawl 검색으로 찾는 값은 14일마다
+                if fc_new and not os.environ.get(FC_ENV, "").strip():
+                    continue   # v1.41 검색 키가 없으면 새로 찾지 않음(받아 둔 주소·대표 상품 주소만 받음)
                 kind = "new"
             j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0})
             j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"
@@ -3580,14 +3589,6 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
     idx, res, rlock, cnt = _SkuIdx(say), {}, threading.Lock(), collections.Counter()
     noidx_k = set()   # v1.37 색인을 못 만들어 묻지 못한 일감(못 받음 — 국내 상태는 앞 상태 유지 · ERP 요청 11/23)
     pre_by, want_by = {}, collections.defaultdict(set)   # v1.35 받아 둔 상품 주소(keep 나라)로 받는 일감 · 색인으로 찾는 열쇠(그 밖 — 킨 한국 색인이 다 찾으면 멈춤)
-    # v1.41 목록 품번 꼴로 정리한(norm) 대표 상품 모델의 한국 주소(아크테릭스 대표 상품 X000010276 = 목록 모델 번호 10276) — 받아 둔 주소가 없으면 검색 없이 그 주소부터
-    #   (대표 상품 품번과 목록 품번의 꼴이 달라 ERP가 대표 상품으로 맞추지 못함 → SKU 상품으로도 실음 · 검토 11/24)
-    rep_url = {}
-    for it_ in rep_items:
-        h_ = SKU_BRANDS.get(it_.get("brand")) if isinstance(it_, dict) and it_.get("kind") != "sku" else None
-        u_ = (((it_.get("m") or {}).get("KR") or {}).get("url")) if h_ and h_.get("norm") else None
-        if u_:
-            rep_url[(it_["brand"], h_["norm"](_sku_norm(it_.get("code"))))] = u_
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ in SKU_BRANDS.get(b_, {}).get("keep", ()):
             us_ = {((((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get(cc_)) or {}).get("url") for c_ in j_["codes"]}
