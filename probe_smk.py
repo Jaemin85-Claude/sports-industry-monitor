@@ -110,21 +110,40 @@ def product(pc):
     return d
 
 
+def mini(pc):
+    t, u, st = T(f"{B}/Product/ProductDetail?ProductCode={pc}")
+    if t is None:
+        return {"pc": pc, "err": u}
+    g = lambda rx: re.findall(rx, t)
+    hid = dict(re.findall(r'<input[^>]+type="hidden"[^>]+name="([^"]+)"[^>]*value="([^"]*)"', t))
+    return {"pc": pc, "st": st, "final": str(u)[-120:], "len": len(t),
+            "isc": g(r'class="item-summary__code">([^<]*)<'), "isc_ctx": sn(t, r"item-summary__code", 2, 200, 200),
+            "bcode": g(r'class="brand_code">([^<]*)<'), "pcode": [x for x in re.findall(r"<th[^>]*>\s*제품코드\s*</th>\s*<td[^>]*>([^<]*)<", t)],
+            "brand": hid.get("BrandName"), "name": hid.get("ProductName"), "tag": hid.get("TagPrice"), "sale": hid.get("SalePrice"),
+            "grp": hid.get("GroupProductCode"), "pcode_hidden": [k for k in hid if "code" in k.lower()][:12],
+            "origin": g(r'class="price__origin">\s*<span class="price__num">([\d,]+)<'),
+            "current": g(r'class="price__current">\s*(?:<span class="price__rate">[^<]*</span>\s*)?<span class="price__num">([\d,]+)<'),
+            "cmt": g(r'<!--<span>\(([^)]{0,12})\)</span>-->'), "title": (re.search(r"<title[^>]*>([^<]{0,80})", t) or [None, ""])[1]}
+
+
 def work(R):
     pf.HOST_GAP["plus.shoemarker.co.kr"] = pf.KR_GAP
-    R["robots"] = T(f"{B}/robots.txt")[0]
-    R["search"] = [search(q) for q in ["U740BM2", "U740-BM2", "M10804O2", "1203B049-021", "1203B049", "1203B049021", "1147833", "IQ4183", "FZ7372", "HQ2056", "VN000D3HY28"]]
-    R["brand_search"] = [search(q) for q in ["호카", "HOKA", "아디다스"]]
-    t, u, st = T(f"{B}/Product/ProductSearchList?SWord={urllib.parse.quote('아디다스')}")
-    R["paging_ctx"] = sn(t or "", r"paging|pagination|goPage|fnPage|name=\"Page\"|PageSize|pageNo|PageNo|btn_more|더보기", 14, 260, 120)
-    R["script_urls"] = sorted(set(re.findall(r"""['"](/Product/[A-Za-z]+[^'"]{0,60})['"]""", t or "")))[:30]
-    R["page_tries"] = [search("아디다스", x) for x in ["&Page=2", "&page=2", "&PageNo=2", "&Page=6"]]
-    pages = {}
-    for pc in ["55850", "55849", "55824", "55623", "55428", "56205", "55982", "55974", "30801", "55919"]:
-        pages[pc] = product(pc)
-    R["pages"] = pages
-    hk = R["brand_search"][0].get("cards") or []
-    R["hoka_more"] = [product(c[0]) for c in hk[2:5]]
+    R["pages"] = [mini(pc) for pc in ["56205", "55824", "55919", "55918", "30801", "55428", "54807", "99999999"]]
+    ad = []
+    for pg in (1, 2, 3):
+        ad += [c[0] for c in (search("아디다스", f"&Page={pg}").get("cards") or [])]
+    R["ad_list_n"] = len(ad)
+    R["ad_pages"] = [mini(pc) for pc in ad[3:9] + ad[40:43]]
+    vs = search("반스")
+    R["vans_list"] = vs
+    R["vans_pages"] = [mini(c[0]) for c in (vs.get("cards") or [])[:2]]
+    codes = []
+    for p_ in R["pages"] + R["ad_pages"] + R["vans_pages"]:
+        for c in (p_.get("isc") or [])[:1]:
+            if c and c not in codes:
+                codes.append(c)
+    R["code_search"] = [search(c) for c in codes[:12]]
+    R["fmt"] = [search(q) for q in ["1147833-AFF", "1147833AFF", "1147833 AFF", "U740BM2 ", "u740bm2", "M2002RXD"]]
     R["blocked"] = sorted(pf._BLOCKED)
 
 
