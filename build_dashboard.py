@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — 단일 HTML 대시보드 빌드
+v33.44: (price_fetch v1.47 · 대표 결정 2026-11-25 '가' — 대표 상품 한국 값은 매일 · 해외 값은 주 1회) 해외 정가 받은 날을 '한국 m/d · 해외 m/d 받음'(prices.json kr_fetched — 없는 옛 파일은 fetched · 같은 날이면 한 번)으로 — 브랜드 상세 출처 줄·해외 정가 화면 아래·수집 상태 '해외 정가' 줄 · 주기 표기 '한국 매일 · 해외 주 1회'(출처 줄·수집 상태 표) · 읽는 법(PR_WHY·PM_WHY) '한국은 매일, 해외는 주 1회 수집 — 해외 할인은 다음 수집 때' · 최상위 kr_told(한국 값 못 받음 알림 기록 — price_fetch 상태)는 화면 자료에 넣지 않음.
 v33.43: (price_fetch v1.43 · 대표 결정 11/24 '진행') 수집 상태 '해외 정가' 줄 끝에 '판매처 정가 재확인 m/d 일치 k/n · 다른 판매처와 같음 x/y'(prices.json audit_retail — 화면 자료에는 넣지 않음).
 v33.42: (price_fetch v1.39) prices.json 최상위 kr_none(국내 공식몰에 없음 꼬리표 — ERP용)은 화면 자료에 넣지 않음.
 v33.41: (대표 결정 2026-11-23 '정확도는 모니터 자체 표본 검사부터' — price_fetch v1.33) 수집 상태 '해외 정가' 줄 끝에 '정가 표본 검사 m/d 일치 k/n'(prices.json audit — 주 1회 국내 정가를 공식몰 페이지와 대조).
@@ -5078,7 +5079,10 @@ function prAll(){   // v33.16 전체 평균(더보기 메뉴 줄) — 상품·�
   ((PRICES&&PRICES.items)||[]).forEach(it=>{ const g=prRows(it).rows.filter(r=>r.gap!=null).map(r=>r.gap); if(g.length){ nIt++; all.push(...g); } });
   return {avg:prAvg(all),n:all.length,nIt};
 }
-const prFetchedMd=()=>{ const fs=String((PRICES&&PRICES.fetched)||''); return /^\d{4}-\d{2}-\d{2}/.test(fs)?`${+fs.slice(5,7)}/${+fs.slice(8,10)}`:''; };
+const prMdOf=v=>{ const fs=String(v||''); return /^\d{4}-\d{2}-\d{2}/.test(fs)?`${+fs.slice(5,7)}/${+fs.slice(8,10)}`:''; };
+const prFetchedMd=()=>{   // v33.44 한국 매일·해외 주 1회(price_fetch v1.47) — '한국 m/d · 해외 m/d'(kr_fetched 없는 옛 파일은 fetched · 같은 날이면 한 번)
+  const f=prMdOf(PRICES&&PRICES.fetched), k=prMdOf(PRICES&&PRICES.kr_fetched)||f;
+  return k&&f&&k!==f?`한국 ${k} · 해외 ${f}`:k&&!f?`한국 ${k}`:f; };
 function prFxHtml(curs,md){   // v33.15 적용 환율 줄(대표 지시 10/22) — 쓴 통화만, 나라 순서대로 · 엔은 100엔 · 기준일이 같으면 한 번만 · 이전 값이면 그 날짜 (v33.16 브랜드 상세·해외 정가 화면이 함께 씀 · v33.30 md = 날짜 글 — 해외 정가 화면은 mdTxt '11/6', 브랜드 상세는 그대로 mdOf)
   if(!curs.length) return '';
   md=md||mdOf;
@@ -5087,7 +5091,7 @@ function prFxHtml(curs,md){   // v33.15 적용 환율 줄(대표 지시 10/22) �
     return `${jp?'100엔':(f.name||c)} ${v.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2})}원${f.stale_since?`(${md(f.stale_since)} 값 — 그 뒤 수집 실패)`:(!as1&&f.asof?`(${md(f.asof)})`:'')}`; };
   return `<p class="bd-pr-src bd-pr-fx">적용 환율${as1?`(${md(as1)} 종가)`:''} ${esc(curs.map(one).join(' · '))}</p>`;
 }
-const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈 = 한국 정가가 더 높음, 쌈 = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice — 두바이는 상품 정보에 없어 공식몰 페이지의 할인 전 가격), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(브랜드 상세 나라 줄 아래에 그 값·확인한 날 — 표는 할인 전 정가 · 해외 정가는 주 1회 수집이라 그사이 바뀐 할인은 다음 수집 때) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(브랜드 상세에 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함(두바이 = UAE 공식몰 · 부가세 5% · 디르함은 달러 고정 3.6725로 환산).';
+const PR_WHY='한국은 = 한국 정가 ÷ (현지 정가 × 적용 환율) − 1 — 적용 환율은 매일 갱신 때 받은 원화 환율 최근 종가(Yahoo Finance)라 정가가 그대로여도 원화·%는 환율 따라 매일 바뀝니다. 비쌈 = 한국 정가가 더 높음, 쌈 = 한국이 더 쌈 — 관세·수입 부가세·운임은 넣지 않은 단순 비교라 병행수입 여지는 이것들을 더해 따집니다. 정가 = 할인 전 가격 — 나이키는 나이키 상품 정보의 정가(fullPrice — 두바이는 상품 정보에 없어 공식몰 페이지의 할인 전 가격), 그 밖은 공식몰 상품 페이지의 정가 표기(없으면 색상·사이즈별 가격 중 가장 높은 값). \'할인 −n%\' = 지금 할인 중인 색상·사이즈가 있음 — n = 그중 가장 싼 값 ÷ 정가(브랜드 상세 나라 줄 아래에 그 값·확인한 날 — 표는 할인 전 정가 · 한국은 매일, 해외는 주 1회 수집 — 해외 할인은 다음 수집 때) · \'정가 ▲▼n%\' = 최근 60일 안에 정가가 바뀜(브랜드 상세에 전 정가). 미국 가격은 판매세 별도(주마다 0~10%), 그 밖은 부가세 포함(두바이 = UAE 공식몰 · 부가세 5% · 디르함은 달러 고정 3.6725로 환산).';
 // v33.18 브랜드 상세 해외 정가 — 펼친 상품 칸(브랜드 → 상품 id 모음). 뒤로 와서 다시 그려도 같은 칸이 열려 있어 되살린 스크롤 위치가 맞음
 const PR_OPEN={};
 document.addEventListener('toggle',e=>{ const d=e.target; if(!d||!d.classList||!d.classList.contains('bd-prd')) return;
@@ -5123,7 +5127,7 @@ function prSecHtml(bname){
     h+=fold?`</details>`:`</div>`;
   });
   const fd=prFetchedMd();
-  h+=`<p class="bd-pr-src">공식몰 정가(할인 전) · 주 1회${fd?` · ${fd} 받음`:''}</p>`;
+  h+=`<p class="bd-pr-src">공식몰 정가(할인 전) · 한국 매일 · 해외 주 1회${fd?` · ${fd} 받음`:''}</p>`;   // v33.44
   h+=prFxHtml([...new Set(its.flatMap(it=>{ const p=prRows(it); return p.kr?p.rows.filter(r=>r.krw).map(r=>r.o.cur):[]; }))]);
   h+=why(PR_WHY+' 맨 위 평균 = 상품·나라별 차이의 단순 평균. 접속을 막는 몰(아디다스·뉴발란스 등)은 넣지 않음.');
   h+=`<button type="button" class="bd-link" data-go="more:price:${esc(bname)}"><span class="tt"><span class="t">${esc(bname)} 정가 표</span><span class="s">더보기 › 해외 정가</span></span>${ic('right',20,'s2 chev')}</button>`;   // v33.30 그 브랜드로 엶
@@ -5164,7 +5168,7 @@ const PM_NOPRICE={
   nomodel:[]};   // v33.38 미즈노 — 한국 공식몰 kor.mizuno.com에 현재 러닝화(price_fetch v1.27) · 크록스·오니츠카타이거도 block에서 뺌(11/21 다시 열림)
 const PM_NOPRICE_T={block:['공식몰이 자동 접속을 막음',' — 우회하지 않음'],nokr:['한국 공식몰 없음',''],nomodel:['한국 몰 현재 모델 없음',''],untested:['아직 시험 안 함','']};
 const PM_WHY='정가 = 할인 전 가격(공식몰 정가 표기 · 나이키는 상품 정보 fullPrice, 두바이는 공식몰 페이지). 원화 = 현지 가격 × 적용 환율(매일 받은 최근 종가 — 정가가 그대로여도 환율 따라 바뀜), 표는 만원 단위 소수 한 자리. 굵은 밑줄 = 원화로 가장 싼 곳(한국 포함 — 한국과 0.5% 안이면 한국), 진한 글자 = 한국보다 싼 나라, 회색 = 한국과 같거나 비싼 나라. 펼친 줄 \'거의 같음\' = 0.5% 안. – = 그 나라 공식몰은 비교하지 않음(직영 몰 없음·접속 막힘·품번이나 사양이 다름).<br>'
-  +'할인가 = 지금 가장 싼 색상·사이즈(일부 색상만일 수 있음) — 한국도 할인 중이면 한국 판매가와 견줌. 할인가 보기에서 굵은 밑줄 칸 아래 −n% = 그 나라 할인율(다른 나라는 줄을 펼치면). 해외 정가는 주 1회 수집이라 그사이 할인은 다음 수집 때.<br>'
+  +'할인가 = 지금 가장 싼 색상·사이즈(일부 색상만일 수 있음) — 한국도 할인 중이면 한국 판매가와 견줌. 할인가 보기에서 굵은 밑줄 칸 아래 −n% = 그 나라 할인율(다른 나라는 줄을 펼치면). 한국은 매일, 해외는 주 1회 수집 — 해외 할인은 다음 수집 때.<br>'
   +'착지 = (현지 가격 × 환율 + 항공 운임 kg당 × 분류별 무게) × 관세 × 수입 부가세 1.10 — 무게는 1개를 상자째 보내는 가정(신발 1.5 · 부츠 2.5 · 샌들류 1.0 · 반팔·민소매 0.3 · 옷 0.8 · 가방 1.0kg — 펼친 줄 아래 품번 옆), 관세는 기본세율(신발·의류 13% · 가방 8% — FTA 세율·통관 수수료 안 넣음), 항공 운임 = 관세청 항공 수입 운임 최근 달(영국·독일 = 유럽연합, 멕시코 = 미국, 두바이는 자료 없음 –). 마진 = 1 − 착지 ÷ 한국에서 지금 팔리는 가격(한국도 할인 중이면 할인가 — 정가 보기도 같음, 착지일 때 한국 줄이 그 가격) − 판매 수수료(설정 패널 · 이 기기에만 저장 · 비우면 수수료 전) — 국내 배송·통관 비용 전. 추천(굵은 밑줄) = 마진 0% 이상인 나라 중 가장 큰 곳 — 40% 이상 할인한 값(*)은 일부 색상·사이즈일 수 있어 빼고, 수집을 멈춘 나라 값(접속 막음·리뉴얼 중 — 옛 값)도 빼며, 한국 가격 수집을 멈춘 상품은 추천·요약 숫자에서 뺌(요약 끝에 따로). 본전 매입가 = 착지가 한국 판매가(판매 수수료를 넣었으면 그만큼 뺀 값)와 같아지는 현지 가격, 목표 매입가 = 목표 마진을 남기는 현지 가격 — 둘 다 현지 부가세 포함 표시가, 정수로 내림(목표 마진은 이 기기에만 저장). \'수출 환급 가정\'을 고르면 현지 부가세를 빼고 계산하고 기준 줄에 적음.<br>'
   +'미국 가격은 판매세 별도, 그 밖은 부가세 포함(두바이 5% · 디르함은 달러 고정 3.6725로 환산). 접속을 막는 공식몰은 우회하지 않음. '
   +'일본·멕시코·두바이는 2026-11-22부터 수집 중단(대표 결정 — 한국·미국·유럽 위주) — 화면에서 뺌.';   // v33.39
@@ -6194,7 +6198,7 @@ STATUS_SOURCES = [
     ("kosis.json", "국내 소매 지표", "update-kosis", "매월 5일", 40),
     ("naver_trend.json", "네이버 검색 관심도", "update-dashboard", "매일 04:17", 2),
     ("logistics.json", "물류 운임·바닷길", "update-dashboard", "매일 04:17", 2),   # v33.4 logistics_fetch v1
-    ("prices.json", "해외 정가", "update-dashboard", "주 1회(매일 확인)", 2),   # v33.14 price_fetch v1 — 매일 돌며 7일마다 받음(generated_at은 매일)
+    ("prices.json", "해외 정가", "update-dashboard", "한국 매일 · 해외 주 1회", 2),   # v33.14 price_fetch v1 — 매일 돌며 7일마다 받음(generated_at은 매일) · v33.44 price_fetch v1.47 한국 값은 매일
 ]
 
 
@@ -6361,8 +6365,10 @@ def _partial(fn, d):
             notes.append("이전 값 " + ", ".join(kept[:4]) + (f" 외 {len(kept) - 4}건" if len(kept) > 4 else ""))
         if bad:
             notes.append("값 없음 " + ", ".join(bad[:4]) + (f" 외 {len(bad) - 4}건" if len(bad) > 4 else ""))
-        if d.get("fetched"):
-            notes.append(f"마지막으로 받은 날 {d['fetched']}")
+        md = lambda v: f"{int(str(v)[5:7])}/{int(str(v)[8:10])}" if re.match(r"\d{4}-\d{2}-\d{2}", str(v or "")) else ""
+        fd = md(d.get("fetched")); kd = md(d.get("kr_fetched")) or fd   # v33.44 한국 매일·해외 주 1회(price_fetch v1.47 kr_fetched — 없는 옛 파일은 fetched · 같은 날이면 한 번)
+        if fd or kd:
+            notes.append((f"한국 {kd} · 해외 {fd}" if fd and kd != fd else fd or f"한국 {kd}") + " 받음")
         if sku:   # v33.40 판매·예정 상품 색상 단위 정가(화면에는 안 보임 — ERP가 prices.json을 읽음)
             notes.append(f"SKU 정가 상품 {len(sku)}개(값 {sum(len(it.get('m') or {}) for it in sku)} · 한국 {sum(1 for it in sku if 'KR' in (it.get('m') or {}))})")
         au = d.get("audit") if isinstance(d.get("audit"), dict) else None
@@ -6588,13 +6594,13 @@ def main():
                     miss.setdefault(x["id"], []).append(x["cc"])
             prices["missing"] = miss
             prices["items"] = [it for it in prices.get("items") or [] if isinstance(it, dict) and it.get("kind") != "sku"]   # 모양이 이상한 항목 하나 때문에 칸 전체가 빠지지 않게 · v33.40 SKU 단계 상품은 뺌
-            for k in ("sku_q", "sku_list_fail", "sku_list_told", "kr_none", "audit_retail"):   # v33.40 화면에 안 쓰는 SKU 단계 상태 · v33.42 국내 공식몰에 없음 꼬리표(ERP용) · v33.43 판매처 정가 재확인(수집 상태 줄은 빌드 때 만듦)
+            for k in ("sku_q", "sku_list_fail", "sku_list_told", "kr_none", "audit_retail", "kr_told"):   # v33.40 화면에 안 쓰는 SKU 단계 상태 · v33.42 국내 공식몰에 없음 꼬리표(ERP용) · v33.43 판매처 정가 재확인(수집 상태 줄은 빌드 때 만듦) · v33.44 한국 값 못 받음 알림 기록(price_fetch v1.47 — kr_fetched는 화면이 씀)
                 prices.pop(k, None)
             for it in prices["items"]:
                 it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if isinstance(o, dict)} if isinstance(it.get("m"), dict) else {}
                 it["m"] = {cc: o for cc, o in it["m"].items() if not str(o.get("paused") or "").startswith("수집 중단")}   # v33.39 나라 단위 수집 중단(price_fetch v1.28 PAUSED_CC — 일본·멕시코·두바이)은 화면에서 뺌
                 for o in it["m"].values():
-                    for k in ("url", "why", "obs", "obs_date", "cand", "cand_date", "off_seen", "sh"):   # v33.23 할인 기록 sh·off_seen은 주간 메일용(화면은 sp·ph만)
+                    for k in ("url", "why", "obs", "obs_date", "cand", "cand_date", "off_seen", "sh", "low_since"):   # v33.23 할인 기록 sh·off_seen은 주간 메일용(화면은 sp·ph만) · v33.44 할인 가드 시작일(price_fetch v1.47 — SKU 값용)
                         o.pop(k, None)
         except Exception as e:
             print(f"[WARN] prices.json 읽기 실패: {str(e)[:100]}")

@@ -12,7 +12,7 @@ on:
         required: false
         default: ""
       price_force:
-        description: "해외 정가 바로 받기(1) — 7일이 안 지나도 지금 받음(수집 코드를 고친 뒤 확인용). 비우면 주 1회대로"
+        description: "해외 정가 바로 받기(1) — 7일이 안 지나도 해외 값도 지금 받음 — 한국은 매일(수집 코드를 고친 뒤 확인용). 비우면 한국 매일·해외 주 1회"
         required: false
         default: ""
       price_lanes:
@@ -72,13 +72,13 @@ jobs:
         run: |
           echo "logistics_fetch: 물류 자료 수집 실패(이전 값 유지)" >> soft_fail.txt
       - name: Overseas list prices
-        # v2026-10-21 해외 정가(price_fetch v1): 브랜드 대표 상품 나라별 정가(할인 전) → docs/prices.json (브랜드 상세 하단) · 매일 돌며 7일마다 받음
+        # v2026-10-21 해외 정가(price_fetch v1): 브랜드 대표 상품 나라별 정가(할인 전) → docs/prices.json (브랜드 상세 하단) · 매일 돌며 7일마다 받음 · v2026-11-25 price_fetch v1.47: 한국 값은 매일, 해외 값은 7일마다
         id: price
         continue-on-error: true   # 해외 정가가 멈춰도 대시보드 갱신은 계속
-        timeout-minutes: 15       # 스크립트가 13분에 스스로 멈춤(v2026-10-23 상품 75개 · 값 299개 — 주 1회만 오래 걸림) · v2026-10-28 묶음 동시 받기(v1.12)로 전체 받기 약 2~3분, 묶음이 걸려도 14분에 저장
+        timeout-minutes: 15       # 스크립트가 13분에 스스로 멈춤(v2026-10-23 상품 75개 · 값 299개 — 주 1회만 오래 걸림) · v2026-10-28 묶음 동시 받기(v1.12)로 전체 받기 약 2~3분, 묶음이 걸려도 14분에 저장 · v2026-11-25 v1.47 한국 값 매일(날마다 약 2~3분 더 — 추정)
         env:
           PYTHONUNBUFFERED: "1"
-          PRICE_FORCE: ${{ inputs.price_force }}   # 수동 실행 입력 price_force=1이면 7일이 안 지나도 받음
+          PRICE_FORCE: ${{ inputs.price_force }}   # 수동 실행 입력 price_force=1이면 7일이 안 지나도 해외 값도 받음(한국은 매일)
           PRICE_LANES: ${{ inputs.price_lanes }}   # 수동 실행 입력 — 비우면 묶음 6개 동시, 1이면 예전처럼 차례대로
           # v2026-11-22 price_fetch v1.29 SKU 단계: 판매·예정 상품 비공개 목록(주소·토큰은 Secrets에만 · 이 단계에만 넘김 · 로그에 안 찍음) — 없으면 건너뜀
           ERP_SKU_URL: ${{ secrets.ERP_SKU_URL }}
