@@ -1,8 +1,9 @@
 {
- "generated_at": "2026-11-25 12:05 KST",
+ "generated_at": "2026-11-25 17:46 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
+ "kr_fetched": "2026-11-25",
  "status": "ok",
  "items": [
   {
@@ -14,10 +15,10 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2288-111)",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -97,10 +98,10 @@
     "KR": {
      "p": 139000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DD1391-100)",
      "obs": 139000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -232,10 +233,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN8490-100)",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -308,10 +309,10 @@
     "KR": {
      "p": 129000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BQ6806-100)",
      "obs": 129000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -417,10 +418,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DM4044-108)",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -518,10 +519,10 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(553558-161)",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -609,10 +610,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(BV1358-003)",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -717,10 +718,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(604133-139)",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -793,10 +794,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(432997-107)",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -806,7 +807,7 @@
       ]
      ],
      "sp": 107100.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 100.0,
@@ -894,10 +895,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DH2987-101)",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -907,7 +908,7 @@
       ]
      ],
      "sp": 84100.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 85.0,
@@ -998,10 +999,10 @@
     "KR": {
      "p": 59000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FD4116-001)",
      "obs": 59000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -1092,10 +1093,10 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN9675-002)",
      "obs": 39000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -1105,7 +1106,7 @@
       ]
      ],
      "sp": 33100.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 37.0,
@@ -1195,10 +1196,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DA6364-101)",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -1208,7 +1209,7 @@
       ]
      ],
      "sp": 81700.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 90.0,
@@ -1314,20 +1315,24 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(FD0736-100)",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
        "2026-11-20",
        104300.0,
        "base"
+      ],
+      [
+       "2026-11-25",
+       126600.0
       ]
      ],
-     "sp": 104300.0,
-     "sp_date": "2026-11-22"
+     "sp": 126600.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 125.0,
@@ -1406,10 +1411,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(921826-101)",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -1495,10 +1500,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW4555-002)",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -1589,10 +1594,10 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(343880-090)",
      "obs": 39000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -1602,7 +1607,7 @@
       ]
      ],
      "sp": 33100.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 30.0,
@@ -1645,10 +1650,10 @@
     "KR": {
      "p": 139000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CN0149-001)",
      "obs": 139000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -1710,10 +1715,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(CW2289-111)",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -1786,20 +1791,22 @@
     "KR": {
      "p": 45000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://api.nike.com/product_feed/threads/v3/?filter=marketplace(KR)&filter=language(ko)&filter=channelId(d9a5bc42-4b9c-4976-858a-f159cf99c647)&filter=productInfo.merchProduct.styleColor(DC4244-010)",
      "obs": 45000.0,
-     "obs_date": "2026-11-22",
-     "sale": true,
+     "obs_date": "2026-11-25",
+     "sale": false,
      "sh": [
       [
        "2026-11-21",
        40500.0,
        "base"
+      ],
+      [
+       "2026-11-25",
+       null
       ]
-     ],
-     "sp": 40500.0,
-     "sp_date": "2026-11-22"
+     ]
     },
     "US": {
      "p": 37.0,
@@ -1887,10 +1894,10 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-og-%3Cbr%3Espeedcat-og/398846.html",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -2050,10 +2057,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%8C%94%EB%A0%88%EB%A5%B4%EB%AA%A8-%3Cbr%3Epalermo/396463.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -2178,10 +2185,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%AA%A8%EC%8A%A4%ED%8A%B8%EB%A1%9C-og-%3Cbr%3Emostro-og/397330.html",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2199,7 +2206,7 @@
       ]
      ],
      "sp": 62600.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 120.0,
@@ -2347,10 +2354,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%EC%9B%A8%EC%9D%B4%EB%93%9C-%ED%81%B4%EB%9E%98%EC%8B%9D%3Cbr%3Esuede-classic/399781.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -2462,10 +2469,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-4-%3Cbr%3Edeviate-nitro-elite-4/312127.html",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2479,7 +2486,7 @@
       ]
      ],
      "sp": 208080.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 250.0,
@@ -2592,10 +2599,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-go-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-go-wns/403589.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2604,7 +2611,7 @@
       ]
      ],
      "sp": 95200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 90.0,
@@ -2694,10 +2701,10 @@
     "KR": {
      "p": 329000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%3Cbr%3Edeviate-nitro-elite-trail/310034.html",
      "obs": 329000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2707,7 +2714,7 @@
       ]
      ],
      "sp": 230300.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 250.0,
@@ -2748,10 +2755,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/t7-always-on-%EC%88%8F-%EA%B8%B0%EC%9E%A5-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-short-track-jacket/629796.html",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2761,7 +2768,7 @@
       ]
      ],
      "sp": 49500.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 70.0,
@@ -2881,10 +2888,10 @@
     "KR": {
      "p": 329000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-%EC%97%98%EB%A6%AC%ED%8A%B8-%ED%8A%B8%EB%A0%88%EC%9D%BC-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Edeviate-nitro-elite-trail-wn/310468.html",
      "obs": 329000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -2955,10 +2962,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Eforeverrun-nitro-2/310109.html",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -2968,7 +2975,7 @@
       ]
      ],
      "sp": 111440.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 150.0,
@@ -3043,10 +3050,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%82%B9-%EC%9D%B8%EB%8F%84%EC%96%B4-%3Cbr%3Eking-indoor/401683.html",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -3127,10 +3134,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Eforeverrun-nitro-2-wn/310471.html",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3140,7 +3147,7 @@
       ]
      ],
      "sp": 111440.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 150.0,
@@ -3210,10 +3217,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%ED%8F%AC%EC%97%90%EB%B2%84%EB%9F%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-3-%3Cbr%3Eforeverrun-nitro-3/312942.html",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3223,7 +3230,7 @@
       ]
      ],
      "sp": 159200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 150.0,
@@ -3295,10 +3302,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%94%94%EB%B9%84%EC%97%90%EC%9D%B4%ED%8A%B8-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-4-%3Cbr%3Edeviate-nitro-4/312123.html",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3308,7 +3315,7 @@
       ]
      ],
      "sp": 122640.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 170.0,
@@ -3398,10 +3405,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%A7%A4%EA%B7%B8%EB%A7%A5%EC%8A%A4-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-2-%3Cbr%3Emagmax-nitro-2/312125.html",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3411,7 +3418,7 @@
       ]
      ],
      "sp": 152960.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 180.0,
@@ -3512,10 +3519,10 @@
     "KR": {
      "p": 129000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/h-street-og/403692.html",
      "obs": 129000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3525,7 +3532,7 @@
       ]
      ],
      "sp": 72240.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 85.0,
@@ -3615,10 +3622,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%8A%A4%ED%94%BC%EB%93%9C%EC%BA%A3-%EB%B0%9C%EB%A0%9B-sd-%EC%9A%B0%EB%A8%BC%EC%8A%A4-%3Cbr%3Espeedcat-ballet-sd-wns/401287.html",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3628,7 +3635,7 @@
       ]
      ],
      "sp": 39000.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 90.0,
@@ -3700,10 +3707,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/t7-%EC%98%AC%EC%9B%A8%EC%9D%B4%EC%A6%88-%EC%98%A8-%ED%8A%B8%EB%9E%99-%EC%9E%90%EC%BC%93-%3Cbr%3Et7-always-on-track-jacket-dk/629587.html",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3713,7 +3720,7 @@
       ]
      ],
      "sp": 61040.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 75.0,
@@ -3803,10 +3810,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EB%B2%A8%EB%A1%9C%EC%8B%9C%ED%8B%B0-%EB%82%98%EC%9D%B4%ED%8A%B8%EB%A1%9C-5-%3Cbr%3Evelocity-nitro-5/312944.html",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3816,7 +3823,7 @@
       ]
      ],
      "sp": 114560.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 140.0,
@@ -3888,10 +3895,10 @@
     "KR": {
      "p": 39000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.puma.com/kr/ko/pd/%EC%97%AC%EC%84%B1-%EB%9F%B0-%EB%B2%A8%EB%A1%9C%EC%8B%9C%ED%8B%B0-%ED%8B%B0%EC%85%94%EC%B8%A0(poly)-%3Cbr%3Ew-run-velocity-tee-(poly)/526578.html",
      "obs": 39000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -3901,7 +3908,7 @@
       ]
      ],
      "sp": 21840.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 23.0,
@@ -3955,10 +3962,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudmonster-1-m-3mf3074/mens/black-shoes-3MF30740553",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4000,10 +4007,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloud-6-m-3mf1007/mens/white-white-shoes-3MF10071200",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4065,10 +4072,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudsurfer-2-3mf1012/mens/black-black-shoes-3MF10121043",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4146,10 +4153,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudtilt-m-3me1010/mens/black-ivory-shoes-3ME10101430",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4211,10 +4218,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/the-roger-advantage-m-3mf3064/mens/white-white-shoes-3MF30641200",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4276,10 +4283,10 @@
     "KR": {
      "p": 249000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudmonster-1-wp-m-3mg1070/mens/black-black-shoes-3MG10701043",
      "obs": 249000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4330,10 +4337,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudmonster-3-m-3mg1005/mens/black-black-shoes-3MG10051043",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4395,10 +4402,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudrunner-3-m-3mg1007/mens/black-black-shoes-3MG10071043",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4460,10 +4467,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloud-x-5-m-3mg3008/mens/black-black-shoes-3MG30081043",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4525,10 +4532,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloud-6-wp-3mf1006/mens/black-black-shoes-3MF10061043",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4590,10 +4597,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloud-6-coast-3mf1003/mens/black-rock-shoes-3MF10030080",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4655,10 +4662,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudzone-3mf1008/mens/black-eclipse-shoes-3MF10080106",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4720,10 +4727,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudrock-low-wp-3mf1025/mens/black-black-shoes-3MF10251043",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4785,10 +4792,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudultra-3-m-3mf3023/mens/black-black-shoes-3MF30231043",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4868,10 +4875,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudboom-max-m-3mf3031/mens/white-black-shoes-3MF30310462",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -4958,10 +4965,10 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudsurfer-next-3me3002/mens/white-white-shoes-3ME30021200",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5050,10 +5057,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudsurfer-max-m-3mf3043/mens/white-white-shoes-3MF30431200",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5115,10 +5122,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloud-6-3wf1006/womens/black-black-shoes-3WF10061043",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5180,10 +5187,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudmonster-3-w-3wg1003/womens/black-black-shoes-3WG10031043",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5245,10 +5252,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.on.com/ko-kr/products/cloudrunner-3-w-3wg1005/womens/black-black-shoes-3WG10051043",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5310,10 +5317,10 @@
     "KR": {
      "p": 295000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://salomon.co.kr/products/l47450600",
      "obs": 295000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5361,10 +5368,10 @@
     "KR": {
      "p": 280000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://salomon.co.kr/products/l41086600",
      "obs": 280000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5412,10 +5419,10 @@
     "KR": {
      "p": 290000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://salomon.co.kr/products/l47132900",
      "obs": 290000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5463,10 +5470,10 @@
     "KR": {
      "p": 240000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://salomon.co.kr/products/l41741300",
      "obs": 240000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5514,10 +5521,10 @@
     "KR": {
      "p": 320000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://salomon.co.kr/products/l49210800",
      "obs": 320000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5565,10 +5572,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-1461-black-smooth",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5601,10 +5608,10 @@
     "KR": {
      "p": 309000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-jadon-black-15265001",
      "obs": 309000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5637,10 +5644,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-1460-cherry-red-11822600",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5681,10 +5688,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-2976ys-black-smooth",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5717,10 +5724,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-1460-bex-black-smooth",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -5729,7 +5736,7 @@
       ]
      ],
      "sp": 245650.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 180.0,
@@ -5769,10 +5776,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/1460-mofalse",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5805,10 +5812,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/adeurian",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -5817,7 +5824,7 @@
       ]
      ],
      "sp": 215100.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 160.0,
@@ -5849,10 +5856,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/shoes-8065-maryjane-black-smooth-12916001",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -5861,7 +5868,7 @@
       ]
      ],
      "sp": 183200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 150.0,
@@ -5893,10 +5900,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/singkeulreeo",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5929,10 +5936,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/shoes-1461-mono-black-14345001",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -5965,10 +5972,10 @@
     "KR": {
      "p": 319000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-2976-quad-black-polished-smooth",
      "obs": 319000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -5992,10 +5999,10 @@
     "KR": {
      "p": 249000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/shoes-1461-bex-black-smooth",
      "obs": 249000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6019,10 +6026,10 @@
     "KR": {
      "p": 269000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/shoes-1461-quad-retro-25567001",
      "obs": 269000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -6032,7 +6039,7 @@
       ]
      ],
      "sp": 215200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 175.0,
@@ -6055,10 +6062,10 @@
     "KR": {
      "p": 229000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/14852001",
      "obs": 229000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -6068,7 +6075,7 @@
       ]
      ],
      "sp": 183200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 145.0,
@@ -6091,10 +6098,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/core-1490-black-virgina",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -6104,7 +6111,7 @@
       ]
      ],
      "sp": 179400.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 180.0,
@@ -6127,10 +6134,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-church-black-16054001",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6163,10 +6170,10 @@
     "KR": {
      "p": 349000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/bintiji-1460",
      "obs": 349000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6190,10 +6197,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/bintiji-1461",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6217,10 +6224,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/31520001-blaire",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6244,10 +6251,10 @@
     "KR": {
      "p": 349000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.drmartens.co.kr/products/boots-2976-black-quillon-25747001",
      "obs": 349000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6271,10 +6278,10 @@
     "KR": {
      "p": 785000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26025DBR",
      "obs": 785000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -6328,10 +6335,10 @@
     "KR": {
      "p": 745000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26026BKX",
      "obs": 745000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6379,10 +6386,10 @@
     "KR": {
      "p": 560000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26029BKX",
      "obs": 560000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -6431,10 +6438,10 @@
     "KR": {
      "p": 530000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26024BKX",
      "obs": 530000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6473,10 +6480,10 @@
     "KR": {
      "p": 745000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26027DBR",
      "obs": 745000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -6529,10 +6536,10 @@
     "KR": {
      "p": 830000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26030DBR",
      "obs": 830000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -6590,10 +6597,10 @@
     "KR": {
      "p": 450000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/DRAGON_DIFFUSION/Product/W2BAS26028DBR",
      "obs": 450000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false,
      "sh": [
       [
@@ -6651,10 +6658,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508652696038BK01",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6696,10 +6703,10 @@
     "KR": {
      "p": 195000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507742896066BK01",
      "obs": 195000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6741,10 +6748,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508641433091BK01",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6786,10 +6793,10 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760510634046010NO01",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6822,10 +6829,10 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760066476268098BK01",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6858,10 +6865,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508619617098BK01",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6910,10 +6917,10 @@
     "KR": {
      "p": 195000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507733522065BK01",
      "obs": 195000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -6946,10 +6953,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760507760063021BK01",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -6982,10 +6989,10 @@
     "KR": {
      "p": 180000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084797358063BK01",
      "obs": 180000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -7018,10 +7025,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508591697023BK01",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -7054,10 +7061,10 @@
     "KR": {
      "p": 259000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133875939070BK01",
      "obs": 259000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7081,10 +7088,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1792133666918092BK01",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7108,10 +7115,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508601844067BK01",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7135,10 +7142,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1785476517288037BK01",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7162,10 +7169,10 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760508683714035NO01",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7189,10 +7196,10 @@
     "KR": {
      "p": 259000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084986999013BK01",
      "obs": 259000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -7225,10 +7232,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1789969305240016BK01",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7252,10 +7259,10 @@
     "KR": {
      "p": 269000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1774579934235020BK01",
      "obs": 269000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7279,10 +7286,10 @@
     "KR": {
      "p": 289000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1760084821690065BK01",
      "obs": 289000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -7306,10 +7313,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.kolonmall.com/Brands/HUNTER/Product/K1784599846737092BK01",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -8397,10 +8404,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EB%9D%BC%EC%9D%B4%EB%93%9C-19-whitecrimson/210/",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8472,10 +8479,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%8A%A4%ED%94%BC%EB%93%9C-5-whitecrimson/220/",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8552,10 +8559,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/302/",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8615,10 +8622,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-24-triple-black/418/",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8660,10 +8667,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EA%B0%80%EC%9D%B4%EB%93%9C-19-fossilcarbon/372/",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8725,10 +8732,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/535/",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8770,10 +8777,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%82%A8%EB%B0%94%EB%9D%BC-16-blackwhite/153/",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8797,10 +8804,10 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-whitecrimson/314/",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8860,10 +8867,10 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%EC%95%84%EC%A3%BC%EB%9D%BC-ivorywhite/307/",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8923,10 +8930,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%EC%97%94%EB%8F%8C%ED%95%80-%ED%94%84%EB%A1%9C-5-whiteblack/298/",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -8968,10 +8975,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%98%B4%EB%8B%88-st-23-triple-black/289/",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9013,10 +9020,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88-80-blackwhite/222/",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9076,10 +9083,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%8E%98%EB%A0%88%EA%B7%B8%EB%A6%B0-16-%EC%99%80%EC%9D%B4%EB%93%9C-carbonblack/211/",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9103,10 +9110,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EB%A6%AC%EC%BB%A4%EB%B2%84%EB%A6%AC-%ED%9B%84%EB%94%94-light-grey-heather/275/",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9130,10 +9137,10 @@
     "KR": {
      "p": 299000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-%EC%9B%8C%ED%84%B0%ED%94%84%EB%A3%A8%ED%94%84-%EC%9E%AC%ED%82%B7-white-black/278/",
      "obs": 299000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9157,10 +9164,10 @@
     "KR": {
      "p": 59000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%8A%A4%ED%86%B1%EC%9B%8C%EC%B9%98-%EB%A1%B1-%EC%8A%AC%EB%A6%AC%EB%B8%8C-ivory-heather/271/",
      "obs": 59000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9211,10 +9218,10 @@
     "KR": {
      "p": 69000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EB%82%A8%EC%84%B1-%EC%95%84%EC%9B%83%ED%8E%98%EC%9D%B4%EC%8A%A4-5%EC%9D%B8%EC%B9%98-%EC%87%BC%EC%B8%A0-black/250/",
      "obs": 69000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9256,10 +9263,10 @@
     "KR": {
      "p": 369000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%EC%97%94%EB%8F%8C%ED%95%80-%EC%97%98%EB%A6%AC%ED%8A%B8-3-whiteblack/478/",
      "obs": 369000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9301,10 +9308,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EC%97%AC%EC%84%B1-%ED%97%88%EB%A6%AC%EC%BC%80%EC%9D%B8-26-triple-black/531/",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9346,10 +9353,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://saucony.co.kr/product/%EA%B3%B5%EC%9A%A9-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%A6%AC%EB%93%9C-%ED%8A%B8%EB%9D%BC%EC%9D%B4%EC%97%84%ED%94%84-4-blacksilver/190/",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9791,10 +9798,10 @@
     "KR": {
      "p": 480000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686241",
      "obs": 480000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9868,7 +9875,9 @@
      "url": "https://arcteryx.co.kr/products/view/685690",
      "obs": 430000.0,
      "obs_date": "2026-11-22",
-     "sale": false
+     "sale": false,
+     "stale_since": "2026-11-22",
+     "why": "상품 가격 데이터(JSON-LD) 없음"
     },
     "US": {
      "p": 280.0,
@@ -9921,10 +9930,10 @@
     "KR": {
      "p": 330000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686323",
      "obs": 330000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -9994,10 +10003,10 @@
     "KR": {
      "p": 310000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686259",
      "obs": 310000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10067,10 +10076,10 @@
     "KR": {
      "p": 690000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686764",
      "obs": 690000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10124,10 +10133,10 @@
     "KR": {
      "p": 290000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686432",
      "obs": 290000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10188,10 +10197,10 @@
     "KR": {
      "p": 350000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686729",
      "obs": 350000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10261,10 +10270,10 @@
     "KR": {
      "p": 380000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686215",
      "obs": 380000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10318,10 +10327,10 @@
     "KR": {
      "p": 250000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686681",
      "obs": 250000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10375,10 +10384,10 @@
     "KR": {
      "p": 490000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686731",
      "obs": 490000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10432,10 +10441,10 @@
     "KR": {
      "p": 710000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686750",
      "obs": 710000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10489,10 +10498,10 @@
     "KR": {
      "p": 290000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686685",
      "obs": 290000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10528,10 +10537,10 @@
     "KR": {
      "p": 280000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686986",
      "obs": 280000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10585,10 +10594,10 @@
     "KR": {
      "p": 310000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686680",
      "obs": 310000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -10633,10 +10642,10 @@
     "KR": {
      "p": 250000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686228",
      "obs": 250000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10690,10 +10699,10 @@
     "KR": {
      "p": 380000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686229",
      "obs": 380000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10738,10 +10747,10 @@
     "KR": {
      "p": 490000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686738",
      "obs": 490000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10795,10 +10804,10 @@
     "KR": {
      "p": 170000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/687008",
      "obs": 170000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10852,10 +10861,10 @@
     "KR": {
      "p": 170000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686883",
      "obs": 170000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10927,10 +10936,10 @@
     "KR": {
      "p": 170000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://arcteryx.co.kr/products/view/686342",
      "obs": 170000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -10975,10 +10984,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000673",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11037,10 +11046,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000679",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11099,10 +11108,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000653",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11153,10 +11162,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000996",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11223,10 +11232,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000580",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11285,10 +11294,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000804",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11330,10 +11339,10 @@
     "KR": {
      "p": 149000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001043",
      "obs": 149000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11400,10 +11409,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000868",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11462,10 +11471,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001054",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11532,10 +11541,10 @@
     "KR": {
      "p": 269000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000945",
      "obs": 269000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11576,10 +11585,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000638",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11639,10 +11648,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000860",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -11684,10 +11693,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000890",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11738,10 +11747,10 @@
     "KR": {
      "p": 279000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000588",
      "obs": 279000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11801,10 +11810,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000952",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11864,10 +11873,10 @@
     "KR": {
      "p": 209000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000986",
      "obs": 209000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11927,10 +11936,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000001045",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -11990,10 +11999,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000585",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
      "sh": [
       [
@@ -12003,7 +12012,7 @@
       ]
      ],
      "sp": 159200.0,
-     "sp_date": "2026-11-22"
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 165.0,
@@ -12062,10 +12071,10 @@
     "KR": {
      "p": 239000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000073",
      "obs": 239000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12116,10 +12125,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.keenfootwear.kr/goods/goods_view.php?goodsNo=1000000991",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12161,10 +12170,10 @@
     "KR": {
      "p": 69000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000050",
      "obs": 69000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12192,10 +12201,10 @@
     "KR": {
      "p": 69000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000084",
      "obs": 69000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12223,10 +12232,10 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000159",
      "obs": 89000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12254,10 +12263,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000062",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12285,10 +12294,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000058",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12316,10 +12325,10 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000087",
      "obs": 89000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12355,10 +12364,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000031",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12386,10 +12395,10 @@
     "KR": {
      "p": 119000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000055",
      "obs": 119000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12417,10 +12426,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000018",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12456,10 +12465,10 @@
     "KR": {
      "p": 89000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000063",
      "obs": 89000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12495,10 +12504,10 @@
     "KR": {
      "p": 99000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000054",
      "obs": 99000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12526,10 +12535,10 @@
     "KR": {
      "p": 159000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000148",
      "obs": 159000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12566,10 +12575,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000145",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12606,10 +12615,10 @@
     "KR": {
      "p": 199000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000149",
      "obs": 199000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12646,10 +12655,10 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000153",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12686,10 +12695,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000151",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12717,10 +12726,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000075",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12757,10 +12766,10 @@
     "KR": {
      "p": 79000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000073",
      "obs": 79000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12788,10 +12797,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000067",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12828,10 +12837,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.oofos.co.kr/goods/goods_view.php?goodsNo=1000000027",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12868,10 +12877,10 @@
     "KR": {
      "p": 2700000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/merino-wool-4-bar-milano-stitch-cardigan-mkc160a-00014-415",
      "obs": 2700000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12933,10 +12942,10 @@
     "KR": {
      "p": 2820000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/wool-4-bar-v-neck-cardigan-fkc207a-00014-415",
      "obs": 2820000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -12998,10 +13007,10 @@
     "KR": {
      "p": 2470000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/milano-stitch-merino-wool-4-bar-pullover-fka239a-00014-415",
      "obs": 2470000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13063,10 +13072,10 @@
     "KR": {
      "p": 2380000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/merino-wool-4-bar-classic-v-neck-cardigan-mkc002a-y1014-415",
      "obs": 2380000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13128,10 +13137,10 @@
     "KR": {
      "p": 2080000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/fine-merino-wool-4-bar-pullover-mka002a-y1014-415",
      "obs": 2080000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13193,10 +13202,10 @@
     "KR": {
      "p": 2430000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/wool-4-bar-pullover-mka189a-00014-415",
      "obs": 2430000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13258,10 +13267,10 @@
     "KR": {
      "p": 2040000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/waffle-4-bar-sweatpants-mjq082a-06452-035",
      "obs": 2040000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13323,10 +13332,10 @@
     "KR": {
      "p": 1030000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/oxford-shirt-mwl001a-f0313-100",
      "obs": 1030000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13388,10 +13397,10 @@
     "KR": {
      "p": 1780000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-longwing-brogues-with-rubber-soles-mfd002h-00198-001",
      "obs": 1780000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13453,10 +13462,10 @@
     "KR": {
      "p": 1840000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-penny-loafers-with-rubber-soles-mfd054g-00198-001",
      "obs": 1840000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13518,10 +13527,10 @@
     "KR": {
      "p": 4810000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/hector-bag-in-pebble-grain-leather-mag050a-00198-001",
      "obs": 4810000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13583,10 +13592,10 @@
     "KR": {
      "p": 7250000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-mr-thom-bag-mag001l-00198-001",
      "obs": 7250000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13648,10 +13657,10 @@
     "KR": {
      "p": 3330000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/merino-wool-milano-v-neck-long-cardigan-fkc289a-00014-415",
      "obs": 3330000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13713,10 +13722,10 @@
     "KR": {
      "p": 2400000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/wool-fresco-pleated-mini-skirt-fgc402v-00473-035",
      "obs": 2400000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13778,10 +13787,10 @@
     "KR": {
      "p": 5220000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/wool-fresco-sportcoat-fbc010i-00473-001",
      "obs": 5220000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13834,10 +13843,10 @@
     "KR": {
      "p": 1860000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/spazzolato-pleated-varsity-loafer-fff173a-l0043-001",
      "obs": 1860000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13899,10 +13908,10 @@
     "KR": {
      "p": 1920000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-leather-wingtip-boots-with-rubber-soles-mfr016m-00198-001",
      "obs": 1920000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -13964,10 +13973,10 @@
     "KR": {
      "p": 2560000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-reporter-bag-mag143b-00198-001",
      "obs": 2560000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14029,10 +14038,10 @@
     "KR": {
      "p": 1680000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/tech-nylon-alumni-sneakers-mfd271b-f0488-001",
      "obs": 1680000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14094,10 +14103,10 @@
     "KR": {
      "p": 5580000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.thombrowne.com/ko-kr/products/pebble-grain-large-duet-tote-mag228a-00198-001",
      "obs": 5580000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14159,10 +14168,10 @@
     "KR": {
      "p": 4150000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/mid-length-gabardine-kensington-trench-coat-p81332441",
      "obs": 4150000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14224,10 +14233,10 @@
     "KR": {
      "p": 6180000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/long-cashmere-kensington-trench-coat-p81361201",
      "obs": 6180000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14289,10 +14298,10 @@
     "KR": {
      "p": 3950000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/long-gabardine-lakefield-trench-coat-p81354831",
      "obs": 3950000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14354,10 +14363,10 @@
     "KR": {
      "p": 850000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/check-cashmere-scarf-p81250011",
      "obs": 850000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14419,10 +14428,10 @@
     "KR": {
      "p": 3720000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/mid-length-kensington-heritage-trench-coat-p81172291",
      "obs": 3720000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14484,10 +14493,10 @@
     "KR": {
      "p": 3720000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/mid-length-chelsea-heritage-trench-coat-p81172391",
      "obs": 3720000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14549,10 +14558,10 @@
     "KR": {
      "p": 3720000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/long-waterloo-heritage-trench-coat-p81172521",
      "obs": 3720000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14614,10 +14623,10 @@
     "KR": {
      "p": 3750000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/long-gabardine-hoxton-trench-coat-p81330281",
      "obs": 3750000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14679,10 +14688,10 @@
     "KR": {
      "p": 940000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/gradient-check-cashmere-scarf-p81348721",
      "obs": 940000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14744,10 +14753,10 @@
     "KR": {
      "p": 900000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/knight-cashmere-scarf-p81316191",
      "obs": 900000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14809,10 +14818,10 @@
     "KR": {
      "p": 1000000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/reversible-check-cashmere-scarf-p81345821",
      "obs": 1000000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14874,10 +14883,10 @@
     "KR": {
      "p": 1080000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/wide-check-cashmere-scarf-p80859311",
      "obs": 1080000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -14939,10 +14948,10 @@
     "KR": {
      "p": 750000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/narrow-check-cashmere-scarf-p81302831",
      "obs": 750000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15004,10 +15013,10 @@
     "KR": {
      "p": 2210000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/small-check-tote-p81314921",
      "obs": 2210000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15060,10 +15069,10 @@
     "KR": {
      "p": 1820000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/small-city-check-clip-messenger-bag-p81315271",
      "obs": 1820000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15116,10 +15125,10 @@
     "KR": {
      "p": 3100000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/detachable-gilet-bloomsbury-harrington-jacket-p81311511",
      "obs": 3100000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15172,10 +15181,10 @@
     "KR": {
      "p": 2340000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kr.burberry.com/nylon-quilted-jacket-p81270131",
      "obs": 2340000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15228,20 +15237,20 @@
     "KR": {
      "p": 69900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/classic-clog/10001.html",
      "obs": 69900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 29900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        29900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 29900.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 49.99,
@@ -15327,10 +15336,10 @@
     "KR": {
      "p": 84900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/classic-lined-clog/203591.html",
      "obs": 84900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15417,11 +15426,19 @@
     "KR": {
      "p": 69900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/baya-clog/10126.html",
      "obs": 69900.0,
-     "obs_date": "2026-11-22",
-     "sale": false
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 39900.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       39900.0
+      ]
+     ]
     },
     "US": {
      "p": 49.99,
@@ -15489,20 +15506,20 @@
     "KR": {
      "p": 84900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/baya-lined-clog/205969.html",
      "obs": 84900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 47900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        47900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 47900.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 59.99,
@@ -15588,10 +15605,10 @@
     "KR": {
      "p": 99900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/classic-unfurgettable-vegan-suede-clog/212106.html",
      "obs": 99900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15678,10 +15695,10 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/unfurgettable-platform-clog/214108.html",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -15741,20 +15758,20 @@
     "KR": {
      "p": 74900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/crocband-clog/11016.html",
      "obs": 74900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 39900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        39900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 39900.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 54.99,
@@ -15840,20 +15857,20 @@
     "KR": {
      "p": 79900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/classic-platform-clog/206750.html",
      "obs": 79900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 52900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        52900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 52900.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 59.99,
@@ -15939,10 +15956,10 @@
     "KR": {
      "p": 139000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/chalet-clog/214955.html",
      "obs": 139000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -16002,20 +16019,20 @@
     "KR": {
      "p": 109000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/bae-lined-clog/211753.html",
      "obs": 109000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 69900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        69900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 69900.0,
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 79.99,
@@ -16083,10 +16100,10 @@
     "KR": {
      "p": 79900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/classic-crafted-clog/211354.html",
      "obs": 79900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "US": {
@@ -16155,20 +16172,20 @@
     "KR": {
      "p": 74900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/bayaband-clog/205089.html",
      "obs": 74900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 42900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        42900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 42900.0,
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 54.99,
@@ -16236,20 +16253,20 @@
     "KR": {
      "p": 79900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/all-terrain-clog/206340.html",
      "obs": 79900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 39900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        39900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 39900.0,
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 59.99,
@@ -16299,20 +16316,20 @@
     "KR": {
      "p": 39900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/crocband-flip/11033.html",
      "obs": 39900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 29900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        29900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 29900.0,
+     "sp_date": "2026-11-25"
     },
     "GB": {
      "p": 34.99,
@@ -16362,20 +16379,20 @@
     "KR": {
      "p": 64900.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.crocs.co.kr/p/mellow-recovery-slide/208392.html",
      "obs": 64900.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 39900.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        39900.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 39900.0,
+     "sp_date": "2026-11-25"
     },
     "US": {
      "p": 39.99,
@@ -16407,10 +16424,10 @@
     "KR": {
      "p": 196000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66/1183c102.001",
      "obs": 196000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -16443,10 +16460,10 @@
     "KR": {
      "p": 220000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd/1183a592.200",
      "obs": 220000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -16479,10 +16496,10 @@
     "KR": {
      "p": 250000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.onitsukatiger.com/kr/ko-kr/product/mexico-66-sd-vin/1183c015.207",
      "obs": 250000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -16515,10 +16532,10 @@
     "KR": {
      "p": 200000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.onitsukatiger.com/kr/ko-kr/product/tai-chi-og/1183c759.100",
      "obs": 200000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -16551,10 +16568,10 @@
     "KR": {
      "p": 210000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://www.onitsukatiger.com/kr/ko-kr/product/tokuten/1183c429.250",
      "obs": 210000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "GB": {
@@ -16587,10 +16604,10 @@
     "KR": {
      "p": 179000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kor.mizuno.com/product/wave-rider-30/12026/",
      "obs": 179000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -16626,10 +16643,10 @@
     "KR": {
      "p": 219000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kor.mizuno.com/product/mizuno-neo-vista-3/12065/",
      "obs": 219000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": false
     },
     "JP": {
@@ -16665,20 +16682,20 @@
     "KR": {
      "p": 169000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kor.mizuno.com/product/wave-inspire-22/11361/",
      "obs": 169000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 135200.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        135200.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 135200.0,
+     "sp_date": "2026-11-25"
     },
     "JP": {
      "p": 16500.0,
@@ -16722,20 +16739,20 @@
     "KR": {
      "p": 189000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kor.mizuno.com/product/wave-sky-9/11346/",
      "obs": 189000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 151200.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        151200.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 151200.0,
+     "sp_date": "2026-11-25"
     },
     "JP": {
      "p": 19800.0,
@@ -16779,20 +16796,20 @@
     "KR": {
      "p": 259000.0,
      "cur": "KRW",
-     "seen": "2026-11-22",
+     "seen": "2026-11-25",
      "url": "https://kor.mizuno.com/product/wave-rebellion-pro-3/10605/",
      "obs": 259000.0,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-25",
      "sale": true,
-     "sp": 181300.0,
-     "sp_date": "2026-11-22",
      "sh": [
       [
        "2026-11-22",
        181300.0,
        "base"
       ]
-     ]
+     ],
+     "sp": 181300.0,
+     "sp_date": "2026-11-25"
     },
     "JP": {
      "p": 29700.0,
@@ -16826,6 +16843,54 @@
     "US": "411498"
    },
    "cat": "shoe"
+  },
+  {
+   "id": "s-ganni-a1010089-077",
+   "brand": "가니",
+   "name": "Jacket in Rinse Denim",
+   "code": "A1010089-077",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 465000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/jacket-in-rinse-denim-A1010089.html",
+     "obs": 465000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 232500,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       232500,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1050060-151",
+   "brand": "가니",
+   "name": "White Beaded Tiger T-shirt",
+   "code": "A1050060-151",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 255000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/white-beaded-tiger-t-shirt-A1050060.html",
+     "obs": 255000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
   },
   {
    "id": "s-ganni-a1050061-252",
@@ -16871,6 +16936,26 @@
        "base"
       ]
      ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1050075-151",
+   "brand": "가니",
+   "name": "White Western Boot Print T-shirt",
+   "code": "A1050075-151",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 164000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/white-western-boot-print-t-shirt-A1050075.html",
+     "obs": 164000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
     }
    }
   },
@@ -16950,6 +17035,46 @@
    }
   },
   {
+   "id": "s-ganni-a1050219-252",
+   "brand": "가니",
+   "name": "T-shirt with Raspberries",
+   "code": "A1050219-252",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 215000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/t-shirt-with-raspberries-A1050219.html",
+     "obs": 215000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1050249-zz7",
+   "brand": "가니",
+   "name": "Baby Fit T-shirt with Tiger",
+   "code": "A1050249-ZZ7",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 255000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/baby-fit-t-shirt-with-tiger-A1050249.html",
+     "obs": 255000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
    "id": "s-ganni-a1050258-151",
    "brand": "가니",
    "name": "Baby Fit T-shirt with Tiger",
@@ -16965,6 +17090,46 @@
      "obs": 200000,
      "obs_date": "2026-11-25",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1050307-868",
+   "brand": "가니",
+   "name": "Baby Fit T-shirt with Forest Teddy",
+   "code": "A1050307-868",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 220000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/baby-fit-t-shirt-with-forest-teddy-A1050307.html",
+     "obs": 220000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1050311-151",
+   "brand": "가니",
+   "name": "T-shirt with Mushroom Teddy",
+   "code": "A1050311-151",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 240000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/t-shirt-with-mushroom-teddy-A1050311.html",
+     "obs": 240000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
     }
    }
   },
@@ -17139,6 +17304,62 @@
    }
   },
   {
+   "id": "s-ganni-a1070269-920",
+   "brand": "가니",
+   "name": "Knit Vest in Grey Wool",
+   "code": "A1070269-920",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 415000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/knit-vest-in-grey-wool-A1070269.html",
+     "obs": 415000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 207500,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       207500,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1070275-135",
+   "brand": "가니",
+   "name": "Jumper in Graphic Wool",
+   "code": "A1070275-135",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 510000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/jumper-in-graphic-wool-A1070275.html",
+     "obs": 510000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 255000,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       255000,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "s-ganni-a1070278-868",
    "brand": "가니",
    "name": "Knit Vest in Graphic Wool",
@@ -17238,6 +17459,26 @@
      "obs": 570000,
      "obs_date": "2026-11-25",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-ganni-a1150058-252",
+   "brand": "가니",
+   "name": "Jumper with Forest Teddy",
+   "code": "A1150058-252",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 570000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/jumper-with-forest-teddy-A1150058.html",
+     "obs": 570000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
     }
    }
   },
@@ -17547,6 +17788,178 @@
      "obs": 200000,
      "obs_date": "2026-11-25",
      "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-ganni-f8807-099",
+   "brand": "가니",
+   "name": "Trousers in Light Slub",
+   "code": "F8807-099",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 410000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/trousers-in-light-slub-F8807.html",
+     "obs": 410000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 123000,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       123000,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-k2474-252",
+   "brand": "가니",
+   "name": "Black Mini Ribbed Merino Cardigan",
+   "code": "K2474-252",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 390000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/black-mini-ribbed-merino-cardigan-K2474.html",
+     "obs": 390000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 195000,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       195000,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-s2273-099",
+   "brand": "가니",
+   "name": "Black Outdoor Chelsea Boots",
+   "code": "S2273-099",
+   "cat": "boot",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 540000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/black-outdoor-chelsea-boots-S2273.html",
+     "obs": 540000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 270000,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       270000,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-ganni-t4004-151",
+   "brand": "가니",
+   "name": "White Basic Jersey Cherry Relaxed T-shirt",
+   "code": "T4004-151",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 184000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/white-basic-jersey-cherry-relaxed-t-shirt-T4004.html",
+     "obs": 184000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
+   "id": "s-ganni-t4007-745",
+   "brand": "가니",
+   "name": "Blue Relaxed Jersey Tiger T-shirt",
+   "code": "T4007-745",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 184000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/blue-relaxed-jersey-tiger-t-shirt-T4007.html",
+     "obs": 184000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
+   "id": "s-ganni-t4124-943",
+   "brand": "가니",
+   "name": "T-shirt in White Basic Jersey with Leopard",
+   "code": "T4124-943",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 184000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/t-shirt-in-white-basic-jersey-with-leopard-T4124.html",
+     "obs": 184000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25"
+    }
+   }
+  },
+  {
+   "id": "s-ganni-t4270-252",
+   "brand": "가니",
+   "name": "Black Animal Print Hoodie",
+   "code": "T4270-252",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 440000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/black-animal-print-hoodie-T4270.html",
+     "obs": 440000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 308000,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       308000,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -26855,6 +27268,44 @@
    }
   },
   {
+   "id": "s-kitsune-mrwkc09kt1181-0613",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD REGULAR CARDIGAN",
+   "code": "MRWKC09KT1181-0613",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-regular-cardigan-taupe-melange-6a31e8387b345.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwkc09kt1181-p702",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD REGULAR CARDIGAN",
+   "code": "MRWKC09KT1181-P702",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-regular-cardigan-latte-6a31e8387e0a1.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-kitsune-model-mw00105kj7026",
    "brand": "메종키츠네",
    "name": "BABY FOX BABY TEE-SHIRT",
@@ -26949,6 +27400,25 @@
    }
   },
   {
+   "id": "s-kitsune-ow06109wb0026-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX CAP",
+   "code": "OW06109WB0026-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-cap-black-676043e22cf4f.html",
+     "obs": 166250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-kitsune-pm00107kj7026-0413",
    "brand": "메종키츠네",
    "name": "FOX HEAD REGULAR TEE-SHIRT",
@@ -27000,6 +27470,44 @@
      "seen": "2026-11-25",
      "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-black-6855fab7c3277.html",
      "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00108kj7025-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT TEE-SHIRT",
+   "code": "PM00108KJ7025-0413",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-tee-shirt-classic-navy-6855fab7c7f0b.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00108kj7025-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT TEE-SHIRT",
+   "code": "PM00108KJ7025-P199",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-tee-shirt-black-6855fab7cefac.html",
+     "obs": 185250.0,
      "obs_date": "2026-11-25",
      "sale": false
     }
@@ -27265,6 +27773,44 @@
      "cur": "KRW",
      "seen": "2026-11-25",
      "url": "https://maisonkitsune.com/kr/fox-head-merino-regular-cardigan-black-6855fab855a5a.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00502kt1006-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD LAMBSWOOL COMFORT CARDIGAN",
+   "code": "PM00502KT1006-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-lambswool-comfort-cardigan-classic-navy-6855fab859e5e.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00502kt1006-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD LAMBSWOOL COMFORT CARDIGAN",
+   "code": "PM00502KT1006-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-lambswool-comfort-cardigan-black-6855fab85be91.html",
      "obs": 536750.0,
      "obs_date": "2026-11-25",
      "sale": false
@@ -27813,6 +28359,44 @@
    }
   },
   {
+   "id": "s-kitsune-qu05700lr0072-p199",
+   "brand": "메종키츠네",
+   "name": "MAISON KITSUNE PARIS CARDHOLDER",
+   "code": "QU05700LR0072-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/maison-kitsune-paris-cardholder-black-6930e1c85cf61.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-qw00413wc5062-p100",
+   "brand": "메종키츠네",
+   "name": "BABY FOX CASUAL SHIRT",
+   "code": "QW00413WC5062-P100",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 346750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-casual-shirt-white-6930e1c88ef63.html",
+     "obs": 346750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-vans-vn000d3hy281",
    "brand": "반스",
    "name": "올드스쿨 - 블랙 / VN000D3HY281",
@@ -28043,6 +28627,132 @@
      "obs": 72000,
      "obs_date": "2026-11-25",
      "sale": false,
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-115745",
+   "brand": "스투시",
+   "name": "BEACH SHELL WAVE DYE",
+   "code": "115745",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 289000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/115745-beach-shell-wave-dye-bone",
+     "obs": 289000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-115785",
+   "brand": "스투시",
+   "name": "WORKGEAR JACKET",
+   "code": "115785",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 419000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/115785-workgear-jacket-khaki",
+     "obs": 419000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-118561",
+   "brand": "스투시",
+   "name": "STÜSSY 80 RELAXED HOODIE",
+   "code": "118561",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 219000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/118561-stussy-80-relaxed-hoodie-washed-black",
+     "obs": 219000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-1321020",
+   "brand": "스투시",
+   "name": "STOCK CUFF BEANIE",
+   "code": "1321020",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 75000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/1321020-stock-cuff-beanie-marled-olive",
+     "obs": 75000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-1321223",
+   "brand": "스투시",
+   "name": "REFLECTIVE YARN CUFF BEANIE",
+   "code": "1321223",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 75000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/1321223-cuff-beanie-reflective-yarn-orange",
+     "obs": 75000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-stussy-134254",
+   "brand": "스투시",
+   "name": "CANVAS FLIGHT BAG",
+   "code": "134254",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://kr.stussy.com/products/134254-canvas-flight-bag-natural",
+     "obs": 149000,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "nolst": "2026-11-25",
      "lvl": "model"
     }
    }
@@ -33612,111 +34322,112 @@
   "salomon-xt4oggtx DE": "2026-11-23"
  },
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
+ "kr_told": {},
  "kr_none": {
   "v": 1,
-  "d": "2026-11-25.c90f37da",
-  "kc": "1a7ed09805923501",
+  "d": "2026-11-25.5fc4f36d",
+  "kc": "035d014937819406",
   "tags": [
-   "05862fe1c7eadeeb",
-   "08ccde6837d663c6",
-   "0b5629e670b2426b",
-   "0b65ffbf2ef2c7a2",
-   "0e0737ebaaa5050f",
-   "0ef5da250acebb51",
-   "112be9e26cc09d41",
-   "14fac3300fa98d8c",
-   "17375de6c64bb5e5",
-   "1859e8eca915c325",
-   "195e8c838e2de687",
-   "1d4e742da142cc0f",
-   "209f19528f5032dd",
-   "217126d104f8e3f2",
-   "2236601510416338",
-   "265132df6c0697dd",
-   "268d93f781eacd7a",
-   "28031d18a52cb273",
-   "2a388fb4edc64fa2",
-   "2ae3fa73bf2ece34",
-   "2bbafb53766ffe48",
-   "2bbee593eff890f6",
-   "2d352dcb54849855",
-   "354de4d4fa992f41",
-   "35586874c03d5c50",
-   "3c064066ebaed91a",
-   "3c232d17065b4816",
-   "3e4dfc43aa17266c",
-   "411cb4006ba7aeb1",
-   "46259b2a826b304f",
-   "49efd94abfd51d14",
-   "4bbb8da3713ff505",
-   "4d6a54d99502308d",
-   "4e7104099729cfba",
-   "529d67d06eb50ad3",
-   "5574f0f0ffa40b64",
-   "576744336806594d",
-   "5a761f841bef47b2",
-   "5f538a61b6bce043",
-   "61cba87a00645264",
-   "61ebd22b126e43a3",
-   "66aa3027bb9f5b3c",
-   "684962de72974a8e",
-   "6f40dea02b483aa6",
-   "70a407fc1d01e401",
-   "70d9bb061c1fa739",
-   "753721e2dd2e74a9",
-   "7790d06224ca86fe",
-   "7924f1ff0d1f7b83",
-   "7a446babfd2860b1",
-   "7e2e0bde9e499640",
-   "80fa33316c3119b3",
-   "89a1489fd5d40ac1",
-   "8c2f8c49f1353d78",
-   "8def1772115631fd",
-   "8e41d3e318696c93",
-   "90bb9991e5d0989c",
-   "926b0a4d06e3f3bb",
-   "95884d238482b6de",
-   "958fa49a8e058363",
-   "9766341edfd27875",
-   "a0575beead07ae22",
-   "a0ee68fa544cd335",
-   "a5060eef19501161",
-   "a69a3f5bcd76f45a",
-   "a9e15b4b59cfb62d",
-   "ac2f28be3c52897f",
-   "ad9c92101b9c7b53",
-   "aef94d21f8c47ef6",
-   "b3710fbbbd4d74d6",
-   "b4ee2aa60ec7ba48",
-   "b73d01b959b219ac",
-   "b7ca1b3e26ea13f6",
-   "b7f49e5b0bb0bcb1",
-   "bcbe484608b80924",
-   "bd6ad5dd03f928a7",
-   "bef17ec115a35cdc",
-   "c6e1c06265c2f545",
-   "c7d1f3945baaa863",
-   "c8081f49dd41be10",
-   "c93a72be419254b7",
-   "cd19e58defb04d4d",
-   "cf4319c71fe48204",
-   "d1236a0caaea3864",
-   "d2f08d5a096e8ad8",
-   "d5386573a4d58398",
-   "d6086946e60c121e",
-   "d97a6c8bac305471",
-   "de64e86137ce1534",
-   "df6cbfaed60f3326",
-   "e135a090a551931c",
-   "e2d64a338803dce6",
-   "e36bb195263c1ffa",
-   "e50a01696abd6eae",
-   "e52f8ddc104fef5e",
-   "e71960c0c1b56efc",
-   "ed26e1480db4ca77",
-   "fc8ce7e8af4a5cc2",
-   "fe1d10c129393a00",
-   "ff87f3f6dcc36223"
+   "01f5fa7646f0934a",
+   "032643a76d4be2cf",
+   "062312a00e000eda",
+   "072890b7337ec212",
+   "0d25f32d9f164228",
+   "0eade11be9420f99",
+   "1a73b68e0502b0d4",
+   "1a7f04e6766e7cf4",
+   "1d48f3bc1c7b2204",
+   "20bdc80233ba8a0a",
+   "26ca3deb5cbc824d",
+   "27488141f588c72c",
+   "32257812860b0a40",
+   "33692c52ea415108",
+   "33794faa36327679",
+   "34b7d38374f6f272",
+   "36152bbe551b48b3",
+   "371f0ca6cab2d201",
+   "40737fd45abfc1ea",
+   "412d288c69847dbd",
+   "431f1a641f0ba479",
+   "43a8b7dbaec6734d",
+   "4591f4cdf3a2c0c8",
+   "4bbfbf2e319ce8e5",
+   "4e243c55457c5654",
+   "4f169e2788745932",
+   "4f8fd4dc60677ca6",
+   "524e66b3480d9bc5",
+   "541f7a4792d3559e",
+   "559e3083bf2c35be",
+   "5d988e50d13f2d06",
+   "643f477c4933101a",
+   "6691e1d8e188934a",
+   "6890f1a9770817db",
+   "69216697ff536610",
+   "6d6b2c35b1b90828",
+   "6f11e62a58e1a85e",
+   "70753b651280cf96",
+   "70c575404fb499c7",
+   "7117fec04f1ca65b",
+   "7629fd7e45345405",
+   "781377a1f26912b9",
+   "7b58fd3ea6f7c049",
+   "7cbbf783b71c4de9",
+   "7d152c42d614290a",
+   "81d3cb9084eeeead",
+   "82c9b8a1b0d09d9b",
+   "86fe8a28b2fb16de",
+   "8d07aa1f9ef60d6a",
+   "8d3a1fc32a90f45b",
+   "8eb880042ba9fcd2",
+   "90d435ed17925bc0",
+   "93698195856d2f38",
+   "955cc0cf6616cc03",
+   "9a6c67dd55620def",
+   "9a79c94c249733c0",
+   "9ac11851b3be9a7a",
+   "9c47998a25aa41f4",
+   "9d389e52df7f69a2",
+   "9eeebb78068287e2",
+   "9f083b52045defe3",
+   "9fae1423ccb4ee64",
+   "a152309eb3922793",
+   "a686aae6734bdb59",
+   "a778f181156cdfd9",
+   "a9573de31346d6f9",
+   "ae4b4ec3cd11fdb5",
+   "b0be4884c13e8639",
+   "b253eea648fbcda9",
+   "b5c30fdbce31287e",
+   "b7c6706ea6e2acd6",
+   "bb477d0fd524ec2c",
+   "bbac470e500b30a2",
+   "bc574ec48c1df3f6",
+   "bd6d71fc579c7f88",
+   "c0a4831720c140e8",
+   "c3ad6427e53d491b",
+   "c4786157c83a6f05",
+   "c4cf5238df2d6c99",
+   "c4d5b5f8129eed55",
+   "c5ae2d302d7a8e04",
+   "c5e196a0d40ba768",
+   "c71c8a2feb3c15f3",
+   "c71fec3e48f91db1",
+   "c749d395ff642257",
+   "c7989f9df0e54e04",
+   "c80d76a4ca25eb3d",
+   "c957d8a9c6a2f845",
+   "d1ca271a4413f8bb",
+   "d226264c997efc90",
+   "d55b13374e95ac97",
+   "d58de41fb66c0d05",
+   "d6cb9ce12dc8fb16",
+   "d87e81b0b7d8c81e",
+   "d8cc05c128e05da6",
+   "dab0541d7a3dd887",
+   "deae478ef463630d",
+   "e71513fd6f976a0e",
+   "eb60c69a1eeb0a10",
+   "f7beee7052cab1d8"
   ]
  },
  "audit": {
