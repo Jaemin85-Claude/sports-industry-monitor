@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 9: 주간 요약 (v1)
+v1.20: (price_fetch v1.47 · 대표 결정 2026-11-25 '가' — 대표 상품 한국 값은 매일 · 해외 값은 주 1회) '■ 해외 정가 변동' 머리 줄 '(지난 7일 · 한국 매일 · 해외 주 1회 — 한국 m/d · 해외 m/d 받음 …)'(prices.json kr_fetched — 없는 옛 파일은 fetched · 같은 날이면 한 번) · 한국 할인 기록(sh)은 한 상품에서 이번 주 새 기록이 여럿이면 한 줄로 접음 — 이번 주 전 상태 → 마지막 상태(할인 시작·커짐·줄어듦·계속 · 할인 끝 — 이번 주에 시작해 끝났으면 'm/d~m/d 할인') + '(이번 주 n번 바뀜)'(매일 받는 한국 값이 메일 칸을 채우지 않게 · 기록마다 한 번만(PRICE_AT git 시점)은 그대로 · 새 기록이 하나면 예전 줄 · 해외·정가 변동 줄은 그대로).
 v1.19: (price_fetch v1.29 SKU 단계 — 대표 결정 2026-11-22) '■ 해외 정가 변동'·지금 할인 중 셈에서 kind "sku" 상품(판매·예정 상품 색상 단위 정가 — ERP용)은 뺌(대표 상품만 · 화면과 같게).
 v1.18: (대표 결정 2026-11-22 '국내 및 미주 유럽 위주' — price_fetch v1.28 PAUSED_CC) '■ 해외 정가 변동'에서 나라 단위로 수집을 멈춘 값(paused '수집 중단 …' — 일본·멕시코·두바이)을 뺌
   (정가 변동·할인 시작·끝·지금 할인 중 모두 — 대시보드 v33.39와 같게 · 멈추기 전 기록도).
@@ -607,9 +608,31 @@ def price_changes(prices, today, old=None, upto=None, n=8):
                     ch.append((f"{nm} {place} {_money(a, cur)} → {_money(b, cur)} ({(b / a - 1) * 100:+.1f}%)", -abs(b / a - 1)))
             p_at = lambda d: next((x[1] for x in ph if str(x[0]) > str(d)), o.get("p"))   # 그 날짜에 걸려 있던 정가
             sh = [x for x in o.get("sh") or [] if isinstance(x, list) and len(x) >= 2]
-            for i, x in enumerate(sh):
-                if not new("sh", x):
-                    continue
+            idx = [i for i, x in enumerate(sh) if new("sh", x)]
+            fold = [i for i in idx if not (len(sh[i]) > 2 and sh[i][2] == "base")] if cc == "KR" else []
+            if len(fold) > 1:   # v1.20 한국 값(매일 수집 — price_fetch v1.47)은 이번 주 새 할인 기록을 한 줄로 — 이번 주 전 상태 → 마지막 상태 + 바뀐 횟수
+                idx, prev, last = [], (sh[fold[0] - 1] if fold[0] else None), sh[fold[-1]]
+                was, d, v, tag = (prev[1] if prev else None), last[0], last[1], f" (이번 주 {len(fold)}번 바뀜)"
+                if v is None:
+                    lp = sh[fold[-1] - 1]   # 끝나기 직전 할인가
+                    cut = [y for y in ph if str(lp[0]) < str(y[0]) <= str(d)]
+                    if lp[1] and not (cut and cut[-1][2] <= lp[1] * 1.005):   # 할인가가 새 정가가 됐으면 정가 변동 줄로
+                        fs = next((str(sh[i][0]) for i in fold if sh[i][1] is not None), "")
+                        st = "" if was or not fs else f" · {fs[5:10].replace('-', '/')}~{str(d)[5:10].replace('-', '/')} 할인"   # 이번 주에 시작해 끝남
+                        end.append((f"{nm} {place} (마지막 할인가 {_money(lp[1], cur)}{st}){tag}", 0))
+                elif p_at(d):
+                    off = (v / p_at(d) - 1) * 100
+                    if not was:
+                        what = "할인 시작"
+                    elif any(str(prev[0]) < str(y[0]) <= str(d) for y in ph):   # 그사이 정가가 바뀜 — 할인율로 비교
+                        po = (was / p_at(prev[0]) - 1) * 100 if p_at(prev[0]) else off
+                        what = ("할인 커짐" if off < po - 0.5 else "할인 줄어듦" if off > po + 0.5
+                                else "할인 계속" if abs(v - was) <= was * 0.005 else "할인가 바뀜(정가 변경)")
+                    else:
+                        what = "할인 커짐" if v < was * 0.995 else "할인 줄어듦" if v > was * 1.005 else "할인 계속"
+                    sale.append((f"{nm} {place} {what} {_money(v, cur)} (정가 대비 {off:.0f}%){tag}", off))
+            for i in idx:
+                x = sh[i]
                 d, v = x[0], x[1]
                 prev = sh[i - 1] if i else None
                 if v is None and prev and prev[1]:
@@ -761,10 +784,12 @@ def build(today, now=None):
         L.append(f"  환율 화면: {dash('more', 'fx')}")
     L.append("")
 
-    # v1.14 해외 정가 변동(price_fetch v1.5 — 주 1회 수집) — 정가 변동·할인 시작/커짐/줄어듦·할인 끝, 각 8줄까지
+    # v1.14 해외 정가 변동(price_fetch v1.5 — 주 1회 수집) — 정가 변동·할인 시작/커짐/줄어듦·할인 끝, 각 8줄까지 · v1.20 한국 매일·해외 주 1회(price_fetch v1.47)
     if prices:
         fd = str(prices.get("fetched") or "")[5:10].replace("-", "/")
-        L.append(f"■ 해외 정가 변동 (지난 7일 · 주 1회 수집{f' — {fd} 받음' if fd else ''} · 지금 할인 중 {pon}건)")
+        kd = str(prices.get("kr_fetched") or "")[5:10].replace("-", "/") or fd   # v1.20 한국 값 받은 날(없는 옛 파일은 fetched · 같은 날이면 한 번)
+        got = f"한국 {kd} · 해외 {fd}" if fd and kd != fd else fd or (f"한국 {kd}" if kd else "")
+        L.append(f"■ 해외 정가 변동 (지난 7일 · 한국 매일 · 해외 주 1회{f' — {got} 받음' if got else ''} · 지금 할인 중 {pon}건)")
         for title, rows in (("정가 변동", pch), ("할인", psale), ("할인 끝", pend_s)):
             if rows:
                 L.append(f"  [{title} {len(rows)}건]")

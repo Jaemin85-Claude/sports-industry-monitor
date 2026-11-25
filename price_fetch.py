@@ -1,6 +1,33 @@
 # -*- coding: utf-8 -*-
 """
 sports-industry-monitor — Phase 11: 해외 정가 (나라별 브랜드 대표 상품 소비자가)
+v1.47: (대표 결정 2026-11-25 '가' — 정가 수집 주기) 대표 상품 한국 값은 매일, 해외 값은 주 1회(DAYS 7 전체 받기) 그대로 — KR_DAILY(False면 예전처럼 주 1회만):
+    전체 받기·다시 받기가 아닌 날은 'kr' 모드(로그 '해외 정가: 한국 값만 매일 — 해외는 주 1회(마지막 …, 다음 …)') — 묶음마다 한국 값만 받고(묶음 로그 '해외 정가 한국 묶음 n개' · 값 수·예상 시간은
+    한국 값만 build_lanes only — 한국 몰 간격 KR_GAP은 PRODUCTS 전체로 그대로) 해외 값은 손대지 않음(시간 초과로 보지 않음 · 값 없음·host_try 기록 그대로) · 다시 받기 날도 한국 값은 모두 받음 ·
+    전체 받기가 아닌 날의 한국 셈은 따로(cnt_kr — 줄 '해외 정가: 한국 값 받음 k/n · n초') 모아 fetched·attempt·tried와 다시 받기의 절반·조용히 판단에 섞지 않음(한국만 받은 날은
+    받은 날을 옮기지 않음 · 시간 초과는 예전 [WARN] 줄에 함께 · 브랜드 통째 판단에는 받은 한국 값만 받은 값으로 — 한국 값을 받은 브랜드가 '… 전부'가 되지 않게) · 최상위 kr_fetched = 한국 값을 받은 날(한국 셈이 절반 넘게 못 받음·시간 초과가 아닐 때) · 한국 값 막힘 알림(파일 값으로 매 실행 판단):
+    한 브랜드의 수집 중인 한국 값이 모두 이전 값이고 마지막으로 받은 날에서 KR_ALERT_DAYS(2)일 지나면 한 기간에 한 번만 실패 표시('해외 정가 {브랜드} 한국 값을 m-d 뒤로 하나도 못 받음 — …' ·
+    kr_told {브랜드: 마지막으로 받은 날} — 그날이 바뀌면 새 기간 · 풀리면 지움 · 한국 값 절반 넘게면 '*' 한 줄로(그 줄을 낸 날 통째로 막힌 브랜드만 알린 것으로 — 뒤에 새로 막힌 브랜드는 '*'가 풀린 뒤 브랜드 줄) · 첫날은 '해외 정가: {브랜드} 한국 값 못 받음 — 내일 다시'만 · kr_told가 없는 옛 파일에서
+    처음 넘어올 때는 이전 파일에서 이미 참인 것만 알린 것으로(그 실행의 실패는 빼고) · 지난 실행에서도 그 값이 모두 이전 값일 때만(연달아 두 실행 — 하루 빠진 실행 뒤 한 번 실패로 바로 알리지 않게) ·
+    같은 실행에 전체 받기·다시 받기 알림이 먼저면 그날은 빼되 기록하지 않음(그 알림은 한국 값을 말하지 않음 — 다음 실행에도 그대로면 알림)) · 값마다 '건너뜀 — …(수집 멈춤…)' 줄은 전체 받기 날만 ·
+    표본 검사 두 개가 돌 날은 SKU 단계 마감에서 그 시간(AUDIT_MIN_LEFT·AUDIT_R_MIN_LEFT + SKU가 마감을 넘는 몫 AUDIT_PAD 75초)을 미리 뺌(한국 매일 받기로 SKU가 남은 시간을 다 써 검사가 밀리지 않게 · 전체 받기 날은 빼지 않음 —
+    예전처럼 검사가 다음 날로, 검사·전체 받기 날이 겹쳐 주마다 SKU를 건너뛰지 않게 · 몫을 빼도 SKU_MIN_LEFT는 남김 · 몫을 뺀 날 두 검사가 함께면 공식몰 검사가 판매처 재확인 몫을 남김) ·
+    크게 바뀜 보류(cand)는 처음 본 날에서 CAND_MIN_DAYS(3)일 지나야 반영(매일 받는 한국 값이 하루 이틀 잘못된 페이지 값을 정가로 넣지 않게 · 그사이 cand·cand_date 그대로 · 주 1회 흐름은 그대로).
+    (대표 결정 2026-11-25 '추천안대로' — ERP SKU 한국 정가) 받아 둔 한국 SKU 정가(모델 단위·판매처 값 포함 · 아크테릭스 Firecrawl 브랜드는 시즌 확인 때문에 예전 7일)는 연 1회 1월 일괄(SKU_KR_YEARLY ·
+    False면 예전처럼 7일마다): 받은 날(obs_date) 뒤 첫 1/6(SKU_KR_SWEEP — 세일 기간이 끝난 다음 날 · 1/1~1/5에 받은 값도 그해 1/6)부터 14일(SKU_KR_SPREAD) 동안 품번 해시로 정한 날(_sku_slot '|y' — 상태 없음)
+    · 그 뒤 밀린 값은 매일 · 새 기록 칸 없이 공개 obs_date로 판단(_kr_due·_kr_over) · 예외는 예전 주기: 이전 값(3일마다) · 정상가를 판매처 검색 자료로만 확인(via)·크게 바뀜 보류(cand)·할인 가드 중(obs < 정가)·
+    정가 표시 없이 처음 받은 값(nolst — 새 칸 · 처음 받은 날 · 정가 표시를 보거나 같은 정가가 SKU_NOLST_DAYS(42)일 이어지면 지움(정가가 바뀌면 그날부터 다시) — 받은 날 세일가였으면 다음 1월까지 정가로 남지 않게 · 판매처 값 빼고)은 7일마다 ·
+    연동 다시 받기(공개 자료로 매 실행 판단 — 저장 안 함): 표본 검사(audit·audit_retail)에 SKU 상품 불일치(k mismatch)가 있거나 대표 상품 한국 값에 최근 7일 정가 변동(ph)·크게 바뀜 보류(cand_date)가 있으면 그 브랜드의
+    한국 SKU 값 중 그날 전에 받은 값을 예외로(오래된 것부터 · 받으면 obs_date가 그날 뒤라 저절로 끝남) · 순서 = 예외·연동 → 1월 일괄(SKU 단계 시간의 SKU_SWEEP_SHARE 35%까지) → 새로 묻기(60% 그대로) —
+    한국은 모든 묶음의 다시 받기(예외·연동·1월 일괄 · 묶음 순서는 다시 받기 일감 수)를 먼저 맡기고 새로 묻기는 그 뒤(같은 묶음은 다시 받기가 끝난 뒤 — 같은 사이트 한 줄 · 일괄 진행이 다른 브랜드의 못 찾은
+    목록 품번 수에 따라 달라지지 않게) · 받아 둔 모델 단위 상품은 그 상품 차례(예외·연동·1월 일괄)에만 바꿈(같은 모델 목록 색상을 물은 응답으로 값·이전 값을 정하지 않음 — 목록 품번이 있는 날만 obs_date가
+    움직이지 않게 · 새로 만드는 것만 · 그날 응답의 국내 색상 정가 갈림(__mixed__)·아미 원단 판단으로 빼는 것은 그날 응답으로 — 공개 칸 fab은 그 상품 차례 날에만 다시 씀) · 아직 못 찾은 한국 품번은 매일(SKU_ASK_KR 1 — 국내 공식몰에 없음(none)으로 답한 품번도 · 국내 상태는 여전히 답을 받은 날에만 바뀜) · 해외 SKU 값은 그대로(7일 · 이전 값 3일) ·
+    같은 응답에 온 받아 둔 다른 품번은 obs_date를 바꾸지 않음(그 일감에서 물은 품번만 — 예전대로) · 안전장치: SKU_DROP(alive)은 한국 SKU 값을 1월 일괄 날짜부터 셈(정상 값 120일) · 이전 값은 처음 못 받은 날
+    (fail_since — 새 칸 · 한국 1년 주기 값만 · 받으면 지움)부터 60일(1월 한 번 실패로 빠지지 않게 · 늦은 밀린 값 한 번 실패로 바로 빠지지 않게 · 연중 연동에서 빠진 값이 다음 해까지 남지 않게 · fail_since 없는 옛 이전 값은
+    1월 일괄 날짜부터 60일 · 해외·읽지 않는 브랜드·아크테릭스는 예전대로) · 판매처 고정(KR_PIN_DAYS) 날 수도 처음 못 받은 날(fail_since)부터(옛 이전 값은 예전대로) · 한국 SKU 할인 가드는
+    정가를 마지막으로 본 날(seen — 1년 가까이 될 수 있음) 대신 낮은 값을 처음 본 날(low_since — 가드 중 값에 저장 · 정가 근처 값을 다시 보면 지움 · 옛 가드 값은 지금 할인이 시작된 날(sh) → 받은 날)부터 SALE_GUARD(120)일 ·
+    세일 기간(_sku_promo)엔 낮은 값을 새 정가로 받지 않음(대표 상품·해외는 그대로) · 표본 검사 두 개는 한국 SKU 값의 8일 제외를 없애고(오래된 값도 표본 — 불일치는 다음 실행 연동) 할인 가드 중 값은 뺌 ·
+    miss마다 age(받은 지 날 수) · 결과에 old(표본 중 SKU_DAYS일 넘은 값 수) — 새 칸만(k 뜻 그대로 · ERP에 알림) · 공식몰 표본 검사는 브랜드 순서도 주마다(브랜드가 AUDIT_N보다 많아도 늘 빠지는 브랜드가 없게).
 v1.46: (대표 지시 11/23 '90% 이상' · 11/24 '네 1번부터 진행해주세요' 2차) 감시 브랜드 밖 국내 공식 온라인몰 SKU 정가 2차 — 메종키츠네 한국(maisonkitsune.com/kr · 원화 ·
     국내 수입사몰 SSF샵은 robots.txt가 막아 브랜드 공식몰의 한국 경로 — 1차 아미·가니와 같은 방식): 한국 상품 사이트맵(색인 sitemap_kr_en_index.xml의 상품 사이트맵 · 11/24 1,005개)의 그림 파일 이름
     (pm00109kj0119-h170_1.jpg = 상품 품번 '스타일-색상' · 그림 모두)과 그림·주소 이름 속 스타일 글자(pm00109kj0119_-p199 · nw00509km03290701처럼 꼴이 다른 상품 — 늘 함께)로 후보를 고르고,
@@ -338,7 +365,10 @@ OLD_BOT = "sports-industry-monitor"   # v1.31 11-23 전 이름 — robots.txt에
 OLD_UA = "Mozilla/5.0 (compatible; sports-industry-monitor price bot; +https://github.com/Jaemin85-Claude/sports-industry-monitor)"   # v1.31 11-23 전 접속 이름 — 수집에는 안 씀 · 그 전에 우리를 막은 사이트를 다시 시험할 때만(임시 시험 · CLAUDE.md)
 UA = f"Mozilla/5.0 (compatible; {BOT} price bot)"   # v1.31 저장소 주소·저장소 이름은 넣지 않음(대표 지시 11-23) — robots.txt는 BOT 이름으로 맞춤
 HDR = {"User-Agent": UA, "Accept": "text/html,application/json;q=0.9,*/*;q=0.8", "Accept-Language": "en-US,en;q=0.8,ko;q=0.6"}
-DAYS = 7            # 주 1회
+DAYS = 7            # 주 1회(해외 값 전체 받기 — v1.47 대표 상품 한국 값은 매일 KR_DAILY)
+KR_DAILY = True     # v1.47 대표 상품 한국 값은 매일 받음(대표 결정 11-25 '가') — False면 예전처럼 주 1회 전체 받기·다시 받기만
+KR_ALERT_DAYS = 2   # v1.47 일 — 한 브랜드 한국 값을 마지막으로 받은 날에서 이만큼 지나도록 하나도 못 받으면 한 기간에 한 번 실패 표시(kr_told)
+CAND_MIN_DAYS = 3   # v1.47 일 — 크게 바뀜 보류(cand)는 처음 본 날에서 이만큼 지나야 반영(매일 받는 한국 값의 하루 이틀 잘못된 페이지 값을 막음)
 SALE_GUARD = 120    # 일 — 이 기간 안에 정가보다 낮게 보이면 할인으로 보고 정가를 지킴
 STALE_ALERT = 21    # 일 — 이 일수 넘게 이전 값이면 실패 표시
 TIME_LIMIT = 13 * 60   # 초 — 한 실행 최대(넘으면 남은 것은 이전 값) · v1.3 상품 56개·값 227개(1개 약 2초)라 6 → 11분 · v1.4 값 299개라 13분
@@ -2553,9 +2583,21 @@ def fetch_one(prod, cc):
     return (full, extra), url
 
 
-def apply_obs(o, full, extra, cur, td, feed, src_url, age):
+def _low_start(o):
+    """v1.47 지금 이어지는 할인이 시작된 날 — 할인 기록 sh 끝에서 이어진 할인 줄(할인가 있음)의 첫 날(없으면 None)"""
+    st = None
+    for x in reversed(o.get("sh") or []):
+        if not (isinstance(x, list) and len(x) >= 2) or x[1] is None:
+            break
+        st = x[0]
+    return st
+
+
+def apply_obs(o, full, extra, cur, td, feed, src_url, age, low=None):
     """v1.29 받은 정가 하나를 이전 값 o에 반영(크게 바뀜 보류·할인 가드·정가 변동 기록·할인가) — 대표 상품(_value)과 SKU 단계가 함께 씀.
-    feed = 나이키 상품 정보 정가(fullPrice — 할인 가드 없음 · 내려도 크게 바뀜 확인) · age(날짜 글) = 오늘까지 날수 · 돌려줌 (o, 셈 n, 줄 note)"""
+    feed = 나이키 상품 정보 정가(fullPrice — 할인 가드 없음 · 내려도 크게 바뀜 확인) · age(날짜 글) = 오늘까지 날수 · 돌려줌 (o, 셈 n, 줄 note) ·
+    v1.47 low = None(할인 가드 나이 = 정가를 마지막으로 본 날 seen — 대표 상품·해외) / 세일 기간인지(한국 SKU — 연 1회 받아 seen이 1년 가까이 될 수 있어
+    낮은 값을 처음 본 날 low_since부터 셈 · 세일 기간엔 낮은 값을 새 정가로 받지 않음)"""
     n = {"try": 1}
     full = round(full, 2)
     note, held, guard = "", False, False
@@ -2563,18 +2605,29 @@ def apply_obs(o, full, extra, cur, td, feed, src_url, age):
     hist = {k: o[k] for k in ("sh", "ph") if same and isinstance(o.get(k), list)}   # v1.5 기록은 통화가 같을 때만 이어 감
     seen_off = bool(same and (o.get("sh") or o.get("off_seen") or (o.get("sale") is False and not o.get("cand"))))   # 할인 아닌 상태를 본 적 있음(그 뒤 할인 = 할인 시작 · 보류 중 sale False는 판단 안 한 것 — 보류 전에 본 것은 off_seen으로 이어 감)
     big = same and (full > o["p"] * JUMP or (feed and full < o["p"] / JUMP))
-    if big and not (o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
+    conf = bool(o.get("cand") and abs(o["cand"] - full) <= o["cand"] * 0.10)   # 보류한 값과 비슷함
+    lowd = None
+    if low is not None and same:   # v1.47 한국 SKU — 낮은 값을 처음 본 날(이미 가드 중인 옛 값은 low_since → 지금 할인이 시작된 날 → 받은 날 · 아니면 오늘)
+        lowd = o.get("low_since") or ((_low_start(o) or o.get("obs_date") or td) if (o.get("obs") or o["p"]) < o["p"] * 0.995 else td)
+    young = conf and o.get("cand_date") and age(o["cand_date"]) < CAND_MIN_DAYS   # v1.47 처음 본 날에서 CAND_MIN_DAYS가 안 지남 — 보류 그대로(매일 받는 한국 값)
+    if big and (not conf or young):   # 크게 바뀜 — 다음 확인 때 비슷하면 반영
         n["hold"] = 1; held = True
-        o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
-        o.pop("stale_since", None); o.pop("why", None)
+        if young:   # v1.47 cand·cand_date 그대로(처음 본 날부터 셈)
+            o.update(obs=full, obs_date=td, url=src_url, sale=False)
+        else:
+            o.update(cand=full, cand_date=td, obs=full, obs_date=td, url=src_url, sale=False)
+        o.pop("stale_since", None); o.pop("why", None); o.pop("fail_since", None)
         o.pop("sp", None); o.pop("sp_date", None)   # v1.5 보류 중엔 할인 판단 안 함(어느 정가 기준인지 모름) — 할인 기록 sh는 그대로 두고 확인 뒤 이어 감
         if seen_off:
             o["off_seen"] = True
-        note = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)"
+        note = (f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, {o['cand_date'][5:]}부터 {CAND_MIN_DAYS}일 지나 비슷하면 반영)" if young
+                else f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 크게 바뀜, 다음 확인 때 비슷하면 반영)")
     elif (same and not big and not feed and full < o["p"] * 0.995
-          and age(o.get("seen") or td) < SALE_GUARD):   # 할인 가드
+          and (age(o.get("seen") or td) < SALE_GUARD if low is None else (low or age(lowd) < SALE_GUARD))):   # 할인 가드 · v1.47 한국 SKU는 낮은 값을 처음 본 날부터 SALE_GUARD일(세일 기간엔 늘)
         o.update(obs=full, obs_date=td, sale=True, url=src_url)
-        for k in ("stale_since", "why", "cand", "cand_date", "off_seen"): o.pop(k, None)
+        for k in ("stale_since", "why", "cand", "cand_date", "off_seen", "fail_since"): o.pop(k, None)
+        if lowd:
+            o["low_since"] = lowd   # v1.47 정가 근처 값을 다시 보면(정가 받아들임 — 새 o) 저절로 지워짐
         note, guard = f"정가 {o['p']:,g} {cur} 유지(이번 {full:,g} — 할인으로 봄)", True
     else:
         old_p = o.get("p") if same else None
@@ -2611,11 +2664,12 @@ def _kr_only_hosts(products):
     return kr - other
 
 
-def build_lanes(products):
+def build_lanes(products, only=None):
     """v1.12 동시에 받을 묶음 — 브랜드·사이트(·ROBOTS_ALT·LANE_JOIN)로 이어진 상품끼리 한 묶음, 묶음 안은 PRODUCTS 순서.
     한 사이트·한 브랜드는 늘 한 묶음에만 있음(사이트별 요청 수·한도 미룸·브랜드 셈을 그 묶음만 씀).
-    est = 예상 초(값 × max(GAP, HOST_GAP), 한도 사이트는 한도까지) — 긴 묶음부터 시작"""
-    for h in _kr_only_hosts(products):   # v1.28 한국 몰 간격(이미 더 긴 간격이 있으면 그대로)
+    est = 예상 초(값 × max(GAP, HOST_GAP), 한도 사이트는 한도까지) — 긴 묶음부터 시작 ·
+    v1.47 only = 그날 받는 나라(한국만 받는 날 {"KR"}) — 값 수·예상 시간만 그 나라로(묶음·한국 몰 간격은 products 전체로)"""
+    for h in _kr_only_hosts(products):   # v1.28 한국 몰 간격(이미 더 긴 간격이 있으면 그대로) · v1.47 늘 products 전체로(거른 목록이면 해외와 함께 쓰는 사이트까지 3초가 됨)
         HOST_GAP[h] = max(HOST_GAP.get(h, 0), KR_GAP)
     par = {}
     def find(x):
@@ -2635,7 +2689,7 @@ def build_lanes(products):
     lanes = {}
     for p in products:
         ln = lanes.setdefault(find("b:" + p["brand"]), {"prods": [], "brands": [], "hosts": collections.Counter()})
-        ln["prods"].append(p); ln["hosts"].update(h for cc, h in zip(ccs(p), _hosts(p)) if not paused_of(p, cc))   # v1.28 값 수·예상 시간은 받는 값만(수집 멈춤 값은 요청 안 함)
+        ln["prods"].append(p); ln["hosts"].update(h for cc, h in zip(ccs(p), _hosts(p)) if not paused_of(p, cc) and (not only or cc in only))   # v1.28 값 수·예상 시간은 받는 값만(수집 멈춤 값은 요청 안 함 · v1.47 그날 받는 나라만)
         if p["brand"] not in ln["brands"]:
             ln["brands"].append(p["brand"])
     for ln in lanes.values():
@@ -2666,10 +2720,15 @@ def _lanes_n():
 # 요청은 대표 상품과 같은 get(우리 봇 이름 · robots.txt · 사이트별 간격 · 막히면 그 실행에서 멈춤 — 우회 없음).
 SKU_ENV_URL, SKU_ENV_TOKEN, SKU_ENV_TEST = "ERP_SKU_URL", "ERP_SKU_TOKEN", "ERP_SKU_TEST"   # TEST = 공개 품번 시험 목록(JSON · 브랜치 시험용 — 줄을 자세히 찍음)
 SKU_MAX = 8 * 60     # 초 — 한 실행 SKU 단계 최대(대표 상품을 받은 뒤 남은 시간 안에서 · TIME_LIMIT 30초 전까지)
-SKU_DAYS = 7         # 일 — 받은 값을 다시 받는 주기(오래된 것부터 · 한국 먼저)
+SKU_DAYS = 7         # 일 — 받은 값을 다시 받는 주기(오래된 것부터 · 한국 먼저) · v1.47 한국은 예외(할인 가드·via·보류·아크테릭스)만 — 그 밖 한국은 1월 일괄(SKU_KR_YEARLY)
 SKU_ASK_DAYS = 7     # 일 — 공식몰에서 아직 못 찾은 해외 값을 다시 물어보는 주기(상태 없이 품번 해시로 정한 날 — 파일에 기록 안 남김)
 SKU_STALE_EVERY = 3  # 일 — 전에 받았는데 이번에 못 받은 값(이전 값)을 다시 받는 주기
-SKU_ASK_KR = 2       # 일 — 한국에서 아직 못 찾은 값을 다시 묻는 주기(목록의 새 상품은 1~2일 안에 · 날마다 순서를 돌림)
+SKU_ASK_KR = 1       # 일 — 한국에서 아직 못 찾은 값을 다시 묻는 주기 · v1.47 매일(대표 결정 11-25 '추천안대로' — 국내 공식몰에 없음으로 답한 품번도)
+SKU_KR_YEARLY = True   # v1.47 받아 둔 한국 SKU 정가는 연 1회(1월 일괄) + 예외 — False면 예전처럼 7일마다
+SKU_KR_SWEEP = (1, 6)  # v1.47 (월, 일) 한국 SKU 정가 1월 일괄 시작 — 세일 기간(_sku_promo)이 1/5에 끝난 다음 날
+SKU_KR_SPREAD = 14     # v1.47 일 — 1월 일괄을 품번 해시로 나눠 받는 날 수(그 뒤 밀린 값은 매일)
+SKU_SWEEP_SHARE = 0.35   # v1.47 1월 일괄 다시 받기는 SKU 단계 시간의 이만큼까지만(목록 크기와 상관없이 — 일괄 진행이 못 찾은 품번 수에 따라 달라지지 않게)
+SKU_NOLST_DAYS = 42    # v1.47 일 — 정가 표시 없이 처음 받은 한국 값(nolst)은 같은 정가가 이만큼 이어지거나 정가 표시를 볼 때까지 7일마다 다시 받음(1주 넘는 세일가가 1월까지 정가로 남지 않게)
 SKU_NEW_SHARE = 0.6  # 한국 '아직 못 찾은 값 묻기'는 SKU 단계 시간의 이만큼까지만 — 나머지는 해외·다시 받기 몫(목록에 공식몰에 없는 품번이 많아도)
 SKU_HOLD_DAYS = 21   # 일 — 정가 확인 보류 값이 같은 값(5% 안)으로 이만큼 넘게 이어지고 세일 기간(_sku_promo) 밖이면 정가로 받아들임
 SKU_META = ("sku_list_fail", "sku_list_told", "kr_none")   # 파일 최상위에 두는 SKU 단계 상태(단계를 건너뛴 날은 그대로 이어 씀)
@@ -2866,6 +2925,18 @@ def sku_list(deadline=None):
 def _sku_slot(key, every, today):
     """상태 없이 다시 물을 날 — 품번 해시로 정한 요일(every일마다 하루 · 파일에 기록을 남기지 않음)"""
     return every <= 1 or int(hashlib.sha1(key.encode()).hexdigest()[:8], 16) % every == today.toordinal() % every
+
+
+def _kr_due(d):
+    """v1.47 그 날짜(받은 날) 뒤 첫 1월 일괄 시작일 — 그해 1/6 전이면 그해 1/6, 아니면 다음 해 1/6(공개 파일의 obs_date만 씀 · 새 기록 칸 없음)"""
+    d = datetime.date.fromisoformat(str(d)[:10])
+    s = datetime.date(d.year, *SKU_KR_SWEEP)
+    return s if d < s else datetime.date(d.year + 1, *SKU_KR_SWEEP)
+
+
+def _kr_over(d, today):
+    """v1.47 1월 일괄 시작일에서 지난 날 수(음수 = 아직 차례 아님)"""
+    return (today - _kr_due(d)).days
 
 
 def _sku_cat(name, default):
@@ -4296,6 +4367,22 @@ AUDIT_DAYS = 7        # 주 1회
 AUDIT_MIN_LEFT = 150  # 초 — 남은 시간이 이보다 적으면 다음 실행에(받은 날을 옮기지 않음)
 
 
+def _audit_age(o, today):
+    """v1.47 값을 받은 지 날 수(obs_date — 없으면 seen · 날짜를 못 읽으면 None)"""
+    try:
+        return (today - datetime.date.fromisoformat(str(o.get("obs_date") or o.get("seen"))[:10])).days
+    except ValueError:
+        return None
+
+
+def _audit_ok(it, o, today):
+    """v1.47 표본에 넣을 값 — 할인 가드 중(페이지에 할인가만 보여 가짜 불일치)은 뺌 · 대표 상품은 8일 안 값만, 한국 SKU 값은 오래된 값도(연 1회 수집 — 검사가 정가 변경을 찾음)"""
+    if o.get("obs") and o["obs"] < o["p"] * 0.995:
+        return False
+    a = _audit_age(o, today)
+    return a is not None and (a <= 8 or (SKU_KR_YEARLY and it.get("kind") == "sku"))
+
+
 def _audit_page(it, o):
     """v1.33 대조할 공식몰 상품 페이지 → (주소 또는 None, 까닭) — 나이키는 상품 정보(같은 회사 API)에 적힌 페이지 이름으로 nike.com/kr 상품 페이지"""
     u = str(o.get("url") or "")
@@ -4315,11 +4402,13 @@ def _audit_page(it, o):
     return None, "페이지 주소 없음"
 
 
-def audit_stage(items_all, t0, today, td, old_audit):
+def audit_stage(items_all, t0, today, td, old_audit, keep=0):
     """v1.33 정가 표본 검사 — 주 1회 국내 정가 AUDIT_N개(브랜드마다 돌아가며 · 주마다 다른 표본)를 공식몰 상품 페이지에 보이는 가격과 대조.
     일치 = 페이지에 그 정가가 '149,000' 꼴로 보이거나 화면 데이터에 그 값(쇼피파이 등 100배 단위 포함)이 있음 · 못 받은 페이지는 셈에서 뺌 ·
     돌려줌 prices.json 'audit' {date, n, ok, rate, not_read, miss[{id, p, k, why}]} — k = "mismatch"(불일치 — n에 셈) · "unread"(대조 못 함 — not_read에 셈) ·
-    why는 사람이 읽는 글(바뀔 수 있음 — ERP는 k로 가름) · 공개 파일(대표 상품·찾은 SKU 상품은 이미 공개)"""
+    why는 사람이 읽는 글(바뀔 수 있음 — ERP는 k로 가름) · 공개 파일(대표 상품·찾은 SKU 상품은 이미 공개) ·
+    v1.47 한국 SKU 값은 8일 넘은 값도 표본에(연 1회 수집 — 검사가 정가 변경을 찾음 · 불일치는 다음 실행 그 브랜드 한국 SKU 다시 받기) · 할인 가드 중 값은 뺌 ·
+    miss마다 age(받은 지 날 수) · old = 표본 중 SKU_DAYS일 넘게 전에 받은 값 수 · keep = 뒤 판매처 정가 재확인에 남길 몫(초 — 검사 날 몫을 뺀 실행만)"""
     if isinstance(old_audit, dict):   # v1.34 v1.33 결과(k 없음)에도 k를 채움 — 불일치 글은 v1.33 그대로 '페이지에 이 정가가 안 보임'
         for m in old_audit.get("miss") or []:
             if isinstance(m, dict) and m.get("k") not in ("mismatch", "unread"):
@@ -4340,50 +4429,50 @@ def audit_stage(items_all, t0, today, td, old_audit):
         o = (it.get("m") or {}).get("KR") if isinstance(it, dict) else None
         if not isinstance(o, dict) or not o.get("p") or o.get("cur") != "KRW" or o.get("paused") or o.get("stale_since") or o.get("src") == "retail":
             continue   # v1.40 국내 판매처 정가는 공식몰 대조가 아니라 뺌
-        try:
-            if (today - datetime.date.fromisoformat(str(o.get("obs_date") or o.get("seen"))[:10])).days > 8:
-                continue
-        except ValueError:
+        if not _audit_ok(it, o, today):   # v1.47 한국 SKU 값은 8일 넘은 값도 · 할인 가드 중은 뺌
             continue
         pool[it.get("brand")].append((it, o))
     for b in pool:
         pool[b].sort(key=lambda x: hashlib.sha1(f"{x[0]['id']}|{wk}".encode()).hexdigest())
+    bo = sorted(pool, key=lambda b: hashlib.sha1(f"{b}|{wk}".encode()).hexdigest())   # v1.47 브랜드 순서도 주마다(브랜드가 AUDIT_N보다 많으면 뒤 브랜드가 늘 빠지지 않게 — 한국 SKU 연중 확인 · 검토 11/25)
     sample, k = [], 0
     while len(sample) < AUDIT_N and any(len(v) > k for v in pool.values()):
-        for b in sorted(pool):
+        for b in bo:
             if len(pool[b]) > k and len(sample) < AUDIT_N:
                 sample.append(pool[b][k])
         k += 1
-    deadline = time.time() + min(left - 30, 240)
+    deadline = time.time() + min(left - 30 - keep, 240)   # v1.47 keep — 두 검사가 함께 돌 날 판매처 재확인 몫을 남김(검토 2차 11/25)
     ok = bad = nf = 0
     miss = []
     _STOP.clear()   # SKU 단계가 끝나며 켠 '묶음 멈춤'을 풀어야 요청이 나감(11/23 브랜치 시험에서 20개 모두 못 받음)
     for it, o in sample:
         if time.time() > deadline:
             nf += 1; continue
+        a_ = _audit_age(o, today)   # v1.47 받은 지 날 수(불일치·대조 못 함 줄에 age)
         try:
             url, why = _audit_page(it, o)
             if not url:
-                nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": why}); continue
+                nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": why, "age": a_}); continue
             t = get(url).text
         except Exception as e:
             nf += 1
             w = re.sub(r"https?://\S+", "(주소)", str(e) if isinstance(e, (RuntimeError, Skip)) else type(e).__name__)[:80]
-            miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지 못 받음 — " + w}); continue
+            miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지 못 받음 — " + w, "age": a_}); continue
         p_ = int(round(o["p"]))
         if f"{p_:,}" in t or re.search(rf"[\"':\s]({p_}|{p_ * 100})(?:\.0+)?[\"',\s}}]", t):
             ok += 1
         elif not re.search(r"\d{1,3}(?:,\d{3})+\s*원|₩\s*\d|\"priceCurrency\"\s*:\s*\"KRW\"", t):
-            nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지에 원화 가격 글자 없음(화면 스크립트로 그림) — 대조 못 함"})   # 11/23 톰브라운
+            nf += 1; miss.append({"id": it["id"], "p": o["p"], "k": "unread", "why": "페이지에 원화 가격 글자 없음(화면 스크립트로 그림) — 대조 못 함", "age": a_})   # 11/23 톰브라운
         else:
-            bad += 1; miss.append({"id": it["id"], "p": o["p"], "k": "mismatch", "why": "페이지에 이 정가가 안 보임"})
+            bad += 1; miss.append({"id": it["id"], "p": o["p"], "k": "mismatch", "why": "페이지에 이 정가가 안 보임", "age": a_})
     _STOP.set()
     n = ok + bad
     if not n:   # 하나도 대조 못 함(모두 못 받음) — 결과를 남기지 않고 다음 실행에 다시(받은 날을 옮기지 않음)
         log(f"정가 표본 검사: 대조한 값 없음(못 받음 {nf}) — 다음 실행에 다시" + (" · " + miss[0]["why"][:80] if miss else ""))
         return old_audit
     miss.sort(key=lambda x: x["k"] != "mismatch")   # v1.34 불일치 먼저(목록을 자를 때 불일치가 빠지지 않게)
-    au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_N]}
+    au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_N],
+          "old": sum(1 for _, o in sample if (_audit_age(o, today) or 0) > SKU_DAYS)}   # v1.47 표본 중 SKU_DAYS일 넘게 전에 받은 값 수(한국 SKU 연 1회 — 새 칸만 · k 뜻 그대로)
     log(f"정가 표본 검사: 국내 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 못 받음 {nf}" if nf else "")
         + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["k"] == "mismatch")[:300] if bad else ""))
     if n >= 10 and ok / n < 0.8:
@@ -4393,6 +4482,7 @@ def audit_stage(items_all, t0, today, td, old_audit):
 
 AUDIT_RN = 10          # v1.43 판매처 정가 재확인 — 한 번에 대조할 판매처 정가 수(대표 결정 11/24 '진행' · ERP 요청)
 AUDIT_R_MIN_LEFT = 90  # 초 — 남은 시간이 이보다 적으면 다음 실행에
+AUDIT_PAD = 75  # 초 — v1.47 SKU 단계가 마감을 넘는 몫(돌던 일감 · 묶음 기다림 마감 + 60초 · 뒤처리) — 검사 날 SKU 마감에서 검사 몫과 함께 한 번 뺌(몫이 검사 기준과 같으면 늘 조금 모자라 검사가 밀림 · 검토 2차 11/25)
 
 
 def _retail_page_check(shop, html, code, url, p):
@@ -4464,7 +4554,8 @@ def audit_retail_stage(items_all, t0, today, td, old_ar):
     """v1.43 판매처 정가 재확인(대표 결정 11/24 '진행' · ERP 요청 '판매처 정가의 정확도를 볼 수단') — 주 1회 판매처 정가 AUDIT_RN개(판매처마다 돌아가며 · 주마다 다른 표본 ·
     이전 값·8일 넘은 값 뺌)를 ① 저장한 상품 페이지에 그 정가가 보이는지(할인 중 값 via "search"는 페이지에 정상가가 없어 '대조 못 함') ② 다른 판매처(29CM ↔ a-rt)의 같은 품번 정가와 같은지 대조.
     돌려줌 prices.json 'audit_retail' {date, n, ok, rate, not_read, miss[{id, p, shop, k, why}], shops{shop: {n, ok}}, cross{n, same, diff[{id, p, shop, other, op}]}} —
-    k = "mismatch"(페이지에 그 정가가 안 보임 — n에 셈) / "unread"(대조 못 함 — not_read) · 공식몰 표본 검사(audit)와 따로"""
+    k = "mismatch"(페이지에 그 정가가 안 보임 — n에 셈) / "unread"(대조 못 함 — not_read) · 공식몰 표본 검사(audit)와 따로 ·
+    v1.47 8일 넘은 값도 표본에(한국 SKU 연 1회 — 불일치는 다음 실행 그 브랜드 한국 SKU 다시 받기) · 할인 가드 중 값은 뺌 · miss마다 age · old = 표본 중 SKU_DAYS일 넘은 값 수"""
     if isinstance(old_ar, dict) and old_ar.get("date"):
         try:
             if (today - datetime.date.fromisoformat(old_ar["date"])).days < AUDIT_DAYS:
@@ -4481,10 +4572,7 @@ def audit_retail_stage(items_all, t0, today, td, old_ar):
         o = (it.get("m") or {}).get("KR") if isinstance(it, dict) else None
         if not isinstance(o, dict) or o.get("src") != "retail" or not o.get("p") or o.get("cur") != "KRW" or o.get("stale_since") or not o.get("shop"):
             continue
-        try:
-            if (today - datetime.date.fromisoformat(str(o.get("obs_date") or o.get("seen"))[:10])).days > 8:
-                continue
-        except ValueError:
+        if not _audit_ok(it, o, today):   # v1.47 한국 SKU 값은 8일 넘은 값도 · 할인 가드 중은 뺌
             continue
         pool[o["shop"]].append((it, o))
     if not pool:
@@ -4507,7 +4595,7 @@ def audit_retail_stage(items_all, t0, today, td, old_ar):
     _STOP.clear()   # SKU 단계가 끝나며 켠 '묶음 멈춤'을 풀어야 요청이 나감(공식몰 표본 검사와 같게)
     for it, o in sample:
         sh, p_ = o["shop"], o["p"]
-        rec = lambda kk, why: miss.append({"id": it["id"], "p": p_, "shop": sh, "k": kk, "why": why})
+        rec = lambda kk, why: miss.append({"id": it["id"], "p": p_, "shop": sh, "k": kk, "why": why, "age": _audit_age(o, today)})   # v1.47 age = 받은 지 날 수
         if time.time() > deadline:
             nf += 1; rec("unread", "시간 부족 — 다음 주"); continue
         if o.get("via"):
@@ -4558,7 +4646,8 @@ def audit_retail_stage(items_all, t0, today, td, old_ar):
         return old_ar
     miss.sort(key=lambda x: x["k"] != "mismatch")
     au = {"date": td, "n": n, "ok": ok, "rate": round(ok / n, 3) if n else None, "not_read": nf, "miss": miss[:AUDIT_RN],
-          "shops": {k_: dict(v_) for k_, v_ in sorted(shops.items())}, "cross": cross}
+          "shops": {k_: dict(v_) for k_, v_ in sorted(shops.items())}, "cross": cross,
+          "old": sum(1 for _, o in sample if (_audit_age(o, today) or 0) > SKU_DAYS)}   # v1.47 표본 중 SKU_DAYS일 넘게 전에 받은 값 수(새 칸만)
     log(f"판매처 정가 재확인: 페이지 대조 {n}개 중 일치 {ok}" + (f"({ok / n:.0%})" if n else "") + (f" · 대조 못 함 {nf}" if nf else "")
         + (f" · 다른 판매처와 같음 {cross['same']}/{cross['n']}" if cross["n"] else "")
         + (" · 확인할 값 " + ", ".join(f"{x['id']} {x['p']:,.0f}" for x in miss if x["k"] == "mismatch")[:200] if bad else "")
@@ -4568,24 +4657,39 @@ def audit_retail_stage(items_all, t0, today, td, old_ar):
     return au
 
 
-def sku_stage(old, t0, today, td, rep_codes, rep_items):
-    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told, kr_none})"""
+def sku_stage(old, t0, today, td, rep_codes, rep_items, reserve=0):
+    """v1.29 SKU 단계 — 돌려줌 (SKU items, 파일 최상위에 넣을 상태 {sku_list_fail, sku_list_told, kr_none}) ·
+    v1.47 reserve = 이번 실행에 돌 표본 검사 몫(초) — SKU 마감에서 미리 뺌"""
     def age(d): return (today - datetime.date.fromisoformat(str(d)[:10])).days
     _SKU_DAY[0] = today
     def band(n): return "0" if n == 0 else "1~9" if n < 10 else "10~49" if n < 50 else "50~199" if n < 200 else "200~999" if n < 1000 else "1000+"
     old_items = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku" and it.get("id")}
     meta = {k: old[k] for k in SKU_META if k in old}
+    def yr(b, cc):   # v1.47 연 1회(1월 일괄)로 다시 받는 값 — 읽는 브랜드의 한국 값(아크테릭스 Firecrawl 브랜드는 시즌 확인 때문에 예전 주기)
+        return SKU_KR_YEARLY and cc == "KR" and b in SKU_BRANDS and not SKU_BRANDS[b].get("fc")
     def alive(it):   # 값이 모두 SKU_DROP일 넘게 이전 값(공식몰에서 빠짐)이거나, 받지 않는 브랜드라 오래 그대로면 뺌
-        for o in (it.get("m") or {}).values():
+        for cc, o in (it.get("m") or {}).items():
             if not isinstance(o, dict) or not o.get("seen"):
+                continue
+            if yr(it.get("brand"), cc):   # v1.47 한국 값은 1월 일괄 날짜부터 셈(마지막으로 받은 날이 1년 가까이 될 수 있어 — 한 번 실패로 빠지지 않게)
+                if o.get("stale_since") and (age(o["fail_since"]) if o.get("fail_since") else (today - _kr_due(o["stale_since"])).days) <= SKU_DROP:
+                    return True   # 이전 값은 처음 못 받은 날(fail_since)부터 SKU_DROP일(늦은 밀린 값 한 번 실패로 바로 빠지거나 연중 연동에서 빠진 값이 다음 해까지 남지 않게 · 검토 11/25)
+                if not o.get("stale_since") and _kr_over(o.get("obs_date") or o["seen"], today) <= SKU_DROP * 2:
+                    return True
                 continue
             if o.get("stale_since") and age(o["stale_since"]) <= SKU_DROP:
                 return True
             if not o.get("stale_since") and age(o.get("obs_date") or o["seen"]) <= SKU_DROP * 2:
                 return True
         return False
+    def _stale(o, b, cc, why):   # 이전 값으로 둠 · v1.47 한국 1년 주기 값은 처음 못 받은 날(fail_since — 받으면 지움)을 남김(뺄 날·판매처 고정 날 수의 기준)
+        if yr(b, cc) and not o.get("stale_since"):
+            o["fail_since"] = td
+        o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = why
     keep = [it for it in old_items.values() if alive(it)]
-    left = t0 + TIME_LIMIT - 30 - time.time()
+    left0 = t0 + TIME_LIMIT - 30 - time.time()
+    reserve = min(reserve, max(0, left0 - SKU_MIN_LEFT))   # v1.47 몫 때문에 SKU 단계를 건너뛰지 않게(SKU_MIN_LEFT는 남김 — 검토 11/25)
+    left = left0 - reserve   # v1.47 표본 검사가 돌 날은 그 몫을 남김
     if left < SKU_MIN_LEFT:   # 단계 15분 제한 전에 저장 — 목록도 안 받음
         log(f"SKU 정가: 남은 시간 부족({max(0, left):.0f}초) — 이번 실행은 건너뜀 · 받아 둔 상품 {len(old_items)}개는 그대로")
         return list(old_items.values()), meta   # v1.39 건너뛴 날은 상품을 빼지 않음(뺄 때 국내 상태를 꼬리표로 옮기는 일은 목록을 받은 실행에서만 — 검토 11/23)
@@ -4633,8 +4737,43 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         u_ = (((it_.get("m") or {}).get("KR") or {}).get("url")) if h_ and h_.get("norm") else None
         if u_:
             rep_url[(it_["brand"], h_["norm"](_sku_norm(it_.get("code"))))] = u_
+    # v1.47 연동 다시 받기(새 기록 칸 없이 공개 자료로 매 실행 판단) — 그 브랜드 한국 SKU 값 중 그날 전에 받은 값을 예외로 다시 받음(받으면 obs_date가 그날 뒤라 저절로 끝남):
+    # ① 표본 검사(audit·audit_retail)의 SKU 상품 불일치(k mismatch) → 검사 날짜 ② 대표 상품 한국 값의 정가 변동(ph)·크게 바뀜 보류(cand) 7일 안 → 그 날짜
+    trig = {}
+    for a_ in (old.get("audit"), old.get("audit_retail")):
+        try:
+            ad_ = datetime.date.fromisoformat(str(a_.get("date"))[:10]).isoformat() if isinstance(a_, dict) and isinstance(a_.get("miss"), list) else None
+        except ValueError:
+            ad_ = None
+        for m_ in (a_.get("miss") if ad_ else None) or []:
+            b_ = (old_items.get(str(m_.get("id") or "")) or {}).get("brand") if isinstance(m_, dict) and m_.get("k") == "mismatch" and str(m_.get("id") or "").startswith("s-") else None
+            if b_ in SKU_BRANDS:
+                trig[b_] = max(trig.get(b_, ""), ad_)
+    for it_ in rep_items:
+        o_ = ((it_.get("m") or {}).get("KR") or {}) if isinstance(it_, dict) and it_.get("kind") != "sku" and it_.get("brand") in SKU_BRANDS else {}
+        for d_ in [x[0] for x in (o_.get("ph") or []) if isinstance(x, list) and x] + ([o_["cand_date"]] if o_.get("cand") and o_.get("cand_date") else []):
+            try:
+                if 0 <= age(d_) < SKU_DAYS:
+                    trig[it_["brand"]] = max(trig.get(it_["brand"], ""), datetime.date.fromisoformat(str(d_)[:10]).isoformat())
+            except (TypeError, ValueError):
+                pass
+    def due(b, cc_, key, o):   # v1.47 받아 둔 값 → 0 다시 받기(예외 · 해외·주 1회) · 1 한국 1월 일괄 · None 이번엔 안 받음
+        d_ = o.get("obs_date") or o["seen"]
+        if o.get("stale_since"):
+            return 0 if _sku_slot(key, SKU_STALE_EVERY, today) else None   # 이전 값 — 3일마다
+        if not yr(b, cc_):
+            return 0 if age(d_) >= SKU_DAYS else None   # 해외·아크테릭스 한국 — 7일마다(예전대로)
+        if trig.get(b) and str(d_)[:10] < trig[b]:
+            return 0   # 검사 불일치·대표 상품 정가 변동 연동
+        if o.get("via") or o.get("cand") or o.get("nolst") or (o.get("obs") and o.get("p") and o["obs"] < o["p"] * 0.995):
+            return 0 if age(d_) >= SKU_DAYS else None   # 예외 — 정상가를 검색 자료로만 확인(via)·크게 바뀜 보류·정가 표시 없이 처음 받음(nolst)·할인 가드 중은 7일마다
+        ov = _kr_over(d_, today)
+        if ov < 0 or (ov < SKU_KR_SPREAD and not _sku_slot(key + "|y", SKU_KR_SPREAD, today)):
+            return None   # 1월 일괄 전 · 일괄 기간엔 품번 해시로 정한 날만(그 뒤 밀린 값은 매일)
+        return 1
     # 일감 = (브랜드, 나라, 묻는 열쇠) — 그 열쇠의 품번들을 한 번에 · 받을 때가 된 값이 있는 것만.
     # 받아 둔 값 다시 받기(ref)가 먼저(오래된 것부터 · 판매 상태와 상관없이 — 순서로 상태가 드러나지 않게), 아직 못 찾은 값 묻기(new)는 그 뒤(판매 중 먼저 · 날마다 돌아가는 순서)
+    # v1.47 한국은 예외·연동(rk 0) → 1월 일괄(rk 1 — SKU_SWEEP_SHARE 시간까지) → 새로 묻기(rk 2 — SKU_NEW_SHARE 시간까지)
     jobs = {}
     for (b, c), st in tgt.items():
         h = SKU_BRANDS[b]; q = h["q"](c); it = old_items.get(iid(b, c)) or {}
@@ -4642,20 +4781,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             o = (it.get("m") or {}).get(cc) or {}
             key = f"{b}|{c}|{cc}"
             if o.get("seen"):
-                if not o.get("stale_since") and age(o.get("obs_date") or o["seen"]) < SKU_DAYS:
-                    continue   # 이번 주기에 받음
-                if o.get("stale_since") and not _sku_slot(key, SKU_STALE_EVERY, today):
-                    continue   # 이전 값 — 3일마다
+                rk = due(b, cc, key, o)
+                if rk is None:
+                    continue   # 이번 주기에 받음 · 이전 값 3일마다 · 한국은 1월 일괄 차례 아님
                 kind = "ref"
             else:
                 fc_new = h.get("fc") and (b, q) not in rep_url   # v1.41 검색이 필요한 새 값(대표 상품 한국 주소가 있는 모델은 검색 없이 받음)
                 if not _sku_slot(key, (FC_ASK_DAYS if fc_new else SKU_ASK_KR) if cc == "KR" else SKU_ASK_DAYS, today):
-                    continue   # 아직 못 찾은 값 — 한국 2일·해외 7일마다(품번 해시로 정한 날) · v1.41 Firecrawl 검색으로 찾는 값은 14일마다
+                    continue   # 아직 못 찾은 값 — 해외 7일마다(품번 해시로 정한 날) · v1.47 한국은 매일(SKU_ASK_KR 1) · v1.41 Firecrawl 검색으로 찾는 값은 14일마다
                 if fc_new and not os.environ.get(FC_ENV, "").strip():
                     continue   # v1.41 검색 키가 없으면 새로 찾지 않음(받아 둔 주소·대표 상품 주소만 받음)
-                kind = "new"
-            j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0})
-            j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"
+                kind, rk = "new", 2
+            j = jobs.setdefault((b, cc, q), {"codes": set(), "st": 9, "ref": False, "age": 0, "rk": 2})
+            j["codes"].add(c); j["ref"] = j["ref"] or kind == "ref"; j["rk"] = min(j["rk"], rk)
             j["st"] = min(j["st"], 1 if (cc == "KR" and iid(b, c) in old_items) else min(st, 1))   # v1.37 이미 파일에 있는 상품의 국내 묻기는 판매 상태와 상관없이 한 차례(예정과 같은 자리 — kr_status가 바뀐 날로 목록 순서가 드러나지 않게 · 아직 못 찾은 판매 중 품번이 먼저 · 검토 11/23)
             if kind == "ref":
                 j["age"] = max(j["age"], age(o.get("obs_date") or o.get("seen") or td))
@@ -4667,26 +4805,33 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         for c in byq.get((b, q), ()):
             if c not in j["codes"] and not ((((old_items.get(iid(b, c)) or {}).get("m") or {}).get(cc)) or {}).get("seen"):
                 j["codes"].add(c)
-    # v1.32 모델 단위 상품은 목록과 상관없이 따로 다시 받음(색상 상품의 '목록에서 빠진 상품'처럼 — 목록이 바뀐 날이 파일에 드러나지 않게) · 7일마다 · 이전 값은 3일마다
+    # v1.32 모델 단위 상품은 목록과 상관없이 따로 다시 받음(색상 상품의 '목록에서 빠진 상품'처럼 — 목록이 바뀐 날이 파일에 드러나지 않게) · 이전 값은 3일마다 · v1.47 그 밖은 색상 값과 같게(예외·연동 → 1월 일괄)
+    m_due = set()   # v1.47 이번에 차례인 받아 둔 모델 상품 — 그 밖은 목록 색상 묻기에 섞인 응답으로 바꾸지 않음(목록 품번이 있는 날만 obs_date가 움직이지 않게 · 검토 11/25)
     for i_, it_ in mitems.items():
         b_, m_ = it_["brand"], str(it_.get("code"))
         o_ = (it_.get("m") or {}).get("KR") or {}
         if not o_.get("seen"):
             continue
-        if not o_.get("stale_since") and age(o_.get("obs_date") or o_["seen"]) < SKU_DAYS:
+        rk_ = due(b_, "KR", f"{b_}|{m_}|KR|model", o_)   # v1.47 색상 값과 같은 규칙(예외·연동 → 1월 일괄)
+        if rk_ is None:
             continue
-        if o_.get("stale_since") and not _sku_slot(f"{b_}|{m_}|KR|model", SKU_STALE_EVERY, today):
-            continue
-        j = jobs.setdefault((b_, "KR", m_), {"codes": set(), "st": 2, "ref": True, "age": 0})
-        j["ref"] = True; j["age"] = max(j["age"], age(o_.get("obs_date") or o_.get("seen") or td))
+        m_due.add(i_)
+        j = jobs.setdefault((b_, "KR", m_), {"codes": set(), "st": 2, "ref": True, "age": 0, "rk": rk_})
+        j["ref"] = True; j["rk"] = min(j["rk"], rk_); j["age"] = max(j["age"], age(o_.get("obs_date") or o_.get("seen") or td))
     ccr = {cc: i for i, cc in enumerate(SKU_CC)}
     rot = lambda k: hashlib.sha1(f"{k}|{td}".encode()).hexdigest()   # 못 찾은 값 묻는 순서 — 날마다 바뀜(뒤쪽 품번도 차례가 옴)
-    order = sorted(jobs, key=lambda k: (k[1] != "KR", 0, -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 1, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저
-    lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국, 1 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤에 시작)
+    order = sorted(jobs, key=lambda k: (k[1] != "KR", jobs[k]["rk"], -jobs[k]["age"], ccr[k[1]], k) if jobs[k]["ref"] else (k[1] != "KR", 2, jobs[k]["st"], ccr[k[1]], rot(k)))   # 해외도 다시 받기(나라 상관없이 오래된 것부터)가 먼저 · v1.47 한국 예외 → 1월 일괄 → 새로 묻기
+    lanes = collections.OrderedDict()   # (단계, 브랜드) — 단계 0 = 한국 다시 받기(예외·1월 일괄), 1 = 한국 새로 묻기(그 묶음의 다시 받기가 끝난 뒤), 2 = 미국·영국·독일(그 브랜드 한국 묶음이 끝난 뒤에 시작)
+    # v1.47 한국은 모든 묶음의 다시 받기를 먼저 맡기고 새로 묻기는 그 뒤 — 1월 일괄 진행이 다른 브랜드의 못 찾은 목록 품번 수(묶음 길이)에 따라 달라지지 않게(묶음 순서는 다시 받기 일감 수 — 공개 자료 · 검토 11/25)
     for k in order:
-        lanes.setdefault((0 if k[1] == "KR" else 1, ("29cm" if SKU_BRANDS[k[0]].get("r29") else ("a-rt" if len(SKU_BRANDS[k[0]]["cc"]) == 1 else "a-rt " + k[0]) if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.42 a-rt만 읽는 브랜드 중 해외 나라가 있는 브랜드(언더아머)는 한국 묶음을 따로(그 브랜드 해외 묶음이 아식스 한국 일감을 기다리지 않게 · 같은 PACE a-rt 줄이라 요청 빠르기는 그대로 · 검토 11/24)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
+        lanes.setdefault(((0 if jobs[k]["ref"] else 1) if k[1] == "KR" else 2, ("29cm" if SKU_BRANDS[k[0]].get("r29") else ("a-rt" if len(SKU_BRANDS[k[0]]["cc"]) == 1 else "a-rt " + k[0]) if SKU_BRANDS[k[0]].get("art") else k[0]) if k[1] == "KR" else k[0]), []).append(k)   # v1.42 a-rt만 읽는 브랜드 중 해외 나라가 있는 브랜드(언더아머)는 한국 묶음을 따로(그 브랜드 해외 묶음이 아식스 한국 일감을 기다리지 않게 · 같은 PACE a-rt 줄이라 요청 빠르기는 그대로 · 검토 11/24)   # v1.40 29CM 브랜드는 한 묶음(같은 사이트 한 줄이라 묶음을 나눠도 빨라지지 않음 — 일꾼을 붙잡지 않게 · 검토 11/24)
     kr_done = {b: threading.Event() for b in SKU_BRANDS}
-    kr_b = {k[0] for (ph_, _), ks_ in lanes.items() if ph_ == 0 for k in ks_}   # v1.42 한국 일감이 '29cm'·'a-rt' 묶음에 있는 브랜드도 — 그 묶음이 끝나야 해외 묶음 시작(검토 11/24)
+    kr_b = {k[0] for (ph_, _), ks_ in lanes.items() if ph_ < 2 for k in ks_}   # v1.42 한국 일감이 '29cm'·'a-rt' 묶음에 있는 브랜드도 — 그 묶음이 끝나야 해외 묶음 시작(검토 11/24)
+    kr_last = {}   # v1.47 브랜드마다 한국 일감이 있는 마지막 단계(0 다시 받기 · 1 새로 묻기) — 그 단계 묶음이 끝나야 해외 묶음 시작
+    for (ph_, _), ks_ in lanes.items():
+        for k_ in ks_ if ph_ < 2 else ():
+            kr_last[k_[0]] = max(kr_last.get(k_[0], 0), ph_)
+    ref_done = {lb_: threading.Event() for (ph_, lb_) in lanes if ph_ == 0}   # v1.47 같은 묶음의 새로 묻기는 다시 받기가 끝난 뒤(같은 사이트 요청은 한 줄로)
     for b in SKU_BRANDS:
         if b not in kr_b:
             kr_done[b].set()
@@ -4702,36 +4847,43 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 pre_by[(b_, cc_, q_)] = {q_: rep_url[(b_, q_)]}; continue
         want_by[(b_, cc_)].add(q_)
     _GANNI_OK[0] = False   # v1.45
+    def pin_age(b, c, o):   # 받아 둔 판매처가 실패한 지 날 수(stale_since = 마지막으로 받은 날 · 다시 받기는 SKU_DAYS 뒤부터 — 검토 11/24)
+        if yr(b, "KR") and o.get("fail_since"):   # v1.47 한국 1년 주기 — 처음 못 받은 날부터(1월 일괄·밀린 값·연중 연동 어느 날이든 한 번 실패로 판매처가 바뀌어 기록이 지워지지 않게 · 검토 11/25)
+            return max(0, age(o["fail_since"]))
+        return max(0, age(o["stale_since"]) - SKU_DAYS)   # 해외·fail_since 없는 옛 이전 값은 예전대로
     _KR_PREF.clear()   # v1.42 받아 둔 한국 값의 판매처(국내 판매처 브랜드) — 그 판매처부터
     _KR_URL.clear()
     for (b_, cc_, q_), j_ in jobs.items():
         if cc_ == "KR" and any(SKU_BRANDS[b_].get(x) for x in KR_RETAIL):
-            os_ = [(((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get("KR")) or {} for c_ in j_["codes"]]
+            cos_ = [(c_, (((old_items.get(iid(b_, c_)) or {}).get("m") or {}).get("KR")) or {}) for c_ in j_["codes"]]
+            os_ = [o_ for _, o_ in cos_]
             sh_ = {o_.get("shop") for o_ in os_} - {None}
             us_ = {o_.get("url") for o_ in os_ if o_.get("shop") == "shoemarker"} - {None}
             if len(us_) == 1:
                 _KR_URL[(b_, q_)] = us_.pop()   # v1.44 슈마커 플러스 — 같은 품번 상품이 여럿이면 받아 둔 상품을 먼저
             if len(sh_) == 1:
-                _KR_PREF[(b_, q_)] = (sh_.pop(), max((max(0, age(o_["stale_since"]) - SKU_DAYS) for o_ in os_ if o_.get("stale_since")), default=0))   # 실패한 지 날 수(stale_since = 마지막으로 받은 날 · 다시 받기는 SKU_DAYS 뒤부터 — 검토 11/24)
+                _KR_PREF[(b_, q_)] = (sh_.pop(), max((pin_age(b_, c_, o_) for c_, o_ in cos_ if o_.get("stale_since")), default=0))
     _IDX_PAGES[0] = 0
     shown = set()
     s0 = time.time()
     new_cut = s0 + (deadline - s0) * SKU_NEW_SHARE   # 한국 '아직 못 찾은 값 묻기'는 이 시각까지만 — 나머지 시간은 해외·다시 받기 몫
+    sweep_cut = s0 + (deadline - s0) * SKU_SWEEP_SHARE   # v1.47 한국 1월 일괄 다시 받기는 이 시각까지만(못 한 것은 다음 실행 — 진행이 목록 크기와 상관없게)
     def lane(ph, b, ks):
         c = _TL.c = _Ctx()
+        lb = b
         last_i = {k_[0]: i_ for i_, k_ in enumerate(ks)}   # v1.42 같은 묶음 안 브랜드마다 마지막 한국 일감 — 그 뒤 바로 그 브랜드 해외 묶음 시작(검토 11/24)
         try:
             for i_k, k in enumerate(ks):
-                if ph == 0 and i_k and last_i.get(ks[i_k - 1][0]) == i_k - 1:
+                if ph < 2 and i_k and last_i.get(ks[i_k - 1][0]) == i_k - 1 and kr_last.get(ks[i_k - 1][0]) == ph:
                     kr_done[ks[i_k - 1][0]].set()
                 b = k[0]   # v1.40 묶음 열쇠가 '29cm'(v1.42 'a-rt')이면 브랜드는 일감마다
                 j = jobs[k]
-                if time.time() > deadline or _STOP.is_set() or (ph == 0 and not j["ref"] and time.time() > new_cut):
+                if time.time() > deadline or _STOP.is_set() or (ph < 2 and not j["ref"] and time.time() > new_cut) or (ph < 2 and j["rk"] == 1 and time.time() > sweep_cut):
                     with rlock: cnt["left"] += 1
                     continue
                 _, cc, q = k
                 ik = f"{b} {cc}"
-                stop_ = min(deadline, new_cut if (ph == 0 and not j["ref"]) else deadline) - 20   # v1.35 색인(킨 한국 목록 넘기기)도 단계 마감·한국 묻기 마감 전에 멈춤
+                stop_ = min(deadline, new_cut if (ph < 2 and not j["ref"]) else deadline) - 20   # v1.35 색인(킨 한국 목록 넘기기)도 단계 마감·한국 묻기 마감 전에 멈춤
                 def get_ix():
                     if b == "닥터마틴" and cc != "KR":
                         web = idx.get("닥터마틴 web", _sku_idx_web)
@@ -4791,16 +4943,19 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                     + (f" · 미확인 {len(got['__unread__'])}" if gx and got.get("__unread__") else "")
                     + (f" · 모델 단위 {got['__model__'][0]:,g}" if "__model__" in got else (f" · 모델 색상 정가가 서로 다름({got['__mixed__']}색)" if got["__mixed__"] > 0 else " · 정가를 확실히 못 읽은 색상이 있어 모델 값 안 정함") if "__mixed__" in got else ""))
         finally:
-            if ph == 0:
+            if ph < 2:
                 for bb in {k_[0] for k_ in ks}:
-                    kr_done[bb].set()
+                    if kr_last.get(bb) == ph:
+                        kr_done[bb].set()
+                if ph == 0:
+                    ref_done[lb].set()
             c.sess.close(); _TL.c = None
     for h_ in set(_kr_only_hosts(PRODUCTS)) | set(SKU_KR_HOSTS):   # 한국 몰 간격(v1.28 KR_GAP)·쇼피파이 플랫폼 간격 — 대표 상품을 받지 않은 날에도 · v1.38 SKU 전용 한국 몰도
         HOST_GAP[h_] = max(HOST_GAP.get(h_, 0), KR_GAP)
     if not _PACE:
         _PACE.update(pace_map(PRODUCTS))
     _STOP.clear()
-    q_ = sorted([x for x in lanes.items() if x[0][0] == 0], key=lambda x: -len(x[1])) + sorted([x for x in lanes.items() if x[0][0] == 1], key=lambda x: -len(x[1]))
+    q_ = sorted(lanes.items(), key=lambda x: (x[0][0], -len(x[1])))   # v1.47 한국 다시 받기 → 한국 새로 묻기 → 해외(단계마다 긴 묶음부터)
     qlock = threading.Lock()
     def worker():   # 시작할 수 있는 묶음(한국 묶음 · 한국을 다 받은 브랜드의 해외 묶음)을 앞에서부터 — 없으면 잠깐 쉬고 다시(기다리며 일꾼을 붙잡지 않음)
         while True:
@@ -4809,7 +4964,7 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 if not q_:
                     return
                 for i_, ((ph, b), ks) in enumerate(q_):
-                    if ph == 0 or kr_done[b].is_set():
+                    if ph == 0 or (ph == 1 and (b not in ref_done or ref_done[b].is_set())) or (ph == 2 and kr_done[b].is_set()):
                         pick = q_.pop(i_); break
             if pick is None:
                 if time.time() > deadline:
@@ -4873,12 +5028,12 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
             o = it["m"].get(cc) or {}
             if "err" in r:
                 if o:
-                    o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = r["err"]
+                    _stale(o, b, cc, r["err"])
                 continue
             v = r["got"].get(c)
             if not v:
                 if o:   # 전에 받던 품번이 이번에 공식몰에 없음 — 이전 값(실패로 셈)
-                    o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = "이번엔 공식몰에서 못 찾음"
+                    _stale(o, b, cc, "이번엔 공식몰에서 못 찾음")
                 continue
             newv[cc] = v
         def fresh(cc):   # 이번에 처음(또는 통화가 바뀌어 다시) 받는 값인지
@@ -4915,8 +5070,16 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 if not big_:   # 1.5배 넘게 다르면 앞 값으로 보류(다음 확인 때 비슷하면 반영 — 판매처가 바뀌어도 크게 바뀜 확인은 그대로 · 검토 11/24)
                     o = {}   # v1.42 판매처가 바뀜(29CM ↔ a-rt · 공식몰 ↔ 판매처 — 그랜드스테이지·ABC마트끼리는 같은 판매처) — 새 값으로(앞 판매처 정가·할인·정가 변동 기록을 이어 쓰지 않음 · 검토 11/24)
             rtl = ex.get("src") == "retail" or o.get("src") == "retail"
-            o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키" or ex.get("src") == "retail", url, age)   # v1.42 판매처 값은 정상가 칸(29CM consumerPrice·a-rt NRMAL_AMT)을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 크게 바뀜은 다음 확인 — 검토 11/24)
+            o2, n, _ = apply_obs(dict(o), full, ex, cur, td, b == "나이키" or ex.get("src") == "retail", url, age, promo if (cc == "KR" and SKU_KR_YEARLY) else None)   # v1.47 한국 할인 가드는 낮은 값을 처음 본 날부터   # v1.42 판매처 값은 정상가 칸(29CM consumerPrice·a-rt NRMAL_AMT)을 직접 주니 나이키 정가처럼 할인 가드 없음(판매처가 '할인 아님'이라 밝힌 값에 가짜 할인이 붙지 않게 · 크게 바뀜은 다음 확인 — 검토 11/24)
             acc = o2.get("p") == round(full, 2)   # v1.42 이번 값을 정가로 받아들였는지(크게 바뀜 보류면 앞 정가 그대로)
+            ns_ = o.get("nolst")
+            if yr(b, cc) and fresh(cc) and not ex.get("lst") and ex.get("src") != "retail":
+                o2["nolst"] = td   # v1.47 정가 표시 없이 처음 받은 한국 값(그 날) — 7일마다 다시 받아 확인(받은 날 세일가였으면 다음 1월까지 정가로 남지 않게 · 검토 11/25)
+            elif ns_ and yr(b, cc) and not ex.get("lst") and ex.get("src") != "retail" and (
+                    o2.get("p") != o.get("p") or age(ns_ if isinstance(ns_, str) else (o.get("obs_date") or td)) < SKU_NOLST_DAYS):
+                o2["nolst"] = td if o2.get("p") != o.get("p") else ns_   # 정가가 바뀌면 그날부터 다시 셈 · 같은 정가가 SKU_NOLST_DAYS 이어지거나 정가 표시를 보면 지움(한 번 다시 받고 지우면 1주 넘는 세일가가 1월까지 남음 · 검토 2차 11/25)
+            else:
+                o2.pop("nolst", None)
             if o2.get("url") is None:
                 o2.pop("url", None)
             if lvl:
@@ -4990,13 +5153,18 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
         i = mid(b, m_)
         it = json.loads(json.dumps(mitems.get(i) or {"id": i, "brand": b, "name": None, "code": m_, "cat": None, "kind": "sku", "m": {}}, ensure_ascii=False))
         it["m"] = {cc: o for cc, o in (it.get("m") or {}).items() if cc == "KR" and isinstance(o, dict)}
-        r = res.get((b, "KR", m_))
+        r0 = r = res.get((b, "KR", m_))   # r0 = 그날 응답(받아 둔 모델 상품이 차례가 아니어도 — 원단·색상 정가 갈림 판단만)
         o = it["m"].get("KR")
+        nd = bool(SKU_KR_YEARLY and o and o.get("seen") and i not in m_due)
+        if nd:
+            r = None   # v1.47 받아 둔 모델 상품은 그 상품 차례(예외·연동·1월 일괄)에만 — 같은 모델 목록 색상을 물은 응답으로 값·이전 값을 정하지 않음(새로 만드는 것만 · False면 예전대로)
         if SKU_BRANDS[b].get("fab"):   # v1.45 아미 — 국내 값이 없는 목록 품번(그 스타일 전체 · 이번에 묻지 않은 것도)의 원단이 국내 몰에 없으면 모델 값(스타일 단위 — ERP 규칙 ②로
             # 모든 원단을 덮음)을 쓰지 않고 받아 둔 모델 상품도 뺌 · 국내 원단 목록은 이번에 받은 것, 없으면 모델 상품에 남긴 것(fab) — 그 스타일을 묻지 않은 날은 그 품번의 국내 차례 날에만
-            # 판단(상태를 바꾸는 날이 차례 날이게) · 자기 국내 값(이번 실행 뒤에도 남는 값 — 이전 값 포함)이 있는 품번은 셈 밖(검토 11/24)
-            ran = bool(r and "got" in r and "__model__" in r["got"])
-            fab_ = set(r["got"].get("__fab__") or ()) if ran else (set(it["fab"]) if isinstance(it.get("fab"), list) else None)
+            # 판단(상태를 바꾸는 날이 차례 날이게) · 자기 국내 값(이번 실행 뒤에도 남는 값 — 이전 값 포함)이 있는 품번은 셈 밖(검토 11/24) ·
+            # v1.47 차례가 아닌 받아 둔 모델 상품도 원단 판단은 그날 응답(r0)으로(묵은 fab으로 하루 잘못 빼거나 국내에서 빠진 원단을 1월까지 덮지 않게) · 그날 응답이 없으면 판단하지 않음 ·
+            # 공개 칸 fab은 그 상품 차례 날·새로 만들 때만 다시 씀(검토 2차 11/25)
+            ran = bool(r0 and "got" in r0 and "__model__" in r0["got"])
+            fab_ = set(r0["got"].get("__fab__") or ()) if ran else (None if nd else (set(it["fab"]) if isinstance(it.get("fab"), list) else None))
             def own_(c):
                 x = items.get(iid(b, c)) or kept.get(iid(b, c))
                 return bool(x and ((x.get("m") or {}).get("KR") or {}).get("p") and alive(x))
@@ -5006,11 +5174,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                                         for c in [c_ for (b2, c_) in tgt if b2 == b and SKU_BRANDS[b]["q"](c_) == m_ and not own_(c_)] + odd_):
                 n_fab += 1
                 continue
-            if ran:
+            if ran and not nd:
                 it["fab"] = sorted(fab_)   # 국내 몰에 있는 원단(공개 상품 정보) — 묻지 않은 날 판단용
         if r and "got" in r and "__model__" in r["got"]:
             full, ex, name, hint, url, lvl = r["got"]["__model__"]
-            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age)   # 색상 값과 같은 가드(나이키 fullPrice는 가드 없음 · 크록스는 120일 할인 가드 — 검토 11/23)
+            o2, n, _ = apply_obs(dict(o or {}), full, ex, "KRW", td, b == "나이키", url, age, _sku_promo(today) if SKU_KR_YEARLY else None)   # 색상 값과 같은 가드(나이키 fullPrice는 가드 없음 · 크록스는 120일 할인 가드 — 검토 11/23)
             for k_ in ("sale", "sp", "sp_date", "sh", "off_seen"):
                 o2.pop(k_, None)   # 할인 표시는 안 붙임(색상마다 다를 수 있어)
             if o2.get("url") is None:
@@ -5021,11 +5189,11 @@ def sku_stage(old, t0, today, td, rep_codes, rep_items):
                 it["name"] = name
             if not it.get("cat"):
                 it["cat"] = _sku_cat(name, hint or bcat.get(b, "shoe"))
-        elif r and "got" in r and "__mixed__" in r["got"]:
+        elif r0 and "got" in r0 and "__mixed__" in r0["got"]:
             n_mixed += 1
-            continue   # 국내 색상 정가가 서로 다름 — 모델 값을 쓰지 않음
+            continue   # 국내 색상 정가가 서로 다름 — 모델 값을 쓰지 않음 · v1.47 차례가 아닌 받아 둔 모델 상품도 그날 응답으로 뺌(ERP 규칙 ②가 새 색상에 묵은 모델 값을 1월까지 쓰지 않게 · 검토 2차 11/25)
         elif r and o:   # 이번에 물었는데 국내 몰에 그 모델이 없음·못 받음 — 이전 값
-            o.setdefault("stale_since", o.get("obs_date") or o.get("seen") or td); o["why"] = r.get("err") or (r.get("got") or {}).get("__why__") or "이번엔 공식몰에서 못 찾음"
+            _stale(o, b, "KR", r.get("err") or (r.get("got") or {}).get("__why__") or "이번엔 공식몰에서 못 찾음")
         if it["m"].get("KR"):
             if not it.get("cat"):
                 it["cat"] = _sku_cat(it.get("name"), bcat.get(b, "shoe"))
@@ -5090,6 +5258,8 @@ def main():
         if unp:
             mode = "retry"
             log(f"해외 정가: 수집 멈춤을 푼 값 {len(unp)}건 — 바로 다시 받기({', '.join(unp[:5])}{' …' if len(unp) > 5 else ''})")
+    if not mode and KR_DAILY:
+        mode = "kr"   # v1.47 대표 상품 한국 값만 매일(해외는 주 1회 — 대표 결정 11-25 '가')
     codes = {p["id"]: p["code"] for p in PRODUCTS}
     # 품번이 바뀐 상품은 id가 같아도 다른 상품 — 이전 값·값 없음 기록을 쓰지 않음
     prev = {it["id"]: it for it in old.get("items", []) if isinstance(it, dict) and it.get("code") == codes.get(it.get("id"))}
@@ -5100,13 +5270,18 @@ def main():
     htry = {k: v for k, v in (old.get("host_try") or {}).items() if k in keys and isinstance(v, str)}
     ok_run, again = None, False
     busy = False   # v1.29 대표 상품 묶음이 시간 안에 안 끝남(그 스레드가 아직 돎) — SKU 단계 건너뜀
+    cnt_kr = collections.Counter()   # v1.47 한국 값 셈(받은 모드마다 — 한국 줄·kr_fetched · 전체 받기 날은 cnt에도 예전처럼)
+    sf_all, sf_brands, said_b = False, set(), set()   # v1.47 이번 실행 전체 받기·다시 받기 알림이 이미 알린 범위(한국 값 막힘 알림에서 뺌) · 첫날 줄을 이미 찍은 브랜드
     if not mode:
         log(f"해외 정가: 주 1회 — 마지막 {att}, 다음 {datetime.date.fromisoformat(att) + datetime.timedelta(days=DAYS)} (건너뜀)")
         items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("id") in codes]
     else:
         if mode == "retry":
-            log(f"해외 정가: 다시 받기 — {att} 받기에서 못 받은 값만")
+            log(f"해외 정가: 다시 받기 — {att} 받기에서 못 받은 값만" + (" · 한국 값은 모두(매일)" if KR_DAILY else ""))
+        elif mode == "kr":   # v1.47 '^해외 정가: ' 줄(점검 요약 참고 줄) — 알림 낱말 없이
+            log(f"해외 정가: 한국 값만 매일 — 해외는 주 1회(마지막 {att}, 다음 {datetime.date.fromisoformat(att) + datetime.timedelta(days=DAYS)})")
         items, bt, cnt = [], {}, collections.Counter()   # bt = 브랜드별 [볼 값, 못 받은 값] — 한 브랜드를 통째로 못 받으면 다음 날 다시
+        kr_sep = KR_DAILY and mode != "full"   # v1.47 전체 받기가 아닌 날의 한국 값 — 셈은 cnt_kr로 따로(받은 날·다시 받기 판단에 안 섞음)
         def _prev_o(pi, prod, cc):   # 이전 값(나라별 수입사 품번이 바뀌었으면 없음)
             pv = pi.get("m", {})
             same = (pi.get("cc_code") or {}).get(cc) == (prod.get("cc_code") or {}).get(cc)
@@ -5115,7 +5290,9 @@ def main():
             u = None if _feed(prod, cc) else prod["urls"].get(cc)
             h = urllib.parse.urlsplit(u).netloc if u else ""
             return h if h in HOST_CAP else ""
-        def _done(o):   # 다시 받기 — 이번 주기에 이미 받은 값(그대로 둠)
+        def _done(o, cc):   # 다시 받기 — 이번 주기에 이미 받은 값(그대로 둠) · v1.47 한국 값은 전체 받기가 아닌 날도 매일 받음
+            if cc == "KR" and kr_sep:
+                return False
             return mode == "retry" and bool(o) and not o.get("stale_since") and (o.get("obs_date") or "") >= (att or "")
         def _due(key):   # v1.9 이번 주기에 아직 다시 받아 보지 않음(마지막 요청이 전체 받기 날이나 그 전 — 미룬 값·새 값·전체 받기 날 못 받은 값)
             return (htry.get(key) or "") <= (att or "")
@@ -5127,7 +5304,7 @@ def main():
                 pi = prev.get(prod["id"]) or {}
                 for cc in ccs(prod):
                     h = _capped(prod, cc)
-                    if h and _due(f"{prod['id']} {cc}") and not _done(_prev_o(pi, prod, cc)):
+                    if h and _due(f"{prod['id']} {cc}") and not _done(_prev_o(pi, prod, cc), cc):
                         due_left[h] = due_left.get(h, 0) + 1
         def _cut(prod, cc, o, key):   # 시간 초과 — 이전 값(다음 날 다시) · 이전 값도 없으면 값 없음(처음 못 받은 날부터 21일 알림)
             if o:
@@ -5140,12 +5317,12 @@ def main():
             """v1.12 값 하나 받기 — 묶음(스레드) 안에서 돎. 공유 기록(failed·htry·bt)은 읽기만 하고 결과로 돌려줌 —
             o = 상품 m에 넣을 값 · fop = 값 없음 기록(pop·set) · hop = 받으러 간 날(host_try) · n = 셈 · b = 브랜드 [볼 값, 못 받은 값]"""
             o = _prev_o(pi, prod, cc); key = f"{prod['id']} {cc}"   # 나라별 수입사 품번을 바꾸면 그 나라 이전 값은 다른 상품
-            if _done(o):
+            if _done(o, cc):
                 return {"o": o, "b": (1, 0)}   # 지난 받기에서 받은 값 — 그대로
             pz = paused_of(prod, cc)
             if pz:   # v1.19 수집을 멈춘 사이트 — 요청 없이 이전 값 그대로(셈·알림 밖 · 표시는 아래 합칠 때 매김)
                 st = o.get("stale_since") or o.get("obs_date") or o.get("seen")
-                if cc not in PAUSED_CC:   # v1.28 나라 단위 수집 중단(일본·멕시코·두바이 — 값 약 300개)은 값마다 줄을 쓰지 않음(끝의 '수집 멈춤 n건' 한 줄)
+                if cc not in PAUSED_CC and (mode == "full" or not KR_DAILY):   # v1.28 나라 단위 수집 중단(일본·멕시코·두바이 — 값 약 300개)은 값마다 줄을 쓰지 않음(끝의 '수집 멈춤 n건' 한 줄) · v1.47 값마다 줄은 전체 받기 날만(매일 같은 줄이 이어지지 않게)
                     log(f"  {key}: 건너뜀 — {pz['why']}(수집 멈춤 · {pz['since'][5:]}부터)" + (f" · 이전 값({str(st)[5:10]} 받은 값)" if o else " · 이전 값 없음"))
                 if o:
                     o.setdefault("stale_since", st or td)
@@ -5203,7 +5380,7 @@ def main():
         res, rlock, closed, errs, took = {}, threading.Lock(), [False], [], {}
         def run_lane(ln):   # 다 받으면 True · 시간 초과로 멈추면 False
             c = _ctx()
-            order = [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc == "KR"] + [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc != "KR"]   # v1.28 한국 값 먼저(대표 결정 11-22 '국내 MSRP 최우선')
+            order = [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc == "KR"] + [(p, cc) for p in ln["prods"] for cc in ccs(p) if cc != "KR" and mode != "kr"]   # v1.28 한국 값 먼저(대표 결정 11-22 '국내 MSRP 최우선') · v1.47 한국만 받는 날은 한국 값만
             for prod, cc in order:
                 pi = prev.get(prod["id"]) or {}
                 if _STOP.is_set():
@@ -5233,7 +5410,7 @@ def main():
                     errs.append((ln["name"], traceback.format_exc())); _STOP.set()
                 finally:
                     c.sess.close(); _TL.c = None
-        lanes, k = build_lanes(PRODUCTS), _lanes_n()
+        lanes, k = build_lanes(PRODUCTS, {"KR"} if mode == "kr" else None), _lanes_n()   # v1.47 한국만 받는 날은 값 수·예상 시간도 한국 값만(한국 몰 간격은 PRODUCTS 전체로)
         _PACE.clear(); _PACE.update(pace_map(PRODUCTS)); _STOP.clear(); cpu0 = time.process_time()
         if k <= 1:   # 예전처럼 차례대로(한 세션 · 모든 요청이 한 줄로 GAP)
             for ln in lanes:
@@ -5261,6 +5438,11 @@ def main():
             m, b = {}, bt.setdefault(prod["brand"], [0, 0])
             for cc in ccs(prod):
                 key = f"{prod['id']} {cc}"
+                if mode == "kr" and cc != "KR":   # v1.47 한국만 받는 날 — 해외 값은 손대지 않음(시간 초과로 보지 않음 · 값 없음·host_try 기록 그대로)
+                    po = _prev_o(pi, prod, cc)
+                    if po:
+                        m[cc] = po
+                    continue
                 out = res.get(key)
                 if out is None:   # 묶음이 시간 안에 안 끝나 못 받은 값 — 시간 초과와 같게(이미 받은 값·한도 미룸은 예전 차례대로)
                     out = _value(prod, cc, pi, cut=True)
@@ -5273,6 +5455,12 @@ def main():
                     failed[key] = fop[1]
                 if hop:
                     htry[key] = hop[1]
+                if cc == "KR":
+                    cnt_kr.update(out.get("n") or {})
+                    if kr_sep:   # v1.47 전체 받기가 아닌 날의 한국 값은 cnt에 안 섞음(받은 날·다시 받기·절반 판단은 해외 값만)
+                        if tuple(out.get("b") or ()) == (1, 0):   # 받은 한국 값은 브랜드 통째 판단에 받은 값으로(예전 다시 받기 날 _done처럼 — 한국 값을 받은 브랜드가 '전부'가 되지 않게 · 검토 11/25)
+                            b[0] += 1
+                        continue
                 cnt.update(out.get("n") or {})
                 db, df = out.get("b") or (0, 0); b[0] += db; b[1] += df
             items.append({"id": prod["id"], "brand": prod["brand"], "name": prod["name"], "code": prod["code"], "m": m,
@@ -5286,28 +5474,40 @@ def main():
         quiet = mode == "retry" and bool(last) and last >= (att or "")   # v1.9 이번 주기에 잘 끝난 실행이 있으면 그 뒤 다시 받기는 조용히(미룬 값으로 다시 받기가 길어져도 매일 알림 안 냄)
         ok_run = not (half or whole or n_cut) and not quiet
         again = (not ok_run and not quiet) or (mode == "full" and (n_fail > 0 or n_defer > 0)) or n_due_defer > 0   # v1.8·v1.9 미룬 값(아직 다시 받아 보지 않은 값)은 다음 날 다시 받기로
-        log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
-            + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
-            + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "")
-            + (f" · 사이트 요청 한도로 {n_defer}건은 {'다음 실행에서' if again else '다음 주에'}" if n_defer else ""))
-        log(f"해외 정가 묶음 {len(lanes)}개 · 동시 {min(k, len(lanes))}: "   # v1.12 가장 긴 묶음 = 전체 받기 시간의 기준
+        if mode == "kr":   # v1.47 한국만 받은 날 — 받은 날(fetched)·전체 받으러 간 날(attempt)은 그대로, 다시 받기(tried) 안 남김(다음 날도 한국 값은 다시 받음)
+            ok_run, again = None, False
+        else:
+            log(f"해외 정가: {len(PRODUCTS)}개 상품 · 받음 {ok}/{n_try} · {time.time() - t0:.0f}초"
+                + (f" · 크게 바뀜 {n_hold}건 다음 확인" if n_hold else "") + (f" · 이름으로 찾음 {n_name}건" if n_name else "")
+                + (f" · 시간 초과로 {n_cut}건 못 받음" if n_cut else "")
+                + (f" · 사이트 요청 한도로 {n_defer}건은 {'다음 실행에서' if again else '다음 주에'}" if n_defer else ""))
+        if kr_sep:   # v1.47 전체 받기가 아닌 날의 한국 값 셈(따로 — 알림은 아래 한국 값 막힘 알림·21일 규칙)
+            k_try, k_fail, k_cut, k_hold, k_name = (cnt_kr[x] for x in ("try", "fail", "cut", "hold", "name"))
+            log(f"해외 정가: 한국 값 받음 {k_try - k_fail}/{k_try} · {time.time() - t0:.0f}초"
+                + (f" · 크게 바뀜 {k_hold}건 다음 확인" if k_hold else "") + (f" · 이름으로 찾음 {k_name}건" if k_name else "")
+                + (f" · 시간 초과로 {k_cut}건 못 받음" if k_cut else "") + (f" · {k_fail}건 못 받음 — 내일 다시" if k_fail else ""))
+        log(f"해외 정가{' 한국' if mode == 'kr' else ''} 묶음 {len(lanes)}개 · 동시 {min(k, len(lanes))}: "   # v1.12 가장 긴 묶음 = 전체 받기 시간의 기준 · v1.47 한국만 받는 날은 '해외 정가 한국 묶음'
             + " · ".join(f"{ln['name']} {took[ln['name']]:.0f}초({ln['n']})" if ln["name"] in took else f"{ln['name']} 안 끝남({ln['n']})"
                          for ln in sorted(lanes, key=lambda x: -took.get(x["name"], 1e9)))
             + f" · CPU {time.process_time() - cpu0:.0f}초")
         if mode == "full":
             if half:
                 soft_fail(f"해외 정가 절반 넘게 못 받음({n_fail}/{n_try}) — 이전 값 유지, 내일 다시")
+                sf_all = True
             elif whole:   # 첫날은 알림 없이 다음 날 다시(한 번 끊긴 것일 수 있음)
                 log(f"해외 정가: {', '.join(whole)} 값을 하나도 못 받음 — 내일 다시")
+                said_b.update(whole)   # v1.47 같은 브랜드 한국 첫날 줄은 겹치므로 뺌
             elif n_fail:
                 log(f"해외 정가: {n_fail}건 못 받음 — 내일 그 값만 한 번 더")
-        elif (half or whole) and not quiet:
+        elif mode == "retry" and (half or whole) and not quiet:
             soft_fail(f"해외 정가 다시 받기도 못 받음({n_fail}/{n_try}" + (f" · {', '.join(whole)} 전부" if whole else "")
                       + ") — 이전 값 유지, 내일 다시")
+            sf_all = sf_all or half; sf_brands.update(whole)
         elif quiet and n_fail:
             log(f"해외 정가: 다시 받기에서도 {n_fail}건 못 받음 — 다음 주 받을 때 다시")
-        if n_cut:
-            log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut}건 못 받음 — 내일 다시")
+        n_cut_all = n_cut + (cnt_kr["cut"] if kr_sep else 0)   # v1.47 전체 받기가 아닌 날의 한국 값 시간 초과도 같은 줄(한국만 받는 날 시간 초과는 진짜 이상)
+        if n_cut_all:
+            log(f"[WARN] 해외 정가: 시간 초과({TIME_LIMIT}초)로 {n_cut_all}건 못 받음 — 내일 다시")
     # v1.19 수집을 멈춘 사이트(PAUSED) 표시를 지금 설정으로 다시 매김(받지 않은 날도 · PAUSED에서 빼면 표시도 지움)
     byid = {p["id"]: p for p in PRODUCTS}
     n_pause, pz_used = 0, set()
@@ -5328,6 +5528,49 @@ def main():
         ccs_u = [c for c, v in PAUSED_CC.items() if id(v) in pz_used]   # v1.28 실제로 멈춘 값이 있는 까닭만(나라 단위가 앞서 가린 사이트 — 푸마 일본 — 는 뺌)
         log(f"해외 정가: 수집 멈춤 {n_pause}건 — " + " · ".join([f"{h} {v['why']}({v['since'][5:]}부터)" for h, v in PAUSED.items() if id(v) in pz_used]
             + ([f"{'·'.join(ccz.get(c, c) for c in ccs_u)} {PAUSED_CC[ccs_u[0]]['why']}({PAUSED_CC[ccs_u[0]]['since'][5:]}부터)"] if ccs_u else [])) + " · 이전 값 그대로(알림 안 함)")
+    # v1.47 한국 값 막힘 알림(파일 값으로 매 실행 판단 — 상태 칸 없이) — 한 브랜드의 수집 중인 한국 값이 모두 이전 값이고 마지막으로 받은 날(stale_since 가장 늦은 날)에서
+    # KR_ALERT_DAYS 지나면 한 기간에 한 번만 실패 표시(kr_told {브랜드: 그날} — 그날이 바뀌면 새 기간 · 풀리면 지움) · 한국 값 절반 넘게면 '*' 한 줄 · 첫날은 알림 낱말 없는 줄만 ·
+    # 지난 실행(이전 파일)에서도 그 값이 모두 이전 값이었을 때만(연달아 두 실행 — 하루 빠진 실행 뒤 한 번 실패·옛 파일의 주 1회 받은 날로 첫날을 건너뛰지 않게 · 검토 11/25)
+    kr_told = old.get("kr_told") if isinstance(old.get("kr_told"), dict) else {}
+    if KR_DAILY:
+        k_first = not isinstance(old.get("kr_told"), dict)   # kr_told가 없는 옛 파일 — 이전 파일에서 이미 참인 것만 알린 것으로(PortWatch·관세청 told와 같게 — 이번 실행 실패는 빼고)
+        k_old, kr_told, k_by = kr_told, {}, collections.defaultdict(list)
+        for it in items:
+            o = (it.get("m") or {}).get("KR")
+            if isinstance(o, dict) and not o.get("paused"):
+                po = ((prev.get(it["id"]) or {}).get("m") or {}).get("KR")
+                k_by[it["brand"]].append((o, bool(isinstance(po, dict) and po.get("stale_since") and not po.get("paused"))))   # (값, 지난 실행에도 못 받은 이전 값 — 수집 멈춤을 푼 첫 실행은 첫날)
+        k_all = [o for vs in k_by.values() for o, _ in vs]
+        k_late = [o for vs in k_by.values() for o, pst in vs if pst and o.get("stale_since") and _days(o["stale_since"]) >= KR_ALERT_DAYS]
+        k_star = bool(k_all) and len(k_late) * 2 > len(k_all)
+        star_ok = k_star and (k_first or "*" in k_old or not sf_all)   # '*' 줄을 냈거나 이미 알림 — 전체 받기·다시 받기 알림에 가려 못 낸 날은 기록하지 않음(다음 실행에 알림 · 검토 11/25)
+        star_now = k_star and not k_first and "*" not in k_old and not sf_all   # 이번 실행에 '*' 줄을 냄 — 그 줄이 덮는 브랜드는 이날 통째로 막힌 브랜드만(뒤에 새로 막힌 브랜드는 '*'가 이어지는 동안 기록하지 않음 → '*'가 풀린 뒤에도 그대로면 브랜드 줄 · 검토 2차 11/25)
+        k_new, k_quiet = [], []   # 이번에 알릴 브랜드 · 첫날 줄
+        for br, vs in k_by.items():
+            if not all(o.get("stale_since") for o, _ in vs):
+                continue
+            since_b = max(o["stale_since"] for o, _ in vs)
+            if _days(since_b) < KR_ALERT_DAYS or not all(pst for _, pst in vs):
+                if br not in said_b:
+                    k_quiet.append(br)
+                continue
+            if k_first or k_old.get(br) == since_b or star_now:
+                kr_told[br] = since_b   # 옛 파일에서 이미 참 · 이미 알림 · 이번 '*' 한 줄이 덮음
+            elif not k_star and not sf_all and br not in sf_brands:
+                kr_told[br] = since_b; k_new.append((br, since_b))
+            # 그 밖(같은 실행에 전체 받기·다시 받기 알림이 먼저 — 그 알림은 한국 값을 말하지 않음)은 기록하지 않음 — 다음 실행에도 그대로면 알림
+        if k_quiet:
+            log(f"해외 정가: {', '.join(k_quiet)} 한국 값 못 받음 — 내일 다시")
+        if k_star:
+            if star_ok:
+                kr_told["*"] = k_old.get("*") or td   # 처음 알린 날 — 조건이 이어지는 동안 그대로(한 번만)
+            if star_now:
+                bl = sorted({br for br, vs in k_by.items() for o, _ in vs if o in k_late})
+                soft_fail(f"해외 정가 한국 값 절반 넘게({len(k_late)}/{len(k_all)}개) 연달아 못 받음({', '.join(bl[:6])}{f' 외 {len(bl) - 6}곳' if len(bl) > 6 else ''})"
+                          " — 이전 값 유지 · 접속 막힘이면 PAUSED 검토")
+        elif k_new:   # '*'가 참인 동안은 브랜드 줄을 따로 내지 않음(위 한 줄 · 알린 것으로 기록)
+            for br, since_b in k_new:
+                soft_fail(f"해외 정가 {br} 한국 값을 {since_b[5:]} 뒤로 하나도 못 받음 — 이전 값 유지 · 접속 막힘이면 PAUSED 검토")
     # 오래 멈춘 값(21일 넘게 이전 값·값 없음) 알림 — v1.19 수집을 멈춘 사이트 값은 뺌
     stale = [f"{it['brand']} {it['name']} {cc}" for it in items for cc, o in it.get("m", {}).items()
              if isinstance(o, dict) and o.get("stale_since") and not o.get("paused") and _days(o["stale_since"]) > STALE_ALERT]
@@ -5341,6 +5584,15 @@ def main():
     rep_codes = collections.defaultdict(set)
     for p in PRODUCTS:
         rep_codes[p["brand"]].add(_sku_norm(p["code"]))
+    def _au_due(a):   # v1.47 표본 검사가 이번 실행에 돌 차례(audit_stage·audit_retail_stage와 같은 판단 — 지난 결과에서 AUDIT_DAYS 지남)
+        try:
+            return not (isinstance(a, dict) and a.get("date") and _days(a["date"]) < AUDIT_DAYS)
+        except (TypeError, ValueError):
+            return True
+    due_a, due_r = _au_due(old.get("audit")), _au_due(old.get("audit_retail"))
+    au_res = (AUDIT_MIN_LEFT if due_a else 0) + (AUDIT_R_MIN_LEFT if due_r else 0) + (AUDIT_PAD if due_a or due_r else 0)   # v1.47 검사 날만 SKU 마감에서 그 몫(+ SKU가 마감을 넘는 몫)을 뺌
+    if mode == "full":
+        au_res = 0   # v1.47 전체 받기 날은 몫을 남기지 않음(예전처럼 검사가 다음 날로 — 검사·전체 받기 날이 겹쳐 주마다 SKU를 건너뛰지 않게 · 검토 11/25)
     if busy:
         log("SKU 정가: 대표 상품 묶음이 안 끝나 이번 실행은 건너뜀 — 받아 둔 상품은 그대로")
         sku_items = [it for it in old.get("items", []) if isinstance(it, dict) and it.get("kind") == "sku"]
@@ -5349,7 +5601,7 @@ def main():
         try:
             _QUIET[0] = True   # SKU 단계 — 사이트별 안내 줄을 찍지 않음(어느 브랜드를 묻는지 드러나지 않게)
             try:
-                sku_items, sku_meta = sku_stage(old, t0, today, td, rep_codes, items)
+                sku_items, sku_meta = sku_stage(old, t0, today, td, rep_codes, items, reserve=au_res)
             finally:
                 _QUIET[0] = False
         except Exception:   # SKU 단계 오류가 대표 상품 저장을 막지 않게 — 받아 둔 상품은 그대로
@@ -5361,7 +5613,7 @@ def main():
     try:   # v1.33 정가 표본 검사(주 1회 · 남은 시간 있을 때) — 오류가 저장을 막지 않게
         _QUIET[0] = True
         try:
-            audit = audit_stage(items + sku_items, t0, today, td, old.get("audit"))
+            audit = audit_stage(items + sku_items, t0, today, td, old.get("audit"), keep=AUDIT_R_MIN_LEFT if au_res and due_r else 0)   # v1.47 몫을 뺀 날 두 검사가 함께면 판매처 재확인 몫을 남김
         finally:
             _QUIET[0] = False
     except Exception:
@@ -5381,9 +5633,12 @@ def main():
     out = {"generated_at": now.strftime("%Y-%m-%d %H:%M KST"),
            "fetched": td if ok_run else last,                       # 받은 날 — 잘 끝난 실행만
            "attempt": td if mode == "full" else att,                # 전체를 받으러 간 날 — 다음 주 받을 날의 기준
-           "cfg": cfg if mode else old.get("cfg"),
+           "cfg": cfg if mode in ("full", "retry") else old.get("cfg"),   # v1.47 한국만 받는 날은 그대로
+           "kr_fetched": td if (cnt_kr["try"] and cnt_kr["fail"] * 2 <= cnt_kr["try"] and not cnt_kr["cut"]) else old.get("kr_fetched"),   # v1.47 대표 상품 한국 값을 받은 날(절반 넘게 못 받음·시간 초과가 아닐 때)
            "status": "ok" if not stale else "kept", "items": items + sku_items, "failed": list(failed.values()), "host_try": htry,
            "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)"}
+    if KR_DAILY or "kr_told" in old:
+        out["kr_told"] = kr_told   # v1.47 한국 값 막힘 알림을 낸 기간(빈 것도 씀 — 옛 파일 판단은 처음 한 번만)
     out.update(sku_meta)   # v1.29 SKU 단계 상태(목록 못 받은 날만 — 못 찾은 품번은 어디에도 안 남김)
     if audit:
         out["audit"] = audit   # v1.33 정가 표본 검사 결과(주 1회 · ERP·수집 상태가 읽음)
