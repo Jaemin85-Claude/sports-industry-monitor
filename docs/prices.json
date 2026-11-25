@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25 00:11 KST",
+ "generated_at": "2026-11-25 09:46 KST",
  "fetched": "2026-11-22",
  "attempt": "2026-11-22",
  "cfg": "6b190d589fa6",
@@ -16875,6 +16875,34 @@
    }
   },
   {
+   "id": "s-ganni-a1050144-151",
+   "brand": "가니",
+   "name": "Baby Fit T-shirt with Fairy",
+   "code": "A1050144-151",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 195000,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.ganni.com/en-kr/baby-fit-t-shirt-with-fairy-A1050144.html",
+     "obs": 195000,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 136500,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       136500,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
    "id": "s-ganni-a1050174-07z",
    "brand": "가니",
    "name": "T-shirt with Fairy",
@@ -25654,6 +25682,48 @@
    }
   },
   {
+   "id": "s-nb-m1906ra",
+   "brand": "뉴발란스",
+   "name": "M1906RA",
+   "code": "M1906RA",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020094425",
+     "obs": 189000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
+   "id": "s-nb-m1906rch",
+   "brand": "뉴발란스",
+   "name": "NBPDGF703T / M1906RCH (BLACK)",
+   "code": "M1906RCH",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 189000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.29cm.co.kr/products/4213797",
+     "obs": 189000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
    "id": "s-nb-m1906ree",
    "brand": "뉴발란스",
    "name": "M1906REE",
@@ -25793,6 +25863,27 @@
      "url": "https://www.29cm.co.kr/products/3617855",
      "obs": 129000.0,
      "obs_date": "2026-11-24",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
+   "id": "s-nb-ml574evg",
+   "brand": "뉴발란스",
+   "name": "NBP7GF719G / ML574EVG (GRAY)",
+   "code": "ML574EVG",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 129000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.29cm.co.kr/products/3744753",
+     "obs": 129000.0,
+     "obs_date": "2026-11-25",
      "sale": false,
      "src": "retail",
      "shop": "29cm"
@@ -25999,6 +26090,58 @@
    }
   },
   {
+   "id": "s-nb-u471993",
+   "brand": "뉴발란스",
+   "name": "U471993",
+   "code": "U471993",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020122146",
+     "obs": 139000.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 99000.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       99000.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "grandstage",
+     "via": "search"
+    }
+   }
+  },
+  {
+   "id": "s-nb-u509163",
+   "brand": "뉴발란스",
+   "name": "U509163",
+   "code": "U509163",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 159000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020122383",
+     "obs": 159000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
    "id": "s-nb-u5095xz",
    "brand": "뉴발란스",
    "name": "U5095XZ",
@@ -26167,6 +26310,27 @@
    }
   },
   {
+   "id": "s-nb-u740wn2",
+   "brand": "뉴발란스",
+   "name": "U740WN2",
+   "code": "U740WN2",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://abcmart.a-rt.com/product/new?prdtNo=1010111721",
+     "obs": 149000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "abcmart"
+    }
+   }
+  },
+  {
    "id": "s-nb-wl574evg",
    "brand": "뉴발란스",
    "name": "NBP7GF720G / WL574EVG (GRAY)",
@@ -26267,6 +26431,1341 @@
      "url": "https://www.drmartens.co.kr/products/shoes-1461-black-smooth",
      "obs": 229000.0,
      "obs_date": "2026-11-23",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-lm06206wa0022-0548",
+   "brand": "메종키츠네",
+   "name": "ALPACA SCARF",
+   "code": "LM06206WA0022-0548",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 375250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/alpaca-scarf-moon-beige-696ae3c601ae7.html",
+     "obs": 375250.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 262675.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       262675.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-lm06206wa0022-0555",
+   "brand": "메종키츠네",
+   "name": "ALPACA SCARF",
+   "code": "LM06206WA0022-0555",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 375250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/alpaca-scarf-aqua-green-696ae3c603a26.html",
+     "obs": 375250.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 262675.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       262675.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-lm06206wa0022-p199",
+   "brand": "메종키츠네",
+   "name": "ALPACA SCARF",
+   "code": "LM06206WA0022-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 375250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/alpaca-scarf-black-696ae3c6078ab.html",
+     "obs": 375250.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 262675.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       262675.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mm00125kj0008-p100",
+   "brand": "메종키츠네",
+   "name": "스피디 폭스 패치 콤포트 티셔츠",
+   "code": "MM00125KJ0008-P100",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166725.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/speedy-fox-patch-comfort-tee-shirt-white-658190edda748.html",
+     "obs": 166725.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 116707.5,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       116707.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrmjt32kj7025-p190",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD COMFORT TEE-SHIRT",
+   "code": "MRMJT32KJ7025-P190",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-comfort-tee-shirt-anthracite-6a31e836cc7ac.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrmjt32kj7025-p702",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD COMFORT TEE-SHIRT",
+   "code": "MRMJT32KJ7025-P702",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-comfort-tee-shirt-latte-6a31e836ce2b0.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrmkc02kt1220-0613",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD COMFORT CARDIGAN",
+   "code": "MRMKC02KT1220-0613",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-comfort-cardigan-taupe-melange-6a31e83701502.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mruat04wb0060-0558",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD SCARF",
+   "code": "MRUAT04WB0060-0558",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 337250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-scarf-ash-green-6a31e837ae733.html",
+     "obs": 337250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mruat04wb0060-p190",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD SCARF",
+   "code": "MRUAT04WB0060-P190",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 337250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-scarf-anthracite-6a31e837af08a.html",
+     "obs": 337250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrubt23ww0096-p190",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD TOTE",
+   "code": "MRUBT23WW0096-P190",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 109250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-tote-anthracite-6a31e837c4697.html",
+     "obs": 109250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrubt23ww0096-p700",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD TOTE",
+   "code": "MRUBT23WW0096-P700",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 109250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-tote-ecru-6a31e837c5005.html",
+     "obs": 109250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwjc00ka0052-0318",
+   "brand": "메종키츠네",
+   "name": "BABY FOX RIBBED CARDIGAN",
+   "code": "MRWJC00KA0052-0318",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 280250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-ribbed-cardigan-cloud-grey-6a31e8380136b.html",
+     "obs": 280250.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 196175.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       196175.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwjc00ka0052-0553",
+   "brand": "메종키츠네",
+   "name": "BABY FOX RIBBED CARDIGAN",
+   "code": "MRWJC00KA0052-0553",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 280250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-ribbed-cardigan-dark-wood-6a31e83804493.html",
+     "obs": 280250.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 196175.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       196175.0,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwjt17kj7026-p190",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD REGULAR TEE-SHIRT",
+   "code": "MRWJT17KJ7026-P190",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-regular-tee-shirt-anthracite-6a31e838578c0.html",
+     "obs": 166250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwjt17kj7026-p702",
+   "brand": "메종키츠네",
+   "name": "DOUBLE FOX HEAD REGULAR TEE-SHIRT",
+   "code": "MRWJT17KJ7026-P702",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/double-fox-head-regular-tee-shirt-latte-6a31e83858ffb.html",
+     "obs": 166250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwkc01kt1006-0548",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD LAMBSWOOL HIGH NECK CARDIGAN",
+   "code": "MRWKC01KT1006-0548",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-lambswool-high-neck-cardigan-moon-beige-6a31e8386c366.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mrwkc01kt1006-0553",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD LAMBSWOOL HIGH NECK CARDIGAN",
+   "code": "MRWKC01KT1006-0553",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-lambswool-high-neck-cardigan-dark-wood-6a31e8386db06.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-mw00105kj7026",
+   "brand": "메종키츠네",
+   "name": "BABY FOX BABY TEE-SHIRT",
+   "code": "MW00105KJ7026",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-baby-tee-shirt-dark-brown-chine-696ae3c6555b5.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mw00507kt1036-0134",
+   "brand": "메종키츠네",
+   "name": "BABY FOX PATCH REGULAR CARDIGAN",
+   "code": "MW00507KT1036-0134",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 483075.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-patch-regular-cardigan-marble-6667983b91888.html",
+     "obs": 483075.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 338152.5,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       338152.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-mw00507kt1036-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX PATCH REGULAR CARDIGAN",
+   "code": "MW00507KT1036-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 483075.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-patch-regular-cardigan-black-65980ea866913.html",
+     "obs": 483075.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 338152.5,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       338152.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-ow05700lr0001-p594",
+   "brand": "메종키츠네",
+   "name": "EDIE CARDHOLDER",
+   "code": "OW05700LR0001-P594",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/edie-cardholder-bakelite-67846a4ab92fb.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00107kj7026-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PM00107KJ7026-0413",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-classic-navy-6855fab7bd647.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00107kj7026-p100",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PM00107KJ7026-P100",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-white-6855fab7bf8ca.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00107kj7026-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PM00107KJ7026-P199",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-black-6855fab7c3277.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-pm00209kp0002",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR POLO",
+   "code": "PM00209KP0002",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-polo-classic-navy-6855fab807e0a.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00209kp0002-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR POLO",
+   "code": "PM00209KP0002-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-polo-classic-navy-6855fab807e0a.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00209kp0002-0604",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR POLO",
+   "code": "PM00209KP0002-0604",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-polo-clear-beige-melange-68f6d1b5ef0bf.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00209kp0002-p100",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR POLO",
+   "code": "PM00209KP0002-P100",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-polo-white-6855fab808dea.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00209kp0002-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR POLO",
+   "code": "PM00209KP0002-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-polo-black-6855fab80c39f.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-pm00210kp0001",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT POLO",
+   "code": "PM00210KP0001",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 223250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-polo-stone-green-68f6d1b6012af.html",
+     "obs": 223250.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00210kp0001-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT POLO",
+   "code": "PM00210KP0001-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 223250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-polo-classic-navy-6855fab80fb30.html",
+     "obs": 223250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00210kp0001-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT POLO",
+   "code": "PM00210KP0001-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 223250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-polo-black-6855fab816196.html",
+     "obs": 223250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00303km0340-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR SWEATSHIRT",
+   "code": "PM00303KM0340-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 318250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-sweatshirt-classic-navy-6855fab8228de.html",
+     "obs": 318250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00303km0340-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR SWEATSHIRT",
+   "code": "PM00303KM0340-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 318250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-sweatshirt-black-6855fab826154.html",
+     "obs": 318250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00304km0341-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT SWEATSHIRT",
+   "code": "PM00304KM0341-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 346750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-sweatshirt-black-6855fab82c2be.html",
+     "obs": 346750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00501kt1181-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD MERINO REGULAR CARDIGAN",
+   "code": "PM00501KT1181-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-merino-regular-cardigan-classic-navy-6855fab851831.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00501kt1181-h120",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD MERINO REGULAR CARDIGAN",
+   "code": "PM00501KT1181-H120",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-merino-regular-cardigan-light-grey-melange-6855fab85389b.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00501kt1181-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD MERINO REGULAR CARDIGAN",
+   "code": "PM00501KT1181-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-merino-regular-cardigan-black-6855fab855a5a.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00703km0341-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT HOODIE",
+   "code": "PM00703KM0341-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 413250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-hoodie-classic-navy-6855fab86fabf.html",
+     "obs": 413250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm00703km0341-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD COMFORT HOODIE",
+   "code": "PM00703KM0341-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 413250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-comfort-hoodie-black-6855fab873301.html",
+     "obs": 413250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-pm00803kt1006",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD LAMBSWOOL COMFORT JUMPER",
+   "code": "PM00803KT1006",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 489250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-lambswool-comfort-jumper-classic-navy-6855fab885ae9.html",
+     "obs": 489250.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm06111kt1140-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD BEANIE",
+   "code": "PM06111KT1140-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-beanie-black-6855fab8e34cc.html",
+     "obs": 166250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pm06111kt1140-p205",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD BEANIE",
+   "code": "PM06111KT1140-P205",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 166250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-beanie-paper-6855fab8e3b06.html",
+     "obs": 166250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00113kj7026-0413",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PW00113KJ7026-0413",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-classic-navy-6855fab92a67f.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00113kj7026-p100",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PW00113KJ7026-P100",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-white-6855fab92c2f8.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00113kj7026-p199",
+   "brand": "메종키츠네",
+   "name": "FOX HEAD REGULAR TEE-SHIRT",
+   "code": "PW00113KJ7026-P199",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 147250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/fox-head-regular-tee-shirt-black-6855fab92d167.html",
+     "obs": 147250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00115kj7026-p100",
+   "brand": "메종키츠네",
+   "name": "BABY FOX REGULAR TEE-SHIRT",
+   "code": "PW00115KJ7026-P100",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-regular-tee-shirt-white-6855fab938d12.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00115kj7026-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX REGULAR TEE-SHIRT",
+   "code": "PW00115KJ7026-P199",
+   "cat": "top",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 185250.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-regular-tee-shirt-black-6855fab939d7b.html",
+     "obs": 185250.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00307km0341-h131",
+   "brand": "메종키츠네",
+   "name": "BABY FOX COMFORT SWEATSHIRT",
+   "code": "PW00307KM0341-H131",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 346750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-comfort-sweatshirt-medium-grey-melange-6855fab9574da.html",
+     "obs": 346750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00307km0341-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX COMFORT SWEATSHIRT",
+   "code": "PW00307KM0341-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 346750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-comfort-sweatshirt-black-6855fab9582f4.html",
+     "obs": 346750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-pw00501kt1006",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL BOXY CARDIGAN",
+   "code": "PW00501KT1006",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-boxy-cardigan-classic-navy-6855fab975c15.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00501kt1006-0413",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL BOXY CARDIGAN",
+   "code": "PW00501KT1006-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-boxy-cardigan-classic-navy-6855fab975c15.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00501kt1006-h120",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL BOXY CARDIGAN",
+   "code": "PW00501KT1006-H120",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-boxy-cardigan-light-grey-melange-6855fab976969.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00501kt1006-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL BOXY CARDIGAN",
+   "code": "PW00501KT1006-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-boxy-cardigan-black-6855fab97769f.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-model-pw00502kt1181",
+   "brand": "메종키츠네",
+   "name": "BABY FOX MERINO REGULAR CARDIGAN",
+   "code": "PW00502KT1181",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-merino-regular-cardigan-dark-wood-68f6d1b7119bf.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00502kt1181-0553",
+   "brand": "메종키츠네",
+   "name": "BABY FOX MERINO REGULAR CARDIGAN",
+   "code": "PW00502KT1181-0553",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-merino-regular-cardigan-dark-wood-68f6d1b7119bf.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00502kt1181-h120",
+   "brand": "메종키츠네",
+   "name": "BABY FOX MERINO REGULAR CARDIGAN",
+   "code": "PW00502KT1181-H120",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-merino-regular-cardigan-light-grey-melange-6855fab97ac3d.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00502kt1181-h218",
+   "brand": "메종키츠네",
+   "name": "BABY FOX MERINO REGULAR CARDIGAN",
+   "code": "PW00502KT1181-H218",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-merino-regular-cardigan-light-beige-melange-6855fab97bbfe.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00502kt1181-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX MERINO REGULAR CARDIGAN",
+   "code": "PW00502KT1181-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-merino-regular-cardigan-black-6855fab97c9ae.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00506kt1006-0413",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL FITTED CARDIGAN",
+   "code": "PW00506KT1006-0413",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-fitted-cardigan-classic-navy-6855fab97f371.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00506kt1006-0553",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL FITTED CARDIGAN",
+   "code": "PW00506KT1006-0553",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-fitted-cardigan-dark-wood-68f6d1b717322.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00506kt1006-p199",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL FITTED CARDIGAN",
+   "code": "PW00506KT1006-P199",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-fitted-cardigan-black-6855fab980df7.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00506kt1006-p623",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL FITTED CARDIGAN",
+   "code": "PW00506KT1006-P623",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 536750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-fitted-cardigan-mist-pink-68f6d1b71a354.html",
+     "obs": 536750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw00817kt1006-0327",
+   "brand": "메종키츠네",
+   "name": "BABY FOX LAMBSWOOL REGULAR JUMPER",
+   "code": "PW00817KT1006-0327",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 440325.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/baby-fox-lambswool-regular-jumper-pale-rose-6855fab9b5f94.html",
+     "obs": 440325.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 308227.5,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       308227.5,
+       "base"
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw05124ww9042-0413",
+   "brand": "메종키츠네",
+   "name": "MAISON KITSUNE HANDWRITING TOTE",
+   "code": "PW05124WW9042-0413",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/maison-kitsune-handwriting-tote-classic-navy-6855fab9e5c81.html",
+     "obs": 99750.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-kitsune-pw05124ww9042-p700",
+   "brand": "메종키츠네",
+   "name": "MAISON KITSUNE HANDWRITING TOTE",
+   "code": "PW05124WW9042-P700",
+   "cat": "bag",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 99750.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://maisonkitsune.com/kr/maison-kitsune-handwriting-tote-ecru-6855fab9e6824.html",
+     "obs": 99750.0,
+     "obs_date": "2026-11-25",
      "sale": false
     }
    }
@@ -26523,6 +28022,27 @@
      "obs_date": "2026-11-25",
      "sale": false,
      "lvl": "model"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-b75806",
+   "brand": "아디다스",
+   "name": "삼바 OG - 화이트 / B75806",
+   "code": "B75806",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.29cm.co.kr/products/3175104",
+     "obs": 149000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
     }
    }
   },
@@ -26789,6 +28309,36 @@
    }
   },
   {
+   "id": "s-adidas-ih6609",
+   "brand": "아디다스",
+   "name": "도쿄 IH6609",
+   "code": "IH6609",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 139000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.29cm.co.kr/products/3823210",
+     "obs": 139000.0,
+     "obs_date": "2026-11-25",
+     "sale": true,
+     "sp": 83400.0,
+     "sp_date": "2026-11-25",
+     "sh": [
+      [
+       "2026-11-25",
+       83400.0,
+       "base"
+      ]
+     ],
+     "src": "retail",
+     "shop": "29cm"
+    }
+   }
+  },
+  {
    "id": "s-adidas-jh6206",
    "brand": "아디다스",
    "name": "아디제로 EVO SL",
@@ -26959,6 +28509,27 @@
      "sale": false,
      "src": "retail",
      "shop": "grandstage"
+    }
+   }
+  },
+  {
+   "id": "s-adidas-jq4774",
+   "brand": "아디다스",
+   "name": "태권도 - 화이트:블랙 / JQ4774",
+   "code": "JQ4774",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 149000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.29cm.co.kr/products/3287653",
+     "obs": 149000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "src": "retail",
+     "shop": "29cm"
     }
    }
   },
@@ -27243,6 +28814,28 @@
    }
   },
   {
+   "id": "s-ua-1361586",
+   "brand": "언더아머",
+   "name": "히트기어 아머 레깅스",
+   "code": "1361586",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 49000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://grandstage.a-rt.com/product/new?prdtNo=1020129799",
+     "obs": 49000.0,
+     "obs_date": "2026-11-25",
+     "sale": false,
+     "lvl": "model",
+     "src": "retail",
+     "shop": "grandstage"
+    }
+   }
+  },
+  {
    "id": "s-ua-1361602",
    "brand": "언더아머",
    "name": "히트기어 아머 롱 쇼츠",
@@ -27476,6 +29069,63 @@
    }
   },
   {
+   "id": "s-converse-132170c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 클래식 레더 블랙",
+   "code": "132170C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 85000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-클래식-레더-블랙/9291/",
+     "obs": 85000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-converse-166799c",
+   "brand": "컨버스",
+   "name": "런스타 하이크 화이트",
+   "code": "166799C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 115000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/런스타-하이크-화이트/10198/",
+     "obs": 115000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-converse-537084c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 쇼어라인 화이트",
+   "code": "537084C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 69000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-쇼어라인-화이트/8620/",
+     "obs": 69000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-converse-560250c",
    "brand": "컨버스",
    "name": "척테일러 올스타 리프트 캔버스 블랙",
@@ -27533,6 +29183,44 @@
    }
   },
   {
+   "id": "s-converse-560846c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 리프트 캔버스 화이트",
+   "code": "560846C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 85000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-리프트-캔버스-화이트/9022/",
+     "obs": 85000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-converse-568497c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 무브 블랙",
+   "code": "568497C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 89000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-무브-블랙/8917/",
+     "obs": 89000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-converse-570256c",
    "brand": "컨버스",
    "name": "척테일러 올스타 무브 블랙",
@@ -27547,6 +29235,25 @@
      "url": "https://www.converse.co.kr/product/척테일러-올스타-무브-블랙/9730/",
      "obs": 85000.0,
      "obs_date": "2026-11-24",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-converse-a01607c",
+   "brand": "컨버스",
+   "name": "스타 플레이어 76 프리미엄 캔버스 블랙",
+   "code": "A01607C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 89000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/스타-플레이어-76-프리미엄-캔버스-블랙/11654/",
+     "obs": 89000.0,
+     "obs_date": "2026-11-25",
      "sale": false
     }
    }
@@ -27590,6 +29297,25 @@
    }
   },
   {
+   "id": "s-converse-m7650c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 클래식 화이트",
+   "code": "M7650C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 75000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-클래식-화이트/6518/",
+     "obs": 75000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-converse-m7652c",
    "brand": "컨버스",
    "name": "척테일러 올스타 클래식 화이트",
@@ -27609,6 +29335,25 @@
    }
   },
   {
+   "id": "s-converse-m9160c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 클래식 블랙",
+   "code": "M9160C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 75000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-클래식-블랙/6517/",
+     "obs": 75000.0,
+     "obs_date": "2026-11-25",
+     "sale": false
+    }
+   }
+  },
+  {
    "id": "s-converse-m9166c",
    "brand": "컨버스",
    "name": "척테일러 올스타 클래식 블랙",
@@ -27623,6 +29368,25 @@
      "url": "https://www.converse.co.kr/product/척테일러-올스타-클래식-블랙/6527/",
      "obs": 69000.0,
      "obs_date": "2026-11-24",
+     "sale": false
+    }
+   }
+  },
+  {
+   "id": "s-converse-m9621c",
+   "brand": "컨버스",
+   "name": "척테일러 올스타 클래식 레드",
+   "code": "M9621C",
+   "cat": "shoe",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 75000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.converse.co.kr/product/척테일러-올스타-클래식-레드/6519/",
+     "obs": 75000.0,
+     "obs_date": "2026-11-25",
      "sale": false
     }
    }
@@ -31709,6 +33473,25 @@
    }
   },
   {
+   "id": "s-palomawool-model-rj9025",
+   "brand": "팔로마울",
+   "name": "(PALOMA WOOL) no 1786 / Grand Slam - RJ9025200 light grey",
+   "code": "RJ9025",
+   "cat": "wear",
+   "kind": "sku",
+   "m": {
+    "KR": {
+     "p": 289000.0,
+     "cur": "KRW",
+     "seen": "2026-11-25",
+     "url": "https://www.kolonmall.com/Product/W1WAX25214GRY",
+     "obs": 289000.0,
+     "obs_date": "2026-11-25",
+     "lvl": "model"
+    }
+   }
+  },
+  {
    "id": "s-puma-392290",
    "brand": "푸마",
    "name": "Puma Caven 2.0",
@@ -31789,59 +33572,109 @@
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "kr_none": {
   "v": 1,
-  "d": "2026-11-25.968f6be9",
-  "kc": "2775fb72255e0c9a",
+  "d": "2026-11-25.fa93995f",
+  "kc": "df455979964ac952",
   "tags": [
-   "019af5e33bd297d0",
-   "061f2bc70f12ca11",
-   "08a6b9092bd07dbb",
-   "11614122623bdf07",
-   "11b418e113275263",
-   "144383535f38ddab",
-   "1939d0c1abffe78b",
-   "19b153c9f1d16871",
-   "1ed695f5b72bc3ec",
-   "29b783e06382c84a",
-   "2be64d0e42a56405",
-   "3cae2abab8204e75",
-   "3f0998407d3fd5d1",
-   "45f1ddb2ccd76fb3",
-   "4cb08bef7e39e7fb",
-   "54ce3166198a96e7",
-   "575cb230529b7259",
-   "5cc3c8c70cd65fc3",
-   "5d150a6820db6a29",
-   "5ea747068aa18b31",
-   "643f45bcde65fa08",
-   "68c0a5bcb3821d3e",
-   "6f7ef1c76a8764cf",
-   "7011bf3080abbd9d",
-   "706fc33f0a9a3685",
-   "89afdf3054870d1b",
-   "8aa27fe467fbb81a",
-   "96babcf6febd72ac",
-   "998cc768996a257d",
-   "9c98d4cec38e011e",
-   "9e7d091b31e59ff9",
-   "9f05ab52b96b23f8",
-   "a0638c57ac40e114",
-   "a08debba4a21f34b",
-   "a26a1964631c3fa5",
-   "aae20c47bc3ff8d4",
-   "b549f5a59e46f5bf",
-   "b5bcc06d7ce0fd12",
-   "c001316f9641eb4c",
-   "c0ceda1ffb3086e2",
-   "ca0b9cedf99bb845",
-   "caeee6851ea0fe77",
-   "d03504bc03ccc187",
-   "d06ba69d971e84ef",
-   "e48cad3601448cfd",
-   "efc234b3162c5e5f",
-   "f3acb46b8b3f8f51",
-   "f7c0470327ef2464",
-   "f99e85acd1bc6b5a",
-   "fb04539510b6112e"
+   "04ed65fd2e3e2521",
+   "0b9bcafcd3857e10",
+   "0c4f31013e4cc727",
+   "0cbe9d8306673416",
+   "0dd63cfd2d045727",
+   "0ef896a9c59fb319",
+   "11ca6ef0de4478b7",
+   "157bc249e24f9d08",
+   "17865d539e2e169a",
+   "199f5118818a202c",
+   "19b6d9208c06df1e",
+   "1d541865694c7888",
+   "1e9519882a1d891b",
+   "21a0e585b7a21e8c",
+   "21aef769eaf8bc49",
+   "276453c320270114",
+   "2fc17cc415db3a77",
+   "387108a6cc82acf7",
+   "3f3eafca1884dfdd",
+   "42e306ad4838ebaa",
+   "44d755d5a23e5972",
+   "4a3b4e5ae2863178",
+   "4cc9e529579145db",
+   "4db53d4f6a2268a1",
+   "5073cec01b277488",
+   "520d6849801d0fef",
+   "5384d8666cb0d499",
+   "55621c800a4c1c21",
+   "57e8df43bb5ea884",
+   "58f527a0deef81e3",
+   "6179ef7d421ea408",
+   "6336b57b08d7c06c",
+   "644fecd66d4ff0a6",
+   "6464239398e86e65",
+   "65f4b46533386231",
+   "6866c546016a5622",
+   "6df2c1717de04aa7",
+   "6ebeb8840f86bec7",
+   "70d0bfb989e7d663",
+   "71099a7d2bfbcc75",
+   "71f9ec84a2e795cc",
+   "7202213e01989902",
+   "739941f8e3c11e00",
+   "746843de8ab7e09c",
+   "7901652626ed8da2",
+   "7c2067afe5c2dad9",
+   "7ca806fd8bf28662",
+   "7f12e1e7292b6631",
+   "8463302d8f0c92ae",
+   "8505f864c4ab0bf0",
+   "8778519f43c6226f",
+   "88d8aec6a0a683d7",
+   "8e31fd921a598936",
+   "92744e7053e07340",
+   "a2896a6921a41fa3",
+   "a3b568c89c2f7220",
+   "a483aaa6203de830",
+   "a76a47b6643618d7",
+   "a90f4c601a580f9f",
+   "abcc7b44ae0c6d40",
+   "ada057a56374ce17",
+   "adf70a5856375976",
+   "af6e02aa5fa774ec",
+   "b1c6a7ba49b9e6dd",
+   "b3fac97fd68ac59d",
+   "b79e3b28639390b5",
+   "b85d1d905d734d79",
+   "b9e760a3ed4d7424",
+   "bd7d5562c604174b",
+   "bd892d9d8a155f06",
+   "bdf8beaeb011c446",
+   "c103963e491d0d1f",
+   "c1477c5a35d67097",
+   "c333308e776f2c0c",
+   "c8ad7e2b36157075",
+   "c8c0336c9b5383d9",
+   "cabad593e2e7d766",
+   "cd8fa54eed8315ba",
+   "cfa1f11247b4184f",
+   "d31fc7dc559ae853",
+   "d3a72af2dac3bba4",
+   "d53c6535e1be7862",
+   "d74c3fdad0529277",
+   "dcc47ef49444b46e",
+   "e195ea1924baf734",
+   "e34d964964abc7a4",
+   "e41b33ebfeef52a7",
+   "ed9ce58b4f802141",
+   "ee1d3a07c2d8144f",
+   "ee1f79261d0fc6b7",
+   "ee35784b6a3a210b",
+   "f22409fe7f82bc5c",
+   "f35da0767b20338b",
+   "f366ff4b58bba13c",
+   "f3b95bf9f714712a",
+   "f67b012281598221",
+   "f8ae9ed24b9e874a",
+   "f9d298e84a9c2038",
+   "fb7c5b42f55cb2fb",
+   "fe84d229d94b542a"
   ]
  },
  "audit": {
