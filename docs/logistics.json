@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27 11:11 KST",
+ "generated_at": "2026-11-28 07:06 KST",
  "war_start": "2026-02-28",
  "base_period": [
   "2026-01-01",
@@ -5972,7 +5972,7 @@
    ]
   ],
   "latest": "2026-11-23",
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "KCCI 부산발 운임"
  },
  "choke": {
@@ -8402,7 +8402,7 @@
     "last_date": "2026-11-22"
    }
   ],
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "해협 통과"
  },
  "ports": {
@@ -10832,7 +10832,7 @@
     "last_date": "2026-11-20"
    }
   ],
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "항만 입항"
  },
  "hubs": {
@@ -18102,7 +18102,7 @@
     "last_date": "2026-11-20"
    }
   ],
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "적출 거점 입항"
  },
  "glp": {
@@ -18250,13 +18250,19 @@
     50.6,
     6.65,
     "https://www.sea-intelligence.com/press-room/415-global-schedule-reliability-records-a-marginal-gain-in-september"
+   ],
+   [
+    "2026-10",
+    46.6,
+    6.34,
+    "https://www.sea-intelligence.com/press-room/425-global-schedule-reliability-drops-3-7-pp-m-m-in-october-2026"
    ]
   ],
   "skip": [],
   "fmt_skip": {
    "https://www.sea-intelligence.com/press-room/268-global-schedule-reliability-dropped-back-to-january-2024-levels": 2
   },
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "전 세계 정시율"
  },
  "vol_in": {
@@ -23664,7 +23670,7 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "관세청 국가별 수입 물동량"
  },
  "vol_out": {
@@ -29072,26 +29078,11 @@
    },
    "odd_seen": []
   },
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "관세청 국가별 수출 물동량"
  },
  "busan_calls": {
   "days": [
-   [
-    "2025-10-22",
-    26,
-    {
-     "CN": 11,
-     "JP": 9,
-     "KR": 2,
-     "US": 1,
-     "VN": 1,
-     "AU": 1,
-     "TW": 1
-    },
-    623.6,
-    26
-   ],
    [
     "2025-10-23",
     35,
@@ -35182,7 +35173,7 @@
      "JP": 8,
      "KR": 5
     },
-    960.4,
+    953.4,
     28
    ],
    [
@@ -35196,7 +35187,7 @@
      "MX": 1,
      "RU": 1
     },
-    980.8,
+    990.1,
     33
    ],
    [
@@ -35213,14 +35204,30 @@
      "VN": 1,
      "PA": 1
     },
-    777.3,
+    854.5,
+    29
+   ],
+   [
+    "2026-11-27",
+    28,
+    {
+     "CN": 12,
+     "JP": 7,
+     "KR": 4,
+     "HK": 1,
+     "GU": 1,
+     "BR": 1,
+     "SG": 1,
+     "AU": 1
+    },
+    744.8,
     28
    ]
   ],
-  "from": "2025-10-22",
+  "from": "2025-10-23",
   "missing": 0,
   "stay_cap": 96,
-  "fetched": "2026-11-27",
+  "fetched": "2026-11-28",
   "label": "부산 입항 선박"
  },
  "status": {
@@ -35243,14 +35250,14 @@
  },
  "failed_since": {},
  "dgk_conn": {
-  "run": "45926622072",
+  "run": "46074313620",
   "tries": [
    {
     "n": 1,
-    "where": "3.41.x.x · Virginia · AS14618 Amazon.com, Inc.",
+    "where": "3.42.x.x · Oregon · AS16509 Amazon.com, Inc.",
     "ok": true,
     "blocked": false,
-    "at": "11-27 11:12"
+    "at": "11-28 07:07"
    }
   ]
  },
