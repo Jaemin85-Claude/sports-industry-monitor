@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-28 07:07 KST",
+ "generated_at": "2026-11-28 10:59 KST",
  "fetched": "2026-11-28",
  "attempt": "2026-11-28",
  "cfg": "6b190d589fa6",
@@ -2275,22 +2275,24 @@
     "DE": {
      "p": 129.95,
      "cur": "EUR",
-     "seen": "2026-11-22",
+     "seen": "2026-11-28",
      "url": "https://eu.puma.com/de/de/pd/mostro-og-sneakers-unisex/397330",
      "obs": 129.95,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-28",
      "sale": true,
      "sh": [
       [
        "2026-10-26",
        39.95,
        "base"
+      ],
+      [
+       "2026-11-28",
+       49.95
       ]
      ],
-     "sp": 39.95,
-     "sp_date": "2026-11-22",
-     "stale_since": "2026-11-22",
-     "why": "ReadTimeout: HTTPSConnectionPool(host='eu.puma.com', port=443): Read timed out. "
+     "sp": 49.95,
+     "sp_date": "2026-11-28"
     },
     "JP": {
      "p": 15400.0,
@@ -2929,10 +2931,10 @@
     "DE": {
      "p": 229.95,
      "cur": "EUR",
-     "seen": "2026-11-22",
+     "seen": "2026-11-28",
      "url": "https://eu.puma.com/de/de/pd/deviate-nitro-elite-trailrunning-laufschuhe-damen/310468",
      "obs": 229.95,
-     "obs_date": "2026-11-22",
+     "obs_date": "2026-11-28",
      "sale": true,
      "sh": [
       [
@@ -2942,9 +2944,7 @@
       ]
      ],
      "sp": 115.95,
-     "sp_date": "2026-11-22",
-     "stale_since": "2026-11-22",
-     "why": "ReadTimeout: HTTPSConnectionPool(host='eu.puma.com', port=443): Read timed out. "
+     "sp_date": "2026-11-28"
     },
     "MX": {
      "p": 4499.0,
@@ -5504,7 +5504,7 @@
      "obs_date": "2026-11-22",
      "sale": false,
      "stale_since": "2026-11-22",
-     "why": "이번 실행에서 이 사이트가 막음 — 더 요청 안 함"
+     "why": "HTTP 403(접속 차단 — 우회하지 않음)"
     }
    },
    "cat": "shoe"
@@ -20756,6 +20756,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 4620.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 4620.0,
+     "obs_date": "2026-11-28",
+     "sale": false
     }
    }
   },
@@ -23622,6 +23630,14 @@
      "obs": 47.99,
      "obs_date": "2026-11-24",
      "sale": false
+    },
+    "GB": {
+     "p": 42.99,
+     "cur": "GBP",
+     "seen": "2026-11-28",
+     "obs": 42.99,
+     "obs_date": "2026-11-28",
+     "sale": false
     }
    }
   },
@@ -24245,6 +24261,23 @@
      "obs": 109.95,
      "obs_date": "2026-11-25",
      "sale": false
+    },
+    "JP": {
+     "p": 14300.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 14300.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 12199.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       12199.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -24290,6 +24323,23 @@
      "obs": 229000.0,
      "obs_date": "2026-11-24",
      "sale": false
+    },
+    "JP": {
+     "p": 28600.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 28600.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 24399.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       24399.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -24819,6 +24869,23 @@
      "obs": 39000.0,
      "obs_date": "2026-11-23",
      "sale": false
+    },
+    "JP": {
+     "p": 4180.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 4180.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 3599.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       3599.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -27107,6 +27174,23 @@
      "obs": 275.0,
      "obs_date": "2026-11-28",
      "sale": false
+    },
+    "JP": {
+     "p": 38280.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 38280.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 32599.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       32599.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -27262,6 +27346,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 20130.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 20130.0,
+     "obs_date": "2026-11-28",
+     "sale": false
     }
    }
   },
@@ -27783,6 +27875,23 @@
      "obs": 270.0,
      "obs_date": "2026-11-26",
      "sale": false
+    },
+    "JP": {
+     "p": 29700.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 29700.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 25199.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       25199.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -27834,6 +27943,23 @@
      "obs": 239.99,
      "obs_date": "2026-11-26",
      "sale": false
+    },
+    "JP": {
+     "p": 29700.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 29700.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 25199.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       25199.0,
+       "base"
+      ]
+     ]
     }
    }
   },
@@ -28834,6 +28960,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 9460.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 9460.0,
+     "obs_date": "2026-11-28",
+     "sale": false
     }
    }
   },
@@ -28909,6 +29043,23 @@
       [
        "2026-11-24",
        47.99,
+       "base"
+      ]
+     ]
+    },
+    "JP": {
+     "p": 9460.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 9460.0,
+     "obs_date": "2026-11-28",
+     "sale": true,
+     "sp": 7999.0,
+     "sp_date": "2026-11-28",
+     "sh": [
+      [
+       "2026-11-28",
+       7999.0,
        "base"
       ]
      ]
@@ -29201,6 +29352,14 @@
      "seen": "2026-11-27",
      "obs": 29.99,
      "obs_date": "2026-11-27",
+     "sale": false
+    },
+    "JP": {
+     "p": 5390.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 5390.0,
+     "obs_date": "2026-11-28",
      "sale": false
     }
    }
@@ -29526,6 +29685,14 @@
        "base"
       ]
      ]
+    },
+    "JP": {
+     "p": 40480.0,
+     "cur": "JPY",
+     "seen": "2026-11-28",
+     "obs": 40480.0,
+     "obs_date": "2026-11-28",
+     "sale": false
     }
    }
   },
@@ -39237,121 +39404,121 @@
   "salomon-xt6base DE": "2026-11-28",
   "salomon-xt4og US": "2026-11-28",
   "salomon-xt4og GB": "2026-11-28",
-  "salomon-xt4og DE": "2026-11-23",
-  "salomon-xt6expanse US": "2026-11-23",
-  "salomon-xt6expanse GB": "2026-11-23",
-  "salomon-xt6expanse DE": "2026-11-23",
-  "salomon-xt4oggtx US": "2026-11-23",
-  "salomon-xt4oggtx GB": "2026-11-23",
-  "salomon-xt4oggtx DE": "2026-11-23"
+  "salomon-xt4og DE": "2026-11-28",
+  "salomon-xt6expanse US": "2026-11-28",
+  "salomon-xt6expanse GB": "2026-11-28",
+  "salomon-xt6expanse DE": "2026-11-28",
+  "salomon-xt4oggtx US": "2026-11-28",
+  "salomon-xt4oggtx GB": "2026-11-28",
+  "salomon-xt4oggtx DE": "2026-11-28"
  },
  "note": "브랜드 공식몰 정가(할인 전) · 나이키는 상품 정보 fullPrice(두바이는 공식몰 페이지) · 미국은 판매세 별도, 그 밖은 부가세 포함(두바이 5%)",
  "kr_told": {},
  "kr_none": {
   "v": 1,
-  "d": "2026-11-28.9acb66fb",
-  "kc": "34a00e3b90beb7be",
+  "d": "2026-11-28.c8f26c11",
+  "kc": "3a7159100bb4c2ea",
   "tags": [
-   "0619ba495b3348ba",
-   "08682393d7217796",
-   "08a3c83afc6c472b",
-   "0b9e55015c48c822",
-   "0df48e5f92bab00d",
-   "0e6baaa0dd9f630a",
-   "0f8bac61859f34af",
-   "11aa6bebfc5f3add",
-   "12a9d07224c0af20",
-   "14296c6f256cbf4a",
-   "17652829f2818af7",
-   "19b697c42130707b",
-   "1b6746f5fdc191b4",
-   "1d7a9dadd05c3cf5",
-   "1e5b6850772a1b90",
-   "1fcc6b185a8f1df2",
-   "204191fc48ce64cf",
-   "20caaa62a53ce2ae",
-   "21046a5c0d3b3324",
-   "258152c186d50433",
-   "2a15e23d56fac8b2",
-   "2b4ad6dc78678b92",
-   "2bc69f95795c954a",
-   "2cb083bf511f4ffe",
-   "2f4db514547f2a49",
-   "30dd2235cc19a1f2",
-   "31fa6c1909387aa5",
-   "3213750470506613",
-   "34475cb3e6121fb8",
-   "34dca640db09f471",
-   "373b508b1469d08b",
-   "387482d7312bcce3",
-   "3933413d8a142ac5",
-   "39388434eced04a3",
-   "3f263cbe433e29f7",
-   "45365a9847c198d4",
-   "45abe53c1eddb89d",
-   "466fedb9262ed675",
-   "4a4a02c1d6dba55f",
-   "4b551fa6a6cb3535",
-   "4c7afb641910e350",
-   "4e819186dae92ba2",
-   "50e623d405f5edd4",
-   "51bbe47b733b3246",
-   "54fddffa7f869e3c",
-   "5916ecef94595404",
-   "5d22bcfc198a10e4",
-   "5ff96fc13bd39b28",
-   "6c3b7755a9a1e06c",
-   "6f2d5fcfc1e1214d",
-   "767bedf8ca149627",
-   "773718d0f8d6fd61",
-   "7918433c44cdc5a6",
-   "7976b5850cd37c1f",
-   "81f48e5b9295627a",
-   "832af0cdd4acc033",
-   "89d3fd1badf37cc3",
-   "8c13946de91adf30",
-   "9592b297a1f8d876",
-   "9679c5da2ddea773",
-   "970d8364f3a57eab",
-   "99282347078552a7",
-   "9a66393cbc79012f",
-   "9b943f39726c0a8d",
-   "9dc3df67880dcaee",
-   "9e3eb0337b06ce18",
-   "a1b9187ecfc8c09a",
-   "a1c6d99f28785882",
-   "a483c43549c6114a",
-   "ad632aa539a3c3cb",
-   "af19858f0147e562",
-   "b4261ce5d437b201",
-   "b8e49c2af5979c5f",
-   "b9813a472d6e28e2",
-   "bba217cb1308163c",
-   "bdd992d08ad131ec",
-   "c0167aaa97b23b07",
-   "c056cb8fe2067b1e",
-   "c146043ad2ca62d9",
-   "c23adee78ae66633",
-   "c98bb0ec6711685a",
-   "cd4be3b57b4590a7",
-   "ce80352789773994",
-   "cf70c8fa02df4344",
-   "d0167ae7c85a5b5f",
-   "d3a71ca9ca77889e",
-   "d75d4a7d1e4dec63",
-   "dcfcabd2c4e35866",
-   "e5dbe6b7f95506dc",
-   "e6b2e8e580b74547",
-   "ee3ec8d7ebd1a104",
-   "ee845ef4809a2979",
-   "f1b176bb7342450c",
-   "f1bcc53ac33d0b52",
-   "f6af527fdacadf87",
-   "f6bb9fd36d916902",
-   "f71eb7baa755fee3",
-   "feb945898c0ac34e",
-   "fed8fd1c8d2c448a",
-   "ff43a8da57a7c76a"
+   "021da0b246841e01",
+   "06823ce641ad89cd",
+   "079cf3753ee76131",
+   "08487ba969e2071f",
+   "0c8ed12b15506e4b",
+   "105bf8d52d517db2",
+   "12320fe2ed022666",
+   "15c047abf3ee23cf",
+   "16bdae3bc7a62cb4",
+   "1a143089733a8d94",
+   "1ac435484e27c217",
+   "1ae26e4897491323",
+   "1c34c0f8625a34d2",
+   "1d4303f0c420f924",
+   "214df943096d78b5",
+   "21f06b629f36aac0",
+   "292acd64bb52d7c1",
+   "2e3fa5a1f895c0f3",
+   "332b35a233a30795",
+   "374029640404ba5a",
+   "38f5308f01dd84a5",
+   "3be7ba564d4ee4a3",
+   "417f71b119716be9",
+   "46bed342654ab6ba",
+   "47908f0be47fd529",
+   "492a0f2de6a84b8c",
+   "49415db6b712f039",
+   "49d2ca2c8a7983b1",
+   "4d22c8037cfa02f8",
+   "548c938dea9762b4",
+   "55324360f3b0b29f",
+   "5a7c01cfd71e7264",
+   "5b0cdfa6f990ab74",
+   "5b4465d00dae5e2b",
+   "5ddc0a6f6768f834",
+   "60944df89d7f3bb9",
+   "664cdd083cf93e8c",
+   "67587648a74531d4",
+   "699724473fbdf14e",
+   "69eeec1ceed8e17e",
+   "6b536df11a7b588d",
+   "6d4c153a4b06e708",
+   "6d634f97ac07548c",
+   "73cbdb4f5496b2c1",
+   "74966ced506c03c6",
+   "791dacc71dbf89e6",
+   "7b80348d45059c70",
+   "80959d1aa19fdc42",
+   "8608273ed42b27b0",
+   "87dad1a1c42b539f",
+   "8ccf60fafb4906b6",
+   "8f5eb236b9bc086c",
+   "8fbdaf9719fe922f",
+   "935320cb563fa56b",
+   "95ef8297487a618f",
+   "96fa337695736a02",
+   "9de9f715f165cba8",
+   "a5dba4a08f4fabd4",
+   "ae9e1ea96084f143",
+   "aea251a30a8105ce",
+   "affc86e5e78c611e",
+   "b07ec42a3420593d",
+   "b1e6de481981c00c",
+   "b5706faf10f104af",
+   "b66e662e4e00de1f",
+   "b67484cd53f616b1",
+   "ba0a960b058c406e",
+   "bbdf0cd706b8fc81",
+   "bced8545175f3ffa",
+   "bde39729df170674",
+   "c101dcca153ef0fe",
+   "c24c09491b323b80",
+   "c2b164a4811d1917",
+   "c460c9d6f0c644b1",
+   "c90118e80cfd2332",
+   "ca9e2128ca7f6565",
+   "ce321c98f6bee00e",
+   "ce68ba43b83e477b",
+   "d242eb286f953a28",
+   "d2868942e73404a8",
+   "d3d6d8ab73c5774c",
+   "d5e4c9c88d728220",
+   "dd94bf5f0098255a",
+   "decd9e301daee750",
+   "df0fa579d805004c",
+   "e068a3e5723e3abf",
+   "e1e80facb65bb967",
+   "ec06dceefca068e7",
+   "efe5a8ae17a93201",
+   "f46a43c6c567c6fc",
+   "f6c16fcdd42a6846",
+   "f88c614d5627cb88",
+   "f89f9453086cd133",
+   "f9c794f659f56591",
+   "fab8065b7a3c8f9c",
+   "fac9b7fea9ddac12",
+   "fb22c933aab51ce9",
+   "fb4d4cfefbc6c842",
+   "fee385c9d391f4ea",
+   "ff410139affaa8da"
   ]
  },
  "audit": {
@@ -39415,6 +39582,5 @@
    "same": 2,
    "diff": []
   }
- },
- "tried": "2026-11-28"
+ }
 }
